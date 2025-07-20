@@ -61,11 +61,11 @@ __traits_diz = {
     "", "", "", "", "", "", "", "", "",},
 
 "Multi-hued lineage",
-    {"The \255umulti-hued\255U lineage provides intrinsic",
-    "resistances to the four basic elements and poison (25).",
+    {"The \255umulti-hued\255U lineage provides resistances to the",
+    "four basic elements, and (at 25) to poison too.",
     "The basic resistances are obtained in the order of",
-    "lightning (5), frost (10), fire (15) and acid (20).",
-    "This lineage provides a random elemental breath.",
+    "lightning (5), frost (10), fire (15), acid (20).",
+    "This lineage provides various elemental breaths.",
     "", "", "", "", "", "", "",},
 
 "Bronze lineage",
@@ -115,7 +115,7 @@ __traits_diz = {
     {"The \255upower\255U lineage provides intrinsic resistance",
     "to fear and blindness (5), and its metallic scales",
     "have a chance to reflect bolts and arrows (20).",
-    "This lineage provides a random elemental breath.",
+    "This lineage provides various elemental breaths.",
     "", "", "", "", "", "", "", "",},
 
 
