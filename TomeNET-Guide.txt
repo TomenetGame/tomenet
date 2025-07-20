@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 14. July 2025 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 21. July 2025 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -19624,8 +19624,12 @@ An alternative method is to just throw the charge, which will auto-arm it.
 Thrown charges are inferior to carefully planted ones, and will have reduced
 effect such as smaller blast radius or lower damage.
 
+Increasing your 'Digging' skill will increase the power of many charge types.
+
+
 Obtaining chemicals/ingredients:
 --------------------------------
+
 Ingredient            | mining  | looting              | other source
 ----------------------+---------+----------------------+-----------------------
 Water                 |         | Potion               | Freshwater sources
@@ -19655,6 +19659,7 @@ grinding tool on items that contain metal.
 If you kill monsters that are 'runemaster' egos, they have a chance to drop
 any kind of chemicals as long as you have demolitionist unlocked (5.000 skill).
 
+
 Crafting ingredients from raw materials:
 ----------------------------------------
 - Wood chips can be processed into charcoal (requires fire-based light source).
@@ -19665,6 +19670,7 @@ Crafting ingredients from raw materials:
 - To obtain water or salt water you can just fill up an empty bottle with
   sea water or freshwater at the appropriate terrain. To obtain empty bottles
   you can make use of the "/empty" command or the "keep_bottle" option in  =0 .
+
 
 Crafting actual explosive charges:
 ----------------------------------

@@ -11053,7 +11053,7 @@ void detonate_charge(int o_idx) {
 	object_type *oo_ptr = &o_list[o_idx];
 	object_type forge = (*oo_ptr), *o_ptr = &forge; /* create local working copy */
 	struct worldpos *wpos = &o_ptr->wpos;
-	int i, who = PROJECTOR_MON_TRAP, x = o_ptr->ix, y = o_ptr->iy;
+	int i, who = PROJECTOR_MON_TRAP, x = o_ptr->ix, y = o_ptr->iy, owskill = 0;
 	int flg = (PROJECT_TRAP | PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_NODO
 	    | PROJECT_GRID | PROJECT_SELF | PROJECT_LODF);//check the flags for correctness
 	struct c_special *cs_ptr;
@@ -11093,6 +11093,8 @@ void detonate_charge(int o_idx) {
 	for (i = 1; i <= NumPlayers; i++) {
 		if (Players[i]->id != o_ptr->owner) continue;
 		who = -i;
+		owskill = get_skill(Players[i], SKILL_DIG) + 9;
+		owskill = (owskill * owskill) / 10;
 		break;
 	}
 
@@ -11103,13 +11105,13 @@ void detonate_charge(int o_idx) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(was_thrown ? 10 : 20, 15), GF_DETONATION, flg, "");
+		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(was_thrown ? 10 : 20, 15) + owskill, GF_DETONATION, flg, "");
 		break;
 	case SV_CHARGE_XBLAST: //X2Megablast
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(was_thrown ? 15 : 30, 15), GF_DETONATION, flg, "");
+		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(was_thrown ? 15 : 30, 15) + owskill, GF_DETONATION, flg, "");
 		break;
 	case SV_CHARGE_SBLAST:
  #ifdef USE_SOUND_2010
@@ -11120,7 +11122,7 @@ void detonate_charge(int o_idx) {
 			x2 = x + ddx[dir] * i;
 			y2 = y + ddy[dir] * i;
 			if (!cave_los_wall(zcave, y2, x2)) break; /* Stop at permanent walls */
-			(void)project(who, 0, wpos, y2, x2, damroll(was_thrown ? 10 : 20, 15), GF_DETONATION, flg, "");
+			(void)project(who, 0, wpos, y2, x2, damroll(was_thrown ? 10 : 20, 15) + owskill, GF_DETONATION, flg, "");
 		}
 		break;
 	case SV_CHARGE_QUAKE:
@@ -11133,7 +11135,7 @@ void detonate_charge(int o_idx) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "cast_ball", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(was_thrown ? 5 : 10, 10), GF_FIRE, flg & ~PROJECT_NODF, "");
+		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(was_thrown ? 5 : 10, 10) + owskill, GF_FIRE, flg & ~PROJECT_NODF, "");
 		break;
 	case SV_CHARGE_FIRESTORM: //evaporate the seas
  #ifdef USE_SOUND_2010
@@ -11144,7 +11146,7 @@ void detonate_charge(int o_idx) {
 		//project_time_effect = 0;
 		project_time = 10;
 		project_interval = 9;
-		(void)project(who, was_thrown ? 2 : 4, wpos, y, x, was_thrown ? 13 : 25, GF_FIRE, flg, "");
+		(void)project(who, was_thrown ? 2 : 4, wpos, y, x, was_thrown ? 13 : 25 + owskill / 4, GF_FIRE, flg, "");
 		break;
 	case SV_CHARGE_FIREWALL:
  #ifdef USE_SOUND_2010
@@ -11159,7 +11161,7 @@ void detonate_charge(int o_idx) {
 			//project_time_effect = 0;
 			project_time = 8;
 			project_interval = 6 + rand_int(3);
-			(void)project(who, 0, wpos, y2, x2, damroll(was_thrown ? 10 : 20, 15), GF_FIRE, flg, "");
+			(void)project(who, 0, wpos, y2, x2, damroll(was_thrown ? 10 : 20, 15) + owskill, GF_FIRE, flg, "");
 		}
 		break;
 	case SV_CHARGE_WRECKING:
@@ -11190,7 +11192,7 @@ void detonate_charge(int o_idx) {
 			x2 = x + ddx[dir] * i;
 			y2 = y + ddy[dir] * i;
 			if (!cave_floor_bold(zcave, y2, x2)) break; /* Stop at walls */
-			(void)project(who, 0, wpos, y2, x2, damroll(was_thrown ? 10 : 20, 15), GF_STONE_WALL, flg, "");
+			(void)project(who, 0, wpos, y2, x2, 1, GF_STONE_WALL, flg, "");
 		}
 		break;
 	case SV_CHARGE_TACTICAL:
@@ -11204,22 +11206,22 @@ void detonate_charge(int o_idx) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		/* note: no different effect if was_thrown */
-		(void)project(who, 6, wpos, y, x, damroll(was_thrown ? 4 : 6, 3), GF_BLIND, flg, "");
+		/* note: maybe make no different effect if was_thrown? */
+		(void)project(who, 6, wpos, y, x, damroll(was_thrown ? 4 : 6, 3) + owskill / 85, GF_BLIND, flg, "");
 		break;
 	case SV_CHARGE_CONCUSSION:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		/* note: no different effect if was_thrown */
-		(void)project(who, 3, wpos, y, x, damroll(was_thrown ? 6 : 9, 3), GF_STUN, flg, "");
+		/* note: maybe make no different effect if was_thrown? */
+		(void)project(who, 3, wpos, y, x, damroll(was_thrown ? 6 : 9, 3) + owskill / 75, GF_STUN, flg, "");
 		break;
 	case SV_CHARGE_XCONCUSSION:
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "flash_bomb", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		/* note: no different effect if was_thrown */
-		(void)project(who, 5, wpos, y, x, damroll(was_thrown ? 12 : 18, 3), GF_STUN, flg, "");
+		/* note: maybe make no different effect if was_thrown? */
+		(void)project(who, 5, wpos, y, x, damroll(was_thrown ? 12 : 18, 3) + owskill / 45, GF_STUN, flg, "");
 		break;
 	case SV_CHARGE_UNDERGROUND:
 		//create lava/water, deep even
