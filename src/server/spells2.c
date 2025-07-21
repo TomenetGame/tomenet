@@ -11105,7 +11105,7 @@ void detonate_charge(int o_idx) {
  #ifdef USE_SOUND_2010
 		sound_near_site(y, x, wpos, 0, "detonation", NULL, SFX_TYPE_MISC, FALSE);
  #endif
-		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(was_thrown ? 10 : 20, 15) + owskill, GF_DETONATION, flg, "");
+		(void)project(who, was_thrown ? 1 : 2, wpos, y, x, damroll(was_thrown ? 10 : 20, 15) + (owskill * 2) / 3, GF_DETONATION, flg, "");
 		break;
 	case SV_CHARGE_XBLAST: //X2Megablast
  #ifdef USE_SOUND_2010
