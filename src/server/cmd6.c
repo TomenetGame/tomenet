@@ -1556,7 +1556,9 @@ void do_cmd_drink_fountain(int Ind) {
 		return;
 	}
 
-	if (!p_ptr->warning_fill) {
+	if (((c_ptr->feat == FEAT_FOUNTAIN_BLOOD || c_ptr->feat == FEAT_FOUNTAIN)
+	// || (feat_is_water(c_ptr->feat) && c_ptr->feat != FEAT_TAINTED_WATER)
+	    ) && !p_ptr->warning_fill) {
 		p_ptr->warning_fill = 1;
 		msg_print(Ind, "\374\377yHINT: You can use the \377o/fill\377y command to fill empty bottles at fountains! Bottles");
 		msg_print(Ind, "\374\377y      can be obtained via the \377o= 0 keep_bottle\377y option or the \377o/empty\377y command.");
