@@ -87,7 +87,7 @@ QUICKFEET = add_spell {
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			set_fast(Ind, 30 + randint(10) + get_level(Ind, QUICKFEET, 30), get_speed())
-			fire_ball(Ind, GF_SPEED_PLAYER, 0, get_speed() * 2, 2, "")
+			fire_ball(Ind, GF_SPEED_PLAYER, 0, get_speed(), 2, "")
 			end,
 	["info"] = 	function()
 			return("dur " .. (30 + get_level(Ind, QUICKFEET, 30)) .. "+d10 speed +" .. get_speed())
