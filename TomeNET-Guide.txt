@@ -2569,17 +2569,17 @@ Gift wrappings:
                 you activate the gift wrapping. Eg: '!$100'.
 
 Bags (subinventory):
-    !A[0|1]     Do not auto-stow items into this bag.
-                0: Except if they stack with existing items.
-                1: Except if they are at least similar(*) to existing items.
+    !A[0|1]     !A  : Do not auto-stow items into this bag.
+                !A0 : Except if they stack with existing items.
+                !A1 : Except if they are similar(*) to existing items.
 
-    !O[0|1]     Do not auto-stow unowned items (ie new loot) into this bag.
-                0: Except if they stack with existing items.
-                1: Except if they are at least similar(*) to existing items.
+    !O[0|1]     !O  : Do not auto-stow unowned items (ie new loot) in this bag.
+                !O0 : Except if they stack with existing items.
+                !O1 : Except if they are similar(*) to existing items.
 
-    !S[0|1]     Only auto-stow items into this bag when buying from store.
-                0: And only if they stack with existing items.
-                1: And only if they are at least similar(*) to existing items.
+    !S[0|1]     !S  : Only auto-stow items in this bag when buying from store.
+                !S0 : And only if they stack with existing items.
+                !S1 : And only if they are similar(*) to existing items.
 
     (*) 'Similar' just means they can stack with the item, but there might not
         be enough space to get fully absorbed into the existing stack.
