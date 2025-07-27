@@ -2667,6 +2667,8 @@ extern void go_challenge_start(int Ind);
 extern void go_challenge_cancel(void);
 extern int go_engine_move_human(int Ind, char *py_move);
 extern void go_engine_clocks(void);
+extern void go_engine_admin_up(int Ind);
+extern void go_engine_admin_down(int Ind);
 #endif
 
 /* quests.c */

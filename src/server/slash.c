@@ -15205,6 +15205,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, k);
 				return;
 			}
+#ifdef ENABLE_GO_GAME
+			else if (prefix(messagelc, "/gogameup")) {
+				go_engine_admin_up(Ind);
+				return;
+			}
+			else if (prefix(messagelc, "/gogamedown")) {
+				go_engine_admin_down(Ind);
+				return;
+			}
+#endif
 		}
 	}
 

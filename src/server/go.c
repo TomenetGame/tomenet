@@ -3501,4 +3501,53 @@ static void set_hidden_stage(bool active) {
 }
 #endif
 
+void go_engine_admin_up(int Ind) {
+#ifdef HIDDEN_STAGE
+	msg_format(Ind, "go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+	if (go_engine_up || hs_go_engine_up) {
+		msg_print(Ind, "ABORT: Already go_engine_up or hs_go_engine_up. Shut it down first.");
+#else
+	msg_format(Ind, "go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+	if (go_engine_up) {
+		msg_print(Ind, "ABORT: Already go_engine_up. Shut it down first.");
+#endif
+		return;
+	}
+
+	/* Initialize & power up the Go AI */
+	go_engine_init();
+
+	msg_print(Ind, "Go engine initialized, result:");
+#ifdef HIDDEN_STAGE
+	msg_format(Ind, " go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+#else
+	msg_format(Ind, " go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+#endif
+	return;
+}
+void go_engine_admin_down(int Ind) {
+#ifdef HIDDEN_STAGE
+	msg_format(Ind, "go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+	if (!go_engine_up && !hs_go_engine_up) {
+		msg_print(Ind, "ABORT: Already neither go_engine_up nor hs_go_engine_up. Start it first.");
+#else
+	msg_format(Ind, "go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+	if (!go_engine_up) {
+		msg_print(Ind, "ABORT: Already not go_engine_up. Start it first.");
+#endif
+		return;
+	}
+
+	/* Shut down Go AI engine and its pipes */
+	go_engine_terminate();
+
+	msg_print(Ind, "Go engine terminated, result:");
+#ifdef HIDDEN_STAGE
+	msg_format(Ind, " go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+#else
+	msg_format(Ind, " go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+#endif
+	return;
+}
+
 #endif /* ENABLE_GO_GAME */
