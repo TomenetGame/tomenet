@@ -2367,7 +2367,7 @@ B:HIT:HURT:1d4
 B:HIT:HURT:1d4
 F:EVIL | FRIENDS | DROP_60 | DROP_90 | DROP_SKELETON | DROP_CORPSE |
 F:OPEN_DOOR | MALE | WILD_TOO | WILD_WASTE | WILD_SWAMP |
-F:MORTAL | ZANGBAND | CAN_SWIM | ANIMAL
+F:MORTAL | ZANGBAND | CAN_SWIM | ANIMAL | CAN_SPEAK
 D:A mutated rat-creature from the great waste, it is vaguely
 D:humanoid in appearance and walks on its hind legs. This race
 D:serves chaos fervently and is greatly feared by others.
@@ -3267,7 +3267,7 @@ O:0:0:100:0
 B:HIT:HURT:1d7
 B:HIT:HURT:1d7
 F:MALE | WILD_TOO | WILD_SWAMP | WILD_WASTE |
-F:FORCE_SLEEP | DROP_90 |
+F:FORCE_SLEEP | DROP_90 | CAN_SPEAK
 F:OPEN_DOOR | BASH_DOOR | DROP_SKELETON | DROP_CORPSE |
 F:EVIL | MORTAL | ZANGBAND | ANIMAL
 S:1_IN_8 |
