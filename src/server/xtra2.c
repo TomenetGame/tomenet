@@ -5668,7 +5668,8 @@ void check_experience(int Ind) {
 }
 
 
-/* Gain experience but put it on hold before applying. */
+/* Gain experience but put it on hold before applying.
+   ASSUMES that p_ptr->gain_exp is set to 0 already, as it just return()s when XP should be 0. */
 void gain_exp_onhold(int Ind, s64b amount) {
 	player_type *p_ptr = Players[Ind];//, *p_ptr2=NULL;
 	//int Ind2 = 0;
@@ -12475,6 +12476,10 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		}
 #endif
 
+		/* Check if it's cloned unique, ie "someone else's spawn" */
+		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1)
+			m_ptr->clone = 90; /* still allow some experience to be gained */
+
 		/* prepare for experience calculation further down */
 		if (m_ptr->level == 0) tmp_exp = r_ptr->mexp;
 		else tmp_exp = r_ptr->mexp * m_ptr->level;
@@ -12631,10 +12636,6 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		/* Apply the killing player's and all involved players' gain_exp amount from gain_exp_onhold(). */
 		i = -1;
 		while (apply_exp_Ind[++i]) apply_exp(apply_exp_Ind[i]);
-
-		/* Check if it's cloned unique, ie "someone else's spawn" */
-		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1)
-			m_ptr->clone = 90; /* still allow some experience to be gained */
 
 #ifdef SOLO_REKING
 		/* Generate treasure and give kill credit */
