@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. July 2025 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 27. July 2025 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -3364,6 +3364,8 @@ Unique      A monster that is named and exists only once. Although it can
             unique monster drops if it wasn't you who killed it in the end.
             That's precisely because every player can only get kill credit for
             each unique monster once.
+            (Killing a unique monster that you already got credited will still
+            grant you 10% of the normal amount of XP.)
             Uniques often have large escorts.
 
             Note that a unique monster cannot occur in two or more different
