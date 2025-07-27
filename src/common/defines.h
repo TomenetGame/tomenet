@@ -1734,7 +1734,7 @@
 #define RI_EYE_OF_THE_DEEP	893
 #define RI_MURK_DWELLER		894
 #define RI_DROWNED_SOUL		895	/* SKILL_MIMIC */
-#define RI_ARANEA		898	/* Druid form */
+#define RI_GREAT_WHITE_SHARK	898	/* Druid form */
 #define RI_AQUATIC_KOBOLD	900
 #define RI_SCRAG		902
 #define RI_WATER_NAGA		919
@@ -1761,7 +1761,7 @@
 #define RI_KHAMUL		953
 #define RI_WITCHKING		954
 
-#define RI_GREAT_WHITE_SHARK	963	/* Druid form */
+#define RI_ARANEA		963	/* Druid form */
 #define RI_ELDER_ARANEA		964	/* Druid form */
 #define RI_GORLIM		961	/* DROP_CHOSEN */
 #define RI_NOV_POSSESSOR	967	/* (SKILL_MIMIC) */
