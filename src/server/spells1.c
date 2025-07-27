@@ -3344,7 +3344,7 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 					}
 
 #ifdef ENABLE_SUBINVEN
- #if 0
+ #if 1
 				/* If we lose a subinventory, remove all items and place them into the player's inventory */
 				if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, i, FALSE, FALSE);
  #else
