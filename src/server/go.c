@@ -1904,9 +1904,9 @@ static int verify_move_CPU(void) {
 	if (engine_api == EAPI_FUEGO && !strcmp(pipe_buf[MAX_GTP_LINES - 1], "SgTimeRecord: outOfTime")) {
  #ifdef GO_DEBUGPRINT
   #ifndef CPU_TIMEOUT_DRAWS
-		s_printf("Your opponent's time has run out, therefore you have won the match!\n");
+		s_printf("Your opponent's time has run out, therefore you won!\n");
   #else
-		s_printf("Your opponent's time has run out which should never happen, match is a draw!\n");
+		s_printf("Opponent's time ran out which should never happen, match is a draw!\n");
   #endif
  #endif
 		return(4);
@@ -2456,9 +2456,11 @@ static void go_engine_move_result(int move_result) {
 			}
 			break;
 		} else { /* Opponent 'fainted' aka engine/pipe bugged out */
-			Send_store_special_str(Ind, 9, GO_BOARD_X + 13, TERM_ORANGE, "I am so sorry, your opponent seems kind of ill.");
-			Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "We unfortunately have to cancel this match for now,");
-			Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "please come back when your opponent feels better...");
+			Send_store_special_str(Ind,  9, GO_BOARD_X + 13, TERM_ORANGE, "I am so sorry, your opponent");
+			Send_store_special_str(Ind, 10, GO_BOARD_X + 13, TERM_ORANGE, "seems a bit ill. Unfortunately");
+			Send_store_special_str(Ind, 11, GO_BOARD_X + 13, TERM_ORANGE, "we have to cancel this match");
+			Send_store_special_str(Ind, 12, GO_BOARD_X + 13, TERM_ORANGE, "for now, please come back when");
+			Send_store_special_str(Ind, 13, GO_BOARD_X + 13, TERM_ORANGE, "your opponent feels better...");
 		}
 
 		if (p_ptr->go_level_top < p_ptr->go_level) {
