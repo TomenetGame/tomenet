@@ -2669,6 +2669,7 @@ extern int go_engine_move_human(int Ind, char *py_move);
 extern void go_engine_clocks(void);
 extern void go_engine_admin_up(int Ind);
 extern void go_engine_admin_down(int Ind);
+extern void go_engine_admin_status(int Ind);
 #endif
 
 /* quests.c */

@@ -3549,5 +3549,13 @@ void go_engine_admin_down(int Ind) {
 #endif
 	return;
 }
+void go_engine_admin_status(int Ind) {
+#ifdef HIDDEN_STAGE
+	msg_format(Ind, "Status: go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+#else
+	msg_format(Ind, "Status: go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+#endif
+	return;
+}
 
 #endif /* ENABLE_GO_GAME */

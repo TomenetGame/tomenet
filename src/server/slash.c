@@ -15214,6 +15214,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				go_engine_admin_down(Ind);
 				return;
 			}
+			else if (prefix(messagelc, "/gogamestatus")) {
+				go_engine_admin_status(Ind);
+				return;
+			}
 #endif
 		}
 	}
