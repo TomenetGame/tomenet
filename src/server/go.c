@@ -166,6 +166,11 @@ static const int NONE = 0, DOWN = 1, UP = 2;
  #define CLACK "item_rune"
 #endif
 
+/* Debug/workaround:
+   If the Go engine pipe-breaks on CPU move, resulting in CPU time loss due to timeout,
+   auto-restart the engine from scratch. */
+#define GO_GAME_AUTO_RESTART
+
 
 /* Global control variables */
 static bool go_engine_up;	/* Go engine is online? */
@@ -333,6 +338,8 @@ int go_engine_init(void) {
 #ifdef ENGINE_PACHI
 		execlp("./go/pachi", "pachi", "-f", "book.dat", "-r", "chinese", "threads=2,max_tree_size=300,pondering", NULL); //,maximize_score;, "-t", "20"; -e uct (default, combines uct+mc)
 #endif
+
+//GODBG
 
 		/* We were unable to execute the engine? Game over! */
 		fprintf(stderr, "GO_ERROR: exec().\n");
@@ -1495,6 +1502,8 @@ void go_challenge_start(int Ind) {
    This should be called in the main loop, every second or more frequently,
    eg  if (go_engine_processing) go_engine_process(); . */
 void go_engine_process(void) {
+//GODBG!
+
 //	if (go_err(DOWN, DOWN, "go_engine_process")) {
 	if (go_err(DOWN, NONE, "go_engine_process")) {
 		go_engine_processing = 0;
@@ -1747,6 +1756,7 @@ static void go_engine_move_CPU() {
 		move_count++;
 	}
 
+//GODBG
 	go_engine_next_action = NACT_MOVE_PLAYER;
 
 /* (TODO) gnugo3.9.1: <genmove black> -> <= = F6> ??? */
@@ -2559,6 +2569,7 @@ static int test_for_response() {
 
 	/* Handle program output ------------------------------------------- */
 	readFromPipe(pipe_line_buf, &pipe_response_complete);
+//GODBG!
 
 	/* No data waiting to be read? */
 	if (!pipe_line_buf[0]) return(-1);
@@ -2575,6 +2586,7 @@ static int test_for_response() {
 
 
 	/* Not even got a while line? Exit now. ---------------------------- */
+//if (!pipe_line_buf[0]) return(0);
 	if (pipe_line_buf[strlen(pipe_line_buf) - 1] != '\n') return(0);
 
 	/* don't output just a single line feed */
@@ -2773,7 +2785,7 @@ static int test_for_response() {
 }
 
 /* Get a response, blocking */
-static int wait_for_response() {
+static int wait_for_response(void) {
 	int cont, r = 0, i;
 	char lbuf[80], tmp[80];//, *tptr = tmp + 79;
 	strcpy(tmp, "");
@@ -2885,6 +2897,7 @@ static int wait_for_response() {
 
 /* Write a line of data into the pipe */
 static void writeToPipe(char *data) {
+//GODBG
 #ifdef GO_DEBUGLOG
 	if (strcmp(data, "showboard")) /* this command is a bit spammy maybe */
 		s_printf("GO_COMMAND: <%s>\n", data);//go_engine_next_action
@@ -2935,6 +2948,10 @@ static void writeToPipe(char *data) {
 			close(hs_pipeto[1]);
 			close(hs_pipefrom[0]);
 			hs_go_engine_up = FALSE;
+#ifdef GO_GAME_AUTO_RESTART
+			go_engine_admin_down(0);
+			go_engine_admin_up(0);
+#endif
 			return;
 		}
 
@@ -2961,6 +2978,10 @@ static void writeToPipe(char *data) {
 		close(pipeto[1]);
 		close(pipefrom[0]);
 		go_engine_up = FALSE;
+#ifdef GO_GAME_AUTO_RESTART
+		go_engine_admin_down(0);
+		go_engine_admin_up(0);
+#endif
 		return;
 	}
 
@@ -2970,6 +2991,7 @@ static void writeToPipe(char *data) {
 
 /* Read a line of data from the pipe if there is any, else skip */
 static void readFromPipe(char *buf, int *cont) {
+//GODBG!
 	int ch = 0;
 	char c[2];
 
@@ -3161,6 +3183,7 @@ static void go_challenge_cleanup(bool server_shutdown) {
 
 	/* Prepare for next game in advance - skip on server shutdown */
 	if (!server_shutdown) writeToPipe("clear_board");
+//GODBG
 
 	/* Clean up everything */
 	go_game_up = FALSE;
@@ -3503,16 +3526,26 @@ static void set_hidden_stage(bool active) {
 
 void go_engine_admin_up(int Ind) {
 #ifdef HIDDEN_STAGE
-	msg_format(Ind, "go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+	if (Ind) {
+		msg_format(Ind, "go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+		if (go_engine_up || hs_go_engine_up) msg_print(Ind, "ABORT: Already go_engine_up or hs_go_engine_up. Shut it down first.");
+	}
+	s_printf("GO: ENGINE_ADMIN_UP (%d): go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d\n", Ind, go_engine_up, hs_go_engine_up, go_engine_processing);
 	if (go_engine_up || hs_go_engine_up) {
-		msg_print(Ind, "ABORT: Already go_engine_up or hs_go_engine_up. Shut it down first.");
-#else
-	msg_format(Ind, "go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
-	if (go_engine_up) {
-		msg_print(Ind, "ABORT: Already go_engine_up. Shut it down first.");
-#endif
+		s_printf(" ABORT: Already go_engine_up or hs_go_engine_up. Shut it down first.\n");
 		return;
 	}
+#else
+	if (Ind) {
+		msg_format(Ind, "go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+		if (go_engine_up) msg_print(Ind, "ABORT: Already go_engine_up. Shut it down first.");
+	}
+	s_printf("GO: ENGINE_ADMIN_UP (%d): go_engine_up %d, go_engine_processing %d\n", Ind, go_engine_up, go_engine_processing);
+	if (go_engine_up) {
+		s_printf(" ABORT: Already go_engine_up. Shut it down first.\n");
+		return;
+	}
+#endif
 
 	/* Initialize & power up the Go AI */
 	go_engine_init();
@@ -3527,25 +3560,38 @@ void go_engine_admin_up(int Ind) {
 }
 void go_engine_admin_down(int Ind) {
 #ifdef HIDDEN_STAGE
-	msg_format(Ind, "go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+	if (Ind) {
+		msg_format(Ind, "go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+		if (!go_engine_up && !hs_go_engine_up) msg_print(Ind, "ABORT: Already neither go_engine_up nor hs_go_engine_up. Start it first.");
+	}
+	s_printf("GO: ENGINE_ADMIN_DOWN (%d) - go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d\n", Ind, go_engine_up, hs_go_engine_up, go_engine_processing);
 	if (!go_engine_up && !hs_go_engine_up) {
-		msg_print(Ind, "ABORT: Already neither go_engine_up nor hs_go_engine_up. Start it first.");
-#else
-	msg_format(Ind, "go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
-	if (!go_engine_up) {
-		msg_print(Ind, "ABORT: Already not go_engine_up. Start it first.");
-#endif
+		s_printf(" ABORT: Already neither go_engine_up nor hs_go_engine_up. Start it first.\n");
 		return;
 	}
+#else
+	if (Ind) {
+		msg_format(Ind, "go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+		if (!go_engine_up) msg_print(Ind, "ABORT: Already not go_engine_up. Start it first.");
+	}
+	s_printf("GO: ENGINE_ADMIN_DOWN (%d) - go_engine_up %d, go_engine_processing %d\n", Ind, go_engine_up, go_engine_processing);
+	if (!go_engine_up) {
+		s_printf(" ABORT: Already not go_engine_up. Start it first.");
+		return;
+	}
+#endif
 
 	/* Shut down Go AI engine and its pipes */
 	go_engine_terminate();
 
-	msg_print(Ind, "Go engine terminated, result:");
+	if (Ind) msg_print(Ind, "Go engine terminated, result:");
+	s_printf("Go engine terminated, result:\n");
 #ifdef HIDDEN_STAGE
-	msg_format(Ind, " go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+	if (Ind) msg_format(Ind, " go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+	s_printf(" go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d\n", go_engine_up, hs_go_engine_up, go_engine_processing);
 #else
-	msg_format(Ind, " go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+	if (Ind) msg_format(Ind, " go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+	s_printf(" go_engine_up %d, go_engine_processing %d\n", go_engine_up, go_engine_processing);
 #endif
 	return;
 }
