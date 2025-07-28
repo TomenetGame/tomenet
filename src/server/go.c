@@ -3550,11 +3550,14 @@ void go_engine_admin_up(int Ind) {
 	/* Initialize & power up the Go AI */
 	go_engine_init();
 
-	msg_print(Ind, "Go engine initialized, result:");
+	if (Ind) msg_print(Ind, "Go engine initialized, result:");
+	s_printf("Go engine initialized, result:\n");
 #ifdef HIDDEN_STAGE
-	msg_format(Ind, " go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+	if (Ind) msg_format(Ind, " go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d", go_engine_up, hs_go_engine_up, go_engine_processing);
+	s_printf(" go_engine_up %d, hs_go_engine_up %d, go_engine_processing %d\n", go_engine_up, hs_go_engine_up, go_engine_processing);
 #else
-	msg_format(Ind, " go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+	if (Ind) msg_format(Ind, " go_engine_up %d, go_engine_processing %d", go_engine_up, go_engine_processing);
+	s_printf(" go_engine_up %d, go_engine_processing %d\n", go_engine_up, go_engine_processing);
 #endif
 	return;
 }
