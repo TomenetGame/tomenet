@@ -371,7 +371,7 @@ extern char graphic_tiles[256];
 extern char32_t kidx_po_rain_char, kidx_po_rain_e1_char, kidx_po_rain_e2_char, kidx_po_rain_w1_char, kidx_po_rain_w2_char, kidx_po_snow_char, kidx_po_sand_char;
 extern char32_t kidx_po_d10f_tl, kidx_po_d10f_t, kidx_po_d10f_tr, kidx_po_d10f_bl, kidx_po_d10f_b, kidx_po_d10f_br;
 extern byte kidx_po_rain_attr, kidx_po_rain_e1_attr, kidx_po_rain_e2_attr, kidx_po_rain_w1_attr, kidx_po_rain_w2_attr, kidx_po_snow_attr, kidx_po_sand_attr;
-extern rawpict_tile tiles_rawpict[MAX_TILES_RAWPICT];
+extern rawpict_tile tiles_rawpict[MAX_TILES_RAWPICT + 1];
 #endif
 extern bool use_sound, use_sound_org;
 extern bool quiet_mode;

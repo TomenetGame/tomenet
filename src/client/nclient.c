@@ -58,6 +58,14 @@
 #define HUGE_BAR_SIZE 16
 
 
+/* Test rawpict_hook for Casino client-side animations */
+#ifdef TEST_CLIENT
+ /* - WiP - C. Blue
+    visuals do not scale if font size isn't identical to tile size (results in blackness usually)
+    and visuals get erased after animation finishes: */
+//#define TEST_RAWPICT
+#endif
+
 
 extern void flicker(void);
 
@@ -4623,8 +4631,25 @@ int Receive_store_special_clr(void) {
 }
 
 static void display_fruit(int row, int col, int fruit) {
+#ifdef USE_GRAPHICS
+	bool use_gfx_fruits =
+ #ifndef TEST_RAWPICT
+	    FALSE;
+ #else
+	    (tiles_rawpict[1].defined && tiles_rawpict[2].defined && tiles_rawpict[3].defined &&
+	    tiles_rawpict[4].defined && tiles_rawpict[5].defined && tiles_rawpict[6].defined);
+ #endif
+#endif
+
 	switch (fruit) {
 	case 1: /* lemon */
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE,  "LEMON ");
+#ifdef USE_GRAPHICS
+		if (use_gfx_fruits) {
+			(void)((*Term->rawpict_hook)(col, row, 1));
+			break;
+		}
+#endif
 		Term_putstr(col, row + 0, -1, TERM_YELLOW, "   ### ");
 		Term_putstr(col, row + 1, -1, TERM_YELLOW, "  #...#");
 		Term_putstr(col, row + 2, -1, TERM_YELLOW, " #.....#");
@@ -4633,10 +4658,16 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_YELLOW, "#.....# ");
 		Term_putstr(col, row + 6, -1, TERM_YELLOW, " #...#  ");
 		Term_putstr(col, row + 7, -1, TERM_YELLOW, "  ###   ");
-		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE,  "LEMON ");
 		break;
 
 	case 2: /* orange */
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE,  "ORANGE");
+#ifdef USE_GRAPHICS
+		if (use_gfx_fruits) {
+			(void)((*Term->rawpict_hook)(col, row, 2));
+			break;
+		}
+#endif
 		Term_putstr(col, row + 0, -1, TERM_ORANGE, "  ####  ");
 		Term_putstr(col, row + 1, -1, TERM_ORANGE, " #++++# ");
 		Term_putstr(col, row + 2, -1, TERM_ORANGE, "#++++++#");
@@ -4645,10 +4676,16 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_ORANGE, "#++++++#");
 		Term_putstr(col, row + 6, -1, TERM_ORANGE, " #++++# ");
 		Term_putstr(col, row + 7, -1, TERM_ORANGE, "  ####  ");
-		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE,  "ORANGE");
 		break;
 
 	case 3: /* sword */
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, "SWORD ");
+#ifdef USE_GRAPHICS
+		if (use_gfx_fruits) {
+			(void)((*Term->rawpict_hook)(col, row, 3));
+			break;
+		}
+#endif
 		Term_putstr(col, row + 0, -1, TERM_SLATE, "   /\\   ");
 		Term_putstr(col, row + 1, -1, TERM_SLATE, "   ##   ");
 		Term_putstr(col, row + 2, -1, TERM_SLATE, "   ##   ");
@@ -4657,10 +4694,16 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_SLATE, "   ##   ");
 		Term_putstr(col, row + 6, -1, TERM_UMBER, " ###### ");
 		Term_putstr(col, row + 7, -1, TERM_UMBER, "   ##   ");
-		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, "SWORD ");
 		break;
 
 	case 4: /* shield */
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, "SHIELD");
+#ifdef USE_GRAPHICS
+		if (use_gfx_fruits) {
+			(void)((*Term->rawpict_hook)(col, row, 4));
+			break;
+		}
+#endif
 		Term_putstr(col, row + 0, -1, TERM_UMBER, " ###### ");
 		Term_putstr(col, row + 1, -1, TERM_UMBER, "#      #");
 		Term_putstr(col, row + 2, -1, TERM_UMBER, "# \377U++++\377u #");
@@ -4669,10 +4712,16 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_UMBER, " #    # ");
 		Term_putstr(col, row + 6, -1, TERM_UMBER, "  #  #  ");
 		Term_putstr(col, row + 7, -1, TERM_UMBER, "   ##   ");
-		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, "SHIELD");
 		break;
 
 	case 5: /* plum */
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, " PLUM ");
+#ifdef USE_GRAPHICS
+		if (use_gfx_fruits) {
+			(void)((*Term->rawpict_hook)(col, row, 5));
+			break;
+		}
+#endif
 		Term_putstr(col, row + 0, -1, TERM_UMBER, "     #  ");
 		Term_putstr(col, row + 1, -1, TERM_VIOLET, "  ##### ");
 		Term_putstr(col, row + 2, -1, TERM_VIOLET, " #######");
@@ -4681,10 +4730,16 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_VIOLET, "####### ");
 		Term_putstr(col, row + 6, -1, TERM_VIOLET, " ###### ");
 		Term_putstr(col, row + 7, -1, TERM_VIOLET, "  ####  ");
-		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, " PLUM ");
 		break;
 
 	case 6: /* cherry */
+		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, "CHERRY");
+#ifdef USE_GRAPHICS
+		if (use_gfx_fruits) {
+			(void)((*Term->rawpict_hook)(col, row, 6));
+			break;
+		}
+#endif
 		Term_putstr(col, row + 0, -1, TERM_GREEN, "     ## ");
 		Term_putstr(col, row + 1, -1, TERM_GREEN, "   ###  ");
 		Term_putstr(col, row + 2, -1, TERM_GREEN, "  #  #  ");
@@ -4693,7 +4748,6 @@ static void display_fruit(int row, int col, int fruit) {
 		Term_putstr(col, row + 5, -1, TERM_RED, "#..##..#");
 		Term_putstr(col, row + 6, -1, TERM_RED, "#..##..#");
 		Term_putstr(col, row + 7, -1, TERM_RED, " ##  ## ");
-		Term_putstr(col + 1, row + 9, -1, TERM_L_WHITE, "CHERRY");
 		break;
 	}
 }
@@ -4846,6 +4900,13 @@ int Receive_store_special_anim(void) {
  #endif
 #endif
 
+#ifdef USE_GRAPHICS
+ #ifdef TEST_RAWPICT
+	if (tiles_rawpict[1].defined && tiles_rawpict[2].defined && tiles_rawpict[3].defined &&
+	    tiles_rawpict[4].defined && tiles_rawpict[5].defined && tiles_rawpict[6].defined)
+		usleep(2000000); //fruits will get erased visually, so wait for a bit
+ #endif
+#endif
 		break;
 
 	case 2: //in-between

@@ -847,7 +847,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 		break;
 	}
-
 	p_ptr->casino_odds = odds;
 	p_ptr->casino_wager = wager;
 	casino_result(Ind, win);

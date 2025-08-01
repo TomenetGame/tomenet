@@ -1526,3 +1526,13 @@ K:1072:/3619 # fireworks - explosion (yellow, frame 1)
 K:1073:/3620 # fireworks - explosion (yellow, frame 2)
 K:1074:/3621 # fireworks - explosion (blue, frame 1)
 K:1075:/3622 # fireworks - explosion (blue, frame 2)
+
+################# Special images (not font-sized tiled) #################
+################# Format is: x,y,w,h (direct pixel coordinates in the image)
+### Casino: Dice Slots
+I:4:800:768:128:192
+I:1:928:768:128:192
+I:3:1056:768:128:192
+I:2:1184:768:128:192
+I:6:1312:768:128:192
+I:5:1440:768:128:192

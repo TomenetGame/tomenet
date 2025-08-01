@@ -975,6 +975,24 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 		}
 		break;
 
+	/* Process "I:<idx>:<x>:<y>:<width>:<height>" -- arbitrarily sized images */
+	case 'I':
+		if (tokenize(buf + 2, 5, zz) == 5) {
+			j = (huge)strtol(zz[0], NULL, 0);
+			if (j > MAX_TILES_RAWPICT) {
+				logprint(format("Exceeding MAX_TILES_RAWPICT (%d).\n", MAX_TILES_RAWPICT));
+				return(0);
+			}
+			tiles_rawpict[j].x = strtol(zz[1], NULL, 0);
+			tiles_rawpict[j].y = strtol(zz[2], NULL, 0);
+			tiles_rawpict[j].w = strtol(zz[3], NULL, 0);
+			tiles_rawpict[j].h = strtol(zz[4], NULL, 0);
+			tiles_rawpict[j].defined = TRUE;
+			//logprint(format("read img %d: %d,%d %d,%d\n", j, tiles_rawpict[j].x, tiles_rawpict[j].y, tiles_rawpict[j].w, tiles_rawpict[j].h));
+			return(0);
+		}
+		break;
+
 	/* Process "r:<monstersymbol>:<a>/<c>" -- attr/char for all monsters whose race translates to a specific ASCII symbol in r_info.txt.
 	   Eg: 'r:o:<a>/<c>' -> all orcs, snotlings, snagas etc will translate to specific mapping <a>/<c>. */
 	case 'r':
