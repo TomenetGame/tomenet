@@ -3570,6 +3570,240 @@ static errr Term_text_win(int x, int y, int n, byte a, const char *s) {
 	return(0);
 }
 
+/* Arbitrary sized image to screen printing for graphics mode,
+   added for Casino's client-side large dice slots symbol images.
+   An <a> 'attr' colour (as there is no 'tile preparation') and tile caching are not applicable (for now).
+   These images are just indexed via 'I:' lines in graphical *.prf mapping file instead of <c> 'character' mapping,
+   which have their own enumerator independant of any 'character' types.
+   Also due to their arbitrary size these images do not use the font tile cache.
+    - C. Blue */
+static errr Term_rawpict_win(int x, int y, int c) {
+#ifdef USE_GRAPHICS
+	int fwid, fhgt;
+
+	term_data *td;
+	int x1, y1;
+	HDC hdc;
+#if 0
+	COLORREF bgColor, fgColor;
+
+	RECT rectBg;
+	RECT rectFg;
+	HBRUSH brushBg;
+	HBRUSH brushFg;
+
+ #ifdef TILE_CACHE_SIZE
+	struct tile_cache_entry *entry;
+	int i, hole = -1;
+  #ifdef TILE_CACHE_SINGLEBMP
+	int tc_idx, tc_x, tc_y;
+  #endif
+ #endif
+
+	a = term2attr(a);
+
+	bgColor = RGB(0, 0, 0);
+	fgColor = RGB(0, 0, 0);
+
+ #ifdef PALANIM_SWAP
+	if (a < CLIENT_PALETTE_SIZE) a = (a + BASE_PALETTE_SIZE) % CLIENT_PALETTE_SIZE;
+ #endif
+
+	/* Background/Foreground color */
+ #ifndef EXTENDED_COLOURS_PALANIM
+  #ifndef EXTENDED_BG_COLOURS
+	fgColor = win_clr[a & 0x0F];
+  #else
+	fgColor = win_clr[a & 0x1F];
+	//bgColor = PALETTEINDEX(win_clr_bg[a & 0x0F]); //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
+	bgColor = win_clr_bg[a & 0x1F]; //wrong / undefined state, as we don't want to have palette indices 0..15 + 32..32+TERMX_AMT with a hole in between?
+  #endif
+ #else
+  #ifndef EXTENDED_BG_COLOURS
+	fgColor = win_clr[a & 0x1F];
+  #else
+	fgColor = win_clr[a & 0x3F];
+	//bgColor = PALETTEINDEX(win_clr_bg[a & 0x1F]); //verify correctness
+	bgColor = win_clr_bg[a & 0x3F]; //verify correctness
+  #endif
+ #endif
+#endif
+
+	td = (term_data*)(Term->data);
+
+	fwid = tiles_rawpict[c].wid;
+	fhgt = tiles_rawpict[c].hgt;
+
+	/* Location of screen window cell */
+	x = x * fwid + td->size_ow1;
+	y = y * fhgt + td->size_oh1;
+
+	/* Location of graphics tile in the tileset */
+	x1 = tiles_rawpict[c].x;
+	y1 = tiles_rawpict[c].y;
+
+	hdc = myGetDC(td->w);
+
+#if 0
+ #ifdef TILE_CACHE_SIZE
+	if (!disable_tile_cache) {
+		entry = NULL;
+		for (i = 0; i < TILE_CACHE_SIZE; i++) {
+			entry = &td->tile_cache[i];
+			if (!entry->is_valid) hole = i;
+			else if (entry->c == c && entry->a == a
+  #ifdef GRAPHICS_BG_MASK
+			    && entry->c_back == 32 && entry->a_back == TERM_DARK
+  #endif
+  #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
+			    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
+			    && fgColor == entry->fg && bgColor == entry->bg
+  #endif
+			    ) {
+				/* Copy cached tile to window. */
+  #ifdef TILE_CACHE_SINGLEBMP
+				//SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation); //already selected?
+				BitBlt(hdc, x, y, fwid, fhgt, td->hdcCacheTilePreparation, (i % TILE_CACHE_SINGLEBMP) * 2 * fwid, (i / TILE_CACHE_SINGLEBMP) * fhgt, SRCCOPY);
+  #else
+				SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation);
+				BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+  #endif
+  #ifndef OPTIMIZE_DRAWING
+				ReleaseDC(td->w, hdc);
+  #endif
+				/* Success */
+				return(0);
+			}
+		}
+
+		// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+		if (hole != -1) {
+  #ifdef TILE_CACHE_LOG
+			c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+  #endif
+  #ifdef TILE_CACHE_SINGLEBMP
+			tc_idx = hole;
+  #endif
+			entry = &td->tile_cache[hole];
+		} else {
+  #ifdef TILE_CACHE_LOG
+			c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+  #endif
+			// Replace valid cache entries in FIFO order
+  #ifdef TILE_CACHE_SINGLEBMP
+			tc_idx = td->cache_position;
+  #endif
+			entry = &td->tile_cache[td->cache_position++];
+			if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+		}
+
+  #ifndef TILE_CACHE_SINGLEBMP
+		SelectObject(td->hdcTilePreparation, entry->hbmTilePreparation);
+  #else
+		//SelectObject(td->hdcCacheTilePreparation, td->hbmCacheTilePreparation); //already selected?
+  #endif
+
+		entry->c = c;
+		entry->a = a;
+  #ifdef GRAPHICS_BG_MASK
+   #if 0
+		entry->c_back = 32;
+   #else
+		entry->c_back = Client_setup.f_char[FEAT_SOLID];;
+   #endif
+		entry->a_back = TERM_DARK;
+  #endif
+		entry->is_valid = TRUE;
+  #ifdef TILE_CACHE_FGBG
+		entry->fg = fgColor;
+		entry->bg = bgColor;
+  #endif
+	} else SelectObject(td->hdcTilePreparation, td->hbmTilePreparation);
+ #else /* (TILE_CACHE_SIZE) No caching: */
+	SelectObject(td->hdcTilePreparation, td->hbmTilePreparation);
+ #endif
+
+ #if defined(TILE_CACHE_SIZE) && defined(TILE_CACHE_SINGLEBMP)
+	if (!disable_tile_cache) {
+		tc_x = (tc_idx % TILE_CACHE_SINGLEBMP) * 2 * fwid;
+		tc_y = (tc_idx / TILE_CACHE_SINGLEBMP) * fhgt;
+
+		/* Paint background rectangle .*/
+		rectBg = (RECT){ tc_x, tc_y, tc_x + fwid, tc_y + fhgt };
+		rectFg = (RECT){ tc_x + fwid, tc_y, tc_x + 2 * fwid, tc_y + fhgt };
+		brushBg = CreateSolidBrush(bgColor);
+		brushFg = CreateSolidBrush(fgColor);
+		FillRect(td->hdcCacheTilePreparation, &rectBg, brushBg);
+		FillRect(td->hdcCacheTilePreparation, &rectFg, brushFg);
+		DeleteObject(brushBg);
+		DeleteObject(brushFg);
+
+
+		//BitBlt(hdc, 0, 0, 2*9, 15, td->hdcCacheTilePreparation, 0, 0, SRCCOPY);
+
+		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+
+		//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcCacheTilePreparation, 0, 0, SRCCOPY);
+
+		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, td->hdcCacheTilePreparation, tc_x + fwid, tc_y, SRCPAINT);
+
+		//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
+		//
+		/* Copy the picture from the tile preparation memory to the window */
+		BitBlt(hdc, x, y, fwid, fhgt, td->hdcCacheTilePreparation, tc_x, tc_y, SRCCOPY);
+	} else
+ #endif
+	{
+		/* Paint background rectangle .*/
+		rectBg = (RECT){ 0, 0, fwid, fhgt };
+		rectFg = (RECT){ fwid, 0, 2 * fwid, fhgt };
+		brushBg = CreateSolidBrush(bgColor);
+		brushFg = CreateSolidBrush(fgColor);
+		FillRect(td->hdcTilePreparation, &rectBg, brushBg);
+		FillRect(td->hdcTilePreparation, &rectFg, brushFg);
+		DeleteObject(brushBg);
+		DeleteObject(brushFg);
+
+
+		//BitBlt(hdc, 0, 0, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
+
+		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+
+		//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
+
+		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
+
+		//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
+		//
+		/* Copy the picture from the tile preparation memory to the window */
+		BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
+	}
+#endif
+	/* Copy the picture from the graphics tiles map image to the window */
+	BitBlt(hdc, x, y, fwid, fhgt, td->hdcTiles, x1, y1, SRCCOPY);
+
+
+ #ifndef OPTIMIZE_DRAWING
+	ReleaseDC(td->w, hdc);
+ #endif
+
+#else /* #ifdef USE_GRAPHICS */
+
+	/* Just erase this grid */
+	//return(Term_wipe_win(x, y, 1));
+
+#endif
+
+	/* Success */
+	return(0);
+}
+
 
 /*** Other routines ***/
 
@@ -3611,6 +3845,7 @@ static void term_data_link(int i, term_data *td) {
 		if (use_graphics == UG_2MASK) t->pict_hook_2mask = Term_pict_win_2mask;
  #endif
 		t->pict_hook = Term_pict_win;
+		t->rawpict_hook = Term_rawpict_win;
 
 		/* use "term_pict" for "graphic" data */
 		t->higher_pict = true;

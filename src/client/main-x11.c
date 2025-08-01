@@ -2543,6 +2543,166 @@ static void invalidate_graphics_cache_x11(term_data *td, int c_idx) {
 }
  #endif
 
+/* Arbitrary sized image to screen printing for graphics mode,
+   added for Casino's client-side large dice slots symbol images.
+   An <a> 'attr' colour (as there is no 'tile preparation') and tile caching are not applicable (for now).
+   These images are just indexed via 'I:' lines in graphical *.prf mapping file instead of <c> 'character' mapping,
+   which have their own enumerator independant of any 'character' types.
+   Also due to their arbitrary size these images do not use the font tile cache.
+    - C. Blue */
+static errr Term_rawpict_x11(int x, int y, int c) {
+	term_data *td;
+
+	int x1, y1;
+
+#if 0
+	Pixmap tilePreparation;
+
+ #ifdef TILE_CACHE_SIZE
+	struct tile_cache_entry *entry;
+	int i, hole = -1;
+ #endif
+
+	/* Catch use in chat instead of as feat attr, or we crash :-s
+	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
+	if (Term && Term->data == &term_main && x >= SCREEN_PAD_LEFT && x < SCREEN_PAD_LEFT + screen_wid && y >= SCREEN_PAD_TOP && y < SCREEN_PAD_TOP + screen_hgt) {
+		flick_global_x = x;
+		flick_global_y = y;
+	} else flick_global_x = 0;
+
+	a = term2attr(a);
+
+	/* Draw the tile in Xor. */
+ #ifndef EXTENDED_COLOURS_PALANIM
+  #ifndef EXTENDED_BG_COLOURS
+	Infoclr_set(clr[a & 0x0F]);
+  #else
+	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
+  #endif
+ #else
+  #ifndef EXTENDED_BG_COLOURS
+	Infoclr_set(clr[a & 0x1F]);
+  #else
+	Infoclr_set(clr[a & 0x3F]);
+  #endif
+ #endif
+
+	if (Infoclr->fg == Infoclr->bg) {
+		/* Foreground color is the same as background color. If this was text, the tile would be rendered as solid block of color.
+		 * But an image tile could contain some other color pixels and could result in no solid color tile.
+		 * That's why paint a solid block as intended. */
+		return(Infofnt_text_std(x, y, " ", 1));
+	}
+#endif
+
+	td = (term_data*)(Term->data);
+	x *= Infofnt->wid;
+	y *= Infofnt->hgt;
+
+#if 0
+ #ifdef TILE_CACHE_SIZE
+	if (!disable_tile_cache) {
+		entry = NULL;
+		for (i = 0; i < TILE_CACHE_SIZE; i++) {
+			entry = &td->tile_cache[i];
+			if (!entry->is_valid) hole = i;
+			else if (entry->c == c && entry->a == a
+  #ifdef GRAPHICS_BG_MASK
+			    && entry->c_back == 32 && entry->a_back == TERM_DARK
+  #endif
+  #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
+			    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
+			    && Infoclr->fg == entry->fg && Infoclr->bg == entry->bg
+  #endif
+			    ) {
+				/* Copy cached tile to window. */
+				XCopyArea(Metadpy->dpy, entry->tilePreparation, td->inner->win, Infoclr->gc,
+					0, 0,
+					td->fnt->wid, td->fnt->hgt,
+					x, y);
+
+				/* Success */
+				return(0);
+			}
+		}
+
+		// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+		if (hole != -1) {
+  #ifdef TILE_CACHE_LOG
+			c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
+  #endif
+			entry = &td->tile_cache[hole];
+		} else {
+  #ifdef TILE_CACHE_LOG
+			c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
+  #endif
+			// Replace valid cache entries in FIFO order
+			entry = &td->tile_cache[td->cache_position++];
+			if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+		}
+
+		tilePreparation = entry->tilePreparation;
+		entry->c = c;
+		entry->a = a;
+  #ifdef GRAPHICS_BG_MASK
+   #if 0
+		entry->c_back = 32;
+   #else
+		entry->c_back = Client_setup.f_char[FEAT_SOLID];
+   #endif
+		entry->a_back = TERM_DARK;
+  #endif
+		entry->is_valid = TRUE;
+  #ifdef TILE_CACHE_FGBG
+		entry->fg = Infoclr->fg;
+		entry->bg = Infoclr->bg;
+  #endif
+	} else tilePreparation = td->tilePreparation;
+ #else /* (TILE_CACHE_SIZE) No caching: */
+	tilePreparation = td->tilePreparation;
+ #endif
+#endif
+
+	/* Prepare tile to preparation pixmap. */
+	x1 = tiles_rawpict[c].x;
+	y1 = tiles_rawpict[c].y;
+#if 0
+	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
+		   x1, y1,
+		   td->fnt->wid, td->fnt->hgt,
+		   0, 0,
+		   1);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
+	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
+	XPutImage(Metadpy->dpy, tilePreparation,
+		  Infoclr->gc,
+		  td->tiles,
+		  x1, y1,
+		  0, 0,
+		  td->fnt->wid, td->fnt->hgt);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
+
+	/* Copy prepared tile to window. */
+	XCopyArea(Metadpy->dpy, tilePreparation, td->inner->win, Infoclr->gc,
+		  0, 0,
+		  td->fnt->wid, td->fnt->hgt,
+		  x, y);
+#endif
+#if 0
+	XCopyArea(Metadpy->dpy,
+		  td->tiles, td->inner->win, Infoclr->gc, x1, y1,
+		  tiles_rawpict[c].w, tiles_rawpict[c].h, x, y);
+#else
+//c_msg_format("#%d, x %d, y %d, w %d, h %d -> xd %d, yd %d", c, x1, y1, tiles_rawpict[c].w, tiles_rawpict[c].h, x, y);
+	XPutImage(Metadpy->dpy, td->inner->win, Infoclr->gc,
+		  td->tiles, x1, y1,
+		  x, y, tiles_rawpict[c].w, tiles_rawpict[c].h);
+#endif
+
+	/* Success */
+	return(0);
+}
+
 /* Salvaged and adapted from http://www.phial.com/angdirs/angband-291/src/maid-x11.c */
 /*
  * Hack -- Convert an RGB value to an X11 Pixel, or die.
@@ -3276,6 +3436,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 			if (use_graphics == UG_2MASK) t->pict_hook_2mask = Term_pict_x11_2mask;
  #endif
 			t->pict_hook = Term_pict_x11;
+			t->rawpict_hook = Term_rawpict_x11;
 
 			/* Use graphics sometimes */
 			t->higher_pict = TRUE;

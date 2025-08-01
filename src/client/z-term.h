@@ -198,6 +198,7 @@ struct term {
 	errr (*curs_hook)(int x, int y);
 	errr (*wipe_hook)(int x, int y, int n);
 	errr (*pict_hook)(int x, int y, byte a, char32_t c);
+	errr (*rawpict_hook)(int x, int y, int c);
 	errr (*text_hook)(int x, int y, int n, byte a, cptr s);
 #ifdef GRAPHICS_BG_MASK
 	errr (*pict_hook_2mask)(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back);

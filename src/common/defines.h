@@ -8421,6 +8421,8 @@ extern int PlayerUID;
 #define FONT_MAP_VEIN_WIN	1	/* Drawn as a diamond, for walls/bars */
 #define FONT_MAP_VEIN_X11	1	/* Drawn as a diamond, for walls/bars */
 
+#define MAX_TILES_RAWPICT	256	//USE_GRAPHICS, client-side only (for now)
+
 
 /*** Sound constants ***/
 /*

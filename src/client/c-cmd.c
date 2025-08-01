@@ -489,6 +489,12 @@ void process_command() {
 	case KTRL('C'):
 		//c_msg_format("Client FPS: %d", cfg_client_fps);
 		//handle_process_font_file();
+
+		tiles_rawpict[0].x = 800; //coords for 16x24 tileset/font
+		tiles_rawpict[0].y = 768;
+		tiles_rawpict[0].w = 128;
+		tiles_rawpict[0].h = 192;
+		(void)((*Term->rawpict_hook)(10, 10, 0));
 		break;
 #endif
 	default: cmd_raw_key(command_cmd); break;

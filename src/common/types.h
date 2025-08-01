@@ -5182,3 +5182,10 @@ struct hash_entry {
 
 struct ego_granted_flags { u32b flags[7]; }; //0 are esp-flags (ego-only), 1-6 are k-compatible ego-flags
 typedef struct ego_granted_flags ego_granted_flags;
+
+//USE_GRAPHICS:
+struct rawpict_tile {
+	int x, y, w, h;
+	bool defined;
+};
+typedef struct rawpict_tile rawpict_tile;
