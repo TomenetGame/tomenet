@@ -255,6 +255,7 @@ F:81:/255 # steep mountain chain (permanent wall in a bunch of dungeons, instead
 F:97:/255 # mountain chain
 F:101:/255 # high mountain chain
 F:104:/255 # high mountain chain (impassable by admins, used in Valinor)
+F:277:/255 # ash-covered mountain chain
 
 F:103:/57 # glittering water (BOUNDARY?)
 F:218:/157 # decorative deep lava

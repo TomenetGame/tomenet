@@ -781,7 +781,7 @@ F:DONT_NOTICE_RUNNING | TUNNELABLE | COVER
 D:1:You dig into the sandwall.
 D:2:a sandwall blocking your way
 
-N:101:high mountain chain
+N:101:snow-covered mountain chain
 G:^:w
 F:WALL | NO_WALK | NO_VISION | PERMANENT
 F:DONT_NOTICE_RUNNING | NIGHT_DARK
@@ -1835,6 +1835,13 @@ G:~:W
 F:WALL | NO_WALK | NO_VISION | PERMANENT | NO_ARTICLE | BOUNDARY
 F:DONT_NOTICE_RUNNING | NIGHT_DARK
 D:0:Falling off the edge leads to certain death.
+
+N:277:ash-covered mountain chain
+G:^:D
+F:WALL | NO_WALK | NO_VISION | PERMANENT
+F:DONT_NOTICE_RUNNING | NIGHT_DARK
+D:1:This rock is far too hard.
+D:2:a very hard stone block blocking your way
 
 
 
