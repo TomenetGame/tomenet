@@ -394,6 +394,18 @@ void clear_from(int row) {
 	}
 }
 
+void clear_from_to(int row_s, int row_e) {
+	int y;
+
+	if (row_e >= Term->hgt) row_e = Term->hgt;
+
+	/* Erase requested rows */
+	for (y = row_s; y < row_e; y++) {
+		/* Erase part of the screen */
+		Term_erase(0, y, 255);
+	}
+}
+
 void prt_num(cptr header, int num, int row, int col, byte color) {
 	int len = strlen(header);
 	char out_val[32];

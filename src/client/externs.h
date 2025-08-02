@@ -700,6 +700,7 @@ extern s32b c_get_quantity(cptr prompt, int predef, int max);
 extern s32b c_get_number(cptr prompt, s32b predef, s32b min, s32b max);
 extern bool askfor_aux(char *buf, int len, char mode);
 extern void clear_from(int row);
+extern void clear_from_to(int row_s, int row_e);
 extern void prt_num(cptr header, int num, int row, int col, byte color);
 extern void prt_lnum(cptr header, s32b num, int row, int col, byte color);
 extern void interact_macros(void);

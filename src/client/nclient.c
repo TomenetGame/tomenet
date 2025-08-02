@@ -4616,12 +4616,15 @@ int Receive_store_special_clr(void) {
 	int n;
 	char ch, line_start, line_end;
 
-	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &line_start, &line_end)) <= 0)
-		return(n);
+	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &line_start, &line_end)) <= 0) return(n);
 	if (!shopping) return(1);
 
+#if 0
 	for (n = line_start; n <= line_end; n++)
 		c_put_str(TERM_WHITE, "                                                                                ", n, 0);
+#else
+	clear_from_to(line_start, line_end);
+#endif
 
 	/* hack: hide cursor */
 	Term->scr->cx = Term->wid;
