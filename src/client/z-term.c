@@ -1649,6 +1649,11 @@ void flicker(void) {
 				ch_back = tterm->scr_back->c[y][x];
 #endif
 
+				/* Skip blanks (spaces) for efficiency;
+				   added actually for rawpict images of dice slots fruits in the casino
+				   so they don't get overwritten by the TERM_SEL_BLUE slot machine frame. - C. Blue */
+				if (ch == ' ') continue;
+
 				/* Unanimated colour? Skip then. */
 				if (term_nanim(attr)
 #ifdef GRAPHICS_BG_MASK

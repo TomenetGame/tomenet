@@ -4899,14 +4899,6 @@ int Receive_store_special_anim(void) {
 		sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
  #endif
 #endif
-
-#ifdef USE_GRAPHICS
- #ifdef TEST_RAWPICT
-	if (tiles_rawpict_org[1].defined && tiles_rawpict_org[2].defined && tiles_rawpict_org[3].defined &&
-	    tiles_rawpict_org[4].defined && tiles_rawpict_org[5].defined && tiles_rawpict_org[6].defined)
-		usleep(2000000); //fruits will get erased visually, so wait for a bit
- #endif
-#endif
 		break;
 
 	case 2: //in-between
