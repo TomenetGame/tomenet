@@ -4824,7 +4824,7 @@ int Receive_store_special_anim(void) {
 
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 3 * ANIM_SLOT_LENGTH;
 		while (anim_step--) {
-			display_fruit(8, 26, (anim_step + anim2) % 6 + 1);
+			display_fruit(7, 26, (anim_step + anim2) % 6 + 1);
 
 			/* hack: hide cursor */
 			Term->scr->cx = Term->wid;
@@ -4842,7 +4842,7 @@ int Receive_store_special_anim(void) {
 			usleep(1000 * (anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN));
 #endif
 		}
-		display_fruit(8, 26, anim2 + 1);
+		display_fruit(7, 26, anim2 + 1);
 #ifdef USE_SOUND_2010
  #ifndef ANIM_SLOT_OPTIMIZE_SFX_DELAY
 		sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
@@ -4851,7 +4851,7 @@ int Receive_store_special_anim(void) {
 
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 2 * ANIM_SLOT_LENGTH;
 		while (anim_step--) {
-			display_fruit(8, 35, (anim_step + anim3) % 6 + 1);
+			display_fruit(7, 35, (anim_step + anim3) % 6 + 1);
 
 			/* hack: hide cursor */
 			Term->scr->cx = Term->wid;
@@ -4869,7 +4869,7 @@ int Receive_store_special_anim(void) {
 			usleep(1000 * (anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN));
 #endif
 		}
-		display_fruit(8, 35, anim3 + 1);
+		display_fruit(7, 35, anim3 + 1);
 #ifdef USE_SOUND_2010
  #ifndef ANIM_SLOT_OPTIMIZE_SFX_DELAY
 		sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
@@ -4878,7 +4878,7 @@ int Receive_store_special_anim(void) {
 
 		anim_step = rand_int(ANIM_SLOT_LENGTH) + 1 * ANIM_SLOT_LENGTH;
 		while (anim_step--) {
-			display_fruit(8, 44, (anim_step + anim4) % 6 + 1);
+			display_fruit(7, 44, (anim_step + anim4) % 6 + 1);
 
 			/* hack: hide cursor */
 			Term->scr->cx = Term->wid;
@@ -4896,7 +4896,7 @@ int Receive_store_special_anim(void) {
 			usleep(1000 * (anim_step > ANIM_SLOT_SETTLE ? ANIM_SLOT_SPEED : ANIM_SLOT_SPEED + ANIM_SLOT_SETTLE * ANIM_SLOT_SETTLE_SLOWDOWN - anim_step * ANIM_SLOT_SETTLE_SLOWDOWN));
 #endif
 		}
-		display_fruit(8, 44, anim4 + 1);
+		display_fruit(7, 44, anim4 + 1);
 #ifdef USE_SOUND_2010
  #ifndef ANIM_SLOT_OPTIMIZE_SFX_DELAY
 		sound(casino_slots_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);

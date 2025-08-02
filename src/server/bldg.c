@@ -562,7 +562,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	/* --- Gamble! --- */
 
 	/* Clear store screen aka erase any previous results */
-	Send_store_special_clr(Ind, 3, 19);
+	Send_store_special_clr(Ind, 3, 18);
 
 	/* Set maximum bet */
 	if (p_ptr->lev < 10) maxbet = (p_ptr->lev * 100);
@@ -795,17 +795,17 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		roll2 = randint(6);
 		choice = randint(6);
 
-		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_SEL_BLUE,  "/==========================\\");
+		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 14, TERM_SEL_BLUE,  "/==========================\\");
+		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
 		Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
 		Send_store_special_str(Ind, DICE_Y + 5, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
 		Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
 		Send_store_special_str(Ind, DICE_Y + 7, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
 		Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
 		Send_store_special_str(Ind, DICE_Y + 9, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 10, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 11, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 14, TERM_SEL_BLUE, "\\==========================/");
-		Send_store_special_str(Ind, DICE_Y + 13, DICE_X - 14, TERM_SEL_BLUE,  " [      ] [      ] [      ]");
+		Send_store_special_str(Ind, DICE_Y + 10, DICE_X - 14, TERM_SEL_BLUE, "|                          |");
+		Send_store_special_str(Ind, DICE_Y + 11, DICE_X - 14, TERM_SEL_BLUE,"\\==========================/");
+		Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 14, TERM_SEL_BLUE, " [      ] [      ] [      ]");
 
 		/* Create client-side animation */
 		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1)) {
@@ -817,9 +817,9 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #ifdef USE_SOUND_2010
 			sound(Ind, "casino_slots", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			display_fruit(Ind, 8, 26, roll1);
-			display_fruit(Ind, 8, 35, roll2);
-			display_fruit(Ind, 8, 44, choice);
+			display_fruit(Ind, 7, 26, roll1);
+			display_fruit(Ind, 7, 35, roll2);
+			display_fruit(Ind, 7, 44, choice);
 		}
 
 #define SLOTS_BONUS 1 /* fine-tuning: must be 0 or 1 */
@@ -828,20 +828,25 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			if (roll1 == 1) odds = 4;
 			else if (roll1 == 2) odds = 6;
 			else odds = roll1 * roll1;
-			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
+			//Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, format("You won (x%d)!", odds));
 		} else if (roll1 == 6 && roll2 == 6) {
 			win = TRUE;
 			odds = choice + 1 + SLOTS_BONUS; //slight boost (was +1), for contrasting the double plum below
-			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
+			//Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, format("You won (x%d)!", odds));
 		} else if (roll1 == 5 && roll2 == 5) { //added some extra winnage (this combo didn't exist before) ^^
 			win = TRUE;
 			odds = choice + SLOTS_BONUS;
-			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
+			//Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, format("You won (x%d)!", odds));
 		} else if (roll2 == choice && roll2 != 3 && roll2 != 4) { //this too...so generous oO
 			win = TRUE;
 			odds = 0; //just get the wager back
-			Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_L_GREEN, "You won!");
-		} else Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_SLATE, "You lost.");
+			//Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_L_GREEN, "You won!");
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, "You won!");
+		} else //Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_SLATE, "You lost.");
+			Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_SLATE, "You lost.");
 
 		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
 		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
