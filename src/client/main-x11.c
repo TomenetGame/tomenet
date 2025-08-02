@@ -1234,10 +1234,11 @@ struct term_data {
 	struct timeval resize_timer;
 
 #ifdef USE_GRAPHICS
-
 	XImage *tiles;
 	Pixmap bgmask;
 	Pixmap fgmask;
+	rawpict_tile tiles_rawpict[MAX_TILES_RAWPICT + 1];
+	int rawpict_scale_wid_org, rawpict_scale_hgt_org, rawpict_scale_wid_use, rawpict_scale_hgt_use;
  #ifdef GRAPHICS_BG_MASK
 	Pixmap bg2mask;
 	Pixmap tilePreparation2;
@@ -1248,7 +1249,6 @@ struct term_data {
 	int cache_position;
 	struct tile_cache_entry tile_cache[TILE_CACHE_SIZE];
  #endif
-
 #endif
 };
 
@@ -2664,8 +2664,8 @@ static errr Term_rawpict_x11(int x, int y, int c) {
 #endif
 
 	/* Prepare tile to preparation pixmap. */
-	x1 = tiles_rawpict[c].x;
-	y1 = tiles_rawpict[c].y;
+	x1 = td->tiles_rawpict[c].x;
+	y1 = td->tiles_rawpict[c].y;
 #if 0
 	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
 		   x1, y1,
@@ -2688,16 +2688,9 @@ static errr Term_rawpict_x11(int x, int y, int c) {
 		  td->fnt->wid, td->fnt->hgt,
 		  x, y);
 #endif
-#if 0
-	XCopyArea(Metadpy->dpy,
-		  td->tiles, td->inner->win, Infoclr->gc, x1, y1,
-		  tiles_rawpict[c].w, tiles_rawpict[c].h, x, y);
-#else
-//c_msg_format("#%d, x %d, y %d, w %d, h %d -> xd %d, yd %d", c, x1, y1, tiles_rawpict[c].w, tiles_rawpict[c].h, x, y);
 	XPutImage(Metadpy->dpy, td->inner->win, Infoclr->gc,
 		  td->tiles, x1, y1,
-		  x, y, tiles_rawpict[c].w, tiles_rawpict[c].h);
-#endif
+		  x, y, td->tiles_rawpict[c].w, td->tiles_rawpict[c].h);
 
 	/* Success */
 	return(0);
@@ -2977,7 +2970,8 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
  #ifndef GRAPHICS_BG_MASK
 static XImage *ResizeImage(Display *disp, XImage *Im,
                            int ix, int iy, int ox, int oy,
-                           char *bgbits, char *fgbits, Pixmap *bgmask_return, Pixmap *fgmask_return) {
+                           char *bgbits, char *fgbits, Pixmap *bgmask_return, Pixmap *fgmask_return,
+                           term_data *td) {
 	int width1, height1, width2, height2;
 	int x1, x2, y1, y2, Tx, Ty;
 	int *px1, *px2, *dx1, *dx2;
@@ -3075,12 +3069,30 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 	Window root_win = DefaultRootWindow(disp);
 	(*bgmask_return) = XCreateBitmapFromData(disp, root_win, bgmask_data, width2, height2);
 	(*fgmask_return) = XCreateBitmapFromData(disp, root_win, fgmask_data, width2, height2);
+
+	/* Also rescale rawpict image dimensions/coordinates according to new dimensions */
+	int i;
+
+	td->rawpict_scale_wid_org = width1;
+	td->rawpict_scale_hgt_org = height1;
+	td->rawpict_scale_wid_use = width2;
+	td->rawpict_scale_hgt_use = height2;
+
+	for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+		if (!tiles_rawpict_org[i].defined) continue;
+		td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
+		td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
+		td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
+		td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+	}
+
 	return(Tmp);
 }
  #else
 static XImage *ResizeImage_2mask(Display *disp, XImage *Im,
                            int ix, int iy, int ox, int oy,
-                           char *bgbits, char *fgbits, char *bg2bits, Pixmap *bgmask_return, Pixmap *fgmask_return, Pixmap *bg2mask_return) {
+                           char *bgbits, char *fgbits, char *bg2bits, Pixmap *bgmask_return, Pixmap *fgmask_return, Pixmap *bg2mask_return,
+                           term_data *td) {
 	int width1, height1, width2, height2;
 	int x1, x2, y1, y2, Tx, Ty;
 	int *px1, *px2, *dx1, *dx2;
@@ -3190,9 +3202,49 @@ static XImage *ResizeImage_2mask(Display *disp, XImage *Im,
 	(*bgmask_return) = XCreateBitmapFromData(disp, root_win, bgmask_data, width2, height2);
 	(*fgmask_return) = XCreateBitmapFromData(disp, root_win, fgmask_data, width2, height2);
 	(*bg2mask_return) = XCreateBitmapFromData(disp, root_win, bg2mask_data, width2, height2);
+
+	/* Also rescale rawpict image dimensions/coordinates according to new dimensions */
+	int i;
+
+	td->rawpict_scale_wid_org = width1;
+	td->rawpict_scale_hgt_org = height1;
+	td->rawpict_scale_wid_use = width2;
+	td->rawpict_scale_hgt_use = height2;
+
+	for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+		if (!tiles_rawpict_org[i].defined) continue;
+		td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
+		td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
+		td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
+		td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+	}
+
 	return(Tmp);
 }
  #endif
+
+/* Rescale rawpict image dimensions/coordinates according to new dimensions */
+void tiles_rawpict_scale(void) {
+	int t, i, width1, width2, height1, height2;
+	term_data *td;
+
+	for (t = 0; t < ANGBAND_TERM_MAX; t++) {
+		td = term_idx_to_term_data(t);
+
+		width1 = td->rawpict_scale_wid_org;
+		height1 = td->rawpict_scale_hgt_org;
+		width2 = td->rawpict_scale_wid_use;
+		height2 = td->rawpict_scale_hgt_use;
+
+		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+			if (!tiles_rawpict_org[i].defined) continue;
+			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
+			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
+			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
+			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+		}
+	}
+}
 
 #endif /* USE_GRAPHICS */
 
@@ -3392,11 +3444,13 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 #ifdef GRAPHICS_BG_MASK
 		td->tiles = ResizeImage_2mask(Metadpy->dpy, graphics_image,
 				graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-				graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask));
+				graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask),
+				td);
 #else
 		td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
 				graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-				graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask));
+				graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask),
+				td);
 #endif
 
 		/* Initialize preparation pixmap. */
@@ -4046,11 +4100,13 @@ static void term_force_font(int term_idx, cptr fnt_name) {
  #ifdef GRAPHICS_BG_MASK
 			td->tiles = ResizeImage_2mask(Metadpy->dpy, graphics_image,
 					graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-					graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask));
+					graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask),
+					td);
  #else
 			td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
 					graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-					graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask));
+					graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask),
+					td);
  #endif
 
 			/* Reinitialize preparation pixmap with new size. */

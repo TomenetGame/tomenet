@@ -371,7 +371,7 @@ extern char graphic_tiles[256];
 extern char32_t kidx_po_rain_char, kidx_po_rain_e1_char, kidx_po_rain_e2_char, kidx_po_rain_w1_char, kidx_po_rain_w2_char, kidx_po_snow_char, kidx_po_sand_char;
 extern char32_t kidx_po_d10f_tl, kidx_po_d10f_t, kidx_po_d10f_tr, kidx_po_d10f_bl, kidx_po_d10f_b, kidx_po_d10f_br;
 extern byte kidx_po_rain_attr, kidx_po_rain_e1_attr, kidx_po_rain_e2_attr, kidx_po_rain_w1_attr, kidx_po_rain_w2_attr, kidx_po_snow_attr, kidx_po_sand_attr;
-extern rawpict_tile tiles_rawpict[MAX_TILES_RAWPICT + 1];
+extern rawpict_tile tiles_rawpict_org[MAX_TILES_RAWPICT + 1];
 #endif
 extern bool use_sound, use_sound_org;
 extern bool quiet_mode;
@@ -1116,6 +1116,7 @@ extern int stricmp(cptr a, cptr b);
 /* main-x11.c */
 void all_term_data_to_term_prefs(void);
 extern long x11_win_term_main;
+extern void tiles_rawpict_scale(void);
 #endif
 
 #ifdef WINDOWS
@@ -1123,6 +1124,7 @@ extern long x11_win_term_main;
 /* extern int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, ...); */
 extern void change_font(int s);
 extern const char* get_font_name(int term_idx);
+extern void tiles_rawpict_scale(void);
  #ifdef USE_LOGFONT
 extern int win_get_logfont_w(int term_idx);
 extern int win_get_logfont_h(int term_idx);

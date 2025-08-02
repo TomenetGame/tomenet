@@ -63,7 +63,7 @@
  /* - WiP - C. Blue
     visuals do not scale if font size isn't identical to tile size (results in blackness usually)
     and visuals get erased after animation finishes: */
-//#define TEST_RAWPICT
+#define TEST_RAWPICT
 #endif
 
 
@@ -4636,8 +4636,8 @@ static void display_fruit(int row, int col, int fruit) {
  #ifndef TEST_RAWPICT
 	    FALSE;
  #else
-	    (tiles_rawpict[1].defined && tiles_rawpict[2].defined && tiles_rawpict[3].defined &&
-	    tiles_rawpict[4].defined && tiles_rawpict[5].defined && tiles_rawpict[6].defined);
+	    (tiles_rawpict_org[1].defined && tiles_rawpict_org[2].defined && tiles_rawpict_org[3].defined &&
+	    tiles_rawpict_org[4].defined && tiles_rawpict_org[5].defined && tiles_rawpict_org[6].defined);
  #endif
 #endif
 
@@ -4902,8 +4902,8 @@ int Receive_store_special_anim(void) {
 
 #ifdef USE_GRAPHICS
  #ifdef TEST_RAWPICT
-	if (tiles_rawpict[1].defined && tiles_rawpict[2].defined && tiles_rawpict[3].defined &&
-	    tiles_rawpict[4].defined && tiles_rawpict[5].defined && tiles_rawpict[6].defined)
+	if (tiles_rawpict_org[1].defined && tiles_rawpict_org[2].defined && tiles_rawpict_org[3].defined &&
+	    tiles_rawpict_org[4].defined && tiles_rawpict_org[5].defined && tiles_rawpict_org[6].defined)
 		usleep(2000000); //fruits will get erased visually, so wait for a bit
  #endif
 #endif

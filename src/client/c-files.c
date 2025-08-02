@@ -975,7 +975,10 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 		}
 		break;
 
-	/* Process "I:<idx>:<x>:<y>:<width>:<height>" -- arbitrarily sized images */
+	/* Process "I:<idx>:<x>:<y>:<width>:<height>" -- arbitrarily sized images.
+	   Problem: This prf is read for the first time on client startup _after_ graphical tilesets were loaded!
+	            So the auto-scale code in the win/x11 tileset resize functions were unable to scale these yet, so we have to do it here.
+	            (On subsequent font size changes after first startup, the auto-scaler code will then do any further rescaling of these.) - C. Blue */
 	case 'I':
 		if (tokenize(buf + 2, 5, zz) == 5) {
 			j = (huge)strtol(zz[0], NULL, 0);
@@ -983,12 +986,17 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 				logprint(format("Exceeding MAX_TILES_RAWPICT (%d).\n", MAX_TILES_RAWPICT));
 				return(0);
 			}
-			tiles_rawpict[j].x = strtol(zz[1], NULL, 0);
-			tiles_rawpict[j].y = strtol(zz[2], NULL, 0);
-			tiles_rawpict[j].w = strtol(zz[3], NULL, 0);
-			tiles_rawpict[j].h = strtol(zz[4], NULL, 0);
-			tiles_rawpict[j].defined = TRUE;
-			//logprint(format("read img %d: %d,%d %d,%d\n", j, tiles_rawpict[j].x, tiles_rawpict[j].y, tiles_rawpict[j].w, tiles_rawpict[j].h));
+			tiles_rawpict_org[j].x = strtol(zz[1], NULL, 0);
+			tiles_rawpict_org[j].y = strtol(zz[2], NULL, 0);
+			tiles_rawpict_org[j].w = strtol(zz[3], NULL, 0);
+			tiles_rawpict_org[j].h = strtol(zz[4], NULL, 0);
+			tiles_rawpict_org[j].defined = TRUE;
+
+			/* For first client startup: Since we're called here _after_ tileset loading, we have to scale here */
+#if defined(WINDOWS) || defined(USE_X11)
+			tiles_rawpict_scale();
+#endif
+
 			return(0);
 		}
 		break;

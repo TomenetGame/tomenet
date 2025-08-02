@@ -427,6 +427,8 @@ struct _term_data {
 
 #ifdef USE_GRAPHICS
 	HDC hdcTiles, hdcBgMask, hdcFgMask;
+	rawpict_tile tiles_rawpict[MAX_TILES_RAWPICT + 1];
+	int rawpict_scale_wid_org, rawpict_scale_hgt_org, rawpict_scale_wid_use, rawpict_scale_hgt_use;
  #ifdef GRAPHICS_BG_MASK
 	HDC hdcBg2Mask;
 	HDC hdcTilePreparation2;
@@ -674,9 +676,9 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
  * Function will not free resources if already allocated in hbmBgMask_return or hbmFgMask_return input variable.
  */
  #ifdef GRAPHICS_BG_MASK
-static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP hbmBg2Mask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return, HBITMAP *hbmBg2Mask_return) {
+static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP hbmBg2Mask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return, HBITMAP *hbmBg2Mask_return, term_data *td) {
  #else
-static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return) {
+static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return, term_data *td) {
  #endif
 	BITMAP bm;
 	GetObject(hbm, sizeof(BITMAP), &bm);
@@ -831,7 +833,48 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
  #ifdef GRAPHICS_BG_MASK
 	(*hbmBg2Mask_return) = hbmResBg2Mask;
  #endif
+
+	/* Also rescale rawpict image dimensions/coordinates according to new dimensions */
+	int i;
+
+	td->rawpict_scale_wid_org = width1;
+	td->rawpict_scale_hgt_org = height1;
+	td->rawpict_scale_wid_use = width2;
+	td->rawpict_scale_hgt_use = height2;
+
+	for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+		if (!tiles_rawpict_org[i].defined) continue;
+		td->tiles_rawpict[i].defined = TRUE;
+		td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
+		td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
+		td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
+		td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+	}
+
 	return(hbmResTiles);
+}
+
+/* Rescale rawpict image dimensions/coordinates according to new dimensions */
+void tiles_rawpict_scale(void) {
+	int t, i, width1, width2, height1, height2;
+	term_data *td;
+
+	for (t = 0; t < ANGBAND_TERM_MAX; t++) {
+		td = &data[t];
+
+		width1 = td->rawpict_scale_wid_org;
+		height1 = td->rawpict_scale_hgt_org;
+		width2 = td->rawpict_scale_wid_use;
+		height2 = td->rawpict_scale_hgt_use;
+
+		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+			if (!tiles_rawpict_org[i].defined) continue;
+			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
+			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
+			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
+			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+		}
+	}
 }
 
 static void releaseCreatedGraphicsObjects(term_data *td) {
@@ -942,9 +985,9 @@ static void recreateGraphicsObjects(term_data *td) {
  #ifdef GRAPHICS_BG_MASK
 	HBITMAP hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
 	HBITMAP hbmBg2Mask;
-	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, g_hbmBg2Mask, &hbmBgMask, &hbmFgMask, &hbmBg2Mask);
+	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, g_hbmBg2Mask, &hbmBgMask, &hbmFgMask, &hbmBg2Mask, td);
  #else
-	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask);
+	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask, td);
  #endif
 
 	if (hbmTiles == NULL || hbmBgMask == NULL || hbmFgMask == NULL || hbmTilePreparation == NULL
