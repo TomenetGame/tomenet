@@ -432,6 +432,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	player_type *p_ptr = Players[Ind];
 	int roll1, roll2, roll3;
 	int choice, odds, win;
+	bool old_casino = is_older_than(&p_ptr->version, 4, 9, 3, 0, 0, 2);
 
 	s32b wager;
 	s32b maxbet;
@@ -562,7 +563,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	/* --- Gamble! --- */
 
 	/* Clear store screen aka erase any previous results */
-	Send_store_special_clr(Ind, 3, 18);
+	Send_store_special_clr(Ind, 3, old_casino ? 20 : 18);
 
 	/* Set maximum bet */
 	if (p_ptr->lev < 10) maxbet = (p_ptr->lev * 100);
@@ -795,17 +796,17 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		roll2 = randint(6);
 		choice = randint(6);
 
-		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 14, TERM_SEL_BLUE,  "/==========================\\");
-		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 4, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 5, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 7, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 8, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 9, DICE_X - 14, TERM_SEL_BLUE,  "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 10, DICE_X - 14, TERM_SEL_BLUE, "|                          |");
-		Send_store_special_str(Ind, DICE_Y + 11, DICE_X - 14, TERM_SEL_BLUE,"\\==========================/");
-		Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 14, TERM_SEL_BLUE, " [      ] [      ] [      ]");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ?  3 :  2), DICE_X - 14, TERM_SEL_BLUE, "/==========================\\");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ?  4 :  3), DICE_X - 14, TERM_SEL_BLUE, "|                          |");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ?  5 :  4), DICE_X - 14, TERM_SEL_BLUE, "|                          |");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ?  6 :  5), DICE_X - 14, TERM_SEL_BLUE, "|                          |");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ?  7 :  6), DICE_X - 14, TERM_SEL_BLUE, "|                          |");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ?  8 :  7), DICE_X - 14, TERM_SEL_BLUE, "|                          |");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ?  9 :  8), DICE_X - 14, TERM_SEL_BLUE, "|                          |");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ? 10 :  9), DICE_X - 14, TERM_SEL_BLUE, "|                          |");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ? 11 : 10), DICE_X - 14, TERM_SEL_BLUE, "|                          |");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ? 12 : 11), DICE_X - 14, TERM_SEL_BLUE,"\\==========================/");
+		Send_store_special_str(Ind, DICE_Y + (old_casino ? 13 : 12), DICE_X - 14, TERM_SEL_BLUE, " [      ] [      ] [      ]");
 
 		/* Create client-side animation */
 		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1)) {
@@ -817,9 +818,9 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #ifdef USE_SOUND_2010
 			sound(Ind, "casino_slots", NULL, SFX_TYPE_MISC, FALSE);
 #endif
-			display_fruit(Ind, 7, 26, roll1);
-			display_fruit(Ind, 7, 35, roll2);
-			display_fruit(Ind, 7, 44, choice);
+			display_fruit(Ind, old_casino ? 8 : 7, 26, roll1);
+			display_fruit(Ind, old_casino ? 8 : 7, 35, roll2);
+			display_fruit(Ind, old_casino ? 8 : 7, 44, choice);
 		}
 
 #define SLOTS_BONUS 1 /* fine-tuning: must be 0 or 1 */
