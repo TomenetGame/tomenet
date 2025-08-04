@@ -6490,7 +6490,7 @@
  * New monster race bit flags
  */
 #define RF1_UNIQUE			0x00000001U	/* Unique Monster */
-#define RF1_RAND_100			0x00000002U	/* 100% random movement */
+#define RF1_RAND_100			0x00000002U	/* 100% random movement -- currently unused */
 #define RF1_MALE			0x00000004U	/* Male gender */
 #define RF1_FEMALE			0x00000008U	/* Female gender */
 #define RF1_CHAR_CLEAR		0x00000010U	/* Absorbs symbol */
