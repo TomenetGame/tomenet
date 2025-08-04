@@ -190,7 +190,7 @@ static cptr r_info_flags1[] = {
 
 	"DROP_GOOD",
 	"DROP_GREAT",
-	"DROP_USEFUL",
+	"RAND_10",
 	"DROP_CHOSEN"
 };
 
@@ -592,7 +592,7 @@ static cptr r_info_flags0[] = {
 	"DRAIN_LIFE",
 	"BO_PSI",
 
-	"X00100000",
+	"DROP_USEFUL",
 	"X00200000",
 	"X00400000",
 	"X00800000",

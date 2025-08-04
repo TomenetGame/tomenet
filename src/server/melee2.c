@@ -9747,6 +9747,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	int		mm2[8];
 #endif
 	bool		random_move = FALSE;
+	int		rnd_move =
+	    ((r_ptr->flags1 & RF1_RAND_5) ? 5 : 0) + ((r_ptr->flags1 & RF1_RAND_10) ? 10 : 0) +
+	    ((r_ptr->flags1 & RF1_RAND_25) ? 25 : 0) + ((r_ptr->flags1 & RF1_RAND_50) ? 50 : 0) +
+	    ((r_ptr->flags1 & RF1_RAND_100) ? 100 : 0);
 
 	cave_type	*c_ptr;
 	object_type	*o_ptr;
@@ -9780,6 +9784,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	*/
 	if (!(zcave = getcave(wpos))) return;
 
+	if (rnd_move > 100) rnd_move = 100; //paranoia, not needed though
 
 	if (m_ptr->r_idx == RI_BLUE) {
 		if (m_ptr->extra > 1) {
@@ -10319,67 +10324,16 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		if (r_ptr->flags2 & (RF2_AURA_FIRE | RF2_AURA_ELEC)) c_ptr->slippery = 0;
 	}
 
-	/* Confused -- 100% random */
-	if (m_ptr->confused || force_random_movement || (r_ptr->flags1 & RF1_RAND_100)) {
+	/* Random movement: Confused, forced, player-invisible, or intrinsic partially random movement */
+	if (m_ptr->confused || force_random_movement || inv || rand_int(100) < rnd_move) {
 		/* Try four "random" directions */
 		mm[0] = mm[1] = mm[2] = mm[3] = 5;
 		random_move = TRUE;
-	}
-
-	/* 75% random movement */
-	else if (((r_ptr->flags1 & RF1_RAND_50) &&
-	    (r_ptr->flags1 & RF1_RAND_25) &&
-	    (rand_int(100) < 75)) || inv) {
 #ifdef OLD_MONSTER_LORE
-		/* Memorize flags */
-		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_50;
-		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_25;
+		/* Memorize flag(s) */
+		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= (r_ptr->flags1 & RF1_RAND_MASK);
 #endif
-
-		/* Try four "random" directions */
-		mm[0] = mm[1] = mm[2] = mm[3] = 5;
-		random_move = TRUE;
 	}
-
-	/* 50% random movement */
-	else if ((r_ptr->flags1 & RF1_RAND_50) &&
-	    (rand_int(100) < 50)) {
-#ifdef OLD_MONSTER_LORE
-		/* Memorize flags */
-		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_50;
-#endif
-
-		/* Try four "random" directions */
-		mm[0] = mm[1] = mm[2] = mm[3] = 5;
-		random_move = TRUE;
-	}
-
-	/* 25% random movement */
-	else if ((r_ptr->flags1 & RF1_RAND_25) &&
-	    (rand_int(100) < 25)) {
-#ifdef OLD_MONSTER_LORE
-		/* Memorize flags */
-		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_25;
-#endif
-
-		/* Try four "random" directions */
-		mm[0] = mm[1] = mm[2] = mm[3] = 5;
-		random_move = TRUE;
-	}
-
-	/* 5% random movement */
-	else if ((r_ptr->flags1 & RF1_RAND_5) &&
-	    (rand_int(100) < 5)) {
-#ifdef OLD_MONSTER_LORE
-		/* Memorize flags */
-		if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags1 |= RF1_RAND_5;
-#endif
-
-		/* Try four "random" directions */
-		mm[0] = mm[1] = mm[2] = mm[3] = 5;
-		random_move = TRUE;
-	}
-
 	/* Normal movement */
 	else {
 		/* Logical moves */
@@ -12375,7 +12329,7 @@ void process_monsters(void) {
 	monster_race	*r_ptr;
 	player_type	*p_ptr;
 	bool		reveal_cloaking, spot_cloaking;
-	int		may_move_Ind, may_move_dis;
+	int		may_move_Ind, may_move_dis, rnd_move;
 	char		m_name[MNAME_LEN];
 	cave_type	**zcave;
 
@@ -12425,6 +12379,11 @@ void process_monsters(void) {
 		}
 
 		r_ptr = race_inf(m_ptr);
+
+		rnd_move =
+		    ((r_ptr->flags1 & RF1_RAND_5) ? 5 : 0) + ((r_ptr->flags1 & RF1_RAND_10) ? 10 : 0) +
+		    ((r_ptr->flags1 & RF1_RAND_25) ? 25 : 0) + ((r_ptr->flags1 & RF1_RAND_50) ? 50 : 0) +
+		    ((r_ptr->flags1 & RF1_RAND_100) ? 100 : 0);
 
 		/* Access the location */
 		fx = m_ptr->fx;
@@ -12994,7 +12953,7 @@ void process_monsters(void) {
 					   doesn't really care about a player being nearby or not,
 					   and hence keep up the random movement, except using attack
 					   spells on the cloaked player! */
-					if (r_ptr->flags1 & (RF1_RAND_50 | RF1_RAND_100)) {
+					if (rnd_move >= 50) {
 						/* 'remember' closest cloaked player */
 						if (j < may_move_dis) {
 							may_move_Ind = pl;

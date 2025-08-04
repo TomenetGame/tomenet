@@ -7686,14 +7686,19 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 
 	int y, x, oldx, oldy;
 	int i;
-	//bool do_move = FALSE;
-	bool rnd = FALSE;
 
-	cave_type	       *c_ptr;
-	struct c_special	*cs_ptr;
-	byte		    *w_ptr;
+	cave_type *c_ptr;
+	struct c_special *cs_ptr;
+	byte *w_ptr;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
 	cave_type **zcave;
+
+	//bool do_move = FALSE;
+	bool rnd = FALSE;
+	int rnd_move =
+	    ((r_ptr->flags1 & RF1_RAND_5) ? 5 : 0) + ((r_ptr->flags1 & RF1_RAND_10) ? 10 : 0) +
+	    ((r_ptr->flags1 & RF1_RAND_25) ? 25 : 0) + ((r_ptr->flags1 & RF1_RAND_50) ? 50 : 0) +
+	    ((r_ptr->flags1 & RF1_RAND_100) ? 100 : 0);
 	int csmove = TRUE;
 	int iterations = 15;
 
@@ -7748,18 +7753,13 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			x = p_ptr->px + ddx[dir];
 		}
 	}
-	/* -C. Blue- I toned down monster RAND_50 and RAND_25 for a mimicking player,
+	/* -C. Blue- I toned down monster RAND_xxx for a mimicking player,
 	assuming that the mimic does not use the monster mind but its own to control
 	the body, on the other hand the body still carries reflexes from the monster ;)
 	- technical reason was to make more forms useful, especially RAND_50 forms */
 	/* if (((p_ptr->pclass != CLASS_SHAMAN) || ((r_ptr->d_char != 'E') && (r_ptr->d_char != 'G'))) && */
 	/* And now shamans gain advantage by linking to the being's mind instead of copying it..or something..err ^^ */
-	else if ((p_ptr->pclass != CLASS_SHAMAN) &&
-	    (((r_ptr->flags1 & RF1_RAND_100) && magik(40)) ||
-	    ((r_ptr->flags1 & RF1_RAND_50) && (r_ptr->flags1 & RF1_RAND_25) && magik(30)) ||
-	    ((r_ptr->flags1 & RF1_RAND_50) && (!(r_ptr->flags1 & RF1_RAND_25)) && magik(20)) ||
-	    ((!(r_ptr->flags1 & RF1_RAND_50)) && (r_ptr->flags1 & RF1_RAND_25) && magik(10))))
-	{
+	else if ((p_ptr->pclass != CLASS_SHAMAN) && rnd_move && magik((rnd_move * 4) / 10)) {
 		do {
 			i = randint(9);
 			y = p_ptr->py + ddy[i];

@@ -6519,8 +6519,10 @@
 #define RF1_DROP_4D2			0x08000000U	/* Drop 4d2 items/gold */
 #define RF1_DROP_GOOD		0x10000000U	/* Drop good items */
 #define RF1_DROP_GREAT		0x20000000U	/* Drop great items */
-#define RF1_DROP_USEFUL		0x40000000U	/* Drop "useful" items -- not implemented, unused (Dolphiner only) */
+#define RF1_RAND_10		0x40000000U	/* Added when it was still unused, on 2025-08-04 just in case, might potentially make some mimic forms less annoying to use (Deep One?) */
 #define RF1_DROP_CHOSEN		0x80000000U	/* Drop "chosen" items */
+
+#define RF1_RAND_MASK (RF1_RAND_5 | RF1_RAND_10 | RF1_RAND_25 | RF1_RAND_50 | RF1_RAND_100)
 
 /*
  * New monster race bit flags
@@ -6874,6 +6876,7 @@
 #define RF0_BO_CHAOS		0x00020000U		/* Mirror: Chaos Bolt (Shadow/HOff) */
 #define RF0_DRAIN_LIFE		0x00040000U		/* Mirror: Drain Life (Shadow/Necro) */
 #define RF0_BO_PSI		0x00080000U		/* Mirror: Psionic Blast [+Psi Storm] */
+#define RF0_DROP_USEFUL		0x00100000U		/* Drop "useful" items -- not implemented, unused (Dolphiner only) */
 //hole
 
 #define RF0_NONFAIL_LIMITER	24			/* note! RF0_OFFSET + this = Spells that cannot fail on casting, because they are not cast spells but 'skills'. */
