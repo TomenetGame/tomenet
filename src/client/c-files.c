@@ -978,7 +978,9 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 	/* Process "I:<idx>:<x>:<y>:<width>:<height>" -- arbitrarily sized images.
 	   Problem: This prf is read for the first time on client startup _after_ graphical tilesets were loaded!
 	            So the auto-scale code in the win/x11 tileset resize functions were unable to scale these yet, so we have to do it here.
-	            (On subsequent font size changes after first startup, the auto-scaler code will then do any further rescaling of these.) - C. Blue */
+	            (On subsequent font size changes after first startup, the auto-scaler code will then do any further rescaling of these.) - C. Blue
+	   Note: For now, these images are cleared whenever the screen is refreshed, as they do not register in the character/attribute matrix (screen[]).
+	         So they are mostly good for temporary effects eg client-side animations (Casino dice slots). */
 	case 'I':
 		if (tokenize(buf + 2, 5, zz) == 5) {
 			j = (huge)strtol(zz[0], NULL, 0);
