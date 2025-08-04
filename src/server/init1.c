@@ -592,7 +592,7 @@ static cptr r_info_flags0[] = {
 	"DRAIN_LIFE",
 	"BO_PSI",
 
-	"DROP_USEFUL",
+	"X00100000",
 	"X00200000",
 	"X00400000",
 	"X00800000",
@@ -608,7 +608,7 @@ static cptr r_info_flags0[] = {
 	"ADMINISTRATIVE_HOLD",
 };
 static cptr r_info_flagsA[] = {
-	"X00000001",
+	"DROP_USEFUL",
 	"X00000002",
 	"X00000004",
 	"X00000008",

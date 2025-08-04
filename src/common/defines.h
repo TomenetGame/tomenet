@@ -6745,7 +6745,7 @@
 #define RF7_SPIDER			0x00000040U	/* Monster is a spider (can pass webs) */
 #define RF7_NAZGUL			0x00000080U	/* Monster is a Nazgul */
 #define RF7_DG_CURSE		0x00000100U	/* If killed the monster grant a DG Curse to the player */
-#define RF7_MORTAL		0x00000200U	/* Is it mortal? -- UNUSED -- [HOLE] */
+#define RF7_MORTAL		0x00000200U	/* Is it mortal? -- NO EFFECT (but used a lot in r_info) -- [HOLE] */
 #define RF7_NO_DEATH		0x00000400U	/* Cannot be killed */
 #define RF7_NO_TARGET		0x00000800U	/* Cannot be targeted */
 #define RF7_AI_ANNOY			0x00001000U	/* Try to tease the player */
@@ -6876,7 +6876,6 @@
 #define RF0_BO_CHAOS		0x00020000U		/* Mirror: Chaos Bolt (Shadow/HOff) */
 #define RF0_DRAIN_LIFE		0x00040000U		/* Mirror: Drain Life (Shadow/Necro) */
 #define RF0_BO_PSI		0x00080000U		/* Mirror: Psionic Blast [+Psi Storm] */
-#define RF0_DROP_USEFUL		0x00100000U		/* Drop "useful" items -- not implemented, unused (Dolphiner only) */
 //hole
 
 #define RF0_NONFAIL_LIMITER	24			/* note! RF0_OFFSET + this = Spells that cannot fail on casting, because they are not cast spells but 'skills'. */
@@ -6897,7 +6896,8 @@
 
 
 /* Additional basic flags (ie not spell-flags, 'S:') */
-//#define RFA_NO_INTERCEPT	0x00000001U		/* Cannot intercept this monster */
+#define RFA_DROP_USEFUL		0x00000001U		/* Drop "useful" items -- not implemented, unused (Dolphiner only) */
+//#define RFA_NO_INTERCEPT	0x10000000U		/* Cannot intercept this monster */
 
 
 /* currently disabled r_info.txt flags (not implemented or some other reason) */
