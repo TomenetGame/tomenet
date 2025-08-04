@@ -975,7 +975,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 		}
 		break;
 
-	/* Process "I:<idx>:<x>:<y>:<width>:<height>" -- arbitrarily sized images.
+	/* Process "I:<idx>:<x>:<y>:<width>:<height>" -- arbitrarily sized images. - This is purely client-side mapping, not transmitted to the server.
 	   Problem: This prf is read for the first time on client startup _after_ graphical tilesets were loaded!
 	            So the auto-scale code in the win/x11 tileset resize functions were unable to scale these yet, so we have to do it here.
 	            (On subsequent font size changes after first startup, the auto-scaler code will then do any further rescaling of these.) - C. Blue
