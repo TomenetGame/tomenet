@@ -868,7 +868,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 	   MAPCHAR:A-Anim1,Rchance1..m%:tile1..m,A-Anim2,Rchance1..n%:tile1..n% etc, or just
 	   MAPCHAR:Rcance1..m%:tile1..m for a non-animated mapping that still picks a random tile out of several choices. */
 
-	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races,
+	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races (this should take precedence over 'r:' mappings),
 	   todo for questors: "R:Q<qidx>C<cnt>:<a>/<c>" syntax based on rmapcnt and rcharidx, requires change to network protocol too. */
 	switch(buf[0]) {
 	case 'R':
@@ -896,7 +896,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 		}
 		break;
 
-	/* Process "K:<num>:<a>/<c>"  -- attr/char for object kinds */
+	/* Process "K:<num>:<a>/<c>"  -- attr/char for object kinds (should take preference over 'E:' mappings) */
 	case 'K':
 		if (tokenize(buf + 2, 3, zz) == 3) {
 			i = (huge)strtol(zz[0], NULL, 0);
@@ -1036,7 +1036,8 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 	   All parameters are optional (which is required as we'd hit 50k+ tiles ^^");
 	   gender = m/f, race = RACE_xxx, class = CLASS_xxx, trait = TRAIT_xxx (draconian lineage or enlightened/corrupted maia),
 	   levelranges: 0: 1-9, 1: 10-19, 2: 20-29, 3: 30-39, 4: 40-49, 5: 50-59, 6: 60-69, 7: 70-79, 8: 80-89, 9: 90-98, 10: 99+ (admin characters can be 100),
-	   CHPrange: -: negative HP aka died, 0-7: same as when ascii '@' turns into a number, F: full HP aka '@' in ascii. */
+	   CHPrange: -: negative HP aka died, 0-7: same as when ascii '@' turns into a number, F: full HP aka '@' in ascii.
+	   TODO maybe: Add a 2nd mask colour for representing the trait? */
 	case '@':
 #if 0 //todo: implement
 		if (tokenize(buf + 2, 3, zz) == 3) {
@@ -1065,7 +1066,8 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 	   type: 0 = rain, 1 = snow, 2 = sandstorm (all client-side),
 	         3 = fireworks launch, 4 = fireworks explosion (all server-side);
 	   subtype (optional):
-	         for types 0/1/2: 0 = no wind, 1 = west wind, 2 = east wind, 3 = strong west wind, 4 = strong east wind. */
+	         for types 0/1/2: 0 = no wind, 1 = west wind, 2 = east wind, 3 = strong west wind, 4 = strong east wind.
+	NOTE: Currently weather particles and fireworks are implemented as 'K:' lines as a workaround. */
 	case 'Z':
 #if 0 //todo: implement
 		if (tokenize(buf + 2, 3, zz) == 3) {
@@ -1090,7 +1092,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 #endif
 		break;
 
-	/* Process "E:<tv>:<a>/<c>" -- attr/char for equippy chars */
+	/* Process "E:<tv>:<a>/<c>" -- attr/char for equippy chars (purely tval-based base mapping) */
 	case 'E':
 		/* Do nothing */
 		return(0);
@@ -1112,7 +1114,8 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 #endif
 		break;
 
-	/* Process "V:<num>:<kv>:<rv>:<gv>:<bv>" -- visual info */
+	/* Process "V:<num>:<kv>:<rv>:<gv>:<bv>" -- visual info.
+	   NOTE: Currently, colours are read from .rc/.ini file. (Also, colour index [i}[0] is only used for main-ami.c, where it is always 1). */
 	case 'V':
 		/* Do nothing */
 		return(0);
