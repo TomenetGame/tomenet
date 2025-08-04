@@ -11698,7 +11698,7 @@ void handle_request_return_num(int Ind, int id, int num) {
 		if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->casino_odds * p_ptr->casino_wager);
 		else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
-		casino_result(Ind, win);
+		casino_result(Ind, win, TRUE);
 		return;
 		}
 
@@ -11897,7 +11897,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->casino_odds * p_ptr->casino_wager);
 		else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
-		casino_result(Ind, win);
+		casino_result(Ind, win, TRUE);
 		return;
 		}
 

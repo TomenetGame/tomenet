@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 28. July 2025 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 4. August 2025 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9581,33 +9581,41 @@ so the payoff odds are 9. The 'zero' always loses.
 Dice slots
 ----------
 
+This game requires upfront payment of the wager.
+
 Three random slots are spun and can stop at one of six symbols:
  'Lemon', 'Orange', 'Sword', 'Shield', 'Plum' and 'Cherry'.
 They have different values:
  Lemon 1, Orange 2, Sword 3, Shield 4, Plum 5, Cherry 6.
 
-To win, you must either get 3 identical symbols
-or the first two symbols must both be 'Cherry'.
+To win, you must either get
+ - 3 identical symbols,
+ - 2 cherries or 2 plums as the first two symbols,
+ - 3 arms (swords or shields).
 
 If you have 3 identical symbols, the payoff is:
  Lemon:  4x.
  Orange: 6x.
  Otherwise the square of the symbol's value!
-If you have two cherries in slot 1 and 2, the payoff is:
- The third slot's symbol's value plus two.
-If you have two plums in slot 1 and 2, the payoff is:
+
+If you have 2 cherries in slot 1 and 2, the payoff is:
+ The third slot's symbol's value plus three.
+If you have 2 plums in slot 1 and 2, the payoff is:
  The third slot's symbol's value plus one.
 
+If you have 3 arms (swords or shields), the pay off is 2.
+
 Last chance for salvation:
-If the 2nd and 3rd slot are the same fruit type (not shields or swords)
-you get your wager back, so you come out with neither profit nor loss.
+If two slots show the same fruit (not shields or swords) you get
+your wager back, so you come out with neither profit nor loss.
 
 eg.
 if orange, orange, orange appears, you win at payoff 6.
 if cherry, cherry, cherry appears, you win at payoff 36 (ie 6 * 6).
 if cherry, cherry, sword appears, you win at payoff 5 (ie 3 + 2).
 if plum, plum, cherry appears, you win at payoff 7 (ie 6 + 1).
-if lemon, cherry, cherry appears, you lose.
+if shield, sword, sword appears, you win at payoff 2.
+if lemon, cherry, shield appears, you lose.
 
 
 ==============================================================================

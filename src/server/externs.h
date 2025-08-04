@@ -2579,7 +2579,7 @@ extern bool is_state(int Ind, store_type *s_ptr, int state);
 extern void show_building(int Ind, store_type *s_ptr);
 extern bool bldg_process_command(int Ind, store_type *s_ptr, int action, int item, int item2, int amt, int gold);
 extern bool repair_item_aux(int Ind, int i, bool iac);
-extern void casino_result(int Ind, bool win);
+extern void casino_result(int Ind, bool win, bool deduct_loss);
 
 /* metaclient.c */
 extern void meta_tick(void);

@@ -572,13 +572,13 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	/* Get the wager */
 	wager = gold;
 
-	if (wager > p_ptr->au) {
+	if (wager > maxbet && maxbet <= p_ptr->au) {
+		msg_format(Ind, "I'll take %d Au of that. Keep the rest.", maxbet);
+		wager = maxbet;
+	} else if (wager > p_ptr->au || !p_ptr->au) {
 		msg_print(Ind, "Hey! You don't have the gold - get out of here!");
 		store_kick(Ind, FALSE);
 		return(FALSE);
-	} else if (wager > maxbet) {
-		msg_format(Ind, "I'll take %d Au of that. Keep the rest.", maxbet);
-		wager = maxbet;
 	} else if (wager < 1) {
 		msg_print(Ind, "Ok, we'll start with 1 Au.");
 		wager = 1;
@@ -791,6 +791,10 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		return(TRUE);
 
 	case BACT_DICE_SLOTS: /* The Dice Slots */
+		//have to 'pay upfront' for dice slots! (for easier prob calc) - like you insert a coin^^
+		p_ptr->au -= wager;
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
+
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== Dice Slots ===");
 		roll1 = randint(6);
 		roll2 = randint(6);
@@ -823,43 +827,48 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			display_fruit(Ind, old_casino ? 8 : 7, 44, choice);
 		}
 
-#define SLOTS_BONUS 1 /* fine-tuning: must be 0 or 1 */
 		if (roll1 == roll2 && roll2 == choice) {
 			win = TRUE;
 			if (roll1 == 1) odds = 4;
 			else if (roll1 == 2) odds = 6;
 			else odds = roll1 * roll1;
-			//Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
-			Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, format("You won (x%d)!", odds));
 		} else if (roll1 == 6 && roll2 == 6) {
 			win = TRUE;
-			odds = choice + 1 + SLOTS_BONUS; //slight boost (was +1), for contrasting the double plum below
-			//Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
-			Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, format("You won (x%d)!", odds));
-		} else if (roll1 == 5 && roll2 == 5) { //added some extra winnage (this combo didn't exist before) ^^
+			odds = choice + 3;
+		} else if (roll1 == 5 && roll2 == 5) {
 			win = TRUE;
-			odds = choice + SLOTS_BONUS;
-			//Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 7, TERM_L_GREEN, format("You won (x%d)!", odds));
-			Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, format("You won (x%d)!", odds));
-		} else if (roll2 == choice && roll2 != 3 && roll2 != 4) { //this too...so generous oO
+			odds = choice + 1;
+		} else if ((roll1 == 3 || roll1 == 4) && (roll2 == 3 || roll2 == 4) && (choice == 3 || choice == 4)) {
 			win = TRUE;
-			odds = 0; //just get the wager back
-			//Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_L_GREEN, "You won!");
-			Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, "You won!");
-		} else //Send_store_special_str(Ind, DICE_Y + 15, DICE_X - 4, TERM_SLATE, "You lost.");
-			Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_SLATE, "You lost.");
+			odds = 2;
+		} else if (roll2 == choice && roll2 != 3 && roll2 != 4) {
+			win = TRUE;
+			odds = 1; //just get the wager back
+		} else if (roll1 == choice && roll1 != 3 && roll1 != 4) {
+			win = TRUE;
+			odds = 1; //just get the wager back
+		} else if (roll1 == roll2 && roll1 != 3 && roll1 != 4) {
+			win = TRUE;
+			odds = 1; //just get the wager back
+		}
+
+		if (win) {
+			if (odds == 1) Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 16, TERM_L_GREEN, "Recuperated your wager!");
+			else Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, format("You won (x%d)!", odds));
+		} else Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_SLATE, "You lost.");
 
 		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
 		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 		break;
 	}
+
 	p_ptr->casino_odds = odds;
 	p_ptr->casino_wager = wager;
-	casino_result(Ind, win);
+	casino_result(Ind, win, cmd != BACT_DICE_SLOTS); //dice slots required payment upfront already, so in case of loss don't double-deduct
 	return(TRUE);
 }
 
-void casino_result(int Ind, bool win) {
+void casino_result(int Ind, bool win, bool deduct_loss) {
 	player_type *p_ptr = Players[Ind];
 
 	if (win) {
@@ -882,14 +891,17 @@ void casino_result(int Ind, bool win) {
 			if (p_ptr->casino_odds) msg_format(Ind, "\377GYou won %d Au! (Payoff: %d)", p_ptr->casino_odds * p_ptr->casino_wager, p_ptr->casino_odds);
 			else msg_format(Ind, "\377GYou won and got your wager of %d Au back.", p_ptr->casino_wager);
 		}
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 	} else {
-		p_ptr->au -= p_ptr->casino_wager;
+		if (deduct_loss) {
+			p_ptr->au -= p_ptr->casino_wager;
+			Send_gold(Ind, p_ptr->au, p_ptr->balance);
+		}
 		msg_format(Ind, "\377sYou lost your wager of %d Au.", p_ptr->casino_wager);
 #ifdef USE_SOUND_2010
 		sound(Ind, "casino_lose", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 	}
-	Send_gold(Ind, p_ptr->au, p_ptr->balance);
 
 	p_ptr->casino_wager = 0;
 }
