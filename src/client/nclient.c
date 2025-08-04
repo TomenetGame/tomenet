@@ -4639,6 +4639,7 @@ static void display_fruit(int row, int col, int fruit) {
  #ifndef TEST_RAWPICT
 	    FALSE;
  #else
+	    !c_cfg.ascii_items &&
 	    (tiles_rawpict_org[1].defined && tiles_rawpict_org[2].defined && tiles_rawpict_org[3].defined &&
 	    tiles_rawpict_org[4].defined && tiles_rawpict_org[5].defined && tiles_rawpict_org[6].defined);
  #endif
@@ -4773,7 +4774,7 @@ int Receive_store_special_anim(void) {
 	u16b anim1, anim2, anim3, anim4;
 	int anim_step;
 #ifdef USE_GRAPHICS
-	bool use_gfx_d10f = TRUE;
+	bool use_gfx_d10f = !c_cfg.ascii_items;
 #endif
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd%hd%hd", &ch, &anim1, &anim2, &anim3, &anim4)) <= 0) return(n);
