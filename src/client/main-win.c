@@ -844,6 +844,7 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 
 	for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
 		if (!tiles_rawpict_org[i].defined) continue;
+		if (!width1 || !height1) continue;
 		td->tiles_rawpict[i].defined = TRUE;
 		td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
 		td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
@@ -869,6 +870,7 @@ void tiles_rawpict_scale(void) {
 
 		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
 			if (!tiles_rawpict_org[i].defined) continue;
+			if (!width1 || !height1) continue;
 			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
 			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
 			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
