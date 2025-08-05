@@ -4635,7 +4635,7 @@ int Receive_store_special_clr(void) {
 
 static void display_fruit(int row, int col, int fruit) {
 #ifdef USE_GRAPHICS
-	bool use_gfx_fruits =
+	bool use_gfx_fruits = /* perhaps display both, first ascii fruit and then gfx fruit on top of it, so ascii fruit will still be there if screen gets refreshed? */
  #ifndef TEST_RAWPICT
 	    FALSE;
  #else
