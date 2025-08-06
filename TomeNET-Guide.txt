@@ -23300,7 +23300,8 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Tier II: Level 40.
 
     Orb of Draining Summons a holy orb, devouring monsters.
-                    This spell deals double damage against evil monsters.
+                    This spell deals double damage against evil creatures
+                    and no damage against good creatures.
                     Required skill level for first spell level: 20.
 
                     Tier II: Level 40.
