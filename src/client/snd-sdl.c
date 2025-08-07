@@ -4782,10 +4782,15 @@ void do_cmd_options_mus_sdl(void) {
  #if 0 /* 0'ed: Exception - we leave playall/shuffleall mode active even when leaving the jukebox screen and returning to actual gameplay, so we can play while still listening! */
 			jukebox_play_all = FALSE;
  #else
+			/* Hack: Allow play-all/shuffle-all to continue even outside of the jukebox */
 			if (jukebox_play_all) {
 				curmus_timepos = -1; //no more song is playing in the jukebox now
 				jukebox_screen = FALSE;
 				topline_icky = FALSE;
+
+				/* Force mixer to remain enabled in any case */
+				cfg_audio_master = TRUE;
+				cfg_audio_music = TRUE;
 			} else
  #endif
 			{
