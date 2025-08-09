@@ -589,7 +589,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	switch (cmd) {
 	case BACT_IN_BETWEEN: /* Game of In-Between */
-		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== In Between ===");
+		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_VIOLET, "=== In Between ===");
 
 		odds = 3;
 		/* Changed it for better formatting visually to use 0..9 instead of 1..10, so we know the number is always 1 char wide ^^' - C. Blue */
@@ -690,7 +690,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	case BACT_CRAPS: /* Game of Craps - requires the good new RNG :) (thanks Mikael for adding the SFMT) */
 #define CRAPS_1STDICE_ATTR TERM_RED /* Colour of the first pair of dice rolled for better distinguishing of function :). (Second pair is normal colour aka k_info->TERM_L_UMBER.) */
-		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Craps ===");
+		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_ORANGE, "=== Craps ===");
 
 		win = 3;
 		odds = 1;

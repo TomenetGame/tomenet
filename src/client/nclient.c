@@ -4805,7 +4805,7 @@ int Receive_store_special_anim(void) {
 		anim_step = rand_int(ANIM_WHEEL_LENGTH) + ANIM_WHEEL_LENGTH * 2;
 		while (--anim_step) { //decrement first, or final loop ends up same as final placement done afterwards, resulting in a perceived 'extra sfx' as there is no visible change
 			Term_putstr(DICE_X - 13, DICE_Y + 4, -1, TERM_L_GREEN, "                              ");
-			Term_putstr(DICE_X - 13 + 3 * ((anim_step + anim2) % 10), DICE_Y + 4, -1, TERM_L_GREEN, "*");
+			Term_putstr(DICE_X - 13 + 3 * ((anim_step + anim2) % 10), DICE_Y + 4, -1, TERM_POIS, "*");
 
 			/* hack: hide cursor */
 			Term->scr->cx = Term->wid;

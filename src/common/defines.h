@@ -8332,6 +8332,7 @@ extern int PlayerUID;
  #define TERM_SEL_RED	61
  #define TERM_SEL_BLUE	62
  #define TERM_SRCLITE	63	/* Looking for the watcher in the sky */
+ /* ... these 'normal' animated colours continue at 95 further below */
 
  #ifdef EXTENDED_COLOURS_PALANIM
   #define TERMA_OFFSET	64
@@ -8393,6 +8394,9 @@ extern int PlayerUID;
   #define TERM_BNW	0x40	/* 64: black & white MASK, for admin wizards */
   #define TERM_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */
  #endif
+
+ /* ...continue with 'normal' animated colours here, after 63. All inbetween was special stuff. */
+ #define TERM_SEL_GREEN	95
 #else
  #define TERM_BNW	0x20	/* 32: black & white MASK, for admin wizards */
  #define TERM_PVP	0x40	/* 64: black & red MASK, for active PvP-hostility (or stormbringer) */
@@ -8401,7 +8405,7 @@ extern int PlayerUID;
 #endif
 #ifdef EXTENDED_BG_COLOURS
  #define TERMX_START	80
- #define TERMX_AMT	7
+ #define TERMX_AMT	7	/* 80...86 = 7 colours */
  #define TERMX_BLUE	80
  #define TERMX_GREEN	81
  #define TERMX_RED	82

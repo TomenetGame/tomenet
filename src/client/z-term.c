@@ -894,6 +894,7 @@ static byte anim2static(byte attr) {
 		c_msg_print("Colour error 1");
 #endif
 		return(TERM_VIOLET); //paranoia + just silence the compiler */
+
 	case TERM_SMOOTHPAL:
 		switch ((((unsigned)ticks * 10) / 52) % 6) { //xD
 		case 0: return(TERM_L_RED);
@@ -907,6 +908,7 @@ static byte anim2static(byte attr) {
 		c_msg_print("Colour error 2");
 #endif
 		return(TERM_VIOLET); //paranoia + just silence the compiler */
+
 	case TERM_SEL_RED:
 #if 0 /* somewhat calm still */
 		switch ((unsigned)ticks % 10) {
@@ -945,7 +947,8 @@ static byte anim2static(byte attr) {
 		c_msg_print("Colour error 3");
 #endif
 		return(TERM_VIOLET); //paranoia + just silence the compiler */
-	case TERM_SEL_BLUE: //atm for testing purpose only, see comments below...
+
+	case TERM_SEL_BLUE: //atm for testing purpose only, see comments below... -- not anymore, now also used for 'shuffle/play all' in the jukebox
 		/* Dual-animation! Use palette animation if available, colour-rotation otherwise */
 		if (TRUE
 #ifdef EXTENDED_BG_COLOURS
@@ -1003,6 +1006,7 @@ static byte anim2static(byte attr) {
 		c_msg_print("Colour error 4");
 #endif
 		return(TERM_VIOLET); //paranoia + just silence the compiler */
+
 	case TERM_SRCLITE: {
 //#define TERM_SRCLITE_TEMP /* only animate temporarily instead of permanently? */
 #define TERM_SRCLITE_HUE 1 /* 1 = reddish, else blueish */
@@ -1093,6 +1097,25 @@ static byte anim2static(byte attr) {
 		default: return(TERM_L_DARK); /* need TERM_L_DARK or TERM_SLATE to get enough contrast to dark blue */
 #endif
 		}}
+
+	case TERM_SEL_GREEN:
+		switch ((unsigned)ticks % 14) {
+		case 0: case 1:
+		case 14: case 15:
+			return(TERM_L_DARK);
+		case 2: case 3:
+		case 12: case 13:
+			return(TERM_GREEN);
+		case 4: case 5: case 6:
+		case 7: case 8:
+		case 9: case 10: case 11:
+			return(TERM_L_GREEN);
+		}
+#ifdef TEST_CLIENT
+		c_msg_print("Colour error 5");
+#endif
+		return(TERM_VIOLET); //paranoia + just silence the compiler */
+
 	default:
 		return(TERM_L_WHITE); //safe-fail, so whatever we were trying to do we won't exceed any basic colour array stuff..
 	}
@@ -1569,6 +1592,22 @@ byte flick_colour(byte attr) {
 		default: return(TERM_L_DARK); /* need TERM_L_DARK or TERM_SLATE to get enough contrast to dark blue */
 #endif
 		}}
+
+	case TERM_SEL_GREEN:
+		switch ((unsigned)ticks % 14) {
+		case 0: case 1:
+		case 14: case 15:
+			return(TERM_L_DARK);
+		case 2: case 3:
+		case 12: case 13:
+			return(TERM_GREEN);
+		case 4: case 5: case 6:
+		case 7: case 8:
+		case 9: case 10: case 11:
+			return(TERM_L_GREEN);
+		}
+		/* Fall through should not happen, just silence the compiler */
+		__attribute__ ((fallthrough));
 
 	case TERM_ANIM_WATER_EAST: /* water stream flowing eastward, every 5th grid has a 'lighter' foam */
 		if (!flick_global_x) return(flick_colour(TERM_WATE));

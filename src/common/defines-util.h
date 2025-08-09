@@ -168,6 +168,8 @@
   #define TERM_BNW	0x40	/* 64: black & white MASK, for admin wizards */
   #define TERM_PVP	0x80	/* 128: black & red MASK, for active PvP-hostility (or stormbringer) */
  #endif
+
+ #define TERM_SEL_GREEN	95
 #else
  #define TERM_BNW	0x20	/* 32: black & white MASK, for admin wizards */
  #define TERM_PVP	0x40	/* 64: black & red MASK, for active PvP-hostility (or stormbringer) */
