@@ -795,7 +795,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		p_ptr->au -= wager;
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 
-		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_GREEN, "=== Dice Slots ===");
+		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_L_BLUE, "=== Dice Slots ===");
 		roll1 = randint(6);
 		roll2 = randint(6);
 		choice = randint(6);
