@@ -9440,7 +9440,7 @@ extern int PlayerUID;
 #define BACT_STEAL			46
 #define BACT_QUEST2			47
 #define BACT_QUEST3			48
-#define BACT_QUEST4			49
+#define BACT_BLACKJACK			49
 #define BACT_STAR_HEAL			50
 #define BACT_REQUEST_ITEM		51
 #define BACT_GET_LOAN			52

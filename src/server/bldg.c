@@ -860,6 +860,93 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
 		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 		break;
+
+	case BACT_BLACKJACK:
+#define CRAPS_1STDICE_ATTR TERM_RED /* Colour of the first pair of dice rolled for better distinguishing of function :). (Second pair is normal colour aka k_info->TERM_L_UMBER.) */
+		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_L_DARK, "=== Black Jack ===");
+
+		win = 1;
+		odds = 1;
+		roll1 = randint(13);
+		roll2 = randint(13);
+		roll3 = randint(13);
+		choice = randint(13);
+
+#if 0
+		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
+			Send_store_special_anim(Ind, 4, 0, 0, 0);
+ #ifdef USE_SOUND_2010
+		else
+			//msg_print(Ind, "\377GCraps");
+			sound(Ind, "casino_craps", NULL, SFX_TYPE_MISC, FALSE);
+ #endif
+#else
+ #ifdef USE_SOUND_2010
+		sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
+ #endif
+ #ifdef USE_SOUND_2010
+		sound(Ind, "playing_cards", NULL, SFX_TYPE_MISC, TRUE);
+ #endif
+#endif
+
+#if 0
+#ifdef CUSTOM_VISUALS
+		if (custom_visuals) {
+ #ifdef GRAPHICS_BG_MASK
+  #ifndef DICE_HUGE //normal die
+			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, CRAPS_1STDICE_ATTR, c_die[roll1], 0, 32);
+			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, CRAPS_1STDICE_ATTR, c_die[roll2], 0, 32);
+  #else //huge die
+			int dx, dy;
+
+			for (dx = 0; dx != 2; dx++) for (dy = 0; dy != 2; dy++) {
+			Send_char_direct(Ind, DICE_HUGE_X + dx, DICE_HUGE_Y + 2 + dy, CRAPS_1STDICE_ATTR, c_die_huge[roll1][dx][dy], 0, 32);
+			Send_char_direct(Ind, DICE_HUGE_X + 4 + dx, DICE_HUGE_Y + 2 + dy, CRAPS_1STDICE_ATTR, c_die_huge[roll2][dx][dy], 0, 32);
+			}
+  #endif
+ #else
+  #ifndef DICE_HUGE //normal die
+			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2, CRAPS_1STDICE_ATTR, c_die[roll1]);
+			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2, CRAPS_1STDICE_ATTR, c_die[roll2]);
+  #else //huge die
+			int dx, dy;
+
+			for (dx = 0; dx != 2; dx++) for (dy = 0; dy != 2; dy++) {
+			Send_char_direct(Ind, DICE_HUGE_X + dx, DICE_HUGE_Y + 2 + dy, CRAPS_1STDICE_ATTR, c_die_huge[roll1][dx][dy]);
+			Send_char_direct(Ind, DICE_HUGE_X + 4 + dx, DICE_HUGE_Y + 2 + dy, CRAPS_1STDICE_ATTR, c_die_huge[roll2][dx][dy]);
+			}
+  #endif
+ #endif
+		} else
+#endif
+		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 3, CRAPS_1STDICE_ATTR, format("%2d  %2d", roll1, roll2));
+#endif
+
+#if 0
+		if ((roll3 == 7) || (roll3 == 11)) {
+			win = TRUE;
+			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_L_GREEN, "You won!");
+		} else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12)) {
+			win = FALSE;
+			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_SLATE, "You lost.");
+		} else {
+			p_ptr->casino_roll = choice;
+			p_ptr->casino_progress = 0;
+			p_ptr->casino_odds = odds;
+			p_ptr->casino_wager = wager;
+			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again -");
+			return(TRUE);
+		}
+
+		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+		else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+#else
+		/* --- under construction --- */
+		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 22, TERM_YELLOW, "Sorry, Blackjack is currently not available.");
+		return(TRUE);
+#endif
+		break;
+
 	}
 
 	p_ptr->casino_odds = odds;
@@ -2266,7 +2353,6 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 	case BACT_QUEST1:
 	case BACT_QUEST2:
 	case BACT_QUEST3:
-	case BACT_QUEST4:
 	{
 #if 0
 		int y = 1, x = 1;
@@ -2317,6 +2403,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 	case BACT_SPIN_WHEEL:
 	case BACT_DICE_SLOTS:
 	case BACT_GAMBLE_RULES:
+	case BACT_BLACKJACK:
 		gamble_comm(Ind, bact, gold);
 		break;
 	case BACT_REST:

@@ -9,6 +9,7 @@
 # Do not modify this file unless you know exactly what you are doing,
 # unless you wish to risk possible system crashes and broken savefiles.
 
+
 # N:<index>:<name>
 # C:<hated cost>:<normal cost>:<liked cost>
 # I:<action>:<acttion restriction>:<letter>:<flags>
@@ -36,6 +37,7 @@
 # 8192 = trapkits
 
 # 16384 = toggle cloaks (repair service flag: general store vs armoury)
+# 32768 = admin-only flag
 
 
 # Version stamp (required)
@@ -200,10 +202,9 @@ N:37:Get an extermination order
 C:0:0:0
 I:48:0:x:0
 
-#	--unused
-N:38:Get an extermination order
+N:38:Play Blackjack
 C:0:0:0
-I:49:0:x:0
+I:49:0:j:32772
 
 N:39:Herbal Healing
 C:15000:10000:7500
