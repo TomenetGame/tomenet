@@ -5858,8 +5858,8 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 	/* QoL */
 	if (last_ok_slot != -1) Send_item_newest_2nd(Ind, last_ok_slot);
 }
-/* Tries to all items or item stacks in inventory completely into
-   a specific subinventory.
+/* Tries to move all items or item stacks in inventory completely into
+   a specific subinventory. Currently only used from "/stow" slash command.
    Returns TRUE if there was some item stowed, else FALSE. */
 bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 	player_type *p_ptr = Players[Ind];

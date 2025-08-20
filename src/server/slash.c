@@ -6180,6 +6180,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			object_type *o_ptr;
 			int start, stop, bags = 0;
 			bool any = FALSE, free_space = FALSE;
+#ifdef SUBINVEN_LIMIT_GROUP
+			int prev_type = -1, t;
+#endif
 
 			/* need to specify one parm: the potion used for colouring */
 			if (strstr(message3, "help") || message3[0] == '?') {
@@ -6222,6 +6225,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				o_ptr = &p_ptr->inventory[i];
 				if (o_ptr->tval != TV_SUBINVEN) break;
 				bags++;
+
+				t = get_subinven_group(o_ptr->sval);
+#ifdef SUBINVEN_LIMIT_GROUP
+				if (t == prev_type) continue; /* This assumes that subinvens are sorted by svals, which is true for all inventory items actually. */
+				prev_type = t;
+#endif
+
 				if (!p_ptr->subinventory[i][o_ptr->bpval - 1].tval) free_space = TRUE;
 				any = do_cmd_subinven_fill(Ind, i, STOW_QUIET) || any; /* FALSE for "You have..." item messages, TRUE for quiet op */
 			}
