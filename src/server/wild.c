@@ -59,7 +59,9 @@
 
 /* Add windows to wilderness houses ('dwellings')? */
 #define WILD_HOUSES_WINDOWS
-
+#ifdef WILD_HOUSES_WINDOWS
+ #define is_no_door(feat) ((feat) != FEAT_HOME && ((feat) < FEAT_DOOR_HEAD || (feat) > FEAT_DOOR_TAIL + 1)) /* +1: Hypothetical secret door (doesn't exist for houses atm though) */
+#endif
 
 
 
@@ -2012,16 +2014,16 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 
 			/* North & south sides */
 			for (x = h_x1 + spacer_x; x <= h_x2 - spacer_x; x += dist_win_x) {
-				if (zcave[h_y1][x].feat != FEAT_HOME && zcave[h_y1][x - 1].feat != FEAT_HOME && zcave[h_y1][x + 1].feat != FEAT_HOME)
+				if (is_no_door(zcave[h_y1][x].feat) && is_no_door(zcave[h_y1][x - 1].feat) && is_no_door(zcave[h_y1][x + 1].feat))
 					zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
-				if (zcave[h_y2][x].feat != FEAT_HOME && zcave[h_y2][x - 1].feat != FEAT_HOME && zcave[h_y2][x + 1].feat != FEAT_HOME)
+				if (is_no_door(zcave[h_y2][x].feat) && is_no_door(zcave[h_y2][x - 1].feat) && is_no_door(zcave[h_y2][x + 1].feat))
 					zcave[h_y2][x].feat = FEAT_BARRED_WINDOW;
 			}
 			/* East & west sides */
 			for (y = h_y1 + spacer_y; y <= h_y2 - spacer_y; y += dist_win_y) {
-				if (zcave[y][h_x1].feat != FEAT_HOME && zcave[y - 1][h_x1].feat != FEAT_HOME && zcave[y + 1][h_x1].feat != FEAT_HOME)
+				if (is_no_door(zcave[y][h_x1].feat) && is_no_door(zcave[y - 1][h_x1].feat) && is_no_door(zcave[y + 1][h_x1].feat))
 					zcave[y][h_x1].feat = FEAT_BARRED_WINDOW_SMALL;
-				if (zcave[y][h_x2].feat != FEAT_HOME && zcave[y - 1][h_x2].feat != FEAT_HOME && zcave[y + 1][h_x2].feat != FEAT_HOME)
+				if (is_no_door(zcave[y][h_x2].feat) && is_no_door(zcave[y - 1][h_x2].feat) && is_no_door(zcave[y + 1][h_x2].feat))
 					zcave[y][h_x2].feat = FEAT_BARRED_WINDOW_SMALL;
 			}
 		} else { /* Non-castles: Depending on house wall length, 0-3 per side */
@@ -2048,14 +2050,14 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 				/* Place window randomly within the dist_win_ interval */
 				if (windows_left != 1 || rand_int(2)) {
 					x = h_x1 + 1 + tmp * dist_win_x + rand_int(dist_win_x);
-					if (zcave[h_y1][x].feat != FEAT_HOME && zcave[h_y1][x - 1].feat != FEAT_HOME && zcave[h_y1][x + 1].feat != FEAT_HOME) {
+					if (is_no_door(zcave[h_y1][x].feat) && is_no_door(zcave[h_y1][x - 1].feat) && is_no_door(zcave[h_y1][x + 1].feat)) {
 						zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
 						windows_left--;
 					}
 				}
 				if (windows_left != 1) {
 					x = h_x1 + 1 + tmp * dist_win_x + rand_int(dist_win_x);
-					if (zcave[h_y2][x].feat != FEAT_HOME && zcave[h_y2][x - 1].feat != FEAT_HOME && zcave[h_y2][x + 1].feat != FEAT_HOME) {
+					if (is_no_door(zcave[h_y2][x].feat) && is_no_door(zcave[h_y2][x - 1].feat) && is_no_door(zcave[h_y2][x + 1].feat)) {
 						zcave[h_y2][x].feat = FEAT_BARRED_WINDOW;
 						windows_left--;
 					}
@@ -2070,14 +2072,14 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 				/* Place window randomly within the dist_win_ interval */
 				if (windows_left != 1 || rand_int(2)) {
 					y = h_y1 + 1 + tmp * dist_win_y + rand_int(dist_win_y);
-					if (zcave[y][h_x1].feat != FEAT_HOME && zcave[y - 1][h_x1].feat != FEAT_HOME && zcave[y + 1][h_x1].feat != FEAT_HOME) {
+					if (is_no_door(zcave[y][h_x1].feat) && is_no_door(zcave[y - 1][h_x1].feat) && is_no_door(zcave[y + 1][h_x1].feat)) {
 						zcave[y][h_x1].feat = FEAT_BARRED_WINDOW;
 						windows_left--;
 					}
 				}
 				if (windows_left != 1) {
 					y = h_y1 + 1 + tmp * dist_win_y + rand_int(dist_win_y);
-					if (zcave[y][h_x2].feat != FEAT_HOME && zcave[y - 1][h_x2].feat != FEAT_HOME && zcave[y + 1][h_x2].feat != FEAT_HOME) {
+					if (is_no_door(zcave[y][h_x2].feat) && is_no_door(zcave[y - 1][h_x2].feat) && is_no_door(zcave[y + 1][h_x2].feat)) {
 						zcave[y][h_x2].feat = FEAT_BARRED_WINDOW;
 						windows_left--;
 					}
