@@ -78,15 +78,15 @@ function get_waterbolt_dam(Ind, limit_lev)
 	lev = get_level(Ind, WATERBOLT_I, 50)
 	if limit_lev ~= 0 and lev > limit_lev then lev = limit_lev + (lev - limit_lev) / 3 end
 
-	return 4 + ((lev * 3) / 5), 6 + ((lev * 5) / 7) + 0
+	return 5 + ((lev * 3) / 5), 6 + ((lev * 5) / 7) + 1
 end
 WATERBOLT_I = add_spell {
 	["name"] = 	"Water Bolt I",
 	["name2"] = 	"WBolt I",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	10,
-	["mana"] = 	4,
-	["mana_max"] = 	4,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
 	["fail"] = 	-5,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
@@ -106,9 +106,9 @@ WATERBOLT_II = add_spell {
 	["name2"] = 	"WBolt II",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	24,
-	["mana"] = 	8,
-	["mana_max"] = 	8,
-	["fail"] = 	-34,
+	["mana"] = 	7,
+	["mana_max"] = 	7,
+	["fail"] = 	-37,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
@@ -127,8 +127,8 @@ WATERBOLT_III = add_spell {
 	["name2"] = 	"WBolt III",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	40,
-	["mana"] = 	16,
-	["mana_max"] = 	16,
+	["mana"] = 	14,
+	["mana_max"] = 	14,
 	["fail"] = 	-75,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
