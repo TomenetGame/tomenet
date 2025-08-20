@@ -125,8 +125,8 @@ SENSEHIDDEN_I = add_spell {
 	["name2"] = 	"SHidden I",
 	["school"] = 	{SCHOOL_DIVINATION},
 	["level"] = 	5,
-	["mana"] = 	2,
-	["mana_max"] = 	2,
+	["mana"] = 	3,
+	["mana_max"] = 	3,
 	["fail"] = 	10,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, 2, "")
