@@ -493,7 +493,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		return;
 // :)		break_cloaking(Ind, 3);
 	}
-	else if (prefix(messagelc, "/say") || (prefix(messagelc, "/s ") || !strcmp(message, "/s"))) {
+	else if (prefix(messagelc, "/say")) { // || (prefix(messagelc, "/s ") || !strcmp(message, "/s"))) { -- changed short form to stow-command
 		if (colon++) {
 			colon_u++;
 			msg_print_near2(Ind, format("\374\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, colon), format("\374\377%c%^s says: %s", COLOUR_CHAT, p_ptr->name, colon_u));
@@ -6174,7 +6174,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (k > 10000) k = 10000;
 			(void)toggle_rest(Ind, k);
 			return;
-		} else if (prefix(messagelc, "/stow")) { /* Stow all items from inventory that can be stowed into bags that are available, optionally only into a specific bag. */
+		} else if (prefix(messagelc, "/stow") || (prefix(messagelc, "/s ") || !strcmp(message, "/s"))) { // (short form used to be for /say)
+			/* Stow all items from inventory that can be stowed into bags that are available, optionally only into a specific bag. */
 			#define STOW_QUIET FALSE
 			object_type *o_ptr;
 			int start, stop, bags = 0;

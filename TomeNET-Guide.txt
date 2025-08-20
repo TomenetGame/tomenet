@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 4. August 2025 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 21. August 2025 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2015,7 +2015,7 @@ They all start with a slash '/' hence they're called slash commands:
 /sac        Tells a hereticism-user if he may use the spell 'Blood Sacrifice'.
 
 /say <text>
-/s          Speaks <text> to players who are currently nearby your position,
+            Speaks <text> to players who are currently nearby your position,
             instead of sending your message to everyone on the server.
 /sayme['] <text>
 /sme        Write an emote to players who are currently nearby your position,
@@ -2099,7 +2099,7 @@ They all start with a slash '/' hence they're called slash commands:
             local timezone). Also see /ctime and /time.
 
 /stow [<a..w|+>]
-            This command will try to stow all items in your inventory into
+/s          This command will try to stow all items in your inventory into
             eligible container items you carry.
             If a slot is specified (optional, '+' for newest item) it will only
             try to stow items which fit into the container item that is in that
