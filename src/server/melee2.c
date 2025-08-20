@@ -10299,6 +10299,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	if ((c_ptr->feat == FEAT_ICE || c_ptr->slippery >= 1000) &&
 	    r_ptr->d_char != 'y' && /* Yeeks have intrinsic feather falling! */
 	    !(r_ptr->flags7 & RF7_CAN_FLY) && !(r_ptr->flags2 & RF2_PASS_WALL) &&
+	    !(r_info[i].flags4 & RF4_BR_GRAV) && /* BR_GRAV pseudo-translates to 'Feather Falling' */
 	    /* Except for /animals/monsters/ that are used to cold, especially Yeti and co */
 	    !(r_ptr->flags3 & RF3_IM_COLD)) {
 	    //(r_info[p_ptr->body_monster].flags3 & (RF3_ANIMAL | RF3_IM_COLD)) == (RF3_ANIMAL | RF3_IM_COLD)))) {
