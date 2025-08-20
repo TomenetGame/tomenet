@@ -49,7 +49,7 @@ IDENTIFY_II = add_spell {
 	["level"] = 	25,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	-15,
+	["fail"] = 	-25,
 	["spell"] = 	function()
 			identify_pack(Ind)
 	end,
@@ -65,7 +65,7 @@ IDENTIFY_III = add_spell {
 	["level"] = 	35,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	-40,
+	["fail"] = 	-60,
 	["spell"] = 	function()
 			identify_pack(Ind)
 			fire_ball(Ind, GF_IDENTIFY, 0, 1, get_level(Ind, IDENTIFY_I, 3), "")
@@ -106,7 +106,7 @@ VISION_II = add_spell {
 	["level"] = 	40,
 	["mana"] = 	55,
 	["mana_max"] = 	55,
-	["fail"] = 	-30,
+	["fail"] = 	-70,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
 			wiz_lite_spell(Ind)
@@ -147,7 +147,7 @@ SENSEHIDDEN_II = add_spell {
 	["level"] = 	20,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
-	["fail"] = 	-10,
+	["fail"] = 	-20,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_DETECTTRAP_PLAYER, 0, 1, 2, "")
 			detect_trap(Ind, 10 + get_level(Ind, SENSEHIDDEN_I, 40, 0))
@@ -216,7 +216,7 @@ SENSEMONSTERS = add_spell {
 	["mana"] = 	25,
 	["mana_max"] = 	25,
 	--["fail"] = 	-15, (was at level 30)
-	["fail"] = 	-30,
+	["fail"] = 	-70,
 	["am"] = 	75,
 	["spell"] = function()
 		set_tim_esp(Ind, 22 + randint(10) + get_level(Ind, SENSEMONSTERS, 28))

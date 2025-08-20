@@ -44,7 +44,7 @@ TELEPORT = add_spell {
 	["level"] = 	10,
 	["mana"] = 	12,
 	["mana_max"] = 	12,
-	["fail"] = 	50,
+	["fail"] = 	10,
 	["spell"] = 	function()
 			local dist = 100 + get_level(Ind, TELEPORT, 100)
 
@@ -80,7 +80,7 @@ TELEAWAY_II = add_spell {
 	["level"] = 	43,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	-60,
+	["fail"] = 	-80,
 	["direction"] = FALSE,
 	["spell"] = 	function()
 			project_los(Ind, GF_AWAY_ALL, 100, "points and shouts")
@@ -98,7 +98,7 @@ RECALL = add_spell {
 	["level"] = 	30,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	20,
+	["fail"] = 	-45,
 	["spell"] = 	function(args)
 			local dur = randint(21 - get_level(Ind, RECALL, 15)) + 15 - get_level(Ind, RECALL, 10)
 
