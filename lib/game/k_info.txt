@@ -3302,7 +3302,7 @@ D:Can be eaten by dragonkin for various temporary effects.
 N:390:& Small Firestone~
 G:~:r
 I:3:6:0
-W:0:0:10:3
+W:0:0:10:8
 A:0/1
 P:0:1d1:0:0:0
 D:Can be eaten by dragonkin for various temporary effects.
