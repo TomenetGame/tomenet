@@ -3620,7 +3620,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 			continue;
 		}
 
-		/* TODO: Add 'outer' shields: Kinetic, Spirit, PfE, Invuln; right here. */
+		/* TODO: Add 'outer' shields: Kinetic, Spirit, PfE, Invuln; right here (mostly COLOUR_DODGE_GOOD for dodger/COLOUR_DODGE_PLY for observer). */
 
 		/* Test for hit */
 		pierced = FALSE;

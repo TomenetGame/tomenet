@@ -791,7 +791,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 #endif
 
 					if (magik(chance > max_chance ? max_chance : chance)) {
-						msg_format(Ind, "%^s is repelled.", m_name);
+						msg_format(Ind, "\377%c%^s is repelled.", COLOUR_DODGE_GOOD, m_name);
 						continue;
 					}
 
@@ -826,7 +826,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_EVIL;
 #endif
 					/* Message */
-					msg_format(Ind, "%^s is repelled.", m_name);
+					msg_format(Ind, "\377%c%^s is repelled.", COLOUR_DODGE_GOOD, m_name);
 
 					/* Hack -- Next attack */
 					continue;

@@ -905,7 +905,7 @@ bool do_dec_stat(int Ind, int stat, int mode) {
 	/* Attempt to reduce the stat */
 	if (dec_stat(Ind, stat, 10, mode)) {
 		/* Message */
-		msg_format(Ind, "You feel very %s.", desc_stat_neg[stat]);
+		msg_format(Ind, "\377yYou feel very %s.", desc_stat_neg[stat]);
 
 		/* Notice effect */
 		return(TRUE);
