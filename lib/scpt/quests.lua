@@ -48,7 +48,8 @@ function quest_towneltalk(Ind, msg, topic)
 			if player.food < 3000 then --PY_FOOD_ALERT
 				if player.ghost == 0 and player.suscep_good == 0 then --Not for undead/demons
 					if hinted == 1 then msg_print(Ind, "\252\255UYou also seem to be in dire need of food. I don't have any with me, but if you visit the temple (4), I'm sure they will hand you some.")
-					else msg_print(Ind, "\252\255U"..msg..", you seem to be in dire need of food. I don't have any with me, but if you visit the temple (4), I'm sure they will hand you some.") end
+					else msg_print(Ind, "\252\255U"..msg..", you seem to be in dire need of food. I don't have any with me, but if you visit the temple (4), I'm sure they will hand you some.")
+					end
 					hinted = 1
 				end
 			end
@@ -72,7 +73,8 @@ function quest_towneltalk(Ind, msg, topic)
 				end
 				if x == 1 then
 					if hinted == 1 then msg_print(Ind, "\252\255UAnd I notice that you apparently have equipped a cursed item. If that was not intentional, you should purchase a scroll of remove curse from the temple (4). As long as it's not a heavy curse it should be broken from that.")
-					else msg_print(Ind, "\252\255U"..msg..", I notice that you apparently have equipped a cursed item. If that was not intentional, you should purchase a scroll of remove curse from the temple (4). As long as it's not a heavy curse it should be broken from that.") end
+					else msg_print(Ind, "\252\255U"..msg..", I notice that you apparently have equipped a cursed item. If that was not intentional, you should purchase a scroll of remove curse from the temple (4). As long as it's not a heavy curse it should be broken from that.")
+					end
 					hinted = 1
 				end
 			end
@@ -84,7 +86,8 @@ function quest_towneltalk(Ind, msg, topic)
 				end
 				if x == 1 then
 					if hinted == 1 then msg_print(Ind, "\252\255UAlso, about that Ring of Power in your backpack, you cannot use it as it isn't yours! If you want to get rid of it you will need a scroll of *remove curse*! A normal scroll of remove curse will not suffice as it is heavily cursed!")
-					else msg_print(Ind, "\252\255UOh "..msg.."! That Ring of Power in your backpack, you cannot use it as it isn't yours! If you want to get rid of it you will need a scroll of *remove curse*! A normal scroll of remove curse will not suffice as it is heavily cursed!") end
+					else msg_print(Ind, "\252\255UOh "..msg.."! That Ring of Power in your backpack, you cannot use it as it isn't yours! If you want to get rid of it you will need a scroll of *remove curse*! A normal scroll of remove curse will not suffice as it is heavily cursed!")
+					end
 					hinted = 1
 				end
 			end
@@ -127,9 +130,11 @@ function quest_towneltalk(Ind, msg, topic)
 		if player.lev < 10 then
 			if player.resist_pois == 1 or player.immune_poison == 1 then x = 1
 			else for i = 0, INVEN_PACK do
-				--check for anti-poison
+				--this early we only check for anti-poison, hence we can just 'break' out when found
 				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 26 or player.inventory[i + 1].sval == 27) then x = 1; break --TV_POTION, SV_POTION_SLOW_POISON, SV_POTION_NEUTRALIZE_POISON
 				elseif player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 12 then x = 1; break --TV_FOOD, SV_FOOD_CURE_POISON
+				elseif player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 207 then x = 1; break --TV_FOOD, SV_FOOD_WAYBREAD
+				elseif player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 210 then x = 1; break --TV_FOOD, SV_FOOD_ATHELAS
 				elseif player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 17 then x = 1; break --TV_STAFF, SV_STAFF_CURING
 
 				--ENABLE_SUBINVEN
@@ -147,22 +152,28 @@ function quest_towneltalk(Ind, msg, topic)
 			hintsub = 0
 			if x == 0 then
 				if hinted == 1 then msg_print(Ind, "\252\255UIf you don't have counters to poison, buy a potion of slow poison from the temple (the green '4') in town.")
-				else msg_print(Ind, "\252\255UWell "..msg..", maybe just grab a potion of slow poison from the temple (the green '4') in town.") end
+				else msg_print(Ind, "\252\255UWell "..msg..", maybe just grab a potion of slow poison from the temple (the green '4') in town.")
+				end
 				hinted = 1; hintsub = 1
 			end
 		elseif player.lev < 20 then
 			for i = 0, INVEN_PACK do
 				--check for escapes
-				if player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 4 then x = 1 end --TV_STAFF, SV_STAFF_TELEPORTATION
-				if player.inventory[i + 1].tval == 70 and (player.inventory[i + 1].sval == 8 or player.inventory[i + 1].sval == 9) then x = 1 end --TV_SCROLL, SV_SCROLL_PHASE_DOOR, SV_SCROLL_TELEPORT
-				--check for heals
-				if player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 16 then y = 1 end --TV_FOOD, SV_FOOD_CURE_SERIOUS
-				if player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 16 then y = 1 end --TV_STAFF, SV_STAFF_CURE_SERIOUS
-				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 35 or player.inventory[i + 1].sval == 36 or player.inventory[i + 1].sval == 38) then y = 1 end --TV_POTION, SV_POTION_CURE_SERIOUS, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING
+				if player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 4 then x = 1 --TV_STAFF, SV_STAFF_TELEPORTATION
+				elseif player.inventory[i + 1].tval == 70 and (player.inventory[i + 1].sval == 8 or player.inventory[i + 1].sval == 9) then x = 1 --TV_SCROLL, SV_SCROLL_PHASE_DOOR, SV_SCROLL_TELEPORT
+				end
+				--check for heals (missing pots: *heal*, life)
+				if player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 16 then y = 1 --TV_FOOD, SV_FOOD_CURE_SERIOUS
+				elseif player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 16 then y = 1 --TV_STAFF, SV_STAFF_CURE_SERIOUS
+				elseif player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 35 or player.inventory[i + 1].sval == 36 or player.inventory[i + 1].sval == 38 or player.inventory[i + 1].sval == 37) then y = 1 --TV_POTION, SV_POTION_CURE_SERIOUS, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING, SV_POTION_STAR_HEALING
+				end
 				--check for anti-poison
-				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 26 or player.inventory[i + 1].sval == 27) then z = 1 end --TV_POTION, SV_POTION_SLOW_POISON, SV_POTION_NEUTRALIZE_POISON
-				if player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 12 then z = 1 end --TV_FOOD, SV_FOOD_CURE_POISON
-				if player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 17 then z = 1 end --TV_STAFF, SV_STAFF_CURING
+				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 26 or player.inventory[i + 1].sval == 27) then z = 1 --TV_POTION, SV_POTION_SLOW_POISON, SV_POTION_NEUTRALIZE_POISON
+				elseif player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 12 then z = 1 --TV_FOOD, SV_FOOD_CURE_POISON
+				elseif player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 207 then z = 1 --TV_FOOD, SV_FOOD_WAYBREAD
+				elseif player.inventory[i + 1].tval == 80 and player.inventory[i + 1].sval == 210 then z = 1 --TV_FOOD, SV_FOOD_ATHELAS
+				elseif player.inventory[i + 1].tval == 55 and player.inventory[i + 1].sval == 17 then z = 1 --TV_STAFF, SV_STAFF_CURING
+				end
 
 				--ENABLE_SUBINVEN
 				if player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 2 then --TV_SUBINVEN, SV_SI_MDEV_WRAPPING
@@ -175,37 +186,49 @@ function quest_towneltalk(Ind, msg, topic)
 				elseif player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 3 then --TV_SUBINVEN, SV_SI_POTION_BELT
 					for j = 0, player.inventory[i + 1].bpval - 1 do
 						forge = lua_get_subinven_item(Ind, i, j)
-						if forge.tval == 71 and (forge.sval == 35 or forge.sval == 36 or forge.sval == 38) then y = 1 end --TV_POTION, SV_POTION_CURE_SERIOUS, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING
+						if forge.tval == 71 and (forge.sval == 35 or forge.sval == 36 or forge.sval == 38 or forge.sval == 37) then y = 1 end --TV_POTION, SV_POTION_CURE_SERIOUS, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING, SV_POTION_STAR_HEALING
 						if forge.tval == 71 and (forge.sval == 26 or forge.sval == 27) then z = 1 end --TV_POTION, SV_POTION_SLOW_POISON, SV_POTION_NEUTRALIZE_POISON
 					end
 				elseif player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 4 then --TV_SUBINVEN, SV_SI_FOOD_BAG
 					for j = 0, player.inventory[i + 1].bpval - 1 do
 						forge = lua_get_subinven_item(Ind, i, j)
 						if forge.tval == 80 and forge.sval == 16 then y = 1 end --TV_FOOD, SV_FOOD_CURE_SERIOUS
-						if forge.tval == 80 and forge.sval == 12 then z = 1 end --TV_FOOD, SV_FOOD_CURE_POISON
+						if forge.tval == 80 and forge.sval == 12 then z = 1 --TV_FOOD, SV_FOOD_CURE_POISON
+						elseif forge.tval == 80 and forge.sval == 207 then z = 1 --TV_FOOD, SV_FOOD_WAYBREAD
+						elseif forge.tval == 80 and forge.sval == 210 then z = 1 --TV_FOOD, SV_FOOD_ATHELAS
+						end
 					end
 				end
 			end
 			if player.resist_pois == 1 or player.immune_poison == 1 then z = 1 end
+			--check for equipped tele-staff or tele-mstaff
+			if player.inventory[INVEN_WIELD + 1].tval == 55 and player.inventory[INVEN_WIELD + 1].sval == 4 then x = 1 --TV_STAFF, SV_STAFF_TELEPORTATION
+			elseif player.inventory[INVEN_WIELD + 1].tval == 6 and player.inventory[INVEN_WIELD + 1].sval == 1 and player.inventory[INVEN_WIELD + 1].xtra1 - 1 == 4 then x = 1 --TV_MSTAFF -> SV_STAFF_TELEPORTATION
+			end
 
 			hintsub = 0
 			if x == 0 then
 				if hinted == 1 then msg_print(Ind, "\252\255UIf you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.")
-				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.") end
+				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.")
+				end
 				hinted = 1; hintsub = 1
 			end
 			if y == 0 then
 				if hinted == 1 then
 					if hintsub == 1 then msg_print(Ind, "\252\255ULikewise if you don't have healing spells available, you should buy potions to cure at least serious wounds from the temple (the green '4') in town.")
-					else msg_print(Ind, "\252\255UIf you don't have healing spells available, you should buy potions to cure at least serious wounds from the temple (the green '4') in town.") end
-				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions to cure at least serious wounds from the temple (the green '4') in town.") end
+					else msg_print(Ind, "\252\255UIf you don't have healing spells available, you should buy potions to cure at least serious wounds from the temple (the green '4') in town.")
+					end
+				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions to cure at least serious wounds from the temple (the green '4') in town.")
+				end
 				hinted = 1; hintsub = 1
 			end
 			if z == 0 then
 				if hinted == 1 then
 					if hintsub == 1 then msg_print(Ind, "\252\255UAlso, get some means of countering poison from the temple (the green '4') in town if you haven't yet.")
-					else msg_print(Ind, "\252\255UIf you don't have curing spells, get means of countering poison from the temple (the green '4') in town.") end
-				else msg_print(Ind, "\252\255UOh "..msg..", if you don't possess curing magic, get something to counter poison from the temple (the green '4') in town.") end
+					else msg_print(Ind, "\252\255UIf you don't have curing spells, get means of countering poison from the temple (the green '4') in town.")
+					end
+				else msg_print(Ind, "\252\255UOh "..msg..", if you don't possess curing magic, get something to counter poison from the temple (the green '4') in town.")
+				end
 				hinted = 1; hintsub = 1
 			end
 		elseif player.lev < 30 then
@@ -217,7 +240,7 @@ function quest_towneltalk(Ind, msg, topic)
 					if player.inventory[i + 1].sval == 9 then x = 1; z = 1 end --SV_SCROLL_TELEPORT
 				end
 				--check for heals
-				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 36 or player.inventory[i + 1].sval == 38) then y = 1 end --TV_POTION, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING
+				if player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 36 or player.inventory[i + 1].sval == 38 or player.inventory[i + 1].sval == 37) then y = 1 end --TV_POTION, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING, SV_POTION_STAR_HEALING
 				--check for one speed potion at least: TV_POTION, SV_POTION_SPEED
 				if player.inventory[i + 1].tval == 71 and player.inventory[i + 1].sval == 29 then w = 1 end
 
@@ -230,37 +253,48 @@ function quest_towneltalk(Ind, msg, topic)
 				elseif player.inventory[i + 1].tval == 126 and player.inventory[i + 1].sval == 3 then --TV_SUBINVEN, SV_SI_POTION_BELT
 					for j = 0, player.inventory[i + 1].bpval - 1 do
 						forge = lua_get_subinven_item(Ind, i, j)
-						if forge.tval == 71 and (forge.sval == 36 or forge.sval == 38) then y = 1 end --TV_POTION, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING
+						if forge.tval == 71 and (forge.sval == 36 or forge.sval == 38 or forge.sval == 37) then y = 1 end --TV_POTION, SV_POTION_CURE_CRITICAL, SV_POTION_HEALING, SV_POTION_STAR_HEALING
 						if forge.tval == 71 and forge.sval == 29 then w = 1 end --TV_POTION, SV_POTION_SPEED
 					end
 				end
+			end
+			--check for equipped tele-staff or tele-mstaff
+			if player.inventory[INVEN_WIELD + 1].tval == 55 and player.inventory[INVEN_WIELD + 1].sval == 4 then x = 1; z = 1 --TV_STAFF, SV_STAFF_TELEPORTATION
+			elseif player.inventory[INVEN_WIELD + 1].tval == 6 and player.inventory[INVEN_WIELD + 1].sval == 1 and player.inventory[INVEN_WIELD + 1].xtra1 - 1 == 4 then x = 1; z = 1 --TV_MSTAFF -> SV_STAFF_TELEPORTATION
 			end
 
 			hintsub = 0
 			if x == 0 then
 				if hinted == 1 then msg_print(Ind, "\252\255UIf you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.")
-				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.") end
+				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have means of escape, you should buy scrolls of phase door from the alchemist (the blue '5') in town.")
+				end
 				hinted = 1; hintsub = 1
 			end
 			if z == 0 then
 				if hinted == 1 then
 					if hintsub == 1 then msg_print(Ind, "\252\255UAnd if you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.")
-					else msg_print(Ind, "\252\255UIf you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.") end
-				else msg_print(Ind, "\252\255UOh "..msg..", if you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.") end
+					else msg_print(Ind, "\252\255UIf you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.")
+					end
+				else msg_print(Ind, "\252\255UOh "..msg..", if you can afford it you should buy a scroll or at least a staff of teleportation to get out of more serious trouble easily.")
+				end
 				hinted = 1; hintsub = 1
 			end
 			if y == 0 then
 				if hinted == 1 then
 					if hintsub == 1 then msg_print(Ind, "\252\255ULikewise if you don't have healing spells available, you should buy potions of cure critical wounds from the temple (the green '4') in town.")
-					else msg_print(Ind, "\252\255UIf you don't have healing spells available, you should buy potions of cure critical wounds from the temple (the green '4') in town.") end
-				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions of cure critical wounds from the temple (the green '4') in town.") end
+					else msg_print(Ind, "\252\255UIf you don't have healing spells available, you should buy potions of cure critical wounds from the temple (the green '4') in town.")
+					end
+				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have healing spells available, you should buy potions of cure critical wounds from the temple (the green '4') in town.")
+				end
 				hinted = 1; hintsub = 1
 			end
 			if w == 0 then
 				if hinted == 1 then
 					if hintsub == 1 then msg_print(Ind, "\252\255UAnd also, you should buy at least one potion of speed, just in case if you meat an especially tough enemy. Look for a black market sale.")
-					else msg_print(Ind, "\252\255UYou should buy at least one potion of speed, just in case if you meat an especially tough enemy. Look for a black market sale.") end
-				else msg_print(Ind, "\252\255UOh "..msg..", you should buy at least one potion of speed, in case you meat an especially tough enemy. Look for a black market sale.") end
+					else msg_print(Ind, "\252\255UYou should buy at least one potion of speed, just in case if you meat an especially tough enemy. Look for a black market sale.")
+					end
+				else msg_print(Ind, "\252\255UOh "..msg..", you should buy at least one potion of speed, in case you meat an especially tough enemy. Look for a black market sale.")
+				end
 				hinted = 1; hintsub = 1
 			end
 		else -- lev 30+
@@ -270,13 +304,14 @@ function quest_towneltalk(Ind, msg, topic)
 			znum = 0
 			wnum = 0
 
+			-- Note: We check for potions/scrolls only at this high level; eg staff of teleportation is ignored
 			for i = 0, INVEN_PACK do
 				--check for escapes
 				if player.inventory[i + 1].tval == 70 and player.inventory[i + 1].sval == 9 then --TV_SCROLL,SV_SCROLL_TELEPORT
 					x = 1
 					xnum = xnum + player.inventory[i + 1].number
 				--check for heals
-				elseif player.inventory[i + 1].tval == 71 and player.inventory[i + 1].sval == 38 then --TV_POTION,SV_POTION_HEALING
+				elseif player.inventory[i + 1].tval == 71 and (player.inventory[i + 1].sval == 38 or player.inventory[i + 1].sval == 37) then --TV_POTION,SV_POTION_HEALING/SV_POTION_STAR_HEALING
 					y = 1
 					ynum = ynum + player.inventory[i + 1].number
 				--check for speed
@@ -294,7 +329,7 @@ function quest_towneltalk(Ind, msg, topic)
 					for j = 0, player.inventory[i + 1].bpval - 1 do
 						forge = lua_get_subinven_item(Ind, i, j)
 
-						if forge.tval == 71 and forge.sval == 38 then --SV_POTION,SV_POTION_HEALING
+						if forge.tval == 71 and (forge.sval == 38 or forge.sval == 37) then --SV_POTION,SV_POTION_HEALING/SV_POTION_STAR_HEALING
 							y = 1
 							ynum = ynum + forge.number
 						elseif forge.tval == 71 and forge.sval == 29 then --TV_POTION,SV_POTION_SPEED
@@ -310,35 +345,43 @@ function quest_towneltalk(Ind, msg, topic)
 
 			if x == 1 and xnum < 5 then
 				if hinted == 1 then msg_print(Ind, "\252\255UYour stack of teleportation scrolls is running dangerously low, you should buy more!")
-				else msg_print(Ind, "\252\255UOh "..msg..", your stack of teleportation scrolls is running dangerously low, you should buy more!") end
+				else msg_print(Ind, "\252\255UOh "..msg..", your stack of teleportation scrolls is running dangerously low, you should buy more!")
+				end
 				hinted = 1; hintsub = 1
 			end
 			if y == 1 and ynum < 10 then
 				if hinted == 1 then
 					if hintsub == 1 then msg_print(Ind, "\252\255UYour supply of healing potions is running dangerously low, too!")
-					else msg_print(Ind, "\252\255UYour supply of healing potions is running dangerously low, you should buy more!") end
-				else msg_print(Ind, "\252\255UOh "..msg..", your supply of healing potions is running dangerously low, you should buy more!") end
+					else msg_print(Ind, "\252\255UYour supply of healing potions is running dangerously low, you should buy more!")
+					end
+				else msg_print(Ind, "\252\255UOh "..msg..", your supply of healing potions is running dangerously low, you should buy more!")
+				end
 				hinted = 1; hintsub = 1
 			end
 			if z == 1 and znum < 6 then
 				if hinted == 1 then
 					if hintsub == 1 then msg_print(Ind, "\252\255USame goes for your supply of speed potins!")
-					else msg_print(Ind, "\252\255UYour supply of speed potions is running dangerously low, you should buy more!") end
-				else msg_print(Ind, "\252\255UOh "..msg..", your supply of speed potions is running dangerously low, you should buy more!") end
+					else msg_print(Ind, "\252\255UYour supply of speed potions is running dangerously low, you should buy more!")
+					end
+				else msg_print(Ind, "\252\255UOh "..msg..", your supply of speed potions is running dangerously low, you should buy more!")
+				end
 				hinted = 1; hintsub = 1
 			end
 			if w == 1 and wnum < 5 then
 				if hinted == 1 then
 					if hintsub == 1 then msg_print(Ind, "\252\255UAnd your supply of resistance potions needs restocking as well!")
-					else msg_print(Ind, "\252\255UYour supply of resistance potions is running dangerously low, you should buy more!") end
-				else msg_print(Ind, "\252\255UOh "..msg..", your supply of resistance potions is running dangerously low, you should buy more!") end
+					else msg_print(Ind, "\252\255UYour supply of resistance potions is running dangerously low, you should buy more!")
+					end
+				else msg_print(Ind, "\252\255UOh "..msg..", your supply of resistance potions is running dangerously low, you should buy more!")
+				end
 				hinted = 1; hintsub = 1
 			end
 
 			hintsub = 0
 			if x == 0 then
 				if hinted == 1 then msg_print(Ind, "\252\255UYou should buy scrolls of teleportation from the black market to be able to get out of bigger trouble fast.")
-				else msg_print(Ind, "\252\255UOh "..msg..", you should buy scrolls of teleportation from the black market to be able to get out of bigger trouble fast.") end
+				else msg_print(Ind, "\252\255UOh "..msg..", you should buy scrolls of teleportation from the black market to be able to get out of bigger trouble fast.")
+				end
 				hinted = 1; hintsub = 1
 			end
 			if y == 0 then
@@ -362,15 +405,19 @@ function quest_towneltalk(Ind, msg, topic)
 			if z == 0 then
 				if hinted == 1 then
 					if hintsub == 1 then msg_print(Ind, "\252\255UAlso if you don't have speed spells available, you should buy potions of speed there too.")
-					else msg_print(Ind, "\252\255UIf you don't have speed spells available, you should buy potions of speed from the black market.") end
-				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have speed spells available, you should buy potions of speed from the black market.") end
+					else msg_print(Ind, "\252\255UIf you don't have speed spells available, you should buy potions of speed from the black market.")
+					end
+				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have speed spells available, you should buy potions of speed from the black market.")
+				end
 				hinted = 1; hintsub = 1
 			end
 			if w == 0 then
 				if hinted == 1 then
 					if hintsub == 1 then msg_print(Ind, "\252\255UAnd if you don't have resistance spells available, you should buy potions of resistance there too.")
-					else msg_print(Ind, "\252\255UIf you don't have resistance spells available, you should buy potions of resistance from the black market.") end
-				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have resistance spells available, you should buy potions of resistance from the black market.") end
+					else msg_print(Ind, "\252\255UIf you don't have resistance spells available, you should buy potions of resistance from the black market.")
+					end
+				else msg_print(Ind, "\252\255UOh "..msg..", if you don't have resistance spells available, you should buy potions of resistance from the black market.")
+				end
 				hinted = 1; hintsub = 1
 			end
 		end
@@ -554,6 +601,7 @@ function quest_towneltalk(Ind, msg, topic)
 
 	--*** partying ***
 	if topic == 4 or topic == -2 then
+		-- TODO
 	end
 
 	--*** dungeon exploration ***
@@ -569,7 +617,5 @@ function quest_towneltalk(Ind, msg, topic)
 	end
 
 	--- Done ---
-	if hinted == 0 then
-		msg_print(Ind, "\252\255UYou seem to be doing fine, "..msg..".")
-	end
+	if hinted == 0 then msg_print(Ind, "\252\255UYou seem to be doing fine, "..msg..".") end
 end
