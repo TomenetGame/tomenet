@@ -226,7 +226,7 @@ RESISTS_I = add_spell {
 	["level"] = 	15,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
-	["fail"] = 	-10,
+	["fail"] = 	-15,
 	["spell"] = 	function()
 			set_oppose_fire(Ind, randint(10) + 15 + get_level(Ind, RESISTS_I, 50))
 			set_oppose_cold(Ind, randint(10) + 15 + get_level(Ind, RESISTS_I, 50))

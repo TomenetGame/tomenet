@@ -129,7 +129,7 @@ STONEPRISON = add_spell {
 	["level"] = 	33,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	-10,
+	["fail"] = 	-60,
 	["spell"] = 	function()
 			local ret, x, y
 			fire_ball(Ind, GF_STONE_WALL, 0, 1, 1, "")
