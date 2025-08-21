@@ -4706,7 +4706,7 @@ W:0:0:2:3
 A:5/16
 P:0:1d1:0:0:0
 F:ACTIVATE | EASY_KNOW
-D:Used for tending to open wounds.
+D:Used for tending to open wounds to lessen the bleeding.
 
 N:542:& Club~
 G:\:u

@@ -4001,7 +4001,7 @@ cptr item_activation(object_type *o_ptr) {
 
 	case TV_JUNK:
 		switch (o_ptr->sval) {
-		case SV_BANDAGE: return("tending to open wounds");
+		case SV_BANDAGE: return("tending to open wounds to lessen the bleeding");
 		case SV_GLASS_SHARD: return("altering a death fate");
 		case SV_ENERGY_CELL: return("delivering a full energy recharge");
 		default:
