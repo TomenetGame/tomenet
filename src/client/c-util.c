@@ -8444,6 +8444,10 @@ Chain_Macro:
 						if (i == -2) continue;
 
 						/* Chain */
+						if (chain_macro_buf[0] && !strncmp(macro__buf, "\e)", 2)) { /* Skip subsequent ')' keybuffer clearing, as it would cancel the previous macro if the player doesn't have enough energy to execute it right now! */
+							strcat(chain_macro_buf, "\e");
+							strcat(chain_macro_buf, macro__buf + 2);
+						} else
 						strcat(chain_macro_buf, macro__buf);
 						strcpy(macro__buf, chain_macro_buf);
 
@@ -8524,6 +8528,11 @@ Chain_Macro:
 									if (delay) {
 										sprintf(tmp, "\\w%c%c", '0' + delay / 10, '0' + delay % 10);
 										text_to_ascii(macro__buf, tmp);
+										/* Chain */
+										if (chain_macro_buf[0] && !strncmp(macro__buf, "\e)", 2)) { /* Skip subsequent ')' keybuffer clearing, as it would cancel the previous macro if the player doesn't have enough energy to execute it right now! */
+											strcat(chain_macro_buf, "\e");
+											strcat(chain_macro_buf, macro__buf + 2);
+										} else
 										strcat(chain_macro_buf, macro__buf);
 										strcpy(macro__buf, chain_macro_buf);
 									}
@@ -9527,6 +9536,10 @@ Chain_Macro:
 					if (chain_macro_buf[0] && choice != mw_custom) text_to_ascii(macro__buf, buf2 + 3);
 					else text_to_ascii(macro__buf, buf2);
 					/* Handle chained macros */
+					if (chain_macro_buf[0] && !strncmp(macro__buf, "\e)", 2)) { /* Skip subsequent ')' keybuffer clearing, as it would cancel the previous macro if the player doesn't have enough energy to execute it right now! */
+						strcat(chain_macro_buf, "\e");
+						strcat(chain_macro_buf, macro__buf + 2);
+					} else
 					strcat(chain_macro_buf, macro__buf);
 					strcpy(macro__buf, chain_macro_buf);
 
@@ -9615,6 +9628,11 @@ Chain_Macro:
 								if (delay) {
 									sprintf(tmp, "\\w%c%c", '0' + delay / 10, '0' + delay % 10);
 									text_to_ascii(macro__buf, tmp);
+									/* Chain */
+									if (chain_macro_buf[0] && !strncmp(macro__buf, "\e)", 2)) { /* Skip subsequent ')' keybuffer clearing, as it would cancel the previous macro if the player doesn't have enough energy to execute it right now! */
+										strcat(chain_macro_buf, "\e");
+										strcat(chain_macro_buf, macro__buf + 2);
+									} else
 									strcat(chain_macro_buf, macro__buf);
 									strcpy(macro__buf, chain_macro_buf);
 								}
