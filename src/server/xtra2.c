@@ -11876,11 +11876,9 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 	/* give it only to the one original target player */
 	j = target;
 	q_ptr = Players[j];
-#ifndef RPG_SERVER
-	if (q_ptr->lev < 5 && !in_irondeepdive(&q_ptr->wpos)) return(FALSE); /* level 5 is minimum to do quests */
-#else
-	if (q_ptr->lev < 3) return(FALSE);
-#endif
+
+	/* We assume the minimum level requirement check was already done by prepare_xorder(). */
+
 	q_ptr->xorder_id = questid;
 	q_ptr->xorder_num = num;
 	clockin(j, 4); /* register that player */
