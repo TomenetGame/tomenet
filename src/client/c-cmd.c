@@ -7994,17 +7994,17 @@ void cmd_message(void) {
 			c_msg_format("Client version: %d.%d.%d.%d.%d.%d%s, OS %d.", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD, CLIENT_VERSION_TAG, VERSION_OS);
 			inkey_msg = FALSE;
 			return;
-		} else if (!strcasecmp(buf, "/apickup")) {
+		} else if (!strcasecmp(buf, "/apickup")) { //purely client-side, so Client_setup.options[] doesn't need to be changed
 			c_cfg.auto_pickup = !c_cfg.auto_pickup;
 			c_msg_format("Auto-pickup mode is %s.", c_cfg.auto_pickup ? "on" : "off");
 			inkey_msg = FALSE;
 			return;
-		} else if (!strcasecmp(buf, "/adestroy")) {
+		} else if (!strcasecmp(buf, "/adestroy")) { //purely client-side, so Client_setup.options[] doesn't need to be changed
 			c_cfg.auto_destroy = !c_cfg.auto_destroy;
 			c_msg_format("Auto-destroy mode is %s.", c_cfg.auto_destroy ? "on" : "off");
 			inkey_msg = FALSE;
 			return;
-		} else if (!strcasecmp(buf, "/daunmatched")) {
+		} else if (!strcasecmp(buf, "/daunmatched")) { //purely client-side, so Client_setup.options[] doesn't need to be changed
 			c_cfg.destroy_all_unmatched = !c_cfg.destroy_all_unmatched;
 			c_msg_format("Destroy-all-unmatched mode (requires auto_destroy) is %s.", c_cfg.destroy_all_unmatched ? "on" : "off");
 			inkey_msg = FALSE;
