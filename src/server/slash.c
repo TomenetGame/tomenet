@@ -6621,6 +6621,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 			return;
 		} else if (prefix(messagelc, "/tss")) { //Thunderstorm: Hit sleeping monsters too.
+			//if (!p_ptr->s_info[SKILL_NATURE].mod && !p_ptr->s_info[SKILL_AIR].mod)
+			if (exec_lua(Ind, format("return get_level(%d, THUNDERSTORM, 50, -50)", Ind)) < 1) {
+				msg_print(Ind, "\377yThis command can only be used by characters that can cast 'Thunderstorm'.");
+				return;
+			}
+
 			if (p_ptr->ts_sleeping == FALSE) {
 				p_ptr->ts_sleeping = TRUE;
 				msg_print(Ind, "Thunderstorm spell will now \377ohit sleeping monsters\377w as well.");
