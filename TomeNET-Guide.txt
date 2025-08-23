@@ -11172,8 +11172,7 @@ Stat drain
     town or by corresponding restoration magic of various sorts.
 
     Note however that there are three tiers of stat drain:
-    I:   Temporary drain. Low-level traps will often do this. Also this might
-         happen to your strength stat if you overexert yourself at swimming.
+    I:   Temporary drain. Low-level traps will often do this.
          Suffering from anoxia while in aquatic form can temporarily drain
          your dexterity. Coming out of an adrenaline rush can temporarily drain
          your constitution.
@@ -12184,10 +12183,9 @@ During swimming, you might get other negative side effects:
   equipped will help your inventory, being immune to water prevents all damage.
   (Acquiring levitation is the simplest way of avoiding this, as you won't
   touch the water at all that way.)
-- If your Strength isn't sustained you might get it reduced sometimes due to
-  exertion, depending on how well you can swim vs how heavy you and your
-  backpack are. This STR drain is temporary and will automatically get restored
-  after a while (same as from tier I stat drain traps basically).
+- You might get exerted and sometimes get a point of stamina depleted,
+  depending on how well you can swim vs how heavy you and your
+  backpack are.
 
 As a side note, even if your character has no special powers and is bad at
 swimming, drowning and exertion can still both be avoided if you happen to
