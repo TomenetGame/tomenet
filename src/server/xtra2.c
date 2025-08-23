@@ -275,6 +275,9 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2) {
 		if (!p_ptr->tim_thunder) {
 			msg_print(Ind, "The air around you charges with lightning!");
 			notice = TRUE;
+#ifdef USE_SOUND_2010
+			sound(Ind, "thunder", NULL, SFX_TYPE_MISC, FALSE); //not 'lightning' alt sfx here, as it's just the clouds forming and growling ^^
+#endif
 		}
 	}
 
