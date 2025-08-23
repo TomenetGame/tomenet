@@ -147,7 +147,7 @@ AIRWINGS = add_spell {
 	["level"] = 	16,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	70,
+	["fail"] = 	0,
 	["spell"] = 	function()
 			if get_level(Ind, AIRWINGS, 50) >= 15 then set_tim_lev(Ind, randint(10) + 5 + get_level(Ind, AIRWINGS, 25))
 			else set_tim_ffall(Ind, randint(10) + 5 + get_level(Ind, AIRWINGS, 25))

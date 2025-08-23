@@ -124,7 +124,7 @@ RECOVERY_I = add_spell	{
 	["level"] = 	15,
 	["mana"] = 	10,
 	["mana_max"] = 	10,
-	["fail"] = 	10,
+	["fail"] = 	-5,
 	["spell"] = 	function()
 			set_poisoned(Ind, 0, 0)
 			set_cut(Ind, 0, 0, FALSE)
@@ -148,7 +148,7 @@ RECOVERY_II = add_spell	{
 	["level"] = 	28,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	-25,
+	["fail"] = 	-35,
 	["spell"] = 	function()
 			set_poisoned(Ind, 0, 0)
 			set_diseased(Ind, 0, 0)
