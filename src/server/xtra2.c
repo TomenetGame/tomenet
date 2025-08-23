@@ -279,6 +279,12 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2) {
 			sound(Ind, "thunder", NULL, SFX_TYPE_MISC, FALSE); //not 'lightning' alt sfx here, as it's just the clouds forming and growling ^^
 #endif
 		}
+
+		if (!p_ptr->warning_tss) {
+			msg_print(Ind, "\374\377GHint: Use chat command '\377W/tss\377G' to make Thunderstorm hit sleeping monsters too.");
+			p_ptr->warning_tss = 1;
+			s_printf("warning_tss: %s\n", p_ptr->name);
+		}
 	}
 
 	/* Shut */

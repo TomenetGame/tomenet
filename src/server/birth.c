@@ -3030,6 +3030,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_newautoret = 1;
 		p_ptr->warning_fill = 1;
 		p_ptr->warning_away = 1;
+		p_ptr->warning_tss = 1;
 		return;
 	}
 
@@ -3209,6 +3210,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_edmt = 1;
 		p_ptr->warning_id = 1;
 		p_ptr->warning_fill = 1;
+		p_ptr->warning_tss = 1;
 	}
 	if (p_ptr->max_plv > 20) {
 		p_ptr->warning_boomerang = 1;

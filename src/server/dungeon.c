@@ -6079,11 +6079,19 @@ static bool process_player_end_aux(int Ind) {
 				/* Ignore "dead" monsters */
 				if (!m_ptr->r_idx) continue;
 
-				/* Don't wake up sleeping monsters */
+				/* Don't wake up sleeping monsters unless explicitely toggled (via /tss) */
 				if (m_ptr->csleep && !p_ptr->ts_sleeping) continue;
 				/* Don't break charm/trance */
 				if (m_ptr->charmedignore) continue;
 
+				/* Note that we in general do not exempt NO_DEATH monsters, eg target dummies, they should still get stroke. */
+
+				/* Don't strike friendly questors (Town Elder^^) */
+				if (m_ptr->questor && !m_ptr->questor_hostile) continue;
+				/* Likewise don't strike non-hostile critters (no need to check for monster ego flags here, as these flags really are basic-intrinsic only) */
+				if (r_info[m_ptr->r_idx].flags7 & (RF7_PET | RF7_NEUTRAL | RF7_FRIENDLY | RF7_NO_TARGET))
+					/* Panda, horses (horses are also FRIENDLY anyway ie don't seek out the player), Robin */
+					continue;
 				/* Spells cast by a player never hurt a friendly golem */
 				if (m_ptr->owner) {
 					int i;
@@ -6097,6 +6105,7 @@ static bool process_player_end_aux(int Ind) {
 					//if his owner is not online, assume friendly(!)
 					if (i == NumPlayers) continue;
 				}
+				//if (m_ptr->pet) continue;
 			}
 			/* else: Hit a hostile player */
 
