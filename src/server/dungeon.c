@@ -5307,11 +5307,20 @@ static bool process_player_end_aux(int Ind) {
 						}
 					}
 
+#if 0 /* would require hacking the stat-autorestoration duration to be much shorter for this, or it's too annoying */
 					/* Swimming, whether successful or not, can drain STR. */
 					if (!rand_int(adj_str_wgt[p_ptr->stat_ind[A_CON]]) && !p_ptr->sustain_str) {
 						msg_print(Ind, "\377oYou are weakened by the exertion of swimming!");
 						dec_stat(Ind, A_STR, 10, STAT_DEC_TEMPORARY);
 					}
+#else /* this is a more elegant solution perhaps? */
+					/* Swimming, whether successful or not, can drain ST. */
+					if (p_ptr->cst) {
+						msg_print(Ind, "\377oYou are exhausted by the exertion of swimming!");
+						p_ptr->cst--;
+						p_ptr->redraw |= PR_STAMINA;
+					}
+#endif
 				}
 
 				/* If we're, after all (enough wood and/or enough swiming or aquatic/Ent) not drowning... */
