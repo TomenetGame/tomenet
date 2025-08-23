@@ -6080,7 +6080,7 @@ static bool process_player_end_aux(int Ind) {
 				if (!m_ptr->r_idx) continue;
 
 				/* Don't wake up sleeping monsters */
-				if (m_ptr->csleep) continue;
+				if (m_ptr->csleep && !p_ptr->ts_sleeping) continue;
 				/* Don't break charm/trance */
 				if (m_ptr->charmedignore) continue;
 

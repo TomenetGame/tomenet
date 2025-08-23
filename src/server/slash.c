@@ -6620,6 +6620,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_print(Ind, "This command is not available in the current server configuration.");
 #endif
 			return;
+		} else if (prefix(messagelc, "/tss")) { //Thunderstorm: Hit sleeping monsters too.
+			if (p_ptr->ts_sleeping == FALSE) {
+				p_ptr->ts_sleeping = TRUE;
+				msg_print(Ind, "Thunderstorm spell will now \377ohit sleeping monsters\377w as well.");
+			} else {
+				p_ptr->ts_sleeping = FALSE;
+				msg_print(Ind, "Thunderstorm spell will no longer hit sleeping monsters.");
+			}
+			return;
 		}
 
 

@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. August 2025 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 23. August 2025 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -23032,7 +23032,8 @@ these limitations will be lifted.
                     (33% lightning, 33% sound, 33% light)
                     Thunderstorm cannot be deflected or reflected.
                     It will omit sleeping and charmed monsters as to not break
-                    the effects.
+                    the effects. This safety lock can be toggled to no longer
+                    ignore sleeping monsters via slash command '/tss'.
                     Required skill level for first spell level: 15.
                     Shared spell (see above): Air, Nature.
 

@@ -2328,6 +2328,10 @@ static bool rd_extra(int Ind) {
 
 	if (!older_than(4, 5, 14)) {
 		rd_byte(&p_ptr->sanity_bar);
+
+		/* More stuff, unrelated to bars: */
+		p_ptr->ts_sleeping = (p_ptr->sanity_bar & 0x20) != 0;
+
 		p_ptr->health_bar = p_ptr->sanity_bar & 0x04;
 		p_ptr->mana_bar = p_ptr->sanity_bar & 0x08;
 		p_ptr->stamina_bar = p_ptr->sanity_bar & 0x10;
@@ -2340,6 +2344,8 @@ static bool rd_extra(int Ind) {
 		else if (skill >= 20) p_ptr->sanity_bar = 2;
 		else if (skill >= 10) p_ptr->sanity_bar = 1;
 		else p_ptr->sanity_bar = 0;
+
+		p_ptr->ts_sleeping = FALSE;
 	}
 
 	if (older_than(4, 9, 0)) {

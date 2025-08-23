@@ -1053,7 +1053,8 @@ static void wr_extra(int Ind) {
 #else
 	//wr_u16b(0x0);
 #endif
-	wr_byte(p_ptr->sanity_bar | (p_ptr->health_bar ? 0x04 : 0x00) | (p_ptr->mana_bar ? 0x08 : 0x00) | (p_ptr->stamina_bar ? 0x10 : 0x00));
+	wr_byte(p_ptr->sanity_bar | (p_ptr->health_bar ? 0x04 : 0x00) | (p_ptr->mana_bar ? 0x08 : 0x00) | (p_ptr->stamina_bar ? 0x10 : 0x00)
+	    | (p_ptr->ts_sleeping ? 0x20 : 0x00)); //store some other info too, to use the space
 	wr_byte(p_ptr->IDDC_flags);
 
 	wr_s16b(p_ptr->word_recall);

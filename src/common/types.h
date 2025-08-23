@@ -4509,6 +4509,7 @@ struct player_type {
 	bool add_kind_diz, hide_lore_paste, sunburn_msg;
 
 	bool notify_notes, notify_sale;
+	bool ts_sleeping;
 };
 
 /* For Monk martial arts */
