@@ -2198,6 +2198,10 @@ They all start with a slash '/' hence they're called slash commands:
             This cannot be reversed, so the player should pick carefully.
             See (7.4) for a list of traits and what they do.
 
+/tss        For characters that can use 'Thunderstorm' spell:
+            Toggles between default state to avoid sleeping monsters and
+            allowing the lightning strike to target sleeping monsters too.
+
 /undoskills
 /undos      A skill reset function ("respec"), allowing you to undo the last
             couple of skill points you assigned in 'G' menu. Use this to
