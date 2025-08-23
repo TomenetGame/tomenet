@@ -3935,6 +3935,8 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 	}
 #endif
 
+	if (p_ptr->ts_sleeping) msg_print(Ind, "Your Thunderstorm spell will hit \377osleeping\377w monsters too.");
+
 	if (!(p_ptr->mode & MODE_DED_IDDC)) { //IDDC-exclusive characters may not own houses
 		if (p_ptr->castles_owned) {
 			if (p_ptr->houses_owned == 1) strcpy(buf, "You own a castle.");

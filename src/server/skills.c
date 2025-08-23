@@ -1177,6 +1177,9 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
 	p_ptr->skill_points_old = p_ptr->skill_points;
 	p_ptr->reskill_possible |= RESKILL_F_UNDO;
+
+	/* Special: Thunderstorm spell knowledge stipulates /tss command usage */
+	if (exec_lua(Ind, format("return get_level(%d, THUNDERSTORM, 50, -50)", Ind)) < 1) p_ptr->ts_sleeping = FALSE;
 }
 
 #ifdef ENABLE_SUBCLASS
@@ -1290,6 +1293,9 @@ void respec_skills(int Ind, bool update_skills) {
 	memcpy(p_ptr->s_info_old, p_ptr->s_info, MAX_SKILLS * sizeof(skill_player));
 	p_ptr->skill_points_old = p_ptr->skill_points;
 	p_ptr->reskill_possible |= RESKILL_F_UNDO;
+
+	/* Special: Thunderstorm spell knowledge stipulates /tss command usage */
+	if (exec_lua(Ind, format("return get_level(%d, THUNDERSTORM, 50, -50)", Ind)) < 1) p_ptr->ts_sleeping = FALSE;
 }
 
 /* return amount of points that were invested into a skill */
