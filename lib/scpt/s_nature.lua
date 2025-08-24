@@ -45,7 +45,7 @@ GROWTREE = add_spell {
 	["level"] = 	30,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	-30,
+	["fail"] = 	-45,
 	["spell"] = 	function()
 			grow_trees(Ind, 1 + get_level(Ind, GROWTREE, 6))
 	end,
@@ -148,7 +148,7 @@ RECOVERY_II = add_spell	{
 	["level"] = 	28,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	-35,
+	["fail"] = 	-45,
 	["spell"] = 	function()
 			set_poisoned(Ind, 0, 0)
 			set_diseased(Ind, 0, 0)
