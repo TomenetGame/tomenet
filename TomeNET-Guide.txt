@@ -19304,7 +19304,8 @@ stated.
                                 great, and it affects the amount of cash
                                 generated from mining mineral veins.
                                 It also grants you additional chances to find
-                                chests, golem materials, runes, and at the
+                                chests, golem arms or legs from rubble, golem
+                                material pieces from walls, runes, and at the
                                 appropriate skill level crafting ingredients
                                 for your Demolitionist perk, as well as laying
                                 open buried fountains or staircases sometimes.
