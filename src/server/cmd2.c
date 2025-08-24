@@ -3573,7 +3573,7 @@ void do_cmd_close(int Ind, int dir) {
 
 
 /*
- * Check the terrain around the location to see if erosion takes place.
+ * Check the terrain around the location to see whether erosion from surrounding lava or water would take place if the feature was removed.
  * TODO: expand this for more generic terrain types		- Jir -
  */
 u16b twall_erosion(worldpos *wpos, int y, int x, u16b feat) {
@@ -3853,9 +3853,13 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 						default_obj_theme, p_ptr->luck);
 					object_level = old_object_level;
 					object_desc(0, o_name, &forge, TRUE, 3);
-					s_printf("DIGGING: %s found item: %s.\n", Ind ? p_ptr->name : "<noone>", o_name);
-					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
-#else
+					if (forge.tval == TV_RUNE && quiet_borer) { /* quiet_borer stone2mud/wall-annihilation also kills any rock-based items ie runes! */
+						s_printf("DIGGING: %s eradicated item: %s.\n", Ind ? p_ptr->name : "<noone>", o_name);
+					} else {
+						s_printf("DIGGING: %s found item: %s.\n", Ind ? p_ptr->name : "<noone>", o_name);
+						drop_near(TRUE, 0, &forge, -1, wpos, y, x);
+					}
+#else //TODO if reenabled: TV_RUNE must be prevented in case of quiet_borer, via new RESF_ flag
 					object_level = find_level_base;
 					place_object(Ind, wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MASK_MID,
 						default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
@@ -3890,11 +3894,11 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		/* mow down the vegetation */
 		if (((power > wood_power ? power : wood_power) > rand_int(400)) && twall(Ind, wpos, y, x, FEAT_GRASS)) { /* 400 */
 			/* Message */
-			if (Ind && !quiet_full) {
+			if (Ind && !quiet_full && !quiet_borer) {
 				msg_print(Ind, "You hack your way through the vegetation.");
 				if (p_ptr->prace == RACE_ENT) msg_print(Ind, "You have a bad feeling about it.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 			}
 
@@ -3911,7 +3915,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 				if (!quiet_full) msg_print(Ind, "You have found something!");
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				s_printf("DIGGING: %s found a massive wood piece.\n", Ind ? p_ptr->name : "<noone>");
-			} else if (!rand_int(65 - skill_dig / 2) && Ind && !p_ptr->IDDC_logscum) {
+			} else if (!rand_int(65 - skill_dig / 2) && Ind && !p_ptr->IDDC_logscum && !quiet_borer) {
 				/* for player store signs: (non-massive) wood pieces */
 				invcopy(&forge, lookup_kind(TV_JUNK, SV_WOOD_PIECE));
 				apply_magic(wpos, &forge, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
@@ -3962,7 +3966,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			if (Ind && !quiet_full) {
 				msg_print(Ind, "You attempt to clear a path.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				*more = TRUE;
 			}
@@ -3973,11 +3977,11 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		/* mow down the vegetation */
 		if (((power > dual_power ? power : dual_power) > rand_int(300)) && twall(Ind, wpos, y, x, FEAT_GRASS)) { /* 400 */
 			/* Message */
-			if (Ind && !quiet_full) {
+			if (Ind && !quiet_full && !quiet_borer) {
 				msg_print(Ind, "You hack your way through the vegetation.");
 				if (p_ptr->prace == RACE_ENT) msg_print(Ind, "You have a bad feeling about it.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 			}
 
@@ -4022,7 +4026,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			if (Ind && !quiet_full) {
 				msg_print(Ind, "You attempt to clear a path.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				*more = TRUE;
 			}
@@ -4033,10 +4037,10 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		/* mow down the vegetation */
 		if (((power > fibre_power ? power : fibre_power) > rand_int(200)) && twall(Ind, wpos, y, x, FEAT_GRASS)) { /* 400 */
 			/* Message */
-			if (Ind && !quiet_full) {
+			if (Ind && !quiet_full && !quiet_borer) {
 				msg_print(Ind, "You hack your way through the vegetation.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 			}
 
@@ -4050,7 +4054,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			if (Ind && !quiet_full) {
 				msg_print(Ind, "You attempt to clear a path.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				*more = TRUE;
 			}
@@ -4061,10 +4065,10 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		/* mow down the vegetation */
 		if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, wpos, y, x, FEAT_GRASS)) { /* 600 */
 			/* Message */
-			if (Ind && !quiet_full) {
+			if (Ind && !quiet_full && !quiet_borer) {
 				msg_print(Ind, "You hack your way through the vegetation.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 			}
 
@@ -4109,7 +4113,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			if (Ind && !quiet_full) {
 				msg_print(Ind, "You attempt to clear a path.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_tree", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				*more = TRUE;
 			}
@@ -4211,15 +4215,15 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 
 		/* Success */
 		if (okay && twall(Ind, wpos, y, x, soft ? FEAT_SAND : FEAT_FLOOR)) {
-			if (Ind && !quiet_full) {
-				if (!quiet_borer && !p_ptr->warning_tunnel4 && o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
+			if (Ind && !quiet_full && !quiet_borer) {
+				if (!p_ptr->warning_tunnel4 && o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
 					/* Don't display hint if digging tool is already so highly enchanted that it was probably done manually -> player seems to know */
 					if (o_ptr->to_h < 8 || o_ptr->to_d < 8) msg_print(Ind, "\374\377yHINT: Further strengthen your digging tool by enchanting it to-hit and to-dam!");
 					s_printf("warning_tunnel4: %s\n", p_ptr->name);
 					p_ptr->warning_tunnel4 = 1;
 				}
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				msg_format(Ind, "You have finished the tunnel in the %s.", soft ? "sandwall" : (hard ? "quartz vein" : "magma intrusion"));
 			}
@@ -4585,10 +4589,10 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 
 		/* Tunnel */
 		if ((power > 40 + rand_int(1600)) && twall(Ind, wpos, y, x, cfeat == FEAT_ICE_WALL ? FEAT_ICE : FEAT_FLOOR)) { /* 1600 */
-			if (Ind && !quiet_full) {
+			if (Ind && !quiet_full && !quiet_borer) {
 				msg_format(Ind, "You have finished the tunnel in the %s.", f_name + f_info[cfeat].name);
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_rock", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 			}
 			if (!istown(wpos)) {
@@ -4640,10 +4644,10 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 
 		/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
 		if ((((power > fibre_power) ? power : fibre_power) > rand_int(100)) && twall(Ind, wpos, y, x, FEAT_DIRT)) {
-			if (Ind && !quiet_full) {
+			if (Ind && !quiet_full && !quiet_borer) {
 				msg_print(Ind, "You have cleared the spider web.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "miss", NULL, SFX_TYPE_NO_OVERLAP, TRUE); //'swiping' sfx^^
+				sound(Ind, "miss", NULL, SFX_TYPE_NO_OVERLAP, TRUE); //'swiping' sfx^^
 #endif
 			}
 		}
@@ -4653,7 +4657,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			if (Ind && !quiet_full) {
 				msg_print(Ind, "You try to clear the spider web.");
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "miss", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "miss", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				*more = TRUE;
 			}
@@ -4678,10 +4682,10 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 
 		/* Tunnel */
 		if ((power > 30 + rand_int(1200)) && twall(Ind, wpos, y, x, FEAT_FLOOR)) { /* some random, arbitrary hardness between granite and next-softer materials.. unused anyway */
-			if (Ind && !quiet_full) {
+			if (Ind && !quiet_full && !quiet_borer) {
 				msg_format(Ind, "You have finished the tunnel in the %s.", f_name + f_info[cfeat].name);
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 			}
 		}
@@ -4691,7 +4695,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			if (Ind && !quiet_full) {
 				msg_print(Ind, f_text + f_ptr->tunnel);
 #ifdef USE_SOUND_2010
-				if (!quiet_borer) sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
+				sound(Ind, "tunnel_rubble", NULL, SFX_TYPE_NO_OVERLAP, TRUE);
 #endif
 				*more = TRUE;
 			}

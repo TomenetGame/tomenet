@@ -19303,15 +19303,31 @@ stated.
                                 and chance for those items to be good or even
                                 great, and it affects the amount of cash
                                 generated from mining mineral veins.
+                                It also grants you additional chances to find
+                                chests, golem materials, runes, and at the
+                                appropriate skill level crafting ingredients
+                                for your Demolitionist perk, as well as laying
+                                open buried fountains or staircases sometimes.
 
                                 This skill spills over especially generously
                                 into its parent skill 'Health'.
 
                                 Note that for the Digging skill to get applied,
                                 which includes any boni it might give such as
-                                improving what you can find or uncover, you
-                                must dig manually, ie not via any kind of magic
-                                or by using a KILL_WALL monster form (mimicry).
+                                improving what you can find or uncover (see
+                                above), you must dig manually ie via tunnel
+                                command or by using demolitionist charges (see
+                                below on how Digging skill grants this perk).
+
+                                If you instead use any kind of digging magic or
+                                the insta-tunneling ability gained by mimicking
+                                a monster that has KILL_WALL flag, the Digging
+                                skill boni/perks will NOT be applied.
+                                The only thing you can uncover this way are
+                                random occurances of shallow water or lava,
+                                and random buried items except for runes (all
+                                other features or wall materials or runes are
+                                just turned to mud or annihilated).
 
                                 In particular, every 10 digging skill you will
                                 have a chance to find an additional pile of

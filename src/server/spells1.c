@@ -5851,6 +5851,15 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			note_kill = (plural ? " are pulverized!" : " is pulverized!");
 			break;
 
+		/* Stone to Mud */
+		case GF_KILL_WALL:
+			if (o_ptr->tval == TV_RUNE) {
+				do_kill = TRUE;
+				note_kill = (plural ? " turn into mud!" : " turns into mud!");
+				do_smash_effect = FALSE;
+			}
+			break;
+
 		case GF_DISENCHANT:
 			if ((f2 & TR2_RES_DISEN) || (f5 & TR5_IGNORE_DISEN)) break; //no 'ignore' message for disenchant for the time being, as it's not that "observable" (and might even be spammy)
 			if (artifact_p(o_ptr) && magik(100)) break;
