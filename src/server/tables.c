@@ -2591,7 +2591,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000, },
 		{ SKILL_DEVICE,
 			'+', 1000,
-			'+', 1100, },
+			'+', 1000, },
 		{ SKILL_SNEAKINESS,
 			'+', 1000,
 			'+', 500, },//700,
@@ -2739,7 +2739,7 @@ player_class class_info[MAX_CLASS] = {
 #endif
 		{ SKILL_DEVICE,
 			'+', 1000,
-			'+', 900, },
+			'+', 850, },
 		{ SKILL_SNEAKINESS,
 			'+', 1000,
 			'+', 600, },//770,
@@ -2831,7 +2831,7 @@ player_class class_info[MAX_CLASS] = {
 #endif
 		{ SKILL_DEVICE,
 			'+', 1000,
-			'+', 950, },
+			'+', 850, },
 #ifdef EXP_NECRO /* Necromancy for this class - experimental */
 		{ SKILL_NECROMANCY,
 			'+', 0,
@@ -2953,7 +2953,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 900, },
 		{ SKILL_DEVICE,
 			'+', 1000,
-			'+', 850, },
+			'+', 800, },
 #ifdef EXP_NECRO /* Necromancy for this class - experimental */
 		{ SKILL_NECROMANCY,
 			'+', 0,
@@ -3304,7 +3304,7 @@ player_class class_info[MAX_CLASS] = {
 #endif
 		{ SKILL_DEVICE,
 			'+', 1000,
-			'+', 1000, },
+			'+', 900, },
 		{ SKILL_SNEAKINESS,
 			'+', 1000,
 			'+', 750, },//900,
@@ -3394,7 +3394,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 650, },
 		{ SKILL_DEVICE,
 			'+', 1000,
-			'+', 900, },
+			'+', 800, },
 		{ SKILL_SPELL,
 			'+', 0,
 			'+', 350,	/* reduced from 500, after
@@ -3630,7 +3630,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0, },
 		{ SKILL_DEVICE,
 			'+', 0,
-			'+', 1000, },
+			'+', 900, },
 		{ SKILL_SNEAKINESS,
 			'+', 0,
 			'+', 600, },//750,
@@ -3682,7 +3682,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000, },
 		{ SKILL_DEVICE,
 			'+', 0,
-			'+', 1000, },
+			'+', 950, },
 		{ SKILL_SPELL,
 			'+', 0,
 			'+', 500, },
@@ -3827,7 +3827,7 @@ player_class class_info[MAX_CLASS] = {
 			'+', 1000, },
 		{ SKILL_DEVICE,
 			'+', 0,
-			'+', 1000, },
+			'+', 950, },
 		{ SKILL_SPELL,
 			'+', 0,
 			'+', 500, },
@@ -4011,7 +4011,7 @@ player_class class_info[MAX_CLASS] = {
 		   Ratio as with ranger (between rogue/istar); expecting to see this on mana runies. - Kurzel */
 		{ SKILL_DEVICE,
 			'+', 1000,
-			'+', 1000, },
+			'+', 900, },
 			/* Sneakiness tree */
 		{ SKILL_SNEAKINESS,
 			'+', 1000,
@@ -4552,7 +4552,7 @@ player_class class_info[MAX_CLASS] = {
 #endif
 		{ SKILL_DEVICE,
 			'+', 1000,
-			'+', 900, },
+			'+', 850, },
 		{ SKILL_SNEAKINESS,
 			'+', 1000,
 			'+', 600, },//770,
