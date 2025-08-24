@@ -4891,8 +4891,8 @@
   /* SV_SI_SATCHEL: */
  /* NO_RUST_NO_HYDROXIDE? -> 9 vs 11 types of chemicals, of which 6 vs 7 are found almost-directly, and 7 vs 8..9 are trivially crafted. Currently satchels can hold mixtures too. */
 
- /* Antistatic Wrapping requires this minimum Magic Device skill in order to use? [10] */
- #define SI_WRAPPING_SKILL 10
+ /* Antistatic Wrapping requires this minimum Magic Device skill in order to use? [15] */
+ #define SI_WRAPPING_SKILL 15
 #endif
 
 
