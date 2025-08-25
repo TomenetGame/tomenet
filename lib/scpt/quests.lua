@@ -7,7 +7,14 @@
 -- msg: the class name (eg 'adventurer').
 -- topic: -2 = display ALL advice (0..max), admin only. -1 is omitted as that one is already displayed on 'accepting' the quest.
 --        -1 = display generic advice, always shown, that is very important (ghost status, black breath..).
---        0..max = different help topics, specified by the player.
+--        0..max = different help topics, specified by the player:
+--         0 = inventory (completed)
+--         1 = equipment (completed)
+--         2 = skills (nothing yet)				--TODO maybe
+--         3 = status (completed)
+--         4 = partying (nothing yet)				--TODO maybe
+--         5 = dungeons (one-liner to town hall list)
+--         6 = events (one-liner to do /evinfo regularly)
 function quest_towneltalk(Ind, msg, topic)
 	local hinted, hintsub, i, w, x, y, z, admin
 
