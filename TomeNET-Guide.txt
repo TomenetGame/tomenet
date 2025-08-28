@@ -25508,12 +25508,14 @@ The only items that allow you to parry are melee weapons. Their parry chance
 only depends on their handedness - the larger a weapon, the more you can parry.
 Without a weapon, you cannot parry at all (item weight will have no effect):
 
-A 1-handed weapon will parry less often than a 1 1/2-hander (SHOULD2H), and
-that one less often than a 2-handed weapon (MUST2H).
-If you wield a 1-hand weapon WITHOUT a shield which "feels especially easy to
-swing" (COULD2H), you'll also get an extra parry bonus.
-Increasing weaponmastery improves your parry chance; dual-wielding improves it
-too, provided that you aren't 'flexibility-encumbered' (compare (5.5)).
+A weapon held with one hand will parry less often than a weapon held with both
+hands.
+The 'Weaponmastery' skill grants a bonus to parrying which is biggest for
+2-handed weapons (MUST2H), second biggest for 1 1/2-hander (SHOULD2H), and
+lowest for 1-handed weapons (including COULD2H even if wielded 2-handedly),
+also compare (7.2) for skill details.
+Dual-wielding weapons improves parrying too, provided that you aren't getting
+a 'flexibility-encumberment' warning (compare (5.5)).
 
 There is an exception: Depending on the server settings, some weapons give a
 special bonus to parry chance. This is displayed in brackets, eg:
