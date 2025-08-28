@@ -2242,7 +2242,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 #else
 	fprintf(fff, "\377D(The deepest/highest point you've ever reached: \377s%d \377Dft (Lv \377s%d\377D))\n\n", p_ptr->max_dlv * 50, p_ptr->max_dlv);
  #ifndef SHOW_DLVL_TO_NONADMIN
-	fprintf(fff, "\377sLocation  Dungeon/Tower Name              Your current maximum recall depth\n");
+	fprintf(fff, "\377sLocation  Dungeon/Tower Name               Your current maximum recall depth\n");
  #else
 	fprintf(fff, "\377sLocation  Dungeon/Tower Name                Level        Your max recall depth\n");
  #endif
@@ -2271,17 +2271,17 @@ void do_cmd_knowledge_dungeons(int Ind) {
 				fprintf(fff, " \377u(%2d,%2d)  \377w%-31s", x, y, get_dun_name(x, y, TRUE, d_ptr, 0, FALSE));
 #ifndef SEPARATE_RECALL_DEPTHS
 				if (admin) {
-					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
+					fprintf(fff, "  t Lev: %3d-%3d  Req: %3d  type: %3d",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 							//d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
 							d_info[i].min_plev, i);
  #ifdef SHOW_DLVL_TO_NONADMIN
 				} else {
   #ifndef INDICATE_DUNGEONBOSSES_SLAIN
-					fprintf(fff, "  \377sLev\377w %3d - %3d\377s",
+					fprintf(fff, "  Tower,   \377sLev\377w %3d - %3d\377s",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1);
   #else
-					fprintf(fff, "  \377sLev\377w %3d - %3d\377s    %s",
+					fprintf(fff, "  Tower,   \377sLev\377w %3d - %3d\377s    %s",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 							(i && d_info[i].final_guardian) ?
 							(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
@@ -2294,22 +2294,22 @@ void do_cmd_knowledge_dungeons(int Ind) {
 				if (admin) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  L \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max %6dft",
+						fprintf(fff, "  t \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max %6dft",
 								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
 								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, 50 * get_recall_depth(&wpos, p_ptr));
 					else
-						fprintf(fff, "  L \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max Lv%4d",
+						fprintf(fff, "  t \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max Lv%4d",
 								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
 								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, get_recall_depth(&wpos, p_ptr));
  #else
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max %6dft",
+						fprintf(fff, "  t %3d-%3d  R %3d  t %3d  Max %6dft",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, 50 * get_recall_depth(&wpos, p_ptr));
 					else
-						fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max Lv%4d",
+						fprintf(fff, "  t %3d-%3d  R %3d  t %3d  Max Lv%4d",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, get_recall_depth(&wpos, p_ptr));
  #endif
@@ -2317,23 +2317,23 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #ifdef SHOW_DLVL_TO_NONADMIN
   #ifndef INDICATE_DUNGEONBOSSES_SLAIN
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %3d - %3d          %6dft",
+						fprintf(fff, "  Tower,   %3d - %3d          %6dft",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								50 * get_recall_depth(&wpos, p_ptr));
 					else
-						fprintf(fff, "  %3d - %3d          Lv%4d",
+						fprintf(fff, "  Tower,   %3d - %3d          Lv%4d",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								get_recall_depth(&wpos, p_ptr));
   #else
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %3d - %3d          %6dft    %s",
+						fprintf(fff, "  Tower,   %3d - %3d          %6dft    %s",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								50 * get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
 								"\377U*" : "nc") : "");
 					else
-						fprintf(fff, "  %3d - %3d          Lv%4d    %s",
+						fprintf(fff, "  Tower,   %3d - %3d          Lv%4d    %s",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian) ?
@@ -2343,14 +2343,14 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #else
   #ifndef INDICATE_DUNGEONBOSSES_SLAIN
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %6dft",
+						fprintf(fff, "  Tower,   %6dft",
 								50 * get_recall_depth(&wpos, p_ptr));
 					else
-						fprintf(fff, "  Lv%4d",
+						fprintf(fff, "  Tower,   Lv%4d",
 								get_recall_depth(&wpos, p_ptr));
   #else
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %6dft     %s",
+						fprintf(fff, "  Tower,   %6dft     %s",
 								50 * get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian
    #ifdef GLOBAL_DUNGEON_KNOWLEDGE
@@ -2358,9 +2358,9 @@ void do_cmd_knowledge_dungeons(int Ind) {
    #endif
 								) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
-								"\377Uconquered" : "not conquered yet") : "");
+								"\377Uconquered" : "not conquered") : "");
 					else
-						fprintf(fff, "  Lv%4d     %s",
+						fprintf(fff, "  Tower,   Lv%4d     %s",
 								get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian
    #ifdef GLOBAL_DUNGEON_KNOWLEDGE
@@ -2368,7 +2368,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
    #endif
 								) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
-								"\377Uconquered" : "not conquered yet") : "");
+								"\377Uconquered" : "not conquered") : "");
   #endif
  #endif
 				}
@@ -2392,17 +2392,17 @@ void do_cmd_knowledge_dungeons(int Ind) {
 				fprintf(fff, " \377u(%2d,%2d)  \377w%-31s", x, y, get_dun_name(x, y, FALSE, d_ptr, 0, FALSE));
 #ifndef SEPARATE_RECALL_DEPTHS
 				if (admin) {
-					fprintf(fff, "  Lev: %3d-%3d  Req: %3d  type: %3d",
+					fprintf(fff, "  D Lev: %3d-%3d  Req: %3d  type: %3d",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 							//d_info[i].mindepth, d_info[i].mindepth + d_info[i].maxdepth - 1,
 							d_info[i].min_plev, i);
  #ifdef SHOW_DLVL_TO_NONADMIN
 				} else {
   #ifndef INDICATE_DUNGEONBOSSES_SLAIN
-					fprintf(fff, "  \377sLev\377w %3d - %3d",
+					fprintf(fff, "  Dungeon, \377sLev\377w %3d - %3d",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1);
   #else
-					fprintf(fff, "  \377sLev\377w %3d - %3d",
+					fprintf(fff, "  Dungeon, \377sLev\377w %3d - %3d",
 							d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 							(i && d_info[i].final_guardian) ?
 							(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
@@ -2415,22 +2415,22 @@ void do_cmd_knowledge_dungeons(int Ind) {
 				if (admin) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  L \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max %6dft",
+						fprintf(fff, "  D \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max %6dft",
 								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
 								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, -50 * get_recall_depth(&wpos, p_ptr));
 					else
-						fprintf(fff, "  L \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max Lv%4d",
+						fprintf(fff, "  D \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max Lv%4d",
 								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
 								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, -get_recall_depth(&wpos, p_ptr));
  #else
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max %6dft",
+						fprintf(fff, "  D %3d-%3d  R %3d  t %3d  Max %6dft",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, -50 * get_recall_depth(&wpos, p_ptr));
 					else
-						fprintf(fff, "  L %3d-%3d  R %3d  t %3d  Max Lv%4d",
+						fprintf(fff, "  D %3d-%3d  R %3d  t %3d  Max Lv%4d",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, -get_recall_depth(&wpos, p_ptr));
  #endif
@@ -2438,23 +2438,23 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #ifdef SHOW_DLVL_TO_NONADMIN
   #ifndef INDICATE_DUNGEONBOSSES_SLAIN
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %3d - %3d          %6dft",
+						fprintf(fff, "  Dungeon, %3d - %3d          %6dft",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								-50 * get_recall_depth(&wpos, p_ptr));
 					else
-						fprintf(fff, "  %3d - %3d          Lv%4dft",
+						fprintf(fff, "  Dungeon, %3d - %3d          Lv%4dft",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								-get_recall_depth(&wpos, p_ptr));
   #else
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %3d - %3d          %6dft    %s",
+						fprintf(fff, "  Dungeon, %3d - %3d          %6dft    %s",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								-50 * get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
 								"\377U*" : "nc") : "");
 					else
-						fprintf(fff, "  %3d - %3d          Lv%4dft    %s",
+						fprintf(fff, "  Dungeon, %3d - %3d          Lv%4dft    %s",
 								d_ptr->baselevel, d_ptr->baselevel + d_ptr->maxdepth - 1,
 								-get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian) ?
@@ -2464,14 +2464,14 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #else
   #ifndef INDICATE_DUNGEONBOSSES_SLAIN
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %6dft",
+						fprintf(fff, "  Dungeon, %6dft",
 								-50 * get_recall_depth(&wpos, p_ptr));
 					else
-						fprintf(fff, "  Lv%4d",
+						fprintf(fff, "  Dungeon, Lv%4d",
 								-get_recall_depth(&wpos, p_ptr));
   #else
 					if (p_ptr->depth_in_feet)
-						fprintf(fff, "  %6dft     %s",
+						fprintf(fff, "  Dungeon, %6dft     %s",
 								-50 * get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian
    #ifdef GLOBAL_DUNGEON_KNOWLEDGE
@@ -2479,9 +2479,9 @@ void do_cmd_knowledge_dungeons(int Ind) {
    #endif
 								) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
-								"\377Uconquered" : "not conquered yet") : "");
+								"\377Uconquered" : "not conquered") : "");
 					else
-						fprintf(fff, "  Lv%4d     %s",
+						fprintf(fff, "  Dungeon, Lv%4d     %s",
 								-get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian
    #ifdef GLOBAL_DUNGEON_KNOWLEDGE
@@ -2489,7 +2489,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
    #endif
 								) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
-								"\377Uconquered" : "not conquered yet") : "");
+								"\377Uconquered" : "not conquered") : "");
   #endif
  #endif
 				}
