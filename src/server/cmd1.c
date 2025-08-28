@@ -1611,6 +1611,49 @@ void whats_under_your_feet(int Ind, bool force) {
 }
 
 #ifdef ENABLE_SUBINVEN
+/* For shop-purchase/steal and home-'purchase': Check if we can directly stow an item into any bag we might carry, for when the normal inventory is full.
+   Note: While auto_stow() just takes a specific subinven as parameter, auto_stow_okay() actually scans all exsiting subinvens in the player's inventory. */
+bool auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
+	int i;
+	object_type *s_ptr;
+	player_type *p_ptr = Players[Ind];
+
+	/* Inscription to specifically prevent auto-stowing of an object. Useful for *perception* staff deposited in a house for example. */
+	if (check_guard_inscription(o_ptr->note, 'S')) return(FALSE);
+
+	/* Don't auto-stow true artifacts;
+	   exception for true-art trapkits is possible, but would need to add subinvens to art-location and -erasure code first. */
+	if (true_artifact_p(o_ptr)) return(FALSE);
+
+	/* Don't auto-stow unidentified items */
+	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
+
+	/* Don't auto-stow if player cannot access stowed items due to outdated client */
+	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
+
+	for (i = 0; i < INVEN_PACK; i++) {
+		s_ptr = &p_ptr->inventory[i];
+		/* Subinvens are at the top of the inventory */
+		if (s_ptr->tval != TV_SUBINVEN) break;
+
+		/* Must fit the object type */
+		if (!item_matches_subinven(Ind, get_subinven_group(s_ptr->sval), o_ptr)) continue;
+
+		/* Player disabled auto-stow via bag inscription? */
+		if (!subinven_can_stack(Ind, o_ptr, i, store_bought)) {
+ #ifdef SUBINVEN_LIMIT_GROUP
+			break;
+ #else
+			continue;
+ #endif
+		}
+
+		return(TRUE);
+	}
+
+	return(FALSE);
+}
+
 /* Try to put a newly acquired item into a specialized bag automatically.
    If the item was from the floor, o_idx must be specified, otherwise it must be -1.
    Returns:

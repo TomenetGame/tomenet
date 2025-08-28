@@ -5487,7 +5487,7 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool 
 	return(slot != -1 ? -slot - 1 : 0);
 }
 
-/* Just check if this object can stack with an existing item in this subinventory.
+/* Just check if this object can stack with an existing item in this subinventory or if we can and are allowed to create a new stack in the subinventory from this item.
    For !X0: Return TRUE only if there is an existing stack that has any space left (even if only for partial merging).
    For !X1: Return TRUE too if there is no existing stack that has space left, but there is an object_similar() item in the bag at least.
    (...with 'X' being one of A,S,O) */
@@ -5507,18 +5507,22 @@ bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bough
 
 	/* Assume it's not accepted to use multiple 'pure' (without 0/1 parm) !A, !O or !S inscriptions on the same item */
 
-	/* Don't auto-stow items in here at all! */
-	if (a == -1 || o == -1 || s == -1) return(FALSE);
 	/* Allowed to auto-stow in any case? */
-	if (!a && !o && !s) return(TRUE);
-
-	/* Check for !X1 aka 'allow creating a new stack, as long as we have a similar object in the bag already'. */
-	allow_new_stack = (a == 2 || o == 2 || s == 2);
+	if (!a && !o && !s) allow_new_stack = TRUE;
+	else {
+		/* Don't auto-stow items in here at all! */
+		if (a == -1 || o == -1 || s == -1) return(FALSE);
+		/* Check for !X1 aka 'allow creating a new stack, as long as we have a similar object in the bag already'. */
+		allow_new_stack = (a == 2 || o == 2 || s == 2);
+	}
 
 	/* Look for free spaces or spaces to merge with */
 	for (i = 0; i < s_ptr->bpval; i++) {
 		o_ptr = &p_ptr->subinventory[sslot][i];
-		if (!o_ptr->tval) break;
+		if (!o_ptr->tval) {
+			if (allow_new_stack) new_stack = TRUE;
+			break;
+		}
 
 		/* Slot has no more stacking capacity ie has reached max stack size? */
 		if (o_ptr->number == MAX_STACK_SIZE - 1 ||
@@ -5681,6 +5685,44 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 	/* Still not fully moved */
 	return(orgnum == i_ptr->number ? 0 : -final_slot); /* Nothing moved? Return 0. */
 }
+
+/* Check if player can stow a specific object into a specifc type of bag;
+   we need Ind to check for bag-use skill (mdev/trapping for Wrapping)
+   and also to check for knowledge of item (non-directional rods). */
+bool item_matches_subinven(int Ind, int subinven_group_type, object_type *o_ptr) {
+	player_type *p_ptr = Players[Ind];
+
+	switch (subinven_group_type) {
+	/* Check item to move against valid tvals to be put into specific container (subinventory) types */
+	case SV_SI_GROUP_CHEST_MIN: return(TRUE);
+	case SV_SI_SATCHEL:
+		if (o_ptr->tval == TV_CHEMICAL) return(TRUE);
+		return(FALSE);
+	case SV_SI_TRAPKIT_BAG:
+		if (o_ptr->tval == TV_TRAPKIT) return(TRUE);
+		return(FALSE);
+	case SV_SI_MDEVP_WRAPPING:
+		if (o_ptr->tval == TV_ROD && !object_aware_p(Ind, o_ptr)) return(FALSE);
+		if (o_ptr->tval == TV_ROD && object_aware_p(Ind, o_ptr) && rod_requires_direction(Ind, o_ptr)) return(FALSE);
+		/* Note that unknown/unaware rods will automatically return(TRUE) for requiring direction, even if they really don't. */
+		if (o_ptr->tval != TV_STAFF && (o_ptr->tval != TV_ROD || rod_requires_direction(Ind, o_ptr))) return(FALSE);
+ #ifdef SI_WRAPPING_SKILL
+		if (get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) return(FALSE);
+ #endif
+		return(TRUE);
+	case SV_SI_POTION_BELT:
+		if (o_ptr->tval != TV_POTION && o_ptr->tval != TV_POTION2 && o_ptr->tval != TV_BOTTLE) return(FALSE);
+		/* Don't stow if player cannot access stowed items due to outdated client */
+		if (!is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) return(FALSE);
+		return(TRUE);
+	case SV_SI_FOOD_BAG:
+		if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE) return(FALSE);
+		return(TRUE);
+	}
+
+	return(FALSE);
+}
+
 /* Tries to move the item or item stack in one inventory slot completely into
    the first available and eligible subinventory. */
 void do_cmd_subinven_move(int Ind, int islot, int amt) {
@@ -5753,7 +5795,7 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 		if (t == prev_type) continue; /* This assumes that subinvens are sorted by svals, which is true for all inventory items actually. */
 		prev_type = t;
  #endif
-		switch (t) {
+		switch (t) { /* Keep consistent with auto_stow_okay()->item_matches_subinven() */
 		/* Check item to move against valid tvals to be put into specific container (subinventory) types */
 		case SV_SI_GROUP_CHEST_MIN:
 			/* Allow all storable items in chests */

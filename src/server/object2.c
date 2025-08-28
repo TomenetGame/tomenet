@@ -11701,6 +11701,11 @@ int inven_carry_okay(int Ind, object_type *o_ptr, s16b tolerance) {
 	int i, r;
 	object_type *j_ptr;
 
+#ifdef ENABLE_SUBINVEN
+	/* Check first if we can add this item to any of our bags instead of the normal inventory, as auto-stowing takes precedence. */
+	if (auto_stow_okay(Ind, o_ptr, tolerance & 0x200)) return(-1); //okay
+#endif
+
 #if 0 /* Allow carrying multiple redundant bags, but just don't utilize them (1/3) */
 #ifdef SUBINVEN_LIMIT_GROUP /* By having this check here, we don't need it in telekinesis_aux() actually */
 	int subinven_group = (o_ptr->tval == TV_SUBINVEN) ? get_subinven_group(o_ptr->sval) : -1;
@@ -11734,6 +11739,7 @@ int inven_carry_okay(int Ind, object_type *o_ptr, s16b tolerance) {
 				k_ptr = &p_ptr->subinventory[i][j];
 				if (!k_ptr->tval) break;
 				if (!subinven_can_stack(Ind, o_ptr, i, tolerance & 0x200)) continue;
+
 				/* Check if the two items can be combined - here we can also check for !Gn inscription via 0x20 tolerance.
 				   We do not check the actual bag type, as we can assume that if a similar-enough item exists in that bag, we must be compatible with the bag type too. */
 				if ((r = object_similar(Ind, k_ptr, o_ptr, tolerance))) return(r);
