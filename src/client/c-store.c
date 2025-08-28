@@ -248,12 +248,10 @@ static int get_stock(int *com_val, cptr pmt, int i, int j) {
 
 
 /* XXX Bad design.. store code really should be rewritten.	- Jir - */
-static void store_examine(void) {
-	int                     i;
-	int                     item;
-
-	object_type             *o_ptr;
-	char            out_val[160];
+static void store_examine(bool no_browse) {
+	int i, item;
+	object_type *o_ptr;
+	char out_val[160];
 
 	/* BIG_MAP leads to big shops */
 	int entries = (screen_hgt == MAX_SCREEN_HGT) ? 26 : 12;
@@ -289,6 +287,10 @@ static void store_examine(void) {
 	o_ptr = &store.stock[item];
 
 	/* Tell the server */
+	if (no_browse) { //hack: Don't browse books but truly examine them
+		Send_store_examine(item);
+		return;
+	}
 	if (is_realm_book(o_ptr)) show_browse(o_ptr);
 	else if (o_ptr->tval == TV_BOOK &&
 	    (!is_custom_tome(o_ptr->sval) || o_ptr->xtra1))
@@ -650,7 +652,7 @@ void store_do_command(int num, bool one) {
 		return;
 		break;
 	case BACT_EXAMINE:
-		store_examine();
+		store_examine(one); //one: hack -> don't browse books but truly examine them
 		return;
 		break;
 	}
@@ -809,7 +811,8 @@ static void store_process_command(int cmd) {
 		}
 	}
 
-	/* hack: translate p/s into d/g and vice versa, for extra comfort */
+	/* If action was not already consumed by store-defined command keys above:
+	   Hack - translate p/s into d/g and vice versa, for extra comfort. */
 	for (i = 0; i < MAX_STORE_ACTIONS; i++) {
 		if (!c_store.actions[i]) continue;
 
@@ -855,18 +858,15 @@ static void store_process_command(int cmd) {
 			}
 			break;
 		case 'x':
-#if 0 /* nope, change of plans for future changes: use shift+I to inspect _own_ items instead! */
-		//(future change: replace x by I in ba_info, and I/s by D) -- case 'I':
-			if (cmd == 'I' || cmd == 'l' || cmd == 'x') {
-				store_do_command(i, FALSE);
-				return;
-			}
-#else
 			if (cmd == 'l' || cmd == 'x') {
 				store_do_command(i, FALSE);
 				return;
 			}
-#endif
+			/* Hack (abuse 'bool one') - Allow examing with SHIFT+x specifically for spell books to NOT browse them but truly examine the actual book object */
+			if (cmd == 'X') {
+				store_do_command(i, TRUE);
+				return;
+			}
 			break;
 		}
 	}
@@ -1182,51 +1182,12 @@ void display_store(void) {
 		clear_from(y + 18 + spacer);
 
 		/* Prompt */
-#if 0
-		prt("You may: ", y + y2 + 18 + spacer, 0);
-
-		/* Basic commands */
-		prt(" ESC) Exit.", y + y2 + 19 + spacer, 0);
-
-		/* Browse if necessary */
-		if (store.stock_num > 12 + spacer) prt(" SPACE) Next page", y + y2 + 20 + spacer, 0);
-#else /* new: also show 1..n for jumping directly to a page */
- #if 0
-		prt("ESC)   Exit store", y + y2 + 18 + spacer, 0);
-		if (store.stock_num > 12 + spacer) {
-			prt("SPACE) Next page", y + y2 + 19 + spacer, 0);
-			prt(format("1-%d)%s  Go to page", (store.stock_num - 1) / (12 + spacer) + 1, (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " "), y + y2 + 20 + spacer, 0);
-		}
- #elif 0 /* display 'c' key instead of SPACE */
-		prt(" ESC) Exit store", y + y2 + 18 + spacer, 0);
-		if (store.stock_num) prt("   c) Paste to chat", y + y2 + 19 + spacer, 0);
-		if (store.stock_num > 12 + spacer)
-			prt(format("%s1-%d) Go to page", (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " ", (store.stock_num - 1) / (12 + spacer) + 1), y + y2 + 20 + spacer, 0);
- #elif 0 /* 2024-07-09: Support up to 9 store actions in ba_info.txt maybe */
-		prt("ESC) Exit store", y + y2 + 17 + spacer, 0);
-		if (store.stock_num) prt(" c) Paste to chat", y + y2 + 17 + spacer, 20);
-		if (store.stock_num > 12 + spacer)
-			prt(format(" 1-%d) Go to page", (store.stock_num - 1) / (12 + spacer) + 1), y + y2 + 17 + spacer, 20 + 30);
- #else /* 2024-07-09: Support up to 9 store actions in ba_info.txt maybe, with 8 of them ok for full-sized action text */
 		prt(" ESC) Exit store", y + y2 + 17 + spacer, 0);
 		if (store.stock_num) prt("   c) Paste to chat", y + y2 + 18 + spacer, 0);
 		if (store.stock_num > 12 + spacer)
 			prt(format("%s1-%d) Go to page", (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " ", (store.stock_num - 1) / (12 + spacer) + 1), y + y2 + 19 + spacer, 0);
- #endif
-#endif
 
-#if 0
-		/* Home commands */
-		if ((store_num == STORE_HOME || store_num == STORE_HOME_DUN) && FALSE) {
-			prt(" g) Get an item.", y + y2 + 19 + spacer, 30);
-			prt(" d) Drop an item.", y + y2 + 20 + spacer, 30);
-
-			prt(" x) eXamine an item.", y + y2 + 19 + spacer, 60);
-		}
-		/* Shop commands XXX XXX XXX */
-		else
-#endif
-			display_store_action();
+		display_store_action();
 
 		/* Hack - Get rid of the cursor - mikaelh */
 		Term->scr->cx = Term->wid;
@@ -1299,21 +1260,7 @@ void display_store_special(void) {
 		clear_from(y + 18 + spacer);
 
 		/* Prompt */
-#if 0 /* keep consistent with display_store() */
-		prt("You may: ", y + y2 + 18 + spacer, 0);
-
-		/* Basic commands */
-		prt(" ESC) Exit.", y + y2 + 19 + spacer, 0);
-#elif 0
-		prt("ESC)   Exit store", y + y2 + 18 + spacer, 0);
-#else /* stores display 'c' key instead of SPACE, leading to different indentation: */
 		prt("ESC) Exit store", y + y2 + 18 + spacer, 0);
-#endif
-
-#if 0
-		/* Browse if necessary */
-		if (store.stock_num > 12 + spacer) prt(" SPACE) Next page", y + y2 + 20 + spacer, 0);
-#endif
 
 		/* Shop commands XXX XXX XXX */
 		display_store_action();
