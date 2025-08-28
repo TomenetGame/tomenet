@@ -1032,6 +1032,31 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 	if (p_ptr->store_num <= -2) return(2);
 #endif
 
+	/* Hack: The Mathom House */
+	if (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) {
+		/* Museums won't buy true artifacts, since they'd be
+		   conserved and out of reach for players thereby. */
+		if (true_artifact_p(o_ptr)) return(3);
+		/* Museum does accept even worthless donations.. */
+		return(0);
+	}
+
+#if STARTEQ_TREATMENT >= 2
+	if (o_ptr->mode & MODE_STARTER_ITEM) {
+ #if STARTEQ_TREATMENT == 3
+		/* Cannot sell any starter items, including own ones */
+		return(6);
+ #else
+		/* Prevent suicide-item-accumulation-cheeze, but allow selling own level 0 rewards (that weren't 100% discounted) */
+		if (o_ptr->owner != p_ptr->id) return(7);
+ #endif
+	}
+#endif
+
+	/* Note: We currently allow selling someone else's level-0 items, eg unique monsters' DROP_CHOSEN items/artifacts
+	   (and potentially starter items if not disabled above). */
+	//if (!o_ptr->level && o_ptr->owner != p_ptr->id) return(5);
+
 #ifdef MANDOS_BUYALL_EATALL
 	/* DF2_MISC_STORES/basic dungeon shops in Halls of Mandos will buy anything (but not display it) */
 	if (in_hallsofmandos(&p_ptr->wpos)) {
@@ -1048,15 +1073,6 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 		}
 	}
 #endif
-
-	/* Hack: The Mathom House */
-	if (st_info[p_ptr->store_num].flags2 & SF2_MUSEUM) {
-		/* Museums won't buy true artifacts, since they'd be
-		   conserved and out of reach for players thereby. */
-		if (true_artifact_p(o_ptr)) return(3);
-		/* Museum does accept even worthless donations.. */
-		return(0);
-	}
 
 	/* Switch on the store */
 	switch (p_ptr->store_num) {
@@ -1454,21 +1470,6 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 
 	/* XXX Never OK to sell keys */
 	if (o_ptr->tval == TV_KEY) return(4);
-
-	/* Note: We currently allow selling someone else's level-0 items, eg unique monsters' DROP_CHOSEN items/artifacts (and also starter items). */
-	//if (!o_ptr->level && o_ptr->owner != p_ptr->id) return(5);
-
-#if STARTEQ_TREATMENT >= 2
-	if (o_ptr->mode & MODE_STARTER_ITEM) {
- #if STARTEQ_TREATMENT == 3
-		/* Cannot sell any starter items, including own ones */
-		return(6);
- #else
-		/* Prevent suicide-item-accumulation-cheeze, but allow selling own level 0 rewards (that weren't 100% discounted) */
-		if (o_ptr->owner != p_ptr->id) return(7);
- #endif
-	}
-#endif
 
 	/* Assume okay */
 	return(0);
