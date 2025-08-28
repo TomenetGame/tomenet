@@ -2971,20 +2971,6 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				o_ptr = &forge;
 			} else delete_it = TRUE; //delete the object from the floor, sinc we fully picked it up (in case of stack of items)
 
-#if 0
-			/* Hack -- query every item */
-			if (p_ptr->carry_query_flag && !confirm) {
-				char out_val[ONAME_LEN];
-
-				snprintf(out_val, ONAME_LEN, "Pick up %s? ", o_name);
-				Send_pickup_check(Ind, out_val);
-
-				/* unhack 'pick_one'/'pick_some' */
-				o_floor_ptr->number = num_org;
-				return;
-			}
-#endif	// 0
-
 			/* Attempt to pick up an object. */
 
 			/* For pick_one/pick_some (otherwise delete_it would be TRUE here):
