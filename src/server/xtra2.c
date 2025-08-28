@@ -5504,8 +5504,8 @@ void check_experience(int Ind) {
 #endif
 		break;
 	case CLASS_RANGER:
-		if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn how to move through dense forests easily.");
-		if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn how to swim well, with heavy backpack even.");
+		if (old_lev < 8 && p_ptr->lev >= 8) msg_print(Ind, "\374\377GYou learn how to move through dense forests easily.");
+		if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn how to swim well, with heavy backpack even.");
 		break;
 	case CLASS_DRUID: /* Forms gained by Druids */
 		/* compare mimic_druid in defines.h */
