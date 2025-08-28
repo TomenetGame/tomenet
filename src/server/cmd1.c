@@ -2904,47 +2904,52 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		/* hack for 'pick_one' (needed for inven_carry_okay() too, or rather for the object_similar() check inside of it */
 		if (pick_one) o_ptr->number = 1;
 
-		/* Note that the pack is too full - here we check for !Gn inscription for specific amount, via 0x20 tolerance marker */
-		if (try_pickup && !(pick_some = inven_carry_okay(Ind, o_ptr, (pickup == 2) ? 0x20 : 0x0))) {
-			msg_format(Ind, "You have no room for %s.", o_name);
-			Send_floor(Ind, o_ptr->tval);
+		/* If we haven't picked up the item yet (ie ammo slot or subinventory), try normal inventory now */
+		if (try_pickup) {
+			object_type forge, *o_floor_ptr; //for creating a structure copy to 'forge' for 'pick_one'/'pick_some' hacks
+			int slot;
 
-			/* Restore old inscription */
-			o_ptr->note = old_note;
-			o_ptr->note_utag = old_note_utag;
+			/* Note that the pack is too full - here we check for !Gn inscription for specific amount, via 0x20 tolerance marker */
+			if (!(pick_some = inven_carry_okay(Ind, o_ptr, (pickup == 2) ? 0x20 : 0x0))) {
+				msg_format(Ind, "You have no room for %s.", o_name);
+				Send_floor(Ind, o_ptr->tval);
 
-			/* unhack 'pick_one' */
-			o_ptr->number = num_org;
+				/* Restore old inscription */
+				o_ptr->note = old_note;
+				o_ptr->note_utag = old_note_utag;
 
-			return;
-		}
-		/* New: Also check the item to pick up for !G inscription, for when we don't have any of it in our inventory yet,
-		   to preemptively apply that value to the amount we probably want to pick up (maybe make it a client option).
-		   Note: We only check the inven_carry_okay() return value for '-1' for 'no more space'.
-		    If there was an existing !G inscription in our inventory, we'll accept that and not process the possible object's own !G inscription here. */
-		if (try_pickup && !pick_all && pick_some == -1 && (limitG = check_guard_inscription(o_ptr->note, 'G') - 1) > 0)
-			if (limitG < o_ptr->number) pick_some = limitG;
+				/* unhack 'pick_one' */
+				o_ptr->number = num_org;
 
-		/* Actually ensure that there is at least one slot left in case we filled the whole inventory with CURSE_NO_DROP items */
-		if (try_pickup && pick_some == -1 && !inven_carry_cursed_okay(Ind, o_ptr, 0x0)) {
-			/* Give a somewhat misleading message, to not spoil him that he actually was protected */
-			msg_print(Ind, "A divine force stops you from picking up that item!");
-			s_printf("NO_PICKUP_CURSE_NO_DROP: Player '%s', item '%s'.\n", p_ptr->name, o_name);
-			Send_floor(Ind, o_ptr->tval);
+				return;
+			}
 
-			/* Restore old inscription */
-			o_ptr->note = old_note;
-			o_ptr->note_utag = old_note_utag;
+			/* New: Also check the item to pick up for !G inscription, for when we don't have any of it in our inventory yet,
+			   to preemptively apply that value to the amount we probably want to pick up (maybe make it a client option).
+			   Note: We only check the inven_carry_okay() return value for '-1' for 'no more space'.
+			    If there was an existing !G inscription in our inventory, we'll accept that and not process the possible object's own !G inscription here. */
+			if (!pick_all && pick_some == -1 && (limitG = check_guard_inscription(o_ptr->note, 'G') - 1) > 0)
+				if (limitG < o_ptr->number) pick_some = limitG;
 
-			/* unhack 'pick_one' */
-			o_ptr->number = num_org;
+			/* Actually ensure that there is at least one slot left in case we filled the whole inventory with CURSE_NO_DROP items */
+			if (pick_some == -1 && !inven_carry_cursed_okay(Ind, o_ptr, 0x0)) {
+				/* Give a somewhat misleading message, to not spoil him that he actually was protected */
+				msg_print(Ind, "A divine force stops you from picking up that item!");
+				s_printf("NO_PICKUP_CURSE_NO_DROP: Player '%s', item '%s'.\n", p_ptr->name, o_name);
+				Send_floor(Ind, o_ptr->tval);
 
-			return;
-		}
-		/* Pick up the item (if requested and allowed) */
-		else if (try_pickup) {
-			int okay = TRUE;
-			object_type forge, *o_floor_ptr = o_ptr; //for creating a structure copy to 'forge' for 'pick_one'/'pick_some' hacks
+				/* Restore old inscription */
+				o_ptr->note = old_note;
+				o_ptr->note_utag = old_note_utag;
+
+				/* unhack 'pick_one' */
+				o_ptr->number = num_org;
+
+				return;
+			}
+
+			/* Pick up the item (if requested and allowed) */
+			o_floor_ptr = o_ptr;
 
 			/* Use i as check just for 'normal picking up' (0) vs 'pickup specific amount' (>0) from now on,
 			   so we discard the third value here (-1) as we have already checked for 'no room' above (was '0')
@@ -2981,170 +2986,164 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #endif	// 0
 
 			/* Attempt to pick up an object. */
-			if (okay) {
-				int slot;
 
-				/* For pick_one/pick_some (otherwise delete_it would be TRUE here):
-				   Need to divide wand/staff charges - thanks Dj_Wolf */
-				if (!delete_it && is_magic_device(o_ptr->tval)) {
-					o_floor_ptr->number = num_org; //temporarily unhack pick_one/pick_some
-					if (pick_one) {
-						divide_charged_item(o_ptr, o_floor_ptr, 1);
-						o_floor_ptr->number = 1; //rehack pick_one
-					} else if (pick_some) {
-						divide_charged_item(o_ptr, o_floor_ptr, pick_some);
-						o_floor_ptr->number = pick_some; //rehack pick_some
-					}
+			/* For pick_one/pick_some (otherwise delete_it would be TRUE here):
+			   Need to divide wand/staff charges - thanks Dj_Wolf */
+			if (!delete_it && is_magic_device(o_ptr->tval)) {
+				o_floor_ptr->number = num_org; //temporarily unhack pick_one/pick_some
+				if (pick_one) {
+					divide_charged_item(o_ptr, o_floor_ptr, 1);
+					o_floor_ptr->number = 1; //rehack pick_one
+				} else if (pick_some) {
+					divide_charged_item(o_ptr, o_floor_ptr, pick_some);
+					o_floor_ptr->number = pick_some; //rehack pick_some
 				}
+			}
 
-				handle_pickup_item(Ind, o_ptr, c_ptr->info);
+			handle_pickup_item(Ind, o_ptr, c_ptr->info);
 
-				/* Carry the item */
-				o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
-				/* 'Auto-load' throwing weapons? To make it fair, works on all weapons. Ez disarm-recovery possible! */
-				if (!(auto_load && is_weapon(o_ptr->tval) && object_known_p(Ind, o_ptr) && (slot = do_cmd_wield(Ind, -c_ptr->o_idx, 4)) != -1))
-				/* Normal pick-up */
-				slot = inven_carry(Ind, o_ptr);
+			/* Carry the item */
+			o_ptr->quest_credited = TRUE; //hack: avoid double-crediting
+			/* 'Auto-load' throwing weapons? To make it fair, works on all weapons. Ez disarm-recovery possible! */
+			if (!(auto_load && is_weapon(o_ptr->tval) && object_known_p(Ind, o_ptr) && (slot = do_cmd_wield(Ind, -c_ptr->o_idx, 4)) != -1))
+			/* Normal pick-up */
+			slot = inven_carry(Ind, o_ptr);
 #ifdef USE_SOUND_2010
-				/* We already carried the item, don't play another (->redundant) sfx later! */
-				inven_carried = TRUE;
+			/* We already carried the item, don't play another (->redundant) sfx later! */
+			inven_carried = TRUE;
 #endif
-				o_ptr->quest_credited = FALSE; //unhack.
+			o_ptr->quest_credited = FALSE; //unhack.
 
-				/* Get the item again */
-				o_ptr = &(p_ptr->inventory[slot]);
-				o_ptr->marked = 0;
-				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+			/* Get the item again */
+			o_ptr = &(p_ptr->inventory[slot]);
+			o_ptr->marked = 0;
+			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
 #if 0
-				if (!o_ptr->level) {
-					if (p_ptr->dun_depth > 0) o_ptr->level = p_ptr->dun_depth;
-					else o_ptr->level = -p_ptr->dun_depth;
-					if (o_ptr->level > 100) o_ptr->level = 100;
-				}
+			if (!o_ptr->level) {
+				if (p_ptr->dun_depth > 0) o_ptr->level = p_ptr->dun_depth;
+				else o_ptr->level = -p_ptr->dun_depth;
+				if (o_ptr->level > 100) o_ptr->level = 100;
+			}
 #endif
 
-				/* the_sandman: attempt to id a newly picked up item if we have the means to do so.
-				 * Check that we don't know the item and can read a scroll - mikaelh */
-				if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) /* was just object_known_p */
-					apply_XID(Ind, o_ptr, slot);
+			/* the_sandman: attempt to id a newly picked up item if we have the means to do so.
+			 * Check that we don't know the item and can read a scroll - mikaelh */
+			if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) /* was just object_known_p */
+				apply_XID(Ind, o_ptr, slot);
 
-				/* Describe the object */
-				object_desc(Ind, o_name, o_ptr, TRUE, 3);
+			/* Describe the object */
+			object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-				if (!remember_sense(Ind, slot, o_ptr)) {
-					/* Just standard message */
-					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
-				}
+			if (!remember_sense(Ind, slot, o_ptr)) {
+				/* Just standard message */
+				msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
+			}
 
-				if (!p_ptr->warning_lamp_oil && o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_LANTERN
-				    && p_ptr->inventory[INVEN_LITE].tval == TV_LITE && p_ptr->inventory[INVEN_LITE].sval == SV_LITE_LANTERN) {
-					msg_print(Ind, "\374\377yHINT: You can also refill your lantern with another lantern with \377oSHIFT+F\377y,");
-					msg_print(Ind, "\374\377y      and the chat command '\377o/empty\377y' can empty lanterns to make them stack.");
-					s_printf("warning_lamp_oil: %s\n", p_ptr->name);
-					p_ptr->warning_lamp_oil = 1;
-				}
+			if (!p_ptr->warning_lamp_oil && o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_LANTERN
+			    && p_ptr->inventory[INVEN_LITE].tval == TV_LITE && p_ptr->inventory[INVEN_LITE].sval == SV_LITE_LANTERN) {
+				msg_print(Ind, "\374\377yHINT: You can also refill your lantern with another lantern with \377oSHIFT+F\377y,");
+				msg_print(Ind, "\374\377y      and the chat command '\377o/empty\377y' can empty lanterns to make them stack.");
+				s_printf("warning_lamp_oil: %s\n", p_ptr->name);
+				p_ptr->warning_lamp_oil = 1;
+			}
 
-				if (!p_ptr->warning_inspect &&
-				    (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET)// || o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF || o_ptr->tval == TV_ROD)
-				    && object_known_p(Ind, o_ptr)
-				    //&& *(k_text + k_info[o_ptr->k_idx].text) /* not this, it disables all 'basic' items such as sustain rings or example */
-				    ) {
-					msg_print(Ind, "\374\377yHINT: You can press '\377oShift+i\377y' to try and inspect an unknown item!");
-					s_printf("warning_inspect: %s\n", p_ptr->name);
-					p_ptr->warning_inspect = 1;
-				}
+			if (!p_ptr->warning_inspect &&
+			    (o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET)// || o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF || o_ptr->tval == TV_ROD)
+			    && object_known_p(Ind, o_ptr)
+			    //&& *(k_text + k_info[o_ptr->k_idx].text) /* not this, it disables all 'basic' items such as sustain rings or example */
+			    ) {
+				msg_print(Ind, "\374\377yHINT: You can press '\377oShift+i\377y' to try and inspect an unknown item!");
+				s_printf("warning_inspect: %s\n", p_ptr->name);
+				p_ptr->warning_inspect = 1;
+			}
 
-				/* guild key? */
-				if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY) {
-					if (o_ptr->pval == p_ptr->guild && !lookup_player_name(guilds[p_ptr->guild].master)) {
-						if (p_ptr->lev < 30) msg_print(Ind, "\377yYou need to be at least level 30 to become a guild master.");
-						else {
-							/* anti-cheeze: People could get an extra house on each character.
-							   So we allow only one guild master per player account to at least
-							   reduce the nonsense to 1 extra house per Account.. */
-							struct account acc;
+			/* guild key? */
+			if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_GUILD_KEY) {
+				if (o_ptr->pval == p_ptr->guild && !lookup_player_name(guilds[p_ptr->guild].master)) {
+					if (p_ptr->lev < 30) msg_print(Ind, "\377yYou need to be at least level 30 to become a guild master.");
+					else {
+						/* anti-cheeze: People could get an extra house on each character.
+						   So we allow only one guild master per player account to at least
+						   reduce the nonsense to 1 extra house per Account.. */
+						struct account acc;
 
-							bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE, NULL, NULL);
+						bool success = GetAccount(&acc, p_ptr->accountname, NULL, FALSE, NULL, NULL);
 
-							/* paranoia */
-							if (success) {
-								int *id_list, ids, i, j;
-								bool ok = TRUE;
+						/* paranoia */
+						if (success) {
+							int *id_list, ids, i, j;
+							bool ok = TRUE;
 
-								ids = player_id_list(&id_list, acc.id);
-								for (i = 0; i < ids; i++) {
-									if ((j = lookup_player_guild(id_list[i])) && /* one of his characters is in a guild.. */
-									    guilds[j].master == id_list[i]) { /* ..and he is actually the master of that guild? */
-										msg_print(Ind, "\377yOnly one character per account is allowed to be a guild master.");
-										ok = FALSE;
-										break;
-									}
+							ids = player_id_list(&id_list, acc.id);
+							for (i = 0; i < ids; i++) {
+								if ((j = lookup_player_guild(id_list[i])) && /* one of his characters is in a guild.. */
+								    guilds[j].master == id_list[i]) { /* ..and he is actually the master of that guild? */
+									msg_print(Ind, "\377yOnly one character per account is allowed to be a guild master.");
+									ok = FALSE;
+									break;
 								}
-								if (ids) C_KILL(id_list, ids, int);
+							}
+							if (ids) C_KILL(id_list, ids, int);
 
-								if (ok) {
-									/* set guild hall to 'no longer suspended' */
-									if ((i = guilds[p_ptr->guild].h_idx)) {
-										houses[i - 1].flags &= ~HF_GUILD_SUS;
-										fill_house(&houses[i - 1], FILL_GUILD_SUS_UNDO, NULL);
-									}
-									guilds[p_ptr->guild].timeout = 0; /* phew */
-
-									guild_msg_format(p_ptr->guild, "\374\377%c%s is the new guild master!", COLOUR_CHAT_GUILD, p_ptr->name);
-									guilds[p_ptr->guild].master = p_ptr->id;
-									/* hack: change guild hall creator id to him */
-									if (guilds[p_ptr->guild].h_idx) houses[guilds[p_ptr->guild].h_idx - 1].dna->creator = p_ptr->dna;
-									Send_guild(Ind, FALSE, FALSE);
-									Send_guild_config(p_ptr->guild);
+							if (ok) {
+								/* set guild hall to 'no longer suspended' */
+								if ((i = guilds[p_ptr->guild].h_idx)) {
+									houses[i - 1].flags &= ~HF_GUILD_SUS;
+									fill_house(&houses[i - 1], FILL_GUILD_SUS_UNDO, NULL);
 								}
+								guilds[p_ptr->guild].timeout = 0; /* phew */
+
+								guild_msg_format(p_ptr->guild, "\374\377%c%s is the new guild master!", COLOUR_CHAT_GUILD, p_ptr->name);
+								guilds[p_ptr->guild].master = p_ptr->id;
+								/* hack: change guild hall creator id to him */
+								if (guilds[p_ptr->guild].h_idx) houses[guilds[p_ptr->guild].h_idx - 1].dna->creator = p_ptr->dna;
+								Send_guild(Ind, FALSE, FALSE);
+								Send_guild_config(p_ptr->guild);
 							}
 						}
 					}
 				}
+			}
 
-				if (o_ptr->tval == TV_SUBINVEN) {
-					if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0))
-						msg_print(Ind, "\377oYou need to use at least client version \377R4.8.0\377o to use this bag! Your current client won't work!");
-					if (o_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0))
-						msg_print(Ind, "\377oYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use this bag! Your current client won't work!");
+			if (o_ptr->tval == TV_SUBINVEN) {
+				if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0))
+					msg_print(Ind, "\377oYou need to use at least client version \377R4.8.0\377o to use this bag! Your current client won't work!");
+				if (o_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0))
+					msg_print(Ind, "\377oYou need to use at least the \377RTEST client 4.9.1\377o or a higher client version to use this bag! Your current client won't work!");
 #if 0 /* Maybe spammy/unnecessary */
 #ifdef SI_WRAPPING_SKILL
-					if (o_ptr->sval == SV_SI_MDEVP_WRAPPING && p_ptr->newbie_hints && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL)
-						msg_format(Ind, "\377yYou need %d in 'Magic Device' or 'Trapping' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
+				if (o_ptr->sval == SV_SI_MDEVP_WRAPPING && p_ptr->newbie_hints && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL)
+					msg_format(Ind, "\377yYou need %d in 'Magic Device' or 'Trapping' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
 #endif
 #endif
+			}
+
+			/* Delete original */
+			//delete_object(wpos, p_ptr->py, p_ptr->px, FALSE);
+			if (delete_it) {
+				/* extra logging for artifacts */
+				if (o_ptr->name1) {
+					char o_name[ONAME_LEN];
+
+					object_desc_store(0, o_name, o_ptr, TRUE, 3);
+					s_printf("%s artifact picked up at (%d,%d,%d) by '%s':\n  %s\n",
+					    showtime(), wpos->wx, wpos->wy, wpos->wz,
+					    p_ptr->name, o_name);
 				}
 
-				/* Delete original */
-				//delete_object(wpos, p_ptr->py, p_ptr->px, FALSE);
-				if (delete_it) {
-					/* extra logging for artifacts */
-					if (o_ptr->name1) {
-						char o_name[ONAME_LEN];
+				delete_object_idx(c_ptr->o_idx, FALSE, FALSE);
 
-						object_desc_store(0, o_name, o_ptr, TRUE, 3);
-						s_printf("%s artifact picked up at (%d,%d,%d) by '%s':\n  %s\n",
-						    showtime(), wpos->wx, wpos->wy, wpos->wz,
-						    p_ptr->name, o_name);
-					}
+				/* Hack -- tell the player of the next object on the pile */
+				whats_under_your_feet(Ind, FALSE);
 
-					delete_object_idx(c_ptr->o_idx, FALSE, FALSE);
-
-					/* Hack -- tell the player of the next object on the pile */
-					whats_under_your_feet(Ind, FALSE);
-
-					/* Tell the client */
-					Send_floor(Ind, 0);
-				} else if (pick_one) /* unhack 'pick_one' - we picked up one item off the pile */
-					o_floor_ptr->number = num_org - 1;
-				else if (pick_some)
-					o_floor_ptr->number = num_org - pick_some;
-			} else { /* not 'okay', currently dead code here, since it's always TRUE, but for paranoia's sake: */
-				/* unhack 'pick_one'/'pick_some' */
-				o_floor_ptr->number = num_org;
-			}
-		}
+				/* Tell the client */
+				Send_floor(Ind, 0);
+			} else if (pick_one) /* unhack 'pick_one' - we picked up one item off the pile */
+				o_floor_ptr->number = num_org - 1;
+			else if (pick_some)
+				o_floor_ptr->number = num_org - pick_some;
+		} /* try_pickup */
 	}
 
 #ifdef USE_SOUND_2010
