@@ -9695,6 +9695,7 @@ void tome_creation_aux(int Ind, int item) {
 	if ((item >= 0) && (o_ptr->number > 1)) {
 		/* Make a fake item */
 		object_type tmp_obj;
+
 		tmp_obj = *o_ptr;
 		tmp_obj.number = 1;
 
@@ -9805,16 +9806,17 @@ void mstaff_absorb_aux(int Ind, int item) {
 
 	/* Use up the magic device */
 	if (is_magic_device(o2_ptr->tval)) /* at this point it has to be */
-		divide_charged_item(o_ptr, o2_ptr, 1);
+		divide_charged_item(o_ptr, o2_ptr, 1); /* this just sets pval/bpval of the mage staff, nothing else */
 	inven_item_increase(Ind, p_ptr->using_up_item, -1);
 	inven_item_describe(Ind, p_ptr->using_up_item);
 	inven_item_optimize(Ind, p_ptr->using_up_item);
 	p_ptr->using_up_item = -1;
 
-	/* unstack if our mage staff was originally in a pile of mage staves */
+	/* (paranoia) unstack if our mage staff was originally in a pile of mage staves -- impossible, it needs to be equipped in order to be activated for fusion */
 	if ((item >= 0) && (o_ptr->number > 1)) {
 		/* Make a fake item */
 		object_type tmp_obj;
+
 		tmp_obj = *o_ptr;
 		tmp_obj.number = 1;
 
@@ -9836,7 +9838,7 @@ void mstaff_absorb_aux(int Ind, int item) {
 	p_ptr->window |= (PW_INVEN | PW_EQUIP);
 	p_ptr->notice |= (PN_REORDER);
 
- #ifdef ENABLE_SUBINVEN /* TODO: PW_SUBINVEN */
+ #ifdef ENABLE_SUBINVEN /* (paranoia) TODO: PW_SUBINVEN -- impossible, mage staves cannot be in subinventory (chest) when activated to fuse */
 	/* Redraw subinven item */
 	if (item >= SUBINVEN_INVEN_MUL) display_subinven_aux(Ind, item / SUBINVEN_INVEN_MUL - 1, item % SUBINVEN_INVEN_MUL);
  #endif
