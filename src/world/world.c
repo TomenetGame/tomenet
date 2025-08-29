@@ -531,8 +531,13 @@ uint32_t get_message_type(char *msg) {
 		return(WMF_HILVLUP | WMF_LVLUP);
 	} else if (strstr(msg, " has attained level ")) {
 		return(WMF_LVLUP);
-	} else if (strstr(msg, " was slain by ") ||
-	    (strstr(msg, " has defeated ") && strstr(msg, " mirror image."))) {
+	} else if (strstr(msg, " was slain by ")
+	    || strstr(msg, "Santa dropped the") /* Santa (optional); he and Pumpkin should probably be either both enabled or both disabled */
+	    || (strstr(msg, " has defeated ") && (
+	     strstr(msg, " mirror image")
+	     || strstr(msg, " a lost guardian") || strstr(msg, "lost vault's guardian") /* Horned Reaper */
+	     || strstr(msg, "tasty halloween spirit") /* Pumpkin (optional) */
+	    ))) {
 		return(WMF_UNIDEATH);
 	} else if (strstr(msg, " was destroyed by ") ||
 	    strstr(msg, " was wasted by ") ||
