@@ -14023,13 +14023,23 @@ LIFE ('It affects your hit points.')
         Will increase your total hit points by +x0%. Example:
         Sword of life (+2) increases your HP by 20%.
 
-        LIFE items _add_ to each other, they aren't multiplied.
-        The maximum total +LIFE bonus a character can achieve is +3 (cap).
-        (For mimics, the +LIFE effect might be less since their HP in
+        LIFE items _add_ to each other, they aren't multiplied; so for
+        example two weapons that grant +1 LIFE each will result in a total
+        of +2 LIFE aka +20% HP.
+        The maximum total +LIFE bonus a character can achieve is +3 (cap)
+        ie a +30% HP bonus.
+
+        For mimicry users, the +LIFE effect might be less since their HP in
         player form or monster form might be low. The +LIFE isn't applied
-        to mimics' final HP but the lower base HP.)
-        LIFE affects your complete hit point pool, including the additional
-        HP a character gained from 'Health' skill.
+        to mimics' final HP but the lower base HP and this gain can be
+        further reduced somewhat if the monster form has significantly more
+        HP than the base player form.
+
+        LIFE affects almost your complete hit point pool, including the
+        additional HP a character gained from 'Health' skill.
+        It does not affect temporary HP boosts from Heroism or Berserk,
+        and it also does not affect the HP boni gained as Corrupted Maia
+        or from training the 'Nature' school.
 
         +LIFE on randarts will (depending on server options, see ~i in-game)
         usually only affect player characters who are royalty ie winners who
@@ -19236,7 +19246,12 @@ stated.
 
 +Health                         Increases your hit points by 2 for each point.
  (0.500)                        Note that this gain stacks with +LIFE items
-                                (compare '+LIFE' in (5.8)).
+                                (compare '+LIFE' in (5.8)) granting you up to
+                                30% more HP at the cap of +3 LIFE ie ~+2.67 HP
+                                for each +1.000 points in Health.
+                                (The HP bonus is factored in before the HP
+                                bonus granted from training 'Nature' school.)
+
                                 Increases your hit point regeneration rate:
                                  (skill_level * 2)% chance to regenerate 1.5x
                                  the normal amount of HP per turn (stacks with
@@ -23076,12 +23091,13 @@ these limitations will be lifted.
 
     BONI:           While 'Disruption Shield' is not active, Nature grants
                     a hit point bonus, that is applied on the total hit points
-                    after all other HP boni and modifications (eg +LIFE, mimic
-                    form HP or Corrupted HP bonus) have been applied except for
-                    the temporary Heroism or Berserk boni.
+                    after all other HP boni and modifications (eg from 'Health'
+                    skill, +LIFE items, mimic form HP or Corrupted Maia bonus)
+                    have been applied, except for Heroism or Berserk HP boni.
                     These HP boni values fully apply at character level 50 or
                     higher, for lower character levels they are scaled down.
                     The final ie top-scaled (character level 50+) values are:
+                    ---------------------------------------------------------
                     +4 for each 1.000 in Nature while HP is still below 800,
                     +3 for each 1.000 in Nature while HP is still below 900,
                     +2 for each 1.000 in Nature while HP is still below 1000,
