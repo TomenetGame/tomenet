@@ -8,7 +8,7 @@ STARIDENTIFY = add_spell {
 	["level"] = 	35,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	10,
+	["fail"] = 	-10,
 	["extra"] = 	function () return get_check2("Cast on yourself?", FALSE) end,
 	["spell"] = 	function (args)
 			if args.aux == TRUE then
