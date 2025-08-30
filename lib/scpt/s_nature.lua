@@ -180,9 +180,9 @@ REGENERATION = add_spell {
 	["name2"] = 	"Regen",
 	["school"] = 	{SCHOOL_NATURE},
 	["level"] = 	20,
-	["mana"] = 	40,
-	["mana_max"] = 	40,
-	["fail"] = 	0,
+	["mana"] = 	25,
+	["mana_max"] = 	25,
+	["fail"] = 	-15,
 	["spell"] = 	function()
 			set_tim_regen(Ind, randint(10) + 5 + get_level(Ind, REGENERATION, 50), 10 + get_level(Ind, REGENERATION, 200), 0)
 	end,
