@@ -260,9 +260,13 @@ static void prt_gold(int Ind) {
  */
 static void prt_ac(int Ind) {
 	player_type *p_ptr = Players[Ind];
+	s16b boosted = (p_ptr->to_a_tmp != 0) ? 10000 : 0;
+	s16b unknown = (p_ptr->unknown_ac) ? 20000 : 0;
 
-	if (p_ptr->to_a_tmp && is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0))
-		Send_ac(Ind, p_ptr->dis_ac + 10000, p_ptr->dis_to_a);
+	if (is_atleast(&p_ptr->version, 4, 9, 3, 0, 0, 2))
+		Send_ac(Ind, p_ptr->dis_ac + boosted + unknown, p_ptr->dis_to_a);
+	else if (is_atleast(&p_ptr->version, 4, 7, 3, 1, 0, 0))
+		Send_ac(Ind, p_ptr->dis_ac + boosted, p_ptr->dis_to_a);
 	else if (p_ptr->to_a_tmp && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0))
 		Send_ac(Ind, p_ptr->dis_ac | 0x1000, p_ptr->dis_to_a);
 	else
@@ -3293,6 +3297,7 @@ void calc_boni(int Ind) {
 	p_ptr->dis_to_h = p_ptr->to_h = p_ptr->to_h_melee = p_ptr->to_h_ranged = p_ptr->to_h_tmp = p_ptr->to_h_melee_tmp = p_ptr->to_h_ranged_tmp = 0;
 	p_ptr->dis_to_d = p_ptr->to_d = p_ptr->to_d_melee = p_ptr->to_d_ranged = p_ptr->to_d_tmp = p_ptr->to_d_melee_tmp = p_ptr->to_d_ranged_tmp = 0;
 	p_ptr->dis_to_a = p_ptr->to_a = p_ptr->to_a_tmp = 0;
+	p_ptr->unknown_ac = FALSE;
 	/* Special throwing ranged bonus */
 	p_ptr->to_h_thrown = 0;
 
@@ -4738,6 +4743,16 @@ void calc_boni(int Ind) {
  #endif
 #endif
 		}
+
+		/* We cannot know for sure how much AC this grants us? */
+#ifdef NEW_SHIELDS_NO_AC
+		else if (o_ptr->tval == TV_SHIELD) ; //nothing
+#endif
+		else if (is_armour(o_ptr->tval)
+		    || k_info[o_ptr->k_idx].to_a
+		    || ((o_ptr->tval == TV_RING || o_ptr->tval == TV_AMULET) && o_ptr->to_a)) //note: in theory doesn't catch disenchanted +0 AC jewelry that usually has non-zero AC.
+			p_ptr->unknown_ac = TRUE;
+
 
 		/* Brands/slays */
 		if (i == INVEN_WIELD || (i == INVEN_ARM && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD /* dual-wielders */ )

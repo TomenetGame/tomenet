@@ -2224,8 +2224,20 @@ int Receive_ac(void) {
 	int n;
 	char ch;
 	s16b base, plus;
+	bool unknown = FALSE, boosted = FALSE;
 
 	if ((n = Packet_scanf(&rbuf, "%c%hd%hd", &ch, &base, &plus)) <= 0) return(n);
+
+	if (is_atleast(&server_version, 4, 7, 3, 1, 0, 0)) {
+		if (base > 15000) {
+			base -= 20000;
+			unknown = TRUE;
+		}
+		if (base > 5000) {
+			base -= 10000;
+			boosted = TRUE;
+		}
+	}
 
 	p_ptr->dis_ac = base;
 	p_ptr->dis_to_a = plus;
@@ -2233,11 +2245,11 @@ int Receive_ac(void) {
 	if (screen_icky) Term_switch(0);
 
 	if (is_atleast(&server_version, 4, 7, 3, 1, 0, 0))
-		prt_ac((base > 5000 ? base - 10000 : base) + plus, (base > 5000));
+		prt_ac(base + plus, boosted, unknown);
 	else if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0))
-		prt_ac((base & ~0x1000) + plus, (base & 0x1000) != 0);
+		prt_ac((base & ~0x1000) + plus, (base & 0x1000) != 0, FALSE);
 	else
-		prt_ac(base + plus, FALSE);
+		prt_ac(base + plus, FALSE, FALSE);
 
 	if (screen_icky) Term_switch(0);
 

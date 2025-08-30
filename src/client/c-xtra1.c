@@ -448,9 +448,10 @@ void prt_gold(int gold) {
 /*
  * Prints current AC
  */
-void prt_ac(int ac, bool boosted) {
+void prt_ac(int ac, bool boosted, bool unknown) {
 	char tmp[32];
 	int x, y, attr;
+
 	if (client_mode == CLIENT_PARTY) return;
 
 	/* remember cursor position */
@@ -461,6 +462,7 @@ void prt_ac(int ac, bool boosted) {
 
 	//if (ac > 0 && boosted) attr = TERM_L_BLUE;
 	if (boosted) attr = TERM_L_BLUE;
+	else if (unknown) attr = TERM_GREEN;
 	else attr = TERM_L_GREEN;
 
 	c_put_str(attr, tmp, ROW_AC, COL_AC + 7);

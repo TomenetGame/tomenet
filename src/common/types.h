@@ -3948,6 +3948,7 @@ struct player_type {
 	s16b to_h_ranged_tmp;		/* Just to track temporary boosts for colourising indicator on client-side */
 	s16b to_d_ranged_tmp;		/* Just to track temporary boosts for colourising indicator on client-side */
 	s16b to_a_tmp;			/* Just to track temporary boosts for colourising indicator on client-side */
+	bool unknown_ac;		/* Some equipment that grants AC isn't identfied enough to know for sure how much AC it gives? */
 
 	s16b ac;			/* Base ac */
 
