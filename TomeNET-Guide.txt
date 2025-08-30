@@ -23142,7 +23142,7 @@ these limitations will be lifted.
                     Required skill level for first spell level: 40.
                     (Telekinesis II is a Mindcraft spell, not in Wizardry.)
 
-    Mass Warp       Locks monsters in stasis for a while.
+    Mass Stasis     Locks monsters in stasis for a while.
                     Required skill level for first spell level: 45.
                     Shared spell (see above): Temporal, Conveyance.
 
@@ -23217,7 +23217,7 @@ these limitations will be lifted.
                     gain of +10 speed and grant up to +14 speed when maxed out.
                     Required skill level for first spell level: 15.
 
-    Mass Warp       Locks monsters in stasis for a while.
+    Mass Stasis     Locks monsters in stasis for a while.
                     Required skill level for first spell level: 45.
                     Shared spell (see above): Temporal, Conveyance.
 
