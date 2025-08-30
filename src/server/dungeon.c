@@ -11550,67 +11550,68 @@ void shutdown_server(void) {
 void pack_overflow(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
+	object_type *o_ptr;
+	int amt, i, j = 0;
+	u32b f1, f2, f3, f4, f5, f6, esp;
+	char o_name[ONAME_LEN];
+
+
 	/* XXX XXX XXX Pack Overflow */
-	if (p_ptr->inventory[INVEN_PACK].k_idx) {
-		object_type *o_ptr;
-		int amt, i, j = 0;
-		u32b f1, f2, f3, f4, f5, f6, esp;
-		char o_name[ONAME_LEN];
+	if (!p_ptr->inventory[INVEN_PACK].k_idx) return;
 
-		/* Choose an item to spill */
-		for (i = INVEN_PACK - 1; i >= 0; i--) {
-			o_ptr = &p_ptr->inventory[i];
-			object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
+	/* Choose an item to spill */
+	for (i = INVEN_PACK - 1; i >= 0; i--) {
+		o_ptr = &p_ptr->inventory[i];
+		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
-			if (!check_guard_inscription(o_ptr->note, 'd') &&
-			    !((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) &&
-			    !o_ptr->questor) {
-				j = 1;
-				break;
-			}
+		if (!check_guard_inscription(o_ptr->note, 'd') &&
+		    !((f4 & TR4_CURSE_NO_DROP) && cursed_p(o_ptr)) &&
+		    !o_ptr->questor) {
+			j = 1;
+			break;
 		}
+	}
 
-		if (!j) i = INVEN_PACK;
+	if (!j) i = INVEN_PACK;
 #ifdef SUBINVEN_LIMIT_GROUP
-		/* Be on the safe side, do NOT potentially drop a bag in use for another bag we just picked up:
-		   Too annoying to lose all its contents too, for zero potential value from the new bag item. */
-		else if (p_ptr->inventory[INVEN_PACK].tval == TV_SUBINVEN) i = INVEN_PACK;
+	/* Be on the safe side, do NOT potentially drop a bag in use for another bag we just picked up:
+	   Too annoying to lose all its contents too, for zero potential value from the new bag item. */
+	else if (p_ptr->inventory[INVEN_PACK].tval == TV_SUBINVEN) i = INVEN_PACK;
 #endif
 
-		/* Access the slot to be dropped */
-		o_ptr = &p_ptr->inventory[i];
+	/* Access the slot to be dropped */
+	o_ptr = &p_ptr->inventory[i];
 
-		/* Drop all of that item */
-		amt = o_ptr->number;
+	/* Drop all of that item */
+	amt = o_ptr->number;
 
-		/* Disturbing */
-		disturb(Ind, 0, 0);
+	/* Disturbing */
+	disturb(Ind, 0, 0);
 
-		/* Warning */
-		//msg_print(Ind, "\376\377oYour pack overflows!");
+	/* Warning */
+	//msg_print(Ind, "\376\377oYour pack overflows!");
 
-		/* Describe */
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	/* Describe */
+	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
-		/* Message */
-		msg_format(Ind, "\376\377oYour pack overflows! You drop %s.", o_name);
+	/* Message */
+	msg_format(Ind, "\376\377oYour pack overflows! You drop %s.", o_name);
 
 #ifdef USE_SOUND_2010
-		sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
+	sound_item(Ind, o_ptr->tval, o_ptr->sval, "drop_");
 #endif
 
-		/* Drop it (carefully) near the player */
-		drop_near(TRUE, Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
+	/* Drop it (carefully) near the player */
+	drop_near(TRUE, Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 
 #ifdef ENABLE_SUBINVEN
-		/* Paranoia? - If we drop a subinventory, remove all items and place them into the player's inventory */
-		if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, i, FALSE, FALSE);
+	/* Paranoia? - If we drop a subinventory, remove all items and place them into the player's inventory */
+	if (o_ptr->tval == TV_SUBINVEN) empty_subinven(Ind, i, FALSE, FALSE);
 #endif
 
-		/* Decrease the item, optimize. */
-		inven_item_increase(Ind, i, -amt);
-		inven_item_optimize(Ind, i);
-	}
+	/* Decrease the item, optimize. */
+	inven_item_increase(Ind, i, -amt);
+	inven_item_optimize(Ind, i);
 }
 
 /* Handle special timed events that don't fit in /
