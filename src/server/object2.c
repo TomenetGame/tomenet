@@ -11823,6 +11823,9 @@ bool inven_carry_cursed_okay(int Ind, object_type *o_ptr, s16b tolerance) {
  * placed into the "overflow" slot, and the "overflow" must take place
  * before the pack is reordered, but (optionally) after the pack is
  * combined.  This may be tricky.  See "dungeon.c" for info.
+ *
+ * Returns: Slot number (INVEN_PACK for overflow slot),
+ *          paranoia: or -1 if even beyond INVEN_PACK (cannot happen).
  */
 s16b inven_carry(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
