@@ -106,7 +106,7 @@ VISION_II = add_spell {
 	["level"] = 	40,
 	["mana"] = 	55,
 	["mana_max"] = 	55,
-	["fail"] = 	-70,
+	["fail"] = 	-60,
 	["spell"] = 	function()
 			fire_ball(Ind, GF_SEEMAP_PLAYER, 0, 1, 2, "")
 			wiz_lite_spell(Ind)
