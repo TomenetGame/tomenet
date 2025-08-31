@@ -4869,6 +4869,14 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			if (my_strcasestr(r_name + r_info[i].name, "Fallen")) r_info[i].flags9 &= ~RF9_RES_LITE;
 		}
 
+		/* Lightning beings should at least resist all Thunderstorm damage parts 1/2 */
+		if (r_info[i].flags4 & RF4_BR_ELEC) {
+			r_info[i].flags9 |= RF9_RES_SOUND;
+			r_info[i].flags9 |= RF9_RES_LITE;
+		}
+		/* Fire beings should at least resist light too 1/2 */
+		if (r_info[i].flags4 & RF4_BR_FIRE) r_info[i].flags9 |= RF9_RES_LITE;
+
 		/* Elemental melee attack effects give the according resistance (experimental) */
 		for (j = 0; j < 4; j++) {
 			switch (r_info[i].blow[j].effect) {
@@ -4882,9 +4890,16 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 				break;
 			case RBE_ELEC:
 				r_info[i].flags9 |= RF9_RES_ELEC;
+				/* Lightning beings should at least resist all Thunderstorm damage parts 2/2 */
+				if (r_info[i].flags3 & RF3_IM_ELEC) {
+					r_info[i].flags9 |= RF9_RES_SOUND;
+					r_info[i].flags9 |= RF9_RES_LITE;
+				}
 				break;
 			case RBE_FIRE:
 				r_info[i].flags9 |= RF9_RES_FIRE;
+				/* Fire beings should at least resist light too 2/2 */
+				if (r_info[i].flags3 & RF3_IM_FIRE) r_info[i].flags9 |= RF9_RES_LITE;
 				break;
 			case RBE_COLD:
 				r_info[i].flags9 |= RF9_RES_COLD;
