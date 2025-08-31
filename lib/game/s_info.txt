@@ -248,8 +248,8 @@ D:such as firing ranged weapons, using void gates or setting up traps.
 I:1000:0
 
 N:36:Swimming
-D:Cross water without drowning depending on weight, and swiftly at 0.700+.
-D:Also reduces chance of items getting damaged by water while swimming.
+D:Cross water more easily (depending on weight) and swiftly at 0.700+. Reduces
+D:chance of item damage from water while swimming. Greatly incrases 'Health'.
 I:1000:0
 F:MAX_1
 
@@ -294,7 +294,7 @@ D:Pseudo-ID food (detailedly at 10+). More detailed sanity indicator at 10/20/40
 I:1000:0
 
 N:44:Digging
-D:Dig more easily, find more treasure, uncover special features. Increases Health.
+D:Dig more easily, find more treasure, uncover features. Increases Health greatly.
 $ENABLE_DEMOLITIONIST$D:At 5 unlocks hidden 'Demolitionist' perk, to acquire chemicals and explosives.
 I:1000:0
 
@@ -513,6 +513,7 @@ $ENABLE_OCCULT$F:DUMMY
 
 N:90:Climbing
 D:Ability to climb highest mountains withouth problems (Requires 1.000).
+D:Greatly increases its parent skill 'Health'.
 I:1000:0
 F:MAX_1
 
