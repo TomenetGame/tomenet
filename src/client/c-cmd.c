@@ -8010,6 +8010,8 @@ void cmd_message(void) {
 			inkey_msg = FALSE;
 			return;
 		} else if (!strcasecmp(buf, "/new")) {
+			if (item_newest == -1) c_msg_print("(There was no newest item yet.)");
+			else c_msg_format("(Newest item was %c) %s.)", 'a' + item_newest, inventory_name[item_newest]);
 			inkey_msg = FALSE;
 			item_tester_hook = NULL;
 			get_item_hook_find_obj_what = "Item name? ";
@@ -8020,6 +8022,8 @@ void cmd_message(void) {
 			c_msg_format("Newest item now: %s", inventory_name[i]);
 			return;
 		} else if (prefix(buf, "/new ")) {
+			if (item_newest == -1) c_msg_print("(There was no newest item yet.)");
+			else c_msg_format("(Newest item was %c) %s.)", 'a' + item_newest, inventory_name[item_newest]);
 			inkey_msg = FALSE;
 			if (!buf[5]) {
 				item_tester_hook = NULL;
