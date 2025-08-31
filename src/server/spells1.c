@@ -11451,7 +11451,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 
 		if (hack_dam & 0x400) { /* holy curing PBAoE */
-			if (Ind != -who) dam = (dam * 3) / 2; /* heals allies for 3/4 of the self-heal amount */
+			if (Ind != -who) dam = (dam * 3) / 2; /* heals allies for 3/4 of the self-heal amount (instead of usual projection 1/2 intensity at rad 1 -> div 2) */
 		}
 
 #if 0 /* causes a prob with 'Cure Wounds' spell - targetting cannot determine if to skip vampires or not -_- */

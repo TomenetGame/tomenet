@@ -64,14 +64,14 @@ HEALING_I = add_spell {
 	["mana_max"] = 	6,
 	["fail"] = 	10,
 	["spell"] = 	function()
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(1), 1, "")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, 1024 + get_healing_power(1), 1, "")
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents(1).."% (max "..get_healing_cap(1)..") = "..get_healing_power(1)
 	end,
 	["desc"] = 	{
 			"Heals a percentage of your max hitpoints up to a spell level-dependent cap.",
-			"Projecting heals nearby players for 1/2 of the amount.",
+			"Projecting heals nearby players for 3/4 of the amount.",
 			"***Automatically projecting***",
 	}
 }
@@ -85,14 +85,14 @@ HEALING_II = add_spell {
 	["mana_max"] = 	20,
 	["fail"] = 	-30,
 	["spell"] = 	function()
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(15), 1, "")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, 1024 + get_healing_power(15), 1, "")
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents(15).."% (max "..get_healing_cap(15)..") = "..get_healing_power(15)
 	end,
 	["desc"] = 	{
 			"Heals a percentage of your max hitpoints up to a spell level-dependent cap.",
-			"Projecting heals nearby players for 1/2 of the amount.",
+			"Projecting heals nearby players for 3/4 of the amount.",
 			"***Automatically projecting***",
 	}
 }
@@ -105,14 +105,14 @@ HEALING_III = add_spell {
 	["mana_max"] = 	67,
 	["fail"] = 	-70,
 	["spell"] = 	function()
-			fire_ball(Ind, GF_HEAL_PLAYER, 0, get_healing_power(0), 1, "")
+			fire_ball(Ind, GF_HEAL_PLAYER, 0, 1024 + get_healing_power(0), 1, "")
 	end,
 	["info"] = 	function()
 			return "heal "..get_healing_percents(0).."% (max "..get_healing_cap(0)..") = "..get_healing_power(0)
 	end,
 	["desc"] = 	{
 			"Heals a percentage of your max hitpoints up to a spell level-dependent cap.",
-			"Final cap is 400. Projecting heals nearby players for 1/2 of the amount.",
+			"Final cap is 400. Projecting heals nearby players for 3/4 of the amount.",
 			"***Automatically projecting***",
 	}
 }
