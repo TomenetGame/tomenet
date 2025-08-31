@@ -14816,12 +14816,12 @@ Chaos
                 resist it or you will take damage too.
 
 Genocide        Removes all monsters of a certain kind from the current level.
-                Drains your HP for each one removed.
                 The race will be determined by the monster which stands
-                closest to you when firing off the spell. For each monster you
-                will suffer randomly from just 1 up to 4+(monsterlevel/8)
-                points of damage, which cannot be absorbed by any magic shield
-                or other protective effect!
+                closest to you when firing off the spell.
+
+                For each monster you will suffer randomly from just 1 up to
+                4+(monsterlevel/8) points of damage, which cannot be absorbed
+                by any magic shield or other protective effect!
 
                 Depending on the server configuration, the caster's remaining
                 hit points are usually halved (as an additional extra penalty)
@@ -14830,8 +14830,9 @@ Genocide        Removes all monsters of a certain kind from the current level.
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
-                (Genocide-type spells do not yield any kind of credit such as
-                experience points, loot or monster-form for mimics.)
+
+                Genocide-type spells do not yield any kind of credit such as
+                experience points, loot or monster-form for mimics.
 
 Golem Creation  Allows you to create a golem which follows you and which you
                 can control to some extent, see (9.3) for more information.
@@ -14857,21 +14858,21 @@ Lottery         This might be your chance today to win the Jackpot!
                 the prize money too, so stolen tickets yield no prize as they
                 are 100% discounted, like all stolen items.
 
-Obliteration    Removes all monsters that are close to you.
-                Drains your HP.
-                All monsters within a radius (equal to your sight range)
-                around you are annihilated. For each monster you will suffer
-                between 1 and 3+(monsterlevel/8) points of damage, which cannot
-                be absorbed by any magic shield or other protective effects!
+Obliteration    Removes all monsters that are close to you (radius 20).
+                For each monster you will suffer a HP drain between 1 and
+                3+(monsterlevel/8) points of damage, which cannot be absorbed
+                by any magic shield or other protective effects!
 
                 Depending on the server configuration, the caster's remaining
                 hit points might be halved (extra penalty) after the spell
                 finished (this penalty is enabled by default).
+
                 Monsters have a chance to resist genocide, depending on their
                 level. Monsters inside vaults, Uniques, and monsters that are
                 immune to teleportation attacks cannot be genocided.
-                (Genocide-type spells do not yield any kind of credit such as
-                experience points, loot or monster-form for mimics.)
+
+                Genocide-type spells do not yield any kind of credit such as
+                experience points, loot or monster-form for mimics.
 
 Parchments      These contain informations about the game, they won't
                 disappear if you read them.
@@ -23266,9 +23267,9 @@ these limitations will be lifted.
                     Tier II: Level 40.
 
     Genocide        Genocides all monsters of a race on your dungeon level at
-                    the cost of your HP, yielding no experience, kill credit or
-                    loot. Monsters may resist. Doesn't work inside vaults. Use
-                    with care!
+                    the cost of your HP, yielding no experience, kill credit
+                    or loot. Monsters may resist. Doesn't work inside vaults.
+                    HP drain cannot be mitigated, so use with care!
                     For details on the effect "genocide" of this spell,
                     please see (5.9) scroll of geno/oblit.
                     (This spell uses WISDOM to determine fail-rates!)
@@ -23278,9 +23279,10 @@ these limitations will be lifted.
                     Conjures a powerful and nearly irresistible beam.
                     Required skill level for first spell level: 40.
 
-    Obliteration    Obliterates all monsters nearby at the cost of your HP,
-                    yielding no experience, kill credit or loot. Monsters may
-                    resist. Doesn't work inside vaults. Use with care!
+    Obliteration    Removes all monsters nearby (radius 20) at the cost of
+                    your HP, yielding no experience, kill credit or loot.
+                    Monsters may resist. Doesn't work inside vaults.
+                    HP drain cannot be mitigated, so use with care!
                     For details on the effect "obliteration" of this spell,
                     please see (5.9) scroll of geno/oblit.
                     (This spell uses WISDOM to determine fail-rates!)

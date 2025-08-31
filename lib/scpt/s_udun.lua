@@ -73,7 +73,12 @@ GENOCIDE_I = add_spell {
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{ "Casts 'Genocide' on all monsters of particular race on the level.", }
+	["desc"] = 	{
+		"Eradicates all monsters of the same race as the monster closest to you,",
+		"at the cost of your HP, depending on monsters' levels. Monsters may resist.",
+		"Monsters erased will not give any kind of XP, loot or kill credit.",
+		"Fails inside vaults and on uniques and teleport-immune monsters."
+	}
 }
 GENOCIDE_II = add_spell {
 	["name"] = 	"Obliteration",
@@ -88,9 +93,14 @@ GENOCIDE_II = add_spell {
 			obliteration(Ind)
 	end,
 	["info"] = 	function()
-			return ""
+			return "rad 20" --MAX_SIGHT [20]
 	end,
-	["desc"] = 	{ "Casts 'Obliteration' on all monsters in your vicinity.", }
+	["desc"] = 	{
+		"Eradicates all monsters in your vicinity at the cost of your HP.",
+		"HP drain depends on monsters' levels, monsters may resist.",
+		"Monsters erased will not give any kind of XP, loot or kill credit.",
+		"Fails inside vaults and on uniques and teleport-immune monsters."
+	}
 }
 
 WRAITHFORM = add_spell {
