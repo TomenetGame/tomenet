@@ -8134,12 +8134,17 @@ bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
  * Cast a cloud spell
  * Stop if we hit a monster, act as a "ball"
  * Allow "target" mode to pass over monsters
- * Affect grids, objects, and monsters
+ * Affect grids, objects, and monsters.
+ * (Return value is currently not used.)
  */
+#define FIRE_WALL_WIDE /* creates a 3-line wide firewall instead of 1-line, to ensure corridors are filled */
 bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_NODF | PROJECT_NODO;
+#ifdef FIRE_WALL_WIDE
+	int dx, dy, sx, sy;
+#endif
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
@@ -8161,6 +8166,62 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
+#ifdef FIRE_WALL_WIDE
+	dx = ABS(tx - p_ptr->px);
+	dy = ABS(ty - p_ptr->py);
+	sx = SGN(tx - p_ptr->px);
+	sy = SGN(ty - p_ptr->py);
+	if (dx == dy || (dx > 4 && dy > 4 && ABS(dx - dy) < (dx + dy) / 6)) { /* Fire additional walls diagonally */
+		/* Hack player position to offset the line parallelly */
+		p_ptr->py += sy;
+		project(0 - Ind, 0, &p_ptr->wpos, ty + sy, tx, dam, typ, flg, attacker);
+		p_ptr->py -= sy;
+		p_ptr->px += sx;
+		/* Re-feed project() info, as each project() call eats these up again. */
+		project_time_effect = EFF_WALL;
+		project_interval = interval;
+		project_time = time;
+		project(0 - Ind, 0, &p_ptr->wpos, ty, tx + sx, dam, typ, flg, attacker);
+		/* Unhack */
+		p_ptr->px -= sx;
+		/* Re-feed project() info, as each project() call eats these up again. */
+		project_time_effect = EFF_WALL;
+		project_interval = interval;
+		project_time = time;
+	} else if (dx > dy) { /* Fire additional walls above and below */
+		/* Hack player position to offset the line parallelly */
+		p_ptr->py--;
+		project(0 - Ind, 0, &p_ptr->wpos, ty - 1, tx, dam, typ, flg, attacker);
+		p_ptr->py += 2;
+		/* Re-feed project() info, as each project() call eats these up again. */
+		project_time_effect = EFF_WALL;
+		project_interval = interval;
+		project_time = time;
+		project(0 - Ind, 0, &p_ptr->wpos, ty + 1, tx, dam, typ, flg, attacker);
+		/* Unhack */
+		p_ptr->py--;
+		/* Re-feed project() info, as each project() call eats these up again. */
+		project_time_effect = EFF_WALL;
+		project_interval = interval;
+		project_time = time;
+	} else { /* Fire additional walls to the left and right */
+		/* Hack player position to offset the line parallelly */
+		p_ptr->px--;
+		project(0 - Ind, 0, &p_ptr->wpos, ty, tx - 1, dam, typ, flg, attacker);
+		p_ptr->px += 2;
+		/* Re-feed project() info, as each project() call eats these up again. */
+		project_time_effect = EFF_WALL;
+		project_interval = interval;
+		project_time = time;
+		project(0 - Ind, 0, &p_ptr->wpos, ty, tx + 1, dam, typ, flg, attacker);
+		/* Unhack */
+		p_ptr->px--;
+		/* Re-feed project() info, as each project() call eats these up again. */
+		project_time_effect = EFF_WALL;
+		project_interval = interval;
+		project_time = time;
+	}
+#endif
 	/* Analyze the "dir" and the "target", do NOT explode */
 	return(project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
