@@ -14789,9 +14789,9 @@ Deed            Some of the parchments are deeds, which are used as rewards
                 *Destruction* actually erases objects completely, so potions
                 caught up in it will not cause any shatter-effects.
 
-Enchant weapon to-dam
-Enchant weapon to-hit
-Enchant armour
+Enchant Weapon To-Dam
+Enchant Weapon To-Hit
+Enchant Armour
                 Will attempt to enchant a selectable item of appropriate type.
                 The higher the item is already enchanted the more unlikely it
                 will succeed another time.
@@ -14800,8 +14800,8 @@ Enchant armour
                 stack size. It is easier to enchant a stack of ammunition than
                 enchanting a same-size stack of regular weapons/armour though.
 
-*Enchant* weapon
-*Enchant armour
+*Enchant* Weapon
+*Enchant* Armour
                 Much more likely to enchant up to +15 than normal 'Enchant'
                 scroll types, and likely to enchant by several points at once.
                 The chance to succeed will drop if the scroll is used on a
@@ -14877,7 +14877,7 @@ Obliteration    Removes all monsters that are close to you (radius 20).
 Parchments      These contain informations about the game, they won't
                 disappear if you read them.
 
-Protection from evil
+Protection from Evil
                 Repels evil creatures that try to attack you in melee.
                 See the prayer 'Protection from evil' in (7.8)!
                 ("You feel safe from evil!")
@@ -15130,18 +15130,18 @@ Chest               Chests may contain treasures or items. Usually, chests
                     Since client 4.8.0, emptied chests can be used for storing
                     items to extend your inventory slightly, see (3.4).
 
-Climbing set        Allows you to travel over mountain fields.
+Climbing Set        Allows you to travel over mountain fields.
                     Info for mimics & co: In order to be able to use it, your
                     appearance form must have arms and fingers. (Equip it!)
 
-Backpack safety lock
+Backpack Safety Lock
                     When equipped it has a very high chance to prevent thieves
                     from stealing items from your backpack or money from your
                     purse.
                     Also somewhat protects against traps that cause your items
                     to drop or that somehow try to steal your items (thirst).
 
-Empty bottle        You can /fill these at fountains to turn them into
+Empty Bottle        You can /fill these at fountains to turn them into
                     potions. (See (0.2b) for more details.)
 
 Firestone           These can be eaten by Draconians and players in dragon
@@ -15187,11 +15187,11 @@ Flint               Prevents your light from going out by automatically
 
 Fortune Cookie      Gives you a line of wisdom.
 
-Guild key           See (7.9).
+Guild Key           See (7.9).
 
-Dwarven lantern     Make you resist fear. Don't need to be fueled.
+Dwarven Lantern     Make you resist fear. Don't need to be fueled.
 
-Feanorian lamp      Make you resist fear and see the invisible. Don't need to
+Feanorian Lamp      Make you resist fear and see the invisible. Don't need to
                     be fueled.
 
 Lembas (elvish waybread)
@@ -15271,13 +15271,13 @@ Snowball            Can be thrown at other people or target dummies.
                     written further above about potions of blood does also
                     apply to snowballs.
 
-Spell scroll        Although called "scrolls" they actually persist and can be
+Spell Scroll        Although called "scrolls" they actually persist and can be
                     used infinite times. They may however get destroyed by
                     certain damage effects (most notably fire and acid)
                     same as regular scrolls. Spell scrolls ignore water damage
                     though, which can harm regular scrolls.
 
-Spell crystal       They are like "spell scrolls", except they are used for
+Spell Crystal       They are like "spell scrolls", except they are used for
                     mindcrafter spells. A specialty of spell crystals is that
                     they ignore fire damage (and water damage, same as spell
                     scrolls), but are susceptible to electricity!
@@ -15343,14 +15343,21 @@ there are also some base item types that provide an activation effect.
 
 Base and ego types that can be activated and aren't described elsewhere:
 
-Cloak of immolation:          Temporary fire resistance.
-Cloak of frostweaving:        Temporary frost resistance.
+Scorching Cloak:              Temporary fire resistance.
+Frostwoven Cloak:             Temporary frost resistance.
+Sparkling Cloak:              Temporary lightning resistance.
 Cloak of Lordly Resistance:   Temporary base+poison resistance.
+
+Cap of the Noldor:            Treasure detection.
+Boots of Jumping:             Random short-distance jump like Phase Door spell.
 Dragon Scale Mail:            According breath attack.
+
 Weapon of the Thunderlords:   Teleportation.
-Weapon of Spinning:           Spin attack.
+Weapon of Spinning:           Spin attack:
+                              Hits monsters adjacent to you n times in total,
+                              adding a stun effect to each blow. 'n' is your
+                              number of blows per round (BpR) plus 8.
 Weapon of Fury:               Temporary fury, compare (4.11c).
-Cap of the Nolor:             Treasure detection.
 Spectral weapon:              Temporary wraithform (see (5.20)).
 
 Amulet of the Serpents:       Poison breath.

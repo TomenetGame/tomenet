@@ -6768,6 +6768,7 @@ void py_attack(int Ind, int y, int x, byte old) {
 	}
 }
 
+/* Hit monsters around us 'num_blow + 8' times in total, adding a stun effect to each blow. */
 void spin_attack(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	cave_type **zcave;
