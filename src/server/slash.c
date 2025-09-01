@@ -1799,6 +1799,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
+			/* QoL: Actually catch wrong comma syntax and translate it into correct spaced syntax... */
+			if (tk == 1 && (c = strchr(token[1], ','))) {
+				token[2] = c + 1;
+				*c = 0;
+				tk = 2;
+			}
+
 			switch (tk) {
 			case 1:
 				/* depth in feet */
