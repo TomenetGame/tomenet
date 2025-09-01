@@ -20180,8 +20180,12 @@ create a character!):
 
     (*) Multi-hued lineage can use specific breaths in the 'm' menu.
 
-    Tip:
+    -- Tip: --
+
     Make sure to set your breath attack to a hotkey when you learn it.
+    You can do this in the macro wizard: Press % for macro menu, z to invoke
+    the wizard, then L and type 'Breathe element', finally press a for method
+    of targetting.
 
 - Kobold
     These somewhat smallish dog-faced humanoids who tend to live in lairs
@@ -20311,7 +20315,8 @@ create a character!):
     As undead, Vampires gain a moderate skill bonus for 'Nether' runes but in
     turn find it extremely hard to improve in 'Light' runes.
 
-    Tip:
+    -- Tip: --
+
     In case you lose your mummy wrapping and the general store doesn't have
     one in stock, you can order one there (press 'o' key in the store).
 
@@ -20382,7 +20387,8 @@ create a character!):
 
     Maia get a bonus on 'Sneakiness' and 'Stealth' no matter the alignment.
 
-    Tip:
+    -- Tip: --
+
     Since all Maiar start with a point in 'Astral Knowledge' skill, you should
     buy a spell scroll of Power Bolt I right away from the bookstore, because
     you will already be able to use it.
@@ -20506,8 +20512,10 @@ create a character!):
     the early game and you can do fine with just a macro for potions of cure
     wounds and maybe also a macro for phase door scrolls until you reach a
     somewhat higher level.
+    You can create macros by pressing % for macro menu, then z to invoke the
+    wizard and select the type of action you want the macro to perform.
 
-    Tips:
+    -- Tips: --
 
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm),
     or Martial Arts if you don't want to use weapons, and always keep it
@@ -20528,6 +20536,8 @@ create a character!):
     for catching annoying monsters that try to keep their distance to you.
     And Sprint is also useful for escaping perilous situations!
     (See (7.12) for details about fighting techniques.)
+    You macro these by pressing % for macro menu, then z to invoke the
+    wizard, then i for fighting techniques.
 
     Dual-wield trick if you lose your items on death:
     If you die and revive, you could save a lot of money by foregoing heavy
@@ -20561,11 +20571,15 @@ create a character!):
     These two schools, Shadow and Unlife, are not affected by Sorcery though,
     so they have to be trained additionally to any Sorcery skill.
 
-    Tip:
+    -- Tip: --
 
     An istar has very few hit points compared to other classes, making
     survival difficult in the beginning. That's why this class is not
     recommended for beginners.
+
+    You can create macros by pressing % for macro menu, then z to invoke the
+    wizard, then d for prayers that don't use a target or e for spells that
+    use a target.
 
 - Priest
     Priests use certain divine magic, uttered as prayers. Unlike mages they
@@ -20592,7 +20606,7 @@ create a character!):
     at which they are able to notice curses almost instantly.
     Wisdom is the priest's primary stat and they get a bonus on 'Holy Curing'.
 
-    Tips:
+    -- Tips: --
 
     Note that their spell Call Light can be used to deal decent damage
     after it's been brought up a few levels. Orcs are said to fear it a lot.
@@ -20603,6 +20617,10 @@ create a character!):
 
     If you're a team player and want to support your team right from the
     beginning, get the spell 'Cure Wounds' as soon as possible and macro it.
+
+    You can create macros by pressing % for macro menu, then z to invoke the
+    wizard, then d for prayers that don't use a target or e for prayers that
+    use a target.
 
 - Corrupted Priest
     There are rumours of ultimately corrupted priests which have lost all their
@@ -20663,13 +20681,15 @@ create a character!):
     similar cloaking or shadowing techniques employed by their opponents
     (monsters only).
 
-    Tips:
+    -- Tips: --
 
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance to you.
     Sprint is also useful for escaping perilous situations!
     (See (7.12) for details about fighting techniques.)
+    You can macro these by pressing % for macro menu, then z to invoke the
+    wizard, then i for fighting techniques.
 
     Always keep your Sword-mastery skill at maximum (if you don't go for an
     unusual build that uses Martial Arts instead).
@@ -20718,7 +20738,7 @@ create a character!):
     their advantage in hit points, ie the extra hit points they gain from such
     forms will diminish as they continue to rise to very high character levels.
 
-    Tips:
+    -- Tips: --
 
     Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
@@ -20744,11 +20764,11 @@ create a character!):
     a target asleep or how to craft ammunition from rubble or from the bones
     of their opponents (see (7.12)), accessible via 'm' key or macro wizard.
 
-    The first thing you should do when you created your character is making
-    a macro for firing your bow. Press % and then z to start the macro wizard,
-    and then c to create a firing macro. The F1 key already has such a macro
-    predefined on it (if you didn't change it), test it in town on some townie
-    or one of the target dummies.
+    The F1 key comes with a predefined macro for firing your bow at the closest
+    enemy. Test this in town against one of the target dummies or townspeople.
+    Alternatively you can just make your own macro for firing:
+    Press % and then z to start the macro wizard, and then c for firing and
+    finally press a for the targetting method.
 
     Even though archers start out with just a long bow for ranged weapon, they
     also get one of each of the 3 base types of ammo in the game (magic arrow
@@ -20758,7 +20778,7 @@ create a character!):
     into your quiver. Magic ammunition always returns to you so you only need
     one, except if it gets destroyed by some elemental attack.
 
-    Tips:
+    -- Tips: --
 
     Enchanting your ranged weapon to-damage is especially effective because
     the damage bonus will be multiplied by the weapons multiplier, eg (x3) for
@@ -20796,15 +20816,20 @@ create a character!):
     While they may train in all sorts of holy schools, they are slightly less
     adept at 'Holy Curing'.
 
-    Tips:
+    -- Tips: --
 
     Note that the spell Call Light can be used to deal decent damage after it's
     been brought up a few levels. Orcs are said to fear it a lot.
+    You can macro prayers by pressing % for macro menu, then z to invoke the
+    wizard, then d for prayers that don't use a target or e for prayers that
+    use a target.
 
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, they are great for catching annoying monsters
     that try to keep their distance to you. (See (7.12) for details.)
     Sprint is also useful for escaping perilous situations!
+    You can macro these by pressing % for macro menu, then z to invoke the
+    wizard, then i for fighting techniques.
 
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), and always
     keep it maximized. Unlike priests, paladins cannot train Martial Arts.
@@ -20869,11 +20894,13 @@ create a character!):
     At level 8 rangers learn to find paths passing thick woods, and at 15 they
     have become able swimmers as well.
 
-    If you're planning to make use of ranged weapons, the first thing you
-    should do when you created your character is making a macro for firing your
-    bow. Press % and then z to start the macro wizard, and then c to create a
-    firing macro. The F1 key already has such a macro predefined on it (if you
-    didn't change it), test it in town on some townie or a target dummy.
+    If you're planning to make use of ranged weapons:
+
+    The F1 key comes with a predefined macro for firing your bow at the closest
+    enemy. Test this in town against one of the target dummies or townspeople.
+    Alternatively you can just make your own macro for firing:
+    Press % and then z to start the macro wizard, and then c for firing and
+    finally a for the targetting method.
 
     Buy arrows (to use with your bow) in store 1 or store 3 in town and put
     them in your quiver (w key). If you instead get a crossbow you will need
@@ -20881,9 +20908,9 @@ create a character!):
     the ammunition  !=  to pick it up automatically from the floor by simply
     walking over it.
 
-    Tips:
+    -- Tips: --
 
-    If you are skilling ranged weapons, check out the tips for Archer class
+    If you are training in ranged weapons, check out the tips for Archer class
     further above in this chapter!
 
     Regarding melee combat, make sure to create a macro for your fighting
@@ -20891,6 +20918,8 @@ create a character!):
     early on. They are great for catching annoying monsters that try to keep
     their distance to you. Sprint is actually also useful for escaping peril.
     (See (7.12) for details about fighting techniques.)
+    You can macro these by pressing % for macro menu, then z to invoke the
+    wizard, then i for fighting techniques.
 
     Since rangers can dual-wield and you start with light armour which is
     required for dual-wielding you might want to buy a secondary weapon right
@@ -20909,7 +20938,7 @@ create a character!):
     and more distinct classes in one character, creating unusual mixtures of
     abilities.
 
-    Tip:
+    -- Tip: --
 
     Adventurers are difficult to play for beginners because to fully utilize
     them you need to know exactly what you are trying to achieve and how you
@@ -20946,7 +20975,7 @@ create a character!):
     chat command, or press ~ followed by 2 and @.
     To see an overview of the forms and their abilities, see (7.7c).
 
-    Tips:
+    -- Tips: --
 
     Druids have a powerful ranged area attack spell they can use very early
     on: Toxic Moisture, from Arcane Lore skill. Look for it in the bookstore!
@@ -20956,6 +20985,8 @@ create a character!):
     Make sure to create a macro for your fighting technique 'Sprint' when
     you learn it, which you do pretty early on. It is great for catching
     annoying monsters that try to keep their distance to you. (See (7.12).)
+    You can macro these by pressing % for macro menu, then z to invoke the
+    wizard, then i for fighting techniques.
 
     As martial artists, druids do not require any armour early on in the game,
     it could even lower their AC instead of improving it.
@@ -20998,7 +21029,7 @@ create a character!):
     by shamans too and are not so useful to normal mimics. It also lists some
     humanoid forms in case you are training a weapon skill.
 
-    Tips:
+    -- Tips: --
 
     Maybe there's a friendly mimicry-user around who can forge some
     'Rings of Polymorphing' for you from forms he or she no longer uses.
@@ -21037,7 +21068,7 @@ create a character!):
     instead used only to apply sigils to worn equipment, granting some boni
     depending synergistically on both the rune element and recipient item.
 
-    Tip:
+    -- Tip: --
 
     Runespells cause backlash of the active element on spell failure.
     For that reason you might use basic elemental spells in the beginning,
@@ -21090,7 +21121,7 @@ create a character!):
     (same as other characters get when they actually train 'Health' skill to
     10, 20 or 40).
 
-    Tips:
+    -- Tips: --
 
     Mindcrafters have a powerful ranged attack spell they can use very early
     on, Psionic Blast. Look for it in the bookstore right away.
