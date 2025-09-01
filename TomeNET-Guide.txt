@@ -20770,14 +20770,6 @@ create a character!):
     Press % and then z to start the macro wizard, and then c for firing and
     finally press a for the targetting method.
 
-    Even though archers start out with just a long bow for ranged weapon, they
-    also get one of each of the 3 base types of ammo in the game (magic arrow
-    for bow, magic bolt for crossbow, magic shot for sling) so you can buy any
-    ranged weapon of your choice in the town stores and will have the matching
-    type of ammo to go with it right from the start - press 'w' key to load it
-    into your quiver. Magic ammunition always returns to you so you only need
-    one, except if it gets destroyed by some elemental attack.
-
     -- Tips: --
 
     Enchanting your ranged weapon to-damage is especially effective because
@@ -20797,6 +20789,10 @@ create a character!):
 
     An amulet of infra-vision can help to greatly extend your view in dark
     hallways, to allow you shooting enemies before they can come close.
+
+    Look out for magic arrows, magic bolts or magic shots. These will return
+    to your quiver magically so you can manage with only a single one of them.
+    (On the down side these cannot carry any form of  enchantment.)
 
 - Paladin
     Paladins are a combination of warrior and priest. Holy knights that
