@@ -20526,6 +20526,7 @@ create a character!):
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance to you.
+    And Sprint is also useful for escaping perilous situations!
     (See (7.12) for details about fighting techniques.)
 
     Dual-wield trick if you lose your items on death:
@@ -20561,6 +20562,7 @@ create a character!):
     so they have to be trained additionally to any Sorcery skill.
 
     Tip:
+
     An istar has very few hit points compared to other classes, making
     survival difficult in the beginning. That's why this class is not
     recommended for beginners.
@@ -20666,6 +20668,7 @@ create a character!):
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, which you do pretty early on. They are great
     for catching annoying monsters that try to keep their distance to you.
+    Sprint is also useful for escaping perilous situations!
     (See (7.12) for details about fighting techniques.)
 
     Always keep your Sword-mastery skill at maximum (if you don't go for an
@@ -20761,6 +20764,7 @@ create a character!):
     the damage bonus will be multiplied by the weapons multiplier, eg (x3) for
     a long bow. So buy enchant to-dam scrolls from the alchemy shop as soon as
     you can afford them.
+    Rings of Accuracy will further boost your early/mid combat prowess.
 
     Also make sure to have an ample supply of 'Scrolls of Phase Door' to stay
     out of melee range and keep shooting things from afar instead.
@@ -20800,6 +20804,7 @@ create a character!):
     Make sure to create a macro for your fighting techniques 'Sprint' and
     'Taunt' when you learn them, they are great for catching annoying monsters
     that try to keep their distance to you. (See (7.12) for details.)
+    Sprint is also useful for escaping perilous situations!
 
     Pick one of the four weapon masteries (Sword/Blunt/Axe/Polearm), and always
     keep it maximized. Unlike priests, paladins cannot train Martial Arts.
@@ -20878,9 +20883,13 @@ create a character!):
 
     Tips:
 
-    Make sure to create a macro for your fighting techniques 'Sprint' and
-    'Taunt' when you learn them, which you do pretty early on. They are great
-    for catching annoying monsters that try to keep their distance to you.
+    If you are skilling ranged weapons, check out the tips for Archer class
+    further above in this chapter!
+
+    Regarding melee combat, make sure to create a macro for your fighting
+    techniques 'Sprint' and 'Taunt' when you learn them, which you do pretty
+    early on. They are great for catching annoying monsters that try to keep
+    their distance to you. Sprint is actually also useful for escaping peril.
     (See (7.12) for details about fighting techniques.)
 
     Since rangers can dual-wield and you start with light armour which is
@@ -20888,9 +20897,6 @@ create a character!):
     away, for example a cheap dagger, or even dispose of your starter weapon
     completely and go with two cheap, light weapons instead. (See (7.2) for
     details on dual-wielding.) This will increase your BpR by 1 or even 2!
-
-    You can determine the order in which ammunition is listed in your backpack
-    by simply dropping it and picking it up again in your preferred order.
 
 - Adventurer
     Adventurers are hardy and versatile, they have no preferred way of fighting
