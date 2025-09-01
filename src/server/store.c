@@ -812,6 +812,10 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 		if (cost <= 100L) size += damroll(5, 3);
 		size += damroll(20, 2);
 		break;
+
+	case TV_JUNK:
+		if (o_ptr->sval == SV_BANDAGE) size += damroll(10, 3);
+		break;
 	}
 
 
