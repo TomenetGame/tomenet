@@ -10152,7 +10152,7 @@ Trap symbols ('^') come in different colours. Here's an overview:
                   3) permanently reduces an attribute. Counter with stat
                      potion.
   bright white    teleport traps
-  orange          dungeon/trap rearrangment traps
+  orange          dungeon/trap rearrangement traps
   violet          summoning traps
   yellow          traps that affect your items or money or give you items
   red             character status-affecting traps
