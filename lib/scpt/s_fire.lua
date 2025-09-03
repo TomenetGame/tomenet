@@ -208,8 +208,8 @@ FIERYAURA_I = add_spell {
 	["name2"] = 	"FShield I",
 	["school"] = 	{SCHOOL_FIRE},
 	["level"] = 	16,
-	["mana"] = 	25,
-	["mana_max"] = 	25,
+	["mana"] = 	15,
+	["mana_max"] = 	15,
 	["fail"] = 	0,
 	["spell"] = 	function()
 		local type
@@ -234,8 +234,8 @@ FIERYAURA_II = add_spell {
 	["name2"] = 	"FShield II",
 	["school"] = 	{SCHOOL_FIRE},
 	["level"] = 	36,
-	["mana"] = 	50,
-	["mana_max"] = 	50,
+	["mana"] = 	35,
+	["mana_max"] = 	35,
 	["fail"] = 	-55,
 	["spell"] = 	function()
 		local type
