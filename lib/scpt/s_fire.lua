@@ -269,7 +269,7 @@ FIREWALL_I = add_spell {
 		fire_wall(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 89), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, FIREWALL_I, 89)).." dur "..(6 + get_level(Ind, FIREWALL_I, 4))
+		return "dam "..(20 + get_level(Ind, FIREWALL_I, 89)).." dur "..(6 + get_level(Ind, FIREWALL_I, 4)).." len 18" --MAX_RANGE
 	end,
 	["desc"] = 	{ "Creates a fiery wall to incinerate monsters stupid enough to move through it." }
 }
@@ -286,7 +286,7 @@ FIREWALL_II = add_spell {
 		fire_wall(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 252), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
 	end,
 	["info"] = 	function()
-		return "dam "..(20 + get_level(Ind, FIREWALL_I, 252)).." dur "..(6 + get_level(Ind, FIREWALL_I, 4))
+		return "dam "..(20 + get_level(Ind, FIREWALL_I, 252)).." dur "..(6 + get_level(Ind, FIREWALL_I, 4)) --MAX_RANGE
 	end,
 	["desc"] = 	{ "Creates a fiery wall to incinerate monsters stupid enough to move through it." }
 }
