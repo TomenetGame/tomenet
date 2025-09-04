@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 31. August 2025 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 4. September 2025 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2185,6 +2185,11 @@ They all start with a slash '/' hence they're called slash commands:
 
 /time       Tells you the current in-game time, same as /ex does.
             Also see /ctime and /stime.
+
+/timer <# of seconds to count down or 0 to halt>
+            Starts a custom timer that will alert you when it runs out.
+            You must specify the number of seconds, which must be between 1
+            and 86400 (1 day) or 0 to halt the timer if it's already running.
 
 /tip <player>
             Tips a player who must be standing next to you:

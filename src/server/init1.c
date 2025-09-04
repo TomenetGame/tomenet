@@ -3950,7 +3950,7 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 
 			for (j = 0; j < MAX_EGO_BASETYPES; j++)
 				e_ptr->tval[j] = 255;
-			for (j = 0; j < 5; j++) {
+			for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 				e_ptr->rar[j] = 0;
 				e_ptr->flags1[j] = 0;
 				e_ptr->flags2[j] = 0;
@@ -4030,6 +4030,10 @@ errr init_e_info_txt(FILE *fp, char *buf) {
 			if (1 != sscanf(buf + 2, "%d", &rar)) return(1);
 
 			cur_r++;
+			if (cur_r == MAX_EGO_R_SECTIONS) {
+				s_printf("Error in e_info.txt %d: Exceeding amount of %d allowed R-sections.\n", error_idx, MAX_EGO_R_SECTIONS);
+				return(1);
+			}
 
 			/* Save the values */
 			e_ptr->rar[cur_r] = rar;

@@ -334,16 +334,16 @@ struct ego_item_type {
 
 	s32b cost;			/* Ego-item "cost" */
 
-	byte rar[5];
-	u32b flags1[5];			/* Ego-Item Flags, set 1 */
-	u32b flags2[5];			/* Ego-Item Flags, set 2 */
-	u32b flags3[5];			/* Ego-Item Flags, set 3 */
-	u32b flags4[5];			/* Ego-Item Flags, set 4 */
-	u32b flags5[5];			/* Ego-Item Flags, set 5 */
-	u32b flags6[5];			/* Ego-Item Flags, set 6 */
-	u32b esp[5];			/* ESP flags */
-	u32b fego1[5];			/* ego flags */
-	u32b fego2[5];			/* ego flags */
+	byte rar[MAX_EGO_R_SECTIONS];
+	u32b flags1[MAX_EGO_R_SECTIONS];	/* Ego-Item Flags, set 1 */
+	u32b flags2[MAX_EGO_R_SECTIONS];	/* Ego-Item Flags, set 2 */
+	u32b flags3[MAX_EGO_R_SECTIONS];	/* Ego-Item Flags, set 3 */
+	u32b flags4[MAX_EGO_R_SECTIONS];	/* Ego-Item Flags, set 4 */
+	u32b flags5[MAX_EGO_R_SECTIONS];	/* Ego-Item Flags, set 5 */
+	u32b flags6[MAX_EGO_R_SECTIONS];	/* Ego-Item Flags, set 6 */
+	u32b esp[MAX_EGO_R_SECTIONS];		/* ESP flags */
+	u32b fego1[MAX_EGO_R_SECTIONS];		/* ego flags */
+	u32b fego2[MAX_EGO_R_SECTIONS];		/* ego flags */
 
 #if 0
 	s16b power;			/* Power granted(if any) */
@@ -4512,6 +4512,7 @@ struct player_type {
 
 	bool notify_notes, notify_sale;
 	bool ts_sleeping;
+	int custom_timer;
 };
 
 /* For Monk martial arts */

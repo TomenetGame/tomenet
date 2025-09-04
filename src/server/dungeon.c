@@ -6562,7 +6562,6 @@ static bool process_player_end_aux(int Ind) {
 		if ((p_ptr->lev >= 2) && ((((s64b)player_exp[p_ptr->lev - 2]) * ((s64b)p_ptr->expfact)) / 100L > p_ptr->exp - exploss))
 			exploss = p_ptr->exp - player_exp[p_ptr->lev - 2];
 #endif
-
 		/* Drain it! */
 		if (exploss > 0) take_xp_hit(Ind, exploss, "Draining", TRUE, FALSE, FALSE, 0);
 	}
@@ -10481,6 +10480,8 @@ void dungeon(void) {
 	   NOTE: Some of these (global events) mustn't be handled _after_ a player got set to 'dead',
 	   or gameplay might in very rare occasions get screwed up (someone dying when he shouldn't) - C. Blue */
 	if (!(turn % cfg.fps)) {
+		player_type *p_ptr;
+
 		/* Process global_events */
 		process_global_events();
 
@@ -10522,36 +10523,51 @@ void dungeon(void) {
 		/* process certain player-related timers */
 		k = 0; //party-colourization
 		for (i = 1; i <= NumPlayers; i++) {
+			p_ptr = Players[i];
+
 			/* CTRL+R spam control */
-			if (Players[i]->redraw_cooldown) Players[i]->redraw_cooldown--;
+			if (p_ptr->redraw_cooldown) p_ptr->redraw_cooldown--;
+
+			/* Custom timer countdowns */
+			if (p_ptr->custom_timer) {
+				p_ptr->custom_timer--;
+				if (!p_ptr->custom_timer) {
+					msg_print(i, "\377vYour custom timer finished.");
+#ifdef USE_SOUND_2010
+					Send_warning_beep(i);
+#else
+					if (p_ptr->paging < 3) p_ptr->paging = 3;
+#endif
+				}
+			}
 
 			/* Temporary public-chat-muting from spam */
-			if (Players[i]->mutedtemp) {
-				Players[i]->mutedtemp--;
-				if (!Players[i]->mutedtemp) msg_print(i, "You are no longer muted.");
+			if (p_ptr->mutedtemp) {
+				p_ptr->mutedtemp--;
+				if (!p_ptr->mutedtemp) msg_print(i, "You are no longer muted.");
 			}
 
 #ifdef USE_SOUND_2010
 			/* Arbitrary max number, just to prevent integer overflow.
 			   Should just be higher than the longest interval of any ambient sfx type. */
-			if (!Players[i]->wpos.wz && /* <- redundant check sort of, caught in process_player_change_wpos() anyway */
-			    Players[i]->ambient_sfx_timer < 200)
-				Players[i]->ambient_sfx_timer++;
+			if (!p_ptr->wpos.wz && /* <- redundant check sort of, caught in process_player_change_wpos() anyway */
+			    p_ptr->ambient_sfx_timer < 200)
+				p_ptr->ambient_sfx_timer++;
 #endif
 
 #ifdef ENABLE_GO_GAME
 			/* Kifu email spam control */
-			if (Players[i]->go_mail_cooldown) Players[i]->go_mail_cooldown--;
+			if (p_ptr->go_mail_cooldown) p_ptr->go_mail_cooldown--;
 #endif
 
 			/* Party-colorization (admins only): not player-specific, but iterates over all online players anyway */
-			if (Players[i]->party && parties[Players[i]->party].set_attr == TRUE) {
-				parties[Players[i]->party].set_attr = FALSE;
+			if (p_ptr->party && parties[p_ptr->party].set_attr == TRUE) {
+				parties[p_ptr->party].set_attr = FALSE;
 				if (k == TERM_L_DARK - 1) k++; //reserved for iron teams
 				if (k == TERM_SLATE - 1) k++; //skip too similar white tone maybe, QoL
 				//if (k == TERM_ORANGE - 1) k++; //slightly cluttery with orange-coloured depths
 				if (k == TERM_L_WHITE - 1) k++; //skip too similar white tone maybe, QoL
-				parties[Players[i]->party].attr = ++k;
+				parties[p_ptr->party].attr = ++k;
 				k = k % TERM_MULTI;
 			}
 		}

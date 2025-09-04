@@ -1596,7 +1596,7 @@ void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3
 	/* Hack -- eliminate 'promised' (ie 100% occurring) ego powers */
 	if (!o_ptr->name2) return;
 	e_ptr = &e_info[o_ptr->name2];
-	for (j = 0; j < 5; j++) {
+	for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 		/* Rarity check */
 		if (e_ptr->rar[j] > 99) {
 			*(f1) &= ~e_ptr->flags1[j];
@@ -1612,7 +1612,7 @@ void eliminate_common_ego_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3
 	/* Hack -- eliminate 'promised' (ie 100% occurring) ego powers */
 	if (!o_ptr->name2b) return;
 	e_ptr = &e_info[o_ptr->name2b];
-	for (j = 0; j < 5; j++) {
+	for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 		/* Rarity check */
 		if (e_ptr->rar[j] > 99) {
 			*(f1) &= ~e_ptr->flags1[j];

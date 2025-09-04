@@ -601,8 +601,10 @@
 #define MAX_D_IDX_COMPAT	64
 #define MAX_Q_IDX_COMPAT	100
 
-/* Max ego base type restrictions */
+/* Max ego item base type restrictions */
 #define MAX_EGO_BASETYPES	10
+/* Max ego item random-flag sections (each section has an R-line as header determining its chance to get applied) */
+#define MAX_EGO_R_SECTIONS	7
 
 /* Max equipped-item combo-sets */
 #define MAX_ITEM_COMBOSETS	5

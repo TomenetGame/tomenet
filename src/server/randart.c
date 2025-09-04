@@ -2523,7 +2523,7 @@ try_an_other_ego:
 	e_ptr = &e_info[e_idx];
 
 	/* Hack -- extra powers */
-	for (j = 0; j < 5; j++) {
+	for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 		/* Rarity check */
 		if (magik(e_ptr->rar[j])) {
 			a_ptr->flags1 |= e_ptr->flags1[j];

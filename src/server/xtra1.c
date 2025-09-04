@@ -7265,7 +7265,7 @@ void calc_boni(int Ind) {
 
 						if (o_ptr->name2) {
 							e_ptr = &e_info[o_ptr->name2];
-							for (j = 0; j < 5; j++) {
+							for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 								if (e_ptr->rar[j] == 0) continue;
 								/* hack: can *identifying* actually make a difference at all? */
 
@@ -7299,7 +7299,7 @@ void calc_boni(int Ind) {
 						}
 						if (o_ptr->name2b) {
 							e_ptr = &e_info[o_ptr->name2b];
-							for (j = 0; j < 5; j++) {
+							for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 								if (e_ptr->rar[j] == 0) continue;
 								/* hack: can *identifying* actually make a difference at all? */
 

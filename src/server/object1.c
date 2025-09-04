@@ -5205,7 +5205,7 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id, ego_grante
 		fixed_flag_forge.flags[4] = fixed_flag_forge.flags[5] = fixed_flag_forge.flags[6] = 0;
 		if (o_ptr->name2) {
 			e_ptr = &e_info[o_ptr->name2];
-			for (j = 0; j < 5; j++) {
+			for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 				if (e_ptr->rar[j] != 100) continue;
 				fixed_flag_forge.flags[0] |= (e_ptr->esp[j] & ~ESP_R_MASK); //count only specific ESP powers; randomized ones are random even at 100% spawn chance
 				fixed_flag_forge.flags[1] |= e_ptr->flags1[j];
@@ -5218,7 +5218,7 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id, ego_grante
 		}
 		if (o_ptr->name2b) {
 			e_ptr = &e_info[o_ptr->name2b];
-			for (j = 0; j < 5; j++) {
+			for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 				if (e_ptr->rar[j] != 100) continue;
 				fixed_flag_forge.flags[0] |= (e_ptr->esp[j] & ~ESP_R_MASK); //count only specific ESP powers; randomized ones are random even at 100% spawn chance
 				fixed_flag_forge.flags[1] |= e_ptr->flags1[j];
@@ -5261,7 +5261,7 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id, ego_grante
 	/* Just add the fixed ego flags that we know to be on the item */
 	if (o_ptr->name2) {
 		e_ptr = &e_info[o_ptr->name2];
-		for (j = 0; j < 5; j++) {
+		for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 			if (e_ptr->rar[j] == 0) continue;
 			/* hack: can *identifying* actually make a difference at all? */
 
@@ -5281,7 +5281,7 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id, ego_grante
 	}
 	if (o_ptr->name2b) {
 		e_ptr = &e_info[o_ptr->name2b];
-		for (j = 0; j < 5; j++) {
+		for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 			if (e_ptr->rar[j] == 0) continue;
 			/* hack: can *identifying* actually make a difference at all? */
 
@@ -5593,7 +5593,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		if (id_ok) {
 			if (o_ptr->name2) {
 				e_ptr = &e_info[o_ptr->name2];
-				for (j = 0; j < 5; j++) {
+				for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 					if (e_ptr->rar[j] == 0) continue;
 					/* hack: can *identifying* actually make a difference at all? */
 
@@ -5627,7 +5627,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 			}
 			if (o_ptr->name2b) {
 				e_ptr = &e_info[o_ptr->name2b];
-				for (j = 0; j < 5; j++) {
+				for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 					if (e_ptr->rar[j] == 0) continue;
 					/* hack: can *identifying* actually make a difference at all? */
 
@@ -6520,14 +6520,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 						/* Just add the fixed ego flags that we know to be on the item */
 						if (x_ptr->name2) {
 							e_ptr = &e_info[x_ptr->name2];
-							for (j = 0; j < 5; j++) {
+							for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 								if (e_ptr->rar[j] != 100) continue;
 								ammo_f1 |= e_ptr->flags1[j];
 							}
 						}
 						if (x_ptr->name2b) {
 							e_ptr = &e_info[x_ptr->name2b];
-							for (j = 0; j < 5; j++) {
+							for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 								if (e_ptr->rar[j] != 100) continue;
 								ammo_f1 |= e_ptr->flags1[j];
 							}
@@ -6562,14 +6562,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 					/* Just add the fixed ego flags that we know to be on the item */
 					if (x_ptr->name2) {
 						e_ptr = &e_info[x_ptr->name2];
-						for (j = 0; j < 5; j++) {
+						for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 							if (e_ptr->rar[j] != 100) continue;
 							shooter_f1 |= e_ptr->flags1[j];
 						}
 					}
 					if (x_ptr->name2b) {
 						e_ptr = &e_info[x_ptr->name2b];
-						for (j = 0; j < 5; j++) {
+						for (j = 0; j < MAX_EGO_R_SECTIONS; j++) {
 							if (e_ptr->rar[j] != 100) continue;
 							shooter_f1 |= e_ptr->flags1[j];
 						}
