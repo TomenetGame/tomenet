@@ -263,7 +263,7 @@ FIREWALL_I = add_spell {
 	["level"] = 	20,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	-10,
+	["fail"] = 	-20,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 		fire_wall(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 89), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
