@@ -71,7 +71,10 @@ TELEAWAY_I = add_spell {
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{ "Teleports a line of monsters away.", }
+	["desc"] = 	{
+		"Teleports a line of monsters away.",
+		"Some creatures may resist or be impervious.",
+	}
 }
 TELEAWAY_II = add_spell {
 	["name"] = 	"Teleport Away II",
@@ -88,7 +91,10 @@ TELEAWAY_II = add_spell {
 	["info"] = 	function()
 			return ""
 	end,
-	["desc"] = 	{ "Teleports all monsters in sight away." }
+	["desc"] = 	{
+		"Teleports a line of monsters away.",
+		"Some creatures may resist or be impervious.",
+	}
 }
 
 RECALL = add_spell {
