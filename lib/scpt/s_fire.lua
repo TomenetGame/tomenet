@@ -219,7 +219,7 @@ FIERYAURA_I = add_spell {
 --		else
 			type = SHIELD_FIRE
 --		end
-		set_shield(Ind, randint(20) + 10 + get_level(Ind, FIERYAURA_I, 30), 10, type, 5 + get_level(Ind, FIERYAURA_I, 10), 5 + get_level(Ind, FIERYAURA_I, 7))
+		set_shield(Ind, randint(20) + 10 + get_level(Ind, FIERYAURA_I, 30), 10, type, 5 + get_level(Ind, FIERYAURA_I, 15), 5 + get_level(Ind, FIERYAURA_I, 7))
 	end,
 	["info"] = 	function()
 		return "dam "..(5 + get_level(Ind, FIERYAURA_I, 15)).."d"..(5 + get_level(Ind, FIERYAURA_I, 7)).." dur "..(10 + get_level(Ind, FIERYAURA_I, 30)).."+d20"
@@ -245,10 +245,10 @@ FIERYAURA_II = add_spell {
 --		else
 			type = SHIELD_FIRE
 --		end
-		set_shield(Ind, randint(20) + 10 + 35 + get_level(Ind, FIERYAURA_II, 35), 10, type, 5 + get_level(Ind, FIERYAURA_I, 10), 5 + get_level(Ind, FIERYAURA_I, 7))
+		set_shield(Ind, randint(20) + 10 + 35 + get_level(Ind, FIERYAURA_II, 35), 10, type, 5 + get_level(Ind, FIERYAURA_I, 15), 5 + get_level(Ind, FIERYAURA_I, 10))
 	end,
 	["info"] = 	function()
-		return "dam "..(5 + get_level(Ind, FIERYAURA_I, 15)).."d"..(5 + get_level(Ind, FIERYAURA_I, 7)).." dur "..(10 + 35 + get_level(Ind, FIERYAURA_II, 35)).."+d20"
+		return "dam "..(5 + get_level(Ind, FIERYAURA_I, 15)).."d"..(5 + get_level(Ind, FIERYAURA_I, 10)).." dur "..(10 + 35 + get_level(Ind, FIERYAURA_II, 35)).."+d20"
 	end,
 	["desc"] = 	{
 			"Creates a shield of fierce flames around you."
