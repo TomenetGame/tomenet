@@ -1128,6 +1128,7 @@ extern void load_recent_deaths(void);
 
 /* melee1.c */
 extern cptr desc_moan_halloween[];
+extern void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *alive);
 /* melee2.c */
 extern bool monst_check_grab(int m_idx, int mod, cptr desc);
 extern int mon_will_run(int Ind, int m_idx);
