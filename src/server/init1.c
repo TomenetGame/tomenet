@@ -4801,7 +4801,10 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		if ((r_info[i].flags9 & RF9_RES_CHAOS)) r_info[i].flags3 |= RF3_NO_CONF;
 
 		/* Monsters with stone skin resist shards */
-		if (r_info[i].flags3 & RF3_HURT_ROCK) r_info[i].flags9 |= RF9_RES_SHARDS;
+		if (r_info[i].flags3 & RF3_HURT_ROCK) {
+			r_info[i].flags9 |= RF9_RES_SHARDS;
+			r_info[i].flags9 |= RF9_RES_ACID;
+		}
 
 		/* -- Breathes imply resistances -- */
 		if (r_info[i].flags4 & RF4_BR_ACID) r_info[i].flags9 |= RF9_RES_ACID;
@@ -4826,7 +4829,10 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		if (r_info[i].flags4 & RF4_BR_TIME) r_info[i].flags9 |= RF9_RES_TIME;
 		if (r_info[i].flags4 & RF4_BR_INER) r_info[i].flags3 |= RF3_NO_STUN;
 		//if (r_info[i].flags4 & RF4_BR_GRAV) r_info[i].flags9 |= RF9_RES_; //feather falling
-		if (r_info[i].flags4 & RF4_BR_SHAR) r_info[i].flags9 |= RF9_RES_SHARDS;
+		if (r_info[i].flags4 & RF4_BR_SHAR) {
+			r_info[i].flags9 |= RF9_RES_SHARDS;
+			r_info[i].flags9 |= RF9_RES_ACID;
+		}
 		if (r_info[i].flags0 & RF0_BR_ICE) r_info[i].flags9 |= (RF9_RES_SHARDS | RF9_RES_COLD);
 		if (r_info[i].flags0 & RF0_BR_WATER) r_info[i].flags3 |= RF3_RES_WATE;
 		/* Newer fix, plasma implies fire/elec/sound. */
@@ -4932,6 +4938,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 				break;
 			case RBE_LITE:
 				r_info[i].flags9 |= RF9_RES_LITE;
+				r_info[i].flags9 |= RF9_RES_FIRE;
 				break;
 			case RBE_UN_BONUS:
 				r_info[i].flags3 |= RF3_RES_DISE;
