@@ -4810,7 +4810,10 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 		if (r_info[i].flags4 & RF4_BR_COLD) r_info[i].flags9 |= RF9_RES_COLD;
 		if (r_info[i].flags4 & RF4_BR_POIS) r_info[i].flags9 |= RF9_RES_POIS;
 		if (r_info[i].flags4 & RF4_BR_NETH) r_info[i].flags3 |= RF3_RES_NETH;
-		if (r_info[i].flags4 & RF4_BR_LITE) r_info[i].flags9 |= RF9_RES_LITE;
+		if (r_info[i].flags4 & RF4_BR_LITE) {
+			r_info[i].flags9 |= RF9_RES_LITE;
+			r_info[i].flags9 |= RF9_RES_FIRE;
+		}
 		if (r_info[i].flags4 & RF4_BR_DARK) r_info[i].flags9 |= RF9_RES_DARK;
 		if (r_info[i].flags4 & RF4_BR_CONF) r_info[i].flags3 |= RF3_NO_CONF;
 		if (r_info[i].flags4 & RF4_BR_SOUN) r_info[i].flags9 |= RF9_RES_SOUND;
