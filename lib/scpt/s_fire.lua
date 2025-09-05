@@ -130,10 +130,10 @@ FIREBALL_I = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_FIRE, args.dir, 100 + get_level(Ind, FIREBALL_I, 500), 2 + get_level(Ind, FIREBALL_I, 3), " casts a fire ball for")
+			fire_ball(Ind, GF_FIRE, args.dir, 100 + get_level(Ind, FIREBALL_I, 500), 1 + get_level(Ind, FIREBALL_I, 4), " casts a fire ball for")
 	end,
 	["info"] = 	function()
-		return "dam "..(100 + get_level(Ind, FIREBALL_I, 500)).." rad "..(2 + get_level(Ind, FIREBALL_I, 3))
+		return "dam "..(100 + get_level(Ind, FIREBALL_I, 500)).." rad "..(1 + get_level(Ind, FIREBALL_I, 4))
 	end,
 	["desc"] = 	{ "Conjures a ball of fire to burn your foes to ashes.", }
 }
@@ -148,10 +148,10 @@ FIREBALL_II = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_FIRE, args.dir, 170 + get_level(Ind, FIREBALL_I, 800), 2 + get_level(Ind, FIREBALL_I, 3), " casts a fire ball for")
+			fire_ball(Ind, GF_FIRE, args.dir, 170 + get_level(Ind, FIREBALL_I, 800), 1 + get_level(Ind, FIREBALL_I, 4), " casts a fire ball for")
 	end,
 	["info"] = 	function()
-		return "dam "..(170 + get_level(Ind, FIREBALL_I, 800)).." rad "..(2 + get_level(Ind, FIREBALL_I, 3))
+		return "dam "..(170 + get_level(Ind, FIREBALL_I, 800)).." rad "..(1 + get_level(Ind, FIREBALL_I, 4))
 	end,
 	["desc"] = 	{ "Conjures a ball of fire to burn your foes to ashes.", }
 }
