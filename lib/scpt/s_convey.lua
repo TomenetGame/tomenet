@@ -73,7 +73,8 @@ TELEAWAY_I = add_spell {
 	end,
 	["desc"] = 	{
 		"Teleports a line of monsters away.",
-		"Some creatures may resist or be impervious.",
+		"Some creatures may resist depending on their level.",
+		"Creatures that are unique or resist teleportation effects are unaffected.",
 	}
 }
 TELEAWAY_II = add_spell {
@@ -93,7 +94,8 @@ TELEAWAY_II = add_spell {
 	end,
 	["desc"] = 	{
 		"Teleports a line of monsters away.",
-		"Some creatures may resist or be impervious.",
+		"Some creatures may resist depending on their level.",
+		"Creatures that are unique or resist teleportation effects are unaffected.",
 	}
 }
 
