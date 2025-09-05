@@ -177,7 +177,11 @@ FIREFLASH_I = add_spell {
 			return "dam "..(100 + get_level(Ind, FIREFLASH_I, 400)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
 		end
 	end,
-	["desc"] = 	{ "Conjures a ball of holy fire to burn your foes to ashes.", }
+	["desc"] = 	{
+		"Conjures a ball of holy fire to burn your foes to ashes.",
+		"Evil creatures are hit hard by holy fire,",
+		"while good creatures suffer no damage.",
+	}
 }
 FIREFLASH_II = add_spell {
 	["name"] = 	"Fireflash II",
@@ -200,7 +204,11 @@ FIREFLASH_II = add_spell {
 			return "dam "..(145 + get_level(Ind, FIREFLASH_I, 700)).." rad "..(2 + get_level(Ind, FIREFLASH_I, 3))
 		end
 	end,
-	["desc"] = 	{ "Conjures a ball of holy fire to burn your foes to ashes.", }
+	["desc"] = 	{
+		"Conjures a ball of holy fire to burn your foes to ashes.",
+		"Evil creatures are hit hard by holy fire,",
+		"while good creatures suffer no damage.",
+	}
 }
 
 FIERYAURA_I = add_spell {
