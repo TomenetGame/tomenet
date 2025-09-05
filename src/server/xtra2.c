@@ -2354,6 +2354,7 @@ bool set_slow(int Ind, int v) { /* bad status effect */
 
 /*
  * Set "p_ptr->shield", notice observable changes
+ * v: duration, p: AC bonus, o: shield element, d1: shield damage dice number, d2: shield damage dice sides
  */
 bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	player_type *p_ptr = Players[Ind];
@@ -2416,13 +2417,12 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 	}
 
 
-	/* Use the value */
-	p_ptr->shield = v;
-	if (p_ptr->shield_power != p) notice = TRUE;
+	p_ptr->shield = v; //duration
+	if (p_ptr->shield_power != p || p_ptr->shield_opt != o) notice = TRUE; // AC bonus (p) and shield element (o)
 	p_ptr->shield_power = p;
 	p_ptr->shield_opt = o;
-	p_ptr->shield_power_opt = d1;
-	p_ptr->shield_power_opt2 = d2;
+	p_ptr->shield_power_opt = d1; //damage dice number
+	p_ptr->shield_power_opt2 = d2; //damage dice sides
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);
