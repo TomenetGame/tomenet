@@ -3138,7 +3138,13 @@ bool make_attack_melee(int Ind, int m_idx) {
 							    " turns into a pile of ashes")) {
 								blinked = FALSE;
 								alive = FALSE;
-							} else msg_format(Ind, "%^s gets burned for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
+							} else {
+								msg_format(Ind, "%^s gets burned for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
+								if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+									if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+									else msg_format(Ind, "%^s retreats!", m_name);
+								}
+							}
 						}
 #ifdef OLD_MONSTER_LORE
 						else {
@@ -3157,7 +3163,13 @@ bool make_attack_melee(int Ind, int m_idx) {
 							    " freezes and shatters")) {
 								blinked = FALSE;
 								alive = FALSE;
-							} else msg_format(Ind, "%^s freezes for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
+							} else {
+								msg_format(Ind, "%^s freezes for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
+								if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+									if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+									else msg_format(Ind, "%^s retreats!", m_name);
+								}
+							}
 						}
 #ifdef OLD_MONSTER_LORE
 						else {
@@ -3177,7 +3189,13 @@ bool make_attack_melee(int Ind, int m_idx) {
 							    " turns into a pile of ashes")) {
 								blinked = FALSE;
 								alive = FALSE;
-							} else msg_format(Ind, "%^s gets burned for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
+							} else {
+								msg_format(Ind, "%^s gets burned for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
+								if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+									if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+									else msg_format(Ind, "%^s retreats!", m_name);
+								}
+							}
 						}
 #ifdef OLD_MONSTER_LORE
 						else {
@@ -3196,7 +3214,13 @@ bool make_attack_melee(int Ind, int m_idx) {
 							    " freezes and shatters")) {
 								blinked = FALSE;
 								alive = FALSE;
-							} else msg_format(Ind, "%^s freezes for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
+							} else {
+								msg_format(Ind, "%^s freezes for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
+								if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+									if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+									else msg_format(Ind, "%^s retreats!", m_name);
+								}
+							}
 						}
 #ifdef OLD_MONSTER_LORE
 						else {
@@ -3216,7 +3240,13 @@ bool make_attack_melee(int Ind, int m_idx) {
 						    " turns into a pile of cinder")) {
 							blinked = FALSE;
 							alive = FALSE;
-						} else msg_format(Ind, "%^s gets zapped for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
+						} else {
+							msg_format(Ind, "%^s gets zapped for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
+							if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+								if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+								else msg_format(Ind, "%^s retreats!", m_name);
+							}
+						}
 					}
 #ifdef OLD_MONSTER_LORE
 					else {
@@ -3243,7 +3273,13 @@ bool make_attack_melee(int Ind, int m_idx) {
 					if (mon_take_hit(Ind, m_idx, d, &fear, " got bashed by your mystc shield")) {
 						blinked = FALSE;
 						alive = FALSE;
-					} else msg_format(Ind, "Your mystic shield bashes %s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
+					} else {
+						msg_format(Ind, "Your mystic shield bashes %s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
+						if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+							if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+							else msg_format(Ind, "%^s retreats!", m_name);
+						}
+					}
 				}
 				/* fire shield */
 				if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FIRE) && alive) {
@@ -3256,7 +3292,13 @@ bool make_attack_melee(int Ind, int m_idx) {
 						if (mon_take_hit(Ind, m_idx, d, &fear, " turns into a pile of ashes")) {
 							blinked = FALSE;
 							alive = FALSE;
-						} else msg_format(Ind, "Your fiery shield burns %^s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
+						} else {
+							msg_format(Ind, "Your fiery shield burns %^s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
+							if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+								if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+								else msg_format(Ind, "%^s retreats!", m_name);
+							}
+						}
 					}
 				}
 #if 0
@@ -3271,7 +3313,13 @@ bool make_attack_melee(int Ind, int m_idx) {
 						if (mon_take_hit(Ind, m_idx, d, &fear, " turns into a pile of cinder")) {
 							blinked = FALSE;
 							alive = FALSE;
-						} else msg_format(Ind, "Your lightning shield zaps %^s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
+						} else {
+							msg_format(Ind, "Your lightning shield zaps %^s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
+							if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
+								if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+								else msg_format(Ind, "%^s retreats!", m_name);
+							}
+						}
 					}
 				}
 				/* fear shield */
