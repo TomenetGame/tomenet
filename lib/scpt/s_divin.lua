@@ -49,7 +49,7 @@ IDENTIFY_II = add_spell {
 	["level"] = 	25,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	-25,
+	["fail"] = 	-35,
 	["spell"] = 	function()
 			identify_pack(Ind)
 	end,
