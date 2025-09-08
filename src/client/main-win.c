@@ -3845,8 +3845,7 @@ static errr Term_rawpict_win(int x, int y, int c) {
 	}
 #endif
 	/* Copy the picture from the graphics tiles map image to the window */
-	BitBlt(hdc, x, y, fwid, fhgt, td->hdcTiles, x1, y1, SRCCOPY);
-
+	BitBlt(hdc, x, y, td->tiles_rawpict[c].w, td->tiles_rawpict[c].h, td->hdcTiles, x1, y1, SRCCOPY);
 
  #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
