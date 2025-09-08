@@ -2976,7 +2976,7 @@ void init_guide(void) {
 	}
 	guide_line = malloc(sizeof(char*) * guide_lines_reserved);
 	if (!guide_line) {
-		c_msg_format("\377yCouldn't allocate the required %lu bytes for Guide line buffer.", sizeof(int) * guide_lines_reserved);
+		c_msg_format("\377yCouldn't allocate the required %u bytes for Guide line buffer.", sizeof(int) * guide_lines_reserved);
 		free(guide_data);
 		return;
 	}
@@ -2992,7 +2992,7 @@ void init_guide(void) {
 			if (!guide_line_tmp) {
 				free(guide_data);
 				free(guide_line);
-				c_msg_format("\377yCouldn't allocate the required %lu bytes for Guide line buffer.", sizeof(int) * guide_lines_reserved);
+				c_msg_format("\377yCouldn't allocate the required %u bytes for Guide line buffer.", sizeof(int) * guide_lines_reserved);
 				return;
 			}
 			guide_line = guide_line_tmp;

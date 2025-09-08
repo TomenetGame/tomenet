@@ -4835,7 +4835,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 	}
 	local_file_line = malloc(sizeof(char*) * local_file_lines_reserved);
 	if (!local_file_line) {
-		c_msg_format("\377yCouldn't allocate the required %lu bytes for local file line buffer.", sizeof(int) * local_file_lines_reserved);
+		c_msg_format("\377yCouldn't allocate the required %u bytes for local file line buffer.", sizeof(int) * local_file_lines_reserved);
 		free(local_file_data);
 		return;
 	}
@@ -4852,7 +4852,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 				if (!local_file_line_tmp) {
 					free(local_file_data);
 					free(local_file_line);
-					c_msg_format("\377yCouldn't allocate the required %lu bytes for local file line buffer.", sizeof(int) * local_file_lines_reserved);
+					c_msg_format("\377yCouldn't allocate the required %u bytes for local file line buffer.", sizeof(int) * local_file_lines_reserved);
 					return;
 				}
 				local_file_line = local_file_line_tmp;
@@ -4875,7 +4875,7 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 				if (!local_file_line_tmp) {
 					free(local_file_data);
 					free(local_file_line);
-					c_msg_format("\377yCouldn't allocate the required %lu bytes for local file line buffer.", sizeof(int) * local_file_lines_reserved);
+					c_msg_format("\377yCouldn't allocate the required %u bytes for local file line buffer.", sizeof(int) * local_file_lines_reserved);
 					return;
 				}
 				local_file_line = local_file_line_tmp;
