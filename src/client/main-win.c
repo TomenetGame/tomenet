@@ -496,6 +496,206 @@ HBITMAP g_hbmBg2Mask = NULL;
 int graphics_tile_wid, graphics_tile_hgt;
 int graphics_image_tpr; /* Tiles per row. */
 
+
+
+/*
+ * An array of term_data's
+ */
+static term_data data[MAX_TERM_DATA];
+
+/*
+ * Mega-Hack -- global "window creation" pointer
+ */
+static term_data *td_ptr;
+
+/*
+ * Various boolean flags
+ */
+bool game_in_progress	= FALSE;  /* game in progress */
+bool initialized	= FALSE;  /* note when "open"/"new" become valid */
+bool paletted		= FALSE;  /* screen paletted, i.e. 256 colors */
+bool colors16		= FALSE;  /* 16 colors screen, don't use RGB() */
+bool convert_ini	= FALSE;  /* Convert a pre 4.9.3 .ini file to current version */
+
+/*
+ * Saved instance handle
+ */
+static HINSTANCE hInstance;
+
+/*
+ * Yellow brush for the cursor
+ */
+static HBRUSH hbrYellow;
+
+/*
+ * An icon
+ */
+static HICON hIcon;
+
+/*
+ * A palette
+ */
+static HPALETTE hPal;
+
+/*
+ * An array of sound file names
+ */
+static cptr sound_file[SOUND_MAX];
+
+/*
+ * Full path to ANGBAND.INI
+ */
+cptr ini_file = NULL;
+
+/*
+ * Name of application
+ */
+static cptr AppName  = "TOMENET";
+
+/*
+ * Name of sub-window type
+ */
+static cptr AngList  = "AngList";
+
+/*
+ * Directory names
+ */
+//#ifndef USE_LOGFONT
+static cptr ANGBAND_DIR_XTRA_FONT;
+//#endif
+#ifdef USE_GRAPHICS
+static cptr ANGBAND_DIR_XTRA_GRAPHICS;
+#endif
+#if defined(USE_SOUND) && !defined(USE_SOUND_2010) /* It's instead defined in snd-sdl.c, different sound system */
+static cptr ANGBAND_DIR_XTRA_SOUND;
+#endif
+
+/*
+ * The Angband color set:
+ *   Black, White, Slate, Orange,    Red, Blue, Green, Umber
+ *   D-Gray, L-Gray, Violet, Yellow, L-Red, L-Blue, L-Green, L-Umber
+ *
+ * Colors 8 to 15 are basically "enhanced" versions of Colors 0 to 7.
+ * Note that on B/W machines, all non-zero colors can be white (on black).
+ *
+ * Note that all characters are assumed to be drawn on a black background.
+ * This may require calling "Term_wipe()" before "Term_text()", etc.
+ *
+ * XXX XXX XXX See "main-ibm.c" for a method to allow color editing
+ *
+ * XXX XXX XXX The color codes below were taken from "main-ibm.c".
+ */
+
+/* These colors are overwritten with the generic, OS-independant client_color_map[] in enable_common_colormap_win()! */
+#ifdef PALANIM_OPTIMIZED2
+ #ifndef EXTENDED_BG_COLOURS
+static COLORREF win_clr_buf[CLIENT_PALETTE_SIZE];
+ #else
+static COLORREF win_clr_buf_bg[CLIENT_PALETTE_SIZE + TERMX_AMT];
+static COLORREF win_clr_buf[CLIENT_PALETTE_SIZE + TERMX_AMT];
+ #endif
+#endif
+#ifndef EXTENDED_BG_COLOURS
+static COLORREF win_clr[CLIENT_PALETTE_SIZE] = {
+#else
+static COLORREF win_clr_bg[CLIENT_PALETTE_SIZE + TERMX_AMT];
+static COLORREF win_clr[CLIENT_PALETTE_SIZE + TERMX_AMT] = {
+#endif
+	PALETTERGB(0x00, 0x00, 0x00),  /* 0 0 0  Dark */
+	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
+	PALETTERGB(0x9D, 0x9D, 0x9D),  /* 2 2 2  Slate */
+	PALETTERGB(0xFF, 0x8D, 0x00),  /* 4 2 0  Orange */
+	PALETTERGB(0xB7, 0x00, 0x00),  /* 3 0 0  Red (was 0xD7,0,0) - making shaman/istar more distinguishable */
+	PALETTERGB(0x00, 0x9D, 0x44),  /* 0 2 1  Green */
+#ifndef READABILITY_BLUE
+	PALETTERGB(0x00, 0x00, 0xFF),  /* 0 0 4  Blue */
+#else
+	PALETTERGB(0x00, 0x33, 0xFF),  /* 0 0 4  Blue */
+#endif
+	PALETTERGB(0x8D, 0x66, 0x00),  /* 2 1 0  Umber */
+#ifndef DISTINCT_DARK
+	PALETTERGB(0x74, 0x74, 0x74),  /* 1 1 1  Lt. Dark */
+#else
+	//PALETTERGB(0x58, 0x58, 0x58),  /* 1 1 1  Lt. Dark */
+	PALETTERGB(0x66, 0x66, 0x66),  /* 1 1 1  Lt. Dark */
+#endif
+	PALETTERGB(0xCD, 0xCD, 0xCD),  /* 3 3 3  Lt. Slate */
+	PALETTERGB(0xAF, 0x00, 0xFF),  /* 4 0 4  Violet (was 2,0,2) */
+	PALETTERGB(0xFF, 0xFF, 0x00),  /* 4 4 0  Yellow */
+	PALETTERGB(0xFF, 0x30, 0x30),  /* 4 0 0  Lt. Red (was 0xFF,0,0) - see 'Red' - C. Blue */
+	PALETTERGB(0x00, 0xFF, 0x00),  /* 0 4 0  Lt. Green */
+	PALETTERGB(0x00, 0xFF, 0xFF),  /* 0 4 4  Lt. Blue */
+	PALETTERGB(0xC7, 0x9D, 0x55)   /* 3 2 1  Lt. Umber */
+#ifdef EXTENDED_COLOURS_PALANIM
+	/* And clone the above 16 standard colours again here: */
+	,
+	PALETTERGB(0x00, 0x00, 0x00),  /* 0 0 0  Dark */
+	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
+	PALETTERGB(0x9D, 0x9D, 0x9D),  /* 2 2 2  Slate */
+	PALETTERGB(0xFF, 0x8D, 0x00),  /* 4 2 0  Orange */
+	PALETTERGB(0xB7, 0x00, 0x00),  /* 3 0 0  Red (was 0xD7,0,0) - making shaman/istar more distinguishable */
+	PALETTERGB(0x00, 0x9D, 0x44),  /* 0 2 1  Green */
+ #ifndef READABILITY_BLUE
+	PALETTERGB(0x00, 0x00, 0xFF),  /* 0 0 4  Blue */
+ #else
+	PALETTERGB(0x00, 0x33, 0xFF),  /* 0 0 4  Blue */
+ #endif
+	PALETTERGB(0x8D, 0x66, 0x00),  /* 2 1 0  Umber */
+ #ifndef DISTINCT_DARK
+	PALETTERGB(0x74, 0x74, 0x74),  /* 1 1 1  Lt. Dark */
+ #else
+	//PALETTERGB(0x58, 0x58, 0x58),  /* 1 1 1  Lt. Dark */
+	PALETTERGB(0x66, 0x66, 0x66),  /* 1 1 1  Lt. Dark */
+ #endif
+	PALETTERGB(0xCD, 0xCD, 0xCD),  /* 3 3 3  Lt. Slate */
+	PALETTERGB(0xAF, 0x00, 0xFF),  /* 4 0 4  Violet (was 2,0,2) */
+	PALETTERGB(0xFF, 0xFF, 0x00),  /* 4 4 0  Yellow */
+	PALETTERGB(0xFF, 0x30, 0x30),  /* 4 0 0  Lt. Red (was 0xFF,0,0) - see 'Red' - C. Blue */
+	PALETTERGB(0x00, 0xFF, 0x00),  /* 0 4 0  Lt. Green */
+	PALETTERGB(0x00, 0xFF, 0xFF),  /* 0 4 4  Lt. Blue */
+	PALETTERGB(0xC7, 0x9D, 0x55)   /* 3 2 1  Lt. Umber */
+#endif
+};
+
+/*
+ * Palette indices for 16 colors
+ *
+ * See "main-ibm.c" for original table information
+ *
+ * The entries below are taken from the "color bits" defined above.
+ *
+ * Note that many of the choices below suck, but so do crappy monitors.
+ */
+static BYTE win_pal[BASE_PALETTE_SIZE] = {
+	VID_BLACK,			/* Dark */
+//	VID_WHITE,			/* White */
+VID_WHITE | VID_BRIGHT,
+//	VID_CYAN,			/* Slate XXX */
+VID_BLUE | VID_BRIGHT,
+	VID_RED | VID_BRIGHT,	/* Orange XXX */
+	VID_RED,			/* Red */
+	VID_GREEN,			/* Green */
+	VID_BLUE,			/* Blue */
+	VID_YELLOW,			/* Umber XXX */
+	VID_BLACK | VID_BRIGHT,	/* Light Dark */
+//	VID_CYAN | VID_BRIGHT,	/* Light Slate XXX */
+VID_WHITE,
+	VID_MAGENTA,		/* Violet XXX */
+	VID_YELLOW | VID_BRIGHT,	/* Yellow */
+	VID_MAGENTA | VID_BRIGHT,	/* Light Red XXX */
+	VID_GREEN | VID_BRIGHT,	/* Light Green */
+	VID_BLUE | VID_BRIGHT,	/* Light Blue */
+	VID_YELLOW			/* Light Umber XXX */
+};
+
+
+#ifdef OPTIMIZE_DRAWING
+HDC oldDC = NULL;
+byte old_attr = -1;
+#endif
+
+
+
 /* Copied and repurposed from: http://winprog.org/tutorial/transparency.html
    NOTE: This function actually blackens (or whitens, if 'inverse') any recognized mask pixel in the _original_ image!
          So while the mask is created, it is sort of 'cut out' of the original image, leaving blackness (whiteness) behind. */
@@ -1075,164 +1275,6 @@ static void recreateGraphicsObjects(term_data *td) {
 }
 #endif /* USE_GRAPHICS */
 
-/*
- * An array of term_data's
- */
-static term_data data[MAX_TERM_DATA];
-
-/*
- * Mega-Hack -- global "window creation" pointer
- */
-static term_data *td_ptr;
-
-/*
- * Various boolean flags
- */
-bool game_in_progress	= FALSE;  /* game in progress */
-bool initialized	= FALSE;  /* note when "open"/"new" become valid */
-bool paletted		= FALSE;  /* screen paletted, i.e. 256 colors */
-bool colors16		= FALSE;  /* 16 colors screen, don't use RGB() */
-bool convert_ini	= FALSE;  /* Convert a pre 4.9.3 .ini file to current version */
-
-/*
- * Saved instance handle
- */
-static HINSTANCE hInstance;
-
-/*
- * Yellow brush for the cursor
- */
-static HBRUSH hbrYellow;
-
-/*
- * An icon
- */
-static HICON hIcon;
-
-/*
- * A palette
- */
-static HPALETTE hPal;
-
-/*
- * An array of sound file names
- */
-static cptr sound_file[SOUND_MAX];
-
-/*
- * Full path to ANGBAND.INI
- */
-cptr ini_file = NULL;
-
-/*
- * Name of application
- */
-static cptr AppName  = "TOMENET";
-
-/*
- * Name of sub-window type
- */
-static cptr AngList  = "AngList";
-
-/*
- * Directory names
- */
-//#ifndef USE_LOGFONT
-static cptr ANGBAND_DIR_XTRA_FONT;
-//#endif
-#ifdef USE_GRAPHICS
-static cptr ANGBAND_DIR_XTRA_GRAPHICS;
-#endif
-#if defined(USE_SOUND) && !defined(USE_SOUND_2010) /* It's instead defined in snd-sdl.c, different sound system */
-static cptr ANGBAND_DIR_XTRA_SOUND;
-#endif
-
-/*
- * The Angband color set:
- *   Black, White, Slate, Orange,    Red, Blue, Green, Umber
- *   D-Gray, L-Gray, Violet, Yellow, L-Red, L-Blue, L-Green, L-Umber
- *
- * Colors 8 to 15 are basically "enhanced" versions of Colors 0 to 7.
- * Note that on B/W machines, all non-zero colors can be white (on black).
- *
- * Note that all characters are assumed to be drawn on a black background.
- * This may require calling "Term_wipe()" before "Term_text()", etc.
- *
- * XXX XXX XXX See "main-ibm.c" for a method to allow color editing
- *
- * XXX XXX XXX The color codes below were taken from "main-ibm.c".
- */
-
-/* These colors are overwritten with the generic, OS-independant client_color_map[] in enable_common_colormap_win()! */
-#ifdef PALANIM_OPTIMIZED2
- #ifndef EXTENDED_BG_COLOURS
-static COLORREF win_clr_buf[CLIENT_PALETTE_SIZE];
- #else
-static COLORREF win_clr_buf_bg[CLIENT_PALETTE_SIZE + TERMX_AMT];
-static COLORREF win_clr_buf[CLIENT_PALETTE_SIZE + TERMX_AMT];
- #endif
-#endif
-#ifndef EXTENDED_BG_COLOURS
-static COLORREF win_clr[CLIENT_PALETTE_SIZE] = {
-#else
-static COLORREF win_clr_bg[CLIENT_PALETTE_SIZE + TERMX_AMT];
-static COLORREF win_clr[CLIENT_PALETTE_SIZE + TERMX_AMT] = {
-#endif
-	PALETTERGB(0x00, 0x00, 0x00),  /* 0 0 0  Dark */
-	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
-	PALETTERGB(0x9D, 0x9D, 0x9D),  /* 2 2 2  Slate */
-	PALETTERGB(0xFF, 0x8D, 0x00),  /* 4 2 0  Orange */
-	PALETTERGB(0xB7, 0x00, 0x00),  /* 3 0 0  Red (was 0xD7,0,0) - making shaman/istar more distinguishable */
-	PALETTERGB(0x00, 0x9D, 0x44),  /* 0 2 1  Green */
-#ifndef READABILITY_BLUE
-	PALETTERGB(0x00, 0x00, 0xFF),  /* 0 0 4  Blue */
-#else
-	PALETTERGB(0x00, 0x33, 0xFF),  /* 0 0 4  Blue */
-#endif
-	PALETTERGB(0x8D, 0x66, 0x00),  /* 2 1 0  Umber */
-#ifndef DISTINCT_DARK
-	PALETTERGB(0x74, 0x74, 0x74),  /* 1 1 1  Lt. Dark */
-#else
-	//PALETTERGB(0x58, 0x58, 0x58),  /* 1 1 1  Lt. Dark */
-	PALETTERGB(0x66, 0x66, 0x66),  /* 1 1 1  Lt. Dark */
-#endif
-	PALETTERGB(0xCD, 0xCD, 0xCD),  /* 3 3 3  Lt. Slate */
-	PALETTERGB(0xAF, 0x00, 0xFF),  /* 4 0 4  Violet (was 2,0,2) */
-	PALETTERGB(0xFF, 0xFF, 0x00),  /* 4 4 0  Yellow */
-	PALETTERGB(0xFF, 0x30, 0x30),  /* 4 0 0  Lt. Red (was 0xFF,0,0) - see 'Red' - C. Blue */
-	PALETTERGB(0x00, 0xFF, 0x00),  /* 0 4 0  Lt. Green */
-	PALETTERGB(0x00, 0xFF, 0xFF),  /* 0 4 4  Lt. Blue */
-	PALETTERGB(0xC7, 0x9D, 0x55)   /* 3 2 1  Lt. Umber */
-#ifdef EXTENDED_COLOURS_PALANIM
-	/* And clone the above 16 standard colours again here: */
-	,
-	PALETTERGB(0x00, 0x00, 0x00),  /* 0 0 0  Dark */
-	PALETTERGB(0xFF, 0xFF, 0xFF),  /* 4 4 4  White */
-	PALETTERGB(0x9D, 0x9D, 0x9D),  /* 2 2 2  Slate */
-	PALETTERGB(0xFF, 0x8D, 0x00),  /* 4 2 0  Orange */
-	PALETTERGB(0xB7, 0x00, 0x00),  /* 3 0 0  Red (was 0xD7,0,0) - making shaman/istar more distinguishable */
-	PALETTERGB(0x00, 0x9D, 0x44),  /* 0 2 1  Green */
- #ifndef READABILITY_BLUE
-	PALETTERGB(0x00, 0x00, 0xFF),  /* 0 0 4  Blue */
- #else
-	PALETTERGB(0x00, 0x33, 0xFF),  /* 0 0 4  Blue */
- #endif
-	PALETTERGB(0x8D, 0x66, 0x00),  /* 2 1 0  Umber */
- #ifndef DISTINCT_DARK
-	PALETTERGB(0x74, 0x74, 0x74),  /* 1 1 1  Lt. Dark */
- #else
-	//PALETTERGB(0x58, 0x58, 0x58),  /* 1 1 1  Lt. Dark */
-	PALETTERGB(0x66, 0x66, 0x66),  /* 1 1 1  Lt. Dark */
- #endif
-	PALETTERGB(0xCD, 0xCD, 0xCD),  /* 3 3 3  Lt. Slate */
-	PALETTERGB(0xAF, 0x00, 0xFF),  /* 4 0 4  Violet (was 2,0,2) */
-	PALETTERGB(0xFF, 0xFF, 0x00),  /* 4 4 0  Yellow */
-	PALETTERGB(0xFF, 0x30, 0x30),  /* 4 0 0  Lt. Red (was 0xFF,0,0) - see 'Red' - C. Blue */
-	PALETTERGB(0x00, 0xFF, 0x00),  /* 0 4 0  Lt. Green */
-	PALETTERGB(0x00, 0xFF, 0xFF),  /* 0 4 4  Lt. Blue */
-	PALETTERGB(0xC7, 0x9D, 0x55)   /* 3 2 1  Lt. Umber */
-#endif
-};
 void enable_readability_blue_win(void) {
 	client_color_map[6] = 0x0033ff;
 #ifdef EXTENDED_COLOURS_PALANIM
@@ -1283,42 +1325,6 @@ static void enable_common_colormap_win(void) {
 }
 
 
-/*
- * Palette indices for 16 colors
- *
- * See "main-ibm.c" for original table information
- *
- * The entries below are taken from the "color bits" defined above.
- *
- * Note that many of the choices below suck, but so do crappy monitors.
- */
-static BYTE win_pal[BASE_PALETTE_SIZE] = {
-	VID_BLACK,			/* Dark */
-//	VID_WHITE,			/* White */
-VID_WHITE | VID_BRIGHT,
-//	VID_CYAN,			/* Slate XXX */
-VID_BLUE | VID_BRIGHT,
-	VID_RED | VID_BRIGHT,	/* Orange XXX */
-	VID_RED,			/* Red */
-	VID_GREEN,			/* Green */
-	VID_BLUE,			/* Blue */
-	VID_YELLOW,			/* Umber XXX */
-	VID_BLACK | VID_BRIGHT,	/* Light Dark */
-//	VID_CYAN | VID_BRIGHT,	/* Light Slate XXX */
-VID_WHITE,
-	VID_MAGENTA,		/* Violet XXX */
-	VID_YELLOW | VID_BRIGHT,	/* Yellow */
-	VID_MAGENTA | VID_BRIGHT,	/* Light Red XXX */
-	VID_GREEN | VID_BRIGHT,	/* Light Green */
-	VID_BLUE | VID_BRIGHT,	/* Light Blue */
-	VID_YELLOW			/* Light Umber XXX */
-};
-
-
-#ifdef OPTIMIZE_DRAWING
-HDC oldDC = NULL;
-byte old_attr = -1;
-#endif
 
 
 
@@ -3076,13 +3082,13 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 	int fwid, fhgt;
 
- #ifdef TILE_CACHE_SIZE
+  #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i, hole = -1;
-  #ifdef TILE_CACHE_SINGLEBMP
+   #ifdef TILE_CACHE_SINGLEBMP
 	int tc_idx, tc_x, tc_y;
+   #endif
   #endif
- #endif
 
 	/* Avoid visual glitches while not in 2mask mode */
 	if (use_graphics != UG_2MASK) {
@@ -3676,16 +3682,24 @@ static errr Term_rawpict_win(int x, int y, int c) {
 
 	td = (term_data*)(Term->data);
 
-	fwid = tiles_rawpict[c].wid;
-	fhgt = tiles_rawpict[c].hgt;
+ #ifdef USE_LOGFONT
+	if (use_logfont) {
+		fwid = td->lf.lfWidth;
+		fhgt = td->lf.lfHeight;
+	} else
+ #endif
+	{
+		fwid = td->font_wid;
+		fhgt = td->font_hgt;
+	}
 
 	/* Location of screen window cell */
 	x = x * fwid + td->size_ow1;
 	y = y * fhgt + td->size_oh1;
 
 	/* Location of graphics tile in the tileset */
-	x1 = tiles_rawpict[c].x;
-	y1 = tiles_rawpict[c].y;
+	x1 = td->tiles_rawpict[c].x;
+	y1 = td->tiles_rawpict[c].y;
 
 	hdc = myGetDC(td->w);
 
