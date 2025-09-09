@@ -127,7 +127,7 @@ static void display_entry(int pos, int entries) {
 /* Similar to AU_DURING_BROWSE: Allow 'S'elling directly from browsing a subinventory,
    but the store screen needs to refresh the displayed stock accordingly, while we're still in the icky subinventory screen. */
 #define STOCK_DURING_BROWSE
-void display_inventory(void) {
+void display_store_inventory(void) {
 	int i, k, entries = 12, y = 2;
 
 #ifdef STOCK_DURING_BROWSE
@@ -894,14 +894,14 @@ static void store_process_command(int cmd) {
 					 * Hack - Allowing going back to first page after buying
 					 * last item on the second page. - mikaelh */
 					store_top = 0;
-					display_inventory();
+					display_store_inventory();
 				} else {
 					c_msg_print("Entire inventory is shown.");
 				}
 			} else {
 				store_top += entries;
 				if (store_top >= store.stock_num) store_top = 0;
-				display_inventory();
+				display_store_inventory();
 			}
 			break;
 
@@ -911,14 +911,14 @@ static void store_process_command(int cmd) {
 				if (store_top) {
 					/* see above - C. Blue */
 					store_top = 0;
-					display_inventory();
+					display_store_inventory();
 				} else {
 					c_msg_print("Entire inventory is shown.");
 				}
 			} else {
 				store_top -= entries;
 				if (store_top < 0) store_top = ((store.stock_num - 1) / entries) * entries;
-				display_inventory();
+				display_store_inventory();
 			}
 			break;
 
@@ -935,7 +935,7 @@ static void store_process_command(int cmd) {
 		case '1':
 			if (store.stock_num > entries * i) {
 				store_top = entries * i;
-				display_inventory();
+				display_store_inventory();
 			}
 #if 0 /* suppress message, in case STORE_INVEN_MAX doesn't actually support all 10 pages. It'd look silyl. */
 			else c_msg_format("Page %d is empty.", i + 1);
@@ -1095,7 +1095,7 @@ void do_redraw_store(void) {
 			sprintf(buf, "%s (Stock: %d/%d)", c_store.store_name, store.stock_num, c_store.max_cost);
 			prt(buf, y, 50);
 		}
-		display_inventory();
+		display_store_inventory();
 	}
 }
 
@@ -1165,7 +1165,7 @@ void display_store(void) {
 	}
 
 	/* Display the inventory */
-	display_inventory();
+	display_store_inventory();
 
 	/* Don't leave */
 	leave_store = FALSE;

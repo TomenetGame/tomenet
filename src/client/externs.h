@@ -754,7 +754,7 @@ extern int check_guard_inscription_str(cptr ax, char what);
 
 /* c-store.c */
 extern bool leave_store;
-extern void display_inventory(void);
+extern void display_store_inventory(void);
 extern void display_store(void);
 extern void display_store_special(void);
 extern void c_store_prt_gold(void);
