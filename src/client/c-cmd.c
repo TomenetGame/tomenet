@@ -8023,6 +8023,7 @@ void cmd_message(void) {
 			if (i < 0 || i >= INVEN_TOTAL) return;
 			item_newest = i;
 			c_msg_format("Newest item now: %s", inventory_name[i]);
+			if (c_cfg.show_newest) redraw_newest();
 			return;
 		} else if (prefix(buf, "/new ")) {
 			if (item_newest == -1) c_msg_print("(There was no newest item yet.)");
@@ -8036,6 +8037,7 @@ void cmd_message(void) {
 				if (i < 0 || i >= INVEN_TOTAL) return;
 				item_newest = i;
 				c_msg_format("Newest item now: %s", inventory_name[i]);
+				if (c_cfg.show_newest) redraw_newest();
 				return;
 			}
 			if (strstr(buf, "help") || buf[5] == '?') {
@@ -8054,6 +8056,7 @@ void cmd_message(void) {
 			}
 			item_newest = i;
 			c_msg_format("Newest item now: %s", inventory_name[i]);
+			if (c_cfg.show_newest) redraw_newest();
 			return;
 		} else if (!strncasecmp(buf, "/opty", 5) || !strncasecmp(buf, "/optvy", 6)) {
 			bool redundant = FALSE, verbose;

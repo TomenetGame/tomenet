@@ -45,6 +45,9 @@
    Might not be visually desirable, as the bars are exactly adjacent... */
 #define HP_MP_ST_BARS_ALLOWED
 
+/* (Sub-)Inven/Equip marker icon for 'newest item' if c_cfg.show_newest is on. */
+#define MARKER_NEWEST_ITEM '-'
+
 
 #ifdef USE_SOUND_2010
 int animate_lightning_type = SFX_TYPE_AMBIENT;
@@ -1879,6 +1882,8 @@ static void display_inven(void) {
 		/* Clear the line */
 		Term_erase(0, i, 255);
 
+		if (c_cfg.show_newest && item_newest == i) tmp_val[2] = MARKER_NEWEST_ITEM;
+
 		/* Is this item acceptable? */
 		if (item_tester_okay(o_ptr)) {
 			/* Display the index */
@@ -2066,6 +2071,8 @@ static void display_subinven(void) {
 			/* Bracket the "index" --(-- */
 			tmp_val[3] = ')';
 
+			if (c_cfg.show_newest && item_newest == (islot + 1) * 100 + i) tmp_val[4] = MARKER_NEWEST_ITEM;
+
 			/* Display the index */
 			if ((n = check_guard_inscription_str(subinventory_name[islot][i], 'W')) && subinventory[islot][i].number < n) Term_putstr(0, last_k + i, 5, TERM_ORANGE, tmp_val);
 			else if ((n = check_guard_inscription_str(subinventory_name[islot][i], 'G')) && subinventory[islot][i].number < n - 1) Term_putstr(0, last_k + i, 5, TERM_YELLOW, tmp_val);
@@ -2149,7 +2156,7 @@ static void display_equip(void) {
 		o_ptr = &inventory[i];
 
 		/* Start with an empty "index" */
-		strcpy(tmp_val, "   ");
+		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
 
 		/* Is this item acceptable? */
 		if (item_tester_okay(o_ptr)) {
@@ -2159,6 +2166,8 @@ static void display_equip(void) {
 			/* Bracket the "index" --(-- */
 			tmp_val[1] = ')';
 		}
+
+		if (c_cfg.show_newest && item_newest == i) tmp_val[2] = MARKER_NEWEST_ITEM;
 
 		a = c_cfg.equip_text_colour ? EQUIP_TEXT_COLOUR2 : EQUIP_TEXT_COLOUR;
 		/* Colour artifact-name luck bonus affected slots */
@@ -2407,6 +2416,8 @@ void show_inven(void) {
 		/* Prepare and index --(-- */
 		sprintf(tmp_val, "%c)", index_to_label(i));
 
+		if (c_cfg.show_newest && item_newest == i) tmp_val[2] = MARKER_NEWEST_ITEM;
+
 		/* Display the index */
 		if ((n = check_guard_inscription_str(inventory_name[i], 'W')) && inventory[i].number < n) c_put_str(TERM_ORANGE, tmp_val, j + 1, col);
 		else if ((n = check_guard_inscription_str(inventory_name[i], 'G')) && inventory[i].number < n - 1) c_put_str(TERM_YELLOW, tmp_val, j + 1, col);
@@ -2601,6 +2612,8 @@ void show_subinven(int islot) {
 		/* Prepare and index --(-- */
 		sprintf(tmp_val, "%c)", index_to_label(i));
 
+		if (c_cfg.show_newest && item_newest == (islot + 1) * 100 + i) tmp_val[2] = MARKER_NEWEST_ITEM;
+
 		/* Clear the line with the (possibly indented) index */
 		if ((n = check_guard_inscription_str(subinventory_name[islot][i], 'W')) && subinventory[islot][i].number < n) c_put_str(TERM_ORANGE, tmp_val, j + 1, col);
 		else if ((n = check_guard_inscription_str(subinventory_name[islot][i], 'G')) && subinventory[islot][i].number < n - 1) c_put_str(TERM_YELLOW, tmp_val, j + 1, col);
@@ -2761,6 +2774,8 @@ void show_equip(void) {
 
 		/* Prepare and index --(-- */
 		sprintf(tmp_val, "%c)", index_to_label(i));
+
+		if (c_cfg.show_newest && item_newest == i) tmp_val[2] = MARKER_NEWEST_ITEM;
 
 		a = c_cfg.equip_text_colour ? EQUIP_TEXT_COLOUR2 : EQUIP_TEXT_COLOUR;
 		/* Colour artifact-name luck bonus affected slots */

@@ -633,6 +633,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "flash_starvation",		"Flash 'Starved' food status by colour animation." },
 	{ &c_cfg.autoswitch_inven,	TRUE,	6,	0, 183, TRUE,
 	    "autoswitch_inven",		"Empty inven prompts auto-switch to equip or bag." },
+	{ &c_cfg.show_newest,		TRUE,	8,	0, 184, TRUE, //'items' page 8; could also be on page 3 (formatting) or 4 (notifications) perhaps
+	    "show_newest",		"Marks the inventory slot of the 'newest' item." },
 };
 
 cptr melee_techniques[16] = {

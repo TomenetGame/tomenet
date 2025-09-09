@@ -15135,6 +15135,8 @@ void check_immediate_options(int i, bool yes, bool playing) {
 	}
 	if (option_info[i].o_var == &c_cfg.sn_huge_bar && c_cfg.sn_huge_bar && is_older_than(&server_version, 4, 8, 1, 3, 0, 0))
 		c_message_add("Server version 4.8.1.3.0.0 or higher required for the 'huge sanity bar' feature.");
+
+	if (option_info[i].o_var == &c_cfg.show_newest) redraw_newest(); //show or actually clear the marker
 }
 
 /* Helper functions for DONT_CLEAR_TOPLINE_IF_AVOIDABLE - C. Blue */

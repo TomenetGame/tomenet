@@ -7009,7 +7009,10 @@ int Receive_item_newest(void) {
 	}
 
 	/* As long as we don't have an 'official' newest item, use fallback replacement if exists */
-	if (item_newest == -1) item_newest = item_newest_2nd;
+	if (item_newest == -1 && item_newest_2nd != -1) {
+		item_newest = item_newest_2nd;
+		if (c_cfg.show_newest) redraw_newest();
+	}
 
 	return(1);
 }
@@ -7018,12 +7021,16 @@ int Receive_item_newest_2nd(void) {
 	char	ch;
 
 	if ((n = Packet_scanf(&rbuf, "%c%d", &ch, &item_newest_2nd)) <= 0) return(n); //ENABLE_SUBINVEN
+	if (item_newest_2nd == -1) return(1);
 
 	/* As long as we don't have an 'official' newest item, use fallback replacement if exists */
-	if (item_newest == -1) item_newest = item_newest_2nd;
+	if (item_newest == -1) {
+		item_newest = item_newest_2nd;
+		if (c_cfg.show_newest) redraw_newest();
+	}
 	/* Hack, mainly for scrolls and potions: If tval is identical, overwrite newest item with 2nd-newest anyway.
 	   This happens eg if we pick up one type of scrolls, and then read another type -> the one we read replaces the picked-up one. */
-	else if (item_newest_2nd != -1) {
+	else {
 		int tval, tval_2nd;
 
 #ifdef ENABLE_SUBINVEN
@@ -7038,9 +7045,11 @@ int Receive_item_newest_2nd(void) {
 #endif
 		tval_2nd = inventory[item_newest_2nd].tval;
 
-		if (tval == tval_2nd) item_newest = item_newest_2nd;
+		if (tval == tval_2nd) {
+			item_newest = item_newest_2nd;
+			if (c_cfg.show_newest) redraw_newest();
+		}
 	}
-
 	return(1);
 }
 

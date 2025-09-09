@@ -1086,6 +1086,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		newest = item_newest_2nd;
 		if (!get_item_okay(newest)) newest = -1;
 	}
+	if (c_cfg.show_newest) redraw_newest();
 
 	if (mode & USE_LIMIT) limit = TRUE;
 	if (mode & EQUIP_FIRST) equip_first = TRUE;
@@ -1876,4 +1877,12 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	if (alt) *cp = -2 - *cp;
 	return(item);
+}
+
+void redraw_newest(void) {
+	p_ptr->window |= PW_INVEN | PW_EQUIP;
+#ifdef ENABLE_SUBINVEN
+	p_ptr->window |= PW_SUBINVEN;
+#endif
+	window_stuff();
 }
