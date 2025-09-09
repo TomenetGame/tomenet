@@ -155,7 +155,7 @@ void display_store_inventory(void) {
 	/* Visual reminder of "more items" */
 	if (store.stock_num > entries) {
 		/* Show "more" reminder (after the last item) */
-		put_str("-more (SPACE to flip page)-", k + y + 3, 3);
+		put_str("-more (Space/Backspace to flip page)-", k + y + 3, 3);
 
 		/* Indicate the "current page" */
 		put_str(format("(Page %d of %d)%s%s",
