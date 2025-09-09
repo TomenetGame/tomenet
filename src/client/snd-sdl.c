@@ -666,7 +666,7 @@ static bool sound_sdl_init(bool no_cache) {
 	char path[2048];
 	char buffer0[BUFFERSIZE] = { 0 }, *buffer = buffer0, bufferx[BUFFERSIZE] = { 0 };
 	FILE *fff;
-	int i, j, cur_line, k;
+	int i, j, cur_line, k, sets;
 	char out_val[160];
 	bool disabled, cat_this_line, cat_next_line;
 
@@ -1198,6 +1198,7 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Lines are always of the form "name = music [music ...]" */
 	cur_line = 0;
 	cat_this_line = cat_next_line = FALSE;
+	sets = 0;
 	while (fgets(buffer0, sizeof(buffer0), fff) != 0) {
 		char *cfg_name;
 		cptr lua_name;
@@ -1205,9 +1206,9 @@ static bool sound_sdl_init(bool no_cache) {
 		char *search;
 		char *cur_token;
 		char *next_token;
-		int event;
+		int event, set = 0;
 		bool initial, reference;
-		char *c;
+		char *c, *ctmp1, *ctmp2;
 
 		cur_line++;
 
@@ -1263,7 +1264,6 @@ static bool sound_sdl_init(bool no_cache) {
 			continue;
 		}
 
-
 		/* New (2018): Allow linewrapping via trailing ' \' character sequence right before EOL */
 		if (cat_next_line) {
 			cat_this_line = TRUE;
@@ -1300,6 +1300,23 @@ static bool sound_sdl_init(bool no_cache) {
 			buffer++;
 			disabled = TRUE;
 		} else disabled = FALSE;
+
+		/* New (2025): Allow multiple alternative 'sets' within one cfg file, denoted by leading '<set number>|' markers,
+		   where number must be > 0 and '1' will be the default set which is automatically selected on init/load
+		   (TODO: save curren set choice to ini/rc or -even better probably- to pack-specific config file);
+		   added this as Kurzel's electronic dance music pack suggested in the music.cfg comments to do this manually via text editor, now it's easier: */
+		ctmp1 = strchr(buffer, '|');
+		ctmp2 = strchr(buffer, '=');
+		if (ctmp1 && ctmp2 && ctmp2 > ctmp1) {
+			/* 'set' detected */
+			set = atoi(buffer);
+			if (set > sets) sets = set;
+
+			//TODO: implement...
+
+			/* eat set info, advance line processing */
+			buffer = ctmp1 + 1;
+		}
 
 		/* Skip anything not beginning with an alphabetic character */
 		if (!buffer[0] || !isalpha((unsigned char)buffer[0])) continue;
