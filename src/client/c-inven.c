@@ -1082,8 +1082,18 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	//if (mode & NEWEST)
 	newest = item_newest; /* experimental: always on if available */
+	/* If we're within subinven operation, translate newest item to local item if it's in our subinven actually (for get_item_okay()) */
+	if (using_subinven != -1) {
+		if ((newest / SUBINVEN_INVEN_MUL) - 1 == using_subinven) newest %= SUBINVEN_INVEN_MUL;
+		else newest = -1;
+	}
 	if (!get_item_okay(newest)) {
 		newest = item_newest_2nd;
+		/* If we're within subinven operation, translate newest item to local item if it's in our subinven actually (for get_item_okay()) */
+		if (using_subinven != -1) {
+			if ((newest / SUBINVEN_INVEN_MUL) - 1 == using_subinven) newest %= SUBINVEN_INVEN_MUL;
+			else newest = -1;
+		}
 		if (!get_item_okay(newest)) newest = -1;
 	}
 	if (c_cfg.show_newest) redraw_newest();
@@ -1762,11 +1772,6 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				else bell_silent();
 				break;
 			}
-#if 0
-			which = 'a' + item_newest;
-			/* fall through to process 'which' */
-			__attribute__ ((fallthrough));
-#else
 			/* Validate the item */
 			if (!get_item_okay(newest)) { //redundant, we checked this at the start
 				if (c_cfg.item_error_beep) bell();
@@ -1775,10 +1780,12 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			}
 
 			*cp = newest;
+#ifdef ENABLE_SUBINVEN
+			if (using_subinven != -1) (*cp) += sub_i;
+#endif
 			item = TRUE;
 			done = TRUE;
 			break;
-#endif
 
 		default:
 			/* Extract "query" setting */
