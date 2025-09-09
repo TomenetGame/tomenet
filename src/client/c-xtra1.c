@@ -1200,26 +1200,32 @@ void prt_speed(int speed) {
 	int attr = TERM_WHITE;
 	char buf[32] = "";
 	int x, y;
+	bool boosted = FALSE;
 
 	/* hack: remember speed (for extra no-tele warning) */
 	p_speed = speed;
 
+	/* Hack: Marker for sped-up buff - negative numbers due to bit representation would trigger the 'boosted' marker */
+	if (speed >= 0 && (speed & 0x100)) {
+		speed &= ~0x100;
+		boosted = TRUE;
+	}
+
 	if (speed > 0) {
-		/* Hack: Marker for sped-up buff */
-		if (speed & 0x100) {
-			speed &= ~0x100;
-			attr = TERM_L_BLUE;
-			//attr = TERM_VIOLET;
-		} else attr = TERM_L_GREEN;
+		if (boosted) attr = TERM_L_BLUE; //attr = TERM_VIOLET;
+		else attr = TERM_L_GREEN;
 		sprintf(buf, "Fast +%d", speed);
 	} else if (speed < 0) {
 		attr = TERM_L_UMBER;
 		sprintf(buf, "Slow %d", speed);
+	} else if (boosted) { /* Indicate 'normal' speed only in case we're boosted to it (ie would be slow otherwise)! */
+		attr = TERM_L_BLUE; //attr = TERM_VIOLET;
+		sprintf(buf, "Normal");
 	}
 
 	if (no_tele_grid) {
 		attr = TERM_L_DARK;
-		if (!speed) sprintf(buf, "No-Tele");
+		if (!speed && !boosted) sprintf(buf, "No-Tele");
 	}
 
 	/* remember cursor position */
