@@ -539,7 +539,7 @@ void do_cmd_eat_food(int Ind, int item) {
 #endif
 
 	if (check_guard_inscription(o_ptr->note, 'E')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	}
 
@@ -1338,7 +1338,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'q')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	};
 
@@ -1359,7 +1359,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 
 	/* For outdated learning potions */
 	if (o_ptr->tval != TV_SPECIAL && o_ptr->xtra1) {
-		msg_print(Ind, "This potion seems to have crystallized and cannot be consumed anymore.");
+		msg_print(Ind, "\377yThis potion seems to have crystallized and cannot be consumed anymore.");
 		return;
 	}
 
@@ -1547,12 +1547,12 @@ void do_cmd_drink_fountain(int Ind) {
 
 	/* decided to allow players in WRAITHFORM to drink ;) */
 	if (p_ptr->ghost) {
-		msg_print(Ind, "Ghosts cannot interact.");
+		msg_print(Ind, "\377yGhosts cannot interact.");
 		if (!is_admin(p_ptr)) return;
 	}
 
 	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN) {
-		msg_print(Ind, "The fountain is dried out.");
+		msg_print(Ind, "\377yThe fountain is dried out.");
 		return;
 	}
 
@@ -1585,7 +1585,7 @@ void do_cmd_drink_fountain(int Ind) {
 #else /* abuse ambient-sfx logic - it works pretty well ^^ */
 				if (p_ptr->sound_ambient == SFX_AMBIENT_SHORE) {
 #endif
-					if (p_ptr->prace == RACE_ENT) msg_print(Ind, "The water is too salty to feed off.");
+					if (p_ptr->prace == RACE_ENT) msg_print(Ind, "\377yThe water is too salty to feed off.");
 					else msg_print(Ind, "The water tastes very salty.");
 
 					/* Take a turn */
@@ -1646,7 +1646,7 @@ void do_cmd_drink_fountain(int Ind) {
 		if (cs_ptr->sc.fountain.rest <= 0) {
 			cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
 			cs_erase(c_ptr, cs_ptr);
-			msg_print(Ind, "The fountain is dried out.");
+			msg_print(Ind, "\377yThe fountain is dried out.");
 		}
 		return;
 	}
@@ -1676,7 +1676,7 @@ void do_cmd_drink_fountain(int Ind) {
 	}
 
 	if (cs_ptr->sc.fountain.rest <= 0) {
-		msg_print(Ind, "The fountain is dried out.");
+		msg_print(Ind, "\377yThe fountain is dried out.");
 		return;
 	}
 
@@ -1750,7 +1750,7 @@ void do_cmd_drink_fountain(int Ind) {
 	if (cs_ptr->sc.fountain.rest <= 0) {
 		cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_EMPTY_FOUNTAIN);
 		cs_erase(c_ptr, cs_ptr);
-		msg_print(Ind, "The fountain is dried out.");
+		msg_print(Ind, "\377yThe fountain is dried out.");
 	}
 
 #ifdef FOUNTAIN_GUARDS
@@ -1800,7 +1800,7 @@ void do_cmd_fill_bottle(int Ind, int force_slot) {
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
 	if (c_ptr->feat == FEAT_EMPTY_FOUNTAIN) {
-		msg_print(Ind, "The fountain is dried out.");
+		msg_print(Ind, "\377yThe fountain is dried out.");
 		return;
 	}
 
@@ -1818,13 +1818,13 @@ void do_cmd_fill_bottle(int Ind, int force_slot) {
 #endif
 	    ) {
 		if (!feat_is_water(c_ptr->feat) || c_ptr->feat == FEAT_TAINTED_WATER) {
-			msg_print(Ind, "You see nothing here to fill bottles with.");
+			msg_print(Ind, "\377yYou see nothing here to fill bottles with.");
 			return;
 		}
 
 		/* Find some empty bottle in the player inventory? */
 		if (force_slot == -1 && !get_something_tval(Ind, TV_BOTTLE, &item)) {
-			msg_print(Ind, "You have no bottles to fill.");
+			msg_print(Ind, "\377yYou have no bottles to fill.");
 			return;
 		}
 
@@ -2031,7 +2031,7 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'k')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	};
 
@@ -2142,7 +2142,7 @@ void do_cmd_rip_cloth(int Ind, int slot) {
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'k')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	};
 
@@ -3478,12 +3478,12 @@ void do_cmd_read_scroll(int Ind, int item) {
 
 	/* Check some conditions */
 	if (p_ptr->blind) {
-		msg_print(Ind, "You can't see anything.");
+		msg_print(Ind, "\377oYou can't see anything.");
 		s_printf("%s EFFECT: Blind prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	}
 	if (p_ptr->confused) {
-		msg_print(Ind, "You are too confused!");
+		msg_print(Ind, "\377oYou are too confused!");
 		s_printf("%s EFFECT: Confusion prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	}
@@ -3494,13 +3494,13 @@ void do_cmd_read_scroll(int Ind, int item) {
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	if (no_lite(Ind) && !(p_ptr->ghost && (o_ptr->tval == TV_PARCHMENT) && (o_ptr->sval == SV_PARCHMENT_DEATH))) {
-		msg_print(Ind, "You have no light to read by.");
+		msg_print(Ind, "\377oYou have no light to read by.");
 		s_printf("%s EFFECT: No-light prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'r')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		s_printf("%s EFFECT: Inscription prevented scroll for %s.\n", showtime(), p_ptr->name);
 		return;
 	};
@@ -4040,7 +4040,7 @@ void do_cmd_use_staff(int Ind, int item) {
 #endif
 
 	if (check_guard_inscription(o_ptr->note, 'u')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
 		p_ptr->current_item = -1;
@@ -4076,7 +4076,7 @@ void do_cmd_use_staff(int Ind, int item) {
 
 	/* Mega-Hack -- refuse to use a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
-		msg_print(Ind, "You must first pick up the staff.");
+		msg_print(Ind, "\377yYou must first pick up the staff.");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
 		p_ptr->current_item = -1;
@@ -4384,7 +4384,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 	item_tester_tval = TV_WAND;
 
 	if (check_guard_inscription(o_ptr->note, 'a')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	};
 
@@ -4392,7 +4392,7 @@ void do_cmd_aim_wand(int Ind, int item, int dir) {
 
 	/* Mega-Hack -- refuse to aim a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
-		msg_print(Ind, "You must first pick up the wands.");
+		msg_print(Ind, "\377yYou must first pick up the wands.");
 		return;
 	}
 
@@ -5020,7 +5020,7 @@ void do_cmd_zap_rod(int Ind, int item, int dir) {
 #endif
 
 	if (check_guard_inscription(o_ptr->note, 'z')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
 		p_ptr->current_item = -1;
@@ -5387,13 +5387,13 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'z')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	};
 
 	/* Mega-Hack -- refuse to zap a pile from the ground */
 	if ((item < 0) && (o_ptr->number > 1)) {
-		msg_print(Ind, "You must first pick up the rods.");
+		msg_print(Ind, "\377yYou must first pick up the rods.");
 		return;
 	}
 
@@ -6152,7 +6152,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	if (item >= SUBINVEN_INVEN_MUL) {
 		/* For now, only allow demo-alch from here */
 		if (o_ptr->tval != TV_CHEMICAL) {
-			msg_print(Ind, "In a container you can only activate demolition-related chemicals.");
+			msg_print(Ind, "\377yIn a container you can only activate demolition-related chemicals.");
 			return;
 		}
 		/* Sanity check */
@@ -6185,8 +6185,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
  #endif
 #endif
 
-		if (!object_known_p(Ind, o_ptr)) msg_print(Ind, "You cannot activate unknown items.");
-		else msg_print(Ind, "You cannot activate that item.");
+		if (!object_known_p(Ind, o_ptr)) msg_print(Ind, "\377yYou cannot activate unknown items.");
+		else msg_print(Ind, "\377yYou cannot activate that item.");
 		return;
 	}
 
@@ -6206,7 +6206,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	    || item >= SUBINVEN_INVEN_MUL
 #endif
 	    ) && wearable_p(o_ptr)) { // MSTAFF_MDEV_COMBO : Could maybe exempt mage staves for mdev-absorption
-		msg_print(Ind, "You must be using this item to activate it.");
+		msg_print(Ind, "\377yYou must be using this item to activate it.");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
 		p_ptr->current_item = -1;
@@ -6217,7 +6217,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'A')) {
-		msg_print(Ind, "The item's inscription prevents it..");
+		msg_print(Ind, "\377yThe item's inscription prevents it..");
 #ifdef ENABLE_XID_MDEV
  #ifndef XID_REPEAT
 		p_ptr->current_item = -1;
@@ -6574,7 +6574,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		default: break;
 		}
 		if (!i) {
-			msg_print(Ind, "That book has no blank pages left!");
+			msg_print(Ind, "\377yThat book has no blank pages left!");
 			return;
 		}
 
@@ -6610,7 +6610,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			object_type forge, *ox_ptr = &p_ptr->inventory[INVEN_LITE];
 
 			if (!ox_ptr->k_idx || ox_ptr->sval == SV_LITE_FEANORIAN) {
-				msg_print(Ind, "You need to equip a fire-based light source to process the wood chips.");
+				msg_print(Ind, "\377yYou need to equip a fire-based light source to process the wood chips.");
 				return;
 			}
 
@@ -7685,7 +7685,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				break;
 			case SV_RING_POLYMORPH:
 				if (!(item == INVEN_LEFT || item == INVEN_RIGHT)) {
-					msg_print(Ind, "You must be wearing the ring!");
+					msg_print(Ind, "\377yYou must be wearing the ring!");
 					return;
 				}
 				if (!get_skill(p_ptr, SKILL_MIMIC) ||
@@ -7734,7 +7734,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 				else {
 					/* Need skill; no need of killing count */
 					if (r_info[o_ptr->pval].level > get_skill_scale(p_ptr, SKILL_MIMIC, 100)) {
-						msg_print(Ind, "Your mimicry is not powerful enough yet.");
+						msg_print(Ind, "\377yYour mimicry is not powerful enough yet.");
 						return;
 					}
 
@@ -7792,10 +7792,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	/* Deprecated - this is now a directional activation so we can bandage other players, see do_cmd_activate_dir() instead. */
 	if (!done && o_ptr->tval == TV_JUNK && o_ptr->sval == SV_BANDAGE) {
 		if (!p_ptr->cut) {
-			msg_print(Ind, "You have no open wounds."); //yellow?
+			msg_print(Ind, "\377yYou have no open wounds."); //yellow?
 			return;
 		} else if (p_ptr->cut_bandaged) {
-			msg_print(Ind, "You have already applied a bandage."); //yellow?
+			msg_print(Ind, "\377yYou have already applied a bandage."); //yellow?
 			return;
 		}
 		inven_item_increase(Ind, item, -1);
@@ -7819,7 +7819,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 	}
 
 	/* Mistake */
-	msg_print(Ind, "That object cannot be activated.");
+	msg_print(Ind, "\377yThat object cannot be activated.");
 }
 
 
@@ -7852,13 +7852,13 @@ void do_cmd_activate_dir(int Ind, int dir) {
 	    || item >= SUBINVEN_INVEN_MUL
 #endif
 	    ) && wearable_p(o_ptr)) { // MSTAFF_MDEV_COMBO : Could maybe exempt mage staves for mdev-absorption
-		msg_print(Ind, "You must be using this item to activate it.");
+		msg_print(Ind, "\377yYou must be using this item to activate it.");
 		return;
 	}
 
 	/* paranoia? */
 	if (check_guard_inscription(o_ptr->note, 'A')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	};
 
@@ -8393,10 +8393,10 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		/* Bandage ourselves? */
 		if (dir == 5) {
 			if (!p_ptr->cut) {
-				msg_print(Ind, "You have no open wounds."); //yellow?
+				msg_print(Ind, "\377yYou have no open wounds."); //yellow?
 				return;
 			} else if (p_ptr->cut_bandaged) {
-				msg_print(Ind, "You have already applied a bandage."); //yellow?
+				msg_print(Ind, "\377yYou have already applied a bandage."); //yellow?
 				return;
 			}
 
@@ -8426,16 +8426,16 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			c_ptr = &zcave[p_ptr->py + ddy[dir]][p_ptr->px + ddx[dir]];
 			Ind2 = -c_ptr->m_idx;
 			if (Ind2 <= 0 || Ind2 > NumPlayers) {
-				msg_print(Ind, "There is no player next to you in that direction.");
+				msg_print(Ind, "\377yThere is no player next to you in that direction.");
 				return;
 			}
 			p2_ptr = Players[Ind2];
 
 			if (!p2_ptr->cut) {
-				msg_print(Ind, "That player has no open wounds."); //yellow?
+				msg_print(Ind, "\377yThat player has no open wounds."); //yellow?
 				return;
 			} else if (p2_ptr->cut_bandaged) {
-				msg_print(Ind, "That player already has a bandage applied."); //yellow?
+				msg_print(Ind, "\377yThat player already has a bandage applied."); //yellow?
 				return;
 			}
 
@@ -8733,25 +8733,25 @@ void do_cmd_fletchery(int Ind) {
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	if (p_ptr->confused) {
-		msg_print(Ind, "You are too confused!");
+		msg_print(Ind, "\377oYou are too confused!");
 		return;
 	}
 	if (p_ptr->blind) {
-		msg_print(Ind, "You are blind!");
+		msg_print(Ind, "\377oYou are blind!");
 		return;
 	}
 	if (get_skill(p_ptr, SKILL_ARCHERY) < 10) {
-		msg_print(Ind, "You don't know how to craft ammo well.");
+		msg_print(Ind, "\377yYou don't know how to craft ammo well.");
 		return;
 	}
 
 	ext = get_archery_skill(p_ptr);
 	if (ext < 1) {
-		msg_print(Ind, "Sorry, you have to wield a launcher first.");
+		msg_print(Ind, "\377ySorry, you have to wield a launcher first.");
 		return;
 	}
 	if (ext == SKILL_BOOMERANG) {
-		msg_print(Ind, "You don't need ammo for boomerangs, naturally.");
+		msg_print(Ind, "\377yYou don't need ammo for boomerangs, naturally.");
 		return;
 	}
 
@@ -8782,7 +8782,7 @@ void do_cmd_fletchery(int Ind) {
 #endif
 
 			if (CANNOT_OPERATE_SPECTRAL) { /* Not in WRAITHFORM ^^ */
-				msg_print(Ind, "You can't pick up rubble in incorporeal form!");
+				msg_print(Ind, "\377yYou can't pick up rubble in incorporeal form!");
 				return;
 			}
 			if (p_ptr->IDDC_logscum) {
@@ -8806,7 +8806,7 @@ void do_cmd_fletchery(int Ind) {
 					return;
 				}
 			}
-			msg_print(Ind, "There are no appropriate materials available.");
+			msg_print(Ind, "\377yThere are no appropriate materials available.");
 			return;
 		}
 
@@ -8863,7 +8863,7 @@ void do_cmd_fletchery(int Ind) {
 		if (item >= 0) q_ptr = &p_ptr->inventory[item];
 		/* Get the item (on the floor) */
 		else {
-			msg_print(Ind, "You don't have appropriate materials.");
+			msg_print(Ind, "\377yYou don't have appropriate materials.");
 			return;
 #if 0
 			if (-item >= o_max)
@@ -8922,7 +8922,7 @@ void do_cmd_fletchery(int Ind) {
 		if (item >= 0) q_ptr = &p_ptr->inventory[item];
 		/* Get the item (on the floor) */
 		else {
-			msg_print(Ind, "You don't have appropriate materials.");
+			msg_print(Ind, "\377yYou don't have appropriate materials.");
 			return;
 #if 0
 			if (-item >= o_max)
@@ -9268,29 +9268,29 @@ void do_cmd_melee_technique(int Ind, int technique) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	object_type *o_ptr;
+	bool found = FALSE, done = FALSE;
 #ifdef ENABLE_SUBINVEN
 	int j;
-	bool found;
 	object_type *os_ptr;
 #endif
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) {
-		msg_print(Ind, "You cannot use techniques while transformed.");
+		msg_print(Ind, "\377yYou cannot use techniques while transformed.");
 		return;
 	}
 	if (p_ptr->ghost) {
-		msg_print(Ind, "You cannot use techniques as a ghost.");
+		msg_print(Ind, "\377yYou cannot use techniques as a ghost.");
 		if (!admin_p(Ind)) return;
 	}
 	if (p_ptr->confused) {
-		msg_print(Ind, "You cannot use techniques while confused.");
+		msg_print(Ind, "\377yYou cannot use techniques while confused.");
 		return;
 	}
 	if (p_ptr->blind) {
 		switch (technique) {
 		case 1: case 3: case 9:
 		case 10: case 14:
-			msg_print(Ind, "You cannot use this technique while blind.");
+			msg_print(Ind, "\377yYou cannot use this technique while blind.");
 			return;
 		}
 	}
@@ -9300,7 +9300,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 
 	if ((p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_RUNEMASTER) &&
 	    p_ptr->rogue_heavyarmor) {
-		msg_print(Ind, "You cannot utilize techniques well while wearing too heavy armour.");
+		msg_print(Ind, "\377yYou cannot utilize techniques well while wearing too heavy armour.");
 		return;
 	}
 
@@ -9308,7 +9308,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 
 	switch (technique) {
 	case 0:	if (!(p_ptr->melee_techniques & MT_SPRINT)) return; /* Sprint */
-		if (p_ptr->cst < 6) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 6) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		use_stamina(p_ptr, 6);
 		un_afk_idle(Ind);
 		break_cloaking(Ind, 0);
@@ -9321,7 +9321,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		p_ptr->warning_technique_melee = 1;
 		break;
 	case 1:	if (!(p_ptr->melee_techniques & MT_TAUNT)) return; /* Taunt */
-		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 2) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		//if (p_ptr->energy < level_speed(&p_ptr->wpos) / 4) return;
 		if (p_ptr->energy <= 0) return;
 		use_stamina(p_ptr, 2);
@@ -9337,7 +9337,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		break;
 
 	case 2:	if (!(p_ptr->melee_techniques & MT_DIRT)) return; /* Throw Dirt */
-		if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 3) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		use_stamina(p_ptr, 3);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);// / 2
 		un_afk_idle(Ind);
@@ -9354,10 +9354,10 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		//msg_print(Ind, "To use Bash, instead press '%s' (or create a macro for that key).", p_ptr->rogue_like_commands ? "f", "B");  -- not any more
 //s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);  -- logged in cmd1.c in py_bash..() instead
 		//if (!target_okay(Ind)) { msg_print(Ind, "You don't have a target."); return; }  -- wrong, as target_okay() acquires a new target, overwriting our designated one
-		if (!p_ptr->target_who) { msg_print(Ind, "You don't have a target."); return; }
+		if (!p_ptr->target_who) { msg_print(Ind, "\377yYou don't have a target."); return; }
 		else {
 			if (distance(p_ptr->target_row, p_ptr->target_col, p_ptr->py, p_ptr->px) > 1) {
-				msg_print(Ind, "No melee target in range.");
+				msg_print(Ind, "\377yNo melee target in range.");
 				return;
 			}
 		}
@@ -9366,7 +9366,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		break;
 
 	case 4:	if (!(p_ptr->melee_techniques & MT_DISTRACT)) return; /* Distract */
-		if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 1) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		use_stamina(p_ptr, 1);
 		p_ptr->energy -= level_speed(&p_ptr->wpos) / 2; /* just a quick grimace and mimicking ;) */
 		un_afk_idle(Ind);
@@ -9382,20 +9382,22 @@ void do_cmd_melee_technique(int Ind, int technique) {
 	case 5:	if (!(p_ptr->melee_techniques & MT_POISON)) return; /* Apply Poison */
 		//if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (!p_ptr->inventory[INVEN_WIELD].k_idx && (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) {
-			msg_print(Ind, "You must wield a melee weapon to apply poison.");
+			msg_print(Ind, "\377yYou must wield a melee weapon to apply poison.");
 			return;
 		}
 		for (i = 0; i < INVEN_WIELD; i++) {
 			o_ptr = &p_ptr->inventory[i];
+
 #ifdef ENABLE_SUBINVEN
 			if (o_ptr->tval == TV_SUBINVEN) {
-				found = FALSE;
 				for (j = 0; j < o_ptr->bpval; j++) {
 					os_ptr = &p_ptr->subinventory[i][j];
 					if (!os_ptr->tval) break;
+					if (check_guard_inscription(os_ptr->note, 'k')) continue;
+
+					/* Known poisonous item? */
 					if (//object_known_p(Ind, os_ptr) && /* skip unknown items */
 					    object_aware_p(Ind, os_ptr) && /* skip unknown items */
-					    !check_guard_inscription(os_ptr->note, 'k') &&
 					    ((os_ptr->tval == TV_POTION && os_ptr->sval == SV_POTION_POISON) ||
 					    (os_ptr->tval == TV_FOOD && (os_ptr->sval == SV_FOOD_POISON || os_ptr->sval == SV_FOOD_UNHEALTH)))) {
 						found = TRUE;
@@ -9404,38 +9406,80 @@ void do_cmd_melee_technique(int Ind, int technique) {
 						inven_item_optimize(Ind, (i + 1) * 100 + j);
 						break;
 					}
+
+					/* Allow specifying a potion or mushroom which may be unknown. Tradeoff: If it wasn't usable it will be lost! */
+					if (check_guard_inscription(os_ptr->note, 'p')) {
+						if (os_ptr->tval == TV_POTION || (os_ptr->tval == TV_FOOD && os_ptr->sval <= SV_FOOD_MUSHROOMS_MAX)) {
+							if ((os_ptr->tval == TV_POTION && os_ptr->sval == SV_POTION_POISON) ||
+							    (os_ptr->tval == TV_FOOD && (os_ptr->sval == SV_FOOD_POISON || os_ptr->sval == SV_FOOD_UNHEALTH)))
+								found = TRUE;
+							else {
+								msg_print(Ind, "\377yThat seems to have no poisonous effect.");
+								s_printf("TECHNIQUE_MELEE: %s - apply poison (fail: %d,%d)\n", p_ptr->name, p_ptr->subinventory[i][j].tval, p_ptr->subinventory[i][j].sval);
+							}
+							inven_item_increase(Ind, (i + 1) * 100 + j, -1);
+							inven_item_describe(Ind, (i + 1) * 100 + j);
+							inven_item_optimize(Ind, (i + 1) * 100 + j);
+							done = TRUE;
+							break;
+						} else msg_print(Ind, "\377yThe !p inscription can only be used on potions or mushrooms.");
+					}
 				}
 				if (found) break;
 			}
 #endif
+
+			if (check_guard_inscription(o_ptr->note, 'k')) continue;
+
+			/* Known poisonous item? */
 			if (//object_known_p(Ind, o_ptr) && /* skip unknown items */
 			    object_aware_p(Ind, o_ptr) && /* skip unknown items */
-			    !check_guard_inscription(o_ptr->note, 'k') &&
 			    ((o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_POISON) ||
 			    (o_ptr->tval == TV_FOOD && (o_ptr->sval == SV_FOOD_POISON || o_ptr->sval == SV_FOOD_UNHEALTH)))) {
+				found = TRUE;
 				inven_item_increase(Ind, i, -1);
 				inven_item_describe(Ind, i);
 				inven_item_optimize(Ind, i);
 				break;
 			}
+
+			/* Allow specifying a potion or mushroom which may be unknown. Tradeoff: If it wasn't usable it will be lost! */
+			if (check_guard_inscription(os_ptr->note, 'p')) {
+				if (o_ptr->tval == TV_POTION || (o_ptr->tval == TV_FOOD && o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX)) {
+					if ((o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_POISON) ||
+					    (o_ptr->tval == TV_FOOD && (o_ptr->sval == SV_FOOD_POISON || o_ptr->sval == SV_FOOD_UNHEALTH)))
+						found = TRUE;
+					else {
+						msg_print(Ind, "\377yThat seems to have no poisonous effect.");
+						s_printf("TECHNIQUE_MELEE: %s - apply poison (fail: %d,%d)\n", p_ptr->name, p_ptr->inventory[i].tval, p_ptr->inventory[i].sval);
+					}
+					inven_item_increase(Ind, i, -1);
+					inven_item_describe(Ind, i);
+					inven_item_optimize(Ind, i);
+					done = TRUE;
+					break;
+				} else msg_print(Ind, "\377yThe !p inscription can only be used on potions or mushrooms.");
+			}
 		}
-		if (i == INVEN_WIELD) {
-			msg_print(Ind, "You are missing a poisonous ingredient.");
+		if (!found && !done) {
+			msg_print(Ind, "\377yYou are missing a poisonous ingredient.");
 			return;
 		}
 		break_shadow_running(Ind);
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
-		msg_print(Ind, "You apply the poisonous essence to your weapon..");
-		set_melee_brand(Ind, 110 + randint(20), TBRAND_POIS, 0, TRUE, TRUE);
+		if (found) {
+			msg_print(Ind, "You apply the poisonous essence to your weapon..");
+			set_melee_brand(Ind, 110 + randint(20), TBRAND_POIS, 0, TRUE, TRUE);
+			s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
+		}
 		//use_stamina(p_ptr, 2);
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
-		s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;
 
 	case 6:	if (!(p_ptr->melee_techniques & MT_TRACKANIM)) return; /* Track Animals */
-		if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 3) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		use_stamina(p_ptr, 3);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		(void)detect_creatures_xxx(Ind, RF3_ANIMAL);
@@ -9444,7 +9488,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		break;
 
 	case 7:	if (!(p_ptr->melee_techniques & MT_DETNOISE)) return; /* Perceive Noise */
-		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 2) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		use_stamina(p_ptr, 2);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		detect_noise(Ind);
@@ -9453,7 +9497,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		break;
 
 	case 8:	if (!(p_ptr->melee_techniques & MT_FLASH)) return; /* Flash bomb */
-		if (p_ptr->cst < 4) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 4) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		//if (p_ptr->energy < level_speed(&p_ptr->wpos)) return;
 		if (p_ptr->energy <= 0) return;
 		use_stamina(p_ptr, 4);
@@ -9476,7 +9520,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 
 		if (!(p_ptr->melee_techniques & MT_STEAMBLAST)) return; /* Steam Blast */
 		if (p_ptr->steamblast) {
-			msg_print(Ind, "You have already prepared a steam blast charge.");
+			msg_print(Ind, "\377yYou have already prepared a steam blast charge.");
 			return;
 		}
 		//if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
@@ -9508,7 +9552,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 			if (p != -1 && t != -1) break;
 		}
 		if (p == -1 || t == -1) {
-			msg_print(Ind, "You need to inscribe both a fumes trap kit or blast charge and a potion '!S'.");
+			msg_print(Ind, "\377yYou need to inscribe both a fumes trap kit or blast charge and a potion '!S'.");
 			return;
 		}
 		/* Check for chest under us first */
@@ -9526,9 +9570,9 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		}
 
 	case 10: if (!(p_ptr->melee_techniques & MT_SPIN)) return; /* Spin */
-		if (p_ptr->cst < 5) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 5) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		if (p_ptr->afraid) {
-			msg_print(Ind, "You are too afraid to attack!");
+			msg_print(Ind, "\377yYou are too afraid to attack!");
 			return;
 		}
 		if (p_ptr->energy < level_speed(&p_ptr->wpos)) return; // ?
@@ -9553,9 +9597,9 @@ void do_cmd_melee_technique(int Ind, int technique) {
 			p_ptr->piercing = 0;
 			return;
 		}
-		if (p_ptr->cst < 9) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 9) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		if (!p_ptr->dual_wield || !p_ptr->dual_mode) {
-			msg_print(Ind, "This attack requires two dual-wielded weapons!");
+			msg_print(Ind, "\377yThis attack requires two dual-wielded weapons!");
 			return;
 		}
 		stop_precision(Ind);
@@ -9570,7 +9614,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 #endif
 
 	case 12 :if (!(p_ptr->melee_techniques & MT_BERSERK)) return; /* Berserk */
-		if (p_ptr->cst < 10) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 10) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		break_cloaking(Ind, 0);
 		break_shadow_running(Ind);
 		stop_precision(Ind);
@@ -9604,19 +9648,19 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 	int i;
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) {
-		msg_print(Ind, "You cannot use techniques while transformed.");
+		msg_print(Ind, "\377yYou cannot use techniques while transformed.");
 		return;
 	}
 	if (p_ptr->ghost) {
-		msg_print(Ind, "You cannot use techniques as a ghost.");
+		msg_print(Ind, "\377yYou cannot use techniques as a ghost.");
 		if (!admin_p(Ind)) return;
 	}
 	if (p_ptr->confused) {
-		msg_print(Ind, "You cannot use techniques while confused.");
+		msg_print(Ind, "\377yYou cannot use techniques while confused.");
 		return;
 	}
 	if (p_ptr->blind) {
-		msg_print(Ind, "You cannot use ranged techniques while blinded.");
+		msg_print(Ind, "\377yYou cannot use ranged techniques while blinded.");
 		return;
 	}
 
@@ -9625,20 +9669,20 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 	if (technique != 3 || !p_ptr->ranged_double) { /* just toggling that one off? */
 		if (technique != 2) {
 			if (!p_ptr->inventory[INVEN_AMMO].tval) {
-				msg_print(Ind, "You have no ammunition equipped.");
+				msg_print(Ind, "\377yYou have no ammunition equipped.");
 				return;
 			}
 			if (p_ptr->inventory[INVEN_AMMO].sval == SV_AMMO_CHARRED) {
-				msg_print(Ind, "Charred ammunition is too brittle to use.");
+				msg_print(Ind, "\377yCharred ammunition is too brittle to use.");
 				return;
 			}
 		}
 		if (p_ptr->inventory[INVEN_BOW].tval == TV_BOOMERANG) {
-			msg_print(Ind, "You cannot use techniques with a boomerang.");
+			msg_print(Ind, "\377yYou cannot use techniques with a boomerang.");
 			return;
 		}
 		if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
-			msg_print(Ind, "You cannot use techniques with a shield equipped.");
+			msg_print(Ind, "\377yYou cannot use techniques with a shield equipped.");
 			return;
 		}
 	}
@@ -9652,9 +9696,9 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 			p_ptr->ranged_flare = FALSE;
 			return;
 		}
-		if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 2) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		if (check_guard_inscription(p_ptr->inventory[INVEN_AMMO].note, 'k')) {
-			msg_print(Ind, "Your ammo's inscription (!k) prevents using it as flare missile.");
+			msg_print(Ind, "\377yYour ammo's inscription (!k) prevents using it as flare missile.");
 			return;
 		}
 #if 0 /* using !k inscription in birth.c instead? */
@@ -9662,7 +9706,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		if (p_ptr->inventory[INVEN_AMMO].name1 == 0 &&
 		    p_ptr->inventory[INVEN_AMMO].sval == SV_AMMO_MAGIC &&
 		    p_ptr->inventory[INVEN_AMMO].number == 1) {
-			msg_print(Ind, "Flare would consume your only magic piece of ammo!");
+			msg_print(Ind, "\377yFlare would consume your only magic piece of ammo!");
 			return;
 		}
 #endif
@@ -9676,7 +9720,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 				break;
 			}
 		if (!p_ptr->ranged_flare) {
-			msg_print(Ind, "You are missing a flask of oil.");
+			msg_print(Ind, "\377yYou are missing a flask of oil.");
 			return;
 		}
 		break_shadow_running(Ind);
@@ -9694,7 +9738,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 			p_ptr->ranged_precision = FALSE;
 			return;
 		}
-		if (p_ptr->cst < 7) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 7) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		//use_stamina(p_ptr, 7);
 		break_shadow_running(Ind);
 		stop_shooting_till_kill(Ind);
@@ -9716,7 +9760,7 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 		if (!p_ptr->ranged_double) {
 			//if (p_ptr->cst < 1) { msg_print(Ind, "Not enough stamina!"); return; }
 			if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 2) {
-				msg_print(Ind, "You need at least 2 projectiles for a dual-shot!");
+				msg_print(Ind, "\377yYou need at least 2 projectiles for a dual-shot!");
 				return;
 			}
 			p_ptr->ranged_double_used = 0;
@@ -9736,9 +9780,9 @@ void do_cmd_ranged_technique(int Ind, int technique) {
 			p_ptr->ranged_barrage = FALSE;
 			return;
 		}
-		if (p_ptr->cst < 9) { msg_print(Ind, "Not enough stamina!"); return; }
+		if (p_ptr->cst < 9) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		if (p_ptr->inventory[INVEN_AMMO].tval && p_ptr->inventory[INVEN_AMMO].number < 6) {
-			msg_print(Ind, "You need at least 6 projectiles for a barrage!");
+			msg_print(Ind, "\377yYou need at least 6 projectiles for a barrage!");
 			return;
 		}
 		//use_stamina(p_ptr, 9);
@@ -9770,7 +9814,7 @@ void do_steamblast(int Ind, int x, int y, bool door) {
 	bool trapping = FALSE;
 
 	if (!zcave) { /* paranoia */
-		msg_print(Ind, "You cannot plant a steam blast charge on this floor.");
+		msg_print(Ind, "\377yYou cannot plant a steam blast charge on this floor.");
 		return;
 	}
 
@@ -9781,25 +9825,25 @@ void do_steamblast(int Ind, int x, int y, bool door) {
 	}
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) {
-		msg_print(Ind, "You cannot use techniques while transformed.");
+		msg_print(Ind, "\377yYou cannot use techniques while transformed.");
 		return;
 	}
 	if (p_ptr->ghost) {
-		msg_print(Ind, "You cannot use techniques as a ghost.");
+		msg_print(Ind, "\377yYou cannot use techniques as a ghost.");
 		if (!admin_p(Ind)) return;
 	}
 	if (p_ptr->confused) {
-		msg_print(Ind, "You cannot use techniques while confused.");
+		msg_print(Ind, "\377yYou cannot use techniques while confused.");
 		return;
 	}
 	if (p_ptr->blind) {
-		msg_print(Ind, "You cannot use this technique while blind.");
+		msg_print(Ind, "\377yYou cannot use this technique while blind.");
 		return;
 	}
 
 	if ((p_ptr->pclass == CLASS_ROGUE || p_ptr->pclass == CLASS_RUNEMASTER) &&
 	    p_ptr->rogue_heavyarmor) {
-		msg_print(Ind, "You cannot utilize techniques well while wearing too heavy armour.");
+		msg_print(Ind, "\377yYou cannot utilize techniques well while wearing too heavy armour.");
 		return;
 	}
 
@@ -9838,7 +9882,7 @@ void do_steamblast(int Ind, int x, int y, bool door) {
 		if (t != -1 && p != -1) break;
 	}
 	if (t == -1 || p == -1) {
-		msg_print(Ind, "You need to inscribe both a fumes trap kit or blast charge and a potion '!S'.");
+		msg_print(Ind, "\377yYou need to inscribe both a fumes trap kit or blast charge and a potion '!S'.");
 		return;
 	}
 
@@ -9852,20 +9896,20 @@ void do_steamblast(int Ind, int x, int y, bool door) {
 		int o_idx = zcave[y][x].o_idx;
 
 		if (!o_idx) { /* paranoia */
-			msg_print(Ind, "There is no chest here.");
+			msg_print(Ind, "\377yThere is no chest here.");
 			return;
 		}
 		o_ptr = &o_list[o_idx];
 		if (o_ptr->tval != TV_CHEST) {
-			msg_print(Ind, "You are not standing on a chest.");
+			msg_print(Ind, "\377yYou are not standing on a chest.");
 			return;
 		}
 		if ((o_ptr->temp & 0x08)) {
-			msg_print(Ind, "There is already an active steam blast charge on this chest.");
+			msg_print(Ind, "\377yThere is already an active steam blast charge on this chest.");
 			return;
 		}
 		if (o_ptr->pval <= 0) {
-			msg_print(Ind, "That chest is not trapped or locked.");
+			msg_print(Ind, "\377yThat chest is not trapped or locked.");
 			return;
 		}
 		o_ptr->temp |= 0x08;
@@ -10004,26 +10048,26 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 	}
 
 	if (p_ptr->prace != RACE_DRACONIAN || !p_ptr->ptrait) {
-		msg_print(Ind, "You cannot breathe elements.");
+		msg_print(Ind, "\377yYou cannot breathe elements.");
 		return;
 	}
 	if (p_ptr->ghost) {
-		msg_print(Ind, "You cannot use your elemental breath as a ghost.");
+		msg_print(Ind, "\377yYou cannot use your elemental breath as a ghost.");
 		return;
 	}
 	if (p_ptr->confused) {
-		msg_print(Ind, "You cannot use your elemental breath while confused.");
+		msg_print(Ind, "\377yYou cannot use your elemental breath while confused.");
 		return;
 	}
 	if (p_ptr->body_monster && !strchr("dDJRM", r_info[p_ptr->body_monster].d_char)) {
-		msg_print(Ind, "You cannot use your elemental breath in your current form.");
+		msg_print(Ind, "\377yYou cannot use your elemental breath in your current form.");
 		return;
 	}
 	if (p_ptr->lev < 8) {
-		msg_print(Ind, "You need to be at least level 8 to breathe elements.");
+		msg_print(Ind, "\377yYou need to be at least level 8 to breathe elements.");
 		return;
 	}
-	if (p_ptr->cst < 3) { msg_print(Ind, "Not enough stamina!"); return; }
+	if (p_ptr->cst < 3) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 
 	/* New '+' feat in 4.4.6.2 */
 	if (dir == 11) {

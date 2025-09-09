@@ -4010,26 +4010,28 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	c_ptr = &zcave[py][px];
 
 	if (!get_skill(p_ptr, SKILL_TRAPPING)) {
-		msg_print(Ind, "You aren't proficient in trapping.");
+		msg_print(Ind, "\377yYou aren't proficient in trapping.");
 		return;
 	}
 
 	/* Check some conditions */
 	if (p_ptr->blind) {
-		msg_print(Ind, "You can't see anything.");
+		msg_print(Ind, "\377oYou can't see anything.");
 		return;
 	}
+#if 0 //hmmm
 	if (no_lite(Ind)) {
-		msg_print(Ind, "You don't dare to set a trap in the darkness.");
+		msg_print(Ind, "\377oYou don't dare to set a trap in the darkness.");
 		return;
 	}
+#endif
 	if (p_ptr->confused) {
-		msg_print(Ind, "You are too confused!");
+		msg_print(Ind, "\377oYou are too confused!");
 		return;
 	}
 
 	if (l_ptr && (l_ptr->flags2 & LF2_NO_TRAPS)) {
-		msg_print(Ind, "This whole floor is not suitable for setting monster traps.");
+		msg_print(Ind, "\377yThis whole floor is not suitable for setting monster traps.");
 		return;
 	}
 
@@ -4039,7 +4041,7 @@ void do_cmd_set_trap(int Ind, int item_kit, int item_load) {
 	    (f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM) ||
 	    !cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
 	    c_ptr->special) {
-		msg_print(Ind, "You cannot set a trap here.");
+		msg_print(Ind, "\377yYou cannot set a trap here.");
 		return;
 	}
 

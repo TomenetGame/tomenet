@@ -44,7 +44,7 @@ s16b inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 	if (amt <= 0) return(-1);
 
 	if (!force && check_guard_inscription(o_ptr->note, 't')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return(-1);
 	}
 
@@ -373,7 +373,7 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 
 	/* check for !d  or !* in inscriptions */
 	if (!force && check_guard_inscription(o_ptr->note, 'd')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return(-1);
 	}
 
@@ -784,20 +784,20 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	if ((alt_slots & 0x8) != 0) {
 		/* Prevent chaos for now >_< */
 		if (p_ptr->inventory[INVEN_WIELD].tval == TV_SPECIAL || p_ptr->inventory[INVEN_ARM].tval == TV_SPECIAL) {
-			msg_print(Ind, "Cannot quick-swap special objects. Please use wear/wield and take-off commands.");
+			msg_print(Ind, "\377yCannot quick-swap special objects. Please use wear/wield and take-off commands.");
 			return(-1);
 		}
 
 		/* paranoia? could probably be caused by bad timing, disarming, etc */
 		if (!(slot1 && slot2)) {
-			msg_print(Ind, "Swapping weapons failed, as you no longer wield two weapons.");
+			msg_print(Ind, "\377ySwapping weapons failed, as you no longer wield two weapons.");
 			Send_confirm(Ind, PKT_WIELD3);
 			return(-1);
 		}
 
 		/* Cannot swap a shield into main hand slot */
 		if (slot2 && p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
-			msg_print(Ind, "Shields must remain in the secondary weapon slot.");
+			msg_print(Ind, "\377yShields must remain in the secondary weapon slot.");
 			Send_confirm(Ind, PKT_WIELD3);
 			return(-1);
 		}
@@ -814,7 +814,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		}
 		if (num == 2) { //num abused as marker: anything cursed?
 			if (all_cursed)
-				msg_format(Ind, "Both items you are wielding appear to be cursed.");
+				msg_format(Ind, "\377yBoth items you are wielding appear to be cursed.");
 			else {
 				object_desc(Ind, o_name, &(p_ptr->inventory[slot]), FALSE, 0);
 				msg_format(Ind, "The %s you are %s appears to be cursed.", o_name, describe_use(Ind, slot));
@@ -857,7 +857,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 #endif
 			if (cursed_p(o_ptr)) { //in case INVERSE_CURSED_RANDARTS triggered
 				o_ptr->ident |= ID_SENSE | ID_SENSED_ONCE;
-				msg_print(Ind, "Oops! It feels deathly cold!");
+				msg_print(Ind, "\377DOops! It feels deathly cold!");
 				note_toggle_cursed(o_ptr, TRUE);
 				/* Force dual-hand mode if wielding cursed weapon(s) */
 				if (get_skill(p_ptr, SKILL_DUAL)) {
@@ -940,7 +940,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'w')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return(-1);
 	}
@@ -952,7 +952,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 #endif
 
 	if (!item_tester_hook_wear(Ind, slot)) {
-		msg_print(Ind, "You may not wield that item.");
+		msg_print(Ind, "\377yYou may not wield that item.");
 		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return(-1);
 	}
@@ -965,7 +965,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	/* Costumes allowed during halloween and xmas */
 	if (!season_halloween && !season_xmas) {
 		if ((o_ptr->tval == TV_SOFT_ARMOR) && (o_ptr->sval == SV_COSTUME)) {
-			msg_print(Ind, "It's not that time of the year anymore.");
+			msg_print(Ind, "\377yIt's not that time of the year anymore.");
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return(-1);
 		}
@@ -989,7 +989,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	    !p_ptr->total_winner
  #endif
 	    ) {
-		msg_print(Ind, "Only royalties are powerful enough to use that item!");
+		msg_print(Ind, "\377yOnly royalties are powerful enough to use that item!");
 		if (!is_admin(p_ptr)) return(-1);
 	}
 #endif
@@ -1035,7 +1035,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 	if ((alt_slots & 0x4) && p_ptr->inventory[slot].k_idx) {
 		object_desc(Ind, o_name, &(p_ptr->inventory[slot]), FALSE, 0);
-		msg_format(Ind, "Take off your %s first.", o_name);
+		msg_format(Ind, "\377yTake off your %s first.", o_name);
 		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return(-1);
 	}
@@ -1055,9 +1055,9 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 
 		/* Message */
 		if (all_cursed)
-			msg_format(Ind, "The items you are already %s both appear to be cursed.", describe_use(Ind, slot));
+			msg_format(Ind, "\377oThe items you are already %s both appear to be cursed.", describe_use(Ind, slot));
 		else
-			msg_format(Ind, "The %s you are %s appears to be cursed.", o_name, describe_use(Ind, slot));
+			msg_format(Ind, "\377oThe %s you are %s appears to be cursed.", o_name, describe_use(Ind, slot));
 
 		/* Cancel the command */
 		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
@@ -1071,19 +1071,19 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 #if 0 /* a) either give error msg, or.. */
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 		if (get_skill(p_ptr, SKILL_DUAL))
-			msg_format(Ind, "You cannot wield your %s with a shield or a secondary weapon.", o_name);
+			msg_format(Ind, "\377yYou cannot wield your %s with a shield or a secondary weapon.", o_name);
 		else
-			msg_format(Ind, "You cannot wield your %s with a shield.", o_name);
+			msg_format(Ind, "\377yYou cannot wield your %s with a shield.", o_name);
 		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return(-1);
 #else /* b) take off the left-hand item too */
 		if (check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 't')) {
-			msg_print(Ind, "Your secondary item's inscription prevents taking it off.");
+			msg_print(Ind, "\377yYour secondary item's inscription prevents taking it off.");
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return(-1);
 		};
 		if (cursed_p(&p_ptr->inventory[INVEN_ARM]) && !is_admin(p_ptr)) {
-			msg_print(Ind, "Hmmm, the secondary item you're wielding seems to be cursed.");
+			msg_print(Ind, "\377oHmmm, the secondary item you're wielding seems to be cursed.");
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return(-1);
 		}
@@ -1108,17 +1108,17 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) {
 #if 0 /* a) either give error msg, or.. */
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
-		msg_format(Ind, "You cannot wield your %s with a secondary weapon.", o_name);
+		msg_format(Ind, "\377yYou cannot wield your %s with a secondary weapon.", o_name);
 		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return(-1);
 #else /* b) take off the secondary weapon */
 		if (check_guard_inscription(p_ptr->inventory[INVEN_ARM].note, 't')) {
-			msg_print(Ind, "Your secondary weapon's inscription prevents taking it off.");
+			msg_print(Ind, "\377yYour secondary weapon's inscription prevents taking it off.");
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return(-1);
 		};
 		if (cursed_p(&p_ptr->inventory[INVEN_ARM]) && !is_admin(p_ptr)) {
-			msg_print(Ind, "Hmmm, the secondary weapon you're wielding seems to be cursed.");
+			msg_print(Ind, "\377yHmmm, the secondary weapon you're wielding seems to be cursed.");
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return(-1);
 		}
@@ -1146,17 +1146,17 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		if ((f4 & TR4_MUST2H) && (x_ptr->k_idx)) {
 #if 0 /* Prevent shield from being put on if wielding 2H */
 			object_desc(Ind, o_name, o_ptr, FALSE, 0);
-			msg_format(Ind, "You cannot wield your %s with a two-handed weapon.", o_name);
+			msg_format(Ind, "\377yYou cannot wield your %s with a two-handed weapon.", o_name);
 			Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 			return(-1);
 #else /* Take off 2h weapon when equipping a shield */
 			if (check_guard_inscription(p_ptr->inventory[INVEN_WIELD].note, 't')) {
-				msg_print(Ind, "Your weapon's inscription prevents taking it off.");
+				msg_print(Ind, "\377yYour weapon's inscription prevents taking it off.");
 				Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 				return(-1);
 			};
 			if (cursed_p(&p_ptr->inventory[INVEN_WIELD]) && !is_admin(p_ptr)) {
-				msg_print(Ind, "Hmmm, the weapon you're wielding seems to be cursed.");
+				msg_print(Ind, "\377yHmmm, the weapon you're wielding seems to be cursed.");
 				Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 				return(-1);
 			}
@@ -1201,7 +1201,7 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		highlander = FALSE;
 
 	if (check_guard_inscription(x_ptr->note, 't') && !highlander) {
-		msg_print(Ind, "The inscription of your equipped item prevents it.");
+		msg_print(Ind, "\377yThe inscription of your equipped item prevents it.");
 		Send_confirm(Ind, (alt_slots & 0x2) ? PKT_WIELD2 : PKT_WIELD);
 		return(-1);
 	};
@@ -1566,7 +1566,7 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'T')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		Send_confirm(Ind, PKT_TAKE_OFF); //+PKT_TAKE_OFF_AMT
 		return;
 	}
@@ -1588,8 +1588,8 @@ void do_cmd_takeoff(int Ind, int item, int amt) {
 #endif
 		    )) {
 			/* Oops */
-			if (o_ptr->number == 1) msg_print(Ind, "Hmmm, it seems to be cursed.");
-			else msg_print(Ind, "Hmmm, they seem to be cursed.");
+			if (o_ptr->number == 1) msg_print(Ind, "\377yHmmm, it seems to be cursed.");
+			else msg_print(Ind, "\377yHmmm, they seem to be cursed.");
 			/* Nope */
 			Send_confirm(Ind, PKT_TAKE_OFF); //+PKT_TAKE_OFF_AMT
 			return;
@@ -1675,7 +1675,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 #endif
 
 	if (check_guard_inscription(o_ptr->note, 'd')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	};
 
@@ -1701,7 +1701,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 			if (override) override = 2;
 			else {
 				/* Oops */
-				msg_print(Ind, "Hmmm, it seems to be cursed.");
+				msg_print(Ind, "\377yHmmm, it seems to be cursed.");
 				/* Nope */
 				return;
 			}
@@ -1709,7 +1709,7 @@ void do_cmd_drop(int Ind, int item, int quantity) {
 			if (override) override = 2;
 			else {
 				/* Oops */
-				msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
+				msg_print(Ind, "\377yHmmm, you seem to be unable to drop it.");
 				/* Nope */
 				return;
 			}
@@ -1851,12 +1851,12 @@ void do_cmd_drop_gold(int Ind, s32b amt) {
 
 	/* Handle the newbies_cannot_drop option */
 	if ((p_ptr->max_plv < cfg.newbies_cannot_drop) && !is_admin(p_ptr)) {
-		msg_print(Ind, "You are not experienced enough to drop gold.");
+		msg_print(Ind, "\377yYou are not experienced enough to drop gold.");
 		return;
 	}
 
 	if (p_ptr->inval) {
-		msg_print(Ind, "You may not drop gold, wait for an admin to validate your account.");
+		msg_print(Ind, "\377yYou may not drop gold, wait for an admin to validate your account.");
 		return;
 	}
 
@@ -1940,7 +1940,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 	o_ptr->number = old_number;
 
 	if (check_guard_inscription(o_ptr->note, 'k')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return(FALSE);
 	};
 
@@ -1951,13 +1951,13 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 
 	/* Certain questor objects cannot be destroyed */
 	if (o_ptr->questor && o_ptr->questor_invincible) {
-		msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
+		msg_print(Ind, "\377yHmmm, you seem to be unable to destroy it.");
 		return(FALSE);
 	}
 	/* Keys cannot be destroyed */
 	if (o_ptr->tval == TV_KEY && !is_admin(p_ptr)) {
 		/* Message */
-		msg_format(Ind, "You cannot destroy %s.", o_name);
+		msg_format(Ind, "\377yYou cannot destroy %s.", o_name);
 		/* Done */
 		return(FALSE);
 	}
@@ -1982,7 +1982,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 		cptr feel = "special";
 
 		/* Message */
-		msg_format(Ind, "You cannot destroy %s.", o_name);
+		msg_format(Ind, "\377yYou cannot destroy %s.", o_name);
 
 		/* Hack -- Handle icky artifacts */
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = "terrible";
@@ -2004,7 +2004,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 		if (override) override = 2;
 		else {
 			/* Oops */
-			msg_print(Ind, "Hmmm, you seem to be unable to destroy it.");
+			msg_print(Ind, "\377yHmmm, you seem to be unable to destroy it.");
 			/* Nope */
 			return(FALSE);
 		}
@@ -2015,7 +2015,7 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 		if (override) override = 2;
 		else {
 			/* Message */
-			msg_print(Ind, "Hmm, that seems to be cursed.");
+			msg_print(Ind, "\377yHmm, that seems to be cursed.");
 			/* Done */
 			return(FALSE);
 		}
@@ -3431,17 +3431,17 @@ void do_cmd_steal(int Ind, int dir) {
 	    && !in_hallsofmandos(&p_ptr->wpos)
 #endif
 	    ) {
-		msg_print(Ind, "You cannot steal from someone or your life would be forfeit.");
+		msg_print(Ind, "\377yYou cannot steal from someone or your life would be forfeit.");
 		return;
 	}
 
 	if (p_ptr->inval) {
-		msg_print(Ind, "You cannot steal from other players without a valid account.");
+		msg_print(Ind, "\377yYou cannot steal from other players without a valid account.");
 		return;
 	}
 
 	if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
-		msg_format(Ind, "You cannot steal from other players until you are level %d.", cfg.newbies_cannot_drop);
+		msg_format(Ind, "\377yYou cannot steal from other players until you are level %d.", cfg.newbies_cannot_drop);
 		return;
 	}
 
@@ -3455,7 +3455,7 @@ void do_cmd_steal(int Ind, int dir) {
 
 	/* No transactions from different mode */
 	if (compat_pmode(Ind, 0 - c_ptr->m_idx, FALSE)) {
-		msg_format(Ind, "You cannot steal from %s players.", compat_pmode(Ind, 0 - c_ptr->m_idx, FALSE));
+		msg_format(Ind, "\377yYou cannot steal from %s players.", compat_pmode(Ind, 0 - c_ptr->m_idx, FALSE));
 		return;
 	}
 

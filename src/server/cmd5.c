@@ -291,7 +291,7 @@ void do_cmd_ghost_power(int Ind, int ability) {
 	/* Must not be confused */
 	if (p_ptr->confused) {
 		/* Message */
-		msg_print(Ind, "You are too confused!");
+		msg_print(Ind, "\377oYou are too confused!");
 		return;
 	}
 
@@ -309,7 +309,7 @@ void do_cmd_ghost_power(int Ind, int ability) {
 	/* Check for level */
 	if (s_ptr->slevel > plev) {
 		/* Message */
-		msg_print(Ind, "You aren't powerful enough to use that ability.");
+		msg_print(Ind, "\377yYou aren't powerful enough to use that ability.");
 		return;
 	}
 
@@ -444,7 +444,7 @@ bool mimic_power_hindered(int Ind) {
 		p_ptr->shooty_till_kill = FALSE;
 		p_ptr->shoot_till_kill_mimic = 0;
 
-		msg_print(Ind, "You are too confused!");
+		msg_print(Ind, "\377oYou are too confused!");
 		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 		return(TRUE);
 	}
@@ -475,7 +475,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 
 	/* confirm the power */
 	if (!(p_ptr->innate_spells[j] & (1U << (power - j * 32)))) {
-		msg_print(Ind, "You cannot use that power.");
+		msg_print(Ind, "\377yYou cannot use that power.");
 
 		/* Paranoia? Cease fire-till-kill! */
 		p_ptr->shooting_till_kill = FALSE;
@@ -488,7 +488,7 @@ static void do_mimic_power(int Ind, int power, int dir) {
 
 	/* Check mana */
 	if (s_ptr->smana > p_ptr->cmp) {
-		msg_print(Ind, "You do not have enough mana to use this power.");
+		msg_print(Ind, "\377oYou do not have enough mana to use this power.");
 		//msg_format(Ind, "You need %d mana to use this power.", s_ptr->smana);
 
 		/* Cease fire-till-kill! */
@@ -1499,7 +1499,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 
 	if (!skill_mimic) {
 		Send_confirm(Ind, PKT_ACTIVATE_SKILL);
-		msg_print(Ind, "You are too solid.");
+		msg_print(Ind, "\377yYou are too solid.");
 		return;
 	}
 
@@ -1518,7 +1518,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 			k++;
 			if (k >= MAX_R_IDX - 1) {
 				//j = 0;
-				msg_print(Ind, "You don't know any forms!");
+				msg_print(Ind, "\377yYou don't know any forms!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
 			}
@@ -1602,15 +1602,15 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 		else j = spell - 20000;
 
 		if (k == j) { //already using this form?
-			msg_print(Ind, "You are already using that form.");
+			msg_print(Ind, "\377yYou are already using that form.");
 			Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 			return;
 		} else if ((j >= MAX_R_IDX - 1) || (j < 0)) {
-			msg_print(Ind, "That form does not exist in the realm!");
+			msg_print(Ind, "\377yThat form does not exist in the realm!");
 			Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 			return;
 		} else if (j && strlen(r_name + r_info[j].name) <= 1) {	/* <- ??? */
-			msg_print(Ind, "You cannot use that form!");
+			msg_print(Ind, "\377yYou cannot use that form!");
 			Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 			return;
 		}
@@ -1625,7 +1625,7 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				do_mimic_change(Ind, j, TRUE);
 				p_ptr->energy -= level_speed(&p_ptr->wpos);
 			} else {
-				msg_print(Ind, "You cannot use that form!");
+				msg_print(Ind, "\377yYou cannot use that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 			}
 		} else if (p_ptr->prace == RACE_VAMPIRE) {
@@ -1636,38 +1636,38 @@ void do_cmd_mimic(int Ind, int spell, int dir) {
 				do_mimic_change(Ind, j, TRUE);
 				p_ptr->energy -= level_speed(&p_ptr->wpos);
 			} else {
-				msg_print(Ind, "You cannot use that form!");
+				msg_print(Ind, "\377yYou cannot use that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 			}
 		} else { /* normal mimicry */
 			if (r_ptr->flags1 & RF1_UNIQUE) {
-				msg_print(Ind, "That form is unique!");
+				msg_print(Ind, "\377yThat form is unique!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
 			} else if ((r_ptr->flags8 & RF8_PSEUDO_UNIQUE) ||
 			    /* For free_mimic, prevent forms that are not normally accessible either: */
 			    (r_ptr->flags9 & RF9_NO_CREDIT) ||
 			    (r_ptr->flags7 & RF7_NO_DEATH)) {
-				msg_print(Ind, "That form is unlearnable!");
+				msg_print(Ind, "\377yThat form is unlearnable!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
 			} else if (!mon_allowed_chance(&r_info[j])) {
-				msg_print(Ind, "You cannot use that form!");
+				msg_print(Ind, "\377yYou cannot use that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
 			} else if (j && p_ptr->pclass == CLASS_SHAMAN && !mimic_shaman(j)) {
-				msg_print(Ind, "As a shaman you cannot use that form!");
+				msg_print(Ind, "\377yAs a shaman you cannot use that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
 			} else if (r_ptr->level > skill_mimic) {
-				msg_print(Ind, "You are not powerful enough to change into that form!");
+				msg_print(Ind, "\377yYou are not powerful enough to change into that form!");
 				Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 				return;
 			} else if (j && p_ptr->r_mimicry[j] < 1
 			    && !(p_ptr->tim_mimic && p_ptr->tim_mimic_what == j)
 			    && !admin) {
 				if (!p_ptr->free_mimic) {
-					msg_print(Ind, "You have no experience with that form at all!");
+					msg_print(Ind, "\377yYou have no experience with that form at all!");
 					Send_confirm(Ind, PKT_ACTIVATE_SKILL);
 					return;
 				} else using_free_mimic = TRUE;

@@ -2648,6 +2648,10 @@ Any item in your inventory:
                 Instead, the item's discount will be set to 100%, making
                 it unsalable to NPC stores permanently.
 
+    !p          Force using this item for the 'Apply Poison' fighting technique
+                where the inscribed item must be a potion or mushroom and will
+                be destroyed in the process, whether it works or not.
+
 Some examples for inscriptions to use with macros:
   An item that can be activated:
   Eg:  @A1      Pressing the keys 'A' and then '1' will activate that item.
@@ -25704,6 +25708,9 @@ The techniques are as follows:
         Searches your inventory for a potion of poison or a mushroom of poison,
         or of unhealth, and spends it to apply poison to any melee weapon that
         you have equipped. Items inscribed '!k' will be skipped.
+        If lacking a _known_ poisonous ingredient, you can also force the use
+        of an unknown potion or mushroom by inscribing it "!p". This will in
+        any case consume the item, whether it works or not.
         If you have two weapons equipped, it is applied to both. This technique
         does not work without a weapon. If you take off a weapon the poison
         branding will fade away.

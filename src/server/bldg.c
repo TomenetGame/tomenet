@@ -2445,7 +2445,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		o_ptr = &p_ptr->inventory[item];
 
 		if (!item_tester_hook(o_ptr)) {
-			msg_print(Ind, "You cannot recharge that item.");
+			msg_print(Ind, "\377yYou cannot recharge that item.");
 			//get_item(Ind);
 		} else {
 			//if (recharge(Ind, 80, -1)) paid = TRUE;

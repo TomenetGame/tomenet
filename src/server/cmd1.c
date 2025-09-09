@@ -3457,7 +3457,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	/* Handle attacker fear */
 	if (p_ptr->afraid) {
 		/* Message */
-		msg_format(Ind, "You are too afraid to attack %s!", q_name);
+		msg_format(Ind, "\377yYou are too afraid to attack %s!", q_name);
 
 		/* Done */
 		return;
@@ -3465,7 +3465,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 	if (q_ptr->store_num == STORE_HOME || q_ptr->store_num == STORE_HOME_DUN) {
 		/* Message */
-		//msg_format(Ind, "You are too afraid to attack %s!", q_name);
+		//msg_format(Ind, "\377yYou are too afraid to attack %s!", q_name);
 
 		/* Done */
 		return;
@@ -3504,7 +3504,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 	/* Handle player fear */
 	if (p_ptr->afraid) {
-		msg_format(Ind, "You are too afraid to attack %s!", q_name);
+		msg_format(Ind, "\377yYou are too afraid to attack %s!", q_name);
 		suppress_message = FALSE;
 		/* Done */
 		return;
@@ -3538,7 +3538,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 	/* Re-check piercing */
 	if (p_ptr->piercing_charged) {
 		if (p_ptr->cst < 9) {
-			msg_print(Ind, "Not enough stamina to execute an assassinating attack.");
+			msg_print(Ind, "\377oNot enough stamina to execute an assassinating attack.");
 			p_ptr->piercing_charged = FALSE;
 			p_ptr->piercing = 0;
 		} else {
@@ -3622,7 +3622,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		chaos_effect = 0; // we need this methinks..?
 
 		if ((f4 & TR4_NEVER_BLOW)) {
-			msg_print(Ind, "You can't attack with that weapon.");
+			msg_print(Ind, "\377yYou can't attack with that weapon.");
 			break;
 		}
 
@@ -4800,7 +4800,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 	/* Handle player fear */
 	if (p_ptr->afraid) {
-		msg_format(Ind, "You are too afraid to attack %s!", m_name);
+		msg_format(Ind, "\377yYou are too afraid to attack %s!", m_name);
 		suppress_message = FALSE;
 		/* Done */
 		return;
@@ -6017,12 +6017,12 @@ void py_bash_mon(int Ind, int y, int x) {
 	if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
 	if (!(p_ptr->melee_techniques & MT_BASH)) {
-		msg_print(Ind, "You are not proficient in shield-bashing opponents.");
+		msg_print(Ind, "\377yYou are not proficient in shield-bashing opponents.");
 		return;
 	}
 
 	if (!p_ptr->num_blow) {
-		msg_print(Ind, "You cannot attack.");
+		msg_print(Ind, "\377yYou cannot attack.");
 		return;
 	}
 
@@ -6120,7 +6120,7 @@ void py_bash_mon(int Ind, int y, int x) {
 
 	/* Handle player fear */
 	if (p_ptr->afraid) {
-		msg_format(Ind, "You are too afraid to attack %s!", m_name);
+		msg_format(Ind, "\377yYou are too afraid to attack %s!", m_name);
 		suppress_message = FALSE;
 		/* Done */
 		return;
@@ -6128,24 +6128,24 @@ void py_bash_mon(int Ind, int y, int x) {
 
 	/* Cannot 'bash' monsters without shield */
 	if (p_ptr->inventory[INVEN_WIELD].tval != TV_SHIELD && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) {
-		msg_format(Ind, "You need a shield to bash others effectively.");
+		msg_format(Ind, "\377yYou need a shield to bash others effectively.");
 		return;
 	}
 
 	/* check whether monster can be bashed */
 	if (m_ptr->monfear) {
-		msg_print(Ind, "You cannot bash monsters that are running away from you.");
+		msg_print(Ind, "\377yYou cannot bash monsters that are running away from you.");
 		return;
 	}
 
 	/* cannot wield the shield? */
 	if (p_ptr->heavy_shield) {
-		msg_print(Ind, "Your shield is too heavy for you to bash with it effectively.");
+		msg_print(Ind, "\377oYour shield is too heavy for you to bash with it effectively.");
 		return;
 	}
 
 	if (p_ptr->cst < 6) {
-		msg_print(Ind, "Not enough stamina!");
+		msg_print(Ind, "\377oNot enough stamina!");
 		return;
 	}
 #ifndef TEST_SERVER
@@ -6499,14 +6499,14 @@ void py_bash_py(int Ind, int y, int x) {
 
 #if 0 /* Bashing is not a weapon-based attack! */
 	if (!p_ptr->num_blow) {
-		msg_print(Ind, "You cannot attack.");
+		msg_print(Ind, "\377yYou cannot attack.");
 		return;
 	}
 #endif
 
 	/* Handle player fear */
 	if (p_ptr->afraid) {
-		msg_format(Ind, "You are too afraid to attack %s!", q_name);
+		msg_format(Ind, "\377yYou are too afraid to attack %s!", q_name);
 		suppress_message = FALSE;
 		/* Done */
 		return;
@@ -6514,26 +6514,26 @@ void py_bash_py(int Ind, int y, int x) {
 
 	/* Cannot 'bash' monsters without shield */
 	if (p_ptr->inventory[INVEN_WIELD].tval != TV_SHIELD && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD) {
-		msg_format(Ind, "You need a shield to bash others effectively.");
+		msg_format(Ind, "\377yYou need a shield to bash others effectively.");
 		return;
 	}
 
 #if 0
 	/* check whether player can be bashed */
 	if (q_ptr->afraid) {
-		msg_print(Ind, "You cannot bash someone who is running away from you.");
+		msg_print(Ind, "\377yYou cannot bash someone who is running away from you.");
 		return;
 	}
 #endif
 
 	/* cannot wield the shield? */
 	if (p_ptr->heavy_shield) {
-		msg_print(Ind, "Your shield is too heavy for you to bash with it effectively.");
+		msg_print(Ind, "\377oYour shield is too heavy for you to bash with it effectively.");
 		return;
 	}
 
 	if (p_ptr->cst < 6) {
-		msg_print(Ind, "Not enough stamina!");
+		msg_print(Ind, "\377oNot enough stamina!");
 		return;
 	}
 	use_stamina(p_ptr, 6);
@@ -6783,7 +6783,7 @@ void spin_attack(int Ind) {
 
 	/* In case we got here by weapon activation: */
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
-		msg_print(Ind, "You cannot spin while in mist form.");
+		msg_print(Ind, "\377yYou cannot spin while in mist form.");
 		return;
 	}
 

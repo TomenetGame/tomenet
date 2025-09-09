@@ -2555,13 +2555,13 @@ int party_add_self(int Ind, cptr party) {
 
 #ifdef IDDC_RESTRICTED_PARTYING
 	if (in_irondeepdive(&p_ptr->wpos)) {
-		msg_print(Ind, "You cannot add yourself to a party when inside the IDDC.");
+		msg_print(Ind, "\377yYou cannot add yourself to a party when inside the IDDC.");
 		return(FALSE);
 	}
 #endif
 
 	if (party_id == -1) {
-		msg_print(Ind, "That party does not exist.");
+		msg_print(Ind, "\377yThat party does not exist.");
 		return(FALSE);
 	}
 
@@ -2570,7 +2570,7 @@ int party_add_self(int Ind, cptr party) {
 	/* paranoia */
 	if (!success) {
 		/* uhh.. */
-		msg_print(Ind, "Sorry, self-adding has failed.");
+		msg_print(Ind, "\377ySorry, self-adding has failed.");
 		return(FALSE);
 	}
 	success = FALSE;
@@ -2627,7 +2627,7 @@ int party_add_self(int Ind, cptr party) {
 
 	/* failure? */
 	if (!success) {
-		msg_print(Ind, "You do not have any character that is member of that party.");
+		msg_print(Ind, "\377yYou do not have any character that is member of that party.");
 		return(FALSE);
 	}
 

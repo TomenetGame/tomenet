@@ -121,15 +121,15 @@ void cast_rune_spell (int Ind, int dir) {
 
 	/* Check some conditions */
 	if (p_ptr->blind) {
-		msg_print(Ind, "\377rYou can't see anything.");
+		msg_print(Ind, "\377oYou can't see anything.");
 		return;
 	}
 	if (no_lite(Ind)) {
-		msg_print(Ind, "\377rYou find it hard to see your hands without a light");
+		msg_print(Ind, "\377oYou find it hard to see your hands without a light");
 		return;
 	}
 	if (p_ptr->confused) {
-		msg_print(Ind, "\377rYou are too confused!");
+		msg_print(Ind, "\377oYou are too confused!");
 		return;
 	}
 
@@ -393,7 +393,7 @@ void cast_rune_spell (int Ind, int dir) {
 
 	//Failed to cast-- out of SP!
 	if (notice) {
-		msg_format(Ind, "\377rYou don't have the energy: %d/%d. Needed: %d",
+		msg_format(Ind, "\377oYou don't have the energy: %d/%d. Needed: %d",
 				p_ptr->cmp, p_ptr->mmp, notice);
 		return;
 #ifdef ALLOW_PERFECT_RUNE_CASTING
@@ -401,7 +401,7 @@ void cast_rune_spell (int Ind, int dir) {
 #else
 	} else if (magik(1) && magik(10)) {
 #endif
-		msg_print(Ind, "\377rThe rune cracks and becomes unusable.");
+		msg_print(Ind, "\376\377oThe rune cracks and becomes unusable.");
 		/* Break me! */
 		inven_item_increase(Ind, mod_rune, -1); //Only the mod...
 		inven_item_describe(Ind, mod_rune);

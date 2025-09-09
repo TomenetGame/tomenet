@@ -91,7 +91,7 @@ bool warding_rune(int Ind, byte typ, int dam, byte rad) {
 	struct c_special *cs_ptr;
 
 	if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) {
-		msg_print(Ind, "You cannot place a glyph here.");
+		msg_print(Ind, "\377yYou cannot place a glyph here.");
 		return(FALSE);
 	}
 
@@ -104,7 +104,7 @@ bool warding_rune(int Ind, byte typ, int dam, byte rad) {
 
 	/* Try to place a rune */
 	if (!cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_RUNE)) {
-		msg_print(Ind, "You cannot place a glyph here.");
+		msg_print(Ind, "\377yYou cannot place a glyph here.");
 		cs_erase(c_ptr, cs_ptr);
 		return(FALSE);
 	}

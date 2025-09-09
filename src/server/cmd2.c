@@ -6877,11 +6877,11 @@ void do_cmd_fire(int Ind, int dir) {
 	if (!(zcave = getcave(wpos))) return;
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRE_BAT) {
-		msg_print(Ind, "You cannot use ranged weapons in bat form.");
+		msg_print(Ind, "\377yYou cannot use ranged weapons in bat form.");
 		return;
 	}
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST) {
-		msg_print(Ind, "You cannot use ranged weapons in mist form.");
+		msg_print(Ind, "\377yYou cannot use ranged weapons in mist form.");
 		return;
 	}
 
@@ -6942,7 +6942,7 @@ void do_cmd_fire(int Ind, int dir) {
 
 	/* Require a launcher */
 	if (!j_ptr->tval) {
-		msg_print(Ind, "You have nothing to fire with.");
+		msg_print(Ind, "\377yYou have nothing to fire with.");
 		return;
 	}
 
@@ -6979,14 +6979,14 @@ void do_cmd_fire(int Ind, int dir) {
 	}
 
 	if (check_guard_inscription(o_ptr->note, 'f')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	}
 
 	if (!can_use_verbose(Ind, o_ptr)) return;
 
 	if (!o_ptr->tval || !o_ptr->number) {
-		msg_print(Ind, "Your quiver is empty!");
+		msg_print(Ind, "\377yYour quiver is empty!");
 		return;
 	}
 
@@ -8713,7 +8713,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	}
 
 	if (!bashing && check_guard_inscription(o_ptr->note, 'v')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	};
 
@@ -8725,7 +8725,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	/* Hack - Cannot throw away 'no drop' cursed items */
 	if (cursed_p(o_ptr) && (f4 & TR4_CURSE_NO_DROP) && item >= 0 && !bashing) {
 		/* Oops */
-		msg_print(Ind, "Hmmm, you seem to be unable to throw it.");
+		msg_print(Ind, "\377yHmmm, you seem to be unable to throw it.");
 
 		/* Nope */
 		return;

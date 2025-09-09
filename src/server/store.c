@@ -4846,7 +4846,7 @@ void store_confirm(int Ind) {
 
 	/* Add '!s' inscription, w00t - C. Blue */
 	if (check_guard_inscription(o_ptr->note, 's')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	}
 
@@ -6617,14 +6617,14 @@ void home_sell(int Ind, int item, int amt) {
 		u32b f1, f2, f3, f4, f5, f6, esp;
 
 		if (item >= INVEN_WIELD) {
-			msg_print(Ind, "Hmmm, it seems to be cursed.");
+			msg_print(Ind, "\377yHmmm, it seems to be cursed.");
 			return;
 		}
 
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 
 		if (f4 & TR4_CURSE_NO_DROP) {
-			msg_print(Ind, "Hmmm, you seem to be unable to drop it.");
+			msg_print(Ind, "\377yHmmm, you seem to be unable to drop it.");
 			return;
 		}
 	}
@@ -6637,14 +6637,14 @@ void home_sell(int Ind, int item, int amt) {
 	}
 
 	if (cfg.anti_arts_house && undepositable_artifact_p(o_ptr)) {
-		msg_print(Ind, "You cannot stock this artifact.");
+		msg_print(Ind, "\377yYou cannot stock this artifact.");
 		return;
 	}
 
 #ifdef ENABLE_SUBINVEN
 	/* Specialty: Either !s or !d will work for bags exclusively, so annoying to accidentally store a bag () that is in use */
 	if (o_ptr->tval == TV_SUBINVEN && (check_guard_inscription(o_ptr->note, 's') || check_guard_inscription(o_ptr->note, 'd'))) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	}
 #endif
@@ -6658,7 +6658,7 @@ void home_sell(int Ind, int item, int amt) {
 
 	/* Is there room in the store (or the home?) */
 	if (!home_check_num(Ind, h_ptr, &sold_obj)) {
-		msg_print(Ind, "Your home is full.");
+		msg_print(Ind, "\377yYour home is full.");
 		return;
 	}
 
@@ -6680,7 +6680,7 @@ void home_sell(int Ind, int item, int amt) {
 
 	/* Sigil (reset it) - Kurzel (fix the list house exploit) */
 	if (sold_obj.sigil) {
-		msg_print(Ind, "The sigil fades away.");
+		msg_print(Ind, "\377yThe sigil fades away.");
 		sold_obj.sigil = 0;
 		sold_obj.sseed = 0;
 	}
@@ -6833,7 +6833,7 @@ void home_purchase(int Ind, int item, int amt) {
 
 	/* Empty? */
 	if (h_ptr->stock_num <= 0) {
-		msg_print(Ind, "Your home is empty.");
+		msg_print(Ind, "\377yYour home is empty.");
 		return;
 	}
 
@@ -6894,7 +6894,7 @@ void home_purchase(int Ind, int item, int amt) {
 	/* prevent winners picking up true arts accidentally */
 	if (true_artifact_p(o_ptr) && !winner_artifact_p(o_ptr) &&
 	    p_ptr->total_winner && cfg.kings_etiquette) {
-		msg_print(Ind, "Royalties may not own true artifacts!");
+		msg_print(Ind, "\377yRoyalties may not own true artifacts!");
 		if (!is_admin(p_ptr)) return;
 	}
 #endif
@@ -6928,7 +6928,7 @@ void home_purchase(int Ind, int item, int amt) {
 	    !p_ptr->total_winner
 #endif
 	    ) {
-		msg_print(Ind, "Only royalties are powerful enough to pick up that item!");
+		msg_print(Ind, "\377yOnly royalties are powerful enough to pick up that item!");
 		if (!is_admin(p_ptr)) return;
 	}
 
@@ -6960,7 +6960,7 @@ void home_purchase(int Ind, int item, int amt) {
 
 	/* Hack -- require room in pack */
 	if (!inven_carry_okay(Ind, &sell_obj, 0x200)) {
-		msg_print(Ind, "You cannot carry that many different items.");
+		msg_print(Ind, "\377yYou cannot carry that many different items.");
 		return;
 	}
 
@@ -7184,7 +7184,7 @@ void home_extend(int Ind) {
 
 	/* Already too large? */
 	if (h_ptr->stock_size >= STORE_INVEN_MAX) {
-		msg_print(Ind, "Your house cannot be extended any more.");
+		msg_print(Ind, "\377yYour house cannot be extended any more.");
 		return;
 	}
 
@@ -7199,7 +7199,7 @@ void home_extend(int Ind) {
 #endif
 
 	if (p_ptr->au < cost) {
-		msg_print(Ind, "You couldn't afford it..");
+		msg_print(Ind, "\377yYou couldn't afford it..");
 		return;
 	}
 

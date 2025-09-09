@@ -9714,7 +9714,7 @@ void tome_creation_aux(int Ind, int item) {
 	}
 
 	if (check_guard_inscription(o2_ptr->note, 'k')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	}
 
@@ -9815,13 +9815,13 @@ void mstaff_absorb_aux(int Ind, int item) {
 	/* severe error: custom book no longer there */
 	if (!(o_ptr->tval == TV_MSTAFF && !o_ptr->name2 && !o_ptr->name2b && !o_ptr->name1 && !o_ptr->xtra1 && !o_ptr->xtra2 && !o_ptr->xtra3)) {
 		/* completely start from scratch (have to re-'activate') */
-		msg_print(Ind, "You can only use a basic mage staff, please retry!");
+		msg_print(Ind, "\377yYou can only use a basic mage staff, please retry!");
 		clear_current(Ind); /* <- not required actually */
 		return;
 	}
 
 	if (!is_magic_device(o2_ptr->tval)) {
-		msg_print(Ind, "You can only absorb a magic device!");
+		msg_print(Ind, "\377yYou can only absorb a magic device!");
 		/* restore silyl hack.. */
 		p_ptr->using_up_item = item;
 		/* try again */
@@ -9830,7 +9830,7 @@ void mstaff_absorb_aux(int Ind, int item) {
 	}
 
 	if (check_guard_inscription(o2_ptr->note, 'k')) {
-		msg_print(Ind, "The item's inscription prevents it.");
+		msg_print(Ind, "\377yThe item's inscription prevents it.");
 		return;
 	}
 
@@ -10772,20 +10772,20 @@ void grind_chemicals(int Ind, int item) {
 
 	/* Safety mechanism in case we're crafing via inscriptions and make a..mistake */
 	if (item >= INVEN_WIELD && item < SUBINVEN_INVEN_MUL) {
-		msg_print(Ind, "The item must be in your inventory in order to dismantle it.");
+		msg_print(Ind, "\377yThe item must be in your inventory in order to dismantle it.");
 		return;
 	}
 
 	object_desc(Ind, o_name, o_ptr, FALSE, 0);
 	if (check_guard_inscription(o_ptr->note, 'k')) {
-		msg_print(Ind, "The item's inscription prevents grinding it.");
+		msg_print(Ind, "\377yThe item's inscription prevents grinding it.");
 		return;
 	}
 	if (artifact_p(o_ptr)) {
 		/* Same relevation as on attempting to cmd_destroy() an artifact: */
 		cptr feel = "special";
 
-		msg_print(Ind, "Artifacts cannot be ground.");
+		msg_print(Ind, "\377yArtifacts cannot be ground.");
 
 		if (cursed_p(o_ptr) || broken_p(o_ptr)) feel = "terrible";
 		o_ptr->note = quark_add(feel);
@@ -10795,14 +10795,14 @@ void grind_chemicals(int Ind, int item) {
 		return;
 	}
 	if (o_ptr->tval == TV_CHEST && o_ptr->pval > 0) {
-		msg_print(Ind, "You have to open the chest in order to dismantle it first.");
+		msg_print(Ind, "\377yYou have to open the chest in order to dismantle it first.");
 		return;
 	}
 
 	metal = contains_significant_reactive_metal(o_ptr);
 	wood = contains_significant_wood(o_ptr);
 	if (!metal && !wood) {
-		msg_format(Ind, "Your %s will yield neither reactive metal powder nor wood chips.", o_name);
+		msg_format(Ind, "\377yYour %s will yield neither reactive metal powder nor wood chips.", o_name);
 		return;
 	}
 
@@ -10810,7 +10810,7 @@ void grind_chemicals(int Ind, int item) {
 	if (is_ammo(o_ptr->tval) || o_ptr->tval == TV_SPIKE) {
 		amt_dec = 10;
 		if (o_ptr->number < amt_dec) {
-			msg_format(Ind, "That item is too small and must be ground in chunks of %d at least.", amt_dec);
+			msg_format(Ind, "\377yThat item is too small and must be ground in chunks of %d at least.", amt_dec);
 			return;
 		}
 	}
@@ -10896,23 +10896,23 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 
 
 	if (o_ptr->owner != p_ptr->id) {
-		msg_print(Ind, "You must own the charge in order to arm it.");
+		msg_print(Ind, "\377yYou must own the charge in order to arm it.");
 		return(FALSE);
 	}
 
 	if (!thrown) {
 		if (p_ptr->blind) {
-			msg_print(Ind, "You can't see anything.");
+			msg_print(Ind, "\377yYou can't see anything.");
 			return(FALSE);
 	}
 		if (no_lite(Ind)) {
-			msg_print(Ind, "You don't dare to set a charge in the darkness.");
+			msg_print(Ind, "\377yYou don't dare to set a charge in the darkness.");
 			return(FALSE);
 		}
 	}
 
 	if (p_ptr->confused) {
-		msg_print(Ind, "You are too confused!");
+		msg_print(Ind, "\377yYou are too confused!");
 		return(FALSE);
 	}
 #if 1 /* need something fiery to light the fuse with? */
@@ -10923,7 +10923,7 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 			object_type *ox2_ptr = &Players[Ind]->inventory[INVEN_TOOL];
 
 			if (!ox2_ptr->k_idx || ox2_ptr->sval != SV_TOOL_FLINT) {
-				msg_print(Ind, "You need to equip a fire-based light source or a flint to light the fuse.");
+				msg_print(Ind, "\377yYou need to equip a fire-based light source or a flint to light the fuse.");
 				return(FALSE);
 			}
 		}
@@ -10933,14 +10933,14 @@ bool arm_charge_conditions(int Ind, object_type *o_ptr, bool thrown) {
 #ifdef DEMOLITIONIST_BLAST_IDDC_ONLY
 	/* for debugging/testing purpose */
 	if (!in_irondeepdive(wpos)) {
-		msg_print(Ind, "You may arm charges only inside the IDDC.");
+		msg_print(Ind, "\377yYou may arm charges only inside the IDDC.");
 		return(FALSE);
 	}
 #endif
 
 	//if (!thrown) {   -- don't allow terraforming in town!
 		if (istownarea(wpos, MAX_TOWNAREA)) {
-			msg_print(Ind, "You may not arm charges in town.");
+			msg_print(Ind, "\377yYou may not arm charges in town.");
 			return(FALSE);
 		}
 	//}
@@ -11042,7 +11042,7 @@ void arm_charge(int Ind, int item, int dir) {
 	o2_idx = o_pop();
 	if (!o2_idx) {
 		//shouldn't happen
-		msg_print(Ind, "It's not possible to arm charges right now.");
+		msg_print(Ind, "\377yIt's not possible to arm charges right now.");
 		return;
 	}
 
@@ -11340,11 +11340,11 @@ void wrap_gift(int Ind, int item) {
 	if ((money = check_guard_inscription(ow_ptr->note, '$')) > 0) {
 		money--;
 		if (money <= 0) {
-			msg_print(Ind, "If you want to gift gold, the amount must be greater than zero.");
+			msg_print(Ind, "\377yIf you want to gift gold, the amount must be greater than zero.");
 			return;
 		}
 		if (money > p_ptr->au) {
-			msg_print(Ind, "You don't carry that much money in your purse.");
+			msg_print(Ind, "\377yYou don't carry that much money in your purse.");
 			return;
 		}
 		msg_format(Ind, "You wrap an mount of \377y%ld\377w gold pieces.", money);
@@ -11358,7 +11358,7 @@ void wrap_gift(int Ind, int item) {
 	} else if (!get_inven_item(Ind, item, &o_ptr)) return;
 
 	if (o_ptr->questor || ow_ptr->questor) {
-		msg_print(Ind, "You cannot use questor items for gift wrapping.");
+		msg_print(Ind, "\377yYou cannot use questor items for gift wrapping.");
 		clear_current(Ind); /* <- not required actually */
 		s_printf("..failed(1)\n");
 		return;
@@ -11367,7 +11367,7 @@ void wrap_gift(int Ind, int item) {
 	/* Most items with live-timeouts cannot be wrapped */
 	if ((o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) ||
 	    (o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_BLOOD)) {
-		msg_print(Ind, "For sanitary reasons, perishable goods may not be gift-wrapped."); //>,>'
+		msg_print(Ind, "\377yFor sanitary reasons, perishable goods may not be gift-wrapped."); //>,>'
 		clear_current(Ind); /* <- not required actually */
 		s_printf("..failed(2)\n");
 		return;
@@ -11376,21 +11376,21 @@ void wrap_gift(int Ind, int item) {
 	/* severe error: gift wrapping no longer there */
 	if (ow_ptr->tval != TV_JUNK || ow_ptr->sval < SV_GIFT_WRAPPING_START || ow_ptr->sval > SV_GIFT_WRAPPING_END) {
 		/* completely start from scratch (have to re-'activate') */
-		msg_print(Ind, "The gift wrapping's inventory location was changed, please retry!");
+		msg_print(Ind, "\377yThe gift wrapping's inventory location was changed, please retry!");
 		clear_current(Ind); /* <- not required actually */
 		s_printf("..failed(3)\n");
 		return;
 	}
 
 	if (!o_ptr->level) {
-		msg_print(Ind, "You cannot wrap zero-level items.");
+		msg_print(Ind, "\377yYou cannot wrap zero-level items.");
 		clear_current(Ind); /* <- not required actually */
 		s_printf("..failed(4)\n");
 		return;
 	}
 
 	if (cursed_p(o_ptr)) {
-		msg_print(Ind, "Oops, the item accidentally ripped the gift wrapping."); //=p
+		msg_print(Ind, "\377yOops, the item accidentally ripped the gift wrapping."); //=p
 		/* One gift wrapping gone */
 		inven_item_increase(Ind, p_ptr->current_activation, -1);
 		inven_item_describe(Ind, p_ptr->current_activation);
@@ -11425,7 +11425,7 @@ void wrap_gift(int Ind, int item) {
 #if 0
 	/* Don't use the wrapping on itself */
 	if (empty) {
-		msg_print(Ind, "You cannot create empty gifts.");
+		msg_print(Ind, "\377yYou cannot create empty gifts.");
 		clear_current(Ind); /* <- not required actually */
 		s_printf("..failed(0)\n");
 		return;
