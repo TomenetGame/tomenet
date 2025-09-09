@@ -2202,6 +2202,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 				if (is_admin(p_ptr) != is_admin(q_ptr)) continue;
 				if (!player_in_party(q_ptr->party, i)) continue;
 				if (!inarea(&q_ptr->wpos, wpos)) continue;
+				if (q_ptr->IDDC_logscum) continue;
 
 				/* Create map for efficiency */
 				PInd[p] = i;
