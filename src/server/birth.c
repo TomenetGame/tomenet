@@ -2761,8 +2761,8 @@ static void player_setup(int Ind, bool new) {
 
 	/* No item being used up */
 	p_ptr->using_up_item = -1;
-	/* No previously used item */
-	p_ptr->item_newest = -1;
+	/* No previously used item. No need to Send_... these as the client also resets these on relogin. */
+	p_ptr->item_newest = p_ptr->item_newest_2nd = -1;
 
 	/* Drain-HP hack for client recognition when to warn */
 	p_ptr->hp_drained = TRUE;

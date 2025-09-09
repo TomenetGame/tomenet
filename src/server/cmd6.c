@@ -2091,7 +2091,10 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	q_ptr->number = 1;
 	q_ptr->level = 1;
 
-	if (p_ptr->item_newest == slot && o_ptr->number == 1) in_slot = p_ptr->item_newest = -1;
+	if (p_ptr->item_newest == slot && o_ptr->number == 1) {
+		in_slot = -1;
+		Send_item_newest(Ind, -1);
+	}
 
 	/* Destroy a potion in the pack */
 	inven_item_increase(Ind, slot, -1);
@@ -2111,7 +2114,7 @@ void do_cmd_empty_potion(int Ind, int slot) {
 #ifdef ENABLE_SUBINVEN
 	if (auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE, FALSE, FALSE, 0x0)) {
 		/* QoL hack: Empty bottles won't really processed in meaningful ways with item-accessing command keys, instead just with /fill, because don't intend to drop/kill the bottle right after we empty'd it. */
-		p_ptr->item_newest = in_slot;
+		Send_item_newest(Ind, in_slot);
 
 		return;
 	}
@@ -2120,7 +2123,7 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	if (slot >= 0) inven_item_describe(Ind, slot);
 
 	/* QoL hack: Empty bottles won't really processed in meaningful ways with item-accessing command keys, instead just with /fill, because don't intend to drop/kill the bottle right after we empty'd it. */
-	p_ptr->item_newest = in_slot;
+	Send_item_newest(Ind, in_slot);
 }
 
 /*
@@ -2162,7 +2165,10 @@ void do_cmd_rip_cloth(int Ind, int slot) {
 	q_ptr->number = amt;
 	q_ptr->level = 1;
 
-	if (p_ptr->item_newest == slot && o_ptr->number == 1) in_slot = p_ptr->item_newest = -1;
+	if (p_ptr->item_newest == slot && o_ptr->number == 1) {
+		in_slot = -1;
+		Send_item_newest(Ind, -1);
+	}
 
 #ifdef USE_SOUND_2010
 #if 1
@@ -2189,7 +2195,7 @@ void do_cmd_rip_cloth(int Ind, int slot) {
 	if (slot >= 0) inven_item_describe(Ind, slot);
 
 	/* QoL hack: Empty bottles won't really processed in meaningful ways with item-accessing command keys, instead just with /fill, because don't intend to drop/kill the bottle right after we empty'd it. */
-	p_ptr->item_newest = in_slot;
+	Send_item_newest(Ind, in_slot);
 }
 
 

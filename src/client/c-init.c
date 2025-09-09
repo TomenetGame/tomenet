@@ -4414,7 +4414,7 @@ again:
  #endif
 		}
 		for (bytes = 0; bytes < INVEN_TOTAL - INVEN_WIELD; bytes++) equip_set[bytes] = 0; //abuse 'bytes' as counter
-		item_newest = -1;
+		item_newest = item_newest_2nd = -1;
 
 		/* retuuurrrnnnn... */
 		goto retry_contact;
