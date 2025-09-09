@@ -2944,7 +2944,7 @@ static void init_floor_mapping(void) {
 
 /* Initialize info for the in-client guide search */
 void init_guide(void) {
-	int i, filesize, guide_lines_reserved = 1000, linelen;
+	int i, filesize, guide_lines_reserved = 1000, linelen, gl_mem;
 
 	FILE *fff;
 	char path[1024], buf[MAX_CHARS * 2 + 1], *c, *c2, **guide_line_tmp;
@@ -2974,9 +2974,10 @@ void init_guide(void) {
 		c_msg_format("\377yCouldn't allocate the required %d bytes for the Guide.", filesize);
 		return;
 	}
-	guide_line = malloc(sizeof(char*) * guide_lines_reserved);
+	gl_mem = sizeof(char*) * guide_lines_reserved;
+	guide_line = malloc(gl_mem);
 	if (!guide_line) {
-		c_msg_format("\377yCouldn't allocate the required %u bytes for Guide line buffer.", sizeof(int) * guide_lines_reserved);
+		c_msg_format("\377yCouldn't allocate the required %d bytes for Guide line buffer.", gl_mem);
 		free(guide_data);
 		return;
 	}
@@ -2988,11 +2989,12 @@ void init_guide(void) {
 #ifdef BUFFER_GUIDE
 		if (guide_lastline + 1 >= guide_lines_reserved) {
 			guide_lines_reserved += 1000;
-			guide_line_tmp = realloc(guide_line, sizeof(char*) * guide_lines_reserved);
+			gl_mem = sizeof(char*) * guide_lines_reserved;
+			guide_line_tmp = realloc(guide_line, gl_mem);
 			if (!guide_line_tmp) {
 				free(guide_data);
 				free(guide_line);
-				c_msg_format("\377yCouldn't allocate the required %u bytes for Guide line buffer.", sizeof(int) * guide_lines_reserved);
+				c_msg_format("\377yCouldn't allocate the required %d bytes for Guide line buffer.", gl_mem);
 				return;
 			}
 			guide_line = guide_line_tmp;
