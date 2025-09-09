@@ -16,7 +16,7 @@ V:4.0.0
 # defaults : NO DEFAULT, MUST precise one
 
 # N:x:ego name
-# G:x:y (x=monster letter, y=colour, use * to use the same as the standard monster)
+# G:x:y (x=monster letter, y=colour, use '*' for same as the standard monster)
 # I:speed:(dice)d(side):aaf:ac:sleep
 # W:lev:rarity:weight:xp:place('B'efore or 'A'fter)
 # E:weapon:torso:arms:finger:head:legs
@@ -24,7 +24,8 @@ V:4.0.0
 # F:flags that the standard monster MUST have - at least ONE of the R_CHAR_x
 #    flags (if present, to determine which monster letters can have this ego
 #    type), plus ALL of the rest
-# H:flags that the standard monster MUST NOT have
+# H:flags that the standard monster MUST NOT have (also R_CHAR_<monster char>)
+#   Note: At most 10 R_CHAR_x entries are allowed for each, F- and H-sections.
 # M:monster flags to add for the ego-type
 # O:monster flags to remove, use MF_ALL for all
 # S:monster spells to add for the ego-type

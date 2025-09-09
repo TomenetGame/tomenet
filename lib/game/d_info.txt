@@ -25,8 +25,8 @@
 # O:<%treasure>:<%combat>:<%magic>:<%tools>
 # E:<dices>d<sides>:<frequency>:<attack type>
 # F:<flags>
-# R:<percent>:<flags mode>
-# M:<monster flags>
+# R:<percent>:<flags mode> (up to 10 rules)
+# M:<monster flags> (up to 10 R_CHAR_x defs)
 # S:<monster spells>
 
 # Note for <flags mode> :

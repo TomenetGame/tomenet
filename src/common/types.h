@@ -2576,7 +2576,7 @@ struct dungeon_type {
 	u32b flags3;		/* DF3 flags */
 	byte maxdepth;		/* max height/depth */
 #if 0
-	rule_type rules[5];	/* Monster generation rules */
+	rule_type rules[10];	/* Monster generation rules */
 	char32_t r_char[10];	/* races allowed */
 	char32_t nr_char[10];	/* races prevented */
 #endif	/* 0 */

@@ -5487,8 +5487,11 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 
 				/* XXX XXX XXX Hack -- Read monster symbols */
 				if (1 == sscanf(s, "R_CHAR_%c", &r_char)) {
-					/* Limited to 5+5 races */
-					if (r_char_number >= 10) continue;
+					/* Limited to 10 races */
+					if (r_char_number >= 10) {
+						s_printf("Too many races (>10) in F-section.\n");
+						return(1);
+					}
 
 					/* Extract a "frequency" */
 					re_ptr->r_char[r_char_number++] = r_char;
@@ -5528,8 +5531,11 @@ errr init_re_info_txt(FILE *fp, char *buf) {
 
 				/* XXX XXX XXX Hack -- Read monster symbols */
 				if (1 == sscanf(s, "R_CHAR_%c", &r_char)) {
-					/* Limited to 5 races */
-					if (nr_char_number >= 10) continue;
+					/* Limited to 10 races */
+					if (nr_char_number >= 10) {
+						s_printf("Too many races (> 10) in H-section.\n");
+						return(1);
+					}
 
 					/* Extract a "frequency" */
 					re_ptr->nr_char[nr_char_number++] = r_char;
@@ -6532,8 +6538,13 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 			int z, y, lims[10];
 
 			/* Scan for the values */
-			if (2 != sscanf(buf + 2, "%d:%d",
-				&percent, &mode)) return(1);
+			if (2 != sscanf(buf + 2, "%d:%d", &percent, &mode)) return(1);
+
+			/* Limited to 10 races */
+			if (rule_num >= 10) {
+				s_printf("Too many races (>10) in R-section.\n");
+				return(1);
+			}
 
 			/* Save the values */
 			r_char_number = 0;
@@ -6575,8 +6586,8 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 				if (1 == sscanf(s, "R_CHAR_%c", &r_char)) {
 					/* Limited to 10 races */
 					if (r_char_number >= 10) {
-						s = t;
-						continue;
+						s_printf("Too many races (>10) in M-section.\n");
+						return(1);
 					}
 
 					/* Extract a "frequency" */
