@@ -7009,10 +7009,8 @@ int Receive_item_newest(void) {
 	}
 
 	/* As long as we don't have an 'official' newest item, use fallback replacement if exists */
-	if (item_newest == -1 && item_newest_2nd != -1) {
-		item_newest = item_newest_2nd;
-		if (c_cfg.show_newest) redraw_newest();
-	}
+	if (item_newest == -1 && item_newest_2nd != -1) item_newest = item_newest_2nd;
+	if (c_cfg.show_newest) redraw_newest();
 
 	return(1);
 }
