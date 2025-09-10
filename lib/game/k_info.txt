@@ -318,6 +318,7 @@ W:5:0:80:90
 A:5/1
 P:0:1d7:0:0:0
 F:SHOW_MODS
+# A small, cheap sword. More useful for daily tasks than for combat.
 
 N:36:& Blade~ of Chaos
 G:|:h
