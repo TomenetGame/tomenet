@@ -875,7 +875,8 @@ static cptr desc_stat_neg2[] = {
 
 
 /*
- * Lose a "point"
+ * Lose a "point".
+ * Mode = STAT_DEC_TEMPORARY / STAT_DEC_NORMAL / STAT_DEC_PERMANENT
  */
 bool do_dec_stat(int Ind, int stat, int mode) {
 	player_type *p_ptr = Players[Ind];
