@@ -44,10 +44,12 @@
 /* Dedicated IDDC-mode characters get all items from town stores in Bree for at least 50% discount. */
 #define IDDC_DED_DISCOUNT
 
-/* Sort spell scrolls alphabetically by spell name? [no] */
+/* Spell sorting in shops: Sort spells alphabetically, within each overarching magic school group? */
 #ifdef TEST_SERVER
- #define STORE_SORT_SPELLS_BY_NAME
+ //#define STORE_SORT_SPELLS_BY_NAME
 #endif
+/* Spell sorting in shops: Group spells by name before discounts get factored in? [yes] */
+#define STORE_SORT_SPELLS_PRECEDE_DISCOUNT
 
 /* Show items that carry @SB inscription and are currently 'SOLD OUT' aka too low on stock to pass for being listed. */
 #define PSTORE_SOLDOUT
@@ -1562,6 +1564,9 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	int keep;
 #endif
 	s64b value, j_value;
+#ifdef STORE_SORT_SPELLS_PRECEDE_DISCOUNT
+	int value_s, j_value_s;
+#endif
 	object_type *j_ptr;
 	s16b o_tv = o_ptr->tval, o_sv = o_ptr->sval, j_tv, j_sv;
 
@@ -1602,6 +1607,10 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 	} else
 #endif
 	value = object_value(0, o_ptr);
+#ifdef STORE_SORT_SPELLS_PRECEDE_DISCOUNT
+	if (o_ptr->tval == TV_BOOK && o_ptr->sval == SV_SPELLBOOK) value_s = raw_spell_cost(o_ptr);
+	else value_s = 0;
+#endif
 
 	/* Cursed/Worthless items "disappear" when sold */
 #ifdef PLAYER_STORES
@@ -1707,9 +1716,16 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 				if (get_spellbook_store_order(o_ptr->pval) > get_spellbook_store_order(j_ptr->pval)) continue;
 #ifdef STORE_SORT_SPELLS_BY_NAME
 				if (strcmp(school_spells[o_ptr->pval].name, school_spells[j_ptr->pval].name) < 0) break;
-				continue;
+				if (strcmp(school_spells[o_ptr->pval].name, school_spells[j_ptr->pval].name) > 0) continue;
 #endif
+#ifdef STORE_SORT_SPELLS_PRECEDE_DISCOUNT
+				/* Also use this to prepare for spell cost checks further down */
+				j_value_s = raw_spell_cost(j_ptr);
+			} else j_value_s = 0;
+#else
 			}
+#endif
+			j_value = object_value(0, j_ptr);
 
 			/* Evaluate that slot */
 #ifdef PSTORE_SOLDOUT
@@ -1719,9 +1735,29 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
 				j_ptr->number = 0; //hack for price=-3 aka SOLD OUT
 			} else
 #endif
-			j_value = object_value(0, j_ptr);
 
-			/* Objects sort by decreasing value */
+#ifdef STORE_SORT_SPELLS_PRECEDE_DISCOUNT
+			/* Spells are primarily sorted by decreasing spell value. */
+			if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {
+				if (value_s > j_value_s) break;
+				if (value_s < j_value_s) continue;
+			}
+#endif
+
+			/* Spell scrolls secondarily get sorted by spell type, before any discount or ego power price is applied!
+			   This could be done simply via pval, but since the players work with spell names and not internal spell indices,
+			   as QoL we sort alphabetically instead. */
+			if (j_ptr->tval == TV_BOOK && j_ptr->sval == SV_SPELLBOOK) {
+#if 0 /* this sorts but the order seems arbitrary to players */
+				if (o_ptr->pval > j_ptr->pval) break;
+				if (o_ptr->pval < j_ptr->pval) continue;
+#else /* QoL: sort spells of same value alphabetically instead, for player convenience */
+				if (strcmp(school_spells[o_ptr->pval].name, school_spells[j_ptr->pval].name) < 0) break;
+				if (strcmp(school_spells[o_ptr->pval].name, school_spells[j_ptr->pval].name) > 0) continue;
+#endif
+			}
+
+			/* Objects sort by decreasing value. (For sell scrolls this could be the tertiary criterium now, ie discount/ego get applied.) */
 			if (value > j_value) break;
 			if (value < j_value) continue;
 		}
@@ -1760,7 +1796,7 @@ static int store_carry(store_type *st_ptr, object_type *o_ptr) {
  * in a certain store.  This can result in zero items.
  *
  */
-static void store_item_increase(store_type *st_ptr, int item, int num) {
+void store_item_increase(store_type *st_ptr, int item, int num) {
 	int         cnt;
 	object_type *o_ptr;
 
@@ -1781,7 +1817,7 @@ static void store_item_increase(store_type *st_ptr, int item, int num) {
 /*
  * Remove a slot if it is empty
  */
-static void store_item_optimize(store_type *st_ptr, int item) {
+void store_item_optimize(store_type *st_ptr, int item) {
 	int j;
 	object_type *o_ptr;
 

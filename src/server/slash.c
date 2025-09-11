@@ -8537,33 +8537,36 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				return;
 			}
-#if 0
-			/* Empty a store */
+			/* Empty the store we're currently in */
 			else if (prefix(messagelc, "/stnew")) {
-				if (!k) {
-					msg_print(Ind, "\377oUsage: /stnew <store#>");
+				int t = gettown(Ind);
+				store_type *st_ptr;
+				object_type *o_ptr;
+
+				if (p_ptr->store_num < 0) {
+					msg_print(Ind, "You must be inside an NPC store to use this command.");
 					return;
 				}
-				for (i = 0; i < numtowns; i++) {
-					int what, num;
-					object_type *o_ptr;
-					store_type *st_ptr;
 
-					st_ptr = &town[i].townstore[k];
-					/* Pick a random slot */
-					what = rand_int(st_ptr->stock_num);
-					/* Determine how many items are here */
-					o_ptr = &st_ptr->stock[what];
-					num = o_ptr->number;
+				st_ptr = &town[t].townstore[p_ptr->store_num];
+				msg_format(Ind, "\377oStore %d (town %d, %d items) was emptied, exit and re-enter to refresh.", p_ptr->store_num, t, st_ptr->stock_num);
 
-					store_item_increase(st_ptr, what, -num);
-					store_item_optimize(st_ptr, what);
-					st_ptr->stock[what].num = 0;
+				for (i = 0; i < st_ptr->stock_num; i++) {
+					o_ptr = &st_ptr->stock[i];
+
+					/* Hack -- preserve artifacts */
+					if (true_artifact_p(o_ptr)) {
+						/* Preserve this one */
+						handle_art_d(o_ptr->name1);
+					}
+					/* Handle quest items */
+					questitem_d(o_ptr, o_ptr->number);
+
+					store_item_increase(st_ptr, i, -o_ptr->number);
+					store_item_optimize(st_ptr, i);
 				}
-				msg_print(Ind, "\377oStores were emptied!");
 				return;
 			}
-#endif
 #if 0
 /* This function was maybe supposed to show specifically cheezed items, at least the name makes sense for it.
    As we don't have a specific way of combining all the cheeze into one log for now, and this function always was

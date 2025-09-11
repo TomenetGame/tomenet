@@ -1561,6 +1561,7 @@ extern void apply_XID(int Ind, object_type *o_ptr, int slot);
 extern void init_treasure_classes(void);
 extern int check_for_wand_of_wonder(int sval, struct worldpos *wpos);
 extern void ammo_add_explosion(s16b *pval);
+extern int raw_spell_cost(object_type *o_ptr);
 
 /* party.c */
 extern void account_check(int Ind);
@@ -2041,6 +2042,8 @@ extern void auction_retrieve_items(int Ind, int *retrieved, int *unretrieved);
 extern int auction_show(int Ind, int auction_id);
 extern int auction_examine(int Ind, int auction_id);
 #endif
+extern void store_item_increase(store_type *st_ptr, int item, int num);
+extern void store_item_optimize(store_type *st_ptr, int item);
 
 /* for handling recharging/timeouting in traditional (list) houses */
 extern void home_item_increase(house_type *h_ptr, int item, int num);
