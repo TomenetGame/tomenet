@@ -6548,10 +6548,16 @@ void calc_boni(int Ind) {
 	//p_ptr->skill_sav += (10 * p_ptr->lev) / 10;  --actually why should lvlup give saving throw? let's try with this commented out!
 
 	/* Affect Skill -- stealth (Level, by Class) */
-	//p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
-	//csheet_boni[14].slth += get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
+#if 0
+	p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
+	csheet_boni[14].slth += get_skill_scale(p_ptr, SKILL_STEALTH, p_ptr->cp_ptr->x_stl * 5) + get_skill_scale(p_ptr, SKILL_STEALTH, 25);
+#elif 0
 	p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_STEALTH, 25);
 	csheet_boni[14].slth += get_skill_scale(p_ptr, SKILL_STEALTH, 25);
+#else
+	p_ptr->skill_stl += get_skill_scale(p_ptr, SKILL_STEALTH, 35);
+	csheet_boni[14].slth += get_skill_scale(p_ptr, SKILL_STEALTH, 35);
+#endif
 
 	/* Affect Skill -- search ability (Level, by Class) */
 	//p_ptr->skill_srh += get_skill_scale(p_ptr, SKILL_SNEAKINESS, p_ptr->cp_ptr->x_srh) + get_skill_scale(p_ptr, SKILL_TRAPPING, 30);

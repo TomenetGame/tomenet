@@ -18921,7 +18921,7 @@ stated.
                                 will wake up. Important if you don't like to
                                 wake up everything at once and prefer to sneak
                                 past monsters or pick your fights one by one.
-                                The stealth gain is half as much as from items
+                                The stealth gain is 70% as much as from items
                                 that give +Stealth.
 
                                 If your character is really bad at stealth,
