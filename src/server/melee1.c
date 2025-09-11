@@ -3266,10 +3266,8 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 				if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
 				if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
 				if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
-				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear,
-				    " turns into a pile of ashes")) {
-					*alive = FALSE;
-				} else {
+				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear, " turns into a pile of ashes")) *alive = FALSE;
+				else {
 					msg_format(Ind, "%^s gets burned for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
 					if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 						if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
@@ -3290,10 +3288,8 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 				if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
 				if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
 				if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
-				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear,
-				    " freezes and shatters")) {
-					*alive = FALSE;
-				} else {
+				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear, " freezes and shatters")) *alive = FALSE;
+				else {
 					msg_format(Ind, "%^s freezes for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
 					if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 						if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
@@ -3315,10 +3311,8 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 				if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
 				if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
 				if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
-				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear,
-				    " turns into a pile of ashes")) {
-					*alive = FALSE;
-				} else {
+				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear, " turns into a pile of ashes")) *alive = FALSE;
+				else {
 					msg_format(Ind, "%^s gets burned for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
 					if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 						if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
@@ -3339,10 +3333,8 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 				if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
 				if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
 				if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
-				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear,
-				    " freezes and shatters")) {
-					*alive = FALSE;
-				} else {
+				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear, " freezes and shatters")) *alive = FALSE;
+				else {
 					msg_format(Ind, "%^s freezes for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
 					if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 						if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
@@ -3364,10 +3356,8 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 			if (r_ptr->flags9 & RF9_RES_ELEC) player_aura_dam /= 3;
 			if (r_ptr->flags9 & RF9_SUSCEP_ELEC) player_aura_dam *= 2;
 			if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
-			if (mon_take_hit(Ind, m_idx, player_aura_dam, fear,
-			    " turns into a pile of cinder")) {
-				*alive = FALSE;
-			} else {
+			if (mon_take_hit(Ind, m_idx, player_aura_dam, fear," turns into a pile of cinder")) *alive = FALSE;
+			else {
 				msg_format(Ind, "%^s gets zapped for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
 				if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 					if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
@@ -3376,9 +3366,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 			}
 		}
 #ifdef OLD_MONSTER_LORE
-		else {
-			if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_ELEC;
-		}
+		else if (p_ptr->mon_vis[m_idx]) r_ptr->r_flags3 |= RF3_IM_ELEC;
 #endif
 	}
 
@@ -3397,9 +3385,8 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 		int d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2);
 
 		if (r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
-		if (mon_take_hit(Ind, m_idx, d, fear, " got bashed by your mystc shield")) {
-			*alive = FALSE;
-		} else {
+		if (mon_take_hit(Ind, m_idx, d, fear, " got bashed by your mystc shield")) *alive = FALSE;
+		else {
 			msg_format(Ind, "Your mystic shield bashes %s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
 			if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 				if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
@@ -3415,9 +3402,8 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 			if (r_ptr->flags9 & RF9_RES_FIRE) d /= 3;
 			if (r_ptr->flags3 & RF3_SUSCEP_FIRE) d *= 2;
 			if (r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
-			if (mon_take_hit(Ind, m_idx, d, fear, " turns into a pile of ashes")) {
-				*alive = FALSE;
-			} else {
+			if (mon_take_hit(Ind, m_idx, d, fear, " turns into a pile of ashes")) *alive = FALSE;
+			else {
 				msg_format(Ind, "Your fiery shield burns %^s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
 				if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 					if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
@@ -3435,9 +3421,8 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 			if (r_ptr->flags9 & RF9_RES_ELEC) d /= 3;
 			if (r_ptr->flags9 & RF9_SUSCEP_ELEC) d *= 2;
 			if (r_idx == RI_MIRROR) d = (d * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
-			if (mon_take_hit(Ind, m_idx, d, fear, " turns into a pile of cinder")) {
-				*alive = FALSE;
-			} else {
+			if (mon_take_hit(Ind, m_idx, d, fear, " turns into a pile of cinder")) *alive = FALSE;
+			else {
 				msg_format(Ind, "Your lightning shield zaps %^s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
 				if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
 					if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
@@ -3521,10 +3506,8 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 		if (magik(chance_trigger) && (r_ptr->level + mod < threshold_effect)) {
 			if (aura_ok) {
 				m_ptr->stunned += 10;
-				if (m_ptr->stunned > 100)
-					msg_format(Ind, "%^s appears frozen.", m_name);
-				else if (m_ptr->stunned > 50)
-					msg_format(Ind, "%^s appears heavily shivering.", m_name);
+				if (m_ptr->stunned > 100) msg_format(Ind, "%^s appears frozen.", m_name);
+				else if (m_ptr->stunned > 50) msg_format(Ind, "%^s appears heavily shivering.", m_name);
 				else msg_format(Ind, "%^s appears shivering.", m_name);
 			} else auras_failed++;
 		}
