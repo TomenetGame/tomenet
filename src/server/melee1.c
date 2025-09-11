@@ -3433,10 +3433,9 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 	}
 	/* fear shield */
 	if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_FEAR) && *alive
-	    && (!(r_ptr->flags3 & RF3_NO_FEAR))
-	    && (!(r_ptr->flags2 & RF2_POWERFUL))
-	    && (!(r_ptr->flags1 & RF1_UNIQUE))
-	    ) {
+	    && !(r_ptr->flags3 & RF3_NO_FEAR)
+	    && !(r_ptr->flags2 & RF2_POWERFUL)
+	    && !(r_ptr->flags1 & RF1_UNIQUE)) {
 		int tmp, d = damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2) - m_ptr->level;
 
 		if (d > 0) {
@@ -3454,6 +3453,10 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 	/* ice shield, functionally similar to aura of death - Kurzel */
 	if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_ICE) && *alive) {
 		if (magik(25)) {
+			//Note - Maybe not fully consinstent?
+			//       Either it's an aura, which gets breached and as a result causes an outburst ie projection,
+			//       or it's a shield which works the same as the other shields (SHIELD_FIRE most prominently), not causing a projection but just retaliation damage.
+			//msg_format(Ind, "%^s breaches your ice shield!", m_name);
 			sprintf(p_ptr->attacker, " is enveloped in ice for");
 			fire_ball(Ind, GF_ICE, 0, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), 1, p_ptr->attacker);
 			if (!m_ptr->r_idx) *alive = FALSE; //hack: Monster was deleted meanwhile if it died, so m_ptr was wiped. We test for r_idx as it should never be zero unless wiped.
@@ -3462,6 +3465,10 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 	/* plasma shield, functionally similar to aura of death - Kurzel */
 	if (p_ptr->shield && (p_ptr->shield_opt & SHIELD_PLASMA) && *alive) {
 		if (magik(25)) {
+			//Note - Maybe not fully consinstent?
+			//       Either it's an aura, which gets breached and as a result causes an outburst ie projection,
+			//       or it's a shield which works the same as the other shields (SHIELD_FIRE most prominently), not causing a projection but just retaliation damage.
+			//msg_format(Ind, "%^s breaches your plasma shield!", m_name);
 			sprintf(p_ptr->attacker, " is enveloped in plasma for");
 			fire_ball(Ind, GF_PLASMA, 0, damroll(p_ptr->shield_power_opt, p_ptr->shield_power_opt2), 1, p_ptr->attacker);
 			if (!m_ptr->r_idx) *alive = FALSE; //hack: Monster was deleted meanwhile if it died, so m_ptr was wiped. We test for r_idx as it should never be zero unless wiped.
@@ -3473,15 +3480,14 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 	 */
 	/* Aura of fear is now affected by the monster level too */
 	if (get_skill(p_ptr, SKILL_AURA_FEAR) && p_ptr->aura[AURA_FEAR] &&
-	    (!(r_ptr->flags3 & RF3_UNDEAD)) && (!(r_ptr->flags3 & RF3_NONLIVING))
-	    && (!(r_ptr->flags3 & RF3_NO_FEAR)) && *alive
-	    ) {
+	    !(r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING))
+	    && !(r_ptr->flags3 & RF3_NO_FEAR) && *alive) {
 		int mod = ((r_ptr->flags2 & RF2_POWERFUL) ? 10 : 0) + ((r_ptr->flags1 & RF1_UNIQUE) ? 10 : 0);
 
 		if (magik(get_skill_scale(p_ptr, SKILL_AURA_FEAR, 30) + 5) &&
 		    r_ptr->level + mod < get_skill_scale(p_ptr, SKILL_AURA_FEAR, 100)) {
 			if (aura_ok) {
-				msg_format(Ind, "%^s appears afraid.", m_name);
+				msg_format(Ind, "%^s breaches your aura of fear and appears afraid.", m_name);
 				//short 'shock' effect ;) it's cooler than just running away
 				m_ptr->monfear = 2 + get_skill_scale(p_ptr, SKILL_AURA_FEAR, 2);
 				m_ptr->monfear_gone = 0;
@@ -3489,9 +3495,9 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 		}
 	}
 	/* Shivering Aura is affected by the monster level */
-	if (get_skill(p_ptr, SKILL_AURA_SHIVER) && (p_ptr->aura[AURA_SHIVER] || (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
-	    && (!(r_ptr->flags3 & RF3_NO_STUN)) && (!(r_ptr->flags3 & RF3_IM_COLD)) && *alive
-	    ) {
+	if (((get_skill(p_ptr, SKILL_AURA_SHIVER) && p_ptr->aura[AURA_SHIVER]) ||
+	    (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
+	    && !(r_ptr->flags3 & RF3_NO_STUN) && !(r_ptr->flags3 & RF3_IM_COLD) && *alive) {
 		int mod = ((r_ptr->flags1 & RF1_UNIQUE) ? 10 : 0);
 		int chance_trigger = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 25);
 		int threshold_effect = get_skill_scale(p_ptr, SKILL_AURA_SHIVER, 100);
@@ -3506,9 +3512,9 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 		if (magik(chance_trigger) && (r_ptr->level + mod < threshold_effect)) {
 			if (aura_ok) {
 				m_ptr->stunned += 10;
-				if (m_ptr->stunned > 100) msg_format(Ind, "%^s appears frozen.", m_name);
-				else if (m_ptr->stunned > 50) msg_format(Ind, "%^s appears heavily shivering.", m_name);
-				else msg_format(Ind, "%^s appears shivering.", m_name);
+				if (m_ptr->stunned > 100) msg_format(Ind, "%^s breaches your shivering aura and appears frozen.", m_name);
+				else if (m_ptr->stunned > 50) msg_format(Ind, "%^s breaches your shivering aura and shivers heavily.", m_name);
+				else msg_format(Ind, "%^s breaches your shivering aura and shivers.", m_name);
 			} else auras_failed++;
 		}
 	}
@@ -3521,11 +3527,11 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 				int dam = 5 + chance * 3;
 
 				if (magik(50)) {
-					//msg_format(Ind, "%^s is engulfed by plasma for %d damage!", m_name, dam);
+					msg_format(Ind, "%^s breaches your death aura, causing a plasma outburst!", m_name);
 					sprintf(p_ptr->attacker, " eradiates a wave of plasma for");
 					fire_ball(Ind, GF_PLASMA, 0, dam, 1, p_ptr->attacker);
 				} else {
-					//msg_format(Ind, "%^s is hit by icy shards for %d damage!", m_name, dam);
+					msg_format(Ind, "%^s breaches your death aura, causing an ice explosion!", m_name);
 					sprintf(p_ptr->attacker, " eradiates a wave of ice for");
 					fire_ball(Ind, GF_ICE, 0, dam, 1, p_ptr->attacker);
 				}

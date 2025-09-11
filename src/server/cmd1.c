@@ -7069,14 +7069,17 @@ void py_touch_zap_player(int Ind, int Ind2) {
 	    && !p_ptr->resist_fear) {
 		if (magik(get_skill_scale(q_ptr, SKILL_AURA_FEAR, 30) + 5) &&
 		    p_ptr->lev < get_skill_scale(q_ptr, SKILL_AURA_FEAR, 100)) {
-			if (aura_ok)
+			if (aura_ok) {
+				msg_format(Ind2, "%^s breaches your aura of fear.", p_ptr->name);
 				(void)set_afraid(Ind, p_ptr->afraid + 2 + get_skill_scale(p_ptr, SKILL_AURA_FEAR, 2));
+			}
 			else auras_failed++;
 		}
 	}
 	/* Shivering Aura is affected by the target level */
-	if (!p_ptr->death && get_skill(q_ptr, SKILL_AURA_SHIVER)
-	    && (q_ptr->aura[AURA_SHIVER] || (q_ptr->prace == RACE_VAMPIRE && q_ptr->body_monster == RI_VAMPIRIC_MIST))
+	if (!p_ptr->death &&
+	    ((get_skill(q_ptr, SKILL_AURA_SHIVER) && q_ptr->aura[AURA_SHIVER]) ||
+	    (q_ptr->prace == RACE_VAMPIRE && q_ptr->body_monster == RI_VAMPIRIC_MIST))
 	    && !(p_ptr->resist_sound
 	    || (p_ptr->nimbus && (p_ptr->nimbus_t == GF_SOUND || p_ptr->nimbus_t == GF_FORCE)))
 	    && !p_ptr->immune_cold) {
@@ -7091,8 +7094,10 @@ void py_touch_zap_player(int Ind, int Ind2) {
 		chance_trigger += 25; //generic boost
 
 		if (magik(chance_trigger) && (p_ptr->lev < threshold_effect)) {
-			if (aura_ok)
+			if (aura_ok) {
+				msg_format(Ind2, "%^s breaches your shivering aura.", p_ptr->name);
 				(void)set_stun_raw(Ind, p_ptr->stun + 5);
+			}
 			else auras_failed++;
 		}
 	}
@@ -7105,11 +7110,11 @@ void py_touch_zap_player(int Ind, int Ind2) {
 				int dam = 5 + chance * 3;
 
 				if (magik(50)) {
-					//msg_format(Ind2, "%s is engulfed by plasma for %d damage!", p_ptr->name, dam);
+					msg_format(Ind2, "%s breaches your death aura, causing a plasma outburst!", p_ptr->name);
 					sprintf(q_ptr->attacker, " eradiates a wave of plasma for");
 					fire_ball(Ind2, GF_PLASMA, 0, dam, 1, q_ptr->attacker);
 				} else {
-					//msg_format(Ind2, "%s is hit by icy shards for %d damage!", p_ptr->name, dam);
+					msg_format(Ind2, "%s breaches your death aura, causing an ice explosion!", p_ptr->name);
 					sprintf(q_ptr->attacker, " eradiates a wave of ice for");
 					fire_ball(Ind2, GF_ICE, 0, dam, 1, q_ptr->attacker);
 				}

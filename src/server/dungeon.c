@@ -6691,7 +6691,10 @@ static bool process_player_end_aux(int Ind) {
 	//if (get_skill(p_ptr, SKIll_PPOWER) >= 24 && get_skill(p_ptr, SKIll_PPOWER) - 16 > k) k = get_skill(p_ptr, SKILL_PPOWER) - 16;
 	if (p_ptr->sh_cold && !p_ptr->sh_fire && k < 20) k = 20;
 	if (p_ptr->ptrait == TRAIT_WHITE && k < 29) k = 29;
-	if (p_ptr->aura[AURA_SHIVER] && get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30 && k < 29) k = 29;
+	if (((p_ptr->aura[AURA_SHIVER] && get_skill(p_ptr, SKILL_AURA_SHIVER) >= 30) ||
+	    (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster == RI_VAMPIRIC_MIST))
+	     && k < 29)
+	        k = 29;
 	if (cold_place(&p_ptr->wpos)) {
 		warm_place = FALSE;
 		if (p_ptr->prace == RACE_VAMPIRE) {
