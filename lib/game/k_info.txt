@@ -7448,7 +7448,8 @@ I:12:5:0
 W:15:0:40:1000
 A:15/5
 F:EASY_KNOW
-D:Protective wrapping, equipping prevents inventory damage from water and acid.
+D:Protective wrapping. Equipping prevents all inventory damage from water
+D:and most inventory damage from acid.
 
 # Parchment to help dead beginners
 N:907:The Book of the Dead [Press 'r' to read]

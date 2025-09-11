@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. September 2025 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 12. September 2025 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -13171,8 +13171,8 @@ Lightning/Electricity   These attacks can destroy rings, damage amulets
                         Immunity or double resistance helps protecting items
                         in your inventory from getting harmed (5.10), (5.15).
 
-Acid                    These attacks can destroy items in your inventory if
-                        you don't wear a tarpaulin.
+Acid                    These attacks can destroy items in your inventory.
+                        Equipping a tarpaulin can mitigate this greatly.
                         They can also damage your equipment.
                         Without resistance it can reduce your charisma.
                         Acid bolts do (level/3)+(7d8) damage.
@@ -15321,9 +15321,9 @@ Sprig of Athelas    Eat this one to cure Black Breath (see (4.11a) for more
                     confusion and hallucinations.
 
 Tarpaulin           When equipped a tarp prevents your inventory from taking
-                    water or acid damage damage, for example when crossing
-                    water grids or when you are attacked with water- or acid-
-                    based effects.
+                    water damage and mostly from acid damage, for example when
+                    crossing water grids or when you are attacked with water-
+                    or acid-based effects.
                     Note that a Tarpaulin doesn't protect your equipment.
 
 Grinding Tool       Used by demolitionists (see "Digging" skill in (7.2)) to

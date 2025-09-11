@@ -26,8 +26,10 @@
 /* chance of equipments getting hurt from attacks, in percent [2] */
 #define HARM_EQUIP_CHANCE	0
 
-/* chance in percent of equipped Tarpaulin to protect inventory items from acid [100 aka complete protection] */
-#define TARPAULIN_ACID_PROTECTION	100
+/* chance in percent of equipped Tarpaulin to protect inventory items from acid [75] */
+#define TARPAULIN_ACID_PROTECTION	75
+/* chance in percent of equipped Tarpaulin to get destroyed when it succeeded in protecting inventory from acid [5] */
+#define TARPAULIN_ACID_DESTRUCTION	5
 
 /* macro to determine the way stat gets reduced by element attacks */
 #define	DAM_STAT_TYPE(inv) \
@@ -3651,9 +3653,17 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	//take_hit(Ind, dam, kb_str, Ind_attacker);
 
 	/* Inventory damage */
-	if (!(p_ptr->oppose_acid && p_ptr->resist_acid) && breakable
-	    && (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN || magik(100 - TARPAULIN_ACID_PROTECTION)))
-		inven_damage(Ind, set_acid_destroy, inv);
+	if (!(p_ptr->oppose_acid && p_ptr->resist_acid) && breakable) {
+		if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN)
+			inven_damage(Ind, set_acid_destroy, inv);
+		else if (magik(100 - TARPAULIN_ACID_PROTECTION))
+			inven_damage(Ind, set_acid_destroy, inv);
+		else if (magik(TARPAULIN_ACID_DESTRUCTION)) {
+			msg_print(Ind, "\377oYour tarpaulin protected your inventory but was destroyed in the process!");
+			inven_item_increase(Ind, INVEN_TOOL, -1);
+			inven_item_optimize(Ind, INVEN_TOOL);
+		}
+	}
 
 	return(dam);
 }
@@ -11975,18 +11985,32 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 					if (randint(4) == 1) /* 4 */ do_poly_self();
 					else corrupt_player();
 				}
+#else // smol version for now (same as unresisted acid does, just more often instead of HURT_CHANCE)
+				if (randint(5) == 1) (void)do_dec_stat(Ind, A_CHR, STAT_DEC_NORMAL);
 #endif	// 0
-
-				if (randint(6) == 1) {
-					/* Don't kill inventory in bloodbond... */
-					if (!(IS_PVP && check_blood_bond(Ind, -who))) {
-						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN || magik(100 - TARPAULIN_ACID_PROTECTION))
-							inven_damage(Ind, set_acid_destroy, 2);
-						if (magik(50)) equip_damage(Ind, GF_ACID);
-					}
-				}
 			}
 		}
+
+		/* Acid damage to items */
+		if (!p_ptr->immune_acid && !(p_ptr->oppose_acid && p_ptr->resist_acid)
+		    && !safe_area(Ind) /* Not in AMC event etc */
+		    /* Don't kill inventory in bloodbond... */
+		    && !(IS_PVP && check_blood_bond(Ind, -who))
+		    && randint(6) == 1) {
+			/* Equipment damage */
+			if (magik(50)) equip_damage(Ind, GF_ACID);
+			/* Inventory damage */
+			if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN)
+				inven_damage(Ind, set_acid_destroy, 2);
+			else if (magik(100 - TARPAULIN_ACID_PROTECTION))
+				inven_damage(Ind, set_acid_destroy, 2);
+			else if (magik(TARPAULIN_ACID_DESTRUCTION)) {
+				msg_print(Ind, "\377oYour tarpaulin protected your inventory but was destroyed in the process!");
+				inven_item_increase(Ind, INVEN_TOOL, -1);
+				inven_item_optimize(Ind, INVEN_TOOL);
+			}
+		}
+
 		break;
 
 	/* Standard damage */
