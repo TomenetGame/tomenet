@@ -193,7 +193,7 @@ MANASHIELD = add_spell {
 	["level"] = 	35,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	10,
+	["fail"] = 	-40,
 	["spell"] = 	function()
 			set_tim_manashield(Ind, randint(10) + 20 + get_level(Ind, MANASHIELD, 75))
 	end,
