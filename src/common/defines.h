@@ -2203,7 +2203,8 @@
 /* Special metric '5/6 of a dungeon turn', used for various processing. - C. Blue
    I chose this odd-looking amount because it fit the timing situation best, where I needed
    something to replace a purely turn-based check by something depending on relative speed instead,
-   resulting in some things faster, some things slower than before, but at very good balance overall. */
+   resulting in some things faster, some things slower than before, but at very good balance overall.
+   *** NOTE: These might need adjustment of cfg.fps is changed! *** */
 #define DUN_TURN_56(wpos)	(level_speed(wpos) / 120)
 #define DUN_TURN_56_0		((level_speeds[0] * 5) / 120)
 
