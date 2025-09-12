@@ -26162,7 +26162,8 @@ half a second on the world surface, and ticks slower the deeper the level:
 - On bush or tree grids: 70 nutrients.
 
 Vampire victim feeding (by killing anything adjacent to them, by any means):
-- Depending on the victim's HP the vampire drinks 300...600 nutrients,
+- Depending on the victim's original HP (ie max HP, when it was not hurt yet)
+  the vampire drinks 300...600 nutrients,
 - demons only give half as many nutrients,
 - angels only give a third as many nutrients.
 - if the killing blow was a backstab, the amount of nutrients is doubled.
