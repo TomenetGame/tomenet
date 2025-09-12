@@ -87,7 +87,7 @@ GENOCIDE_II = add_spell {
 	["level"] = 	40,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	-40,
+	["fail"] = 	-60,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			obliteration(Ind)
@@ -110,7 +110,7 @@ WRAITHFORM = add_spell {
 	["level"] = 	43,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	-40,
+	["fail"] = 	-65,
 	["spell"] = 	function()
 			local dur = randint(30) + 20 + get_level(Ind, WRAITHFORM, 40)
 

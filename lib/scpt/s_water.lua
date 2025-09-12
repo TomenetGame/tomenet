@@ -190,7 +190,7 @@ ICESTORM_I = add_spell {
 	["level"] = 	22,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	-20,
+	["fail"] = 	-25,
 	["spell"] = 	function()
 			fire_wave(Ind, GF_COLD, 0, 34 + get_level(Ind, ICESTORM_I, 200), 1, 20 + get_level(Ind, ICESTORM_I, 27), 8, EFF_STORM, " summons an ice storm for")
 	end,
@@ -206,7 +206,7 @@ ICESTORM_II = add_spell {
 	["level"] = 	37,
 	["mana"] = 	60,
 	["mana_max"] = 	60,
-	["fail"] = 	-50,
+	["fail"] = 	-60,
 	["spell"] = 	function()
 			fire_wave(Ind, GF_ICE, 0, 34 + get_level(Ind, ICESTORM_I, 200), 1, 20 + get_level(Ind, ICESTORM_I, 27), 8, EFF_STORM, " summons an ice storm for")
 	end,

@@ -147,7 +147,7 @@ STRIKE_I = add_spell {
 	["level"] = 	25,
 	["mana"] = 	30,
 	["mana_max"] = 	30,
-	["fail"] = 	10,
+	["fail"] = 	-35,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE_I, 50), 0, " casts a force bolt of")
@@ -164,7 +164,7 @@ STRIKE_II = add_spell {
 	["level"] = 	37,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	-50,
+	["fail"] = 	-70,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			fire_ball(Ind, GF_FORCE, args.dir, 50 + get_level(Ind, STRIKE_I, 50), 1, " casts a force ball of")
@@ -182,7 +182,7 @@ SHAKE = add_spell {
 	["level"] = 	37,
 	["mana"] = 	60,
 	["mana_max"] = 	60,
-	["fail"] = 	15,
+	["fail"] = 	-50,
 	["spell"] = 	function()
 			earthquake(player.wpos, player.py, player.px, 2 + get_level(Ind, SHAKE, 17));
 	end,

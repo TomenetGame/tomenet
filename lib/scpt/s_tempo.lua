@@ -63,7 +63,7 @@ SLOWMONSTER_II = add_spell {
 	["level"] = 	30,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	-30,
+	["fail"] = 	-40,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
 			fire_ball(Ind, GF_OLD_SLOW, args.dir, 5 + get_level(Ind, SLOWMONSTER_I, 100), 1, "")
@@ -117,7 +117,7 @@ MASSWARP = add_spell {
 	["level"] = 	45,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	-70,
+	["fail"] = 	-90,
 	["spell"] = 	function()
 			project_los(Ind, GF_STASIS, 80 + get_level(Ind, MASSWARP, 200), "casts a spell")
 	end,

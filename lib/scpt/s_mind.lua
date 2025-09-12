@@ -112,7 +112,7 @@ TELEKINESIS = add_spell {
 	["level"] = 	35,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	10,
+	["fail"] = 	-30,
 	["am"] = 	75,
 	["get_item"] = {
 		["prompt"] = 	"Teleport which object? ",
@@ -149,7 +149,7 @@ TELEKINESIS = add_spell {
 	["level"] = 	35,
 	["mana"] = 	25,
 	["mana_max"] = 	25,
-	["fail"] = 	10,
+	["fail"] = 	-30,
 	["am"] = 	75,
 	["spell"] = 	function(args)
 		telekinesis(Ind, player.inventory[1 + args.book], 4 + get_level(Ind, TELEKINESIS, 330, 0))

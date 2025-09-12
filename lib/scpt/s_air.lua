@@ -169,7 +169,7 @@ INVISIBILITY = add_spell {
 	["level"] = 	30,
 	["mana"] = 	35,
 	["mana_max"] = 	35,
-	["fail"] = 	-30,
+	["fail"] = 	-40,
 	["spell"] = 	function()
 			set_invis(Ind, randint(20) + 15 + get_level(Ind, INVISIBILITY, 50), 20 + get_level(Ind, INVISIBILITY, 50))
 	end,
@@ -189,7 +189,7 @@ POISONBLOOD = add_spell {
 	["level"] = 	30,
 	["mana"] = 	15,
 	["mana_max"] = 	15,
-	["fail"] = 	-30,
+	["fail"] = 	-40,
 	["spell"] = 	function()
 			local dur
 
