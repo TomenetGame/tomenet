@@ -295,6 +295,11 @@ school_book[63] = { MDISARM, MSILENCE, MSCARE_II, MCONFUSE_II, MSLEEP_II, MSLOWM
 -- Create the handbook of wind and weather
 school_book[64] = { THUNDERSTORM, AIRWINGS, TIDALWAVE_I, VAPOR_II, LIGHTNINGBOLT_II, ICESTORM_I, FROSTBALL_I, FROSTBOLT_II, WATERBOLT_II, VAPORMIRROR }
 
+-- Create the handbook of movement
+school_book[65] = { TELEPORT, ESSENSESPEED, AIRWINGS, TELEAWAY_I, SLOWMONSTER_II, PROBABILITY_TRAVEL, TELEKINESIS, QUICKFEET, MTELEPORT, MHASTE, MSLOWMONSTER_II, MTELETOWARDS, MTELEAWAY, MTELEKINESIS }
+-- would also belong into it, but the spell list gets huge and there is no cross-over school benefit, so just keep it a bit cleaner: SHAKE, EARTHQUAKE, LEVITATION, OBLINK, OLEVITATION }
+
+
 -- Create the handbook of rough ideas (mindcrafter starter book)
 --school_book[65] = { MBOOST, MCURE,  MSCARE_I, MCONFUSE_I, MSLEEP_I, MMINDBLAST_I,  MBASH, MDISARM }
 --<MAYBE ENABLE> school_book[65] = { MCURE, MSCARE_I, MCONFUSE_I, MBASH }
