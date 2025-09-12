@@ -6836,8 +6836,8 @@ D:Allows for friendly duels. Inscribe it @P<playername> and read it.
 
 N:815:Unmagic
 G:,:d
-I:80:0:50
-W:10:0:2:75
+I:80:0:500
+W:10:0:1:75
 A:10/1
 D:Removes all kinds of temporary magical effects.
 
