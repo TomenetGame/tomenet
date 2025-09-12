@@ -1400,11 +1400,12 @@ void do_cmd_quaff_potion(int Ind, int item) {
 			if (o_ptr->sval == SV_POTION_BLOOD) set_food(Ind, o_ptr->pval + p_ptr->food);
 		} else if (p_ptr->prace == RACE_ENT) {
 			if (o_ptr->sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
-			else (void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2));
+			else if (o_ptr->sval != SV_POTION_BLOOD) (void)set_food(Ind, p_ptr->food + (o_ptr->pval * (o_ptr->pval > 0 ? 2 : 1))); //don't double-subtract for invulnerability potions!
 		} else if (p_ptr->suscep_life) {
+			if (o_ptr->sval == SV_POTION_BLOOD) set_food(Ind, o_ptr->pval + p_ptr->food / 4);
 			(void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2) / 3);
 		} else
-			(void)set_food(Ind, p_ptr->food + o_ptr->pval);
+			if (o_ptr->sval != SV_POTION_BLOOD) (void)set_food(Ind, p_ptr->food + o_ptr->pval);
 	}
 
 	if (true_artifact_p(o_ptr)) handle_art_d(o_ptr->name1);
@@ -1626,7 +1627,7 @@ void do_cmd_drink_fountain(int Ind) {
 			set_food(Ind, k_info[lookup_kind(TV_POTION, SV_POTION_BLOOD)].pval + p_ptr->food);
 		} else if (p_ptr->suscep_life) {
 			msg_print(Ind, "You feel less thirsty.");
-			(void)set_food(Ind, p_ptr->food + 100);
+			set_food(Ind, k_info[lookup_kind(TV_POTION, SV_POTION_BLOOD)].pval / 4 + p_ptr->food);
 		} else {
 			switch (rand_int(3)) {
 			case 0: msg_print(Ind, "Ew."); break;
@@ -1740,7 +1741,7 @@ void do_cmd_drink_fountain(int Ind) {
 	if (p_ptr->prace == RACE_VAMPIRE) ;
 	else if (p_ptr->prace == RACE_ENT) {
 		if (sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
-		else (void)set_food(Ind, p_ptr->food + pval * 2);
+		else (void)set_food(Ind, p_ptr->food + pval * (pval > 0 ? 2 : 1)); //don't double-subtract for invulnerability potions!
 	} else if (p_ptr->suscep_life)
 		(void)set_food(Ind, p_ptr->food + (pval * 2) / 3);
 	else

@@ -8583,7 +8583,7 @@ P:0:1d1:0:0:0
 #For fountains in Minas Anor, as Mark suggested, so Vampire characters can feed more easily.
 N:1029:Blood
 G:!:r
-I:71:3:0
+I:71:3:5000
 W:40:255:4:400
 A:40/0
 P:0:1d1:0:0:0
