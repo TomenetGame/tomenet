@@ -26085,7 +26085,7 @@ This should probably go to the 'Items' chapter, but I prefer it here as
 subchapter following food consumption explanation.
 
 List of nutrients, weight, and nutrients per lb weight for various food types.
-Food types can be either 'food' class items or 'potion' class items.
+Food types can be either 'food', 'potion' or 'firestone' class items.
 
 Food                               Weight (lb)     Nutrients    Nutrients/0.1lb
 -------------------------------------------------------------------------------
@@ -26109,7 +26109,7 @@ Beet                                   0.1             1000           1000
 Squash                                 0.3             1000           ~333
 Corn                                   0.2             2000           1000
 
-Firestones                          10,20                0              0
+Firestones                           10,20                0              0
 
 Potion (0.4lb)             Nutrients   |   Potion (0.4lb)             Nutrients
 ---------------------------------------+---------------------------------------
