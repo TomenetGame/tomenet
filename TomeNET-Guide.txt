@@ -210,6 +210,7 @@ Contents
     (7.14)  Miscellaneous character properties
     (7.15)  Character sheet boni page
     (7.16)  Food consumption
+    (7.16a) Nutrition details
 (8) Tactics & strategy
     (8.1)   Preparing the inventory for diving into the dungeon
     (8.2)   Preparing the equipment for diving into the dungeon
@@ -19700,7 +19701,7 @@ Obtaining chemicals/ingredients:
 
 Ingredient            | mining  | looting              | other source
 ----------------------+---------+----------------------+-----------------------
-Water                 |         | Potion               | Freshwater sources
+Water                 |         | Potion               | Fresh water sources
 Salt water            |         | Potion               | Seawater sources
 Lamp oil              |         | Flask                | General store
 Acid                  |         |                      | Crafting
@@ -19736,7 +19737,7 @@ Crafting ingredients from raw materials:
 - Reactive metal powder + salt water or ammonia salt = caustic metal ash.
 - Reactive metal powder + acid or vitriol = caustic salt.
 - To obtain water or salt water you can just fill up an empty bottle with
-  sea water or freshwater at the appropriate terrain. To obtain empty bottles
+  seawater or fresh water at the appropriate terrain. To obtain empty bottles
   you can make use of the "/empty" command or the "keep_bottle" option in  =0 .
 
 
@@ -26076,6 +26077,75 @@ However, potion nutrition works differently on some characters:
 - Ents do get fed more from potions of water than other races.
 - Mimicry users using undead forms receive reduced feeding effect from potions
   in general.
+
+
+(7.16a) Nutrition details
+-------------------------
+This should probably go to the 'Items' chapter, but I prefer it here as
+subchapter following food consumption explanation.
+
+List of nutrients, weight, and nutrients per lb weight for various food types.
+Food types can be either 'food' class items or 'potion' class items.
+
+Food                               Weight (lb)     Nutrients    Nutrients/0.1lb
+-------------------------------------------------------------------------------
+Mushrooms                              0.1              500            500
+Mushroom of Restoring                  0.1             1000           1000
+
+Ration                                 1.0             5000            500
+Biscuit                                0.2             1500            750
+Venison                                0.3             2000           ~667
+Lembas                                 0.3           =14999          ~5000
+Slime Mold                             0.5             3000            600
+Ale                                    0.5              500            100
+Wine                                   1.0             1000            100
+Fortune Cookie                         0.2              500            250
+Sprig of Athelas                       0.2                0              0
+
+Potato                                 0.2             1250            750
+Cabbage                                0.3             1650            550
+Carrot                                 0.1              750            750
+Beet                                   0.1             1000           1000
+Squash                                 0.3             1000           ~333
+Corn                                   0.2             2000           1000
+
+Firestones                          10,20                0              0
+
+Potion (0.4lb)             Nutrients   |   Potion (0.4lb)             Nutrients
+---------------------------------------+---------------------------------------
+Salt Water                      0      |   Curing                        100*
+Fresh Water (Ents)           1500      |   Invulnerability             -2500
+           (Other)              0      |   Cure Light Wounds              50*
+Blood (True Vampires)        5000      |   Cure Serious Wounds           100*
+      (Suscept-Life)         1250      |   Cure Critical Wounds          100*
+      (Other)                   0      |   Healing                       225*
+Apple Juice                   250*     |   *Healing*                     400*
+Slime Mold Juice              400*     |   Life                         1000*
+Slowness                       50*     |   Resistance                    100*
+Sleep                         100*     |   Booze                          50*
+
+(*) Double this amount for Ents
+
+- All potions weigh 0.4 lbs. Drinking from a fountain is the same as quaffing
+  a potion of the same type or drinking directly from open water sources,
+  except for salt water: When drinking a potion or from a fountain this can
+  have adverse effects, poisoning Ents and make other races vomit.
+  But when sipping from the open sea, these negative effects will not happen,
+  assuming the character is more careful. Fresh water nourishment is the same.
+
+- A 'Scroll of Satisfy Hunger' and Lembas set the food state of the character
+  to the maximum "full" state right before "bloated" state, ie to 14999.
+  The scroll and Lembas do not work for Ents or true Vampires.
+
+- Ents gain double nourishment from fountains and potions and specifically 1500
+  if it's (fresh) water. Salt water gives no nourishment even to Ents.
+
+- Vampire race characters gain no nourishment from any food, potions or
+  fountains except for fountains/potions of blood. Other characters gain no
+  nourishment from blood.
+
+- Susceptible-to-life characters gain 2/3 nourishment from fountains and
+  potions, and 1/3 nourishmnt from other food.
 
 
 
