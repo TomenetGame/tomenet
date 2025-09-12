@@ -300,7 +300,7 @@ school_book[65] = { TELEPORT, ESSENSESPEED, AIRWINGS, TELEAWAY_I, SLOWMONSTER_II
 -- would also belong into it, but the spell list gets huge and there is no cross-over school benefit, so just keep it a bit cleaner: SHAKE, EARTHQUAKE, LEVITATION, OBLINK, OLEVITATION }
 
 -- Create the handbook of manifold targetting (note: no beam spells at this time; also no grid bolts (psi,cryo,pyro))
-school_book[66] = { LIGHTNINGBOLT_II, FROSTBOLT_II, ACIDBOLT_II, WATERBOLT_II, FIREBOLT_II, DARKBOLT_II, CHAOSBOLT, OFIREBOLT_II, CHAOSBOLT2, NETHERBOLT, OLIGHTNINGBOLT_II, POWERBOLT_II }
+school_book[66] = { MANATHRUST_II, LIGHTNINGBOLT_II, FROSTBOLT_II, ACIDBOLT_II, WATERBOLT_II, FIREBOLT_II, DARKBOLT_II, CHAOSBOLT, OFIREBOLT_II, CHAOSBOLT2, NETHERBOLT, OLIGHTNINGBOLT_II, POWERBOLT_II }
 
 
 
