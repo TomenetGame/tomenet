@@ -6477,7 +6477,15 @@ F:RES_FIRE | SH_FIRE | BRAND_FIRE
 ##P:0:1d1:0:0:0
 ##F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
-# HOLE 765-769
+N:765:& Handbook~ of Manifold Targetting
+G:?:c
+I:111:66:0
+W:50:0:30:13000
+A:20/30:40/65
+P:0:1d1:0:0:0
+F:FULL_NAME | EASY_KNOW
+
+# HOLE 766-769
 
 # The Ring of Phasing -- see artifact list
 
@@ -7042,8 +7050,6 @@ W:50:0:30:13000
 A:20/30:40/65
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW
-
-# HOLE 848
 
 N:848:& Handbook~ of Manipulation
 G:?:y

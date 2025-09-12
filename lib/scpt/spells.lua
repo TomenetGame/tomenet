@@ -299,6 +299,10 @@ school_book[64] = { THUNDERSTORM, AIRWINGS, TIDALWAVE_I, VAPOR_II, LIGHTNINGBOLT
 school_book[65] = { TELEPORT, ESSENSESPEED, AIRWINGS, TELEAWAY_I, SLOWMONSTER_II, PROBABILITY_TRAVEL, TELEKINESIS, QUICKFEET, MTELEPORT, MHASTE, MSLOWMONSTER_II, MTELETOWARDS, MTELEAWAY, MTELEKINESIS }
 -- would also belong into it, but the spell list gets huge and there is no cross-over school benefit, so just keep it a bit cleaner: SHAKE, EARTHQUAKE, LEVITATION, OBLINK, OLEVITATION }
 
+-- Create the handbook of manifold targetting (note: no beam spells at this time; also no grid bolts (psi,cryo,pyro))
+school_book[66] = { LIGHTNINGBOLT_II, FROSTBOLT_II, ACIDBOLT_II, WATERBOLT_II, FIREBOLT_II, DARKBOLT_II, CHAOSBOLT, OFIREBOLT_II, CHAOSBOLT2, NETHERBOLT, OLIGHTNINGBOLT_II, POWERBOLT_II }
+
+
 
 -- Create the handbook of rough ideas (mindcrafter starter book)
 --school_book[65] = { MBOOST, MCURE,  MSCARE_I, MCONFUSE_I, MSLEEP_I, MMINDBLAST_I,  MBASH, MDISARM }
