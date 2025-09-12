@@ -323,7 +323,7 @@ BLOODSACRIFICE = add_spell {
 	["spell_power"] = 0,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	-60,
+	["fail"] = 	-80,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			if player.pclass == CLASS_HELLKNIGHT or player.pclass == CLASS_CPRIEST then

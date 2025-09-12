@@ -256,7 +256,7 @@ HRUNEPROT = add_spell {
 	["level"] = 	35,
 	["mana"]= 	20,
 	["mana_max"] = 	20,
-	["fail"] = 	0,
+	["fail"] = 	-10,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			local x, y
@@ -280,7 +280,7 @@ HMARTYR = add_spell {
 	["level"] = 	47,
 	["mana"]= 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	-60,
+	["fail"] = 	-90,
 	["stat"] = 	A_WIS,
 	["spell"] = 	function()
 			if player.martyr_timeout > 0 then
