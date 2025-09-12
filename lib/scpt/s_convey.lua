@@ -129,7 +129,7 @@ PROBABILITY_TRAVEL = add_spell {
 	["level"] = 	35,
 	["mana"] = 	50,
 	["mana_max"] = 	50,
-	["fail"] = 	20,
+	["fail"] = 	-40,
 	["spell"] = 	function()
 			set_prob_travel(Ind, randint(10) + get_level(Ind, PROBABILITY_TRAVEL, 60))
 	end,
