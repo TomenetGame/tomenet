@@ -26147,6 +26147,27 @@ Sleep                         100*     |   Booze                          50*
 - Susceptible-to-life characters gain 2/3 nourishment from fountains and
   potions, and 1/3 nourishmnt from other food.
 
+Alternative means of feeding
+----------------------------
+Ents can also feed by rooting into the ground, depending on the ground type.
+Vampires usually feed simply by killing an enemy that is on an grid adjacent
+to them.
+The amount of nutrition they get out of these methods is as follows:
+
+Ent rooting (initiated by 'Resting' mode via Shift+R) will provide nutrients
+in intervals of 5/6 of a player's "dungeon turn" which corresponds roughly to
+half a second on the world surface, and ticks slower the deeper the level:
+- On water (except tainted water) or mud: 200 nutrients.
+- On grass or dirt: 100 nutrients.
+- On bush or tree grids: 70 nutrients.
+
+Vampire victim feeding (by killing anything adjacent to them, by any means):
+- Depending on the victim's HP the vampire drinks 300...600 nutrients,
+- demons only give half as many nutrients,
+- angels only give a third as many nutrients.
+- if the killing blow was a backstab, the amount of nutrients is doubled.
+- it's impossible to feed from undead, non-living and some other creatures.
+
 
 
 (8) Tactics & strategy
