@@ -1847,9 +1847,11 @@ A:0/1
 P:0:1d1:0:0:0
 F:FOUNTAIN
 
+# NOTE: If nutrition gets set != 0, all default-water assumptions in
+#       do_cmd_drink_fountain() need to be adjusted (they assume 0 nutrition).
 N:224:Water
 G:!:d
-I:71:0:150
+I:71:0:0
 W:0:0:4:3
 A:0/1
 P:0:1d1:0:0:0
