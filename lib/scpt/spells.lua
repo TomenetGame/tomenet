@@ -296,11 +296,12 @@ school_book[63] = { MDISARM, MSILENCE, MSCARE_II, MCONFUSE_II, MSLEEP_II, MSLOWM
 school_book[64] = { THUNDERSTORM, AIRWINGS, TIDALWAVE_I, VAPOR_II, LIGHTNINGBOLT_II, ICESTORM_I, FROSTBALL_I, FROSTBOLT_II, WATERBOLT_II, VAPORMIRROR }
 
 -- Create the handbook of movement
+-- ...would also belong into it, but the spell list gets huge and there is no cross-over school benefit, so just keep it a bit cleaner: SHAKE, EARTHQUAKE, LEVITATION, OBLINK, OLEVITATION }
 school_book[65] = { TELEPORT, ESSENSESPEED, AIRWINGS, TELEAWAY_I, SLOWMONSTER_II, PROBABILITY_TRAVEL, TELEKINESIS, QUICKFEET, MTELEPORT, MHASTE, MSLOWMONSTER_II, MTELETOWARDS, MTELEAWAY, MTELEKINESIS }
--- would also belong into it, but the spell list gets huge and there is no cross-over school benefit, so just keep it a bit cleaner: SHAKE, EARTHQUAKE, LEVITATION, OBLINK, OLEVITATION }
-
 -- Create the handbook of manifold targetting (note: no beam spells at this time; also no grid bolts (psi,cryo,pyro))
 school_book[66] = { MANATHRUST_II, LIGHTNINGBOLT_II, FROSTBOLT_II, ACIDBOLT_II, WATERBOLT_II, FIREBOLT_II, DARKBOLT_II, CHAOSBOLT, OFIREBOLT_II, CHAOSBOLT2, NETHERBOLT, OLIGHTNINGBOLT_II, POWERBOLT_II }
+-- Create the handbook of elemental offense (too much: FIREFLASH_I)
+school_book[67] = { TIDALWAVE_I, VAPOR_II, FIREWALL_I, MANATHRUST_II, LIGHTNINGBOLT_II, FROSTBOLT_II, WATERBOLT_II, ACIDBOLT_II, FIREBOLT_II, HELLFIRE_I, FROSTBALL_I, FIREBALL_I }
 
 
 
