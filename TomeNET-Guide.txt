@@ -26133,9 +26133,9 @@ Sleep                         100*     |   Booze                          50*
   But when sipping from the open sea, these negative effects will not happen,
   assuming the character is more careful. Fresh water nourishment is the same.
 
-- A 'Scroll of Satisfy Hunger' and Lembas set the food state of the character
-  to the maximum "full" state right before "bloated" state, ie to 14999.
-  The scroll and Lembas do not work for Ents or true Vampires.
+- A 'Scroll of Satisfy Hunger' (weighs 0.5 lb) and Lembas set the food state
+  of the character to the maximum "full" state right before "bloated" state,
+  ie to 14999. Scroll and Lembas do not work for Ents or true Vampires.
 
 - Ents gain double nourishment from fountains and potions and specifically 1500
   if it's (fresh) water. Salt water gives no nourishment even to Ents.
