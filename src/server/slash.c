@@ -6650,7 +6650,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!p_ptr->custom_timer) {
 					if (tk && !k) msg_format(Ind, "\377yCustom timer was not active.");
 					else msg_print(Ind, "Your custom timer is currently not set.");
-				} else msg_format(Ind, "Your custom timer was currently running: \377B%ds\377w left.", p_ptr->custom_timer);
+				} else msg_format(Ind, "Your custom timer is currently running: \377B%ds\377w left.", p_ptr->custom_timer);
 			}
 			if (tk == 1) {
 				if (k) {
