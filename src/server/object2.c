@@ -6882,6 +6882,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 		case SV_POTION_INC_DEX:
 		case SV_POTION_INC_CON:
 		case SV_POTION_INC_CHR:
+		case SV_POTION_STAR_ENLIGHTENMENT:
 			if (level < 20) level = 20;
 			break;
 		}
@@ -6963,6 +6964,7 @@ void determine_level_req(int level, object_type *o_ptr) {
 		case SV_POTION_INC_DEX:
 		case SV_POTION_INC_CON:
 		case SV_POTION_INC_CHR:
+		case SV_POTION_STAR_ENLIGHTENMENT:
 			base += 40 + 30;
 			break;
 		case SV_POTION_AUGMENTATION:
