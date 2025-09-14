@@ -10537,7 +10537,7 @@ void dungeon(void) {
 				if (!p_ptr->custom_timer) {
 					msg_print(i, "\377vYour custom timer finished.");
 #ifdef USE_SOUND_2010
-					if (p_ptr->audio_sfx) sound(i, "gong", "bell", SFX_TYPE_MISC, FALSE);
+					if (p_ptr->audio_sfx) sound(i, "gong", "bell", SFX_TYPE_ALERT, FALSE);
 					else Send_warning_beep(i);
 #else
 					if (p_ptr->paging < 3) p_ptr->paging = 3;

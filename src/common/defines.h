@@ -8480,6 +8480,7 @@ extern int PlayerUID;
  #define SFX_TYPE_STOP		9	/* stop playing this sfx, if it is. stop playing any SFX_TYPE_NO_OVERLAP sfx if no sfx is specified. */
  #define SFX_TYPE_AMBIENT_LOCAL	10	/* Play a looping, local ambient sound effect, that changes panning for each player accordingly to their positions */
  #define SFX_TYPE_OVERLAP	11	/* same as SFX_TYPE_SFX but allows any overlapping, always */
+ #define SFX_TYPE_ALERT		12	/* on client-side will get volume boosted like warning beeps, depending on paging_master_vol and paging_max_vol */
 
  /* new in 2013: for dedicated ambient sound fx channel only (inn fireplace!) -- all 'persistent' ambient sfx. */
  #define SFX_AMBIENT_NONE	-1

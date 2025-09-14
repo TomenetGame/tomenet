@@ -1666,200 +1666,7 @@ static bool sound_sdl_init(bool no_cache) {
 	return(TRUE);
 }
 
-/*
- * Play a sound of type "event". Returns FALSE if sound couldn't be played.
- */
-static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x, int dist_y) {
-	Mix_Chunk *wave = NULL;
-	int s, vols = 100;
-	bool test = FALSE, real_event = (event >= 0 && event < SOUND_MAX_2010), allow_overlap = FALSE;
 
-#ifdef DISABLE_MUTED_AUDIO
-	if (!cfg_audio_master || !cfg_audio_sound) return(TRUE); /* claim that it 'succeeded' */
-#endif
-
-#ifdef USER_VOLUME_SFX
-	/* Apply user-defined custom volume modifier */
-	if (real_event && samples[event].volume) vols = samples[event].volume;
-#endif
-
-	/* hack: */
-	if (type == SFX_TYPE_STOP) {
-		/* stop all SFX_TYPE_NO_OVERLAP type sounds? */
-		if (event == -1) {
-			bool found = FALSE;
-
-			for (s = 0; s < cfg_max_channels; s++) {
-				if (channel_type[s] == SFX_TYPE_NO_OVERLAP && channel_player_id[s] == player_id) {
-					Mix_FadeOutChannel(s, 450); //250..450 (more realistic timing vs smoother sound (avoid final 'spike'))
-					found = TRUE;
-				}
-			}
-			return(found);
-		}
-		/* stop sound of this type? */
-		else if (real_event) {
-			for (s = 0; s < cfg_max_channels; s++) {
-				if (channel_sample[s] == event && channel_player_id[s] == player_id) {
-					Mix_FadeOutChannel(s, 450); //250..450 (more realistic timing vs smoother sound (avoid final 'spike'))
-					return(TRUE);
-				}
-			}
-			return(FALSE);
-		}
-	}
-
-	/* Paranoia */
-	if (!real_event) return(FALSE);
-
-	if (type == SFX_TYPE_AMBIENT_LOCAL) {
-		//todo
-	}
-
-	if (samples[event].disabled) return(TRUE); /* claim that it 'succeeded' */
-
-	/* Check there are samples for this event */
-	if (!samples[event].num) return(FALSE);
-
-	/* already playing? allow to prevent multiple sounds of the same kind
-	   from being mixed simultaneously, for preventing silliness */
-	switch (type) {
-	case SFX_TYPE_ATTACK: if (c_cfg.ovl_sfx_attack) break; else test = TRUE;
-		break;
-	case SFX_TYPE_COMMAND: if (c_cfg.ovl_sfx_command) break; else test = TRUE;
-		break;
-	case SFX_TYPE_MISC: if (c_cfg.ovl_sfx_misc) break; else test = TRUE;
-		break;
-	case SFX_TYPE_MON_ATTACK: if (c_cfg.ovl_sfx_mon_attack) break; else test = TRUE;
-		break;
-	case SFX_TYPE_MON_SPELL: if (c_cfg.ovl_sfx_mon_spell) break; else test = TRUE;
-		break;
-	case SFX_TYPE_MON_MISC: if (c_cfg.ovl_sfx_mon_misc) break; else test = TRUE;
-		break;
-	case SFX_TYPE_NO_OVERLAP: /* never overlap! (eg tunnelling) */
-		test = TRUE;
-		break;
-	case SFX_TYPE_WEATHER:
-	case SFX_TYPE_AMBIENT:
-		/* always allow overlapping, since these should be sent by the
-		   server in a completely sensibly timed manner anyway. */
-		allow_overlap = TRUE;
-		break;
-	case SFX_TYPE_OVERLAP: /* Same as SFX_TYPE_MISC, but never checks against overlapping */
-		allow_overlap = TRUE;
-		break;
-	default:
-		test = TRUE;
-	}
-
-	if (test) {
-#if 0 /* old method before sounds could've come from other players nearby us, too */
-		if (samples[event].current_channel != -1) return(TRUE);
-#else /* so now we need to allow multiple samples, IF they stem from different sources aka players */
-		for (s = 0; s < cfg_max_channels; s++) {
-			if (channel_sample[s] == event && channel_player_id[s] == player_id) return(TRUE);
-		}
-#endif
-	}
-
-	/* prevent playing duplicate sfx that were initiated very closely
-	   together in time, after one each other? (efficiency) */
-	if (c_cfg.no_ovl_close_sfx && ticks == samples[event].started_timer_tick && !allow_overlap) return(TRUE);
-
-	/* Choose a random event (normal gameplay), except when in the jukebox screen where we play everything sequentially  */
-	if (jukebox_sfx_screen) {
-		if (sound_cur != event) s = 0;
-		else s = (sound_cur_wav + 1) % samples[event].num;
-	} else s = rand_int(samples[event].num);
-	wave = samples[event].wavs[s];
-	sound_cur_wav = s; //just for jukebox wav index display
-	sound_cur = event;
-
-	/* Try loading it, if it's not cached */
-	if (!wave) {
-		if (on_demand_loading || no_cache_audio) {
-			if (!(wave = load_sample(event, s))) {
-				/* we really failed to load it */
-				plog(format("SDL sound load failed (%d, %d) [1].", event, s));
-				puts(format("SDL sound load failed (%d, %d) [1].", event, s));
-				return(FALSE);
-			}
-		} else {
-			/* Fail silently */
-			return(TRUE);
-		}
-	}
-
-	/* Actually play the thing */
-	/* remember, for efficiency management */
-	s = Mix_PlayChannel(-1, wave, 0);
-	if (s != -1) {
-		channel_sample[s] = event;
-		channel_type[s] = type;
-		channel_volume[s] = vol;
-		channel_player_id[s] = player_id;
-
-		/* HACK - use weather volume for thunder sfx */
-		if (type == SFX_TYPE_WEATHER)
-			Mix_Volume(s, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100, vols) * grid_weather_volume) / 100);
-		else
-		if (type == SFX_TYPE_AMBIENT)
-			Mix_Volume(s, (CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100, vols) * grid_ambient_volume) / 100);
-		else
-			/* Note: Linear scaling is used here to allow more precise control at the server end */
-			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100, vols));
-
-		/* Simple stereo-positioned audio, only along the x-coords. TODO: HRTF via OpenAL ^^ - C. Blue */
-		if (c_cfg.positional_audio) {
-#if 0
-			/* Just for the heck of it: Trivial (bad) panning, ignoring any y-plane angle and just use basic left/right distance. */
-			if (dist_x < 0) Mix_SetPanning(s, 255, (-255 * 4) / (dist_x - 3));
-			else if (dist_x > 0) Mix_SetPanning(s, (255 * 4) / (dist_x + 3), 255);
-			else Mix_SetPanning(s, 255, 255);
-#else
-			/* Best we can do with simple stereo for now without HRTF etc.:
-			   We don't have a y-audio-plane (aka z-plane really),
-			   but at least we pan according to the correct angle. - C. Blue */
-
-			int dy = ABS(dist_y); //we don't differentiate between in front of us / behind us, need HRTF for that.
-
-			/* Hack: Catch edge case: At dist 20 (MAX_SIGHT) there is a +/- 1 leeway orthogonally
-			   due to the way distance() works. This is fine, but we only define roots up to 370 for practical reasons.
-			   For this tiny angle we can just assume that we receive the same panning as if we stood slightly closer. */
-			if (dist_y * dist_y + dist_x * dist_x > 370) {
-				if (dy == MAX_SIGHT) dist_x = 0;
-				else dist_y = 0;
-			}
-
-			if (!dist_x) Mix_SetPanning(s, 255, 255); //shortcut for both, 90 deg and undefined angle aka 'on us'. */
-			else if (!dist_y) { //shortcut for 0 deg and 180 deg (ie sin = 0)
-				if (dist_x < 0) Mix_SetPanning(s, 255, 0);
-				else Mix_SetPanning(s, 0, 255);
-			} else { //all other cases (ie sin != 0) -- and d_real cannot be 0 (for division!)
-				int pan_l, pan_r;
-				int d_real = fast_sqrt[dist_x * dist_x + dist_y * dist_y]; //wow, for once not just an approximated distance (beyond that integer thingy) ^^
-				int sin = (10 * dy) / d_real; //sinus (scaled by *10 for accuracy)
-
-				/* Calculate left/right panning weight from angle:
-				   The ear with 'los' toward the event gets 100% of the distance-reduced volume (d),
-				   while the other ear gets ABS(sin(a)) * d. */
-				if (dist_x < 0) { /* somewhere to our left */
-					pan_l = 255;
-					pan_r = (255 * sin) / 10;
-				} else { /* somewhere to our right */
-					pan_l = (255 * sin) / 10;
-					pan_r = 255;
-				}
-				Mix_SetPanning(s, pan_l, pan_r);
-			}
-#endif
-		}
-	}
-	samples[event].current_channel = s;
-	samples[event].started_timer_tick = ticks;
-
-	return(TRUE);
-}
 /* play the 'bell' sound */
 #define BELL_REDUCTION 3 /* reduce volume of bell() sounds by this factor */
 extern bool sound_bell(void) {
@@ -2019,6 +1826,205 @@ extern bool sound_warning(void) {
 		}
 	}
 	samples[warning_sound_idx].current_channel = s;
+
+	return(TRUE);
+}
+/*
+ * Play a sound of type "event". Returns FALSE if sound couldn't be played.
+ */
+static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x, int dist_y) {
+	Mix_Chunk *wave = NULL;
+	int s, vols = 100;
+	bool test = FALSE, real_event = (event >= 0 && event < SOUND_MAX_2010), allow_overlap = FALSE;
+
+#ifdef DISABLE_MUTED_AUDIO
+	if (!cfg_audio_master || !cfg_audio_sound) return(TRUE); /* claim that it 'succeeded' */
+#endif
+
+#ifdef USER_VOLUME_SFX
+	/* Apply user-defined custom volume modifier */
+	if (real_event && samples[event].volume) vols = samples[event].volume;
+#endif
+
+	/* hack: */
+	if (type == SFX_TYPE_STOP) {
+		/* stop all SFX_TYPE_NO_OVERLAP type sounds? */
+		if (event == -1) {
+			bool found = FALSE;
+
+			for (s = 0; s < cfg_max_channels; s++) {
+				if (channel_type[s] == SFX_TYPE_NO_OVERLAP && channel_player_id[s] == player_id) {
+					Mix_FadeOutChannel(s, 450); //250..450 (more realistic timing vs smoother sound (avoid final 'spike'))
+					found = TRUE;
+				}
+			}
+			return(found);
+		}
+		/* stop sound of this type? */
+		else if (real_event) {
+			for (s = 0; s < cfg_max_channels; s++) {
+				if (channel_sample[s] == event && channel_player_id[s] == player_id) {
+					Mix_FadeOutChannel(s, 450); //250..450 (more realistic timing vs smoother sound (avoid final 'spike'))
+					return(TRUE);
+				}
+			}
+			return(FALSE);
+		}
+	}
+
+	/* Paranoia */
+	if (!real_event) return(FALSE);
+
+	if (type == SFX_TYPE_AMBIENT_LOCAL) {
+		//todo
+	}
+
+	if (samples[event].disabled) return(TRUE); /* claim that it 'succeeded' */
+
+	/* Check there are samples for this event */
+	if (!samples[event].num) return(FALSE);
+
+	/* already playing? allow to prevent multiple sounds of the same kind
+	   from being mixed simultaneously, for preventing silliness */
+	switch (type) {
+	case SFX_TYPE_ATTACK: if (c_cfg.ovl_sfx_attack) break; else test = TRUE;
+		break;
+	case SFX_TYPE_COMMAND: if (c_cfg.ovl_sfx_command) break; else test = TRUE;
+		break;
+	case SFX_TYPE_MISC: if (c_cfg.ovl_sfx_misc) break; else test = TRUE;
+		break;
+	case SFX_TYPE_MON_ATTACK: if (c_cfg.ovl_sfx_mon_attack) break; else test = TRUE;
+		break;
+	case SFX_TYPE_MON_SPELL: if (c_cfg.ovl_sfx_mon_spell) break; else test = TRUE;
+		break;
+	case SFX_TYPE_MON_MISC: if (c_cfg.ovl_sfx_mon_misc) break; else test = TRUE;
+		break;
+	case SFX_TYPE_NO_OVERLAP: /* never overlap! (eg tunnelling) */
+		test = TRUE;
+		break;
+	case SFX_TYPE_WEATHER:
+	case SFX_TYPE_AMBIENT:
+		/* always allow overlapping, since these should be sent by the
+		   server in a completely sensibly timed manner anyway. */
+		allow_overlap = TRUE;
+		break;
+	case SFX_TYPE_OVERLAP: /* Same as SFX_TYPE_MISC, but never checks against overlapping */
+		allow_overlap = TRUE;
+		break;
+	case SFX_TYPE_ALERT:
+		test = FALSE; /* Allow overlapping alert sfx */
+		break;
+	default:
+		test = TRUE;
+	}
+
+	if (test) {
+#if 0 /* old method before sounds could've come from other players nearby us, too */
+		if (samples[event].current_channel != -1) return(TRUE);
+#else /* so now we need to allow multiple samples, IF they stem from different sources aka players */
+		for (s = 0; s < cfg_max_channels; s++) {
+			if (channel_sample[s] == event && channel_player_id[s] == player_id) return(TRUE);
+		}
+#endif
+	}
+
+	/* prevent playing duplicate sfx that were initiated very closely
+	   together in time, after one each other? (efficiency) */
+	if (c_cfg.no_ovl_close_sfx && ticks == samples[event].started_timer_tick && !allow_overlap) return(TRUE);
+
+	/* Choose a random event (normal gameplay), except when in the jukebox screen where we play everything sequentially  */
+	if (jukebox_sfx_screen) {
+		if (sound_cur != event) s = 0;
+		else s = (sound_cur_wav + 1) % samples[event].num;
+	} else s = rand_int(samples[event].num);
+	wave = samples[event].wavs[s];
+	sound_cur_wav = s; //just for jukebox wav index display
+	sound_cur = event;
+
+	/* Try loading it, if it's not cached */
+	if (!wave) {
+		if (on_demand_loading || no_cache_audio) {
+			if (!(wave = load_sample(event, s))) {
+				/* we really failed to load it */
+				plog(format("SDL sound load failed (%d, %d) [1].", event, s));
+				puts(format("SDL sound load failed (%d, %d) [1].", event, s));
+				return(FALSE);
+			}
+		} else {
+			/* Fail silently */
+			return(TRUE);
+		}
+	}
+
+	/* Actually play the thing */
+	/* remember, for efficiency management */
+	s = Mix_PlayChannel(-1, wave, 0);
+	if (s != -1) {
+		channel_sample[s] = event;
+		channel_type[s] = type;
+		channel_volume[s] = vol;
+		channel_player_id[s] = player_id;
+
+		/* HACK - use weather volume for thunder sfx */
+		if (type == SFX_TYPE_WEATHER)
+			Mix_Volume(s, (CALC_MIX_VOLUME(cfg_audio_weather, (cfg_audio_weather_volume * vol) / 100, vols) * grid_weather_volume) / 100);
+		else if (type == SFX_TYPE_AMBIENT)
+			Mix_Volume(s, (CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100, vols) * grid_ambient_volume) / 100);
+		else if (type == SFX_TYPE_ALERT && (c_cfg.paging_max_volume || c_cfg.paging_master_volume)) { /* depending on client audio options play at elevated volume */
+			if (c_cfg.paging_max_volume) Mix_Volume(s, MIX_MAX_VOLUME / BELL_REDUCTION);
+			else Mix_Volume(s, CALC_MIX_VOLUME(1, MIX_MAX_VOLUME / BELL_REDUCTION, vols));
+		} else
+			/* Note: Linear scaling is used here to allow more precise control at the server end */
+			Mix_Volume(s, CALC_MIX_VOLUME(cfg_audio_sound, (cfg_audio_sound_volume * vol) / 100, vols));
+
+		/* Simple stereo-positioned audio, only along the x-coords. TODO: HRTF via OpenAL ^^ - C. Blue */
+		if (c_cfg.positional_audio && type != SFX_TYPE_ALERT) {
+#if 0
+			/* Just for the heck of it: Trivial (bad) panning, ignoring any y-plane angle and just use basic left/right distance. */
+			if (dist_x < 0) Mix_SetPanning(s, 255, (-255 * 4) / (dist_x - 3));
+			else if (dist_x > 0) Mix_SetPanning(s, (255 * 4) / (dist_x + 3), 255);
+			else Mix_SetPanning(s, 255, 255);
+#else
+			/* Best we can do with simple stereo for now without HRTF etc.:
+			   We don't have a y-audio-plane (aka z-plane really),
+			   but at least we pan according to the correct angle. - C. Blue */
+
+			int dy = ABS(dist_y); //we don't differentiate between in front of us / behind us, need HRTF for that.
+
+			/* Hack: Catch edge case: At dist 20 (MAX_SIGHT) there is a +/- 1 leeway orthogonally
+			   due to the way distance() works. This is fine, but we only define roots up to 370 for practical reasons.
+			   For this tiny angle we can just assume that we receive the same panning as if we stood slightly closer. */
+			if (dist_y * dist_y + dist_x * dist_x > 370) {
+				if (dy == MAX_SIGHT) dist_x = 0;
+				else dist_y = 0;
+			}
+
+			if (!dist_x) Mix_SetPanning(s, 255, 255); //shortcut for both, 90 deg and undefined angle aka 'on us'. */
+			else if (!dist_y) { //shortcut for 0 deg and 180 deg (ie sin = 0)
+				if (dist_x < 0) Mix_SetPanning(s, 255, 0);
+				else Mix_SetPanning(s, 0, 255);
+			} else { //all other cases (ie sin != 0) -- and d_real cannot be 0 (for division!)
+				int pan_l, pan_r;
+				int d_real = fast_sqrt[dist_x * dist_x + dist_y * dist_y]; //wow, for once not just an approximated distance (beyond that integer thingy) ^^
+				int sin = (10 * dy) / d_real; //sinus (scaled by *10 for accuracy)
+
+				/* Calculate left/right panning weight from angle:
+				   The ear with 'los' toward the event gets 100% of the distance-reduced volume (d),
+				   while the other ear gets ABS(sin(a)) * d. */
+				if (dist_x < 0) { /* somewhere to our left */
+					pan_l = 255;
+					pan_r = (255 * sin) / 10;
+				} else { /* somewhere to our right */
+					pan_l = (255 * sin) / 10;
+					pan_r = 255;
+				}
+				Mix_SetPanning(s, pan_l, pan_r);
+			}
+#endif
+		}
+	}
+	samples[event].current_channel = s;
+	samples[event].started_timer_tick = ticks;
 
 	return(TRUE);
 }
