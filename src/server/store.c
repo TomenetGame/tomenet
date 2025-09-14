@@ -3915,7 +3915,11 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 		/* Let the player carry it (as if he picked it up) */
 		can_use(Ind, &sell_obj);//##UNH
 		sell_obj.iron_trade = p_ptr->iron_trade;
+#ifndef IDDC_UNRESTRICTED_SHOPITEMS /* not tradeable within iddc party */
 		sell_obj.iron_turn = -1;
+#else /* tradeable within iddc party */
+		sell_obj.iron_turn = turn;
+#endif
 
 		//s_printf("Stealing: %s (%d) succ. %s (chance %d%% (%d)).\n", p_ptr->name, p_ptr->lev, o_name, 950 / (chance < 10 ? 10 : chance), chance);
 		/* let's instead display the chance without regards to 5% chance to fail, since very small % numbers become more accurate! */
@@ -4469,7 +4473,11 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 				//note regarding quests: The item here gets owned first, then inven-carried, so it doesn't give credit!
 				can_use(Ind, &sell_obj);//##UNH
 				sell_obj.iron_trade = p_ptr->iron_trade;
+#ifndef IDDC_UNRESTRICTED_SHOPITEMS /* not tradeable within iddc party */
 				sell_obj.iron_turn = -1;
+#else /* tradeable within iddc party */
+				sell_obj.iron_turn = turn;
+#endif
 
 				/* Describe the final result */
 #ifdef ENABLE_SUBINVEN
@@ -5465,7 +5473,11 @@ void do_cmd_store(int Ind) {
 				forge.ident |= ID_MENTAL;
 				forge.note = quark_add(format("%s Delivery", st_name + st_info[p_ptr->item_order_store - 1].name));
 				forge.iron_trade = p_ptr->iron_trade;
+#ifndef IDDC_UNRESTRICTED_SHOPITEMS /* not tradeable within iddc party */
 				forge.iron_turn = -1;
+#else /* tradeable within iddc party */
+				forge.iron_turn = turn;
+#endif
 				slot = inven_carry(Ind, &forge);
 				if (slot != -1) {
 					object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);

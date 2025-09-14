@@ -15174,6 +15174,10 @@ void telekinesis_aux(int Ind, int item) {
 			msg_print(Ind, "\377yYou cannot contact outsiders.");
 			if (!is_admin(p_ptr)) return;
 		}
+		if (q_ptr->iron_trade == p2_ptr->iron_trade && q_ptr->iron_turn == -1) {
+			msg_format(Ind, "\377yThis item cannot be sent to that player as it was bought or stolen from a shop.");
+			if (!is_admin(p_ptr)) return;
+		}
 		if (q_ptr->iron_trade != p2_ptr->iron_trade || q_ptr->iron_turn < p2_ptr->iron_turn) {
 			msg_format(Ind, "\377yThis item cannot be sent to that player as it predates %s.", p2_ptr->male ? "him" : "her");
 			if (!is_admin(p_ptr)) return;

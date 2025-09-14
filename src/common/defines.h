@@ -1159,6 +1159,11 @@
    and you can only add someone who is on the same floor or deeper as the deepest party member.
    Last but not least, items cannot be traded on stale floors (could exploit via logging+farming the same floor over and over with new chars)! */
 #define IDDC_RESTRICTED_PARTYING
+#ifdef IDDC_RESTRICTED_TRADING
+/* Addition for IDDC_RESTRICTED_TRADING:
+   Actually re-allow sharing items bought from shops. */
+ #define IDDC_UNRESTRICTED_SHOPITEMS
+#endif
 
 /* Special anti-cheeze hack: Disallow carrying items from town to IDDC and
    giving them to another character inside IDDC, for the first n floors. */

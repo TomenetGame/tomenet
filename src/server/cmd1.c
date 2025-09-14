@@ -2451,6 +2451,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
  #endif
 				if (!is_admin(p_ptr)) return;
 			}
+			else if (o_ptr->iron_turn == -1) {
+				msg_print(Ind, "\377yYou cannot take this item as it was bought or stolen from a shop.");
+				if (!is_admin(p_ptr)) return;
+			}
 			else if (p_ptr->iron_turn > o_ptr->iron_turn) {
  #ifdef TEST_SERVER /* debug */
 					msg_format(Ind, "\377yPredates you joining party (%d, %d, %d, %d).", p_ptr->iron_trade, o_ptr->iron_trade, p_ptr->iron_turn, o_ptr->iron_turn);
