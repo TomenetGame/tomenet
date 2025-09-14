@@ -488,6 +488,7 @@ void process_command() {
 #ifdef CTRLC_DEBUG /* only for debugging purpose - dump some client-side special config */
 	case KTRL('C'):
 		//c_msg_format("Client FPS: %d", cfg_client_fps);
+		//Term_xtra(TERM_XTRA_NOISE, 0);
 		//handle_process_font_file();
  #if 0
 		tiles_rawpict_org[0].x = 800; //coords for 16x24 tileset/font
