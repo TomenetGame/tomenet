@@ -519,7 +519,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.disable_lightning,	FALSE,	4,	0, 132, TRUE,
 	    "disable_lightning",	"Disable visual screen flash effect for lightning" },
 	{ &c_cfg.macros_in_stores,	FALSE,	2,	0, 133, TRUE,
-	    "macros_in_stores",		"Don't disable macros while inside a store" },
+	    "macros_in_stores",		"Eable macros while inside a store" },
 	{ &c_cfg.item_error_beep,	TRUE,	7,	0, 134, TRUE,
 	    "item_error_beep",		"Beep when an item selection fails" },
 	{ &c_cfg.keep_bottle,		FALSE,	8,	0, 135, TRUE,
