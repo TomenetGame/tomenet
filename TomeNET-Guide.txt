@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 12. September 2025 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 14. September 2025 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5533,6 +5533,7 @@ config entries "graphics" and "graphic_tiles".)
 
 Graphical tilesets are xyz.bmp files in 24-bit format (R8,G8,B8 - and make sure
 to check "Don't include colour space information" in GIMP or whatever you use,
+or in newer versions make sure to _uncheck_ "Write color space information",
 or it will not work on Windows) that come with a graphics-xyz.prf mapping file.
 The bmp filename must be in the format "<width>x<height><custom text>.bmp" and
 the prf filename must be "graphics-<width>x<height><custom text>.prf".
