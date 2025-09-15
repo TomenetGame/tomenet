@@ -5519,7 +5519,7 @@ Thanks to jEzEk (https://github.com/jezek) graphics tiles are now supported
 again, now with two colour masks (a foreground and a background mask, of which
 the background mask has currently no meaning, since all grids in TomeNET are
 always drawn with black background) and auto-scaling to font size. There is a
-also a third mask for'dual-mask'mode in clients newer than 4.9.2 release time.
+also a third mask for 'dual-mask' mode in clients newer than version 4.9.2.
 The advantage over normal fonts is that these can have many colours and thereby
 look much better.
 
@@ -5551,8 +5551,10 @@ Tilesets also have two designated 'mask colours':
   For example a tile depicting an orc would display the mask colour in umber
   (ie brown) if it was a hill orc or in light green if it was a cave orc.
 - (Currently no effect, as all grids in TomeNET always have black background:)
-  A 'background mask' defined by colour R=62,G=61,B=0 (hex 0x3E3D00) aka a
-  dark, somewhat greenish ochre.
+  A 'background colour mask' defined by colour R=62,G=61,B=0 (hex 0x3E3D00) aka
+  a dark, somewhat greenish ochre. This is not a transparency mask but just for
+  a second colour, as each character can in theory have a foreground and a
+  background colour specified.
   Currently, TomeNET always uses black background colour for any grid it draws.
   (Example: A fountain in ASCII is currently a white '_' on black background.
   If background colours were enabled in the future, it could be a white '_' on
@@ -5561,7 +5563,7 @@ Tilesets also have two designated 'mask colours':
   blueness around the fountain would have to be 0x3E3D00.)
 - No effect in clients not newer than 4.9.2:
   A 'dual-background mask' defined by colour R=29,G=33,B=28 (hex 0x1D211C),
-  ie a very dark green.
+  ie a very dark green. This is a transparency-mask.
   Graphical tiles that usually take precedence over terrain, such as objects,
   any traps, monsters, players etc. can use this colour to become transparent
   for the background terrain.
