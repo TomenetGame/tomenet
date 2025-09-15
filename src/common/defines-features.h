@@ -624,7 +624,7 @@
  /* Colours for foreground-colour mask (0xFCnnFB, was previously 0xFF00FF)) */
  #define GFXMASK_FG_R	252
  #define GFXMASK_FG_G	0
-//todo: implement -> #define GFXMASK_FG_G	-1	/* (only the FG mask may use "-1" values) */
+//todo: implement -> #define GFXMASK_FG_G	-1	/* (only the FG mask may use "-1" values, as wildcard to indicate any value 0...255 will result in shades of masked foreground colour) */
  #define GFXMASK_FG_B	251
  /* Colours for background-colour mask (0x3E3D00, was previously 0x000000) */
  #define GFXMASK_BG_R	62
