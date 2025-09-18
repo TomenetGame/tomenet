@@ -2858,6 +2858,9 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 	int masks_size = width * height / 8 + (width * height % 8 == 0 ? 0 : 1);
 	u32b bit;
 	byte r, g, b;
+#ifdef GRAPHICS_SHADED_ALPHA
+	byte a; /* Mask gains shades via alpha channel */
+#endif
 	int x, y;
 
 	char *bgmask;
@@ -2874,6 +2877,10 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 			b = data[4 * (x + y * width)];
 			g = data[4 * (x + y * width) + 1];
 			r = data[4 * (x + y * width) + 2];
+#ifdef GRAPHICS_SHADED_ALPHA
+			/* Set alpha value aka shading strength -> normal, ie fully opaque */
+			a = 255;
+#endif
 
 			/* Ensure non-GRAPHICS_BG_MASK backward compatibility with 2mask-ready tilesets that use the dual-mask colour! */
 			if (r == GFXMASK_BG2_R && g == GFXMASK_BG2_G && b == GFXMASK_BG2_B) {
@@ -2885,11 +2892,30 @@ static void createMasksFromData(char* data, int width, int height, char **bgmask
 			if (r != GFXMASK_BG_R || g != GFXMASK_BG_G || b != GFXMASK_BG_B)
 				bgmask[bit / 8] |= 1 << (bit % 8);
 
-			//todo:implement -> if ((GFXMASK_FG_R == -1 || r == GFXMASK_FG_R) && (GFXMASK_FG_G == -1 || g == GFXMASK_FG_G) && (GFXMASK_FG_B == -1 || b == GFXMASK_FG_B)) {
 			if (r == GFXMASK_FG_R && g == GFXMASK_FG_G && b == GFXMASK_FG_B) {
 				fgmask[bit / 8] |= 1 << (bit % 8);
 				bgmask[bit / 8] &= ~((char)1 << (bit % 8));
 			}
+#ifdef GRAPHICS_SHADED_ALPHA
+			if (r == GFXMASK_FG_R1 && g == GFXMASK_FG_G1 && b == GFXMASK_FG_B1) {
+				fgmask[bit / 8] |= 1 << (bit % 8);
+				bgmask[bit / 8] &= ~((char)1 << (bit % 8));
+				/* Translate shaded RGB-values of the foreground mask to alpha-channel info */
+				a = 151;
+			}
+			if (r == GFXMASK_FG_R2 && g == GFXMASK_FG_G2 && b == GFXMASK_FG_B2) {
+				fgmask[bit / 8] |= 1 << (bit % 8);
+				bgmask[bit / 8] &= ~((char)1 << (bit % 8));
+				/* Translate shaded RGB-values of the foreground mask to alpha-channel info */
+				a = 79;
+			}
+			if (r == GFXMASK_FG_R3 && g == GFXMASK_FG_G3 && b == GFXMASK_FG_B3) {
+				fgmask[bit / 8] |= 1 << (bit % 8);
+				bgmask[bit / 8] &= ~((char)1 << (bit % 8));
+				/* Translate shaded RGB-values of the foreground mask to alpha-channel info */
+				a = 29;
+			}
+#endif
 		}
 	}
 

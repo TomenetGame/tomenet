@@ -711,6 +711,14 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 	unsigned char *data, *data2;
 	unsigned char *r, *g, *b, *r2, *g2, *b2;
 	unsigned char rt = GetRValue(crTransparent), gt = GetGValue(crTransparent), bt = GetBValue(crTransparent); /* Translate everything back xD */
+ #ifdef GRAPHICS_SHADED_ALPHA
+	/* A bit messy in terms of redundancy: We only need these values here if crTransparent is actually the GFXMASK_FG_* colour... */
+	bool is_not_GFXMASK_FG = (crTransparent != RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B));
+	unsigned char *a2; /* Mask gains shades via alpha channel */
+	unsigned char rt1 = GFXMASK_FG_R1, gt1 = GFXMASK_FG_G1, bt1 = GFXMASK_FG_B1;
+	unsigned char rt2 = GFXMASK_FG_R2, gt2 = GFXMASK_FG_G2, bt2 = GFXMASK_FG_B2;
+	unsigned char rt3 = GFXMASK_FG_R3, gt3 = GFXMASK_FG_G3, bt3 = GFXMASK_FG_B3;
+ #endif
 	/* Note that while hbmColour is actually in 32bbm memory, bytesPerPixel is actually 24bbp usually! (PixelFormat.Format24bppRgb/Format32bppArgb): */
 	int bytesPerLine = bm.bmWidthBytes, bytesPerPixel = bytesPerLine / bm.bmWidth;
 
@@ -796,9 +804,41 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 				if (*r == rt && *g == gt && *b == bt) {
 					/* Set mask pixel */
 					*b2 = *g2 = *r2 = MaskColor1;
+  #ifdef GRAPHICS_SHADED_ALPHA
+					/* Set alpha value aka shading strength -> normal, ie fully opaque */
+					*a2 = 255;
+  #endif
 					/* Erase origin pixel */
 					*b = *g = *r = MaskColor0;
 				}
+  #ifdef GRAPHICS_SHADED_ALPHA
+				if (!is_not_GFXMASK_FG) continue;
+				/* Translate shaded RGB-values of the foreground mask to alpha-channel info */
+				if (*r == rt1 && *g == gt1 && *b == bt1) {
+					/* Set mask pixel */
+					*b2 = *g2 = *r2 = MaskColor1;
+					/* Set alpha value aka shading strength */
+					*a2 = 151;
+					/* Erase origin pixel */
+					*b = *g = *r = MaskColor0;
+				}
+				if (*r == rt2 && *g == gt2 && *b == bt2) {
+					/* Set mask pixel */
+					*b2 = *g2 = *r2 = MaskColor1;
+					/* Set alpha value aka shading strength */
+					*a2 = 79;
+					/* Erase origin pixel */
+					*b = *g = *r = MaskColor0;
+				}
+				if (*r == rt3 && *g == gt3 && *b == bt3) {
+					/* Set mask pixel */
+					*b2 = *g2 = *r2 = MaskColor1;
+					/* Set alpha value aka shading strength */
+					*a2 = 29;
+					/* Erase origin pixel */
+					*b = *g = *r = MaskColor0;
+				}
+  #endif
 			}
 		}
 	}
@@ -819,6 +859,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
 	free(data2);
   #endif
  #else /* GetPixel()/SetPixel() is WAY too slow on some Windows systems: Client startup time is a minute+, while it is immediate on WINE on an ancient, slow laptop. Microsoft please. */
+ /* --- NOTE: GRAPHICS_SHADED_ALPHA is not implemented here! --- */
 	const COLORREF MaskColor0 = RGB(0, 0, 0), MaskColor1 = RGB(255, 255, 255);
 
 	/* Create 32bpp mask bitmap. */
@@ -2996,8 +3037,8 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 		rectFg = (RECT){ tc_x + fwid, tc_y, tc_x + 2 * fwid, tc_y + fhgt };
 		brushBg = CreateSolidBrush(bgColor);
 		brushFg = CreateSolidBrush(fgColor);
-		FillRect(td->hdcCacheTilePreparation, &rectBg, brushBg);
-		FillRect(td->hdcCacheTilePreparation, &rectFg, brushFg);
+		FillSolidRect(td->hdcCacheTilePreparation, &rectBg, brushBg);
+		FillSolidRect(td->hdcCacheTilePreparation, &rectFg, brushFg);
 		DeleteObject(brushBg);
 		DeleteObject(brushFg);
 
@@ -3016,7 +3057,16 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 		//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
 		//
 		/* Copy the picture from the tile preparation memory to the window */
+  #ifdef GRAPHICS_SHADED_ALPHA
+		BLENDFUNCTION bf;
+		bf.BlendOp = AC_SRC_OVER; //forced (0)
+		bf.BlendFlags = 0; //forced
+		bf.SourceConstantAlpha = 255; //0..255
+		bf.AlphaFormat = AC_SRC_ALPHA; //forced (1)
+		AlphaBlend(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, fwid, fhgt, bf);
+  #else
 		BitBlt(hdc, x, y, fwid, fhgt, td->hdcCacheTilePreparation, tc_x, tc_y, SRCCOPY);
+  #endif
 	} else
  #endif
 	{

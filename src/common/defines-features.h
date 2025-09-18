@@ -615,17 +615,32 @@
    (However note, in equipment, colour codes are already used by rune sigils.) */
 #define X_INFO_TXT_COLOURS
 
+
 /* When graphics are used, enable a 2nd mask colour for background masking:
    Black (0x000000) in a non-f_info.txt-graphics will let the otherwise displayed f_info.txt graphics shine through (100% alpha transparency). - C. Blue
    (Notes: Affected server functions: Send_char(), Send_line_info(), Send_line_info_forward().) */
 #if defined(USE_GRAPHICS) || !defined(CLIENT_SIDE) /* !clientside: The server doesn't itself use graphics, but has to provide the calculation-capabilities for graphics-enabled clients */
+
+/* Allow multiple shades of mask colour instead of just a single (R,G,B)-specified mask colour? */
+// #define GRAPHICS_SHADED_ALPHA /* WIP */
+
  /* Masks for USE_GRAPHICS, using values that are very unlikely to collide with any desired actual colour.
     (todo: implement -> A value of '-1' for R or G or B is ONLY allowed for the foreground mask, means 'any' and thereby will offer a range of x256 combinations for that mask.) */
  /* Colours for foreground-colour mask (0xFCnnFB, was previously 0xFF00FF)) */
  #define GFXMASK_FG_R	252
  #define GFXMASK_FG_G	0
-//todo: implement -> #define GFXMASK_FG_G	-1	/* (only the FG mask may use "-1" values, as wildcard to indicate any value 0...255 will result in shades of masked foreground colour) */
  #define GFXMASK_FG_B	251
+ #ifdef GRAPHICS_SHADED_ALPHA /* Allow more shades of the fg colour? -- added 3 shades for now, remotely logarithmically spaced to match human perception - C. Blue */
+  #define GFXMASK_FG_R1	148
+  #define GFXMASK_FG_G1	0
+  #define GFXMASK_FG_B1	147
+  #define GFXMASK_FG_R2	76
+  #define GFXMASK_FG_G2	0
+  #define GFXMASK_FG_B2	75
+  #define GFXMASK_FG_R3	26
+  #define GFXMASK_FG_G3	0
+  #define GFXMASK_FG_B3	25
+ #endif
  /* Colours for background-colour mask (0x3E3D00, was previously 0x000000) */
  #define GFXMASK_BG_R	62
  #define GFXMASK_BG_G	61
@@ -648,8 +663,10 @@
    #define GRAPHICS_BG_MASK /* Enable 2nd mask for background masking. */
   #endif
  #endif
+
  /* Resume in text mode on client startup if graphics fail for some reason, instead of just quitting? */
  #define GFXERR_FALLBACK
+
 #endif
 #if 1 /* actually make these constants always available for now, might need sorting out/cleaning up */
 //#ifdef GRAPHICS_BG_MASK
@@ -659,6 +676,7 @@
  #define UG_2MASK	2
 //#endif
 #endif
+
 
 /* Casino: Use custom/graphical visuals for Go stones, dice, etc. if player has custom mappings to allow it? */
 #define CUSTOM_VISUALS
