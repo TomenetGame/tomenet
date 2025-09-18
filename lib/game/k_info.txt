@@ -6480,7 +6480,7 @@ F:RES_FIRE | SH_FIRE | BRAND_FIRE
 ##F:FULL_NAME | EASY_KNOW | IGNORE_WATER
 
 N:765:& Handbook~ of Manifold Targetting
-G:?:c
+G:?:v
 I:111:66:0
 W:50:0:30:13000
 A:20/30:40/65
@@ -6488,7 +6488,7 @@ P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW
 
 N:766:& Handbook~ of Elemental Offense
-G:?:c
+G:?:B
 I:111:67:0
 W:50:0:30:15000
 A:20/30:40/65
@@ -7054,7 +7054,7 @@ I:80:105:2000
 W:1:0:2:2
 
 N:847:& Handbook~ of Movement
-G:?:c
+G:?:W
 I:111:65:0
 W:50:0:30:13000
 A:20/30:40/65
