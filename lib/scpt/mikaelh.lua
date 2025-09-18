@@ -152,7 +152,7 @@ end
 -- Adds mod_add to all spell indices that were at least <new spell number>.
 -- Example, after adding the Stop Wraithform spell:
 -- fix_spellbooks("Pfft", STOPWRAITH, 1)
-
+-- If there are multiple spells to be inserted, call the function from the highest-indexed spell to the lowest index number consecutively.
 function fix_spellbooks(name, start, mod)
 	local i, p, x
 	p = ind(name)
