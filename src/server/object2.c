@@ -11976,6 +11976,9 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 		/* Force a pack overflow now to clear the overflow slot */
 		s_printf("WARNING: Forcing a pack overflow for player %s.\n", p_ptr->name);
 		pack_overflow(Ind);
+
+		/* Reinstantiate 2nd-newest-flag for this item, to be processed in pack_overflow() again */
+		if (!newest) o_ptr->mode |= MODE_NOT_NEWEST_ITEM;
 	}
 
 	/* Use that slot */

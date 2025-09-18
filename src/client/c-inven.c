@@ -1887,9 +1887,6 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 }
 
 void redraw_newest(void) {
-#ifdef TEST_CLIENT
-	c_msg_format("newest=%d,2nd=%d", item_newest, item_newest_2nd);
-#endif
 	p_ptr->window |= PW_INVEN | PW_EQUIP;
 #ifdef ENABLE_SUBINVEN
 	p_ptr->window |= PW_SUBINVEN;

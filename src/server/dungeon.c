@@ -11632,6 +11632,13 @@ void pack_overflow(int Ind) {
 	/* Decrease the item, optimize. */
 	inven_item_increase(Ind, i, -amt);
 	inven_item_optimize(Ind, i);
+
+	/* Newest item is actually the one that caused the overflow,
+	   which now moved from overflow slot INVEN_PACK down one into normal inventory slot 'w'. */
+	if (o_ptr->mode & MODE_NOT_NEWEST_ITEM) {
+		o_ptr->mode &= ~MODE_NOT_NEWEST_ITEM;
+		Send_item_newest_2nd(Ind, INVEN_PACK - 1);
+	} else Send_item_newest(Ind, INVEN_PACK - 1);
 }
 
 /* Handle special timed events that don't fit in /
