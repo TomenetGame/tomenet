@@ -158,10 +158,10 @@ HELLFIRE_I = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_HELLFIRE, args.dir, 20 + get_level(Ind, HELLFIRE_I, 250), 2 + get_level(Ind, HELLFIRE_I, 2), " casts a ball of hellfire for")
+			fire_ball(Ind, GF_HELLFIRE, args.dir, 50 + get_level(Ind, HELLFIRE_I, 250), 2 + get_level(Ind, HELLFIRE_I, 2), " casts a ball of hellfire for")
 		end,
 	["info"] = 	function()
-			return "dam "..(20 + get_level(Ind, HELLFIRE_I, 250)).." rad "..(2 + get_level(Ind, HELLFIRE_I, 2))
+			return "dam "..(50 + get_level(Ind, HELLFIRE_I, 250)).." rad "..(2 + get_level(Ind, HELLFIRE_I, 2))
 		end,
 	["desc"] = 	{ "Conjures a ball of hellfire to burn your foes to ashes.", }
 }
@@ -176,10 +176,10 @@ HELLFIRE_II = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	2,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_HELLFIRE, args.dir, 20 + 250 + get_level(Ind, HELLFIRE_II, 250), 2 + get_level(Ind, HELLFIRE_I, 2), " casts a ball of hellfire for")
+			fire_ball(Ind, GF_HELLFIRE, args.dir, 50 + 250 + get_level(Ind, HELLFIRE_II, 250), 2 + get_level(Ind, HELLFIRE_I, 2), " casts a ball of hellfire for")
 		end,
 	["info"] = 	function()
-			return "dam "..(20 + 250 + get_level(Ind, HELLFIRE_II, 250)).." rad "..(2 + get_level(Ind, HELLFIRE_I, 2))
+			return "dam "..(50 + 250 + get_level(Ind, HELLFIRE_II, 250)).." rad "..(2 + get_level(Ind, HELLFIRE_I, 2))
 		end,
 	["desc"] = 	{ "Conjures a ball of hellfire to burn your foes to ashes.", }
 }
