@@ -6098,6 +6098,10 @@ static void ruin_chest(object_type *o_ptr) {
 	if (o_ptr && o_ptr->tval == TV_CHEST) { /* check for o_ptr - chest might already be destroyed at this point */
 		//delete_object_idx(k, TRUE, FALSE);
 		o_ptr->sval = SV_CHEST_RUINED; /* Ruined chest now */
+		o_ptr->k_idx = lookup_kind(TV_CHEST, SV_CHEST_RUINED); //maybe todo for graphical tilesets: have a small and a large ruined chest, maybe even wood vs iron/steel
+		if (!o_ptr->embed && !o_ptr->held_m_idx)
+			// && in_bounds_array(o_ptr->iy, o_ptr->ix) //paranoia?
+			everyone_lite_spot(&o_ptr->wpos, o_ptr->iy, o_ptr->ix); /* Redraw visuals if not embedded or sth */
 		o_ptr->pval = 0; /* untrapped */
 		//o_ptr->bpval = 0;
 		o_ptr->ident |= ID_KNOWN | ID_NO_HIDDEN; /* easy to see it's a goner */
