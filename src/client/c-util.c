@@ -9732,7 +9732,8 @@ void auto_inscriptions(void) {
 	char tmp[160], buf[1024], *buf_ptr, c;
 	char match_buf[AUTOINS_MATCH_LEN + 8], tag_buf[AUTOINS_TAG_LEN + 2];
 
-	char fff[1024], search[MAX_CHARS];
+	char fff[1024];
+	static char search[MAX_CHARS] = { 0 };
 
 #ifdef REGEX_SEARCH
 	int ires = -999;
