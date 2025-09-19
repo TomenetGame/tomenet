@@ -6840,6 +6840,141 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 	}
 }
 
+void open_rift(int Ind, int dir, int intensity) {
+	player_type *p_ptr = Players[Ind];
+	struct worldpos *wpos = &p_ptr->wpos;
+	cave_type *c_ptr;
+	dun_level *l_ptr = getfloor(wpos);
+	struct c_special *cs_ptr;	/* for special key doors */
+	cave_type **zcave;
+
+	if (!(zcave = getcave(wpos))) return;
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_DESTROY) && !override_LF1_NO_DESTROY) return;
+	override_LF1_NO_DESTROY = FALSE;
+
+	/* among others, make sure town areas aren't affected.. */
+	if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) return;
+
+	x = p_ptr->px;
+	y = p_ptr->py;
+
+#ifdef USE_SOUND_2010
+	/* Use either stone prison or earthquake sound fx? */
+	//sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_NO_OVERLAP);
+	sound(Ind, "stone_wall", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
+
+	int tx, ty;
+	//todo: w/o PROJECT_KILL it doesn't even create the floor feats
+	//int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_THRU | PROJECT_NODF | PROJECT_NODO;
+	int flg = PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO | PROJECT_NODF;
+	int dx, dy, sx, sy;
+
+	/* Differences to wide fire_wall():
+	    tmpx,tmpy: Move only 1 step into the target direction, then cast, ie create the rift directly adjacent to us always;
+	    i: make the rift potentialylonger than just 3 grids. */
+	int tmpx, tmpy, i, xorg, yorg;
+
+	/* Use the given direction */
+	tx = p_ptr->px + ddx[dir];
+	ty = p_ptr->py + ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind)) {
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+
+	dx = ABS(tx - p_ptr->px);
+	dy = ABS(ty - p_ptr->py);
+	sx = SGN(tx - p_ptr->px);
+	sy = SGN(ty - p_ptr->py);
+	if (dx == dy || (dx > 4 && dy > 4 && ABS(dx - dy) < (dx + dy) / 6)) { /* Cast additional grids diagonally */
+		/* Hack player position to offset the line parallelly */
+		p_ptr->px -= sx;
+#if 0
+		project(0 - Ind, 0, &p_ptr->wpos, ty, tx - sx, 0, GF_DARK_RIFT, flg, "");
+#else
+		tmpx = p_ptr->px;
+		tmpy = p_ptr->py;
+		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - sx);
+msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx-sx,ty,tmpx,tmpy);
+		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+#endif
+		p_ptr->px += sx;
+		p_ptr->py -= sy;
+#if 0
+		project(0 - Ind, 0, &p_ptr->wpos, ty - sy, tx, 0, GF_DARK_RIFT, flg, "");
+#else
+		tmpx = p_ptr->px;
+		tmpy = p_ptr->py;
+		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - sy, tx);
+msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
+		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+#endif
+		/* Unhack */
+		p_ptr->py += sy;
+	} else if (dx > dy) { /* Fire additional walls above and below */
+		/* Hack player position to offset the line parallelly */
+		p_ptr->py--;
+#if 0
+		project(0 - Ind, 0, &p_ptr->wpos, ty - 1, tx, 0, GF_DARK_RIFT, flg, "");
+#else
+		tmpx = p_ptr->px;
+		tmpy = p_ptr->py;
+		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - 1, tx);
+msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
+		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+#endif
+		p_ptr->py += 2;
+#if 0
+		project(0 - Ind, 0, &p_ptr->wpos, ty + 1, tx, 0, GF_DARK_RIFT, flg, "");
+#else
+		tmpx = p_ptr->px;
+		tmpy = p_ptr->py;
+		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty + 1, tx);
+msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
+		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+#endif
+		/* Unhack */
+		p_ptr->py--;
+	} else { /* Fire additional walls to the left and right */
+		/* Hack player position to offset the line parallelly */
+		p_ptr->px--;
+#if 0
+		project(0 - Ind, 0, &p_ptr->wpos, ty, tx - 1, 0, GF_DARK_RIFT, flg, "");
+#else
+		tmpx = p_ptr->px;
+		tmpy = p_ptr->py;
+		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - 1);
+msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
+		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+#endif
+		p_ptr->px += 2;
+#if 0
+		project(0 - Ind, 0, &p_ptr->wpos, ty, tx + 1, 0, GF_DARK_RIFT, flg, "");
+#else
+		tmpx = p_ptr->px;
+		tmpy = p_ptr->py;
+		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx + 1);
+msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
+		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+#endif
+		/* Unhack */
+		p_ptr->px--;
+	}
+	/* Analyze the "dir" and the "target", do NOT explode */
+#if 0
+	project(0 - Ind, 0, &p_ptr->wpos, ty, tx, 0, GF_DARK_RIFT, flg, "");
+#else
+	tmpx = p_ptr->px;
+	tmpy = p_ptr->py;
+	mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx);
+msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
+	project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+#endif
+}
+
 /* Wipe everything -- admin terraform function, does not happen in normal gameplay. */
 void wipe_spell(struct worldpos *wpos, int cy, int cx, int r) {
 	int		yy, xx, dy, dx;

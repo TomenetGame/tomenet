@@ -1879,6 +1879,7 @@ extern bool dispel_undead_demons(int Ind, int dam);
 extern bool turn_undead(int Ind);
 extern void destroy_area(struct worldpos *wpos, int y1, int x1, int r, bool full, u16b feat, int stun);
 extern void earthquake(struct worldpos *wpos, int cy, int cx, int r);
+extern void open_rift(int Ind, int dir, int intensity);
 extern void wipe_spell(struct worldpos *wpos, int cy, int cx, int r);
 extern void lite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);

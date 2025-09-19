@@ -251,3 +251,21 @@ VAPORMIRROR = add_spell {
 			"Creates a solid mirage from moisture in the air around you",
 			"that acts as a magical mirror and reflects projectiles.", }
 }
+
+HAILSTORM = add_spell {
+	["name"] = 	"Hailstorm",
+	["name2"] = 	"Hail",
+	["school"] = 	{SCHOOL_AIR, SCHOOL_WATER},
+	["level"] = 	40,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
+	["fail"] = 	-65,
+	["direction"] = TRUE,
+	["spell"] = 	function(args)
+			fire_cloud(Ind, GF_ICE, args.dir, (1 + 91 + get_level(Ind, HAILSTORM, 59)), 3, 9 + get_level(Ind, HAILSTORM, 30), 9, " creates a hailstorm of")
+	end,
+	["info"] = 	function()
+			return "dam "..(91 + get_level(Ind, HAILSTORM, 59)).." rad 3 dur "..(9 + get_level(Ind, HAILSTORM, 30))
+	end,
+	["desc"] = 	{ "Creates a devastating hailstorm of ice shards.", }
+}

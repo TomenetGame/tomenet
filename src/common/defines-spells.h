@@ -219,6 +219,8 @@
 #define GF_THUNDER		167 /* To replace the hacky 'triple-bolt' of the thunderstorm spell */
 #define GF_ANNIHILATION		168 /* To differentiate drain effect from hacky non-drain effect for wands */
 #define GF_VINE_SLOW		169 /* Same as GF_OLD_SLOW but causes terrain fluff */
+#define GF_DISP_UNDEAD_DEMON	170
+#define	GF_DARK_RIFT		171
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200
@@ -238,4 +240,3 @@
 // #define GF_TEXT_UPDATE	210 /* 'your game version is outdated..' */
 #define GF_SHOW_LIGHTNING	211
 #define GF_THUNDER_VISUAL	212
-#define GF_DISP_UNDEAD_DEMON	213

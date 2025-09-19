@@ -4822,6 +4822,59 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 	    }
 
+	case GF_DARK_RIFT:
+	    {
+		struct c_special *cs_ptr;
+		u16b feat = c_ptr->feat;
+
+		/* Require a "naked" floor grid */
+		if (!cave_naked_bold(zcave, y, x)) break;
+		if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) break;
+		/* Beware of the houses in town */
+		if ((wpos->wz == 0) && (c_ptr->info & CAVE_ICKY)) break;
+		/* Not if it's an open house door - mikaelh */
+		if ((f_info[feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) break;
+
+		/* Attempt to terraform */
+		if (!cave_set_feat_live(wpos, y, x, FEAT_DARK_PIT)) break;
+
+		/* Success! - Remove traps, monster traps and runes: */
+
+		/* Cleanup traps */
+		cs_ptr = GetCS(c_ptr, CS_TRAPS);
+		if (cs_ptr) cs_erase(c_ptr, cs_ptr);
+
+		/* Cleanup Runemaster Glyphs */
+		cs_ptr = GetCS(c_ptr, CS_RUNE);
+		if (cs_ptr) cs_erase(c_ptr, cs_ptr);
+
+		/* Cleanup monster traps */
+		if (feat == FEAT_MON_TRAP) {
+			(void)erase_mon_trap(wpos, y, x, 0);
+			/* erasing the monster trap will reset feature to previous type, so have to overwrite it again with the new wall */
+			c_ptr->feat = FEAT_WALL_EXTRA;
+		}
+
+		if (feat != FEAT_DARK_PIT) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
+
+		/* Notice */
+		if (!quiet) note_spot(Ind, y, x);
+
+#if 0
+		/* Redraw - the walls might block view and cause wall shading etc! */
+		for (i = 1; i <= NumPlayers; i++) {
+			/* If he's not playing, skip him */
+			if (Players[i]->conn == NOT_CONNECTED) continue;
+			/* If he's not here, skip him */
+			if (!inarea(wpos, &Players[i]->wpos)) continue;
+
+			Players[i]->update |= (PU_VIEW | PU_LITE | PU_FLOW); //PU_DISTANCE, PU_TORCH, PU_MONSTERS??; PU_FLOW needed? both VIEW and LITE needed?
+		}
+#endif
+		break;
+	    }
+
+
 	/* Burn trees, grass, etc. depending on specific fire type */
 	case GF_HOLY_FIRE:
 		/* Light up oil patches! */

@@ -179,10 +179,10 @@ SHAKE = add_spell {
 	["name"] = 	"Shake",
 	["name2"] = 	"Shake",
 	["school"] = 	{SCHOOL_EARTH},
-	["level"] = 	37,
+	["level"] = 	44,
 	["mana"] = 	60,
 	["mana_max"] = 	60,
-	["fail"] = 	-50,
+	["fail"] = 	-75,
 	["spell"] = 	function()
 			earthquake(player.wpos, player.py, player.px, 2 + get_level(Ind, SHAKE, 17));
 	end,
@@ -190,4 +190,44 @@ SHAKE = add_spell {
 			return "rad "..(2 + get_level(Ind, SHAKE, 17))
 	end,
 	["desc"] = 	{ "Creates a localized earthquake." }
+}
+
+SPIKES = add_spell {
+	["name"] = 	"Impaling Spikes",
+	["name2"] = 	"Spikes",
+	["school"] = 	{SCHOOL_EARTH},
+	["level"] = 	37,
+	["mana"] = 	35,
+	["mana_max"] = 	35,
+	["fail"] = 	-50,
+	["direction"] = TRUE,
+	["ftk"] = 	1,
+	["spell"] = 	function(args)
+			fire_ball(Ind, GF_SHARDS, args.dir, 400 + get_level(Ind, SPIKES, 1000), 1, " casts impaling spikes of")
+	end,
+	["info"] = 	function()
+			return "dam "..(400 + get_level(Ind, SPIKES, 1000)).." rad 1"
+	end,
+	["desc"] = 	{ "Causes stone spikes to erupt from the earth, impaling your enemies." }
+}
+
+RIFT = add_spell {
+	["name"] = 	"Rift",
+	["name2"] = 	"Rift",
+	["school"] = 	{SCHOOL_EARTH},
+	["level"] = 	40,
+	["mana"] = 	40,
+	["mana_max"] = 	40,
+	["fail"] = 	-70,
+	["direction"] = TRUE,
+	["ftk"] = 	0,
+	["spell"] = 	function(args)
+			--open_rift(Ind, args.dir, get_level(Ind, RIFT, 20));
+			open_rift(Ind, args.dir, 4);
+	end,
+	["info"] = 	function()
+			--return "length "..(1 + get_level(Ind, RIFT, 20) * 2)
+			return "length 9"
+	end,
+	["desc"] = 	{ "Causes the ground to give way, potentially trapping enemies." }
 }
