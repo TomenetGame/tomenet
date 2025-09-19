@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 14. September 2025 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 19. September 2025 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -22985,6 +22985,10 @@ these limitations will be lifted.
 
                     Tier II: Level 40.
 
+    Hailstorm       Creates a devastating hailstorm of ice shards.
+                    Required skill level for first spell level: 40.
+                    Shared spell (see above): Water, Air.
+
     BONI:           Swim in water at 30,
                     water resistance at 40.
                     Items that go bad over time due to warmth while being
@@ -23042,6 +23046,10 @@ these limitations will be lifted.
                     all other reactive-shield spells are from Runecraft.)
                     Required skill level for first spell level: 35.
 
+    Hailstorm       Creates a devastating hailstorm of ice shards.
+                    Required skill level for first spell level: 40.
+                    Shared spell (see above): Water, Air.
+
     BONI:           Feather falling at 30,
                     levitation at 45.
 
@@ -23075,8 +23083,17 @@ these limitations will be lifted.
     Stone Prison    Creates a prison of granite walls around you.
                     Required skill level for first spell level: 33.
 
-    Shake           Creates a local earthquake.
+    Impaling Spikes
+                    Causes a batch of stone spikes to erupt from the ground,
+                    impaling your enemies.
                     Required skill level for first spell level: 37.
+
+    Rift            Causes the ground to give way, potentially trapping
+                    enemies.
+                    Required skill level for first spell level: 40.
+
+    Shake           Creates a local earthquake.
+                    Required skill level for first spell level: 44.
 
     BONI:           Great damage reduction against earthquakes at 45.
 
