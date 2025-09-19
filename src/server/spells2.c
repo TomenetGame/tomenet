@@ -6855,9 +6855,6 @@ void open_rift(int Ind, int dir, int intensity) {
 	/* among others, make sure town areas aren't affected.. */
 	if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) return;
 
-	x = p_ptr->px;
-	y = p_ptr->py;
-
 #ifdef USE_SOUND_2010
 	/* Use either stone prison or earthquake sound fx? */
 	//sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_NO_OVERLAP);
