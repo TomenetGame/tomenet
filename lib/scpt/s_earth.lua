@@ -184,10 +184,10 @@ SHAKE = add_spell {
 	["mana_max"] = 	60,
 	["fail"] = 	-75,
 	["spell"] = 	function()
-			earthquake(player.wpos, player.py, player.px, 2 + get_level(Ind, SHAKE, 17));
+			earthquake(player.wpos, player.py, player.px, 2 + get_level(Ind, SHAKE, 30));
 	end,
 	["info"] = 	function()
-			return "rad "..(2 + get_level(Ind, SHAKE, 17))
+			return "rad "..(2 + get_level(Ind, SHAKE, 30))
 	end,
 	["desc"] = 	{ "Creates a localized earthquake." }
 }
