@@ -6843,9 +6843,7 @@ void earthquake(struct worldpos *wpos, int cy, int cx, int r) {
 void open_rift(int Ind, int dir, int intensity) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
-	cave_type *c_ptr;
 	dun_level *l_ptr = getfloor(wpos);
-	struct c_special *cs_ptr;	/* for special key doors */
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return;
