@@ -6893,7 +6893,6 @@ void open_rift(int Ind, int dir, int intensity) {
 		tmpx = p_ptr->px;
 		tmpy = p_ptr->py;
 		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - sx);
-msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx-sx,ty,tmpx,tmpy);
 		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
 #endif
 		p_ptr->px += sx;
@@ -6904,7 +6903,6 @@ msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,
 		tmpx = p_ptr->px;
 		tmpy = p_ptr->py;
 		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - sy, tx);
-msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
 		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
 #endif
 		/* Unhack */
@@ -6918,7 +6916,6 @@ msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,
 		tmpx = p_ptr->px;
 		tmpy = p_ptr->py;
 		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - 1, tx);
-msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
 		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
 #endif
 		p_ptr->py += 2;
@@ -6928,7 +6925,6 @@ msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,
 		tmpx = p_ptr->px;
 		tmpy = p_ptr->py;
 		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty + 1, tx);
-msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
 		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
 #endif
 		/* Unhack */
@@ -6942,7 +6938,6 @@ msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,
 		tmpx = p_ptr->px;
 		tmpy = p_ptr->py;
 		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - 1);
-msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
 		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
 #endif
 		p_ptr->px += 2;
@@ -6952,7 +6947,6 @@ msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,
 		tmpx = p_ptr->px;
 		tmpy = p_ptr->py;
 		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx + 1);
-msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
 		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
 #endif
 		/* Unhack */
@@ -6965,7 +6959,6 @@ msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,
 	tmpx = p_ptr->px;
 	tmpy = p_ptr->py;
 	mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx);
-msg_format(Ind, "px=%d,py=%d  tx=%d,ty=%d  tmpx=%d,tmpy=%d",p_ptr->px,p_ptr->py,tx,ty-sy,tmpx,tmpy);
 	project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
 #endif
 }
