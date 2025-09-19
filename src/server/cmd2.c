@@ -2987,8 +2987,7 @@ void do_cmd_open(int Ind, int dir) {
 			flag = TRUE;
 			/* Attempt to unlock it */
 			if (o_ptr->pval > 0) {
-				trap_kind *t_ptr;
-				t_ptr = &t_info[o_ptr->pval];
+				trap_kind *t_ptr = &t_info[o_ptr->pval];
 
 				/* Assume locked, and thus not open */
 				flag = FALSE;
