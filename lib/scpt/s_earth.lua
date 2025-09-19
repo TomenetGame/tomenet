@@ -196,17 +196,17 @@ SPIKES = add_spell {
 	["name"] = 	"Impaling Spikes",
 	["name2"] = 	"Spikes",
 	["school"] = 	{SCHOOL_EARTH},
-	["level"] = 	37,
+	["level"] = 	40,
 	["mana"] = 	35,
 	["mana_max"] = 	35,
-	["fail"] = 	-50,
+	["fail"] = 	-70,
 	["direction"] = TRUE,
 	["ftk"] = 	1,
 	["spell"] = 	function(args)
-			fire_ball(Ind, GF_SHARDS, args.dir, 400 + get_level(Ind, SPIKES, 1000), 1, " casts impaling spikes of")
+			fire_ball(Ind, GF_SHARDS, args.dir, 400 + get_level(Ind, SPIKES, 1300), 1, " casts impaling spikes of")
 	end,
 	["info"] = 	function()
-			return "dam "..(400 + get_level(Ind, SPIKES, 1000)).." rad 1"
+			return "dam "..(400 + get_level(Ind, SPIKES, 1300)).." rad 1"
 	end,
 	["desc"] = 	{ "Causes stone spikes to erupt from the earth, impaling your enemies." }
 }
@@ -215,19 +215,19 @@ RIFT = add_spell {
 	["name"] = 	"Rift",
 	["name2"] = 	"Rift",
 	["school"] = 	{SCHOOL_EARTH},
-	["level"] = 	40,
+	["level"] = 	37,
 	["mana"] = 	40,
 	["mana_max"] = 	40,
-	["fail"] = 	-70,
+	["fail"] = 	-50,
 	["direction"] = TRUE,
 	["ftk"] = 	0,
 	["spell"] = 	function(args)
 			--open_rift(Ind, args.dir, get_level(Ind, RIFT, 20));
-			open_rift(Ind, args.dir, 4);
+			open_rift(Ind, args.dir, 1); -- todo: len 4 (total 9) instead of 1 (total 3)
 	end,
 	["info"] = 	function()
 			--return "length "..(1 + get_level(Ind, RIFT, 20) * 2)
-			return "length 9"
+			return "length 3"
 	end,
 	["desc"] = 	{ "Causes the ground to give way, potentially trapping enemies." }
 }

@@ -23083,13 +23083,13 @@ these limitations will be lifted.
     Stone Prison    Creates a prison of granite walls around you.
                     Required skill level for first spell level: 33.
 
+    Rift            Causes the ground to give way, potentially trapping
+                    enemies.
+                    Required skill level for first spell level: 37.
+
     Impaling Spikes
                     Causes a batch of stone spikes to erupt from the ground,
                     impaling your enemies.
-                    Required skill level for first spell level: 37.
-
-    Rift            Causes the ground to give way, potentially trapping
-                    enemies.
                     Required skill level for first spell level: 40.
 
     Shake           Creates a local earthquake.
