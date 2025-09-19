@@ -2468,6 +2468,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 	chapter[0] = 0;
 	searchstr[0] = 0;
 	//lastsearch[0] = 0;
+	//lastchapter[0] = 0;
 
 	/* In case we're invoked by /? command, always start searching from the beginning */
 	if (!init_lineno && init_search_string) line = 0;
