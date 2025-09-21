@@ -1310,17 +1310,17 @@ bool set_tim_manashield(int Ind, int v) {
 	/* Open */
 	if (v) {
 		if (!p_ptr->tim_manashield) {
-			msg_print(Ind, "\376\377wA purple shimmering shield forms around your body!");
+			msg_print(Ind, "A purple shimmering shield forms around your body!");
 			notice = TRUE;
 		} else if (p_ptr->tim_manashield > 15 && v <= 15) {
-			msg_print(Ind, "\376\377vThe disruption shield starts to flicker and fade...");
+			msg_print(Ind, "\377vThe disruption shield starts to flicker and fade...");
 		}
 	}
 
 	/* Shut */
 	else {
 		if (p_ptr->tim_manashield) {
-			msg_print(Ind, "\376\377vThe disruption shield fades away.");
+			msg_print(Ind, "\377vThe disruption shield fades away.");
 			notice = TRUE;
 		}
 	}
@@ -2964,7 +2964,7 @@ bool set_invuln(int Ind, int v) {
 			msg_print(Ind, "\377vA powerful iridescent shield forms around your body!");
 			notice = TRUE;
 		} else if (p_ptr->invuln > 5 && v <= 5) {
-			msg_print(Ind, "\376\377vThe invulnerability shield starts to fade...");
+			msg_print(Ind, "\377vThe invulnerability shield starts to fade...");
 		}
 	}
 
@@ -2972,7 +2972,7 @@ bool set_invuln(int Ind, int v) {
 	else {
 		if (p_ptr->invuln &&
 		    p_ptr->invuln_dur >= 5) { /* avoid spam on stair-GoI */
-			msg_print(Ind, "\376\377vThe invulnerability shield fades away.");
+			msg_print(Ind, "\377vThe invulnerability shield fades away.");
 		}
 		notice = TRUE;
 	}
@@ -3723,7 +3723,7 @@ bool set_cut(int Ind, int v, int attacker, bool quiet) { /* bad status effect */
 		notice = TRUE;
 	}
 
-	if (heal_bandaged) msg_print(Ind, "\376Your wound seems healed, you remove the bandage.");
+	if (heal_bandaged) msg_print(Ind, "Your wound seems healed, you remove the bandage.");
 
 	/* Use the value */
 	p_ptr->cut = v;
@@ -3814,17 +3814,17 @@ bool set_kinetic_shield(int Ind, int v) {
 			/* Mutually exclusive */
 			if (p_ptr->spirit_shield) set_spirit_shield(Ind, 0, 0);
 
-			msg_print(Ind, "\376\377wYou create a kinetic barrier.");
+			msg_print(Ind, "You create a kinetic barrier.");
 			notice = TRUE;
 		} else if (p_ptr->kinetic_shield > 10 && v <= 10) {
-			msg_print(Ind, "\376\377vThe kinetic barrier starts to destabilize...");
+			msg_print(Ind, "\377vThe kinetic barrier starts to destabilize...");
 		}
 	}
 
 	/* Shut */
 	else {
 		if (p_ptr->kinetic_shield) {
-			msg_print(Ind, "\376\377vYour kinetic barrier destabilizes.");
+			msg_print(Ind, "\377vYour kinetic barrier destabilizes.");
 			notice = TRUE;
 		}
 	}
@@ -3898,17 +3898,17 @@ bool set_spirit_shield(int Ind, int power, int v) {
 			if (p_ptr->kinetic_shield) set_kinetic_shield(Ind, 0);
 
 			p_ptr->spirit_shield_pow = power;
-			msg_print(Ind, "\376\377wYou feel the spirits watching over you.");
+			msg_print(Ind, "You feel the spirits watching over you.");
 			notice = TRUE;
 		} else if (p_ptr->spirit_shield > 10 && v <= 10) {
-			msg_print(Ind, "\376\377vYou feel the spirits weakening");
+			msg_print(Ind, "\377vYou feel the spirits weakening");
 		}
 	}
 
 	/* Shut */
 	else {
 		if (p_ptr->spirit_shield) {
-			msg_print(Ind, "\376\377vYou feel the spirits watching over you are disappearing.");
+			msg_print(Ind, "\377vYou feel the spirits watching over you are disappearing.");
 			notice = TRUE;
 		}
 	}
