@@ -9340,8 +9340,8 @@ bool projectable_wall_perm(struct worldpos *wpos, int y1, int x1, int y2, int x2
 
 	/* See "project()" */
 	for (dist = 0; dist <= range; dist++) {
-		/* Protected grids prevent targetting */
-		if (f_info[zcave[y][x].feat].flags1 & FF1_PERMANENT) break;
+		/* ONLY permanent walls prevent targetting */
+		if (cave_perma_wall(zcave, y, x)) break;
 
 		/* Check for arrival at "final target" */
 		if ((x == x2) && (y == y2)) return(TRUE);

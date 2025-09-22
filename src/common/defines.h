@@ -7854,12 +7854,12 @@
 #define cave_floor_bold(ZCAVE,Y,X) \
 	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)
 
-/* Adding FF1_LOS to have LOS across FEAT_DARK_PIT grids */
+/* Adding FF1_LOS to have LOS across FEAT_DARK_PIT grids (or alternatively add FF1_CAN_LEVITATE) */
 #define cave_los(ZCAVE,Y,X) \
 	(((f_info[ZCAVE[Y][X].feat].flags1 & FF1_LOS) || (f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)) && \
 	!(f_info[ZCAVE[Y][X].feat].flags1 & FF1_BLOCK_LOS))
 
-/* Complete check for projections/shots */
+/* Complete check for projections/shots (again alternatively add FF1_CAN_LEVITATE instead of FF1_LOS)*/
 #define cave_contact(ZCAVE,Y,X) \
 	(((f_info[ZCAVE[Y][X].feat].flags1 & FF1_LOS) || (f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR)) && \
 	!(f_info[ZCAVE[Y][X].feat].flags1 & (FF1_BLOCK_LOS | FF1_BLOCK_CONTACT)))
@@ -7880,9 +7880,9 @@
 #define cave_block_los(ZCAVE,Y,X) \
 	(f_info[ZCAVE[Y][X].feat].flags1 & FF1_BLOCK_LOS)*/
 
-/* Is a grid any sort of removable wall? */
+/* Is a grid any sort of removable wall? (added FF1_CAN_LEVITATE as we assume those could be changeable ground holes for example) */
 #define cave_dig_wall(ZCAVE,Y,X) \
-	(!(f_info[ZCAVE[Y][X].feat].flags1 & (FF1_FLOOR | FF1_PERMANENT)))
+	(!(f_info[ZCAVE[Y][X].feat].flags1 & (FF1_FLOOR | FF1_LOS | FF1_PERMANENT)))
 
 /*
  * Determine if a "legal" grid is a "floor" grid or a passable grid
@@ -8016,7 +8016,8 @@
 	 ((f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_ALLOW_TELE))
 
 #define cave_perma_wall(ZCAVE,Y,X) \
-	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && !cave_mountain_bold(ZCAVE, Y, X) && !(f_info[ZCAVE[Y][X].feat].flags1 & FF1_FLOOR))
+	((f_info[ZCAVE[Y][X].feat].flags1 & FF1_PERMANENT) && !(f_info[ZCAVE[Y][X].feat].flags1 & (FF1_FLOOR | FF1_LOS)))
+	// && !cave_mountain_bold(ZCAVE, Y, X)
 
 /*
  * Is a given location "valid" for placing things?
@@ -8047,7 +8048,7 @@
 
 /* Grid based version of "cave_dig_wall()" */
 #define cave_dig_wall_grid(C) \
-	(!(f_info[(C)->feat].flags1 & (FF1_FLOOR | FF1_PERMANENT)))
+	(!(f_info[(C)->feat].flags1 & (FF1_FLOOR | FF1_LOS | FF1_PERMANENT)))
 
 /*
  * Grid based version of "cave_floor_bold()"
