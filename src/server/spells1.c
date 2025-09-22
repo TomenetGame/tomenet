@@ -13497,7 +13497,7 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 
 				c_ptr2 = &zcave[y][x];
 
-				if (cave_valid_bold(zcave, y, x) && /* <- implies !FF1_PERMANENT */
+				if (cave_valid_bold(zcave, y, x) && /* <- implies !FF1_PERMANENT, no NO_TFORM, and no special-gene true artifact on that grid */
 				    //(cave[y][x].feat < FEAT_PATTERN_START || cave[y][x].feat > FEAT_PATTERN_XTRA2) &&
 				    !feat_is_water(c_ptr2->feat) &&
 				    !feat_is_lava(c_ptr2->feat) &&
@@ -13507,7 +13507,7 @@ msg_format(-who, " TRUE x=%d,y=%d,grids=%d",x,y,grids);
 				    (c_ptr2->feat != FEAT_HOME_OPEN) &&
 				    (c_ptr2->feat != FEAT_HOME) &&
 				    allow_terraforming(wpos, FEAT_TREE) &&
-				    !((f_info[c_ptr2->feat].flags2 & FF2_NO_TFORM) || (c_ptr2->info & CAVE_NO_TFORM)) &&
+				    //!((f_info[c_ptr2->feat].flags2 & FF2_NO_TFORM) || (c_ptr2->info & CAVE_NO_TFORM)) && //redundant: already checked via cave_valid_bold() above
 				    /* Experimental: Let monster traps survive for non-Disintegration! Idea: Allow multi-detonation-potion-traps: */
 				    (typ == GF_DISINTEGRATE || c_ptr2->feat != FEAT_MON_TRAP)) {
 					struct c_special *cs_ptr;
