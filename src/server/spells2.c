@@ -6887,16 +6887,23 @@ void open_rift(int Ind, int dir, int intensity) {
 	sy = SGN(ty - p_ptr->py);
 
 	if (dx == dy || (dx > 4 && dy > 4 && ABS(dx - dy) < (dx + dy) / 6)) { /* Cast additional grids diagonally */
+/* todo: panic save at some angle/distance of manual targetting inside sector ]315;360[ deg */
+/* todo: non div/45 angle targetting draws straight lines. Need to cycle target grid around 90 deg clock+counterclock
+         and then mmove 'i' steps into each direction to find the new starting points. */
 		for (i = 1; i <= intensity; i++) {
 			/* Hack player position to offset the line parallelly */
-			tmpx = p_ptr->px = xorg - sx * i;
-			tmpy = p_ptr->py = yorg;
-			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - sx * i);
+			dx = sx * ((i + 1) / 2);
+			dy = sy * (i / 2);
+			tmpx = p_ptr->px = xorg - dx;
+			tmpy = p_ptr->py = yorg + dy;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty + dy, tx - dx);
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 
-			tmpx = p_ptr->px = xorg;
-			tmpy = p_ptr->py = yorg - sy * i;
-			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - sy * i, tx);
+			dx = sx * (i / 2);
+			dy = sy * ((i + 1) / 2);
+			tmpx = p_ptr->px = xorg + dx;
+			tmpy = p_ptr->py = yorg - dy;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - dy, tx + dx);
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 		}
 	} else if (dx > dy) { /* Cast additional grids above and below */
@@ -6932,7 +6939,7 @@ void open_rift(int Ind, int dir, int intensity) {
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 		}
 	}
-	/* Analyze the "dir" and the "target", do NOT explode */
+	/* Analyze the "dir" and the "target", do NOT explode; also restore px/py */
 	tmpx = p_ptr->px = xorg;
 	tmpy = p_ptr->py = yorg;
 	mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx);
