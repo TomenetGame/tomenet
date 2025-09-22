@@ -6868,7 +6868,7 @@ void open_rift(int Ind, int dir, int intensity) {
 	/* Differences to wide fire_wall():
 	    tmpx,tmpy: Move only 1 step into the target direction, then cast, ie create the rift directly adjacent to us always;
 	    i: make the rift potentialylonger than just 3 grids. */
-	int tmpx, tmpy, i, xorg, yorg;
+	int tmpx, tmpy, i, xorg = p_ptr->px, yorg = p_ptr->py;
 
 	/* Use the given direction */
 	tx = p_ptr->px + ddx[dir];
@@ -6884,82 +6884,89 @@ void open_rift(int Ind, int dir, int intensity) {
 	dy = ABS(ty - p_ptr->py);
 	sx = SGN(tx - p_ptr->px);
 	sy = SGN(ty - p_ptr->py);
+intensity = 1; //wip...
 	if (dx == dy || (dx > 4 && dy > 4 && ABS(dx - dy) < (dx + dy) / 6)) { /* Cast additional grids diagonally */
-		/* Hack player position to offset the line parallelly */
-		p_ptr->px -= sx;
+		for (i = 0; i < intensity; i++) {
+			/* Hack player position to offset the line parallelly */
+			p_ptr->px -= sx;
 #if 0
-		project(0 - Ind, 0, &p_ptr->wpos, ty, tx - sx, 0, GF_DARK_RIFT, flg, "");
+			project(0 - Ind, 0, &p_ptr->wpos, ty, tx - sx, 0, GF_RIFT, flg, "");
 #else
-		tmpx = p_ptr->px;
-		tmpy = p_ptr->py;
-		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - sx);
-		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+			tmpx = p_ptr->px;
+			tmpy = p_ptr->py;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - sx);
+			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 #endif
-		p_ptr->px += sx;
-		p_ptr->py -= sy;
+			p_ptr->px += sx;
+			p_ptr->py -= sy;
 #if 0
-		project(0 - Ind, 0, &p_ptr->wpos, ty - sy, tx, 0, GF_DARK_RIFT, flg, "");
+			project(0 - Ind, 0, &p_ptr->wpos, ty - sy, tx, 0, GF_RIFT, flg, "");
 #else
-		tmpx = p_ptr->px;
-		tmpy = p_ptr->py;
-		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - sy, tx);
-		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+			tmpx = p_ptr->px;
+			tmpy = p_ptr->py;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - sy, tx);
+			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 #endif
-		/* Unhack */
-		p_ptr->py += sy;
-	} else if (dx > dy) { /* Fire additional walls above and below */
-		/* Hack player position to offset the line parallelly */
-		p_ptr->py--;
+			/* Unhack */
+			p_ptr->py += sy;
+		}
+	} else if (dx > dy) { /* Cast additional grids above and below */
+		for (i = 0; i < intensity; i++) {
+			/* Hack player position to offset the line parallelly */
+			p_ptr->py--;
 #if 0
-		project(0 - Ind, 0, &p_ptr->wpos, ty - 1, tx, 0, GF_DARK_RIFT, flg, "");
+			project(0 - Ind, 0, &p_ptr->wpos, ty - 1, tx, 0, GF_RIFT, flg, "");
 #else
-		tmpx = p_ptr->px;
-		tmpy = p_ptr->py;
-		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - 1, tx);
-		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+			tmpx = p_ptr->px;
+			tmpy = p_ptr->py;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - 1, tx);
+			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 #endif
-		p_ptr->py += 2;
+			p_ptr->py += 2;
 #if 0
-		project(0 - Ind, 0, &p_ptr->wpos, ty + 1, tx, 0, GF_DARK_RIFT, flg, "");
+			project(0 - Ind, 0, &p_ptr->wpos, ty + 1, tx, 0, GF_RIFT, flg, "");
 #else
-		tmpx = p_ptr->px;
-		tmpy = p_ptr->py;
-		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty + 1, tx);
-		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+			tmpx = p_ptr->px;
+			tmpy = p_ptr->py;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty + 1, tx);
+			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 #endif
-		/* Unhack */
-		p_ptr->py--;
-	} else { /* Fire additional walls to the left and right */
-		/* Hack player position to offset the line parallelly */
-		p_ptr->px--;
+			/* Unhack */
+			p_ptr->py--;
+		}
+	} else { /* Cast additional grids to the left and right */
+		for (i = 0; i < intensity; i++) {
+			/* Hack player position to offset the line parallelly */
+			p_ptr->px--;
 #if 0
-		project(0 - Ind, 0, &p_ptr->wpos, ty, tx - 1, 0, GF_DARK_RIFT, flg, "");
+			project(0 - Ind, 0, &p_ptr->wpos, ty, tx - 1, 0, GF_RIFT, flg, "");
 #else
-		tmpx = p_ptr->px;
-		tmpy = p_ptr->py;
-		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - 1);
-		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+			tmpx = p_ptr->px;
+			tmpy = p_ptr->py;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - 1);
+			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 #endif
-		p_ptr->px += 2;
+			p_ptr->px += 2;
 #if 0
-		project(0 - Ind, 0, &p_ptr->wpos, ty, tx + 1, 0, GF_DARK_RIFT, flg, "");
+			project(0 - Ind, 0, &p_ptr->wpos, ty, tx + 1, 0, GF_RIFT, flg, "");
 #else
-		tmpx = p_ptr->px;
-		tmpy = p_ptr->py;
-		mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx + 1);
-		project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+			tmpx = p_ptr->px;
+			tmpy = p_ptr->py;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx + 1);
+			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 #endif
-		/* Unhack */
-		p_ptr->px--;
+			/* Unhack */
+			p_ptr->px--;
+		}
 	}
 	/* Analyze the "dir" and the "target", do NOT explode */
 #if 0
-	project(0 - Ind, 0, &p_ptr->wpos, ty, tx, 0, GF_DARK_RIFT, flg, "");
+	project(0 - Ind, 0, &p_ptr->wpos, ty, tx, 0, GF_RIFT, flg, "");
 #else
 	tmpx = p_ptr->px;
 	tmpy = p_ptr->py;
 	mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx);
-	project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_DARK_RIFT, flg, "");
+	project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 #endif
 }
 

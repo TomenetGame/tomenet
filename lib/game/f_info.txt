@@ -1843,6 +1843,16 @@ F:DONT_NOTICE_RUNNING | NIGHT_DARK
 D:1:This rock is far too hard.
 D:2:a very hard stone block blocking your way
 
+# Rift created by Earth spell 'Rift'.
+# Similar to dark pit but can be summoned on thanks to FLOOR flag.
+# And potentially could be disintegrated if PERMANENT flag is removed.
+N:278:rift
+G:~:D
+# available: ; ' . % & = ~ _
+F:CAN_FEATHER | CAN_LEVITATE | LOS | PERMANENT | FLOOR
+F:NO_WALK | SUPPORT_LIGHT | DONT_NOTICE_RUNNING
+D:0:A deep rift.
+
 
 
 # generic scheme (all lines are unique except

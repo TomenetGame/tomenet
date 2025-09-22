@@ -4822,7 +4822,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 	    }
 
-	case GF_DARK_RIFT:
+	case GF_RIFT:
 	    {
 		struct c_special *cs_ptr;
 		u16b feat = c_ptr->feat;
@@ -4836,7 +4836,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if ((f_info[feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) break;
 
 		/* Attempt to terraform */
-		if (!cave_set_feat_live(wpos, y, x, FEAT_DARK_PIT)) break;
+		if (!cave_set_feat_live(wpos, y, x, FEAT_RIFT)) break;
 
 		/* Success! - Remove traps, monster traps and runes: */
 
@@ -4855,7 +4855,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			c_ptr->feat = FEAT_WALL_EXTRA;
 		}
 
-		if (feat != FEAT_DARK_PIT) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
+		if (feat != FEAT_RIFT) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
 
 		/* Notice */
 		if (!quiet) note_spot(Ind, y, x);

@@ -3020,7 +3020,9 @@
 #define FEAT_ANIM_DEEP_LAVA_SOUTH	273
 #define FEAT_BARRED_WINDOW		274
 #define FEAT_BARRED_WINDOW_SMALL	275
-
+#define FEAT_HIGH_CLOUDS		276
+#define FEAT_ASH_MOUNTAIN		277
+#define FEAT_RIFT			278
 
 #define feat_is_shal_water(F) \
 	((F) == FEAT_ANIM_SHAL_WATER_EAST || (F) == FEAT_ANIM_SHAL_WATER_WEST || (F) == FEAT_ANIM_SHAL_WATER_NORTH || (F) == FEAT_ANIM_SHAL_WATER_SOUTH || \
@@ -5722,7 +5724,7 @@
 #define GF_ANNIHILATION		168 /* To differentiate drain effect from hacky non-drain effect for wands */
 #define GF_VINE_SLOW		169 /* Same as GF_OLD_SLOW but causes terrain fluff */
 #define GF_DISP_UNDEAD_DEMON	170
-#define GF_DARK_RIFT		171
+#define GF_RIFT			171
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200
