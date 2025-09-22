@@ -6846,19 +6846,6 @@ void open_rift(int Ind, int dir, int intensity) {
 	dun_level *l_ptr = getfloor(wpos);
 	cave_type **zcave;
 
-	if (!(zcave = getcave(wpos))) return;
-	if (l_ptr && (l_ptr->flags1 & LF1_NO_DESTROY) && !override_LF1_NO_DESTROY) return;
-	override_LF1_NO_DESTROY = FALSE;
-
-	/* among others, make sure town areas aren't affected.. */
-	if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) return;
-
-#ifdef USE_SOUND_2010
-	/* Use either stone prison or earthquake sound fx? */
-	//sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_NO_OVERLAP);
-	sound(Ind, "stone_wall", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
-#endif
-
 	int tx, ty;
 	//todo: w/o PROJECT_KILL it doesn't even create the floor feats
 	//int flg = PROJECT_NORF | PROJECT_GRID | PROJECT_ITEM | PROJECT_THRU | PROJECT_NODF | PROJECT_NODO;
@@ -6870,104 +6857,86 @@ void open_rift(int Ind, int dir, int intensity) {
 	    i: make the rift potentialylonger than just 3 grids. */
 	int tmpx, tmpy, i, xorg = p_ptr->px, yorg = p_ptr->py;
 
-	/* Use the given direction */
-	tx = p_ptr->px + ddx[dir];
-	ty = p_ptr->py + ddy[dir];
 
-	/* Hack -- Use an actual "target" */
-	if ((dir == 5) && target_okay(Ind)) {
+	if (!(zcave = getcave(wpos))) return;
+	if (l_ptr && (l_ptr->flags1 & LF1_NO_DESTROY) && !override_LF1_NO_DESTROY) return;
+	override_LF1_NO_DESTROY = FALSE;
+
+	/* among others, make sure town areas aren't affected.. */
+	if (!allow_terraforming(wpos, FEAT_WALL_EXTRA)) return;
+
+	if (dir != 5) {
+		/* Use the given direction */
+		tx = p_ptr->px + ddx[dir];
+		ty = p_ptr->py + ddy[dir];
+	} else if (target_okay(Ind)) {
+		/* Hack -- Use an actual "target" */
 		tx = p_ptr->target_col;
 		ty = p_ptr->target_row;
-	}
+	} else return;
+
+#ifdef USE_SOUND_2010
+	/* Use either stone prison or earthquake sound fx? */
+	//sound_near_site(y, x, wpos, 0, "stone_wall", NULL, SFX_TYPE_NO_OVERLAP);
+	sound(Ind, "stone_wall", NULL, SFX_TYPE_NO_OVERLAP, FALSE);
+#endif
 
 	dx = ABS(tx - p_ptr->px);
 	dy = ABS(ty - p_ptr->py);
 	sx = SGN(tx - p_ptr->px);
 	sy = SGN(ty - p_ptr->py);
-intensity = 1; //wip...
+
 	if (dx == dy || (dx > 4 && dy > 4 && ABS(dx - dy) < (dx + dy) / 6)) { /* Cast additional grids diagonally */
-		for (i = 0; i < intensity; i++) {
+		for (i = 1; i <= intensity; i++) {
 			/* Hack player position to offset the line parallelly */
-			p_ptr->px -= sx;
-#if 0
-			project(0 - Ind, 0, &p_ptr->wpos, ty, tx - sx, 0, GF_RIFT, flg, "");
-#else
-			tmpx = p_ptr->px;
-			tmpy = p_ptr->py;
-			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - sx);
+			tmpx = p_ptr->px = xorg - sx * i;
+			tmpy = p_ptr->py = yorg;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - sx * i);
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
-#endif
-			p_ptr->px += sx;
-			p_ptr->py -= sy;
-#if 0
-			project(0 - Ind, 0, &p_ptr->wpos, ty - sy, tx, 0, GF_RIFT, flg, "");
-#else
-			tmpx = p_ptr->px;
-			tmpy = p_ptr->py;
-			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - sy, tx);
+
+			tmpx = p_ptr->px = xorg;
+			tmpy = p_ptr->py = yorg - sy * i;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - sy * i, tx);
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
-#endif
-			/* Unhack */
-			p_ptr->py += sy;
 		}
 	} else if (dx > dy) { /* Cast additional grids above and below */
-		for (i = 0; i < intensity; i++) {
+		for (i = 1; i <= intensity; i++) {
+			p_ptr->px = xorg;
+
 			/* Hack player position to offset the line parallelly */
-			p_ptr->py--;
-#if 0
-			project(0 - Ind, 0, &p_ptr->wpos, ty - 1, tx, 0, GF_RIFT, flg, "");
-#else
 			tmpx = p_ptr->px;
-			tmpy = p_ptr->py;
-			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - 1, tx);
+			tmpy = p_ptr->py = yorg - i;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - i, tx);
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
-#endif
-			p_ptr->py += 2;
-#if 0
-			project(0 - Ind, 0, &p_ptr->wpos, ty + 1, tx, 0, GF_RIFT, flg, "");
-#else
+
 			tmpx = p_ptr->px;
-			tmpy = p_ptr->py;
-			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty + 1, tx);
+			tmpy = p_ptr->py = yorg + i;
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty + i, tx);
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
-#endif
-			/* Unhack */
-			p_ptr->py--;
 		}
 	} else { /* Cast additional grids to the left and right */
-		for (i = 0; i < intensity; i++) {
+		for (i = 1; i <= intensity; i++) {
+			p_ptr->py = yorg;
+
 			/* Hack player position to offset the line parallelly */
-			p_ptr->px--;
-#if 0
-			project(0 - Ind, 0, &p_ptr->wpos, ty, tx - 1, 0, GF_RIFT, flg, "");
-#else
+			p_ptr->px = xorg - i;
 			tmpx = p_ptr->px;
 			tmpy = p_ptr->py;
-			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - 1);
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - i);
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
-#endif
-			p_ptr->px += 2;
-#if 0
-			project(0 - Ind, 0, &p_ptr->wpos, ty, tx + 1, 0, GF_RIFT, flg, "");
-#else
+
+			p_ptr->px = xorg + i;
 			tmpx = p_ptr->px;
 			tmpy = p_ptr->py;
-			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx + 1);
+			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx + i);
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
-#endif
-			/* Unhack */
-			p_ptr->px--;
 		}
 	}
 	/* Analyze the "dir" and the "target", do NOT explode */
-#if 0
-	project(0 - Ind, 0, &p_ptr->wpos, ty, tx, 0, GF_RIFT, flg, "");
-#else
-	tmpx = p_ptr->px;
-	tmpy = p_ptr->py;
+	tmpx = p_ptr->px = xorg;
+	tmpy = p_ptr->py = yorg;
 	mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx);
 	project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
-#endif
 }
 
 /* Wipe everything -- admin terraform function, does not happen in normal gameplay. */

@@ -222,12 +222,10 @@ RIFT = add_spell {
 	["direction"] = TRUE,
 	["ftk"] = 	0,
 	["spell"] = 	function(args)
-			--open_rift(Ind, args.dir, get_level(Ind, RIFT, 20));
-			open_rift(Ind, args.dir, 1); -- todo: len 4 (total 9) instead of 1 (total 3)
+			open_rift(Ind, args.dir, (get_level(Ind, RIFT, 25) + 1) / 2);
 	end,
 	["info"] = 	function()
-			--return "length "..(1 + get_level(Ind, RIFT, 20) * 2)
-			return "length 3"
+			return "length "..(1 + ((get_level(Ind, RIFT, 25) + 1) / 2) * 2)
 	end,
 	["desc"] = 	{ "Causes the ground to give way, potentially trapping enemies." }
 }
