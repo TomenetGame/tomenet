@@ -659,7 +659,7 @@ static void print_immunities() {
  */
 void do_mimic() {
 	int spell, j, dir, c = 0;
-	char out_val[41];
+	char out_val[MAX_CHARS];
 	bool uses_dir = FALSE;
 	bool redraw = FALSE;
 	char choice;
