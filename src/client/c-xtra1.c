@@ -1286,6 +1286,7 @@ void prt_indicators(u32b indicators) {
 	prt_indicator_pfe_crit((indicators & IND_PFE) != 0, (indicators & IND_CRIT) != 0);
 	if ((indicators & (IND_SHIELD1 | IND_SHIELD2 | IND_SHIELD3 | IND_SHIELD4 | IND_SHIELD5 | IND_SHIELD6 | IND_SHIELD7)) != 0) prt_indicator_shield(indicators);
 	else prt_indicator_shield(0);
+	prt_indicator_probtravel((indicators & IND_PROBTRAVEL) != 0);
 }
 
 void prt_indicator_res_fire(bool is_active) {
@@ -1504,8 +1505,23 @@ void prt_indicator_shield(u32b flags) {
 			else if (flags & IND_SHIELD6) /*SHIELD_PLASMA*/ a = TERM_L_RED;
 			else /*IND_SHIELD7*/ a = TERM_VIOLET; //'mystic shield'
 		}
-		 c_put_str(a, "Shld", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+		c_put_str(a, "Sh", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
 	}
+
+	/* restore cursor position */
+	Term_gotoxy(x, y);
+}
+void prt_indicator_probtravel(bool is_active) {
+	int x, y;
+
+	/* Only visible in BIG_MAP mode, othewise it would overwrite other indicators */
+	if (screen_hgt != MAX_SCREEN_HGT) return;
+
+	/* remember cursor position */
+	Term_locate(&x, &y);
+
+	if (is_active) c_put_str(TERM_L_BLUE, "P", ROW_PROBTRAVEL, COL_PROBTRAVEL);
+	else c_put_str(TERM_WHITE, " ", ROW_PROBTRAVEL, COL_PROBTRAVEL);
 
 	/* restore cursor position */
 	Term_gotoxy(x, y);

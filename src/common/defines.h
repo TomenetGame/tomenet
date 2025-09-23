@@ -2728,6 +2728,9 @@
 #define ROW_TEMP_SHIELD		23
 #define COL_TEMP_SHIELD		8
 
+#define ROW_PROBTRAVEL		23
+#define COL_PROBTRAVEL		11
+
 #define ROW_TEMP_ESP		25
 #define COL_TEMP_ESP		1
 
@@ -5460,6 +5463,7 @@
 #define IND_PFE		0x00040000U /* Active Protection from Evil */
 #define IND_TSTORM	0x00080000U /* Active thunderstorm spell */
 #define IND_CRIT	0x00100000U /* Active corrupted silent force spell */
+#define IND_PROBTRAVEL	0x00200000U /* Active Probability Travel spell */
 
 /*
  * Bit flags for the "p_ptr->window" variable (etc)

@@ -799,6 +799,7 @@ static void prt_indicators(int Ind) {
 	if (p_ptr->melee_brand) indicators |= IND_MELEE_BRAND;
 	if (p_ptr->tim_regen) indicators |= IND_REGEN;
 	if (p_ptr->dispersion) indicators |= IND_DISPERSION;
+	if (p_ptr->prob_travel) indicators |= IND_PROBTRAVEL;
 
 	if (p_ptr->mcharming) indicators |= IND_CHARM;
 	if (p_ptr->tim_thunder) indicators |= IND_TSTORM;

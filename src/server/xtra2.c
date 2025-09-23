@@ -788,7 +788,7 @@ bool set_tim_lcage(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS);
 
 	/* Redraw indicator */
-	p_ptr->redraw2 |= (PR2_INDICATORS);
+	p_ptr->redraw2 |= PR2_INDICATORS;
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -881,6 +881,9 @@ bool set_prob_travel(int Ind, int v) {
 
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
+
+	/* Redraw indicator */
+	p_ptr->redraw2 |= (PR2_INDICATORS);
 
 	/* Handle stuff */
 	handle_stuff(Ind);
