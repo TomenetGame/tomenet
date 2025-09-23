@@ -9486,8 +9486,8 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		break;
 
 	case 6:	if (!(p_ptr->melee_techniques & MT_TRACKANIM)) return; /* Track Animals */
-		if (p_ptr->cst < 3) { msg_print(Ind, "\377oNot enough stamina!"); return; }
-		use_stamina(p_ptr, 3);
+		if (p_ptr->cst < 1) { msg_print(Ind, "\377oNot enough stamina!"); return; }
+		use_stamina(p_ptr, 1);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		(void)detect_creatures_xxx(Ind, RF3_ANIMAL);
 		s_printf("TECHNIQUE_MELEE: %s - track animals\n", p_ptr->name);
@@ -9495,8 +9495,8 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		break;
 
 	case 7:	if (!(p_ptr->melee_techniques & MT_DETNOISE)) return; /* Perceive Noise */
-		if (p_ptr->cst < 2) { msg_print(Ind, "\377oNot enough stamina!"); return; }
-		use_stamina(p_ptr, 2);
+		if (p_ptr->cst < 1) { msg_print(Ind, "\377oNot enough stamina!"); return; }
+		use_stamina(p_ptr, 1);
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		detect_noise(Ind);
 		s_printf("TECHNIQUE_MELEE: %s - perceive noise\n", p_ptr->name);
