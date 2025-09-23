@@ -6888,7 +6888,6 @@ void open_rift(int Ind, int dir, int intensity) {
 
 //msg_format(Ind, "px=%d(%d),py=%d(%d)  tx=%d,ty=%d  sx=%d,sy=%d  dx=%d,dy=%d", p_ptr->px, xorg, p_ptr->py, yorg, tx, ty, sx, sy, dx, dy);
 	if (dx == dy || ABS(dx - dy) < (dx + dy) / 2) { /* Cast additional grids diagonally */
-/* todo: panic save at some angle/distance of manual targetting inside sector ]315;360[ deg */
 /* todo: non div/45 angle targetting draws straight lines. Need to cycle target grid around 90 deg clock+counterclock
          and then mmove 'i' steps into each direction to find the new starting points. */
 //so for now hack to exact diagonals instead, to remedy both of the above:
@@ -6907,6 +6906,7 @@ ty = p_ptr->py + sy;
 			tmpx = p_ptr->px = xorg - dx;
 			tmpy = p_ptr->py = yorg + dy;
 			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty + dy, tx - dx);
+			if (!in_bounds_floor(l_ptr, p_ptr->py, p_ptr->px)) continue;
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 
 			dx = sx * (i / 2);
@@ -6914,6 +6914,7 @@ ty = p_ptr->py + sy;
 			tmpx = p_ptr->px = xorg + dx;
 			tmpy = p_ptr->py = yorg - dy;
 			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - dy, tx + dx);
+			if (!in_bounds_floor(l_ptr, p_ptr->py, p_ptr->px)) continue;
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 		}
 	} else if (dx > dy) { /* Cast additional grids above and below */
@@ -6924,11 +6925,13 @@ ty = p_ptr->py + sy;
 			tmpx = p_ptr->px;
 			tmpy = p_ptr->py = yorg - i;
 			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty - i, tx);
+			if (!in_bounds_floor(l_ptr, p_ptr->py, p_ptr->px)) continue;
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 
 			tmpx = p_ptr->px;
 			tmpy = p_ptr->py = yorg + i;
 			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty + i, tx);
+			if (!in_bounds_floor(l_ptr, p_ptr->py, p_ptr->px)) continue;
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 		}
 	} else { /* Cast additional grids to the left and right */
@@ -6940,12 +6943,14 @@ ty = p_ptr->py + sy;
 			tmpx = p_ptr->px;
 			tmpy = p_ptr->py;
 			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx - i);
+			if (!in_bounds_floor(l_ptr, p_ptr->py, p_ptr->px)) continue;
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 
 			p_ptr->px = xorg + i;
 			tmpx = p_ptr->px;
 			tmpy = p_ptr->py;
 			mmove2(&tmpy, &tmpx, p_ptr->py, p_ptr->px, ty, tx + i);
+			if (!in_bounds_floor(l_ptr, p_ptr->py, p_ptr->px)) continue;
 			project(0 - Ind, 0, &p_ptr->wpos, tmpy, tmpx, 0, GF_RIFT, flg, "");
 		}
 	}
