@@ -1386,7 +1386,7 @@
 #define TURN_CHAR_INTO_NUMBER_NEWMETHOD
 
 /* Warning and colour change when Disruption Shield runs out (turns left) */
-#define TIME_SHIELDM_LOW 12
+#define TIME_SHIELDM_LOW 10
 
 /* Martyrdom doesn't allow to restore mana? (deprecated, we use half damage
    output for GF_DISP_xxx damage types instead of this penalty) */
