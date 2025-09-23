@@ -4458,7 +4458,7 @@ void lite_spot(int Ind, int y, int x) {
 			}
 
 			/* Mana Shield and GOI also flicker */
-			if (p_ptr->tim_manashield && rand_int(2)) {
+			if (p_ptr->tim_manashield) { // && rand_int(2)) {  -- commented out the rand to maximize distinguishing manashield from @ base colour
 				if (p_ptr->tim_manashield > 15) a = TERM_SHIELDM;
 				else a = TERM_NEXU;
 			}

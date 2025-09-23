@@ -787,12 +787,10 @@ static byte anim2static(byte attr) {
 	case TERM_PVPBB:
 	case TERM_PVP:
 		return(TERM_WHITE); //TERM_L_DARK
-	}
 
-	if (attr == TERM_SHIELDM) return(TERM_L_RED); //fewest collisions, as friendly shamans will usually be in monster form anyway
-	if (attr == TERM_SHIELDI) return(TERM_VIOLET); //can be violet already from invisibility though, but maybe still best choice regarding party gameplay
+	case TERM_SHIELDM: return(TERM_L_RED); //fewest collisions, as friendly shamans will usually be in monster form anyway
+	case TERM_SHIELDI: return(TERM_VIOLET); //can be violet already from invisibility though, but maybe still best choice regarding party gameplay
 
-	switch (attr) {
 	case TERM_MULTI:
 		//return(anim2static(TERM_SMOOTHPAL));
 		return(TERM_VIOLET);
@@ -817,7 +815,7 @@ static byte anim2static(byte attr) {
 	case TERM_PSI:
 		return(TERM_YELLOW);
 	case TERM_NEXU:
-		return(TERM_VIOLET);
+		return(TERM_L_RED);//nexus in general is rather TERM_VIOLET but we want to avoid disruption shield colour collision with invisibility base colour which is also violet
 	case TERM_NETH:
 		return(TERM_L_DARK);//TERM_L_GREEN?
 	case TERM_DISE:
