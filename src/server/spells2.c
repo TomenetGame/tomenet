@@ -6895,6 +6895,11 @@ void open_rift(int Ind, int dir, int intensity) {
 tx = p_ptr->px + sx;
 ty = p_ptr->py + sy;
 //msg_format(Ind, "->  tx=%d,ty=%d", tx, ty);
+		/* Hack: Since we're drawing a diagonal line at double thickness to avoid holes, it gets only half as long in actual grids.
+		         To compensate but remain visually smooth for now we multiply the actual grid length by SQRT(2)
+		         aka the ratio of diagonal movement in a square-based game like this (w/ round-up bias^^). */
+		intensity = (intensity * 142 + 99) / 100;
+
 		for (i = 1; i <= intensity; i++) {
 			/* Hack player position to offset the line parallelly */
 			dx = sx * ((i + 1) / 2);
