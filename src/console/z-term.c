@@ -554,8 +554,10 @@ byte flick_colour(byte attr) {
 #endif
 
 	if (attr == TERM_SHIELDM) {
-		switch (randint(3)) { /* Changed violet to l-blue because @ can be base violet from invisibility already, potentially causing a lag in recognizing shield failure */
-		case 1: return(TERM_L_BLUE);
+		switch (randint(3)) {
+		/* Changed violet to l-blue because @ can be base violet from invisibility already, potentially causing a lag in recognizing shield failure */
+		/* Changed it back because l-blue contrast is a bit extreme; with the removed rand2 check for colouring it seems violet is ok too */
+		case 1: return(TERM_VIOLET); //return(TERM_L_BLUE);
 		case 2: return(TERM_L_RED);
 		case 3: return(TERM_ORANGE);
 		}
