@@ -1369,6 +1369,9 @@
  * TODO: wraithes should only pass townwalls of her/his own house
  */
 #define WRAITH_THROUGH_TOWNWALL
+/* Wraithform and Probability Travel share the bpr/wraith indicator?
+   If not, probtravel gets its own indicator to the right of shield-indicator. */
+#define IND_WRAITH_PROB
 
 /* when do rogues learn cloaking mode? */
 #define LEARN_CLOAKING_LEVEL 15
@@ -5419,6 +5422,7 @@
 #define PR_STATE	0x00100000U	/* Display Extra (State) */
 #define PR_SPEED	0x00200000U	/* Display Extra (Speed) */
 #define PR_STUDY	0x00400000U	/* Display Extra (Study) */
+#define PR_BPR_WRAITH_PROB	0x00400000U	/* Re-use (!) to display BpR and also Wraithform */
 #define PR_PLUSSES	0x00800000U	/* Display Plusses to Hit/Damage */
 #define PR_EXTRA	0x01000000U	/* Display Extra Info */
 #define PR_BASIC	0x02000000U	/* Display Basic Info */
@@ -5428,8 +5432,6 @@
 #define PR_SANITY	0x20000000U     /* Display Sanity */
 #define PR_ENCUMBERMENT	0x40000000U	/* Display Encumberment status line */
 #define PR_STAMINA	0x80000000U	/* Display Stamina */
-
-#define PR_BPR_WRAITH	0x00400000U	/* Re-use (!) to display BpR and also Wraithform */
 
 /*
  * Bit flags for the "p_ptr->redraw2" variable

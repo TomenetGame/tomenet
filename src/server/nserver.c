@@ -7513,7 +7513,7 @@ int Send_study(int Ind, bool study) {
 
 /* Sends either BpR or Wraithform status.
    To send Wraithform, bpr must be 255. */
-int Send_bpr_wraith(int Ind, byte bpr, byte attr, cptr bpr_str) {
+int Send_bpr_wraith_prob(int Ind, byte bpr, byte attr, cptr bpr_str) {
 	int Ind2;
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
 	player_type *p_ptr2 = NULL;
@@ -15098,7 +15098,7 @@ void end_mind(int Ind, bool update) {
 	} else { /* we got apruptly severed (target logged out) */
 		p_ptr->update |= PU_MUSIC;
 		p_ptr->window |= (PW_ALLITEMS);
-		p_ptr->redraw |= (PR_BPR_WRAITH | PR_BASIC | PR_MAP);
+		p_ptr->redraw |= (PR_BPR_WRAITH_PROB | PR_BASIC | PR_MAP);
 	}
 }
 

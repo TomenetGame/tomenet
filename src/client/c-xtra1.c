@@ -1256,7 +1256,7 @@ void prt_study(bool study) {
 }
 
 /* Prints blows/round in main window - important and changable stat! - C. Blue */
-void prt_bpr_wraith(byte bpr, byte attr, cptr bpr_str) {
+void prt_bpr_wraith_prob(byte bpr, byte attr, cptr bpr_str) {
 	int x, y;
 
 	/* remember cursor position */
@@ -1264,6 +1264,9 @@ void prt_bpr_wraith(byte bpr, byte attr, cptr bpr_str) {
 
 	/* hack: display active wraithform indicator instead */
 	if (bpr_str[0]) c_put_str(attr, bpr_str, ROW_BPR, COL_BPR);
+#ifdef IND_WRAITH_PROB
+	else if (bpr == 254) c_put_str(attr, "PbTrav", ROW_BPR, COL_BPR);
+#endif
 	else if (bpr == 255) c_put_str(attr, "Wraith", ROW_BPR, COL_BPR);
 	else c_put_str(attr, format("%2d BpR", bpr), ROW_BPR, COL_BPR);
 
@@ -1286,7 +1289,9 @@ void prt_indicators(u32b indicators) {
 	prt_indicator_pfe_crit((indicators & IND_PFE) != 0, (indicators & IND_CRIT) != 0);
 	if ((indicators & (IND_SHIELD1 | IND_SHIELD2 | IND_SHIELD3 | IND_SHIELD4 | IND_SHIELD5 | IND_SHIELD6 | IND_SHIELD7)) != 0) prt_indicator_shield(indicators);
 	else prt_indicator_shield(0);
+#ifndef IND_WRAITH_PROB
 	prt_indicator_probtravel((indicators & IND_PROBTRAVEL) != 0);
+#endif
 }
 
 void prt_indicator_res_fire(bool is_active) {
@@ -1493,7 +1498,11 @@ void prt_indicator_shield(u32b flags) {
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
+#ifdef IND_WRAITH_PROB
 	if (!flags) c_put_str(TERM_WHITE, "    ", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+#else
+	if (!flags) c_put_str(TERM_WHITE, "  ", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+#endif
 	else {
 		/* Colour based on shield type? */
 		if (flags & IND_SHIELD1) /*p_ptr->tim_reflect*/ a = TERM_L_WHITE;
@@ -1505,7 +1514,11 @@ void prt_indicator_shield(u32b flags) {
 			else if (flags & IND_SHIELD6) /*SHIELD_PLASMA*/ a = TERM_L_RED;
 			else /*IND_SHIELD7*/ a = TERM_VIOLET; //'mystic shield'
 		}
+#ifdef IND_WRAITH_PROB
+		c_put_str(a, "Shld", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+#else
 		c_put_str(a, "Sh", ROW_TEMP_SHIELD, COL_TEMP_SHIELD);
+#endif
 	}
 
 	/* restore cursor position */

@@ -506,16 +506,20 @@ static void prt_study(int Ind) {
 }
 
 
-static void prt_bpr_wraith(int Ind) {
+static void prt_bpr_wraith_prob(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	byte attr = p_ptr->num_blow ? TERM_L_GREEN : TERM_RED;
 
+	if (p_ptr->prob_travel && is_atleast(&p_ptr->version, 4, 9, 3, 0, 0, 2)) {
+		Send_bpr_wraith_prob(Ind, 254, TERM_L_BLUE, "");
+		return;
+	}
 	if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0)) {
-		Send_bpr_wraith(Ind, 255, TERM_UMBER, "WStep ");//TERM_ACID/TERM_L_DARK
+		Send_bpr_wraith_prob(Ind, 255, TERM_UMBER, "WStep ");//TERM_ACID/TERM_L_DARK
 		return;
 	}
 	if (p_ptr->tim_wraith) {
-		Send_bpr_wraith(Ind, 255, TERM_WHITE, "");
+		Send_bpr_wraith_prob(Ind, 255, TERM_WHITE, "");
 		return;
 	}
 
@@ -553,7 +557,7 @@ static void prt_bpr_wraith(int Ind) {
 	/* Indicate temporary +EA buffs, but only if we can attack at all */
 	if (p_ptr->extra_blows && p_ptr->num_blow) attr = TERM_L_BLUE;
 
-	Send_bpr_wraith(Ind, p_ptr->num_blow, attr, "");
+	Send_bpr_wraith_prob(Ind, p_ptr->num_blow, attr, "");
 }
 
 
@@ -799,7 +803,9 @@ static void prt_indicators(int Ind) {
 	if (p_ptr->melee_brand) indicators |= IND_MELEE_BRAND;
 	if (p_ptr->tim_regen) indicators |= IND_REGEN;
 	if (p_ptr->dispersion) indicators |= IND_DISPERSION;
+#ifndef IND_WRAITH_PROB
 	if (p_ptr->prob_travel) indicators |= IND_PROBTRAVEL;
+#endif
 
 	if (p_ptr->mcharming) indicators |= IND_CHARM;
 	if (p_ptr->tim_thunder) indicators |= IND_TSTORM;
@@ -1088,8 +1094,8 @@ static void prt_frame_extra(int Ind) {
 		/* Study spells */
 		prt_study(Ind);
 	else
-		/* Blows/Round */
-		prt_bpr_wraith(Ind);
+		/* Blows/Round, Wraithform, Probability Travel */
+		prt_bpr_wraith_prob(Ind);
 }
 
 
@@ -2576,7 +2582,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		if (!(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK) &&
 		    !(l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC))) {
 			//BAD!(recursion)	set_tim_wraith(Ind, 10000);
-			if (!p_ptr->tim_wraith) p_ptr->redraw |= PR_BPR_WRAITH;
+			if (!p_ptr->tim_wraith) p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 			p_ptr->tim_wraith = 10000; csheet_boni->cb[5] |= CB6_RWRTH;
 			p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 		}
@@ -7205,7 +7211,7 @@ void calc_boni(int Ind) {
 	p_ptr->redraw |= (PR_ENCUMBERMENT);
 	if (is_newer_than(&p_ptr->version, 4, 4, 8, 4, 0, 0))
 		/* Redraw BpR */
-		p_ptr->redraw |= PR_BPR_WRAITH;
+		p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 
 	/* Send all the columns */
 	if (is_newer_than(&p_ptr->version, 4, 5, 3, 2, 0, 0) && logged_in)
@@ -8316,9 +8322,9 @@ void redraw_stuff(int Ind) {
 			prt_study(Ind);
 		}
 	} else {
-		if (p_ptr->redraw & PR_BPR_WRAITH) {
-			p_ptr->redraw &= ~(PR_BPR_WRAITH);
-			prt_bpr_wraith(Ind);
+		if (p_ptr->redraw & PR_BPR_WRAITH_PROB) {
+			p_ptr->redraw &= ~(PR_BPR_WRAITH_PROB);
+			prt_bpr_wraith_prob(Ind);
 		}
 	}
 }

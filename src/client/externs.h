@@ -785,7 +785,7 @@ extern void prt_poisoned(char poisoned);
 extern void prt_state(s16b paralyzed, bool searching, bool resting);
 extern void prt_speed(int speed);
 extern void prt_study(bool study);
-extern void prt_bpr_wraith(byte bpr, byte attr, cptr bpr_str);
+extern void prt_bpr_wraith_prob(byte bpr, byte attr, cptr bpr_str);
 extern void prt_cut(int cut);
 extern void prt_stun(int stun);
 extern void prt_basic(void);

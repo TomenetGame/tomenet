@@ -5861,7 +5861,7 @@ static bool process_player_end_aux(int Ind) {
 		if (!(p_ptr->tim_wraithstep & 0xF0)) {
 			p_ptr->tim_wraithstep &= ~0x1;
 			msg_print(Ind, "The boundary to the immaterium returns to normal.");
-			p_ptr->redraw |= PR_BPR_WRAITH;
+			p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 		}
 	}
 
@@ -7030,7 +7030,7 @@ static bool process_player_end_aux(int Ind) {
 			p_ptr->tim_wraith = 0;
 			p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 			msg_print(Ind, "You lose your wraith powers.");
-			p_ptr->redraw |= PR_BPR_WRAITH;
+			p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 		}
 		/* No wraithform on NO_MAGIC levels - C. Blue */
@@ -7038,7 +7038,7 @@ static bool process_player_end_aux(int Ind) {
 			p_ptr->tim_wraith = 0;
 			p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 			msg_print(Ind, "You lose your wraith powers.");
-			p_ptr->redraw |= PR_BPR_WRAITH;
+			p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 			msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 		}
 	}
@@ -7205,7 +7205,7 @@ static void process_player_end(int Ind) {
 					   So we have to manually add a message and redraw the no-tele indicators. */
 					msg_print(Ind, "\377sFresh air greets you as you leave the prison.");
 					p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-					p_ptr->redraw |= PR_BPR_WRAITH;
+					p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 				}
 			}
 #ifdef JAIL_KICK

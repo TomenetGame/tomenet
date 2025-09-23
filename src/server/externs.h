@@ -1275,7 +1275,7 @@ extern int Send_paralyzed(int Ind, bool paralyzed);
 extern int Send_searching(int Ind, bool searching);
 extern int Send_speed(int Ind, int speed);
 extern int Send_study(int Ind, bool study);
-extern int Send_bpr_wraith(int Ind, byte bpr, byte attr, cptr bpr_str);
+extern int Send_bpr_wraith_prob(int Ind, byte bpr, byte attr, cptr bpr_str);
 extern int Send_cut(int Ind, int cut);
 extern int Send_stun(int Ind, int stun);
 extern int Send_direction(int Ind);

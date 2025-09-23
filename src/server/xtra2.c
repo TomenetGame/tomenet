@@ -883,7 +883,11 @@ bool set_prob_travel(int Ind, int v) {
 	p_ptr->update |= (PU_BONUS);
 
 	/* Redraw indicator */
-	p_ptr->redraw2 |= (PR2_INDICATORS);
+#ifdef IND_WRAITH_PROB
+	p_ptr->redraw |= PR_BPR_WRAITH_PROB;
+#else
+	p_ptr->redraw2 |= PR2_INDICATORS;
+#endif
 
 	/* Handle stuff */
 	handle_stuff(Ind);
@@ -1569,7 +1573,7 @@ bool set_tim_wraith(int Ind, int v) {
 				notice = TRUE;
 
 				p_ptr->wraith_in_wall = TRUE;
-				p_ptr->redraw |= PR_BPR_WRAITH;
+				p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 			}
 		}
 		p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
@@ -1621,7 +1625,7 @@ bool set_tim_wraith(int Ind, int v) {
 				if (v != 10000) {
 					msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
 					msg_print(Ind, "You lose your wraith powers.");
-					p_ptr->redraw |= PR_BPR_WRAITH;
+					p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 					notice = TRUE;
 
 					/* That will hopefully prevent game hinging when loading */
@@ -1676,7 +1680,7 @@ bool set_tim_wraithstep(int Ind, int v) {
 				msg_print(Ind, "The boundary to the immaterium weakens for you.");
 				notice = TRUE;
 				p_ptr->wraith_in_wall = TRUE;
-				p_ptr->redraw |= PR_BPR_WRAITH;
+				p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 			}
 		} else {
 			msg_print(Ind, "You are already immaterial.");
@@ -1691,7 +1695,7 @@ bool set_tim_wraithstep(int Ind, int v) {
 	else {
 		if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0)) {
 			msg_print(Ind, "The boundary to the immaterium returns to normal.");
-			p_ptr->redraw |= PR_BPR_WRAITH;
+			p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 			notice = TRUE;
 			p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 		}

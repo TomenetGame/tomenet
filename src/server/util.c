@@ -10217,7 +10217,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 			p_ptr->tim_wraith = 0; //avoid duplicate message
 			p_ptr->tim_wraithstep &= ~0x1; //hack: mark as normal wraithform, to distinguish from wraithstep
 			p_ptr->update |= PU_BONUS;
-			p_ptr->redraw |= PR_BPR_WRAITH;
+			p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 		}
 	}
 	if (ox != -1 && (zcave[oy][ox].info & CAVE_STCK) && !(zcave[y][x].info & CAVE_STCK)) {
@@ -10229,7 +10229,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 		} else
 			msg_print(Ind, "\377sFresh air greets you as you leave the vault.");
 		p_ptr->redraw |= PR_DEPTH; /* hack: depth colour indicates no-tele */
-		p_ptr->redraw |= PR_BPR_WRAITH;
+		p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 #ifdef USE_SOUND_2010
 		/* New: Have bgm indicate no-tele too! */
 		handle_music(Ind);

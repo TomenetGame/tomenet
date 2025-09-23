@@ -7536,7 +7536,7 @@ bool player_can_enter(int Ind, u16b feature, bool comfortably) {
 	    ) {
 		p_ptr->tim_wraithstep &= ~0xF0;
 		p_ptr->tim_wraith = 1;
-		p_ptr->redraw |= PR_BPR_WRAITH;
+		p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 		msg_format_near(Ind, "%s turns into a wraith!", p_ptr->name);
 		msg_print(Ind, "You turn into a wraith!");
 		return(TRUE);

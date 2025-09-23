@@ -359,7 +359,7 @@ static void Receive_init(void) {
 	receive_tbl[PKT_CONFUSED]	= Receive_confused;
 	receive_tbl[PKT_POISON]		= Receive_poison;
 	receive_tbl[PKT_STUDY]		= Receive_study;
-	receive_tbl[PKT_BPR]		= Receive_bpr_wraith;
+	receive_tbl[PKT_BPR]		= Receive_bpr_wraith_prob;
 	receive_tbl[PKT_FOOD]		= Receive_food;
 	receive_tbl[PKT_FEAR]		= Receive_fear;
 	receive_tbl[PKT_SPEED]		= Receive_speed;
@@ -3670,7 +3670,7 @@ int Receive_study(void) {
 	return(1);
 }
 
-int Receive_bpr_wraith(void) {
+int Receive_bpr_wraith_prob(void) {
 	int n;
 	char ch, bpr_str[20];
 	byte bpr, attr;
@@ -3682,7 +3682,7 @@ int Receive_bpr_wraith(void) {
 	}
 
 	if (screen_icky) Term_switch(0);
-	prt_bpr_wraith(bpr, attr, bpr_str);
+	prt_bpr_wraith_prob(bpr, attr, bpr_str);
 	if (screen_icky) Term_switch(0);
 	return(1);
 }
