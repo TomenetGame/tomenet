@@ -1385,6 +1385,9 @@
    HP ratio becomes worse than MP ratio? To warn the player ie if he's cut/poisoned/diseased. - C. Blue */
 #define TURN_CHAR_INTO_NUMBER_NEWMETHOD
 
+/* Warning and colour change when Disruption Shield runs out (turns left) */
+#define TIME_SHIELDM_LOW 12
+
 /* Martyrdom doesn't allow to restore mana? (deprecated, we use half damage
    output for GF_DISP_xxx damage types instead of this penalty) */
 //#define MARTYR_NO_MANA
@@ -8292,6 +8295,11 @@ extern int PlayerUID;
 #define TERM_DARKNESS	26	/* similar to acid */
 
 #define TERM_SHIELDM	27	/* mana shield */
+#ifdef EXTENDED_TERM_COLOURS
+ #define TERM_SHIELDM_LOW	TERM_PLAS	/* mana shield running out of time; was TERM_NEXU but the violet component is too similar to base invsibility colour */
+#else
+ #define TERM_SHIELDM_LOW	TERM_FIRE	/* mana shield running out of time */
+#endif
 #define TERM_SHIELDI	28	/* invulnerability */
 
 #ifdef EXTENDED_TERM_COLOURS

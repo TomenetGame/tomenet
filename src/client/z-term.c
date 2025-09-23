@@ -815,7 +815,7 @@ static byte anim2static(byte attr) {
 	case TERM_PSI:
 		return(TERM_YELLOW);
 	case TERM_NEXU:
-		return(TERM_L_RED);//nexus in general is rather TERM_VIOLET but we want to avoid disruption shield colour collision with invisibility base colour which is also violet
+		return(TERM_VIOLET);
 	case TERM_NETH:
 		return(TERM_L_DARK);//TERM_L_GREEN?
 	case TERM_DISE:

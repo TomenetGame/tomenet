@@ -55,6 +55,11 @@
 #define TERM_DARKNESS	26	/* similar to acid */
 
 #define TERM_SHIELDM	27	/* mana shield */
+#ifdef EXTENDED_TERM_COLOURS
+ #define TERM_SHIELDM_LOW	TERM_PLAS	/* mana shield running out of time; was TERM_NEXU but the violet component is too similar to base invsibility colour */
+#else
+ #define TERM_SHIELDM_LOW	TERM_FIRE	/* mana shield running out of time */
+#endif
 #define TERM_SHIELDI	28	/* invulnerability */
 
 #ifdef EXTENDED_TERM_COLOURS

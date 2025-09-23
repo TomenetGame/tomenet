@@ -1312,7 +1312,7 @@ bool set_tim_manashield(int Ind, int v) {
 		if (!p_ptr->tim_manashield) {
 			msg_print(Ind, "A purple shimmering shield forms around your body!");
 			notice = TRUE;
-		} else if (p_ptr->tim_manashield > 15 && v <= 15) {
+		} else if (p_ptr->tim_manashield > TIME_SHIELDM_LOW && v <= TIME_SHIELDM_LOW) {
 			msg_print(Ind, "\377vThe disruption shield starts to flicker and fade...");
 		}
 	}

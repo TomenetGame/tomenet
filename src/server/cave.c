@@ -2445,8 +2445,8 @@ static byte player_color(int Ind) {
 		 which is called from set_tim_manashield().  */
 #ifdef EXTENDED_TERM_COLOURS
 	if (is_atleast(&p_ptr->version, 4, 5, 1, 2, 0, 0)) {
-		if (p_ptr->tim_manashield > 15) return(TERM_SHIELDM);
-		else if (p_ptr->tim_manashield) return(TERM_NEXU);
+		if (p_ptr->tim_manashield > TIME_SHIELDM_LOW) return(TERM_SHIELDM);
+		else if (p_ptr->tim_manashield) return(TERM_SHIELDM_LOW);
 		if (p_ptr->nimbus > 15) return(spell_color(p_ptr->nimbus_t));
 		else if (p_ptr->nimbus) return(magik(50) ? TERM_ICE : spell_color(p_ptr->nimbus_t));
 		if (p_ptr->invuln > 5) return(TERM_SHIELDI);
@@ -2474,7 +2474,7 @@ static byte player_color(int Ind) {
 	} else
 #endif
 	{
-		if (p_ptr->tim_manashield > 15) return(TERM_SHIELDM);
+		if (p_ptr->tim_manashield > TIME_SHIELDM_LOW) return(TERM_SHIELDM);
 		if (p_ptr->nimbus > 15) return(spell_color(p_ptr->nimbus_t));
 		if (p_ptr->invuln > 5) return(TERM_SHIELDI);
 		if (p_ptr->kinetic_shield) {
@@ -4459,8 +4459,8 @@ void lite_spot(int Ind, int y, int x) {
 
 			/* Mana Shield and GOI also flicker */
 			if (p_ptr->tim_manashield) { // && rand_int(2)) {  -- commented out the rand to maximize distinguishing manashield from @ base colour
-				if (p_ptr->tim_manashield > 15) a = TERM_SHIELDM;
-				else a = TERM_NEXU;
+				if (p_ptr->tim_manashield > TIME_SHIELDM_LOW) a = TERM_SHIELDM;
+				else a = TERM_SHIELDM_LOW;
 			}
 
 			/* All kinds of BNW states: */
@@ -4582,7 +4582,7 @@ void lite_spot(int Ind, int y, int x) {
 					else a = TERM_ORANGE;
 				}
 				if (p_ptr->tim_manashield && p_ptr->mmp > 0 && p_ptr->cmp > 0) {
-					if (p_ptr->tim_manashield > 15) a = TERM_YELLOW;
+					if (p_ptr->tim_manashield > TIME_SHIELDM_LOW) a = TERM_YELLOW;
 					else a = TERM_ORANGE;
 				}
 				if (p_ptr->kinetic_shield && p_ptr->mmp > 0 && p_ptr->cmp > 0) {
