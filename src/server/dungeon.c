@@ -10534,8 +10534,17 @@ void dungeon(void) {
 			/* Custom timer countdowns */
 			if (p_ptr->custom_timer) {
 				p_ptr->custom_timer--;
-				if (!p_ptr->custom_timer) {
-					msg_print(i, "\377vYour custom timer finished.");
+				if (p_ptr->custom_timer == -86400 - 1) {
+					msg_print(i, "\376\377vYour custom timer reached max count of 86400s (1 day).");
+#ifdef USE_SOUND_2010
+					if (p_ptr->audio_sfx) sound(i, "gong", "bell", SFX_TYPE_ALERT, FALSE);
+					else Send_warning_beep(i);
+#else
+					if (p_ptr->paging < 3) p_ptr->paging = 3;
+#endif
+					p_ptr->custom_timer = 0;
+				} else if (!p_ptr->custom_timer) {
+					msg_print(i, "\376\377vYour custom timer finished.");
 #ifdef USE_SOUND_2010
 					if (p_ptr->audio_sfx) sound(i, "gong", "bell", SFX_TYPE_ALERT, FALSE);
 					else Send_warning_beep(i);

@@ -6643,20 +6643,33 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			return;
 		} else if (prefix(messagelc, "/timer")) { //set a custom timer w/ sfx/notification
-			if (tk != 1) msg_print(Ind, "To (re)set the custom timer:   /timer <0...86400 seconds to count down>");
-			else if (k < 0 || k > 86400) msg_print(Ind, "\377yTimer must be between 1 and 86400 seconds.");
+			bool up = (tk == 1 && token[1][0] == '+');
+
+			if (tk != 1) msg_print(Ind, "To (re)set the custom timer:   /timer '0'-'86400' or '+'    (count down or up)");
+			else if ((k < 0 || k > 86400) && !up) msg_print(Ind, "\377yTimer must be between 1 and 86400 seconds or '+' plus symbol.");
+
+			if (up) {
+				if (p_ptr->custom_timer > 0) msg_format(Ind, "Your custom timer was currently running: \377B%ds\377w left.", p_ptr->custom_timer);
+				else if (p_ptr->custom_timer < 0) msg_format(Ind, "Your custom timer was currently running: \377B%ds\377w passed.", -p_ptr->custom_timer - 1);
+
+				if (!p_ptr->custom_timer) msg_format(Ind, "\376Started the custom timer \377vcounting up\377w.", k);
+				else msg_format(Ind, "\376Restarted the custom timer \377vcounting up\377w.", k);
+				p_ptr->custom_timer = -1;
+				return;
+			}
 			if (k < 0 || k > 86400) return;
 			if (tk <= 1) {
 				if (!p_ptr->custom_timer) {
 					if (tk && !k) msg_format(Ind, "\377yCustom timer was not active.");
 					else msg_print(Ind, "Your custom timer is currently not set.");
-				} else msg_format(Ind, "Your custom timer is currently running: \377B%ds\377w left.", p_ptr->custom_timer);
+				} else if (p_ptr->custom_timer > 0) msg_format(Ind, "Your custom timer %s currently running: \377B%ds\377w left.", tk == 1 ? "was" : "is", p_ptr->custom_timer);
+				else msg_format(Ind, "Your custom timer %s currently running: \377B%ds\377w passed.", tk == 1 ? "was" : "is", -p_ptr->custom_timer - 1);
 			}
 			if (tk == 1) {
 				if (k) {
-					if (p_ptr->custom_timer) msg_format(Ind, "Restarted the custom timer counting down \377v%ds\377w seconds.", k);
-					else msg_format(Ind, "Started the custom timer counting down \377v%ds\377w seconds.", k);
-				} else if (p_ptr->custom_timer) msg_print(Ind, "Halted the custom timer.");
+					if (p_ptr->custom_timer) msg_format(Ind, "\376Restarted the custom timer counting down \377v%ds\377w seconds.", k);
+					else msg_format(Ind, "\376Started the custom timer counting down \377v%ds\377w seconds.", k);
+				} else if (p_ptr->custom_timer) msg_print(Ind, "\376\377vHalted the custom timer.");
 				p_ptr->custom_timer = k;
 			}
 			return;

@@ -2187,10 +2187,13 @@ They all start with a slash '/' hence they're called slash commands:
 /time       Tells you the current in-game time, same as /ex does.
             Also see /ctime and /stime.
 
-/timer <# of seconds to count down or 0 to halt>
+/timer <# of seconds to count down or 0 to halt or '+' sign to count up>
             Starts a custom timer that will alert you when it runs out.
             You must specify the number of seconds, which must be between 1
             and 86400 (1 day) or 0 to halt the timer if it's already running.
+            If instead of a number of seconds you just type the plus sign '+'
+            the timer will count up indefinitely until halted or reaching the
+            maximum threshold of 86400 seconds (1 day).
 
 /tip <player>
             Tips a player who must be standing next to you:
