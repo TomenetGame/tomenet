@@ -6886,10 +6886,15 @@ void open_rift(int Ind, int dir, int intensity) {
 	sx = SGN(tx - p_ptr->px);
 	sy = SGN(ty - p_ptr->py);
 
-	if (dx == dy || (dx > 4 && dy > 4 && ABS(dx - dy) < (dx + dy) / 6)) { /* Cast additional grids diagonally */
+//msg_format(Ind, "px=%d(%d),py=%d(%d)  tx=%d,ty=%d  sx=%d,sy=%d  dx=%d,dy=%d", p_ptr->px, xorg, p_ptr->py, yorg, tx, ty, sx, sy, dx, dy);
+	if (dx == dy || ABS(dx - dy) < (dx + dy) / 2) { /* Cast additional grids diagonally */
 /* todo: panic save at some angle/distance of manual targetting inside sector ]315;360[ deg */
 /* todo: non div/45 angle targetting draws straight lines. Need to cycle target grid around 90 deg clock+counterclock
          and then mmove 'i' steps into each direction to find the new starting points. */
+//so for now hack to exact diagonals instead, to remedy both of the above:
+tx = p_ptr->px + sx;
+ty = p_ptr->py + sy;
+//msg_format(Ind, "->  tx=%d,ty=%d", tx, ty);
 		for (i = 1; i <= intensity; i++) {
 			/* Hack player position to offset the line parallelly */
 			dx = sx * ((i + 1) / 2);
