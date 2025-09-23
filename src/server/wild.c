@@ -4957,7 +4957,7 @@ void paint_house(int Ind, int x, int y, int k) {
 	case TERM_CONF: c = TERM_UMBER; break;
 	case TERM_SHAR: c = TERM_UMBER; break;
 	case TERM_SHIELDI: c = TERM_L_WHITE; break; /* mixage again.. */
-	case TERM_SHIELDM: c = TERM_VIOLET; break; /* well, either that or red.. */
+	case TERM_SHIELDM: c = TERM_RED; break;
 	}
 	/* 0 means 'no colour' so we start at 1 for colour 0 */
 	c++;

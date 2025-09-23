@@ -554,33 +554,20 @@ byte flick_colour(byte attr) {
 #endif
 
 	if (attr == TERM_SHIELDM) {
-/*	if ((attr >= TERM_SHIELDM) && (attr < TERM_SHIELDI)) {
-		if (randint(2) == 1) return(attr - TERM_SHIELDM);
-		if ((attr - TERM_SHIELDM) != TERM_VIOLET)
-		return((randint(2) == 1) ? TERM_VIOLET : TERM_ORANGE);
-		else
-		return((randint(2) == 1) ? TERM_L_RED : TERM_ORANGE);
-*/		switch (randint(3)) {
-		case 1: return(TERM_VIOLET);
+		switch (randint(3)) { /* Changed violet to l-blue because @ can be base violet from invisibility already, potentially causing a lag in recognizing shield failure */
+		case 1: return(TERM_L_BLUE);
 		case 2: return(TERM_L_RED);
 		case 3: return(TERM_ORANGE);
 		}
 	}
 	if (attr == TERM_SHIELDI) {
-/*	if ((attr >= TERM_SHIELDI) && (attr <= 0xFF)) {
-		if (randint(4) == 1) return(attr - TERM_SHIELDI);
-*/		switch (randint(5)) {
+		switch (randint(5)) {
 		case 1: return(TERM_L_RED);
 		case 2: return(TERM_L_GREEN);
 		case 3: return(TERM_L_BLUE);
 		case 4: return(TERM_YELLOW);
 		case 5: return(TERM_VIOLET);
-/*		case 1: return(TERM_L_RED);
-		case 2: return(TERM_VIOLET);
-		case 3: return(TERM_RED);
-		case 4: return(TERM_L_DARK);
-		case 5: return(TERM_WHITE);
-*/		}
+		}
 	}
 	switch (attr) {
 		case TERM_MULTI:
