@@ -20,10 +20,16 @@
    (It's personal, not distributed over the party)
    diff,lvl go from 2,2 to 12,38 atm (some traps disabled).
    dlev was added to the formula, because some traps (arrow/bolt traps)
-   depend on dungeon depth for determining the effect, too. */
-#define TRAP_EXP(t_idx, dlev) \
-    (((t_info[t_idx].difficulty * t_info[t_idx].minlevel) + ((dlev) > 5 ? (dlev) - 5 : 0)) * \
-    (200 - t_info[t_idx].probability) / 100)
+   depend on dungeon depth for determining the effect, too.
+   Also reduce XP gain if player level is high compared to floor depth, same as for XP gain from monsters.*/
+#define TRAP_EXP_RAW(t_idx, dlev) \
+    ((((((t_info[t_idx].difficulty * t_info[t_idx].minlevel) + ((dlev) > 5 ? (dlev) - 5 : 0)) * \
+    (200 - t_info[t_idx].probability) / 100) /* so far here: 2...398 XP from rough testing of a bunch of traps */ \
+    + 2) * 3) / 2) /* ...increase XP gain somewhat further, especially for the low-end traps */
+#define TRAP_EXP(p_ptr, t_idx, dlev) \
+    ((!in_irondeepdive(&p_ptr->wpos) && (!in_hallsofmandos(&p_ptr->wpos) || p_ptr->lev >= 50)) ? \
+    det_exp_level(TRAP_EXP_RAW(t_idx, dlev), p_ptr->lev, getlevel(&p_ptr->wpos)) : \
+    TRAP_EXP_RAW(t_idx, dlev))
 
 /* Maximum level a character may have reached so far to still be eligible
    to enter the Ironman Deep Dive Challenge. Two main possiblities:
@@ -3009,7 +3015,7 @@ void do_cmd_open(int Ind, int dir) {
 					sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 					/* opening it uses only 1x trdifficulty instead of 3x. (Very maybe TODO: SHOW_XP_GAIN) */
-					if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)) / 3);
+					if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(p_ptr, o_ptr->pval, getlevel(&p_ptr->wpos)) / 3);
 				}
 
 				/* Failure -- Keep trying */
@@ -5300,7 +5306,7 @@ static void do_id_trap(int Ind, int t_idx) {
 
 	/* Fair reward; so it's double exp when disarming AND
 	   for the first time also IDing - C. Blue */
-	if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)));
+	if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, TRAP_EXP(p_ptr, t_idx, getlevel(&p_ptr->wpos)));
 }
 
 /*
@@ -5442,12 +5448,12 @@ void do_cmd_disarm(int Ind, int dir) {
 #endif
 					if (!(p_ptr->mode & MODE_PVP)) {
 #ifdef SHOW_XP_GAIN
-						gain_exp_onhold(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
+						gain_exp_onhold(Ind, TRAP_EXP(p_ptr, o_ptr->pval, getlevel(&p_ptr->wpos)));
 						msg_format(Ind, "You have disarmed the chest. (%d XP)", p_ptr->gain_exp);
 						apply_exp(Ind);
 #else
 						msg_print(Ind, "You have disarmed the chest.");
-						gain_exp(Ind, TRAP_EXP(o_ptr->pval, getlevel(&p_ptr->wpos)));
+						gain_exp(Ind, TRAP_EXP(p_ptr, o_ptr->pval, getlevel(&p_ptr->wpos)));
 #endif
 					} else msg_print(Ind, "You have disarmed the chest.");
 
@@ -5613,12 +5619,12 @@ void do_cmd_disarm(int Ind, int dir) {
 				/* Reward */
 				if (!(p_ptr->mode & MODE_PVP)) {
 #ifdef SHOW_XP_GAIN
-					gain_exp_onhold(Ind, (TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)) * (MAX_CLONE_TRAPPING - cs_ptr->sc.trap.clone)) / MAX_CLONE_TRAPPING);
+					gain_exp_onhold(Ind, (TRAP_EXP(p_ptr, t_idx, getlevel(&p_ptr->wpos)) * (MAX_CLONE_TRAPPING - cs_ptr->sc.trap.clone)) / MAX_CLONE_TRAPPING);
 					msg_format(Ind, "You have disarmed the %s. (%d XP)", name, p_ptr->gain_exp);
 					apply_exp(Ind);
 #else
 					msg_format(Ind, "You have disarmed the %s.", name);
-					gain_exp(Ind, (TRAP_EXP(t_idx, getlevel(&p_ptr->wpos)) * (MAX_CLONE_TRAPPING - cs_ptr->sc.trap.clone)) / MAX_CLONE_TRAPPING);
+					gain_exp(Ind, (TRAP_EXP(p_ptr, t_idx, getlevel(&p_ptr->wpos)) * (MAX_CLONE_TRAPPING - cs_ptr->sc.trap.clone)) / MAX_CLONE_TRAPPING);
 #endif
 				} else msg_format(Ind, "You have disarmed the %s.", name);
 
