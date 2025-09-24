@@ -9904,11 +9904,9 @@ void auto_inscriptions(void) {
 			//i++;
 
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "Troubleshooting:");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "The auto-inscription menu tries to merge all applicable .ins files:");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "global.ins, <race>.ins, <trait>.ins, <class>.ins, <charname>.ins.");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "So if you have 'ghost' inscriptions popping up, look for these files");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "and modify/delete them as you see fit. The 'cleanest' result will");
-			Term_putstr( 0, i++, -1, TERM_WHITE, "occur if you delete all .ins files except for <charname>.ins.");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "The auto-inscription menu tries to load only the most specific .ins file");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "and discard all other ones, the order from most specific to least is:");
+			Term_putstr( 0, i++, -1, TERM_WHITE, "<charname>.ins, <class>.ins, <trait>.ins, <race>.ins, global.ins.");
 
 			Term_putstr(25, 23, -1, TERM_L_BLUE, "(Press any key to go back)");
 			inkey();
