@@ -12480,7 +12480,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						break;
 					case CS_TRAPS:
 						for (i = 1; i <= max_tr_idx; i++) if (tr_info_rev[i] == cs_ptr->sc.trap.t_idx) break;
-						msg_format(Ind, " CS_TRAP: t_idx = %d (%d), found = %d, clone = %d ('%s)", cs_ptr->sc.trap.t_idx, i <= max_tr_idx ? i : i + 10000, cs_ptr->sc.trap.found, cs_ptr->sc.trap.clone, t_name + t_info[cs_ptr->sc.trap.t_idx].name);
+						msg_format(Ind, " CS_TRAPS: t_idx = %d (%d), found = %d, clone = %d ('%s)", cs_ptr->sc.trap.t_idx, i <= max_tr_idx ? i : i + 10000, cs_ptr->sc.trap.found, cs_ptr->sc.trap.clone, t_name + t_info[cs_ptr->sc.trap.t_idx].name);
 						break;
 					case CS_INSCRIP:
 						break;
@@ -12501,7 +12501,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					case CS_MIMIC:
 						break;
 					case CS_RUNE:
-						msg_format(Ind, " CS_MON_TRAP: id = %ld, dam = %d, rad = %d, typ = %d, feat = %d, found = %d", cs_ptr->sc.rune.id, cs_ptr->sc.rune.dam, cs_ptr->sc.rune.rad, cs_ptr->sc.rune.typ, cs_ptr->sc.rune.feat, cs_ptr->sc.rune.found);
+						msg_format(Ind, " CS_RUNE: id = %ld, dam = %d, rad = %d, typ = %d, feat = %d, found = %d", cs_ptr->sc.rune.id, cs_ptr->sc.rune.dam, cs_ptr->sc.rune.rad, cs_ptr->sc.rune.typ, cs_ptr->sc.rune.feat, cs_ptr->sc.rune.found);
 						break;
 					}
 				}
