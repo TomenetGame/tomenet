@@ -286,7 +286,6 @@ bool set_tim_thunder(int Ind, int v, int p1, int p2) {
 			s_printf("warning_tss: %s\n", p_ptr->name);
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_thunder) {
@@ -345,7 +344,6 @@ bool set_tim_regen(int Ind, int v, int p, int c) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_regen) {
@@ -392,7 +390,6 @@ bool set_tim_mp2hp(int Ind, int v, int p, int c) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_regen) {
@@ -438,9 +435,9 @@ bool set_tim_ffall(int Ind, int v) {
 		if (!p_ptr->tim_ffall) {
 			msg_print(Ind, "You feel very light.");
 			notice = TRUE;
-		}
+		} else if (p_ptr->tim_lev > 5 && v <= 5)
+			msg_print(Ind, "\377BYour lightness starts to fade..."); 
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_ffall) {
@@ -482,9 +479,9 @@ bool set_tim_lev(int Ind, int v) {
 		if (!p_ptr->tim_lev) {
 			msg_print(Ind, "You feel light and your feet take off the ground.");
 			notice = TRUE;
-		}
+		} else if (p_ptr->tim_lev > 5 && v <= 5)
+			msg_print(Ind, "\377BYour levitation starts to fade...");
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_lev) {
@@ -552,7 +549,6 @@ bool set_adrenaline(int Ind, int v) {
 			v = v - i + 1;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->adrenaline) {
@@ -612,7 +608,6 @@ bool set_biofeedback(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->biofeedback) {
@@ -664,7 +659,6 @@ bool set_tim_esp(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_esp) {
@@ -715,7 +709,6 @@ bool set_tim_reflect(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_reflect) {
@@ -766,7 +759,6 @@ bool set_tim_lcage(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_lcage) {
@@ -815,7 +807,6 @@ bool set_st_anchor(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->st_anchor) {
@@ -861,7 +852,6 @@ bool set_prob_travel(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->prob_travel) {
@@ -1162,7 +1152,6 @@ bool set_ammo_brand(int Ind, int v, u16b t, int p) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->ammo_brand) {
@@ -1210,11 +1199,9 @@ bool set_nimbus(int Ind, int v, byte t, byte d) {
 	if (v) { // IMPORTANT - Always notice element changes to calc_boni() - Kurzel
 		if (!p_ptr->nimbus || !(p_ptr->nimbus_d == d)) {
 			notice = TRUE;
-		} else if (p_ptr->nimbus > 15 && v <= 15) {
+		} else if (p_ptr->nimbus > 15 && v <= 15)
 			msg_print(Ind, "\377BYour aura of power starts to flicker and fade...");
-		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->nimbus) {
@@ -1263,11 +1250,9 @@ bool set_mimic(int Ind, int v, int p) {
 		if (!p_ptr->tim_mimic) {
 			msg_print(Ind, "Your form changes!");
 			notice = TRUE;
-		} else if (p_ptr->tim_mimic > 100 && v <= 100) {
+		} else if (p_ptr->tim_mimic > 100 && v <= 100)
 			msg_print(Ind, "\376\377LThe magical force stabilizing your form starts to fade...");
-		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_mimic && p_ptr->body_monster == p_ptr->tim_mimic_what) {
@@ -1319,11 +1304,9 @@ bool set_tim_manashield(int Ind, int v) {
 		if (!p_ptr->tim_manashield) {
 			msg_print(Ind, "A purple shimmering shield forms around your body!");
 			notice = TRUE;
-		} else if (p_ptr->tim_manashield > TIME_SHIELDM_LOW && v <= TIME_SHIELDM_LOW) {
+		} else if (p_ptr->tim_manashield > TIME_SHIELDM_LOW && v <= TIME_SHIELDM_LOW)
 			msg_print(Ind, "\377vThe disruption shield starts to flicker and fade...");
-		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_manashield) {
@@ -1371,7 +1354,6 @@ bool set_tim_traps(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_traps) {
@@ -1417,7 +1399,6 @@ bool set_invis(int Ind, int v, int p) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_invisibility && !p_ptr->tim_invis_power) { //only give message if no static invis anyway
@@ -1470,7 +1451,6 @@ bool set_fury(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->fury) {
@@ -1517,7 +1497,6 @@ bool set_tim_meditation(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_meditation) {
@@ -1584,7 +1563,6 @@ bool set_tim_wraith(int Ind, int v) {
 			return(FALSE);
 #endif	// 0
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_wraith) {
@@ -1690,7 +1668,6 @@ bool set_tim_wraithstep(int Ind, int v) {
 		/* Use the value */
 		p_ptr->tim_wraithstep = 0x10 * v + 0x1;
 	}
-
 	/* Shut */
 	else {
 		if ((p_ptr->tim_wraithstep & 0x1) && (p_ptr->tim_wraithstep & 0xF0)) {
@@ -1754,7 +1731,6 @@ bool set_blind(int Ind, int v) { /* bad status effect */
 
 		break_shadow_running(Ind);
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->blind) {
@@ -1820,7 +1796,6 @@ bool set_blind_quiet(int Ind, int v) { /* bad status effect */
 
 		break_shadow_running(Ind);
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->blind) {
@@ -1896,7 +1871,6 @@ bool set_confused(int Ind, int v) { /* bad status effect */
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->confused) {
@@ -1960,7 +1934,6 @@ bool set_poisoned(int Ind, int v, int attacker) { /* bad status effect */
 			p_ptr->poisoned_attacker = attacker;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->poisoned) {
@@ -2013,7 +1986,6 @@ bool set_diseased(int Ind, int v, int attacker) { /* bad status effect */
 			p_ptr->poisoned_attacker = attacker;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->diseased) {
@@ -2065,7 +2037,6 @@ bool set_afraid(int Ind, int v) { /* bad status effect */
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->afraid) {
@@ -2117,7 +2088,6 @@ bool set_paralyzed(int Ind, int v) { /* bad status effect */
 			s_printf("%s EFFECT: Paralyzed %s.\n", showtime(), p_ptr->name);
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->paralyzed) {
@@ -2167,7 +2137,6 @@ bool set_stopped(int Ind, int v) { /* bad status effect */
 			s_printf("%s EFFECT: Stopped %s.\n", showtime(), p_ptr->name);
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->stopped) {
@@ -2219,7 +2188,6 @@ bool set_image(int Ind, int v) { /* bad status effect */
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->image) {
@@ -2329,7 +2297,6 @@ bool set_slow(int Ind, int v) { /* bad status effect */
 			s_printf("%s EFFECT: Slowed %s.\n", showtime(), p_ptr->name);
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->slow) {
@@ -2398,7 +2365,6 @@ bool set_shield(int Ind, int v, int p, s16b o, s16b d1, s16b d2) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->shield) {
@@ -2485,7 +2451,6 @@ bool set_blessed(int Ind, int v, bool own) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->blessed) {
@@ -2536,7 +2501,6 @@ bool set_dispersion(int Ind, byte v, byte d) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->dispersion) {
@@ -2582,7 +2546,6 @@ bool set_res_fear(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->res_fear_temp) {
@@ -2629,7 +2592,6 @@ bool set_hero(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->hero) {
@@ -2685,7 +2647,6 @@ bool set_shero(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->shero) {
@@ -2730,7 +2691,6 @@ bool set_melee_sprint(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->melee_sprint) {
@@ -2788,7 +2748,6 @@ bool set_protevil(int Ind, int v, bool own) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->protevil) {
@@ -2841,7 +2800,6 @@ bool set_zeal(int Ind, int p, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->zeal) {
@@ -2915,7 +2873,6 @@ bool set_martyr(int Ind, int v) {
 			everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->martyr) {
@@ -2970,11 +2927,9 @@ bool set_invuln(int Ind, int v) {
 			p_ptr->invuln_dur = v;
 			msg_print(Ind, "\377vA powerful iridescent shield forms around your body!");
 			notice = TRUE;
-		} else if (p_ptr->invuln > 5 && v <= 5) {
+		} else if (p_ptr->invuln > 5 && v <= 5)
 			msg_print(Ind, "\377vThe invulnerability shield starts to fade...");
-		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->invuln &&
@@ -3052,7 +3007,6 @@ bool set_tim_invis(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_invis) {
@@ -3101,7 +3055,6 @@ bool set_tim_infra(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->tim_infra) {
@@ -3150,7 +3103,6 @@ bool set_oppose_acid(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->oppose_acid) {
@@ -3199,7 +3151,6 @@ bool set_oppose_elec(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->oppose_elec) {
@@ -3248,7 +3199,6 @@ bool set_oppose_fire(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->oppose_fire) {
@@ -3297,7 +3247,6 @@ bool set_oppose_cold(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->oppose_cold) {
@@ -3346,7 +3295,6 @@ bool set_oppose_pois(int Ind, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->oppose_pois) {
@@ -3443,8 +3391,7 @@ bool set_stun_raw(int Ind, int v) { /* bad status effect */
 			s_printf("warning_status_stun: %s\n", p_ptr->name);
 		}
 	}
-
-	/* Decrease cut */
+	/* Decrease stun */
 	else if (new_aux < old_aux) {
 		/* Describe the state */
 		switch (new_aux) {
@@ -3560,8 +3507,7 @@ bool set_stun(int Ind, int v) { /* bad status effect */
 			s_printf("warning_status_stun: %s\n", p_ptr->name);
 		}
 	}
-
-	/* Decrease cut */
+	/* Decrease stun */
 	else if (new_aux < old_aux) {
 		/* Describe the state */
 		switch (new_aux) {
@@ -3713,7 +3659,6 @@ bool set_cut(int Ind, int v, int attacker, bool quiet) { /* bad status effect */
 		/* Notice */
 		notice = TRUE;
 	}
-
 	/* Decrease cut */
 	else if (new_aux < old_aux) {
 		/* Describe the state */
@@ -3764,7 +3709,6 @@ bool set_mindboost(int Ind, int p, int v) {
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
-
 	/* Redraw the Blows/Round if any */
 	if (v && p_ptr->mindboost_power != p) p_ptr->update |= PU_BONUS;
 
@@ -3778,7 +3722,6 @@ bool set_mindboost(int Ind, int p, int v) {
 			notice = TRUE;
 		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->mindboost) {
@@ -3823,11 +3766,9 @@ bool set_kinetic_shield(int Ind, int v) {
 
 			msg_print(Ind, "You create a kinetic barrier.");
 			notice = TRUE;
-		} else if (p_ptr->kinetic_shield > 10 && v <= 10) {
+		} else if (p_ptr->kinetic_shield > 10 && v <= 10)
 			msg_print(Ind, "\377vThe kinetic barrier starts to destabilize...");
-		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->kinetic_shield) {
@@ -3867,7 +3808,6 @@ bool set_savingthrow(int Ind, int v) {
 			notice = (TRUE);
 		}
 	}
-
 	/* Shut */
 	else { //v = 0;
 		if (p_ptr->temp_savingthrow) {
@@ -3907,11 +3847,9 @@ bool set_spirit_shield(int Ind, int power, int v) {
 			p_ptr->spirit_shield_pow = power;
 			msg_print(Ind, "You feel the spirits watching over you.");
 			notice = TRUE;
-		} else if (p_ptr->spirit_shield > 10 && v <= 10) {
+		} else if (p_ptr->spirit_shield > 10 && v <= 10)
 			msg_print(Ind, "\377vYou feel the spirits weakening");
-		}
 	}
-
 	/* Shut */
 	else {
 		if (p_ptr->spirit_shield) {
@@ -3956,7 +3894,6 @@ bool do_divine_hp(int Ind, int p, int v) {
 			notice = (TRUE);
 		}
 	}
-
 	/* Shut */
 	else { //v = 0;
 		if (p_ptr->divine_hp) {
@@ -4002,7 +3939,6 @@ bool do_divine_crit(int Ind, int p, int v) {
 			notice = (TRUE);
 		}
 	}
-
 	/* Shut */
 	else { //v = 0;
 		if (p_ptr->divine_crit) {
@@ -4050,7 +3986,6 @@ bool do_divine_xtra_res(int Ind, int v) {
 			notice = (TRUE);
 		}
 	}
-
 	/* Shut */
 	else { //v = 0;
 		if (p_ptr->divine_xtra_res) {
@@ -4363,7 +4298,6 @@ bool set_food(int Ind, int v) {
 		/* Change */
 		notice = TRUE;
 	}
-
 	/* Food decrease */
 	else if (new_aux < old_aux) {
 		/* Describe the state */
