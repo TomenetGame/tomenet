@@ -2482,13 +2482,15 @@ static char *ai_fgets(char *buf, int len, FILE *fp) {
 	return(buf);
 }
 
-/* Load Auto-Inscription file (*.ins) - C. Blue */
-void load_auto_inscriptions(cptr name) {
+/* Load Auto-Inscription file (*.ins) - C. Blue
+   Returns TRUE if filename was found and loaded at least one inscription entry
+   (even partially, if some of it was corrupt/missing) from it, else FALSE. */
+bool load_auto_inscriptions(cptr name) {
 	FILE *fp;
 	char buf[1024], *bufptr;
 	char file_name[256], vtag[7];
 	int i, c, j, c_eff, version, vmaj, vmin, vpatch, tmp;
-	bool replaced, force;
+	bool replaced, force, loaded_something = FALSE;
 #ifdef REGEX_SEARCH
 	int ires = -999;
 	regex_t re_src;
@@ -2513,13 +2515,13 @@ void load_auto_inscriptions(cptr name) {
 	fp = fopen(buf, "r");
 	if (!fp) {
 		/* Couldn't open */
-		return;
+		return(FALSE);
 	}
 
 	/* load header (1 line) */
 	if (ai_fgets(buf, 80, fp) == NULL) {
 		fclose(fp);
-		return;
+		return(FALSE);
 	}
 
 	/* extract version */
@@ -2654,6 +2656,7 @@ void load_auto_inscriptions(cptr name) {
 			}
 
 			replaced = TRUE;
+			loaded_something = TRUE;
 			break;
 		}
 		if (replaced) continue;
@@ -2673,6 +2676,7 @@ void load_auto_inscriptions(cptr name) {
 			c_eff = -c - 1;
 		}
 		/* set slot */
+		loaded_something = TRUE;
 		strcpy(auto_inscription_match[c_eff], bufptr);
 		auto_inscription_force[c_eff] = force;
 #ifdef REGEX_SEARCH
@@ -2760,6 +2764,8 @@ void load_auto_inscriptions(cptr name) {
 		/* Always re-save the converted inscriptions to update them to the latest version */
 		save_auto_inscriptions(name);
 	}
+
+	return(loaded_something);
 }
 
 /* Save Character-Birth file (*.dna).

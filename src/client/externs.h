@@ -609,7 +609,7 @@ extern bool my_freadable(cptr file);
 extern errr get_safe_file(char *buf, cptr file);
 extern void xhtml_screenshot(cptr name, byte redux);
 extern void save_auto_inscriptions(cptr name);
-extern void load_auto_inscriptions(cptr name);
+extern bool load_auto_inscriptions(cptr name);
 extern void save_birth_file(cptr cname, bool touch);
 extern void load_birth_file(cptr cname);
 extern bool within_cmd_player;

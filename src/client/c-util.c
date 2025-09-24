@@ -10133,8 +10133,7 @@ void auto_inscriptions(void) {
 			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
-			load_auto_inscriptions(tmp);
-			apply_auto_inscriptions(-1);
+			if (load_auto_inscriptions(tmp)) apply_auto_inscriptions(-1);
 			break;
 		case 'L':
 			/* Prompt */
@@ -10150,8 +10149,7 @@ void auto_inscriptions(void) {
 			if (!askfor_aux(tmp, 70, 0)) continue;
 
 			/* Process the given filename */
-			load_auto_inscriptions(tmp);
-			apply_auto_inscriptions(-1);
+			if (load_auto_inscriptions(tmp)) apply_auto_inscriptions(-1);
 			break;
 		case 's':
 			/* Prompt */

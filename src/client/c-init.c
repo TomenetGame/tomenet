@@ -341,35 +341,38 @@ void initialize_player_ins_files(void) {
 		auto_inscription_disabled[i] = FALSE;
 	}
 
-#if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs macros if you have a character of same name. */
-	/* Access the "account" ins file */
-	sprintf(buf, "%s.ins", nick);
-#else /* this should be just fine as replacement */
-	sprintf(buf, "global.ins");
-#endif
-	load_auto_inscriptions(buf);
+	/* --- Note: Different from macro-loading, auto-inscriptions only load the most specific .ins file.
+	             Otherwise things become messy as lines can easily end up out of intended order. - C. Blue --- */
 
-	/* Access the "race" ins file */
-	if (race < Setup.max_race) {
-		sprintf(buf, "%s.ins", race_info[race].title);
-		load_auto_inscriptions(buf);
+	/* Access the "character" ins file */
+	sprintf(buf, "%s.ins", cname);
+	if (load_auto_inscriptions(buf)) return;
+
+	/* Access the "class" ins file */
+	if (class < Setup.max_class) {
+		sprintf(buf, "%s.ins", class_info[class].title);
+		if (load_auto_inscriptions(buf)) return;
 	}
 
 	/* Access the "trait" ins file */
 	if (trait < Setup.max_trait) {
 		sprintf(buf, "%s.ins", trait_info[trait].title);
-		load_auto_inscriptions(buf);
+		if (load_auto_inscriptions(buf)) return;
 	}
 
-	/* Access the "class" ins file */
-	if (class < Setup.max_class) {
-		sprintf(buf, "%s.ins", class_info[class].title);
-		load_auto_inscriptions(buf);
+	/* Access the "race" ins file */
+	if (race < Setup.max_race) {
+		sprintf(buf, "%s.ins", race_info[race].title);
+		if (load_auto_inscriptions(buf)) return;
 	}
 
-	/* Access the "character" ins file */
-	sprintf(buf, "%s.ins", cname);
-	load_auto_inscriptions(buf);
+#if 0 /* disabled, since everyone only has 1 account anyway. It just disturbs inscriptions if you have a character of same name. */
+	/* Access the "account" ins file */
+	sprintf(buf, "%s.ins", nick);
+#else /* this should be just fine as replacement */
+	sprintf(buf, "global.ins");
+#endif
+	(void)load_auto_inscriptions(buf);
 }
 
 

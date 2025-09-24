@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 23. September 2025 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 24. September 2025 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2882,12 +2882,20 @@ To make the game parse an inscription as regexp, prefix it with a '$', eg
 If you use both '!' and '$', put the '!' first, eg: "!$drag.*mail".
 Regexps are always parsed case-insensitively.
 
-Auto-inscription files can be saved and will be loaded automatically in the
-same manner as macro files, if the filename matches your race, trait, class or
-character name (compare (3.6), 'Loading macros automatically').
+Auto-inscription files can be saved and will be loaded automatically in a
+similar manner as macro files, if the filename matches your race, trait,
+class or character name (compare (3.6), 'Loading macros automatically').
 The only exception are form-name specific ins-files, these don't work.
-If multiple matching files are found, the game will attempt to merge them
-accordingly.
+However, the difference to macro-file loading is that only the most specific
+inscriptions-file found will be loaded and the rest ignored! The order from
+first aka most specific to least specific is:
+ - <charactername>.ins
+ - <class>.ins
+ - <trait>.ins
+ - <race>.ins
+ - global.ins
+(Earlier client versions actually tried to read all of these and merge them.
+This has been abolished as it could place inscriptions in unintended order.)
 
 To immediately apply an auto-inscription that you just added or modified,
 use the  /at  command.
