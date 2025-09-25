@@ -19066,6 +19066,7 @@ stated.
                                 the blacklist time will be much shorter too.
                                 Some potion/scroll/wand/staff break points
                                 regarding this (not complete, just examples):
+                                ?Magic Mapping, !Cure Serious Wounds: 40 Au.
                                 ?Identify: 50 Au.
                                 !Neutralize Poison: 55 Au.
                                 !Cure Critical Wounds: 100 Au.
