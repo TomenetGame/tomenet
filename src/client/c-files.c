@@ -982,6 +982,9 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 	   Note: For now, these images are cleared whenever the screen is refreshed, as they do not register in the character/attribute matrix (screen[]).
 	         So they are mostly good for temporary effects eg client-side animations (Casino dice slots). */
 	case 'I':
+#ifdef USE_GRAPHICS
+		if (!use_graphics) return(0); //"accept"
+
 		if (tokenize(buf + 2, 5, zz) == 5) {
 			j = (huge)strtol(zz[0], NULL, 0);
 			if (j > MAX_TILES_RAWPICT) {
@@ -995,10 +998,10 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			tiles_rawpict_org[j].defined = TRUE;
 
 			/* For first client startup: Since we're called here _after_ tileset loading, we have to scale here */
-#if defined(WINDOWS) || defined(USE_X11)
+ #if defined(WINDOWS) || defined(USE_X11)
 			tiles_rawpict_scale();
+ #endif
 #endif
-
 			return(0);
 		}
 		break;
