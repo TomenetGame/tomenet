@@ -12009,6 +12009,7 @@ static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool l
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 	char m_name[MNAME_LEN], m_name_real[MNAME_LEN], xp_str[15];
+	bool chat_xp = FALSE;
 
 	/* Extract monster name */
 	monster_desc(Ind, m_name, m_idx, 0);
@@ -12026,12 +12027,21 @@ static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool l
 	p_ptr->gain_exp_frac = FALSE;
 #endif
 
+
+	/* Hack for showing the XP gained for unique monsters in chat:
+	   If diz_unique is enabled, 'lore' would be FALSE to prevent
+	   a duplicate unique info message. However, this would mean that we cannot see the 'XP' info in chat.
+	   So we override it here for that particular case: */
+	if (!p_ptr->r_killed[m_ptr->r_idx]
+	    && (r_ptr->flags1 & RF1_UNIQUE) && p_ptr->diz_unique)
+		chat_xp = TRUE; /* Hacked: On first unique kill, do show the slain message w/ XP info in chat-buffer */
+
 	/* Death by Missile/Spell attack */
 	/* DEG modified spell damage messages. */
 	if (note) {
 #ifdef RACE_DIZ
 		/* Tell player the monster's lore? (4.7.1b feature) */
-		if (lore) msg_format(Ind, "\374\377y%^s%s from \377g%d \377ydamage.%s", m_name, note, dam, xp_str);
+		if (lore || chat_xp) msg_format(Ind, "\374\377y%^s%s from \377g%d \377ydamage.%s", m_name, note, dam, xp_str);
 		else
 #endif
 		msg_format(Ind, "\377y%^s%s from \377g%d \377ydamage.%s", m_name, note, dam, xp_str);
@@ -12045,7 +12055,7 @@ static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool l
 	else if (!p_ptr->mon_vis[m_idx]) {
 #ifdef RACE_DIZ
 		/* Tell player the monster's lore? (4.7.1b feature) */
-		if (lore) msg_format(Ind, "\374\377yYou have killed %s.%s", m_name, xp_str);
+		if (lore || chat_xp) msg_format(Ind, "\374\377yYou have killed %s.%s", m_name, xp_str);
 		else
 #endif
 		msg_format(Ind, "\377yYou have killed %s.", m_name, xp_str);
@@ -12072,7 +12082,7 @@ static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool l
 	    (strchr("Evg", r_ptr->d_char))) {
 #ifdef RACE_DIZ
 		/* Tell player the monster's lore? (4.7.1b feature) */
-		if (lore) msg_format(Ind, "\374\377yYou have destroyed %s.%s", m_name, xp_str);
+		if (lore || chat_xp) msg_format(Ind, "\374\377yYou have destroyed %s.%s", m_name, xp_str);
 		else
 #endif
 		msg_format(Ind, "\377yYou have destroyed %s.%s", m_name, xp_str);
@@ -12085,7 +12095,7 @@ static void monster_death_message(int Ind, int m_idx, int dam, cptr note, bool l
 	else {
 #ifdef RACE_DIZ
 		/* Tell player the monster's lore? (4.7.1b feature) */
-		if (lore) msg_format(Ind, "\374\377yYou have slain %s.%s", m_name, xp_str);
+		if (lore || chat_xp) msg_format(Ind, "\374\377yYou have slain %s.%s", m_name, xp_str);
 		else
 #endif
 		msg_format(Ind, "\377yYou have slain %s.%s", m_name, xp_str);
