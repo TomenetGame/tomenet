@@ -14681,6 +14681,12 @@ Restore Life Levels
                 Note that this potion does not restore experience you lost by
                 dying (there is no way to restore experience loss from death).
 
+                If you gain experience while your experience is drained, it
+                will go into regaining XP back to your normal value, and only
+                10% of it will actually be credited to your maximum XP, so it
+                is highly inefficient to kill monsters while your XP is drained
+                as you basically waste 90% of your gains.
+
 Restore Mana    Restores 500 MP. ('You feel your head clearing')
 
 *Restore Mana*  Restores 1000 MP. ('You feel your head clearing')
