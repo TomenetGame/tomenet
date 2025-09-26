@@ -971,11 +971,11 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 				if (plural) msg_format(Ind, "\377w%s are branded with venom of unknown effect!", weapons);
 				else msg_format(Ind, "\377w%s is branded with venom of unknown effect!", weapons);
 			} else if (potion_mushroom_branding(Ind, 0, 0, (forge.tval == TV_FOOD ? 1000 : 0) + forge.sval, TRUE)) {
-				if (plural) msg_format(Ind, "\377w%s are branded with venom of %s!", k_name + k_info[forge.k_idx].name);
-				else msg_format(Ind, "\377w%s is branded with venom of %s!", k_name + k_info[forge.k_idx].name);
+				if (plural) msg_format(Ind, "\377w%s are branded with venom of %s!", weapons, k_name + k_info[forge.k_idx].name);
+				else msg_format(Ind, "\377w%s is branded with venom of %s!", weapons, k_name + k_info[forge.k_idx].name);
 			} else {
-				if (plural) msg_format(Ind, "\377w%s are branded with ineffetive venom!");
-				else msg_format(Ind, "\377w%s is branded with ineffetive venom!");
+				if (plural) msg_format(Ind, "\377w%s are branded with ineffetive venom!", weapons);
+				else msg_format(Ind, "\377w%s is branded with ineffetive venom!", weapons);
 			}
 		} else switch (t) {
 			case TBRAND_BALL_ACID: //not used
@@ -1039,11 +1039,11 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 				if (plural) msg_format(Ind, "\377W%s are no longer branded branded with \377gunknown venom\377W!", weapons);
 				else msg_format(Ind, "\377W%s is no longer branded with \377gunknown venom\377W!", weapons);
 			} else if (potion_mushroom_branding(Ind, 0, 0, (forge.tval == TV_FOOD ? 1000 : 0) + forge.sval, TRUE)) {
-				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gvenom of %s\377W!", k_name + k_info[forge.k_idx].name);
-				else msg_format(Ind, "\377W%s is no longer branded with \377gvenom of %s\377W!", k_name + k_info[forge.k_idx].name);
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gvenom of %s\377W!", weapons, k_name + k_info[forge.k_idx].name);
+				else msg_format(Ind, "\377W%s is no longer branded with \377gvenom of %s\377W!", weapons, k_name + k_info[forge.k_idx].name);
 			} else {
-				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gineffetive venom\377W!");
-				else msg_format(Ind, "\377W%s is no longer branded with \377gineffetive venom\377W!");
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gineffetive venom\377W!", weapons);
+				else msg_format(Ind, "\377W%s is no longer branded with \377gineffetive venom\377W!", weapons);
 			}
 		} else switch (t) {
 			case TBRAND_BALL_ACID: //not used
