@@ -800,7 +800,7 @@ static void prt_indicators(int Ind) {
 	if (p_ptr->oppose_pois) indicators |= IND_RES_POIS;
 	if (p_ptr->divine_xtra_res) indicators |= IND_RES_DIVINE;
 	if (p_ptr->tim_esp) indicators |= IND_ESP;
-	if (p_ptr->melee_brand) indicators |= IND_MELEE_BRAND;
+	if (p_ptr->melee_brand || p_ptr->melee_brand2) indicators |= IND_MELEE_BRAND;
 	if (p_ptr->tim_regen) indicators |= IND_REGEN;
 	if (p_ptr->dispersion) indicators |= IND_DISPERSION;
 #ifndef IND_WRAITH_PROB

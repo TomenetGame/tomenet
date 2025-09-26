@@ -1236,6 +1236,23 @@ static void wr_extra(int Ind) {
 	(void)k; /* discard */
 	wr_byte(0);
 #endif
+
+	/* Save current temporary ammo branding, melee weapon branding, nimbus */
+	wr_s16b(p_ptr->ammo_brand);
+	wr_u16b(p_ptr->ammo_brand_t);
+	wr_s16b(p_ptr->ammo_brand_d);
+
+	wr_s16b(p_ptr->nimbus);
+	wr_byte(p_ptr->nimbus_t);
+	wr_byte(p_ptr->nimbus_d);
+
+	wr_s16b(p_ptr->melee_brand);
+	wr_u16b(p_ptr->melee_brand_t);
+	wr_byte(p_ptr->melee_brand_flags); //uchar
+	wr_s16b(p_ptr->melee_brand2);
+	wr_u16b(p_ptr->melee_brand2_t);
+	wr_byte(p_ptr->melee_brand2_flags); //uchar
+	wr_byte(p_ptr->melee_brand_ma); //bool
 }
 
 /*

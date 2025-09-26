@@ -225,7 +225,7 @@ POISONRES = add_spell {
 		local dur
 
 		dur = randint(15) + 20 + get_level(Ind, POISONRES, 25)
-		set_melee_brand(Ind, dur, TBRAND_POIS, 0, TRUE, TRUE)
+		set_melee_brand(Ind, dur, TBRAND_POIS, TBRAND_F_DUAL, TRUE, TRUE)
 		fire_ball(Ind, GF_TBRAND_POIS, 0, dur, 2, " calls perilous shadows imbuing you.")
 		if get_level(Ind, POISONRES, 50) >= 10 then
 			set_oppose_pois(Ind, dur)

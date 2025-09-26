@@ -5836,7 +5836,7 @@ bool mon_hit_trap(int m_idx) {
 					dam += load_o_ptr->to_d;
 #endif
 					/* Apply slays/brands */
-					dam = brand_dam_aux(0, load_o_ptr, dam, m_ptr, FALSE);
+					dam = brand_dam_aux(0, load_o_ptr, -1, dam, m_ptr, FALSE);
 #ifndef MONTRAPS_TO_DAM_BRANDS
 					/* Damage enchantment */
 					dam += load_o_ptr->to_d;

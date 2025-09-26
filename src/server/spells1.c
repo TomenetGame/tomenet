@@ -12138,7 +12138,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_TBRAND_POIS:
-		set_melee_brand(Ind, dam, TBRAND_POIS, TBRAND_F_EXTERN, TRUE, TRUE); //mark as not self-applied. This is to suppress msg-spam if not wielding any weapon.
+		set_melee_brand(Ind, dam, TBRAND_POIS, TBRAND_F_EXTERN | TBRAND_F_DUAL, TRUE, TRUE); //mark as not self-applied. This is to suppress msg-spam if not wielding any weapon.
 		dam = 0;
 		break;
 

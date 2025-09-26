@@ -898,20 +898,30 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
+	/* Hack: If someone projects this on us but we already have our own effect up,
+	   ignore the new cast so it doesn't overwrite our stuff - only if it's not the same type though! */
+	if (v && cast && (flags & TBRAND_F_EXTERN)) {
+		if ((flags & TBRAND_F_MAINHAND) && p_ptr->melee_brand && p_ptr->melee_brand_t != t) flags &= ~TBRAND_F_MAINHAND; //no longer affect first weapon
+		if ((flags & TBRAND_F_OFFHAND) && p_ptr->melee_brand2 && p_ptr->melee_brand2_t != t) flags &= ~TBRAND_F_OFFHAND; //no longer affect second weapon
+		if (!(flags & TBRAND_F_DUAL) && weapons_only) return(FALSE); //nothing left?
+	}
+
 	if (cast) p_ptr->melee_brand_ma = FALSE; //assume
 	else p_ptr->melee_brand_ma = !weapons_only;
 
-	if (!p_ptr->melee_brand_ma &&
+	if (!p_ptr->melee_brand_ma && /* both weapons? */
+	    (flags & TBRAND_F_DUAL) == TBRAND_F_DUAL &&
 	    (p_ptr->inventory[INVEN_WIELD].k_idx && /* dual-wield */
 	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
 		strcpy(weapons, "Your weapons");
 		plural = TRUE;
-	} else if (!p_ptr->melee_brand_ma &&
-	    (p_ptr->inventory[INVEN_WIELD].k_idx ||
-	    (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))) {
+	} else if (!p_ptr->melee_brand_ma && ( /* either weapon? */
+	    ((flags & TBRAND_F_MAINHAND) && p_ptr->inventory[INVEN_WIELD].k_idx) ||
+	    ((flags & TBRAND_F_OFFHAND) && p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD))
+	    ) {
 		strcpy(weapons, "Your weapon");
 		plural = FALSE;
-	} else if (!weapons_only) {
+	} else if (!weapons_only) { /* bare fists (or whatever we have) brand? */
 		//fists, claws, tentacles >,>
 		switch (bodymonster_hands(Ind)) {
 		case 0:
@@ -922,6 +932,9 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 			p_ptr->melee_brand = 0;
 			p_ptr->melee_brand_t = 0;
 			p_ptr->melee_brand_flags = 0x0;
+			p_ptr->melee_brand2 = 0;
+			p_ptr->melee_brand2_t = 0;
+			p_ptr->melee_brand2_flags = 0x0;
 			return(FALSE); /* don't notice anything */
 		case 1:
 			strcpy(weapons, "Your fists");
@@ -935,137 +948,173 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 		}
 		plural = TRUE;
 		if (cast) p_ptr->melee_brand_ma = TRUE;
-	} else {
+	} else { /* can't brand anything */
 		/* If this buff wasn't applied by ourself, prevent msg-spam */
 		if (v && cast && !(flags & TBRAND_F_EXTERN)) msg_print(Ind, "You are not wielding any melee weapons to brand."); /* failure */
 		/* Ensure no brand */
 		p_ptr->melee_brand = 0;
 		p_ptr->melee_brand_t = 0;
 		p_ptr->melee_brand_flags = 0x0;
+		p_ptr->melee_brand2 = 0;
+		p_ptr->melee_brand2_t = 0;
+		p_ptr->melee_brand2_flags = 0x0;
 		return(FALSE); /* don't notice anything */
 	}
 
 	/* Open */
 	if (v && cast) {
-		switch (t) {
-		case TBRAND_BALL_ACID: //not used
-		case TBRAND_ACID:
-			if (plural) msg_format(Ind, "\377w%s are branded with acid!", weapons);
-			else msg_format(Ind, "\377w%s is branded with acid!", weapons);
-			break;
-		case TBRAND_BALL_ELEC: //not used
-		case TBRAND_ELEC:
-			if (plural) msg_format(Ind, "\377w%s are branded with lightning!", weapons);
-			else msg_format(Ind, "\377w%s is branded with lightning!", weapons);
-			break;
-		case TBRAND_BALL_FIRE: //not used
-		case TBRAND_FIRE:
-			if (plural) msg_format(Ind, "\377w%s are branded with fire!", weapons);
-			else msg_format(Ind, "\377w%s is branded with fire!", weapons);
-			break;
-		case TBRAND_BALL_COLD: //not used
-		case TBRAND_COLD:
-			if (plural) msg_format(Ind, "\377w%s are branded with frost!", weapons);
-			else msg_format(Ind, "\377w%s is branded with frost!", weapons);
-			break;
-		case TBRAND_POIS:
-			if (plural) msg_format(Ind, "\377w%s are branded with poison!", weapons);
-			else msg_format(Ind, "\377w%s is branded with poison!", weapons);
-			break;
-		case TBRAND_BASE:
-			if (plural) msg_format(Ind, "\377w%s glow in many colours!", weapons); //not used
-			else msg_format(Ind, "\377w%s glows in many colours!", weapons); //not used
-			break;
-		case TBRAND_CHAO:
-			if (plural) msg_format(Ind, "\377w%s seem to twist and warp!", weapons); //not used
-			else msg_format(Ind, "\377w%s seems to twist and warp!", weapons); //not used
-			break;
-		case TBRAND_VORP:
-			if (plural) msg_format(Ind, "\377w%s sharpen!", weapons); //not used
-			else msg_format(Ind, "\377w%s sharpens!", weapons); //not used
-			break;
-		case TBRAND_BALL_SOUN:
-			if (plural) msg_format(Ind, "\377w%s vibrate!", weapons); //not used
-			else msg_format(Ind, "\377w%s vibrates!", weapons); //not used
-			break;
-		case TBRAND_HELLFIRE:
-			if (plural) msg_format(Ind, "\377w%s are branded with hellfire!", weapons);
-			else msg_format(Ind, "\377w%s is branded with hellfire!", weapons);
-			break;
-		case TBRAND_VAMPIRIC:
-			if (plural) msg_format(Ind, "\377w%s are branded with vampiric hunger!", weapons);
-			else msg_format(Ind, "\377w%s is branded with vampiric hunger!", weapons);
-			break;
+		if (flags & TBRAND_F_POTION_MUSHROOM) {
+			object_type forge;
+
+			invcopy(&forge, lookup_kind(TV_POTION, t));
+			if (!object_aware_p(Ind, &forge)) {
+				if (plural) msg_format(Ind, "\377w%s are branded with venom of unknown effect!", weapons);
+				else msg_format(Ind, "\377w%s is branded with venom of unknown effect!", weapons);
+			} else if (potion_mushroom_branding(Ind, 0, 0, (forge.tval == TV_FOOD ? 1000 : 0) + forge.sval, TRUE)) {
+				if (plural) msg_format(Ind, "\377w%s are branded with venom of %s!", k_name + k_info[forge.k_idx].name);
+				else msg_format(Ind, "\377w%s is branded with venom of %s!", k_name + k_info[forge.k_idx].name);
+			} else {
+				if (plural) msg_format(Ind, "\377w%s are branded with ineffetive venom!");
+				else msg_format(Ind, "\377w%s is branded with ineffetive venom!");
+			}
+		} else switch (t) {
+			case TBRAND_BALL_ACID: //not used
+			case TBRAND_ACID:
+				if (plural) msg_format(Ind, "\377w%s are branded with acid!", weapons);
+				else msg_format(Ind, "\377w%s is branded with acid!", weapons);
+				break;
+			case TBRAND_BALL_ELEC: //not used
+			case TBRAND_ELEC:
+				if (plural) msg_format(Ind, "\377w%s are branded with lightning!", weapons);
+				else msg_format(Ind, "\377w%s is branded with lightning!", weapons);
+				break;
+			case TBRAND_BALL_FIRE: //not used
+			case TBRAND_FIRE:
+				if (plural) msg_format(Ind, "\377w%s are branded with fire!", weapons);
+				else msg_format(Ind, "\377w%s is branded with fire!", weapons);
+				break;
+			case TBRAND_BALL_COLD: //not used
+			case TBRAND_COLD:
+				if (plural) msg_format(Ind, "\377w%s are branded with frost!", weapons);
+				else msg_format(Ind, "\377w%s is branded with frost!", weapons);
+				break;
+			case TBRAND_POIS:
+				if (plural) msg_format(Ind, "\377w%s are branded with poison!", weapons);
+				else msg_format(Ind, "\377w%s is branded with poison!", weapons);
+				break;
+			case TBRAND_BASE:
+				if (plural) msg_format(Ind, "\377w%s glow in many colours!", weapons); //not used
+				else msg_format(Ind, "\377w%s glows in many colours!", weapons); //not used
+				break;
+			case TBRAND_CHAO:
+				if (plural) msg_format(Ind, "\377w%s seem to twist and warp!", weapons); //not used
+				else msg_format(Ind, "\377w%s seems to twist and warp!", weapons); //not used
+				break;
+			case TBRAND_VORP:
+				if (plural) msg_format(Ind, "\377w%s sharpen!", weapons); //not used
+				else msg_format(Ind, "\377w%s sharpens!", weapons); //not used
+				break;
+			case TBRAND_BALL_SOUN:
+				if (plural) msg_format(Ind, "\377w%s vibrate!", weapons); //not used
+				else msg_format(Ind, "\377w%s vibrates!", weapons); //not used
+				break;
+			case TBRAND_HELLFIRE:
+				if (plural) msg_format(Ind, "\377w%s are branded with hellfire!", weapons);
+				else msg_format(Ind, "\377w%s is branded with hellfire!", weapons);
+				break;
+			case TBRAND_VAMPIRIC:
+				if (plural) msg_format(Ind, "\377w%s are branded with vampiric hunger!", weapons);
+				else msg_format(Ind, "\377w%s is branded with vampiric hunger!", weapons);
+				break;
 		}
 		notice = TRUE;
 	}
 	/* Shut */
-	else if (!v && p_ptr->melee_brand) {
-		switch (t) {
-		case TBRAND_BALL_ACID: //not used
-		case TBRAND_ACID:
-			if (plural) msg_format(Ind, "\377W%s are no longer branded with \377sacid\377W.", weapons);
-			else msg_format(Ind, "\377W%s is no longer branded with \377sacid\377W.", weapons);
-			break;
-		case TBRAND_BALL_ELEC: //not used
-		case TBRAND_ELEC:
-			if (plural) msg_format(Ind, "\377W%s are no longer branded with \377blightning\377W.", weapons);
-			else msg_format(Ind, "\377W%s is no longer branded with \377blightning\377W.", weapons);
-			break;
-		case TBRAND_BALL_FIRE: //not used
-		case TBRAND_FIRE:
-			if (plural) msg_format(Ind, "\377W%s are no longer branded with \377rfire\377W.", weapons);
-			else msg_format(Ind, "\377W%s is no longer branded with \377rfire\377W.", weapons);
-			break;
-		case TBRAND_BALL_COLD: //not used
-		case TBRAND_COLD:
-			if (plural) msg_format(Ind, "\377W%s are no longer branded with \377wfrost\377W.", weapons);
-			else msg_format(Ind, "\377W%s is no longer branded with \377wfrost\377W.", weapons);
-			break;
-		case TBRAND_POIS:
-			if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gpoison\377W.", weapons);
-			else msg_format(Ind, "\377W%s is no longer branded with \377gpoison\377W.", weapons);
-			break;
-		case TBRAND_BASE:
-			if (plural) msg_format(Ind, "\377W%s stop glowing in \377vmany colours\377W.", weapons); //not used
-			else msg_format(Ind, "\377w%s stops glowing in \377vmany colours\377W.", weapons); //not used
-			break;
-		case TBRAND_CHAO:
-			if (plural) msg_format(Ind, "\377W%s return to \377vnormal\377W.", weapons); //not used
-			else msg_format(Ind, "\377w%s returns to \377vnormal\377W.", weapons); //not used
-			break;
-		case TBRAND_VORP:
-			if (plural) msg_format(Ind, "\377W%s look less \377wsharp\377W.", weapons); //not used
-			else msg_format(Ind, "\377w%s looks less \377wsharp\377W", weapons); //not used
-			break;
-		case TBRAND_BALL_SOUN:
-			if (plural) msg_format(Ind, "\377W%s stop \377yvibrating\377W.", weapons); //not used
-			else msg_format(Ind, "\377w%s stops \377yvibrating\377W.", weapons); //not used
-			break;
-		case TBRAND_HELLFIRE:
-			if (plural) msg_format(Ind, "\377W%s are no longer branded with \377rhellfire\377W.", weapons);
-			else msg_format(Ind, "\377W%s is no longer branded with \377rhellfire\377W.", weapons);
-			break;
-		case TBRAND_VAMPIRIC:
-			if (plural) msg_format(Ind, "\377W%s are no longer branded with \377Dvampirism\377W.", weapons);
-			else msg_format(Ind, "\377W%s is no longer branded with \377Dvampirism\377W.", weapons);
-			break;
-		default:
-			if (plural) msg_format(Ind, "\377W%s are no longer branded.", weapons);
-			else msg_format(Ind, "\377W%s is no longer branded.", weapons);
-		break;
-		}
+	else if (!v && (p_ptr->melee_brand || p_ptr->melee_brand2)) {
+		if (flags & TBRAND_F_POTION_MUSHROOM) {
+			object_type forge;
 
+			invcopy(&forge, lookup_kind(TV_POTION, t));
+			if (!object_aware_p(Ind, &forge)) {
+				if (plural) msg_format(Ind, "\377W%s are no longer branded branded with \377gunknown venom\377W!", weapons);
+				else msg_format(Ind, "\377W%s is no longer branded with \377gunknown venom\377W!", weapons);
+			} else if (potion_mushroom_branding(Ind, 0, 0, (forge.tval == TV_FOOD ? 1000 : 0) + forge.sval, TRUE)) {
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gvenom of %s\377W!", k_name + k_info[forge.k_idx].name);
+				else msg_format(Ind, "\377W%s is no longer branded with \377gvenom of %s\377W!", k_name + k_info[forge.k_idx].name);
+			} else {
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gineffetive venom\377W!");
+				else msg_format(Ind, "\377W%s is no longer branded with \377gineffetive venom\377W!");
+			}
+		} else switch (t) {
+			case TBRAND_BALL_ACID: //not used
+			case TBRAND_ACID:
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377sacid\377W.", weapons);
+				else msg_format(Ind, "\377W%s is no longer branded with \377sacid\377W.", weapons);
+				break;
+			case TBRAND_BALL_ELEC: //not used
+			case TBRAND_ELEC:
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377blightning\377W.", weapons);
+				else msg_format(Ind, "\377W%s is no longer branded with \377blightning\377W.", weapons);
+				break;
+			case TBRAND_BALL_FIRE: //not used
+			case TBRAND_FIRE:
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377rfire\377W.", weapons);
+				else msg_format(Ind, "\377W%s is no longer branded with \377rfire\377W.", weapons);
+				break;
+			case TBRAND_BALL_COLD: //not used
+			case TBRAND_COLD:
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377wfrost\377W.", weapons);
+				else msg_format(Ind, "\377W%s is no longer branded with \377wfrost\377W.", weapons);
+				break;
+			case TBRAND_POIS:
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gpoison\377W.", weapons);
+				else msg_format(Ind, "\377W%s is no longer branded with \377gpoison\377W.", weapons);
+				break;
+			case TBRAND_BASE:
+				if (plural) msg_format(Ind, "\377W%s stop glowing in \377vmany colours\377W.", weapons); //not used
+				else msg_format(Ind, "\377w%s stops glowing in \377vmany colours\377W.", weapons); //not used
+				break;
+			case TBRAND_CHAO:
+				if (plural) msg_format(Ind, "\377W%s return to \377vnormal\377W.", weapons); //not used
+				else msg_format(Ind, "\377w%s returns to \377vnormal\377W.", weapons); //not used
+				break;
+			case TBRAND_VORP:
+				if (plural) msg_format(Ind, "\377W%s look less \377wsharp\377W.", weapons); //not used
+				else msg_format(Ind, "\377w%s looks less \377wsharp\377W", weapons); //not used
+				break;
+			case TBRAND_BALL_SOUN:
+				if (plural) msg_format(Ind, "\377W%s stop \377yvibrating\377W.", weapons); //not used
+				else msg_format(Ind, "\377w%s stops \377yvibrating\377W.", weapons); //not used
+				break;
+			case TBRAND_HELLFIRE:
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377rhellfire\377W.", weapons);
+				else msg_format(Ind, "\377W%s is no longer branded with \377rhellfire\377W.", weapons);
+				break;
+			case TBRAND_VAMPIRIC:
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377Dvampirism\377W.", weapons);
+				else msg_format(Ind, "\377W%s is no longer branded with \377Dvampirism\377W.", weapons);
+				break;
+			default:
+				if (plural) msg_format(Ind, "\377W%s are no longer branded.", weapons);
+				else msg_format(Ind, "\377W%s is no longer branded.", weapons);
+			break;
+		}
 		notice = TRUE;
 		t = 0;
-		flags = 0x0;
 	}
 
 	/* Use the value */
-	p_ptr->melee_brand = v;
-	p_ptr->melee_brand_t = t;
-	p_ptr->melee_brand_flags = flags;
-
+	if (p_ptr->melee_brand_ma) flags &= ~TBRAND_F_DUAL; //paranoia?
+	if ((flags & TBRAND_F_MAINHAND) || p_ptr->melee_brand_ma) { //barehanded brand uses the first value array by default
+		p_ptr->melee_brand = v;
+		p_ptr->melee_brand_t = t;
+		p_ptr->melee_brand_flags = v ? (flags & ~TBRAND_F_OFFHAND) : 0x0;
+	}
+	if (flags & TBRAND_F_OFFHAND) {
+		p_ptr->melee_brand2 = v;
+		p_ptr->melee_brand2_t = t;
+		p_ptr->melee_brand2_flags = v ? (flags & ~TBRAND_F_MAINHAND) : 0x0;
+	}
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);

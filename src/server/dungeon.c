@@ -5788,8 +5788,17 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_nimbus(Ind, p_ptr->nimbus - minus_magic, p_ptr->nimbus_t, p_ptr->nimbus_d);
 
 	/* weapon brand time */
-	if (p_ptr->melee_brand)
-		(void)set_melee_brand(Ind, p_ptr->melee_brand - minus_magic, p_ptr->melee_brand_t, p_ptr->melee_brand_flags, FALSE, !p_ptr->melee_brand_ma);
+	/* special hack: if both weapons run out at the same time with the same element, only give one (combined) message ^^ */
+	if (p_ptr->melee_brand && p_ptr->melee_brand2 &&
+	    p_ptr->melee_brand - minus_magic <= 0 && p_ptr->melee_brand2 - minus_magic <= 0 &&
+	    p_ptr->melee_brand_t == p_ptr->melee_brand2_t)
+		(void)set_melee_brand(Ind, p_ptr->melee_brand - minus_magic, p_ptr->melee_brand_t, p_ptr->melee_brand_flags | TBRAND_F_DUAL, FALSE, !p_ptr->melee_brand_ma);
+	else {
+		if (p_ptr->melee_brand)
+			(void)set_melee_brand(Ind, p_ptr->melee_brand - minus_magic, p_ptr->melee_brand_t, p_ptr->melee_brand_flags, FALSE, !p_ptr->melee_brand_ma);
+		if (p_ptr->melee_brand2)
+			(void)set_melee_brand(Ind, p_ptr->melee_brand2 - minus_magic, p_ptr->melee_brand2_t, p_ptr->melee_brand2_flags, FALSE, !p_ptr->melee_brand_ma);
+	}
 
 	/* Hack -- Timed ESP */
 	if (p_ptr->tim_esp)

@@ -2764,6 +2764,26 @@ if (p_ptr->updated_savegame == 0) {
 		}
 	}
 
+	/* Load current temporary ammo branding, melee weapon branding, nimbus */
+	if (!s_older_than(4, 9, 23)) {
+		rd_s16b(&p_ptr->ammo_brand);
+		rd_u16b(&p_ptr->ammo_brand_t);
+		rd_s16b(&p_ptr->ammo_brand_d);
+
+		rd_s16b(&p_ptr->nimbus);
+		rd_byte(&p_ptr->nimbus_t);
+		rd_byte(&p_ptr->nimbus_d);
+
+		rd_s16b(&p_ptr->melee_brand);
+		rd_u16b(&p_ptr->melee_brand_t);
+		rd_byte(&p_ptr->melee_brand_flags); //uchar
+		rd_s16b(&p_ptr->melee_brand2);
+		rd_u16b(&p_ptr->melee_brand2_t);
+		rd_byte(&p_ptr->melee_brand2_flags); //uchar
+		rd_byte(&tmp8u); //bool
+		p_ptr->melee_brand_ma = (tmp8u != 0);
+	}
+
 	/* Success */
 	return(FALSE);
 }

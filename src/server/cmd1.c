@@ -322,8 +322,9 @@ s16b critical_melee(int Ind, int weight, int plus, int dam, int o_crit, bool all
  * Note that most brands and slays are x3, except Slay Animal (x2),
  * Slay Evil (x2), and Kill dragon (x5).
  */
-/* accepts Ind <=0 */
-s16b brand_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, bool thrown) {
+/* accepts Ind <=0.
+   slot is only important for melee weapons, for temporary brands. */
+s16b brand_dam_aux(int Ind, object_type *o_ptr, int slot, int tdam, monster_type *m_ptr, bool thrown) {
 	int mult = FACTOR_MULT, bonus = 0;
 	monster_race *r_ptr = race_inf(m_ptr);
 	u32b f1, f2, f3, f4, f5, f6, esp;
@@ -501,10 +502,10 @@ s16b brand_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, b
 		f1 |= p_ptr->slay_melee;
 
 		/* Temporary weapon branding */
-		if (p_ptr->melee_brand &&
-		    ((o_ptr && o_ptr->k_idx && !p_ptr->melee_brand_ma) || /* we have a weapon brand? */
-		    ((!o_ptr || !o_ptr->k_idx) && p_ptr->melee_brand_ma))) { /* we have a barehanded brand? */
-			switch (p_ptr->melee_brand_t) {
+		if ((!p_ptr->melee_brand_ma && o_ptr && o_ptr->k_idx &&
+		    ((p_ptr->melee_brand && slot == INVEN_WIELD) || (p_ptr->melee_brand2 && slot == INVEN_ARM))) || /* we have a weapon brand? */
+		    (p_ptr->melee_brand_ma && p_ptr->melee_brand && (!o_ptr || !o_ptr->k_idx))) { /* we have a barehanded brand? */
+			switch (slot == INVEN_ARM ? p_ptr->melee_brand2_t : p_ptr->melee_brand_t) { /* Default for MA branding is also melee_brand_t! */
 			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
 				break;
@@ -928,8 +929,9 @@ s16b brand_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, b
 
 /*
  * Brands (including slay mods) the given damage depending on object type, hitting a given player.
+ * slot is only important for melee weapons, for temporary brands.
  */
-s16b brand_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_ptr, bool thrown) {
+s16b brand_dam_aux_player(int Ind, object_type *o_ptr, int slot, int tdam, player_type *q_ptr, bool thrown) {
 	int mult = FACTOR_MULT, bonus = 0;
 	u32b f1, f2, f3, f4, f5, f6, esp;
 	u16b fx = 0x0;
@@ -1062,10 +1064,10 @@ s16b brand_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_
 		f1 |= p_ptr->slay_melee;
 
 		/* Temporary weapon branding */
-		if (p_ptr->melee_brand &&
-		    ((o_ptr && o_ptr->k_idx && !p_ptr->melee_brand_ma) || /* we have a weapon brand? */
-		    ((!o_ptr || !o_ptr->k_idx) && p_ptr->melee_brand_ma))) { /* we have a barehanded brand? */
-			switch (p_ptr->melee_brand_t) {
+		if ((!p_ptr->melee_brand_ma && o_ptr && o_ptr->k_idx &&
+		    ((p_ptr->melee_brand && slot == INVEN_WIELD) || (p_ptr->melee_brand2 && slot == INVEN_ARM))) || /* we have a weapon brand? */
+		    (p_ptr->melee_brand_ma && p_ptr->melee_brand && (!o_ptr || !o_ptr->k_idx))) { /* we have a barehanded brand? */
+			switch (slot == INVEN_ARM ? p_ptr->melee_brand2_t : p_ptr->melee_brand_t) { /* Default for MA branding is also melee_brand_t! */
 			case TBRAND_ELEC:
 				f1 |= TR1_BRAND_ELEC;
 				break;
@@ -3631,7 +3633,9 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		}
 
 		/* check whether this weapon or we in general, are vampiric */
-		if (p_ptr->melee_brand && p_ptr->melee_brand_t == TBRAND_VAMPIRIC) vampiric_melee = 100;
+		if ((slot == INVEN_WIELD && p_ptr->melee_brand && p_ptr->melee_brand_t == TBRAND_VAMPIRIC) ||
+		    (slot == INVEN_ARM && p_ptr->melee_brand2 && p_ptr->melee_brand2_t == TBRAND_VAMPIRIC))
+			vampiric_melee = 100;
 		else if ((f1 & TR1_VAMPIRIC)) vampiric_melee = 100; /* weapon chance is always 100% */
 		else vampiric_melee = p_ptr->vampiric_melee; /* non-weapon chance from other items is applied from xtra1.c */
 #ifdef TEST_SERVER
@@ -3895,7 +3899,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = brand_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
+				k = brand_dam_aux_player(Ind, NULL, -1, k, q_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
 				/* Apply the player damage boni */
@@ -3904,7 +3908,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, 0, FALSE, FALSE);
 				k3 += k2;
 #else
-				k = brand_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
+				k = brand_dam_aux_player(Ind, NULL, -1, k, q_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				k += p_ptr->to_d + p_ptr->to_d_melee;
@@ -3957,10 +3961,10 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 #endif
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = brand_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
+				k = brand_dam_aux_player(Ind, o_ptr, slot, k, q_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 #else
-				k = brand_dam_aux_player(Ind, o_ptr, k, q_ptr, FALSE);
+				k = brand_dam_aux_player(Ind, o_ptr, slot, k, q_ptr, FALSE);
 #endif
 #ifdef VORPAL_LOWBRANDED
 				if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
@@ -4074,7 +4078,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
 			/* handle bare fists/bat/ghost */
 			} else {
-				k = brand_dam_aux_player(Ind, NULL, k, q_ptr, FALSE);
+				k = brand_dam_aux_player(Ind, NULL, -1, k, q_ptr, FALSE);
 
 				/* Apply the player damage boni */
 				/* (should this also cancelled by nazgul?(for now not)) */
@@ -4950,7 +4954,9 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		}
 
 		/* check whether this weapon or we in general, are vampiric */
-		if (p_ptr->melee_brand && p_ptr->melee_brand_t == TBRAND_VAMPIRIC) vampiric_melee = 100;
+		if ((slot == INVEN_WIELD && p_ptr->melee_brand && p_ptr->melee_brand_t == TBRAND_VAMPIRIC) ||
+		    (slot == INVEN_ARM && p_ptr->melee_brand2 && p_ptr->melee_brand2_t == TBRAND_VAMPIRIC))
+			vampiric_melee = 100;
 		else if (f1 & TR1_VAMPIRIC) vampiric_melee = 100; /* weapon chance is always 100% */
 		else vampiric_melee = p_ptr->vampiric_melee; /* non-weapon chance from other items is applied from xtra1.c */
 
@@ -5152,7 +5158,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = brand_dam_aux(Ind, NULL, k, m_ptr, FALSE);
+				k = brand_dam_aux(Ind, NULL, k, -1, m_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 
 				if (!p_ptr->instakills) {
@@ -5166,7 +5172,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				k3 = critical_melee(Ind, marts * (randint(10)), ma_ptr->min_level, k - k2, 0, FALSE, FALSE);
 				k3 += k2;
 #else
-				k = brand_dam_aux(Ind, NULL, k, m_ptr, FALSE);
+				k = brand_dam_aux(Ind, NULL, -1, k, m_ptr, FALSE);
 
 				if (!p_ptr->instakills) do_nazgul(Ind, &k, r_ptr, -1);
 
@@ -5241,10 +5247,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #endif
 #ifdef CRIT_UNBRANDED
 				k2 = k;
-				k = brand_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+				k = brand_dam_aux(Ind, o_ptr, slot, k, m_ptr, FALSE);
 				k2 = k - k2; /* remember difference between branded and unbranded dice */
 #else
-				k = brand_dam_aux(Ind, o_ptr, k, m_ptr, FALSE);
+				k = brand_dam_aux(Ind, o_ptr, slot, k, m_ptr, FALSE);
 #endif
 #ifdef VORPAL_LOWBRANDED
 				if (vorpal_cut) vorpal_cut = (vorpal_cut + k) / 2;
@@ -5400,7 +5406,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 				if (p_ptr->body_monster == RI_VAMPIRE_BAT) k /= 2;
 			/* handle bare fists/bat/ghost */
 			} else {
-				k = brand_dam_aux(Ind, NULL, k, m_ptr, FALSE);
+				k = brand_dam_aux(Ind, NULL, -1, k, m_ptr, FALSE);
 
 				if (!p_ptr->instakills) do_nazgul(Ind, &k, r_ptr, -1);
 

@@ -5841,18 +5841,21 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (slot < SUBINVEN_INVEN_MUL)
  #endif
 	/* Temporary brands -- kinda hacky that they use p_ptr instead of o_ptr.. */
-	if (pt_ptr->melee_brand && !pt_ptr->melee_brand_ma && is_melee_weapon(o_ptr->tval) && (slot == INVEN_WIELD || slot == INVEN_ARM)) {
-		if (p_ptr->melee_brand_flags & TBRAND_F_POTION_MUSHROOM) {
+	if (!pt_ptr->melee_brand_ma && is_melee_weapon(o_ptr->tval) && ((slot == INVEN_WIELD && pt_ptr->melee_brand) || (slot == INVEN_ARM && pt_ptr->melee_brand2))) {
+		char f = (slot == INVEN_ARM) ? pt_ptr->melee_brand2_flags : pt_ptr->melee_brand_flags;
+		u16b t = (slot == INVEN_ARM) ? pt_ptr->melee_brand2_t : pt_ptr->melee_brand_t;
+
+		if (f & TBRAND_F_POTION_MUSHROOM) {
 			object_type forge;
 
-			invcopy(&forge, lookup_kind(TV_POTION, (s16b)p_ptr->melee_brand_t));
+			invcopy(&forge, lookup_kind(TV_POTION, t));
 			if (!object_aware_p(Ind, &forge))
 				fprintf(fff, "\377GVenom of unknown effect has been applied to it temporarily.\n");
 			else if (potion_mushroom_branding(Ind, 0, 0, (forge.tval == TV_FOOD ? 1000 : 0) + forge.sval, TRUE))
 				fprintf(fff, "\377GVenom of %s has been applied to it temporarily.\n", k_name + k_info[forge.k_idx].name);
 			else
 				fprintf(fff, "\377GIneffective venom has been applied to it temporarily.\n");
-		} else switch (pt_ptr->melee_brand_t) {
+		} else switch (t) {
 			case TBRAND_ELEC:
 				fprintf(fff, "\377GLightning charge has been applied to it temporarily.\n");
 				break;
@@ -5875,6 +5878,14 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 				fprintf(fff, "\377GVampirism brand has been applied to it temporarily.\n");
 				break;
 			//other brands are unused atm (possibly not fully implemented even)
+			//case TBRAND_BALL_ACID: //not used
+			//case TBRAND_BALL_ELEC: //not used
+			//case TBRAND_BALL_FIRE: //not used
+			//case TBRAND_BALL_COLD: //not used
+			//case TBRAND_BASE:
+			//case TBRAND_CHAO:
+			//case TBRAND_VORP:
+			//case TBRAND_BALL_SOUN:
 		}
 	}
 	//Note: ammo_brand_t is unused atm (possibly not fully implemented even)

@@ -3748,15 +3748,18 @@ struct player_type {
 	s16b tim_manashield;		/* Timed -- Mana Shield */
 	s16b tim_mimic;			/* Timed -- Mimicry */
 	s16b tim_mimic_what;		/* Timed -- Mimicry */
-	s16b ammo_brand;			/* Timed -- Bow Branding */
+	s16b ammo_brand;		/* Timed -- Bow Branding */
 	u16b ammo_brand_t;		/* Timed -- Bow Branding */
 	s16b ammo_brand_d;		/* Timed -- Bow Branding */
-	s16b nimbus;	/* Timed -- Magic brand, shield, resist - Kurzel */
-	byte nimbus_t;	/* Timed -- GF_TYPE to resist and project() */
-	byte nimbus_d;	/* Timed -- Damage for project() */
+	s16b nimbus;			/* Timed -- Magic brand, shield, resist - Kurzel */
+	byte nimbus_t;			/* Timed -- GF_TYPE to resist and project() */
+	byte nimbus_d;			/* Timed -- Damage for project() */
 	s16b melee_brand;			/* Timed -- Weapon Branding, duration */
 	u16b melee_brand_t;			/* Timed -- Weapon Branding, type */
-	unsigned char melee_brand_flags;			/* Timed -- Weapon Branding, flags? */
+	unsigned char melee_brand_flags;	/* Timed -- Weapon Branding, flags? */
+	s16b melee_brand2;			/* Timed -- Weapon Branding, duration */
+	u16b melee_brand2_t;			/* Timed -- Weapon Branding, type */
+	unsigned char melee_brand2_flags;	/* Timed -- Weapon Branding, flags? */
 	bool melee_brand_ma;			/* Flag to indicate it's the hands getting branded instead of weapons (for martial arts) */
 	s16b prob_travel;		/* Timed -- Probability travel */
 	s16b st_anchor;			/* Timed -- Space/Time Anchor */

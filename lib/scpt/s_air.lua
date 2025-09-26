@@ -195,7 +195,7 @@ POISONBLOOD = add_spell {
 
 			dur = randint(30) + 25 + get_level(Ind, POISONBLOOD, 25)
 			set_oppose_pois(Ind, dur)
-			set_melee_brand(Ind, dur, TBRAND_POIS, 0, TRUE, FALSE)
+			set_melee_brand(Ind, dur, TBRAND_POIS, TBRAND_F_DUAL, TRUE, FALSE)
 	end,
 	["info"] = 	function()
 			return "dur "..(25 + get_level(Ind, POISONBLOOD, 25)).."+d30"

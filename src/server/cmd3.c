@@ -20,6 +20,34 @@
 #define BATS_ALLOW_BODY
 
 
+
+/* If a melee weapon stops being equipped, any temporary brand fades immediately */
+static void terminate_melee_brand(int Ind, int slot, int tval, bool quiet) {
+	player_type *p_ptr = Players[Ind];
+
+	/* Melee weapons are not branded, our fists (tentacles?) are... */
+	if (p_ptr->melee_brand_ma) return;
+
+	/* Don't give any messages? */
+	if (quiet) {
+		if (p_ptr->melee_brand && slot == INVEN_WIELD) {
+			p_ptr->melee_brand = 0;
+			p_ptr->melee_brand_t = 0;
+			p_ptr->melee_brand_flags = 0x0;
+		}
+		if (p_ptr->melee_brand2 && slot == INVEN_ARM && tval != TV_SHIELD) {
+			p_ptr->melee_brand2 = 0;
+			p_ptr->melee_brand2_t = 0;
+			p_ptr->melee_brand2_flags = 0x0;
+		}
+		return;
+	}
+
+	if (p_ptr->melee_brand && slot == INVEN_WIELD) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, TBRAND_F_MAINHAND, TRUE, FALSE);
+	if (p_ptr->melee_brand2 && slot == INVEN_ARM && tval != TV_SHIELD) set_melee_brand(Ind, 0, p_ptr->melee_brand2_t, TBRAND_F_OFFHAND, TRUE, FALSE);
+	return;
+}
+
 /*
  * Move an item from equipment list to pack
  * Note that only one item at a time can be wielded per slot.
@@ -81,10 +109,8 @@ s16b inven_takeoff(int Ind, int item, int amt, bool called_from_wield, bool forc
 	}
 
 	if (p_ptr->ammo_brand && item == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
-	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
-	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
-	else if (p_ptr->melee_brand && !p_ptr->melee_brand_ma && (item == INVEN_WIELD || /* dual-wield */
-	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, TRUE, FALSE);
+	/* if weapon is stashed away any tmep brand fades */
+	terminate_melee_brand(Ind, item, o_ptr->tval, FALSE);
 
 	/* Verify */
 	if (amt > o_ptr->number) amt = o_ptr->number;
@@ -268,10 +294,7 @@ void equip_thrown(int Ind, int slot, object_type *o_ptr, int original_number) {
 #endif
 
 	if (p_ptr->ammo_brand && slot == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
-	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
-	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
-	else if (p_ptr->melee_brand && !p_ptr->melee_brand_ma && (slot == INVEN_WIELD || /* dual-wield */
-	    (slot == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, TRUE, FALSE);
+	terminate_melee_brand(Ind, slot, o_ptr->tval, FALSE);
 
 #if POLY_RING_METHOD == 0
 	/* Polymorph back */
@@ -540,10 +563,8 @@ int inven_drop(bool handle_d, int Ind, int item, int amt, bool force) {
 #endif
 	/* Reset temporary brand enchantments */
 	if (p_ptr->ammo_brand && item == INVEN_AMMO) set_ammo_brand(Ind, 0, p_ptr->ammo_brand_t, 0);
-	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
-	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
-	else if (p_ptr->melee_brand && !p_ptr->melee_brand_ma && (item == INVEN_WIELD || /* dual-wield */
-	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, TRUE, FALSE);
+	/* if weapon is stashed away any tmep brand fades */
+	terminate_melee_brand(Ind, item, o_ptr->tval, FALSE);
 
 	/* Drop it (carefully) near the player */
 	o_idx = drop_near(handle_d, Ind, o_ptr, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
@@ -1360,11 +1381,11 @@ int do_cmd_wield(int Ind, int item, u16b alt_slots) {
 		switch (slot) {
 		case INVEN_WIELD:
 			act = "You are wielding";
-			if (p_ptr->melee_brand && !p_ptr->melee_brand_ma) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, TRUE, FALSE); /* actually only applies for dual-wield */
+			if (p_ptr->melee_brand && !p_ptr->melee_brand_ma) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, TBRAND_F_MAINHAND, TRUE, FALSE); /* actually only applies for dual-wield */
 			break;
 		case INVEN_ARM:
 			act = "You are wielding";
-			if (p_ptr->melee_brand && !p_ptr->melee_brand_ma && slot_base != INVEN_ARM) set_melee_brand(Ind, 0, p_ptr->melee_brand_t, 0, TRUE, FALSE); /* dual-wield */
+			if (p_ptr->melee_brand2 && !p_ptr->melee_brand_ma && slot_base != INVEN_ARM) set_melee_brand(Ind, 0, p_ptr->melee_brand2_t, TBRAND_F_OFFHAND, TRUE, FALSE); /* dual-wield */
 			break;
 		case INVEN_BOW: act = "You are shooting with"; break;
 		case INVEN_LITE: act = "Your light source is"; break;
@@ -2057,14 +2078,8 @@ bool do_cmd_destroy(int Ind, int item, int quantity) {
 		p_ptr->ammo_brand_t = 0;
 		p_ptr->ammo_brand_d = 0;
 	}
-	/* for now, if one of dual-wielded weapons is stashed away the brand fades for both..
-	   could use o_ptr->xtraX to mark them specifically maybe, but also requires distinct messages, maybe too much. */
-	else if (p_ptr->melee_brand && !p_ptr->melee_brand_ma && (item == INVEN_WIELD || /* dual-wield */
-	    (item == INVEN_ARM && o_ptr->tval != TV_SHIELD))) {
-		p_ptr->melee_brand = 0;
-		p_ptr->melee_brand_t = 0;
-		p_ptr->melee_brand_flags = 0x0;
-	}
+	/* if weapon is stashed away any tmep brand fades */
+	terminate_melee_brand(Ind, item, o_ptr->tval, TRUE);
 
 #ifdef USE_SOUND_2010
 	//sound_item(Ind, o_ptr->tval, o_ptr->sval, "kill_"); /* too spammy when mass-looting maybe */
