@@ -25745,8 +25745,12 @@ The techniques are as follows:
     -----------------------------------
     Apply Poison        -
         Searches your inventory for a potion or mushroom that is inscribed "!p"
-        and tries to apply the potion or mushroom's essence to your equipped
-        melee weapon(s).
+        or "!p1" or "!p2" and tries to apply the potion or mushroom's essence
+        to your equipped melee weapon(s).
+        The "!p" inscription will apply the item's essence to BOTH weapons if
+        you dual-wield, while the "!p1" inscription will only apply it to a
+        main-hand weapon (equipment slot 'a') and "!p2" only to the off-hand
+        weapon (equipment slot 'b').
         This is a temporary weapon brand that will run out after some time.
         The potion or mushroom will be used up in the process. Items that
         are inscribed '!k' will always be skipped.

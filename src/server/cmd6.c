@@ -9382,7 +9382,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		break;
 
 	case 5: {
-		bool found = FALSE;
+		bool found = FALSE, applied1 = FALSE, applied2 = FALSE;
 		int k, iidx, k_idx;
 #ifdef ENABLE_SUBINVEN
 		int is, imax;
@@ -9427,10 +9427,13 @@ void do_cmd_melee_technique(int Ind, int technique) {
 #ifdef ENABLE_SUBINVEN
 			}
 #endif
-
 			if (check_guard_inscription(o_ptr->note, 'k')) continue;
 			/* Look for "!p[1|2]" inscription */
 			if (!(k = check_guard_inscription(o_ptr->note, 'p'))) continue;
+			if (k != -1 && k != 2 && k != 3) {
+				msg_print(Ind, "\377yThe !p inscription can only be '!p' (both weapons at once) or '!p1' or '!p2'.");
+				continue;
+			}
 			/* Allow specifying a potion or mushroom (which may be unknown, tradeoff: If it wasn't usable it will just be lost!) */
 			if (o_ptr->tval != TV_POTION && !(o_ptr->tval == TV_FOOD && o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX)) {
 				msg_print(Ind, "\377yThe !p inscription can only be used on potions or mushrooms.");
@@ -9440,30 +9443,49 @@ void do_cmd_melee_technique(int Ind, int technique) {
 			found = TRUE;
 			k_idx = o_ptr->k_idx;
 
+			/* Keep track as to not double-apply to the same item, preventing wastefulness and allowing the player to stock poisons in advance sort of */
+			switch (k) {
+			case -1: applied1 = applied2 = TRUE; break;
+			case 2:
+				if (applied1) continue;
+				applied1 = TRUE;
+				break;
+			case 3:
+				if (applied2) continue;
+				applied2 = TRUE;
+				break;
+			}
+
 			/* Actual 'normal' poison? */
+			msg_format(Ind, "You apply the %s to your %s!", o_ptr->tval == TV_POTION ? "potion" : "essence", k == -1 ? "weapons" : (k == 2 ? "first weapon" : "second weapon"));
 			if ((o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_POISON) ||
 			    (o_ptr->tval == TV_FOOD && (o_ptr->sval == SV_FOOD_POISON || o_ptr->sval == SV_FOOD_UNHEALTH))) {
-				set_melee_brand(Ind, 110 + randint(20), TBRAND_POIS, 0, TRUE, TRUE);
-				s_printf("TECHNIQUE_MELEE: %s - apply poison: %s\n", p_ptr->name, k_name + k_info[k_idx].name);
+				set_melee_brand(Ind, 60 + randint(10), TBRAND_POIS, k == -1 ? TBRAND_F_DUAL : (k == 2 ? TBRAND_F_MAINHAND : TBRAND_F_OFFHAND), TRUE, TRUE);
+				s_printf("TECHNIQUE_MELEE: %s - apply poison to %d: %s\n", p_ptr->name, k, k_name + k_info[k_idx].name);
 			}
 			/* Special effect */
 			else {
-				set_melee_brand(Ind, 110 + randint(20), o_ptr->tval == TV_FOOD ? 1000 : 0 + o_ptr->sval, TBRAND_F_POTION_MUSHROOM, TRUE, TRUE);
-				s_printf("TECHNIQUE_MELEE: %s - apply poison special: %s\n", p_ptr->name, k_name + k_info[k_idx].name);
+				set_melee_brand(Ind, 60 + randint(10), o_ptr->tval == TV_FOOD ? 1000 : 0 + o_ptr->sval, (k == -1 ? TBRAND_F_DUAL : (k == 2 ? TBRAND_F_MAINHAND : TBRAND_F_OFFHAND)) | TBRAND_F_POTION_MUSHROOM, TRUE, TRUE);
+				s_printf("TECHNIQUE_MELEE: %s - apply poison special to %d: %s\n", p_ptr->name, k, k_name + k_info[k_idx].name);
 			}
-			msg_format(Ind, "You apply the %s to your %s!", o_ptr->tval == TV_POTION ? "potion" : "essence", k == -1 ? "weapons" : (k == 1 ? "first weapon" : "second weapon"));
 
+			/* If that was the last item of its inventory slot, compensate for the loss ie slide... */
+			if (o_ptr->number <= 1) {
+#ifdef ENABLE_SUBINVEN
+				if (in_sub) is--;
+				else
+#endif
+				i--;
+			}
 			inven_item_increase(Ind, iidx, -1);
 			inven_item_describe(Ind, iidx);
 			inven_item_optimize(Ind, iidx);
 
-			/* Applied on both weapons? Done then. */
-			if (k == -1) break;
-			else break;//WiP...
+			/* Applied on both weapons? Done then. Otherwise keep looking. */
+			if (applied1 && applied2) break;
 		}
 		if (!found) {
-			msg_print(Ind, "\377yYou must inscribe an ingredient '!p'."); //WiP....
-			//msg_print(Ind, "\377yYou must inscribe an ingredient '!p', '!p1' or '!p2'.");
+			msg_print(Ind, "\377yYou must inscribe an ingredient '!p', '!p1' or '!p2'.");
 			return;
 		}
 		break_shadow_running(Ind);
