@@ -1001,10 +1001,12 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
  #if defined(WINDOWS) || defined(USE_X11)
 			tiles_rawpict_scale();
  #endif
-#endif
 			return(0);
 		}
 		break;
+#else
+		return(0); //just accept and ignore
+#endif
 
 	/* Process "r:<monstersymbol>:<a>/<c>" -- attr/char for all monsters whose race translates to a specific ASCII symbol in r_info.txt.
 	   Eg: 'r:o:<a>/<c>' -> all orcs, snotlings, snagas etc will translate to specific mapping <a>/<c>. */
