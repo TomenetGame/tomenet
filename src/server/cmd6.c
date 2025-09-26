@@ -9275,11 +9275,6 @@ void do_cmd_melee_technique(int Ind, int technique) {
 	player_type *p_ptr = Players[Ind];
 	int i;
 	object_type *o_ptr;
-	bool found = FALSE, done = FALSE;
-#ifdef ENABLE_SUBINVEN
-	int j;
-	object_type *os_ptr;
-#endif
 
 	if (p_ptr->prace == RACE_VAMPIRE && p_ptr->body_monster) {
 		msg_print(Ind, "\377yYou cannot use techniques while transformed.");
@@ -9386,104 +9381,98 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		p_ptr->warning_technique_melee = 1;
 		break;
 
-	case 5:	if (!(p_ptr->melee_techniques & MT_POISON)) return; /* Apply Poison */
+	case 5: {
+		bool found = FALSE;
+		int k, iidx, k_idx;
+#ifdef ENABLE_SUBINVEN
+		int is, imax;
+		bool in_sub = FALSE;
+#endif
+
+		if (!(p_ptr->melee_techniques & MT_POISON)) return; /* Apply Poison */
 		//if (p_ptr->cst < 2) { msg_print(Ind, "Not enough stamina!"); return; }
 		if (!p_ptr->inventory[INVEN_WIELD].k_idx && (!p_ptr->inventory[INVEN_ARM].k_idx || p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD)) {
 			msg_print(Ind, "\377yYou must wield a melee weapon to apply poison.");
 			return;
 		}
-		for (i = 0; i < INVEN_WIELD; i++) {
-			o_ptr = &p_ptr->inventory[i];
-
+		i = -1;
+		while (TRUE) {
 #ifdef ENABLE_SUBINVEN
-			if (o_ptr->tval == TV_SUBINVEN) {
-				for (j = 0; j < o_ptr->bpval; j++) {
-					os_ptr = &p_ptr->subinventory[i][j];
-					if (!os_ptr->tval) break;
-					if (check_guard_inscription(os_ptr->note, 'k')) continue;
-
-					/* Known poisonous item? */
-					if (//object_known_p(Ind, os_ptr) && /* skip unknown items */
-					    object_aware_p(Ind, os_ptr) && /* skip unknown items */
-					    ((os_ptr->tval == TV_POTION && os_ptr->sval == SV_POTION_POISON) ||
-					    (os_ptr->tval == TV_FOOD && (os_ptr->sval == SV_FOOD_POISON || os_ptr->sval == SV_FOOD_UNHEALTH)))) {
-						found = TRUE;
-						inven_item_increase(Ind, (i + 1) * 100 + j, -1);
-						inven_item_describe(Ind, (i + 1) * 100 + j);
-						inven_item_optimize(Ind, (i + 1) * 100 + j);
-						break;
-					}
-
-					/* Allow specifying a potion or mushroom which may be unknown. Tradeoff: If it wasn't usable it will be lost! */
-					if (check_guard_inscription(os_ptr->note, 'p')) {
-						if (os_ptr->tval == TV_POTION || (os_ptr->tval == TV_FOOD && os_ptr->sval <= SV_FOOD_MUSHROOMS_MAX)) {
-							if ((os_ptr->tval == TV_POTION && os_ptr->sval == SV_POTION_POISON) ||
-							    (os_ptr->tval == TV_FOOD && (os_ptr->sval == SV_FOOD_POISON || os_ptr->sval == SV_FOOD_UNHEALTH)))
-								found = TRUE;
-							else {
-								msg_print(Ind, "\377yThat seems to have no poisonous effect.");
-								s_printf("TECHNIQUE_MELEE: %s - apply poison (fail: %d,%d)\n", p_ptr->name, p_ptr->subinventory[i][j].tval, p_ptr->subinventory[i][j].sval);
-							}
-							inven_item_increase(Ind, (i + 1) * 100 + j, -1);
-							inven_item_describe(Ind, (i + 1) * 100 + j);
-							inven_item_optimize(Ind, (i + 1) * 100 + j);
-							done = TRUE;
-							break;
-						} else msg_print(Ind, "\377yThe !p inscription can only be used on potions or mushrooms.");
-					}
+			if (in_sub) {
+				is++;
+				if (is == imax) {
+					in_sub = FALSE;
+					continue;
 				}
-				if (found) break;
+				o_ptr = &p_ptr->subinventory[i][is];
+				if (!o_ptr->tval) {
+					in_sub = FALSE;
+					continue;
+				}
+				iidx = (i + 1) * 100 + is;
+			} else {
+#endif
+				i++;
+				if (i == INVEN_PACK) break; //overflow slot doesn't count^^
+				o_ptr = &p_ptr->inventory[i];
+#ifdef ENABLE_SUBINVEN
+				if (o_ptr->tval == TV_SUBINVEN) {
+					in_sub = TRUE;
+					imax = o_ptr->bpval;
+					is = -1;
+					continue;
+				}
+#endif
+				iidx = i;
+#ifdef ENABLE_SUBINVEN
 			}
 #endif
 
 			if (check_guard_inscription(o_ptr->note, 'k')) continue;
-
-			/* Known poisonous item? */
-			if (//object_known_p(Ind, o_ptr) && /* skip unknown items */
-			    object_aware_p(Ind, o_ptr) && /* skip unknown items */
-			    ((o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_POISON) ||
-			    (o_ptr->tval == TV_FOOD && (o_ptr->sval == SV_FOOD_POISON || o_ptr->sval == SV_FOOD_UNHEALTH)))) {
-				found = TRUE;
-				inven_item_increase(Ind, i, -1);
-				inven_item_describe(Ind, i);
-				inven_item_optimize(Ind, i);
-				break;
+			/* Look for "!p[1|2]" inscription */
+			if (!(k = check_guard_inscription(o_ptr->note, 'p'))) continue;
+			/* Allow specifying a potion or mushroom (which may be unknown, tradeoff: If it wasn't usable it will just be lost!) */
+			if (o_ptr->tval != TV_POTION && !(o_ptr->tval == TV_FOOD && o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX)) {
+				msg_print(Ind, "\377yThe !p inscription can only be used on potions or mushrooms.");
+				continue;
 			}
 
-			/* Allow specifying a potion or mushroom which may be unknown. Tradeoff: If it wasn't usable it will be lost! */
-			if (check_guard_inscription(os_ptr->note, 'p')) {
-				if (o_ptr->tval == TV_POTION || (o_ptr->tval == TV_FOOD && o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX)) {
-					if ((o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_POISON) ||
-					    (o_ptr->tval == TV_FOOD && (o_ptr->sval == SV_FOOD_POISON || o_ptr->sval == SV_FOOD_UNHEALTH)))
-						found = TRUE;
-					else {
-						msg_print(Ind, "\377yThat seems to have no poisonous effect.");
-						s_printf("TECHNIQUE_MELEE: %s - apply poison (fail: %d,%d)\n", p_ptr->name, p_ptr->inventory[i].tval, p_ptr->inventory[i].sval);
-					}
-					inven_item_increase(Ind, i, -1);
-					inven_item_describe(Ind, i);
-					inven_item_optimize(Ind, i);
-					done = TRUE;
-					break;
-				} else msg_print(Ind, "\377yThe !p inscription can only be used on potions or mushrooms.");
+			found = TRUE;
+			k_idx = o_ptr->k_idx;
+
+			/* Actual 'normal' poison? */
+			if ((o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_POISON) ||
+			    (o_ptr->tval == TV_FOOD && (o_ptr->sval == SV_FOOD_POISON || o_ptr->sval == SV_FOOD_UNHEALTH))) {
+				set_melee_brand(Ind, 110 + randint(20), TBRAND_POIS, 0, TRUE, TRUE);
+				s_printf("TECHNIQUE_MELEE: %s - apply poison: %s\n", p_ptr->name, k_name + k_info[k_idx].name);
 			}
+			/* Special effect */
+			else {
+				set_melee_brand(Ind, 110 + randint(20), o_ptr->tval == TV_FOOD ? 1000 : 0 + o_ptr->sval, TBRAND_F_POTION_MUSHROOM, TRUE, TRUE);
+				s_printf("TECHNIQUE_MELEE: %s - apply poison special: %s\n", p_ptr->name, k_name + k_info[k_idx].name);
+			}
+			msg_format(Ind, "You apply the %s to your %s!", o_ptr->tval == TV_POTION ? "potion" : "essence", k == -1 ? "weapons" : (k == 1 ? "first weapon" : "second weapon"));
+
+			inven_item_increase(Ind, iidx, -1);
+			inven_item_describe(Ind, iidx);
+			inven_item_optimize(Ind, iidx);
+
+			/* Applied on both weapons? Done then. */
+			if (k == -1) break;
+			else break;//WiP...
 		}
-		if (!found && !done) {
-			msg_print(Ind, "\377yYou are missing a poisonous ingredient.");
+		if (!found) {
+			msg_print(Ind, "\377yYou must inscribe an ingredient '!p'."); //WiP....
+			//msg_print(Ind, "\377yYou must inscribe an ingredient '!p', '!p1' or '!p2'.");
 			return;
 		}
 		break_shadow_running(Ind);
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
-		if (found) {
-			msg_print(Ind, "You apply the poisonous essence to your weapon..");
-			set_melee_brand(Ind, 110 + randint(20), TBRAND_POIS, 0, TRUE, TRUE);
-			s_printf("TECHNIQUE_MELEE: %s - apply poison\n", p_ptr->name);
-		}
 		//use_stamina(p_ptr, 2);
 		p_ptr->energy -= level_speed(&p_ptr->wpos); /* prepare the shit.. */
 		p_ptr->warning_technique_melee = 1;
-		break;
+		break; }
 
 	case 6:	if (!(p_ptr->melee_techniques & MT_TRACKANIM)) return; /* Track Animals */
 		if (p_ptr->cst < 1) { msg_print(Ind, "\377oNot enough stamina!"); return; }

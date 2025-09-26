@@ -221,6 +221,7 @@
 #define GF_VINE_SLOW		169 /* Same as GF_OLD_SLOW but causes terrain fluff */
 #define GF_DISP_UNDEAD_DEMON	170
 #define	GF_RIFT			171
+#define GF_RESTORING		172
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200

@@ -5738,6 +5738,7 @@
 #define GF_VINE_SLOW		169 /* Same as GF_OLD_SLOW but causes terrain fluff */
 #define GF_DISP_UNDEAD_DEMON	170
 #define GF_RIFT			171
+#define GF_RESTORING		172
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200
@@ -8588,7 +8589,11 @@ extern int PlayerUID;
 #define TBRAND_PLASMA		0x8000	/* note: no stun effect! */
 
 /* Temporary weapon branding - flags */
-#define TBRAND_F_EXTERN		0x01
+#define TBRAND_F_EXTERN			0x01	/* Brand wasn't applied by ourselves but an external source, ie via GF_TBRAND_POIS projection; this is just used to prevent message spam */
+#define TBRAND_F_POTION_MUSHROOM	0x02	/* Brand type isn't one of the flags above but actually a potion sval (for 'Apply Poison' technique extending) */
+#define TBRAND_F_MAINHAND		0x04	/* Brand is applied to equip slot a) */
+#define TBRAND_F_OFFHAND		0x08	/* Brand is applied to equip slot b) */
+#define TBRAND_F_DUAL			(TBRAND_F_MAINHAND | TBRAND_F_OFFHAND)
 
 
 /* Client modes (e) */

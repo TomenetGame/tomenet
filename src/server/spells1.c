@@ -102,12 +102,12 @@
  * seemingly TV_POTION2 are not haldled right (ToME native bug?).
  */
 bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
-	int	 radius = 2;
-	int	 dt = 0;
-	int	 dam = 0;
+	int	radius = 2;
+	int	dt = 0;
+	int	dam = 0;
+	int	flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO);
 	bool	ident = FALSE;
 	bool	angry = FALSE;
-	int	flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO);
 
 #if 0 /* todo maybe: extinguish thrown (not embedded) blast charges (TV_CHARGE), or accelerate the fuse if we threw oil! */
 	cave_type **zcave;
@@ -139,8 +139,12 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		}
 	} else
 	switch (o_sval) {
+	case SV_POTION_RESTORE_MANA:
+	case SV_POTION_STAR_RESTORE_MANA:
+		return(FALSE);
+
 	case SV_POTION_SLIME_MOLD:
-	case SV_POTION_WATER:   /* perhaps a 'water' attack? */
+	case SV_POTION_WATER:
 	case SV_POTION_APPLE_JUICE:
 		return(TRUE);
 
@@ -391,54 +395,343 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		radius = 1;
 		ident = TRUE;
 		break;
-#if 0 /* silly. people DRINK these */
-	case SV_POTION_RESTORE_MANA:   /* MANA */
-		dt = GF_MANA;
-		dam = damroll(8, 10);
-		radius = 1;
-		ident = TRUE;
-		break;
-	case SV_POTION_STAR_RESTORE_MANA:   /* MANA */
-		dt = GF_MANA;
-		dam = damroll(12, 10);
-		radius = 1;
-		ident = TRUE;
-		break;
-#endif
 	default:
-		/* Do nothing */  ;
+		/* Do nothing */
 		return(FALSE);
 	}
 
 	/* doh! project halves the dam ?! */
 	if (dt != GF_CURING) dam *= 2;
 
-	(void)project(who, radius, wpos, y, x, dam, dt,
-	    flg, "");
+	(void)project(who, radius, wpos, y, x, dam, dt, flg, "");
 
+	/* XXX	those potions that explode need to become "known" */
 	if (ident && who < 0 && who > PROJECTOR_UNUSUAL) {
 		player_type *p_ptr = Players[-who];
 		object_type forge;
-		int lev;
 
 		invcopy(&forge, lookup_kind(TV_POTION, o_sval));
-		lev = k_info[forge.k_idx].level;
-
-		/* Combine / Reorder the pack (later) */
-		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-
 		/* The player is now aware of the object */
 		if (!object_aware_p(-who, &forge)) {
 			object_aware(-who, &forge);
-			if (!(p_ptr->mode & MODE_PVP)) gain_exp(-who, (lev + (p_ptr->lev >> 1)) / p_ptr->lev);
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(-who, (k_info[forge.k_idx].level + (p_ptr->lev >> 1)) / p_ptr->lev);
+			/* Combine / Reorder the pack (later) */
+			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 		}
-
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
 	}
 
-	/* XXX	those potions that explode need to become "known" */
 	return(angry);
+}
+
+/* Similar to potion_smash_effect() these are used for weapon-branding (Apply Poison).
+   Returns FALSE if potion has no effect in terms of branding, else TRUE.
+   If 'verify' is TRUE, no application (projection) is performed and tx/ty are just ignored. */
+bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify) {
+	player_type *p_ptr = Players[Ind];
+	int dt = 0, dam = 0, flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO);
+	bool ident = FALSE;
+
+	if (o_tsval >= 1000) { /* TV_FOOD -- mushrooms, to be specific */
+		o_tsval -= 1000;
+
+		switch (o_tsval) {
+		/* Note: These three are actually handled outside of this function so we should never arrive here */
+		case SV_FOOD_UNHEALTH:
+		case SV_FOOD_DISEASE:
+		case SV_FOOD_POISON:
+			dt = GF_POIS;
+			dam = 7;
+			ident = TRUE;
+			break;
+
+		case SV_FOOD_UNMAGIC: return(FALSE);
+		case SV_FOOD_CURE_POISON: return(FALSE);
+		case SV_FOOD_CURE_BLINDNESS: return(FALSE); //could cure conf, but we don't know whether it was really "blindness"
+		case SV_FOOD_CURE_PARANOIA: return(FALSE); //could cure conf, but we don't know whether it was really "paranoia"
+		case SV_FOOD_CURE_CONFUSION: return(FALSE); //could cure conf, but we don't know whether it was really "confusion" (or eg blindness instead)
+
+		case SV_FOOD_REGEN:
+			//return(FALSE);
+			//actually fall through instead? */
+		case SV_FOOD_CURE_SERIOUS:
+			dt = GF_OLD_HEAL;
+			dam = damroll(4, 3);
+			ident = TRUE;
+			break;
+
+		case SV_FOOD_RESTORE_STR:
+			dt = GF_RES_STR;
+			dam = 1; /* dummy */
+			break;
+			break;
+		case SV_FOOD_RESTORE_CON:
+			dt = GF_RES_CON;
+			dam = 1; /* dummy */
+			break;
+			break;
+		case SV_FOOD_RESTORING:
+			dt = GF_RESTORING;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
+
+		case SV_FOOD_BLINDNESS:
+			dam = damroll(3, 5);
+			dt = GF_BLIND;
+			ident = TRUE;
+			break;
+		case SV_FOOD_PARANOIA:
+		case SV_FOOD_CONFUSION:
+		case SV_FOOD_HALLUCINATION:
+			dam = damroll(10, 8);
+			dt = GF_OLD_CONF;
+			ident = TRUE;
+			break;
+
+		case SV_FOOD_PARALYSIS:
+			dt = GF_OLD_SLEEP;
+			dam = damroll(10, 8);
+			ident = TRUE;
+			break;
+
+		case SV_FOOD_WEAKNESS:
+			dt = GF_DEC_STR;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
+		case SV_FOOD_SICKNESS:
+			dt = GF_DEC_CON;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
+		case SV_FOOD_STUPIDITY: return(FALSE);
+		case SV_FOOD_NAIVETY: return(FALSE);
+
+		}
+	} else { /* TV_POTION */
+		switch (o_tsval) {
+		case SV_POTION_RESTORE_MANA:
+		case SV_POTION_STAR_RESTORE_MANA:
+			return(FALSE);
+
+		case SV_POTION_SLIME_MOLD:
+		case SV_POTION_WATER:
+		case SV_POTION_APPLE_JUICE:
+			return(FALSE);
+
+		case SV_POTION_INFRAVISION:
+		case SV_POTION_DETECT_INVIS:
+		case SV_POTION_SLOW_POISON:
+		case SV_POTION_CURE_POISON:
+		case SV_POTION_RESIST_HEAT:
+		case SV_POTION_RESIST_COLD:
+		case SV_POTION_RESTORE_EXP:
+		case SV_POTION_ENLIGHTENMENT:
+		case SV_POTION_STAR_ENLIGHTENMENT:
+		case SV_POTION_SELF_KNOWLEDGE:
+		case SV_POTION_RESISTANCE:
+		case SV_POTION_INVULNERABILITY: /* >,> */
+		//case SV_POTION_NEW_LIFE:
+			/* All of the above potions have no effect when shattered */
+			return(FALSE);
+
+		case SV_POTION_EXPERIENCE:
+			dt = GF_EXP;
+			dam = 1; /* level */
+			ident = TRUE;
+			break;
+		case SV_POTION_BOLDNESS:
+			dt = GF_REMFEAR;
+			//ident = TRUE;
+			dam = 1; /* dummy */
+			break;
+		case SV_POTION_SALT_WATER:
+			return(FALSE);
+		case SV_POTION_LOSE_MEMORIES:
+			dt = GF_OLD_CONF;
+			dam = damroll(10, 11);
+			ident = TRUE;
+			break;
+		case SV_POTION_DEC_STR:
+			dt = GF_DEC_STR;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
+		case SV_POTION_DEC_INT:
+			break;
+		case SV_POTION_DEC_WIS:
+			break;
+		case SV_POTION_DEC_DEX:
+			dt = GF_DEC_DEX;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
+		case SV_POTION_DEC_CON:
+			dt = GF_DEC_CON;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
+		case SV_POTION_DEC_CHR:
+			return(FALSE);
+		case SV_POTION_RES_STR:
+			dt = GF_RES_STR;
+			dam = 1; /* dummy */
+			break;
+		case SV_POTION_RES_INT:
+			return(FALSE);
+		case SV_POTION_RES_WIS:
+			return(FALSE);
+		case SV_POTION_RES_DEX:
+			dt = GF_RES_DEX;
+			dam = 1; /* dummy */
+			break;
+		case SV_POTION_RES_CON:
+			dt = GF_RES_CON;
+			dam = 1; /* dummy */
+			break;
+		case SV_POTION_RES_CHR:
+			break;
+		case SV_POTION_INC_STR:
+			dt = GF_INC_STR;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
+		case SV_POTION_INC_INT:
+			return(FALSE);
+		case SV_POTION_INC_WIS:
+			return(FALSE);
+		case SV_POTION_INC_DEX:
+			dt = GF_INC_DEX;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
+		case SV_POTION_INC_CON:
+			dt = GF_INC_CON;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
+		case SV_POTION_INC_CHR:
+			return(FALSE);
+		case SV_POTION_AUGMENTATION:
+			dt = GF_AUGMENTATION;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
+		case SV_POTION_HEROISM:
+		case SV_POTION_BERSERK_STRENGTH:
+			dt = GF_HERO_MONSTER;
+			dam = damroll(2, 10);
+			ident = TRUE;
+			break;
+		case SV_POTION_SLOWNESS:
+			dt = GF_OLD_SLOW;
+			dam = damroll(5, 10);
+			ident = TRUE;
+			break;
+		case SV_POTION_POISON:
+			dt = GF_POIS;
+			dam = 7;
+			ident = TRUE;
+			break;
+		case SV_POTION_BLINDNESS:
+			dam = damroll(3, 5);
+			dt = GF_BLIND;
+			ident = TRUE;
+			break;
+		case SV_POTION_CONFUSION: /* Booze */
+			dam = damroll(10, 8);
+			dt = GF_OLD_CONF;
+			ident = TRUE;
+			break;
+		case SV_POTION_SLEEP:
+			dt = GF_OLD_SLEEP;
+			dam = damroll(10, 8);
+			ident = TRUE;
+			break;
+		case SV_POTION_RUINATION:
+			dt = GF_RUINATION;
+			ident = TRUE;
+			dam = 1; /* dummy */
+			break;
+		case SV_POTION_DETONATIONS:
+			return(FALSE);
+		case SV_POTION_DEATH:
+			//dt = GF_DEATH_RAY;	/* !! */	/* not implemented yet. */
+			dt = GF_NETHER_WEAK; /* special damage type solemnly for potion smash effect */
+			dam = damroll(25, 20);
+			ident = TRUE;
+			break;
+		case SV_POTION_SPEED:
+			dt = GF_OLD_SPEED;
+			dam = damroll(5, 3);
+			ident = TRUE;
+			break;
+		case SV_POTION_CURE_LIGHT:
+			dt = GF_OLD_HEAL;
+			dam = damroll(2, 3);
+			ident = TRUE;
+			break;
+		case SV_POTION_CURE_SERIOUS:
+			dt = GF_OLD_HEAL;
+			dam = damroll(4, 3);
+			ident = TRUE;
+			break;
+		case SV_POTION_CURE_CRITICAL:
+			dt = GF_OLD_HEAL;
+			dam = damroll(6, 3);
+			ident = TRUE;
+			break;
+		case SV_POTION_CURING:
+			dt = GF_CURING; //GF_OLD_HEAL;
+			dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //damroll(5,10);
+			ident = TRUE;
+			break;
+		case SV_POTION_HEALING:
+			dt = GF_OLD_HEAL;
+			dam = damroll(10, 10);
+			ident = TRUE;
+			break;
+		case SV_POTION_STAR_HEALING:
+			dt = GF_OLD_HEAL;
+			dam = damroll(30, 20);
+			ident = TRUE;
+			break;
+		case SV_POTION_LIFE:
+			dt = GF_LIFEHEAL;
+			dam = damroll(30, 20);
+			ident = TRUE;
+			break;
+		default:
+			/* Do nothing */
+			return(FALSE);
+		}
+	}
+
+	/* Just verifying internally whether the potion has any effect? */
+	if (verify) return(TRUE);
+
+	/* Apply to target! */
+	(void)project(-Ind, 0, &p_ptr->wpos, ty, tx, dam, dt, flg, "");
+
+	/* XXX	those potions that explode need to become "known" */
+	if (ident) {
+		object_type forge;
+
+		invcopy(&forge, lookup_kind(TV_POTION, o_tsval));
+		/* The player is now aware of the object */
+		if (!object_aware_p(Ind, &forge)) {
+			object_aware(Ind, &forge);
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (k_info[forge.k_idx].level + (p_ptr->lev >> 1)) / p_ptr->lev);
+			/* Combine / Reorder the pack (later) */
+			p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+		}
+	}
+
+	return(TRUE);
 }
 
 
@@ -8935,7 +9228,6 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Restore strength */
 	case GF_RES_STR:
-		no_dam = TRUE;
 		dam = 0; /* hack :) */
 		for (i = 0; i < 4; i++) {
 		/*	  if (m_ptr->blow[i].d_dice < r_ptr->blow[i].d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice;
@@ -8950,6 +9242,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			}
 		}
 		if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak.");
+		no_dam = TRUE;
 		quiet = TRUE;
 		break;
 
@@ -8974,6 +9267,45 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			m_ptr->maxhp = m_ptr->org_maxhp;
 			msg_print_near_monster(c_ptr->m_idx, "appears less sick.");
 		}
+		no_dam = TRUE;
+		quiet = TRUE;
+		break;
+
+	/* Restore all (STR,DEX,CON) */
+	case GF_RESTORING:
+		/* Restore strength */
+		dam = 0; /* hack :) */
+		for (i = 0; i < 4; i++) {
+		/*	  if (m_ptr->blow[i].d_dice < r_ptr->blow[i].d_dice) m_ptr->blow[i].d_dice = r_ptr->blow[i].d_dice;
+				if (m_ptr->blow[i].d_side < r_ptr->blow[i].d_side) m_ptr->blow[i].d_side = r_ptr->blow[i].d_side;
+		*/	if (m_ptr->blow[i].d_dice < r_ptr->blow[i].org_d_dice) {
+				m_ptr->blow[i].d_dice = r_ptr->blow[i].org_d_dice;
+				dam = 1;
+			}
+			if (m_ptr->blow[i].d_side < r_ptr->blow[i].org_d_side) {
+				m_ptr->blow[i].d_side = r_ptr->blow[i].org_d_side;
+				dam = 1;
+			}
+		}
+		if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak.");
+
+		/* Restore dexterity */
+		/*if (m_ptr->ac < r_ptr->ac) {
+			m_ptr->ac = r_ptr->ac;*/
+		if (m_ptr->ac < m_ptr->org_ac) {
+			m_ptr->ac = m_ptr->org_ac;
+			msg_print_near_monster(c_ptr->m_idx, "appears less clumsy.");
+		}
+
+		/* Restore constitution */
+		/*if (m_ptr->hp < r_ptr->hside * r_ptr->hdice) {
+			m_ptr->hp = r_ptr->hside * r_ptr->hdice;*/
+		if (m_ptr->maxhp < m_ptr->org_maxhp) {
+			m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
+			m_ptr->maxhp = m_ptr->org_maxhp;
+			msg_print_near_monster(c_ptr->m_idx, "appears less sick.");
+		}
+
 		no_dam = TRUE;
 		quiet = TRUE;
 		break;
@@ -14753,6 +15085,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 	case GF_RES_STR:
 	case GF_RES_DEX:
 	case GF_RES_CON:
+	case GF_RESTORING:
 	case GF_INC_STR:
 	case GF_INC_DEX:
 	case GF_INC_CON:

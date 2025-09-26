@@ -4029,6 +4029,8 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				if (chaos_effect == 2) do_quake = TRUE;
 				if (vorpal_cut) msg_format(Ind, "Your weapon cuts deep into %s!", q_name);
 
+				/* NOTE: chaos_effect == 3 aka confusion is not applied atm! Maybe too OP at the given frequency. */
+
 				k += o_ptr->to_d;
 
 				/* Apply the player damage boni */
@@ -4488,6 +4490,16 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 				} else {
 					msg_format(Ind, "%^s resists the effect.", q_name);
 				}
+			}
+
+			/* Apply Poison technique used with non-standard poison potion for special fx */
+			if (p_ptr->melee_brand_flags & TBRAND_F_POTION_MUSHROOM) {
+#if 0 /* Tone down confusion brand? */
+				if (p_ptr->melee_brand_t != SV_POTION_CONFUSION || !rand_int(10))
+#else /* Town down ANY potion brands? */
+				if (!rand_int(10))
+#endif
+					potion_mushroom_branding(Ind, q_ptr->px, q_ptr->py, p_ptr->melee_brand_t, FALSE);
 			}
 
 #if 0 /* moved to xtra1.c */
@@ -5752,7 +5764,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			}
 
 			/* Confusion attack */
-			if ((p_ptr->confusing) || (chaos_effect == 3)) {
+			if (p_ptr->confusing || chaos_effect == 3) {
 				/* Cancel glowing hands */
 				if (p_ptr->confusing) p_ptr->confusing--;
 
@@ -5772,8 +5784,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					m_ptr->confused += 10 + rand_int(p_ptr->lev) / 5 + rand_int(get_skill_scale(p_ptr, SKILL_COMBAT, 5));
 				}
 			}
-
-			else if (chaos_effect == 4) {
+			if (chaos_effect == 4) {
 				if (!(r_ptr->flags9 & RF9_IM_TELE) &&
 				    !(r_ptr->flags3 & RF3_RES_TELE) &&
 				    !(r_ptr->flags1 & RF1_UNIQUE)) {
@@ -5786,16 +5797,15 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					//no_extra = TRUE;
 				} else msg_format(Ind, "%^s is unaffected.", m_name);
 			}
-
-/*			else if ((chaos_effect == 5) && cave_floor_bold(zcave,y,x)
-					&& (randint(90) > m_ptr->level))*/
+/*			else if (chaos_effect == 5 && cave_floor_bold(zcave,y,x)
+			    && (randint(90) > m_ptr->level))*/
 			else if (chaos_effect == 5) {
 				if (!((r_ptr->flags1 & RF1_UNIQUE) ||
 				    (r_ptr->flags4 & RF4_BR_CHAO) ||
 				    (r_ptr->flags9 & RF9_IM_TELE) ||
 				    (r_ptr->flags9 & RF9_RES_CHAOS) ))
 				    //|| (m_ptr->mflag & MFLAG_QUEST)))
-				{
+				    {
 					if (randint(150) > m_ptr->level) {
 						int tmp = poly_r_idx(m_ptr->r_idx);
 
@@ -5866,6 +5876,9 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 					m_ptr->monfear_gone = 0;
 				}
 			}
+
+			/* Apply Poison technique used with non-standard poison potion for special fx */
+			if (p_ptr->melee_brand_flags & TBRAND_F_POTION_MUSHROOM) potion_mushroom_branding(Ind, m_ptr->fx, m_ptr->fy, p_ptr->melee_brand_t, FALSE);
 
 #if 0 /* moved to xtra1.c */
 			/* Fruit bats get life stealing.

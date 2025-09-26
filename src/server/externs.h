@@ -1779,6 +1779,7 @@ extern int shield_takes_damage(int Ind, int typ);
 #endif
 
 extern bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval);
+extern bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify);
 extern void teleport_to_player(int Ind, int m_idx);
 
 extern bool hates_fire(object_type *o_ptr);

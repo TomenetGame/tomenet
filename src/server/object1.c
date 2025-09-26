@@ -5841,31 +5841,42 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (slot < SUBINVEN_INVEN_MUL)
  #endif
 	/* Temporary brands -- kinda hacky that they use p_ptr instead of o_ptr.. */
-	if (pt_ptr->melee_brand && !pt_ptr->melee_brand_ma && is_melee_weapon(o_ptr->tval) && (slot == INVEN_WIELD || slot == INVEN_ARM))
-		switch (pt_ptr->melee_brand_t) {
-		case TBRAND_ELEC:
-			fprintf(fff, "\377GLightning charge has been applied to it temporarily.\n");
-			break;
-		case TBRAND_COLD:
-			fprintf(fff, "\377GFrost brand has been applied to it temporarily.\n");
-			break;
-		case TBRAND_ACID:
-			fprintf(fff, "\377GAcid cover has been applied to it temporarily.\n");
-			break;
-		case TBRAND_FIRE:
-			fprintf(fff, "\377GFire brand has been applied to it temporarily.\n");
-			break;
-		case TBRAND_POIS:
-			fprintf(fff, "\377GVenom has been applied to it temporarily.\n");
-			break;
-		case TBRAND_HELLFIRE:
-			fprintf(fff, "\377GHellfire brand has been applied to it temporarily.\n");
-			break;
-		case TBRAND_VAMPIRIC:
-			fprintf(fff, "\377GVampirism brand has been applied to it temporarily.\n");
-			break;
-		//other brands are unused atm (possibly not fully implemented even)
+	if (pt_ptr->melee_brand && !pt_ptr->melee_brand_ma && is_melee_weapon(o_ptr->tval) && (slot == INVEN_WIELD || slot == INVEN_ARM)) {
+		if (p_ptr->melee_brand_flags & TBRAND_F_POTION_MUSHROOM) {
+			object_type forge;
+
+			invcopy(&forge, lookup_kind(TV_POTION, (s16b)p_ptr->melee_brand_t));
+			if (!object_aware_p(Ind, &forge))
+				fprintf(fff, "\377GVenom of unknown effect has been applied to it temporarily.\n");
+			else if (potion_mushroom_branding(Ind, 0, 0, (forge.tval == TV_FOOD ? 1000 : 0) + forge.sval, TRUE))
+				fprintf(fff, "\377GVenom of %s has been applied to it temporarily.\n", k_name + k_info[forge.k_idx].name);
+			else
+				fprintf(fff, "\377GIneffective venom has been applied to it temporarily.\n");
+		} else switch (pt_ptr->melee_brand_t) {
+			case TBRAND_ELEC:
+				fprintf(fff, "\377GLightning charge has been applied to it temporarily.\n");
+				break;
+			case TBRAND_COLD:
+				fprintf(fff, "\377GFrost brand has been applied to it temporarily.\n");
+				break;
+			case TBRAND_ACID:
+				fprintf(fff, "\377GAcid cover has been applied to it temporarily.\n");
+				break;
+			case TBRAND_FIRE:
+				fprintf(fff, "\377GFire brand has been applied to it temporarily.\n");
+				break;
+			case TBRAND_POIS:
+				fprintf(fff, "\377GVenom has been applied to it temporarily.\n");
+				break;
+			case TBRAND_HELLFIRE:
+				fprintf(fff, "\377GHellfire brand has been applied to it temporarily.\n");
+				break;
+			case TBRAND_VAMPIRIC:
+				fprintf(fff, "\377GVampirism brand has been applied to it temporarily.\n");
+				break;
+			//other brands are unused atm (possibly not fully implemented even)
 		}
+	}
 	//Note: ammo_brand_t is unused atm (possibly not fully implemented even)
 	/* Note: Static brands (p_ptr->brand_..) aren't displayed here, since they come completely independant of the weapon usage,
 		 while temporary brands at least (usually) stop when you take off the weapon. */

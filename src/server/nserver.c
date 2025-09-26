@@ -7964,7 +7964,7 @@ int Send_technique_info(int Ind) {
 		return(0);
 	}
 
-	/* backward compatibility before addition of 'detect_noise()' and 'apply_poison()' for rogues */
+	/* backward compatibility before addition of 'detect_noise()' and 'Apply Poison' for rogues */
 	if (is_older_than(&p_ptr->version, 4, 6, 1, 2, 0, 1)) {
 		u32b tech_compat = (p_ptr->melee_techniques & 0x0F) | ((p_ptr->melee_techniques & 0xFF00) >> 1);
 
