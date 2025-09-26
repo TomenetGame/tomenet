@@ -1495,14 +1495,14 @@
 #endif
 
 /* Apply flat brand/slay +todam bonus too (for low-dice weapons)? - C. Blue */
-#define FLAT_MIN_BONUS		1	/* added for Hellfire vs <Good && Immune> */
-#define FLAT_HALF_BONUS		2	/* added for Hellfire vs <Good && Resist> */
+#define FLAT_MIN_BONUS		3	/* added for Hellfire vs <Good && Immune> */
+#define FLAT_HALF_BONUS		4	/* added for Hellfire vs <Good && Resist> */
 
-#define FLAT_HURT_BONUS		3	/* slay, but weaker version, used for animals/evil */
-#define FLAT_SLAY_BONUS		4	/* slay */
-#define FLAT_KILL_BONUS		5	/* *slay* aka kill */
+#define FLAT_HURT_BONUS		5	/* slay, but weaker version, used for animals/evil */
+#define FLAT_SLAY_BONUS		10	/* slay */
+#define FLAT_KILL_BONUS		10	/* *slay* aka kill */
 
-#define FLAT_BRAND_BONUS	4	/* for all elements except poison; used vs both, normal and susceptible monsters (no bonus at all vs resisting monsters) */
+#define FLAT_BRAND_BONUS	5	/* for all elements except poison; used vs both, normal and susceptible monsters (no bonus at all vs resisting monsters) */
 #define FLAT_BRAND_BONUS_POISON	15	/* specifically for poison, 'pre-empts' the pseudo DoT into a bigger instant damage, as monsters do not have DoT mechanics (and it wouldn't be a great idea probably) */
 
 
