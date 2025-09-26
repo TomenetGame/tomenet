@@ -2765,7 +2765,7 @@ if (p_ptr->updated_savegame == 0) {
 	}
 
 	/* Load current temporary ammo branding, melee weapon branding, nimbus */
-	if (!s_older_than(4, 9, 23)) {
+	if (!older_than(4, 9, 23)) {
 		rd_s16b(&p_ptr->ammo_brand);
 		rd_u16b(&p_ptr->ammo_brand_t);
 		rd_s16b(&p_ptr->ammo_brand_d);
