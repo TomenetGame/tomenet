@@ -1330,7 +1330,7 @@ static void compare_weapon_aux1(object_type *o_ptr, int col, int r) {
 		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Cold:",
 		                    f1, f2, f3, TERM_RED);
 	if (f1 & (TR1_BRAND_POIS))
-		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS, "Poison:",
+		compare_weapon_aux2(o_ptr, p_ptr->num_blow, r++, col, FACTOR_BRAND, FLAT_BRAND_BONUS_POISON, "Poison:",
 		                    f1, f2, f3, TERM_RED);
 }
 

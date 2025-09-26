@@ -4332,7 +4332,7 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 		if (f1 & TR1_BRAND_COLD) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non cold resistant creatures", "cold susceptible creatures");
 		if (f1 & TR1_BRAND_ELEC) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non lightning resistant creatures", "lightning susceptible creatures");
 		if (f1 & TR1_BRAND_ACID) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non acid resistant creatures", "acid susceptible creatures");
-		if (f1 & TR1_BRAND_POIS) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non poison resistant creatures", "poison susceptible creatures");
+		if (f1 & TR1_BRAND_POIS) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS_POISON, "non poison resistant creatures", "poison susceptible creatures");
 
 		output_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, 0, 0, (first) ? "all monsters" : "other monsters", NULL);
 	}
@@ -4494,7 +4494,7 @@ static void display_boomerang_damage(int Ind, object_type *o_ptr, FILE *fff, u32
 	if (f1 & TR1_BRAND_COLD) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non cold resistant creatures", "cold susceptible creatures");
 	if (f1 & TR1_BRAND_ELEC) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non lightning resistant creatures", "lightning susceptible creatures");
 	if (f1 & TR1_BRAND_ACID) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non acid resistant creatures", "acid susceptible creatures");
-	if (f1 & TR1_BRAND_POIS) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non poison resistant creatures", "poison susceptible creatures");
+	if (f1 & TR1_BRAND_POIS) output_boomerang_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS_POISON, "non poison resistant creatures", "poison susceptible creatures");
 
 	output_boomerang_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, 0, 0, (first) ? "all monsters" : "other monsters", NULL);
 
@@ -4649,7 +4649,7 @@ static void display_ammo_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f1,
 	if (f1 & TR1_BRAND_COLD) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non cold resistant creatures", "cold susceptible creatures");
 	if (f1 & TR1_BRAND_ELEC) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non lightning resistant creatures", "lightning susceptible creatures");
 	if (f1 & TR1_BRAND_ACID) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non acid resistant creatures", "acid susceptible creatures");
-	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non poison resistant creatures", "poison susceptible creatures");
+	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS_POISON, "non poison resistant creatures", "poison susceptible creatures");
 
 	output_ammo_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, 0, 0, (first) ? "all monsters" : "other monsters", NULL);
 	fprintf(fff, "\n");
@@ -4746,7 +4746,7 @@ static void display_shooter_damage(int Ind, object_type *o_ptr, FILE *fff, u32b 
 	if (f1 & TR1_BRAND_COLD) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non cold resistant creatures", "cold susceptible creatures");
 	if (f1 & TR1_BRAND_ELEC) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non lightning resistant creatures", "lightning susceptible creatures");
 	if (f1 & TR1_BRAND_ACID) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non acid resistant creatures", "acid susceptible creatures");
-	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS, "non poison resistant creatures", "poison susceptible creatures");
+	if (f1 & TR1_BRAND_POIS) output_ammo_dam(Ind, fff, oa_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS_POISON, "non poison resistant creatures", "poison susceptible creatures");
 
 	output_ammo_dam(Ind, fff, oa_ptr, FACTOR_MULT, 0, 0, 0, (first) ? "all monsters" : "other monsters", NULL);
 	fprintf(fff, "\n");

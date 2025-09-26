@@ -696,7 +696,7 @@ s16b brand_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, b
 			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 		} else if (r_ptr->flags9 & RF9_RES_ELEC) {
-		    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 		}
 		/* Otherwise, take the damage */
 		else {
@@ -719,7 +719,7 @@ s16b brand_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, b
 			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 		} else if (r_ptr->flags9 & RF9_RES_FIRE) {
-		    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 		}
 		/* Otherwise, take the damage */
 		else {
@@ -743,7 +743,7 @@ s16b brand_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, b
 			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
 		}
 		else if (r_ptr->flags9 & RF9_RES_COLD) {
-		    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 		}
 		/* Otherwise, take the damage */
 		else {
@@ -766,14 +766,14 @@ s16b brand_dam_aux(int Ind, object_type *o_ptr, int tdam, monster_type *m_ptr, b
 #endif
 			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
 			//if (magik(95)) *special |= SPEC_POIS;
-			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			if (bonus < FLAT_BRAND_BONUS_POISON) bonus = FLAT_BRAND_BONUS_POISON;
 		} else if (r_ptr->flags9 & RF9_RES_POIS) {
-		    if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
+			if (mult < FACTOR_BRAND_RES) mult = FACTOR_BRAND_RES;
 		}
 		/* Otherwise, take the damage */
 		else {
 			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			if (bonus < FLAT_BRAND_BONUS_POISON) bonus = FLAT_BRAND_BONUS_POISON;
 		}
 	}
 
@@ -1302,10 +1302,10 @@ s16b brand_dam_aux_player(int Ind, object_type *o_ptr, int tdam, player_type *q_
 		/* Otherwise, take the damage */
 		else if (q_ptr->suscep_pois) {
 			if (mult < FACTOR_BRAND_SUSC) mult = FACTOR_BRAND_SUSC;
-			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			if (bonus < FLAT_BRAND_BONUS_POISON) bonus = FLAT_BRAND_BONUS_POISON;
 		} else {
 			if (mult < FACTOR_BRAND) mult = FACTOR_BRAND;
-			if (bonus < FLAT_BRAND_BONUS) bonus = FLAT_BRAND_BONUS;
+			if (bonus < FLAT_BRAND_BONUS_POISON) bonus = FLAT_BRAND_BONUS_POISON;
 		}
 	}
 
