@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 24. September 2025 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 26. September 2025 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -25738,16 +25738,20 @@ The techniques are as follows:
     Rogue-specific fighting techniques:
     -----------------------------------
     Apply Poison        -
-        Searches your inventory for a potion of poison or a mushroom of poison,
-        or of unhealth, and spends it to apply poison to any melee weapon that
-        you have equipped. Items inscribed '!k' will be skipped.
-        If lacking a _known_ poisonous ingredient, you can also force the use
-        of an unknown potion or mushroom by inscribing it "!p". This will in
-        any case consume the item, whether it works or not.
-        If you have two weapons equipped, it is applied to both. This technique
-        does not work without a weapon. If you take off a weapon the poison
-        branding will fade away.
-        The poison will only last for a short while, so it's best to apply it
+        Searches your inventory for a potion or mushroom that is inscribed "!p"
+        and tries to apply the potion or mushroom's essence to your equipped
+        melee weapon(s).
+        This is a temporary weapon brand that will run out after some time.
+        The potion or mushroom will be used up in the process. Items that
+        are inscribed '!k' will always be skipped.
+        If it's a potion of poison or mushroom of poison or of unhealth, the
+        weapons will receive a poison brand that deals increased damage to
+        enemies who don't resist poison.
+        For any other types of potions or mushrooms, the brand effect may vary,
+        some might have no effect at all.
+        This technique does not work without a weapon. If you take off a weapon
+        or equip another weapon, the brand will fade away immediately.
+        Since the brand is only temporary it is a good idea to apply it right
         before engaging in a fight.
         Learning this technique also causes you to occasionally harvest potions
         of poison from larger poison breathing monsters, as long as you wield
