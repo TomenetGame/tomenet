@@ -151,7 +151,7 @@ C:29000:26000:23000
 I:24:0:a:0
 
 N:26:Recharge item
-C:800:650:500
+C:2400:2000:1600
 I:25:0:r:2
 
 N:27:Identify possessions
