@@ -559,12 +559,12 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 	bool compat_apf = FALSE;
 #endif
 #ifdef USE_X11
-	bool found_window[10] = { FALSE };
+	bool found_window[ANGBAND_TERM_MAX] = { FALSE };
 #endif
 	bool explicit_save = !(creds_only == TRUE && update_creds == FALSE) /* Don't execute if we got called from client_init(). */
 	    && !(creds_only == TRUE && update_creds == TRUE); /* Don't execute if we got called from store_crecedentials(). */
-	char *old_term_names[10] = { "Mainwindow", "Mirrorwindow", "Recallwindow", "Choicewindow", "Term-4window", "Term-5window", "Term-6window", "Term-7window", "Term-8window", "Term-9window" };
-	char *term_names[10] = { "Term-Main", "Term-1", "Term-2", "Term-3", "Term-4", "Term-5", "Term-6", "Term-7", "Term-8", "Term-9" };
+	char *old_term_names[ANGBAND_TERM_MAX] = { "Mainwindow", "Mirrorwindow", "Recallwindow", "Choicewindow", "Term-4window", "Term-5window", "Term-6window", "Term-7window", "Term-8window", "Term-9window" };
+	char *term_names[ANGBAND_TERM_MAX] = { "Term-Main", "Term-1", "Term-2", "Term-3", "Term-4", "Term-5", "Term-6", "Term-7", "Term-8", "Term-9" };
 #ifdef USE_X11
 	char **use_term_names;
 #endif
@@ -591,7 +591,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #ifdef USE_X11
 				/* Hack for auto-conversion of 4.9.2->4.9.3 config files: Test if main window exists.
 				   If it doesn't that would be because it uses outdated names, so it must be pre 4.9.3 and we convert it. */
-				if (!convert_rc && strstr(buf, "Mainwindow")) {
+				if (!convert_rc && !strncmp(buf, "Mainwindow", 10)) {
 					convert_rc = TRUE;
 					plog("Auto-converting old .rc file (on writing).");
 				}
@@ -669,7 +669,9 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 
 							/* save window positions/sizes/visibility (and possibly fonts) */
 							for (i = 0; i < ANGBAND_TERM_MAX; i++) {
-								if (!strncmp(buf, use_term_names[i], strlen(use_term_names[i]))) {
+								if (!strncmp(buf, use_term_names[i], strlen(use_term_names[i])) ||
+								    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+								    (convert_rc && !strncmp(buf, term_names[i], strlen(term_names[i])))) {
 									write_mangrc_aux_line(i, term_names[i], use_term_names[i], buf);
 									win = found_window[i] = TRUE;
 								}
@@ -751,43 +753,43 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			    && explicit_save) { /*This code is only meant for when we deliberately save config. */
 				/* Add missing windows (added for older client versions that didn't have 7-9 yet) */
 				if (!found_window[0]) {
-					write_mangrc_aux(0, "Term-Main", config2);
+					write_mangrc_aux(0, term_names[0], config2);
 					logprint("Added missing Term-Main window to config file.\n");
 				}
 				if (!found_window[1]) {
-					write_mangrc_aux(1, "Term-1", config2);
+					write_mangrc_aux(1, term_names[1], config2);
 					logprint("Added missing Term-1 window to config file.\n");
 				}
 				if (!found_window[2]) {
-					write_mangrc_aux(2, "Term-2", config2);
+					write_mangrc_aux(2, term_names[2], config2);
 					logprint("Added missing Term-2 window to config file.\n");
 				}
 				if (!found_window[3]) {
-					write_mangrc_aux(3, "Term-3", config2);
+					write_mangrc_aux(3, term_names[3], config2);
 					logprint("Added missing Term-3 window to config file.\n");
 				}
 				if (!found_window[4]) {
-					write_mangrc_aux(4, "Term-4", config2);
+					write_mangrc_aux(4, term_names[4], config2);
 					logprint("Added missing Term-4 window to config file.\n");
 				}
 				if (!found_window[5]) {
-					write_mangrc_aux(5, "Term-5", config2);
+					write_mangrc_aux(5, term_names[5], config2);
 					logprint("Added missing Term-5 window to config file.\n");
 				}
 				if (!found_window[6]) {
-					write_mangrc_aux(6, "Term-6", config2);
+					write_mangrc_aux(6, term_names[6], config2);
 					logprint("Added missing Term-6 window to config file.\n");
 				}
 				if (!found_window[7]) {
-					write_mangrc_aux(7, "Term-7", config2);
+					write_mangrc_aux(7, term_names[7], config2);
 					logprint("Added missing Term-7 window to config file.\n");
 				}
 				if (!found_window[8]) {
-					write_mangrc_aux(8, "Term-8", config2);
+					write_mangrc_aux(8, term_names[8], config2);
 					logprint("Added missing Term-8 window to config file.\n");
 				}
 				if (!found_window[9]) {
-					write_mangrc_aux(9, "Term-9", config2);
+					write_mangrc_aux(9, term_names[9], config2);
 					logprint("Added missing Term-9 window to config file.\n");
 				}
 			}
