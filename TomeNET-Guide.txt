@@ -1779,7 +1779,8 @@ They all start with a slash '/' hence they're called slash commands:
 /ing
 /ingredients
             Disable (and reenable) any ingredient drops for demolitionist perk
-            and for Rogues' "Apply Poison" fighting technique (poison potions).
+            and for the "Apply Poison" fighting technique used by rogues (and
+            possibly death knights).
             This setting is saved between logins. When you login on a character
             that has drops disabled you will see a message reminding you of it:
             "Ingredient drops [...] are currently suppressed."
@@ -25744,6 +25745,7 @@ The techniques are as follows:
     Rogue-specific fighting techniques:
     -----------------------------------
     Apply Poison        -
+    (Also enabled for death knights according to 'Blackguard' DnD 3e aspect.)
         Searches your inventory for a potion or mushroom that is inscribed "!p"
         or "!p1" or "!p2" and tries to apply the potion or mushroom's essence
         to your equipped melee weapon(s).
