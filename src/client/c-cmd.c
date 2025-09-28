@@ -4743,7 +4743,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
    Used for *_info.txt files, so you can see the whole data block belonging to your search result. */
 #define BLF_SRC_PREFEED
 void browse_local_file(const char* angband_path, char* fname, int remembrance_index, bool reverse) {
-	static int line_cur[MAX_REMEMBRANCE_INDICES] = { 0 }, line_before_search[MAX_REMEMBRANCE_INDICES] = { 0 }, jumped_to_line[MAX_REMEMBRANCE_INDICES] = { 0 }, file_lastline[MAX_REMEMBRANCE_INDICES] = { -1 };
+	static int line_cur[MAX_REMEMBRANCE_INDICES] = { 0 }, line_before_search[MAX_REMEMBRANCE_INDICES] = { 0 }, jumped_to_line[MAX_REMEMBRANCE_INDICES] = { 0 }, file_lastline[MAX_REMEMBRANCE_INDICES] = { -2 }; // -2 = 'hack' to init the array to -1
 	static char lastsearch[MAX_REMEMBRANCE_INDICES][MAX_CHARS] = { 0 };
 
 	bool inkey_msg_old, within, within_col, searchwrap = FALSE, skip_redraw = FALSE, backwards = FALSE, restore_pos = FALSE, marking = FALSE, marking_after = FALSE;
@@ -4783,6 +4783,11 @@ void browse_local_file(const char* angband_path, char* fname, int remembrance_in
 	int line_prefeed_result = -1; /* Remember actual result match line */
 #endif
 
+
+	/* Init... */
+	if (file_lastline[0] == -2)
+		for (i = 0; i < MAX_REMEMBRANCE_INDICES; i++)
+			file_lastline[i] = -1;
 
 	if (!remembrance_index || remembrance_index >= MAX_REMEMBRANCE_INDICES) {
 		remembrance_index = 0;
