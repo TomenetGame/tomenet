@@ -508,7 +508,7 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			break;
 		case SV_FOOD_STUPIDITY: return(FALSE);
 		case SV_FOOD_NAIVETY: return(FALSE);
-
+		default: return(FALSE);
 		}
 	} else { /* TV_POTION */
 		switch (o_tsval) {
