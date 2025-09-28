@@ -562,10 +562,6 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			dam = 1; /* dummy */
 			ident = TRUE;
 			break;
-		case SV_POTION_DEC_INT:
-			break;
-		case SV_POTION_DEC_WIS:
-			break;
 		case SV_POTION_DEC_DEX:
 			dt = GF_DEC_DEX;
 			dam = 1; /* dummy */
@@ -576,16 +572,14 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			dam = 1; /* dummy */
 			ident = TRUE;
 			break;
+		case SV_POTION_DEC_INT:
+		case SV_POTION_DEC_WIS:
 		case SV_POTION_DEC_CHR:
 			return(FALSE);
 		case SV_POTION_RES_STR:
 			dt = GF_RES_STR;
 			dam = 1; /* dummy */
 			break;
-		case SV_POTION_RES_INT:
-			return(FALSE);
-		case SV_POTION_RES_WIS:
-			return(FALSE);
 		case SV_POTION_RES_DEX:
 			dt = GF_RES_DEX;
 			dam = 1; /* dummy */
@@ -594,17 +588,15 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			dt = GF_RES_CON;
 			dam = 1; /* dummy */
 			break;
+		case SV_POTION_RES_INT:
+		case SV_POTION_RES_WIS:
 		case SV_POTION_RES_CHR:
-			break;
+			return(FALSE);
 		case SV_POTION_INC_STR:
 			dt = GF_INC_STR;
 			dam = 1; /* dummy */
 			ident = TRUE;
 			break;
-		case SV_POTION_INC_INT:
-			return(FALSE);
-		case SV_POTION_INC_WIS:
-			return(FALSE);
 		case SV_POTION_INC_DEX:
 			dt = GF_INC_DEX;
 			dam = 1; /* dummy */
@@ -615,6 +607,8 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			dam = 1; /* dummy */
 			ident = TRUE;
 			break;
+		case SV_POTION_INC_INT:
+		case SV_POTION_INC_WIS:
 		case SV_POTION_INC_CHR:
 			return(FALSE);
 		case SV_POTION_AUGMENTATION:
