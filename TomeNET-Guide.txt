@@ -26155,7 +26155,7 @@ Beet                                   0.1             1000           1000
 Squash                                 0.3             1000           ~333
 Corn                                   0.2             2000           1000
 
-Firestones                           10,20                0              0
+Firestones (small/normal)          1.0/2.0                0              0
 
 Potion (0.4lb)             Nutrients   |   Potion (0.4lb)             Nutrients
 ---------------------------------------+---------------------------------------
