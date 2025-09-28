@@ -268,13 +268,22 @@ retry_mangrc:
 				if (p) use_graphics_new = use_graphics = (atoi(p) != 0);
  #endif
 			}
-			if (!strncmp(buf, "graphic_tiles", 13)) {
+			if (!strncmp(buf, "graphic_tiles", 13) && !(buf[13] >= '0' && buf[13] <= '9')) {
 				char *p;
 
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) strcpy(graphic_tiles, p);
+			} else if (!strncmp(buf, "graphic_tiles", 13)) { //graphic_subtiles[]
+				char *p;
+				int i = atoi(buf + 13);
+
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+
+				if (i >= 0 && i < MAX_SUBFONTS) graphic_subtiles[i] = (atoi(p) != 0);
 			}
+
 			if (!strncmp(buf, "disableGfxCache", 15)) { //TILE_CACHE_SIZE
 				char *p;
 
@@ -541,6 +550,7 @@ static void write_mangrc_aux_line(int t, cptr sec_name_write, cptr sec_name, cha
    Already existing nick+pass will only be updated if update_creds is TRUE.
    If audiopacks_only is TRUE, all other settings except for sound+music pack will be skipped. */
 bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
+	int i;
 	char config_name2[100];
 	FILE *config, *config2;
 	char buf[1024];
@@ -655,7 +665,6 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #ifdef USE_X11
 						/* Don't do this in terminal mode ('-c') */
 						if (!strcmp(ANGBAND_SYS, "x11")) {
-							int i;
 							bool win = FALSE;
 
 							/* save window positions/sizes/visibility (and possibly fonts) */
@@ -673,9 +682,15 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 								strcat(buf, format("%d\n", use_graphics_new));
 							}
  #ifdef USE_GRAPHICS
-							else if (!strncmp(buf, "graphic_tiles", 13)) {
+							else if (!strncmp(buf, "graphic_tiles", 13) && !(buf[13] >= '0' && buf[13] <= '9')) {
 								strcpy(buf, "graphic_tiles\t\t");
 								strcat(buf, format("%s\n", graphic_tiles));
+							} else if (!strncmp(buf, "graphic_tiles", 13)) { //graphic_subtiles[]
+								i = atoi(buf + 13);
+
+								sprintf(buf, "graphic_tiles%d\t\t", i);
+								if (i >= 0 && i < MAX_SUBFONTS) strcat(buf, format("%d\n", graphic_subtiles[i] ? 1 : 0));
+								else strcat(buf, "1"); //in case of array subscript out of bounds, just assume "enabled" as default
 							}
  #endif
 						}
@@ -863,8 +878,13 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			fputs(format("graphics\t\t%d\n", use_graphics_new), config2);
 #ifdef USE_GRAPHICS
 			/* On writing a default .tomenetrc, also default to 16x24sv tileset */
-			if (!graphic_tiles[0]) strcpy(graphic_tiles, "16x24sv");
+			if (!graphic_tiles[0]) {
+				strcpy(graphic_tiles, "16x24sv");
+				for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = TRUE;
+			}
 			fputs(format("graphic_tiles\t\t%s\n", graphic_tiles), config2);
+			for (i = 0; i < MAX_SUBFONTS; i++)
+				fputs(format("graphic_tiles%d\t\t%d\n", i, graphic_subtiles[i] ? 1 : 0), config2);
 			fputs("disableGfxCache\t\t0\n", config2);
 #endif
 			fputs("\n", config2);

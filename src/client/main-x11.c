@@ -3780,8 +3780,11 @@ int init_graphics_x11(void) {
 	path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
 	strcat(filename, ".bmp");
 
-	/* Load .bmp image. */
 
+	//TODO: Load graphic_subtiles[] too...
+
+
+	/* Load .bmp image. */
 	if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
 		sprintf(use_graphics_errstr, "Graphics file \"%s\" ", filename);
 		switch (rerr) {

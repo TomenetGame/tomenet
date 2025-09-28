@@ -7642,6 +7642,10 @@
  #define term_term_7	(ang_term[7])
  #define term_term_8	(ang_term[8])
  #define term_term_9	(ang_term[9])
+
+ /* These currently depend on ENABLE_SUBWINDOW_MENU in c-util.c */
+ #define MAX_FONTS 100 /* also max graphical tilesets */
+ #define MAX_SUBFONTS 10 /* added actually not for fonts but for partial graphical tilesets, 0...9 */
 #endif
 
 

@@ -1661,7 +1661,8 @@ static void save_prefs_aux(int term_idx, cptr sec_name) {
  */
 void save_prefs(void) {
 #if defined(USE_GRAPHICS) || defined(USE_SOUND)
-	char       buf[32];
+	char buf[32];
+	int i;
 #endif
 
 	strcpy(buf, INI_disable_CS_IME ? "1" : "0");
@@ -1678,6 +1679,8 @@ void save_prefs(void) {
 	strcpy(buf, use_graphics_new == UG_2MASK ? "2" : (use_graphics_new ? "1" : "0"));
 	WritePrivateProfileString("Base", "Graphics", buf, ini_file);
 	WritePrivateProfileString("Base", "GraphicTiles", graphic_tiles, ini_file);
+	for (i = 0; i < MAX_SUBFONTS; i++)
+		WritePrivateProfileInt("Base", format("GraphicSubTiles%d", graphic_subtiles[i] ? 1 : 0), ini_file);
 #endif
 #ifdef USE_SOUND
 	strcpy(buf, use_sound_org ? "1" : "0");
@@ -1905,6 +1908,8 @@ static void load_prefs(void) {
 	/* Convert to lowercase. */
 	for (int i =0; i < 256; i++)
 		graphic_tiles[i] = tolower(graphic_tiles[i]);
+	for (i = 0; i < MAX_SUBFONTS; i++)
+		graphic_subtiles[i] = (GetPrivateProfileInt("Base", format("GraphicSubTiles%d", i), 1, ini_file) != 0);
 #endif
 
 #ifdef USE_SOUND
@@ -4018,6 +4023,10 @@ int init_graphics_win(void) {
 
 	/* Validate the bitmap filename */
 	validate_file(filename);
+
+
+	// TODO for graphic_subtiles[]: implement loading them and just check_file() instead of validate_file() so missing subfiles are just ignored instead of fail-terminating the client.
+
 
 	/* Load .bmp image into memory */
  #ifndef CBM_METHOD_DIB
