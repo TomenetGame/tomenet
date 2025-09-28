@@ -6617,6 +6617,81 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	return(obvious);
 }
 
+bool monster_dec_str(monster_type *m_ptr) {
+	int i, k;
+	bool effect = FALSE;
+
+	/* reduce down to (2x14%)^2 ~ 52% remaining damage */
+	for (i = 0; i < 4; i++) {
+		/* prevent div0 if monster has no damaging attack */
+		if (!m_ptr->blow[i].org_d_dice) continue;
+
+		/* if dice are bigger than sides or if sides are just not further reducible, reduce the dice if they're still reducible */
+		if ((m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side || (100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side <= 72) &&
+		    (100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice > 72) {
+			/* to verify whether we really reduced the damage or the reduction got eaten up by rounding */
+			k = m_ptr->blow[i].d_dice;
+			/* reduce by 14% */
+			m_ptr->blow[i].d_dice -= (14 * m_ptr->blow[i].org_d_dice) / 100;
+			/* cap at 72% damage ie 2x reduction */
+			if ((100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice < 72) {
+				m_ptr->blow[i].d_dice = (72 * m_ptr->blow[i].org_d_dice) / 100;
+				if (!m_ptr->blow[i].d_dice) m_ptr->blow[i].d_dice = 1; //paranoia for future changes, doesn't do anything for current reduction percentages
+			}
+			if (m_ptr->blow[i].d_dice != k) effect = TRUE;
+		}
+		/* otherwise reduce the sides, if still reducible */
+		else if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side > 72) {
+			/* to verify whether we really reduced the damage or the reduction got eaten up by rounding */
+			k = m_ptr->blow[i].d_side;
+			/* reduce by 14% */
+			m_ptr->blow[i].d_side -= (14 * m_ptr->blow[i].org_d_side) / 100;
+			/* cap at 72% damage ie 2x reduction */
+			if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side < 72) {
+				m_ptr->blow[i].d_side = (72 * m_ptr->blow[i].org_d_side) / 100;
+				if (!m_ptr->blow[i].d_side) m_ptr->blow[i].d_side = 1; //paranoia for future changes, doesn't do anything for current reduction percentages
+			}
+			if (m_ptr->blow[i].d_side != k) effect = TRUE;
+		}
+	}
+
+	return(effect);
+}
+bool monster_dec_dex(monster_type *m_ptr) {
+	int k;
+
+	/* already reduced too much? */
+	if (m_ptr->org_ac - m_ptr->ac >= m_ptr->org_ac / 2) return(FALSE);
+
+	/* to verify whether we really reduced the AC or the reduction got eaten up by rounding/limits */
+	k = m_ptr->ac;
+
+	if (m_ptr->ac) {
+		m_ptr->ac = (m_ptr->ac * 7) / 8;
+		if (m_ptr->ac > 10) m_ptr->ac -= 2;
+		else if (m_ptr->ac > 5) m_ptr->ac -= 1;
+	}
+
+	return(m_ptr->ac != k);
+}
+bool monster_dec_con(monster_type *m_ptr) {
+	int k;
+
+	/* already reduced too much? */
+	if (m_ptr->org_maxhp - m_ptr->maxhp >= m_ptr->org_maxhp / 2) return(FALSE);
+
+	/* to verify whether we really reduced the AC or the reduction got eaten up by rounding/limits */
+	k = m_ptr->maxhp;
+
+	if (m_ptr->maxhp > 3) {
+		m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
+		if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
+		else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
+		if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
+	}
+
+	return(m_ptr->maxhp != k);
+}
 
 #if 0 /* commented out in project_m */
 /*
@@ -9115,14 +9190,11 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Decrease strength */
 	case GF_DEC_STR:
+		no_dam = TRUE;
 		if (m_ptr->r_idx == RI_MIRROR) {
 			note = " is unaffected";
-			no_dam = TRUE;
 			break;
 		}
-
-		/* hack */
-		no_dam = TRUE;
 
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING | RF3_TROLL | RF3_GIANT)) ||
@@ -9130,47 +9202,19 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		    (m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-		} else {
-			dam = 0;
-			for (i = 0; i < 4; i++) {
-				/* prevent div0 if monster has no damaging attack */
-				if (!m_ptr->blow[i].org_d_dice) continue;
-
-				/* if dice are bigger than sides or if sides are just not further reducible, reduce the dice if they're still reducible */
-				if ((m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side || (100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side <= 72) &&
-				    (100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice > 72) {
-					/* reduce by 14% */
-					m_ptr->blow[i].d_dice -= (14 * m_ptr->blow[i].org_d_dice) / 100;
-					/* cap at 72% total reduction */
-					if ((100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice < 72)
-						m_ptr->blow[i].d_dice = (72 * m_ptr->blow[i].org_d_dice) / 100;
-					dam = 1;
-				}
-				/* otherwise reduce the sides, if still reducible */
-				else if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side > 72) {
-					/* reduce by 14% */
-					m_ptr->blow[i].d_side -= (14 * m_ptr->blow[i].org_d_side) / 100;
-					/* cap at 72% total reduction */
-					if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side < 72)
-						m_ptr->blow[i].d_side = (72 * m_ptr->blow[i].org_d_side) / 100;
-					dam = 1;
-				}
-			}
-			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears weaker!");
-			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-		}
+		} else if (monster_dec_str(m_ptr)) msg_print_near_monster(c_ptr->m_idx, "appears weaker!");
+		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		quiet = TRUE;
 		break;
 
 	/* Decrease dexterity */
 	case GF_DEC_DEX:
+		no_dam = TRUE;
 		if (m_ptr->r_idx == RI_MIRROR) {
 			note = " is unaffected";
-			no_dam = TRUE;
 			break;
 		}
 
-		no_dam = TRUE;
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
@@ -9178,29 +9222,19 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		    (m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-		} else {
-			if (m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2) {
-				if (m_ptr->ac) {
-					msg_print_near_monster(c_ptr->m_idx, "appears clumsy!");
-					m_ptr->ac = (m_ptr->ac * 7) / 8;
-					if (m_ptr->ac > 10) m_ptr->ac -= 2;
-					else if (m_ptr->ac > 5) m_ptr->ac -= 1;
-				}
-			}
-			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-		}
+		} else if (monster_dec_dex(m_ptr)) msg_print_near_monster(c_ptr->m_idx, "appears clumsy!");
+		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		quiet = TRUE;
 		break;
 
 	/* Decrease dexterity */
 	case GF_DEC_CON:
+		no_dam = TRUE;
 		if (m_ptr->r_idx == RI_MIRROR) {
 			note = " is unaffected";
-			no_dam = TRUE;
 			break;
 		}
 
-		no_dam = TRUE;
 		// apparently we don't have any western/dunadan monsters (SUST_CON)
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
@@ -9208,18 +9242,8 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		    (m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-		} else {
-			if (m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2) {
-				if (m_ptr->maxhp > 3) {
-					msg_print_near_monster(c_ptr->m_idx, "appears less healthy!");
-					m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
-					if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
-					else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
-					if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
-				}
-				//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-			}
-		}
+		} else if (monster_dec_con(m_ptr)) msg_print_near_monster(c_ptr->m_idx, "appears less healthy!");
+		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 		quiet = TRUE;
 		break;
 
@@ -9434,9 +9458,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Ruination! (now we're talking) */
 	case GF_RUINATION:
+		no_dam = TRUE;
 		if (m_ptr->r_idx == RI_MIRROR) {
 			note = " is unaffected";
-			no_dam = TRUE;
 			break;
 		}
 
@@ -9445,69 +9469,30 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
-			/* hack */
+			/* to verify whether we really reduced anything */
 			dam = 0;
 
 			/* -STR */
 			if (!(r_ptr->flags3 & (RF3_TROLL | RF3_GIANT)) &&
 			    !(m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
 			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL))
-			for (i = 0; i < 4; i++) {
-				/* prevent div0 if monster has no damaging attack */
-				if (!m_ptr->blow[i].org_d_dice) continue;
-
-				/* if dice are bigger than sides or if sides are just not further reducible, reduce the dice if they're still reducible */
-				if ((m_ptr->blow[i].d_dice > m_ptr->blow[i].d_side || (100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side <= 72) &&
-				    (100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice > 72) {
-					/* reduce by 14% */
-					m_ptr->blow[i].d_dice -= (14 * m_ptr->blow[i].org_d_dice) / 100;
-					/* cap at 72% total reduction */
-					if ((100 * m_ptr->blow[i].d_dice) / m_ptr->blow[i].org_d_dice < 72)
-						m_ptr->blow[i].d_dice = (72 * m_ptr->blow[i].org_d_dice) / 100;
-					dam = 1;
-				}
-				/* otherwise reduce the sides, if still reducible */
-				else if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side > 72) {
-					/* reduce by 14% */
-					m_ptr->blow[i].d_side -= (14 * m_ptr->blow[i].org_d_side) / 100;
-					/* cap at 72% total reduction */
-					if ((100 * m_ptr->blow[i].d_side) / m_ptr->blow[i].org_d_side < 72)
-						m_ptr->blow[i].d_side = (72 * m_ptr->blow[i].org_d_side) / 100;
-					dam = 1;
-				}
-			}
+				dam |= monster_dec_str(m_ptr);
 
 			/* -DEX */
 			if (!(m_ptr->r_idx == RI_SMEAGOL || m_ptr->r_idx == RI_SLHOBBIT || m_ptr->r_idx == RI_HALFLING_SLINGER) &&
 			    !(m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
-			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL) &&
-			    (m_ptr->org_ac - m_ptr->ac < m_ptr->org_ac / 2)) {
-				if (m_ptr->ac) {
-					m_ptr->ac = (m_ptr->ac * 7) / 8;
-					if (m_ptr->ac > 10) m_ptr->ac -= 2;
-					else if (m_ptr->ac > 5) m_ptr->ac -= 1;
-					dam = 1;
-				}
-			}
+			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL))
+				dam |= monster_dec_dex(m_ptr);
 
 			/* -CON */
 			// apparently we don't have any western/dunadan monsters (SUST_CON)
 			if (!(m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
-			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL) &&
-			    (m_ptr->org_maxhp - m_ptr->maxhp < m_ptr->org_maxhp / 2)) {
-				if (m_ptr->maxhp > 3) {
-					m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
-					if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
-					else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
-					if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
-					dam = 1;
-				}
-			}
+			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL))
+				dam |= monster_dec_con(m_ptr);
 
 			if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less powerful!");
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		}
-		no_dam = TRUE;
 		quiet = TRUE;
 		break;
 
