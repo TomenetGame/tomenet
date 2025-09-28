@@ -5372,10 +5372,10 @@ void observe_aux(int Ind, object_type *o_ptr) {
 
 	if (is_throwing_weapon(o_ptr)) msg_print(Ind, "\377s  It can be used as an effective throwing weapon.");
 
-	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, NULL, Ind_target);
-	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, NULL, Ind_target);
-	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, NULL, Ind_target);
-	else if (o_ptr->tval == TV_DIGGING) display_tool_handling(Ind, &forge, NULL, Ind_target);
+	if (o_ptr->tval == TV_BOW) display_shooter_handling(Ind, &forge, NULL, Ind);
+	else if (is_melee_weapon(o_ptr->tval)) display_weapon_handling(Ind, &forge, NULL, Ind);
+	else if (is_armour(o_ptr->tval)) display_armour_handling(Ind, &forge, NULL, Ind);
+	else if (o_ptr->tval == TV_DIGGING) display_tool_handling(Ind, &forge, NULL, Ind);
 
 	if (wield_slot(Ind, o_ptr) == INVEN_WIELD
 	    //|| is_armour(o_ptr->tval)
@@ -5447,10 +5447,10 @@ bool identify_fully_aux(int Ind, object_type *o_ptr) {
 bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int Ind_target) {
 	player_type *p_ptr = Players[Ind];
 	player_type *pt_ptr = (Ind_target ? Players[Ind_target] : p_ptr);
-	bool id_ok = full || object_known_p(Ind, o_ptr); /* item has undergone basic ID (or is easy-know and basic)? */
+	bool id_ok = full || object_known_p(pt_ptr->Ind, o_ptr); /* item has undergone basic ID (or is easy-know and basic)? */
 	bool can_have_hidden_powers = FALSE, eff_full = full;
 	ego_item_type *e_ptr;
-	bool aware = object_aware_p(Ind, o_ptr) || full;
+	bool aware = object_aware_p(pt_ptr->Ind, o_ptr) || full;
 	bool aware_cursed = id_ok || (o_ptr->ident & ID_SENSE);
 	object_type forge;
 	bool am_unknown = FALSE;
@@ -5465,6 +5465,8 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	char timeleft[51] = { 0 };//[26]
 	ego_granted_flags *es_ptr = NULL; //silence compiler warning
 	u32b hack_sigil_local_f[7] = { 0 }, hack_comboset_local_f[7] = { 0 }; //same as ego_granted_flags
+
+	if (!Ind_target) Ind_target = Ind;
 
 	/* Open a new file */
 	fff = my_fopen(p_ptr->infofile, "wb");
@@ -5848,11 +5850,13 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		if (f & TBRAND_F_POTION_MUSHROOM) {
 			object_type forge;
 
-			invcopy(&forge, lookup_kind(TV_POTION, t));
-			if (!object_aware_p(Ind, &forge))
+			if (t >= 1000) invcopy(&forge, lookup_kind(TV_FOOD, t - 1000));
+			else invcopy(&forge, lookup_kind(TV_POTION, t));
+
+			if (!object_aware_p(Ind_target, &forge))
 				fprintf(fff, "\377GVenom of unknown effect has been applied to it temporarily.\n");
-			else if (potion_mushroom_branding(Ind, 0, 0, (forge.tval == TV_FOOD ? 1000 : 0) + forge.sval, TRUE))
-				fprintf(fff, "\377GVenom of %s has been applied to it temporarily.\n", k_name + k_info[forge.k_idx].name);
+			else if (potion_mushroom_branding(Ind_target, 0, 0, t, TRUE))
+				fprintf(fff, "\377GVenom of %c%s has been applied to it temporarily.\n", tolower(*(k_name + k_info[forge.k_idx].name)), k_name + k_info[forge.k_idx].name + 1);
 			else
 				fprintf(fff, "\377GIneffective venom has been applied to it temporarily.\n");
 		} else switch (t) {
@@ -6523,7 +6527,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 #endif
 	    )
 		/* TODO: 3rd party observe via Ind_target */
-		display_weapon_damage(Ind_target ? Ind_target : Ind, &forge, fff, f1);
+		display_weapon_damage(Ind_target, &forge, fff, f1);
 
 	/* Damage display for ranged weapons */
 	if (wield_slot(0, o_ptr) == INVEN_BOW) {
@@ -6558,10 +6562,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 				}
 			}
 			/* TODO: 3rd party observe via Ind_target */
-			display_shooter_damage(Ind_target ? Ind_target : Ind, &forge, fff, f1, ammo_f1);
+			display_shooter_damage(Ind_target, &forge, fff, f1, ammo_f1);
 		} else
 			/* TODO: 3rd party observe via Ind_target */
-			display_boomerang_damage(Ind_target ? Ind_target : Ind, &forge, fff, f1);
+			display_boomerang_damage(Ind_target, &forge, fff, f1);
 	}
 
 	/* Breakage/Damage display for ammo */
@@ -6606,7 +6610,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		else fprintf(fff, "\377WIt has a%s %d.%d%% chance to break upon hit.\n", vowel ? "n" : "", chance, permille);
 
 		/* TODO: 3rd party observe via Ind_target */
-		display_ammo_damage(Ind_target ? Ind_target : Ind, &forge, fff, f1, shooter_f1);
+		display_ammo_damage(Ind_target, &forge, fff, f1, shooter_f1);
 	}
 
 #if 1 /* display trigger chance for magic devices? */

@@ -5790,8 +5790,8 @@ static bool process_player_end_aux(int Ind) {
 	/* weapon brand time */
 	/* special hack: if both weapons run out at the same time with the same element, only give one (combined) message ^^ */
 	if (p_ptr->melee_brand && p_ptr->melee_brand2 &&
-	    p_ptr->melee_brand - minus_magic <= 0 && p_ptr->melee_brand2 - minus_magic <= 0 &&
-	    p_ptr->melee_brand_t == p_ptr->melee_brand2_t)
+	    p_ptr->melee_brand_t == p_ptr->melee_brand2_t &&
+	    SGN(p_ptr->melee_brand - minus_magic) == SGN(p_ptr->melee_brand2 - minus_magic)) /* actually not just run out together but also count down together for efficiency */
 		(void)set_melee_brand(Ind, p_ptr->melee_brand - minus_magic, p_ptr->melee_brand_t, p_ptr->melee_brand_flags | TBRAND_F_DUAL, FALSE, !p_ptr->melee_brand_ma);
 	else {
 		if (p_ptr->melee_brand)

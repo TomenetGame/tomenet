@@ -430,10 +430,11 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
    If 'verify' is TRUE, no application (projection) is performed and tx/ty are just ignored. */
 bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify) {
 	player_type *p_ptr = Players[Ind];
-	int dt = 0, dam = 0, flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO);
+	int dt = 0, dam = 0, flg = (PROJECT_NORF | PROJECT_JUMP | PROJECT_ITEM | PROJECT_KILL | PROJECT_SELF | PROJECT_NODO), tv;
 	bool ident = FALSE;
 
 	if (o_tsval >= 1000) { /* TV_FOOD -- mushrooms, to be specific */
+		tv = TV_FOOD;
 		o_tsval -= 1000;
 
 		switch (o_tsval) {
@@ -511,6 +512,8 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 		default: return(FALSE);
 		}
 	} else { /* TV_POTION */
+		tv = TV_POTION;
+
 		switch (o_tsval) {
 		case SV_POTION_RESTORE_MANA:
 		case SV_POTION_STAR_RESTORE_MANA:
@@ -719,7 +722,7 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 	if (ident) {
 		object_type forge;
 
-		invcopy(&forge, lookup_kind(TV_POTION, o_tsval));
+		invcopy(&forge, lookup_kind(tv, o_tsval));
 		/* The player is now aware of the object */
 		if (!object_aware_p(Ind, &forge)) {
 			object_aware(Ind, &forge);
@@ -4860,7 +4863,7 @@ int divide_spell_damage(int dam, int div, int typ) {
 	case GF_TELEPORT_PLAYER: //Kurzel - This and many others (buffs) could go here (pending approval..)!
 	case GF_LIFE_SLOW: case GF_MIND_SLOW: case GF_OLD_SLOW: case GF_VINE_SLOW:
 	case GF_OLD_CONF:
-	case GF_OLD_SLEEP:
+	case GF_OLD_SLEEP: //uses a 0x400 hack
 	case GF_TURN_ALL: //fear
 	case GF_TERROR:
 	case GF_EXTRA_STATS:
@@ -8212,7 +8215,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 #ifdef ENABLE_OCCULT
 		/* hack for Occult school's "Trance" spell */
-		if (dam & 0x400) {
+		if (dam >= 0x400) {
 			/* fails? (not a ghost, spirit, elemental or vortex) */
 			if (r_ptr->d_char != 'G' && r_ptr->d_char != 'E' && r_ptr->d_char != 'X' && r_ptr->d_char != 'v') {
 				quiet = TRUE;

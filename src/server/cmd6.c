@@ -9465,7 +9465,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 			}
 			/* Special effect */
 			else {
-				set_melee_brand(Ind, 60 + randint(10), o_ptr->tval == TV_FOOD ? 1000 : 0 + o_ptr->sval, (k == -1 ? TBRAND_F_DUAL : (k == 2 ? TBRAND_F_MAINHAND : TBRAND_F_OFFHAND)) | TBRAND_F_POTION_MUSHROOM, TRUE, TRUE);
+				set_melee_brand(Ind, 60 + randint(10), (o_ptr->tval == TV_FOOD ? 1000 : 0) + o_ptr->sval, (k == -1 ? TBRAND_F_DUAL : (k == 2 ? TBRAND_F_MAINHAND : TBRAND_F_OFFHAND)) | TBRAND_F_POTION_MUSHROOM, TRUE, TRUE);
 				s_printf("TECHNIQUE_MELEE: %s - apply poison special to %d: %s\n", p_ptr->name, k, k_name + k_info[k_idx].name);
 			}
 

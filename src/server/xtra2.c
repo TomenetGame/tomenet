@@ -921,6 +921,8 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 	    ) {
 		strcpy(weapons, "Your weapon");
 		plural = FALSE;
+		if (!((flags & TBRAND_F_MAINHAND) && p_ptr->inventory[INVEN_WIELD].k_idx)) flags &= ~TBRAND_F_MAINHAND;
+		if (!((flags & TBRAND_F_OFFHAND) && p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) flags &= ~TBRAND_F_OFFHAND;
 	} else if (!weapons_only) { /* bare fists (or whatever we have) brand? */
 		//fists, claws, tentacles >,>
 		switch (bodymonster_hands(Ind)) {
@@ -929,12 +931,16 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 			/* If this buff wasn't applied by ourself, prevent msg-spam */
 			if (v && cast && !(flags & TBRAND_F_EXTERN)) msg_print(Ind, "You don't have any limbs to enchant."); /* failure */
 			/* Ensure no brand */
-			p_ptr->melee_brand = 0;
-			p_ptr->melee_brand_t = 0;
-			p_ptr->melee_brand_flags = 0x0;
-			p_ptr->melee_brand2 = 0;
-			p_ptr->melee_brand2_t = 0;
-			p_ptr->melee_brand2_flags = 0x0;
+			if (flags & TBRAND_F_MAINHAND) {
+				p_ptr->melee_brand = 0;
+				p_ptr->melee_brand_t = 0;
+				p_ptr->melee_brand_flags = 0x0;
+			}
+			if (flags & TBRAND_F_OFFHAND) {
+				p_ptr->melee_brand2 = 0;
+				p_ptr->melee_brand2_t = 0;
+				p_ptr->melee_brand2_flags = 0x0;
+			}
 			return(FALSE); /* don't notice anything */
 		case 1:
 			strcpy(weapons, "Your fists");
@@ -952,27 +958,36 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 		/* If this buff wasn't applied by ourself, prevent msg-spam */
 		if (v && cast && !(flags & TBRAND_F_EXTERN)) msg_print(Ind, "You are not wielding any melee weapons to brand."); /* failure */
 		/* Ensure no brand */
-		p_ptr->melee_brand = 0;
-		p_ptr->melee_brand_t = 0;
-		p_ptr->melee_brand_flags = 0x0;
-		p_ptr->melee_brand2 = 0;
-		p_ptr->melee_brand2_t = 0;
-		p_ptr->melee_brand2_flags = 0x0;
+		if (flags & TBRAND_F_MAINHAND) {
+			p_ptr->melee_brand = 0;
+			p_ptr->melee_brand_t = 0;
+			p_ptr->melee_brand_flags = 0x0;
+		}
+		if (flags & TBRAND_F_OFFHAND) {
+			p_ptr->melee_brand2 = 0;
+			p_ptr->melee_brand2_t = 0;
+			p_ptr->melee_brand2_flags = 0x0;
+		}
 		return(FALSE); /* don't notice anything */
 	}
+
+	/* For MA brand we just use the first array as default */
+	if (p_ptr->melee_brand_ma) flags &= ~TBRAND_F_OFFHAND;
 
 	/* Open */
 	if (v && cast) {
 		if (flags & TBRAND_F_POTION_MUSHROOM) {
 			object_type forge;
 
-			invcopy(&forge, lookup_kind(TV_POTION, t));
+			if (t >= 1000) invcopy(&forge, lookup_kind(TV_FOOD, t - 1000));
+			else invcopy(&forge, lookup_kind(TV_POTION, t));
+
 			if (!object_aware_p(Ind, &forge)) {
 				if (plural) msg_format(Ind, "\377w%s are branded with venom of unknown effect!", weapons);
 				else msg_format(Ind, "\377w%s is branded with venom of unknown effect!", weapons);
-			} else if (potion_mushroom_branding(Ind, 0, 0, (forge.tval == TV_FOOD ? 1000 : 0) + forge.sval, TRUE)) {
-				if (plural) msg_format(Ind, "\377w%s are branded with venom of %s!", weapons, k_name + k_info[forge.k_idx].name);
-				else msg_format(Ind, "\377w%s is branded with venom of %s!", weapons, k_name + k_info[forge.k_idx].name);
+			} else if (potion_mushroom_branding(Ind, 0, 0, t, TRUE)) {
+				if (plural) msg_format(Ind, "\377w%s are branded with venom of %c%s!", weapons, tolower(*(k_name + k_info[forge.k_idx].name)), k_name + k_info[forge.k_idx].name + 1);
+				else msg_format(Ind, "\377w%s is branded with venom of %c%s!", weapons, tolower(*(k_name + k_info[forge.k_idx].name)), k_name + k_info[forge.k_idx].name + 1);
 			} else {
 				if (plural) msg_format(Ind, "\377w%s are branded with ineffetive venom!", weapons);
 				else msg_format(Ind, "\377w%s is branded with ineffetive venom!", weapons);
@@ -1034,13 +1049,15 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 		if (flags & TBRAND_F_POTION_MUSHROOM) {
 			object_type forge;
 
-			invcopy(&forge, lookup_kind(TV_POTION, t));
+			if (t >= 1000) invcopy(&forge, lookup_kind(TV_FOOD, t - 1000));
+			else invcopy(&forge, lookup_kind(TV_POTION, t));
+
 			if (!object_aware_p(Ind, &forge)) {
 				if (plural) msg_format(Ind, "\377W%s are no longer branded branded with \377gunknown venom\377W!", weapons);
 				else msg_format(Ind, "\377W%s is no longer branded with \377gunknown venom\377W!", weapons);
-			} else if (potion_mushroom_branding(Ind, 0, 0, (forge.tval == TV_FOOD ? 1000 : 0) + forge.sval, TRUE)) {
-				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gvenom of %s\377W!", weapons, k_name + k_info[forge.k_idx].name);
-				else msg_format(Ind, "\377W%s is no longer branded with \377gvenom of %s\377W!", weapons, k_name + k_info[forge.k_idx].name);
+			} else if (potion_mushroom_branding(Ind, 0, 0, t, TRUE)) {
+				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gvenom of %c%s\377W!", weapons, tolower(*(k_name + k_info[forge.k_idx].name)), k_name + k_info[forge.k_idx].name + 1);
+				else msg_format(Ind, "\377W%s is no longer branded with \377gvenom of %c%s\377W!", weapons, tolower(*(k_name + k_info[forge.k_idx].name)), k_name + k_info[forge.k_idx].name + 1);
 			} else {
 				if (plural) msg_format(Ind, "\377W%s are no longer branded with \377gineffetive venom\377W!", weapons);
 				else msg_format(Ind, "\377W%s is no longer branded with \377gineffetive venom\377W!", weapons);
@@ -1104,7 +1121,6 @@ bool set_melee_brand(int Ind, int v, u16b t, unsigned char flags, bool cast, boo
 	}
 
 	/* Use the value */
-	if (p_ptr->melee_brand_ma) flags &= ~TBRAND_F_DUAL; //paranoia?
 	if ((flags & TBRAND_F_MAINHAND) || p_ptr->melee_brand_ma) { //barehanded brand uses the first value array by default
 		p_ptr->melee_brand = v;
 		p_ptr->melee_brand_t = t;
