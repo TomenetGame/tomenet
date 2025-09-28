@@ -9439,6 +9439,8 @@ void do_cmd_melee_technique(int Ind, int technique) {
 				msg_print(Ind, "\377yThe !p inscription can only be used on potions or mushrooms.");
 				continue;
 			}
+			/* We can actually use the item? (Level requirements met/we are owner) */
+			if (!can_use_verbose(Ind, o_ptr)) return;
 
 			found = TRUE;
 			k_idx = o_ptr->k_idx;
@@ -9551,17 +9553,23 @@ void do_cmd_melee_technique(int Ind, int technique) {
 				if (t != -1) continue; /* we already found a suitable trap kit */
 				if (o_ptr->sval != SV_TRAPKIT_POTION) continue;
 				if (!check_guard_inscription(o_ptr->note, 'B')) continue;
+				/* We can actually use the item? (Level requirements met/we are owner) */
+				if (!can_use_verbose(Ind, o_ptr)) continue;
 				t = i;
 				break;
 			case TV_CHARGE: /* or need a normal blast charge */
 				if (t != -1) continue; /* we already found a suitable blast charge */
 				if (o_ptr->sval != SV_CHARGE_BLAST) continue;
 				if (!check_guard_inscription(o_ptr->note, 'B')) continue;
+				/* We can actually use the item? (Level requirements met/we are owner) */
+				if (!can_use_verbose(Ind, o_ptr)) continue;
 				t = i;
 				break;
 			case TV_POTION: /* and in either case need a potion */
 				if (p != -1) continue; /* we already found a suitable potion */
 				if (!check_guard_inscription(o_ptr->note, 'B')) continue;
+				/* We can actually use the item? (Level requirements met/we are owner) */
+				if (!can_use_verbose(Ind, o_ptr)) continue;
 				p = i;
 				break;
 			default:
@@ -9879,6 +9887,8 @@ void do_steamblast(int Ind, int x, int y, bool door) {
 			if (t != -1) continue; /* we already found a suitable trap kit */
 			if (o_ptr->sval != SV_TRAPKIT_POTION) continue;
 			if (!(f = check_guard_inscription(o_ptr->note, 'B'))) continue;
+			/* We can actually use the item? (Level requirements met/we are owner) */
+			if (!can_use_verbose(Ind, o_ptr)) continue;
 			if (f != -1) fuse = f;
 			trapping = TRUE;
 			t = i;
@@ -9887,12 +9897,16 @@ void do_steamblast(int Ind, int x, int y, bool door) {
 			if (t != -1) continue; /* we already found a suitable blast charge */
 			if (o_ptr->sval != SV_CHARGE_BLAST) continue;
 			if (!(f = check_guard_inscription(o_ptr->note, 'B'))) continue;
+			/* We can actually use the item? (Level requirements met/we are owner) */
+			if (!can_use_verbose(Ind, o_ptr)) continue;
 			if (f != -1) fuse = f;
 			t = i;
 			break;
 		case TV_POTION: /* and in either case need a potion */
 			if (p != -1) continue; /* we already found a suitable potion */
 			if (!(f = check_guard_inscription(o_ptr->note, 'B'))) continue;
+			/* We can actually use the item? (Level requirements met/we are owner) */
+			if (!can_use_verbose(Ind, o_ptr)) continue;
 			if (f != -1) fuse = f;
 			p = i;
 			break;
