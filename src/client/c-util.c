@@ -11613,7 +11613,7 @@ static void do_cmd_options_fonts(void) {
 }
 /* These are .bmp files in xtra/graphics, on all systems. - C. Blue
    The global vars are use_graphics (TRUE/FALSE) and graphic_tiles (string of filename, without path, without '.bmp' extension, gets inserted to "graphics-%s.prf").
-   Filename convention added: "graphics-<tilesetname>[#<0..9><subname>].bmp" */
+   Filename convention added: "graphics-<tilesetname>[#<0..9>_<subname>].bmp" */
 //#include <dirent.h> /* for do_cmd_options_tilesets() */
 static void do_cmd_options_tilesets(void) {
 	int j, l, l2, cur_set = -1, found_subset;
@@ -11623,7 +11623,7 @@ static void do_cmd_options_tilesets(void) {
 	char tileset_name[MAX_FONTS][256], path[1024];
 	char tileset_subname[MAX_FONTS][MAX_SUBFONTS][256] = { 0 };
 	int tilesets = 0;
-	char tmp_name[256], tmp_name2[256], *csub;
+	char tmp_name[256], tmp_name2[256], *csub, *csub_end;
 
   #ifdef WINDOWS
 	char *cp, *cpp;
@@ -11663,22 +11663,31 @@ static void do_cmd_options_tilesets(void) {
 				c_msg_format("Warning: Ignoring out-of-range tile-subset #%d for %s.", l, tmp_name);
 				continue;
 			}
-
+			/* "#n" must be followed by "_" and at least one other character */
+			if (!(csub_end = strchr(csub + 1, '_')) || *(csub_end + 1) == 0) {
+				c_msg_format("Warning: Ignoring wrong tile-subset syntax for %s#%d.", tmp_name, l);
+				continue;
+			}
+			*csub_end = 0;
 			for (j = 0; j < tilesets; j++) {
 				/* Already found this base set name? */
 				if (!strcmp(tileset_name[j], tmp_name)) {
-					strcpy(tileset_subname[j][l], csub + 1);
+					strcpy(tileset_subname[j][l], csub_end + 1);
 					break;
 				}
 			}
 			/* Not a new base set? */
 			if (j != tilesets) continue;
 		}
+		/* Check that a base tileset was not already added by one of its sub-tileset file names, in that case skip */
+		for (j = 0; j < tilesets; j++)
+			if (!strcmp(tileset_name[j], tmp_name)) break;
+		if (j != tilesets) continue;
 		/* New tileset */
 		strcpy(tileset_name[tilesets], tmp_name);
 		if (!strcmp(graphic_tiles, tmp_name)) cur_set = tilesets; /* We're currently using this set */
 		/* ..also comes with a subset '#' entry? */
-		if (csub) strcpy(tileset_subname[tilesets][l], csub + 1);
+		if (csub) strcpy(tileset_subname[tilesets][l], csub_end + 1);
 
 		tilesets++;
 		if (tilesets == MAX_FONTS) {
@@ -11723,6 +11732,7 @@ static void do_cmd_options_tilesets(void) {
 
 		/* Prompt XXX XXX XXX */
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377y-\377w/\377y+\377w,\377y=\377w switch tileset (requires restart), \377yENTER\377w enter a specific tileset name,");
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377y0\377w...\377y9\377w to enable/disable subset of currently selected tileset, if available,");
   #ifdef GRAPHICS_BG_MASK
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377yv\377w cycle graphics mode - requires client restart! \377yESC\377w keep changes and exit.");
   #else
@@ -11736,7 +11746,6 @@ static void do_cmd_options_tilesets(void) {
 		l++;
 
 		Term_putstr(1, l++, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", tilesets, tilesets == 1 ? "" : "s"));
-		l++;
 
 		//GRAPHICS_BG_MASK @ UG_2MASK:
   #ifdef GRAPHICS_BG_MASK
@@ -11762,7 +11771,7 @@ static void do_cmd_options_tilesets(void) {
 		l2++;
 		for (j = 0; j < MAX_SUBFONTS; j++) {
 			if (!tileset_subname[cur_set][j][0]) continue;
-			Term_putstr(40, l2++, -1, TERM_WHITE, format("  '\377s#%d\377B%s\377-'", j, tileset_subname[cur_set][j]));
+			Term_putstr(40, l2++, -1, TERM_WHITE, format("  \377s#%d '\377B%s\377-'", j, tileset_subname[cur_set][j]));
 			found_subset++;
 		}
 		if (found_subset) Term_putstr(40, l2 - 1 - found_subset, -1, TERM_WHITE, format("Available subsets of the selected set: "));
