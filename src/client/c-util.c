@@ -11862,10 +11862,10 @@ static void do_cmd_options_tilesets(void) {
 		case '+':
 			/* find out which of the tilesets in lib/xtra/graphics we're currently using */
 			for (j = 0; j < tilesets - 1; j++) {
-				if (!strcasecmp(tileset_name[j], format("%s.bmp", graphic_tiles))) {
+				if (!strcasecmp(tileset_name[j], graphic_tiles)) {
 					/* advance to next tileset file in lib/xtra/graphics */
 					strcpy(graphic_tiles, tileset_name[j + 1]);
-					graphic_tiles[strlen(graphic_tiles) - 4] = 0; /* cut off ".bmp" */
+					cur_set = j + 1;
 					break;
 				}
 			}
@@ -11874,10 +11874,10 @@ static void do_cmd_options_tilesets(void) {
 		case '-':
 			/* find out which of the tilesets in lib/xtra/graphics we're currently using */
 			for (j = 1; j < tilesets; j++) {
-				if (!strcasecmp(tileset_name[j], format("%s.bmp", graphic_tiles))) {
+				if (!strcasecmp(tileset_name[j], graphic_tiles)) {
 					/* retreat to previous tileset file in lib/xtra/graphics */
 					strcpy(graphic_tiles, tileset_name[j - 1]);
-					graphic_tiles[strlen(graphic_tiles) - 4] = 0; /* cut off ".bmp" */
+					cur_set = j - 1;
 					break;
 				}
 			}
@@ -11903,7 +11903,10 @@ static void do_cmd_options_tilesets(void) {
   #else
 				sprintf(tmp_name2, "%s", tileset_name[j]);
   #endif
-				if (!strcasecmp(tmp_name2, format("%s.bmp", tmp_name))) break;
+				if (!strcasecmp(tmp_name2, tmp_name)) {
+					cur_set = j;
+					break;
+				}
 			}
 
 			if (j == tilesets) {
