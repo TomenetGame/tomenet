@@ -77,6 +77,8 @@ static void init_arrays(void) {
 
 	/* Paranoia, for crash in get_item_hook_find_obj() */
 	for (i = 0; i < INVEN_TOTAL; i++) inventory_name[i][0] = 0;
+
+	for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = TRUE;
 }
 
 void init_schools(s16b new_size) {
@@ -1977,13 +1979,13 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN], bool 
 
 	my_fclose(fff);
 }
-const char *obj_flags2highlight[] = {"SPECIAL_GENE", ""};
-const char *obj_flags2highlight2[] = {"WINNERS_ONLY", ""};
+const char *obj_flags2highlight[] = { "SPECIAL_GENE", "" };
+const char *obj_flags2highlight2[] = { "WINNERS_ONLY", "" };
 //collisions requiring extra string checks: SUST_xxx, REGEN_mana, HOLD_life
-const char *obj_flags2highlight3[] = {"STR", "INT", "WIS", "DEX", "CON", "CHR", "STEALTH", "BLOWS", "CRIT", "MANA", "SEARCH", "INFRA", "TUNNEL", "SPEED", "LIFE", "LUCK", "DISARM", ""};//flags affected by (b)pval
-const char *obj_flags2highlight4[] = {"NO_TELE", "DRAIN_MANA", "DRAIN_HP", "DRAIN_EXP", "AGGRAVATE", "NEVER_BLOW", "BLACK_BREATH", "CLONE", "PERMA_CURSE", "HEAVY_CURSE", "TY_CURSE", "DG_CURSE", "CURSE_NO_DROP", "AUTO_CURSE", "CURSED", ""};
-const char *obj_flags2highlight5[] = {"ACTIVATE", ""};
-const char *obj_flags2highlight6[] = {"IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POISON", "IM_WATER", "IM_NETHER", ""};
+const char *obj_flags2highlight3[] = { "STR", "INT", "WIS", "DEX", "CON", "CHR", "STEALTH", "BLOWS", "CRIT", "MANA", "SEARCH", "INFRA", "TUNNEL", "SPEED", "LIFE", "LUCK", "DISARM", "" };//flags affected by (b)pval
+const char *obj_flags2highlight4[] = { "NO_TELE", "DRAIN_MANA", "DRAIN_HP", "DRAIN_EXP", "AGGRAVATE", "NEVER_BLOW", "BLACK_BREATH", "CLONE", "PERMA_CURSE", "HEAVY_CURSE", "TY_CURSE", "DG_CURSE", "CURSE_NO_DROP", "AUTO_CURSE", "CURSED", "" };
+const char *obj_flags2highlight5[] = { "ACTIVATE", "" };
+const char *obj_flags2highlight6[] = { "IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC", "IM_POISON", "IM_WATER", "IM_NETHER", "" };
 static int obj_highlit_flags(char *line) {
 	const char **f = obj_flags2highlight;
 	char *p2;

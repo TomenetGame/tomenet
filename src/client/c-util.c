@@ -11616,13 +11616,13 @@ static void do_cmd_options_fonts(void) {
    Filename convention added: "graphics-<tilesetname>[#<0..9>_<subname>].bmp" */
 //#include <dirent.h> /* for do_cmd_options_tilesets() */
 static void do_cmd_options_tilesets(void) {
-	int j, l, l2, cur_set = -1, found_subset;
+	int j, l, l2, cur_set = -1, found_subset, t;
 	char ch, old_tileset[MAX_CHARS];
-	bool go = TRUE, inkey_msg_old;
+	bool go = TRUE, inkey_msg_old, subset_enabled[MAX_FONTS][MAX_SUBFONTS];
 
-	char tileset_name[MAX_FONTS][256], path[1024];
+	char filename_tmp[MAX_FONTS][256], tileset_name[MAX_FONTS][256], path[1024];
 	char tileset_subname[MAX_FONTS][MAX_SUBFONTS][256] = { 0 };
-	int tilesets = 0;
+	int filenames_tmp = 0, tilesets = 0;
 	char tmp_name[256], tmp_name2[256], *csub, *csub_end;
 
   #ifdef WINDOWS
@@ -11645,6 +11645,7 @@ static void do_cmd_options_tilesets(void) {
 		return;
 	}
 
+	/* Read all eligible filenames (*.bmp), ... */
 	while ((ent = readdir(dir))) {
 		strcpy(tmp_name, ent->d_name);
 
@@ -11654,6 +11655,19 @@ static void do_cmd_options_tilesets(void) {
 		if ((tolower(tmp_name[j++]) != '.' || tolower(tmp_name[j++] != 'b') || tolower(tmp_name[j++] != 'm') || tolower(tmp_name[j] != 'p'))) continue;
 		/* cut off extension */
 		tmp_name[j - 3] = 0;
+
+		strcpy(filename_tmp[filenames_tmp++], tmp_name);
+	}
+	closedir(dir);
+	if (!filenames_tmp) {
+		c_msg_format("No .bmp files found in directory (%s).", path);
+		return;
+	}
+	/* ...sort them... */
+	qsort(filename_tmp, filenames_tmp, sizeof(char[256]), font_name_cmp);
+	/* ...and process them for tileset/subset type */
+	for (t = 0; t < filenames_tmp; t++) {
+		strcpy(tmp_name, filename_tmp[t]);
 
 		/* Check for subset */
 		if ((csub = strchr(tmp_name, '#'))) {
@@ -11685,7 +11699,6 @@ static void do_cmd_options_tilesets(void) {
 		if (j != tilesets) continue;
 		/* New tileset */
 		strcpy(tileset_name[tilesets], tmp_name);
-		if (!strcmp(graphic_tiles, tmp_name)) cur_set = tilesets; /* We're currently using this set */
 		/* ..also comes with a subset '#' entry? */
 		if (csub) strcpy(tileset_subname[tilesets][l], csub_end + 1);
 
@@ -11695,17 +11708,13 @@ static void do_cmd_options_tilesets(void) {
 			break;
 		}
 	}
-	closedir(dir);
-
 	if (!tilesets) {
-		c_msg_format("No .bmp tileset files found in directory (%s).", path);
+		c_msg_format("No eligible .bmp tileset files found in directory (%s).", path);
 		return;
 	}
-
-	qsort(tileset_name, tilesets, sizeof(char[256]), font_name_cmp);
-
-   #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
+	/* Some post-processing ^^ */
 	for (j = 0; j < tilesets; j++) {
+   #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
 		strcpy(tmp_name, tileset_name[j]);
 		//path_build(tileset_name[j], 1024, path, tileset_name[j]);
 		//strcpy(tileset_name[j], ".\\");
@@ -11713,8 +11722,14 @@ static void do_cmd_options_tilesets(void) {
 		strcat(tileset_name[j], path);
 		strcat(tileset_name[j], "\\");
 		strcat(tileset_name[j], tmp_name);
-	}
    #endif
+		/* Find index of currently used tileset */
+		if (strcasecmp(tileset_name[j], graphic_tiles)) continue;
+		cur_set = j;
+		/* Imprint current tileset's subset config to array of all tilesets' subsets */
+		for (l = 0; l < MAX_SUBFONTS; l++) subset_enabled[j][l] = graphic_subtiles[l];
+		break;
+	}
 
 	/* suppress hybrid macros */
 	inkey_msg_old = inkey_msg;
@@ -11771,7 +11786,7 @@ static void do_cmd_options_tilesets(void) {
 		l2++;
 		for (j = 0; j < MAX_SUBFONTS; j++) {
 			if (!tileset_subname[cur_set][j][0]) continue;
-			Term_putstr(40, l2++, -1, TERM_WHITE, format("  \377s#%d '\377B%s\377-'", j, tileset_subname[cur_set][j]));
+			Term_putstr(40, l2++, -1, subset_enabled[cur_set][j] ? TERM_L_WHITE : TERM_L_DARK, format("  #%d '\377B%s\377-'", j, tileset_subname[cur_set][j]));
 			found_subset++;
 		}
 		if (found_subset) Term_putstr(40, l2 - 1 - found_subset, -1, TERM_WHITE, format("Available subsets of the selected set: "));
@@ -11806,9 +11821,21 @@ static void do_cmd_options_tilesets(void) {
 
 		/* Get key */
 		ch = inkey();
-
 		/* Analyze */
-		switch (ch) {
+		if (ch >= '0' && ch <= '9') {
+			int sub = ch - '0';
+
+			l2 = l + 1;
+			for (j = 0; j < MAX_SUBFONTS; j++) {
+				if (!tileset_subname[cur_set][j][0]) continue;
+				l2++;
+				if (j != sub) continue;
+
+				graphic_subtiles[sub] = !graphic_subtiles[sub];
+				subset_enabled[cur_set][sub] = graphic_subtiles[sub];
+				break;
+			}
+		} else switch (ch) {
 		case ESCAPE:
 			go = FALSE;
 
@@ -11862,24 +11889,22 @@ static void do_cmd_options_tilesets(void) {
 		case '+':
 			/* find out which of the tilesets in lib/xtra/graphics we're currently using */
 			for (j = 0; j < tilesets - 1; j++) {
-				if (!strcasecmp(tileset_name[j], graphic_tiles)) {
-					/* advance to next tileset file in lib/xtra/graphics */
-					strcpy(graphic_tiles, tileset_name[j + 1]);
-					cur_set = j + 1;
-					break;
-				}
+				if (strcasecmp(tileset_name[j], graphic_tiles)) continue;
+				/* advance to next tileset file in lib/xtra/graphics */
+				strcpy(graphic_tiles, tileset_name[j + 1]);
+				cur_set = j + 1;
+				break;
 			}
 			break;
 
 		case '-':
 			/* find out which of the tilesets in lib/xtra/graphics we're currently using */
 			for (j = 1; j < tilesets; j++) {
-				if (!strcasecmp(tileset_name[j], graphic_tiles)) {
-					/* retreat to previous tileset file in lib/xtra/graphics */
-					strcpy(graphic_tiles, tileset_name[j - 1]);
-					cur_set = j - 1;
-					break;
-				}
+				if (strcasecmp(tileset_name[j], graphic_tiles)) continue;
+				/* retreat to previous tileset file in lib/xtra/graphics */
+				strcpy(graphic_tiles, tileset_name[j - 1]);
+				cur_set = j - 1;
+				break;
 			}
 			break;
 
@@ -11903,10 +11928,9 @@ static void do_cmd_options_tilesets(void) {
   #else
 				sprintf(tmp_name2, "%s", tileset_name[j]);
   #endif
-				if (!strcasecmp(tmp_name2, tmp_name)) {
-					cur_set = j;
-					break;
-				}
+				if (strcasecmp(tmp_name2, tmp_name)) continue;
+				cur_set = j;
+				break;
 			}
 
 			if (j == tilesets) {
