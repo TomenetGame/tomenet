@@ -5298,7 +5298,10 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool 
 
 				object_absorb(Ind, o_ptr, i_ptr);
 				/* Describe the object */
-				if (!quiet) { // && !check_guard_inscription(o_ptr->note, 'Q')
+				if (!quiet
+				    /* If the target stack is set to 'quiet' !Q inscription, apply this to the item-absorption too
+				       even if the item(s) to get absorbed did not have the inscription. */
+				    && !check_guard_inscription(o_ptr->note, 'Q')) {
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
 				}
@@ -5401,7 +5404,10 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool 
 			}
 
 			/* Describe the object */
-			if (!quiet) { // && !check_guard_inscription(o_ptr->note, 'Q')
+			if (!quiet
+			    /* In case auto_inscribe() caused a 'quiet' !Q inscription, apply this
+			       even if the item(s) did not have the inscription originally. */
+			    && !check_guard_inscription(o_ptr->note, 'Q')) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
 			}
@@ -5470,7 +5476,10 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool 
 			}
 
 			/* Describe the object */
-			if (!quiet) { // && !check_guard_inscription(o_ptr->note, 'Q')
+			if (!quiet
+			    /* In case auto_inscribe() caused a 'quiet' !Q inscription, apply this
+			       even if the item(s) did not have the inscription originally. */
+			    && !check_guard_inscription(o_ptr->note, 'Q')) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3);
 				msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
 			}
@@ -5609,7 +5618,10 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 					object_absorb(Ind, o_ptr, &temp_forge);
 				} else object_absorb(Ind, o_ptr, i_ptr);
 				/* Describe the object */
-				if (!quiet) {
+				if (!quiet
+				    /* If the target stack is set to 'quiet' !Q inscription, apply this to the item-absorption too
+				       even if the item(s) to get absorbed did not have the inscription. */
+				    && !check_guard_inscription(o_ptr->note, 'Q')) {
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "You have %s (%c)(%c).", o_name, index_to_label(sslot), index_to_label(i));
 				}

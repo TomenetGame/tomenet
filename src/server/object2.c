@@ -11265,7 +11265,8 @@ void inven_item_describe(int Ind, int item) {
 	/* Print a message */
 	msg_format(Ind, "You have %s.", o_name);
 }
-/* Like inven_item_describe() but cannot be muted and shows up in important-scrollback-messagebuffer (ctrl+o). */
+/* Like inven_item_describe() but cannot be muted and shows up in important-scrollback-messagebuffer (ctrl+o).
+   This is only used for do_Nazgul() weapon destruction. */
 void inven_item_describe_important(int Ind, int item) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
