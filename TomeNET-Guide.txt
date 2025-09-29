@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 26. September 2025 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 29. September 2025 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -18951,21 +18951,52 @@ stated.
                                 doesn't help. But if you invest a lot of points
                                 you will eventually see an improvement ;).
 
-    .Stealing                   Ability to steal items from stores,
-     (0.100, at least 1.000)    also helps against someone else trying to steal
-                                from you.
+    .Stealing                   Ability to steal items from many NPC stores.
+     (0.100, at least 1.000)    Also helps noticing if someone else is trying
+                                to steal from you.
+                                You need to be at least level 5 to steal
+                                and at least level 10 to steal anything of
+                                somewhat higher value.
+                                This skill Will have no effect if your armour
+                                is too heavy so that you get a 'flexibility'
+                                warning, compare (5.5).
 
-                                This skill will not give you stealing-chance or
-                                notice-stealing benefits if your armour is so
-                                heavy that you get a flexibility warning (5.5).
+                                Your chance to steal an item from a shop
+                                depends on your stealing skill (by far your
+                                most important aspect), your dexterity, and to
+                                a minor extent your stealth and invisibility,
+                                and on the other hand the price and weight of
+                                the item you try to steal.
+                                For example it's nearly impossible to steal a
+                                large piece of wood without the store owner
+                                noticing it, although it's not worth much.
+                                There's always a minimum chance of 5% to fail.
 
                                 If you get caught by an NPC shopkeeper you will
                                 be on the 'blacklist of merchants' for a while,
                                 which can be from 0 up to 76 minutes, depending
-                                on the (discounts matter) value of the item you
-                                tried to steal from the shop.
+                                on the value of the item you tried to steal
+                                from the shop. Afterwards you may still be
+                                watched sharply by shopkeepers for 100 seconds
+                                up to 4 1/2 minutes during which you cannot
+                                attempt to steal again.
+                                For very low-value items compared to your
+                                Stealing skill you might actually only get on
+                                the watchlist, not on the blacklist, lucky you.
 
-                                During this time it's impossible to steal from
+                                The item price used to calculate both stealing
+                                chances and blacklist/watchlist duration is the
+                                'normal' price with discounts applied if any,
+                                not the increased display price items get in
+                                shops like black markets.
+                                So for example an item in a black market would
+                                be exactly as hard to steal as from the town's
+                                alchemist shop. And an item that has a 50% off
+                                discount tag on it would be easier to steal
+                                and result in less penalty than if it was not
+                                discounted.
+
+                                While blacklisted it's impossible to steal from
                                 shops, and you will get BAD prices (quadruple,
                                 like in the blackmarket usually) in all NPC
                                 shops. (Player stores are unaffected.)
@@ -18975,26 +19006,21 @@ stated.
                                 in stock) but stay on hold until your blacklist
                                 timer runs out.
 
-                                You'll also be on the 'watchlist', meaning
-                                that you can shop at normal prices as usual,
-                                but the shopkeepers still keep a sharp eye on
-                                you meaning you are unable to steal anything.
-                                The watchlist is always 4 1/2 minutes longer
-                                than the blacklist, but can also be lower in
-                                cases when you didn't make it on the blacklist,
-                                down to a minimum of 100 seconds.
+                                After the blacklist runs out you'll now be on
+                                the 'watchlist' for a bit more time, meaning
+                                that you can shop at normal prices and use all
+                                shop services as usual, but the shopkeepers
+                                still keep a sharp eye on you meaning you are
+                                unable to steal anything.
+                                The watchlist always extends for 4 1/2 minutes
+                                after the blacklist ran out, but it can also be
+                                lower in cases when you didn't make it on the
+                                blacklist, down to a minimum of 100 seconds.
 
                                 The blacklist and watchlist will be on hold for
                                 a character that isn't logged in, so it's best
                                 to steal before going to the dungeon or AFK,
                                 so your black-/watchlist have time to run out.
-
-                                The time period you'll be on these lists solely
-                                depends on the item's _base_ value (so it does
-                                not matter whether you got caught in a normal
-                                store or in the black market.) Price discount
-                                applies though, reducing the base value and
-                                therefore the blacklist time too.
 
                                 Messages when you enter a shop, how the
                                 shopkeeper regards you will roughly give away
@@ -19005,10 +19031,38 @@ stated.
                                 eyes you suspiciously         <20 min.
                                 looks at you disapprovingly   <10 min.
                                 gives you a cold glance       < 5 min.
+                                ------------------------------------------
+                                And for the watchlist:
+                                keeps a sharp eye on you      < 4 1/2 min.
 
-                                After your blacklist ran out, if you're still
-                                on the watchlist you get this message:
-                                "The owner keeps a sharp eye on you."
+                                If you succeed to steal an item, the message
+                                will vary depending on what your chance to
+                                succeed was:
+                                ------------
+                                At least 70%:        "You easily stole ...",
+                                between 30% and 70%: "You stole ...",
+                                Up to 30%:           "You barely stole ...".
+
+                                Stealing items which have a base value (meaning
+                                without discount applied) not higher than your
+                                stealing_skill * 10 (eg 50 Au->5.000 Stealing)
+                                are especially easy to steal.
+                                Also, if you still get caught on such an item,
+                                the blacklist time will be much shorter too.
+                                Some popular potion/scroll/wand/staff break
+                                points regarding this:
+                                ----------------------
+                                ?Magic Mapping, !Cure Serious Wounds: 40 Au.
+                                ?Identify: 50 Au.
+                                !Neutralize Poison: 55 Au.
+                                !Cure Critical Wounds: 100 Au.
+                                ?Enchant Weapon/Armour: 125 Au.
+                                ?Recharging/Word of Recall: 150 Au.
+                                !Speed, ?Holy Chant, _Treasure Location:200 Au.
+                                !Restore stat, -Stone to Mud: 300 Au.
+                                !Healing, ?Teleportation: 400 Au.
+                                !Resistance, !Restore Mana, Athelas: 450 Au.
+                                ?Wilderness Mapping: 500 Au.
 
                                 Note that usually people don't want to be seen
                                 with stolen goods, which means that very
@@ -19019,35 +19073,11 @@ stated.
                                 10 million Au, you'd still have at least a 5%
                                 chance of it retaining its original level.)
 
-                                Your chance to steal an item from a shop
-                                depends on your dexterity, your stealing skill
-                                and the price and weight of the item. Stealth
-                                and invisibility are also somewhat helpful.
-                                For example it's nearly impossible to steal a
-                                large piece of wood without the store owner
-                                noticing it, although it's not worth much.
-                                There's always a minimum chance of 5% to fail.
-                                You need to be at least level 5 to steal
-                                and at least level 10 to steal anything of
-                                somewhat higher value.
-
-                                If you succeed to steal an item, the message
-                                will vary depending on what your chance to
-                                succeed was:
-                                At least 70%:        "You easily stole ...",
-                                between 30% and 70%: "You stole ...",
-                                Up to 30%:           "You barely stole ...".
-
-                                You have a chance to successfully steal an
-                                item even if your stealing skill is 0 and your
-                                dexterity low, so everyone could give it a try.
-
-                                If a shop offers an item more expensive than
-                                it actually is (black market) that has no
-                                effect on stealing. The 'normal' item value
-                                is used to calculate the chances.
-                                However, if an item is offered at reduced
-                                price, it'll be easier to steal it!
+                                You have a (tiny) chance to successfully steal
+                                an item even if you don't have any stealing
+                                skill and even if your dexterity low, so in
+                                theory everyone could give it a try if they see
+                                an item they really want.
 
                                 It's more difficult to steal from certain
                                 stores, eg stores that are found in the dungeon
@@ -19060,30 +19090,6 @@ stated.
                                 shop and rare jewelry shop (both in dungeons),
                                 or from a dungeon town's temple, potion store
                                 or black market.
-
-                                It's a good idea to wear as many +DEX items
-                                as possible while trying to steal from a shop,
-                                since DEX is the main factor besides the skill.
-
-                                Stealing items which have a base value (without
-                                discount applied!) not higher than your
-                                stealing_skill * 10 (eg 50 Au->5.000 Stealing)
-                                are especially easy to steal.
-                                Also, if you still get caught on such an item,
-                                the blacklist time will be much shorter too.
-                                Some potion/scroll/wand/staff break points
-                                regarding this (not complete, just examples):
-                                ?Magic Mapping, !Cure Serious Wounds: 40 Au.
-                                ?Identify: 50 Au.
-                                !Neutralize Poison: 55 Au.
-                                !Cure Critical Wounds: 100 Au.
-                                ?Enchant Weapon/Armour: 125 Au.
-                                ?Recharging/Word of Recall: 150 Au.
-                                !Speed, ?Holy Chant, _Treasure Location:200 Au.
-                                !Restore stat, -Stone to Mud: 300 Au.
-                                !Healing, ?Teleportation: 400 Au.
-                                !Resistance, !Restore Mana, Athelas: 450 Au.
-                                ?Wilderness Mapping: 500 Au.
 
                                 Trying to 'steal back' an item that was already
                                 owned by a player, ie an item that has been
@@ -19106,7 +19112,9 @@ stated.
                                 too much here is *quite* substantial.
 
                                 Training the 'Stealing' skill will carry over
-                                strongly into its parent skill 'Sneakiness'.
+                                strongly into its parent skill 'Sneakiness',
+                                thereby granting you some dungeoneering or
+                                combat benefit too.
 
     .Backstabbing               Lets you backstab enemies, afflicting high
      (1/7, at least 1.000)      damage. Works if the opponent is asleep or

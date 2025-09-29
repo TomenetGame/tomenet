@@ -492,6 +492,13 @@ HBITMAP g_hbmFgMask = NULL;
 HBITMAP g_hbmBg2Mask = NULL;
  #endif
 
+HBITMAP g_hbmTiles_sub[MAX_SUBFONTS] = NULL;
+HBITMAP g_hbmBgMask_sub[MAX_SUBFONTS] = NULL;
+HBITMAP g_hbmFgMask_sub[MAX_SUBFONTS] = NULL;
+ #ifdef GRAPHICS_BG_MASK
+HBITMAP g_hbmBg2Mask_sub[MAX_SUBFONTS] = NULL;
+ #endif
+
 /* These variables are computed at image load (in 'init_windows'). */
 int graphics_tile_wid, graphics_tile_hgt;
 int graphics_image_tpr; /* Tiles per row. */
