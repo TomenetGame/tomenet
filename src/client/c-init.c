@@ -77,8 +77,6 @@ static void init_arrays(void) {
 
 	/* Paranoia, for crash in get_item_hook_find_obj() */
 	for (i = 0; i < INVEN_TOTAL; i++) inventory_name[i][0] = 0;
-
-	for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = TRUE;
 }
 
 void init_schools(s16b new_size) {

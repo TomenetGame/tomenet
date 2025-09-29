@@ -687,13 +687,10 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 							else if (!strncmp(buf, "graphic_tiles", 13) && !(buf[13] >= '0' && buf[13] <= '9')) {
 								strcpy(buf, "graphic_tiles\t\t");
 								strcat(buf, format("%s\n", graphic_tiles));
-							} else if (!strncmp(buf, "graphic_tiles", 13)) { //graphic_subtiles[]
-								i = atoi(buf + 13);
-
-								sprintf(buf, "graphic_tiles%d\t\t", i);
-								if (i >= 0 && i < MAX_SUBFONTS) strcat(buf, format("%d\n", graphic_subtiles[i] ? 1 : 0));
-								else strcat(buf, "1"); //in case of array subscript out of bounds, just assume "enabled" as default
-							}
+								/* Specialty: Write all sub-tilesets lines right after this one (and ignore/discard the existing ones) */
+								for (i = 0; i < MAX_SUBFONTS; i++)
+									fputs(format("graphic_tiles%d\t\t%d\n", i, graphic_subtiles[i] ? 1 : 0), config2);
+							} else if (!strncmp(buf, "graphic_tiles", 13)) continue; //graphic_subtiles[] -> ignore/discard
  #endif
 						}
 #endif /* USE_X11 */
@@ -1031,6 +1028,7 @@ bool write_mangrc_colourmap(void) {
 
 static void default_set(void) {
 	char *temp;
+	int i;
 
 #ifdef SET_UID
 	int player_uid;
@@ -1072,6 +1070,8 @@ static void default_set(void) {
 	temp = getenv("TOMENET_USER");
 	if (temp) strcpy(real_name, temp);
 #endif
+
+	for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = TRUE;
 }
 
 int main(int argc, char **argv) {
