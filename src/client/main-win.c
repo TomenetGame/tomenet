@@ -3970,8 +3970,14 @@ static void term_data_link(int i, term_data *td) {
 /* Assumes 'use_graphics' is enabled, but may disable it if init fails. */
 int init_graphics_win(void) {
 	BITMAP bm;
-	char filename[1024];
+	char filename[1024], subfilename[1024];
 	HDC hdc = GetDC(NULL);
+
+	DIR *dir;
+	struct dirent *ent;
+	char tmp_name[256], *csub, *csub_end;
+	int i, j;
+
 
 	logprint("Initializing graphics.\n");
 	if (GetDeviceCaps(hdc, BITSPIXEL) < 24) {
@@ -4024,9 +4030,34 @@ int init_graphics_win(void) {
 	/* Validate the bitmap filename */
 	validate_file(filename);
 
+	/* for graphic_subtiles[]: read all fitting files and accept those with indices that are enabled in our config file (.rc/.ini) */
+	if (!(dir = opendir(ANGBAND_DIR_XTRA_GRAPHICS))) {
+		c_msg_format("init_graphics_win: Couldn't open tilesets directory (%s).", ANGBAND_DIR_XTRA_GRAPHICS);
+		return(FALSE);
+	}
+	while ((ent = readdir(dir))) {
+		strcpy(tmp_name, ent->d_name);
 
-	// TODO for graphic_subtiles[]: implement loading them and just check_file() instead of validate_file() so missing subfiles are just ignored instead of fail-terminating the client.
+		/* file must end on '.bmp' */
+		j = strlen(tmp_name) - 4;
+		if (j < 1) continue;
+		if ((tolower(tmp_name[j++]) != '.' || tolower(tmp_name[j++] != 'b') || tolower(tmp_name[j++] != 'm') || tolower(tmp_name[j] != 'p'))) continue;
 
+		/* check whether it's a valid subtile file */
+		if (!(csub = strchr(tmp_name, '#'))) continue; //valid sub index marker
+		*csub = 0;
+		if (strcmp(tmp_name, graphic_tiles)) continue; //is same base filename as the selected graphical_tiles file
+		if (!(csub_end = strchr(csub + 1, '_'))) continue; //valid sub index terminator
+		*csub_end = 0;
+		i = atoi(csub + 1);
+		if (i < 0 || i >= MAX_SUBFONTS) continue; //valid sub index
+
+		/* accept if enabled */
+		graphic_subtiles_file[i][0] = 0;
+		if (!graphic_subtiles[i]) continue;
+		strcpy(graphic_subtiles_file[i], tmp_name);
+	}
+	closedir(dir);
 
 	/* Load .bmp image into memory */
  #ifndef CBM_METHOD_DIB

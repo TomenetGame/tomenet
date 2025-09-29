@@ -3732,6 +3732,7 @@ static errr x11_term_init(int term_id) {
 }
 
 #ifdef USE_GRAPHICS
+ #include <dirent.h> /* we now need it for scanning for audio packs too */
 int init_graphics_x11(void) {
 	char path[1024];
 	char filename[1024];
@@ -3740,6 +3741,12 @@ int init_graphics_x11(void) {
 	errr rerr = 0;
 	int depth, x, y;
 	Visual *visual;
+
+	DIR *dir;
+	struct dirent *ent;
+	char tmp_name[256], *csub, *csub_end;
+	int i, j;
+
 
 	/* Load graphics file. Quit if file missing or load error. */
 	logprint("Initializing graphics.\n");
@@ -3780,9 +3787,34 @@ int init_graphics_x11(void) {
 	path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_tiles);
 	strcat(filename, ".bmp");
 
+	/* for graphic_subtiles[]: read all fitting files and accept those with indices that are enabled in our config file (.rc/.ini) */
+	if (!(dir = opendir(ANGBAND_DIR_XTRA_GRAPHICS))) {
+		c_msg_format("init_graphics_win: Couldn't open tilesets directory (%s).", ANGBAND_DIR_XTRA_GRAPHICS);
+		return(FALSE);
+	}
+	while ((ent = readdir(dir))) {
+		strcpy(tmp_name, ent->d_name);
 
-	//TODO: Load graphic_subtiles[] too...
+		/* file must end on '.bmp' */
+		j = strlen(tmp_name) - 4;
+		if (j < 1) continue;
+		if ((tolower(tmp_name[j++]) != '.' || tolower(tmp_name[j++] != 'b') || tolower(tmp_name[j++] != 'm') || tolower(tmp_name[j] != 'p'))) continue;
 
+		/* check whether it's a valid subtile file */
+		if (!(csub = strchr(tmp_name, '#'))) continue; //valid sub index marker
+		*csub = 0;
+		if (strcmp(tmp_name, graphic_tiles)) continue; //is same base filename as the selected graphical_tiles file
+		if (!(csub_end = strchr(csub + 1, '_'))) continue; //valid sub index terminator
+		*csub_end = 0;
+		i = atoi(csub + 1);
+		if (i < 0 || i >= MAX_SUBFONTS) continue; //valid sub index
+
+		/* accept if enabled */
+		graphic_subtiles_file[i][0] = 0;
+		if (!graphic_subtiles[i]) continue;
+		strcpy(graphic_subtiles_file[i], tmp_name);
+	}
+	closedir(dir);
 
 	/* Load .bmp image. */
 	if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
