@@ -9313,8 +9313,8 @@ void do_cmd_melee_technique(int Ind, int technique) {
 		if (p_ptr->cst < 6) { msg_print(Ind, "\377oNot enough stamina!"); return; }
 		use_stamina(p_ptr, 6);
 		un_afk_idle(Ind);
-		break_cloaking(Ind, 0);
-		break_shadow_running(Ind);
+		//break_cloaking(Ind, 0);
+		//break_shadow_running(Ind);
 		stop_precision(Ind);
 		stop_shooting_till_kill(Ind);
 
