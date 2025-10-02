@@ -3882,8 +3882,9 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 	chance_permille = (int)(10000 / (chance < 10 ? 10 : chance)) % 10;
 
 	/* always 1% chance to fail, so that ppl won't macro it */
-	/* 1% pfft. 5% and rising... */
-	if (rand_int(chance) < 10 && !magik(5)) {
+	/* 1% pfft. 5% and rising...
+	   (experimental, 2025) Reduced it to 3% for supplying potion-heavy characters better */
+	if (rand_int(chance) < 10 && !magik(3)) {
 		if (p_ptr->store_num > -2) { /* Never become aware of player store items */
 			/* Hack -- buying an item makes you aware of it */
 			object_aware(Ind, &sell_obj);
