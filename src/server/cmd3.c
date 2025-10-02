@@ -2188,6 +2188,7 @@ void do_cmd_observe(int Ind, int item) {
 
 
 /* Helper function for do_cmd_inscribe(): Create an automatic inscription based on the item's known powers.
+   Also used by store.c to prepare shop-item-pasting from client-side.
    This function appends the power-inscription to 'powins'. */
 void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	u32b f1, f2, f3, f4, f5, f6, esp, tmpf1, tmpf2, tmpf3, tmp;
@@ -2568,6 +2569,8 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
 	}
 }
 
+/* Verify eligibility, give feedback messages if 'Ind' isn't 0, and do power-inscribe an item.
+   Ind is 0 if this is called from inverse_cursed()/reverse_cursed() for item-flipping. */
 bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr inscription) {
 	char *pi_pos = NULL;
 	const char *pi_pos_src = inscription;

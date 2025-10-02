@@ -15344,7 +15344,9 @@ void telekinesis_aux(int Ind, int item) {
 			scan = inscription = strdup(quark_str(q_ptr->note));
 
 			while (*scan != '\0') {
-				if (*scan == '@') {
+				if (*scan == '@'
+				    /* exempt power-inscriptions: */
+				    && *(scan + 1) != '&' && *(scan + 1) != '^') {
 					/* Replace @ with space */
 					*scan = ' ';
 				}

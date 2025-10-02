@@ -2650,7 +2650,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			scan = inscription = strdup(quark_str(o_ptr->note));
 
 			while (*scan != '\0') {
-				if (*scan == '@') {
+				if (*scan == '@'
+				    /* exempt power-inscriptions: */
+				    && *(scan + 1) != '&' && *(scan + 1) != '^') {
 					/* Replace @ with space */
 					*scan = ' ';
 				}
