@@ -6540,22 +6540,18 @@ static bool process_player_end_aux(int Ind) {
 	/*** Process Inventory ***/
 
 	/* Handle experience draining */
-	//if (p_ptr->drain_exp && (p_ptr->wpos.wz != 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
-/* experimental: maybe no expdrain or just less expdrain while player is on world surface.
-   idea: allow classes who lack a *remove curse* spell to make more use of the rings. */
-	//if (p_ptr->drain_exp && (p_ptr->wpos.wz != 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
-	//if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : 0) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
-	//if (p_ptr->drain_exp && magik(p_ptr->wpos.wz != 0 ? 50 : (town ? 0 : 25)) && magik(30 - (60 / (p_ptr->drain_exp + 2))))
-	/* changing above line to use istownarea() so you can sort your houses without drain */
+	/* (Historical comment, code was changed meanwhile- "Moltor is right, exp drain was too weak for up to quite high levels. Need to make a new formula..") */
+	/* No expdrain or just less expdrain while player is on world surface,
+	   no expdrain while in town or housing area,
+	   to allow characters who lack a *remove curse* spell to make more use of the rings. */
 	if (p_ptr->drain_exp
 	    && magik((p_ptr->wpos.wz != 0 ? (dungeontown ? 0 : 50) :
 	     (townarea ? 0 : 25)) / (p_ptr->prace == RACE_VAMPIRE ? 2 : 1))
 	    && magik(100 - p_ptr->antimagic / 2)
-	    && magik(30 - (60 / (p_ptr->drain_exp + 2))))
-		//take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "Draining", TRUE, FALSE, FALSE, 0);
-		/* Moltor is right, exp drain was too weak for up to quite high levels. Need to make a new formula.. */
-	{
-		long exploss = 1 + p_ptr->lev + p_ptr->max_exp / 2000L;
+	    && magik(30 - (60 / (p_ptr->drain_exp + 2))) /* 10%/15%/18%/20% probability per dungeon tick (5/6 player's dungeon turn) to lose XP (for 1/2/3/4 drain sources) */
+	    ) {
+		//long exploss = 1 + p_ptr->lev + p_ptr->max_exp / 2000L; /* loss is 1+35+175 (lv 35), 1+40+525 (lv 40), 1+45+1250 (lv 45), 1+50+2900 (lv 50) */
+		long exploss = 1 + p_ptr->lev + p_ptr->max_exp / 3000L; /* experimental: reduce divisor to 3000...4000 */
 
 		/* Reduce exploss the more difficult it is for a race/class combination
 		   to aquire exp, ie depending on the character's exp% penalty.
@@ -6571,19 +6567,10 @@ static bool process_player_end_aux(int Ind) {
 		if ((p_ptr->lev >= 2) && ((((s64b)player_exp[p_ptr->lev - 2]) * ((s64b)p_ptr->expfact)) / 100L > p_ptr->exp - exploss))
 			exploss = p_ptr->exp - player_exp[p_ptr->lev - 2];
 #endif
+
 		/* Drain it! */
 		if (exploss > 0) take_xp_hit(Ind, exploss, "Draining", TRUE, FALSE, FALSE, 0);
 	}
-
-#if 0
-	{
-		if ((rand_int(100) < 10) && (p_ptr->exp > 0)) {
-			p_ptr->exp--;
-			p_ptr->max_exp--;
-			check_experience(Ind);
-		}
-	}
-#endif	// 0
 
 	/* Now implemented here too ;) - C. Blue */
 	/* let's say TY_CURSE lowers stats (occurs often) */
