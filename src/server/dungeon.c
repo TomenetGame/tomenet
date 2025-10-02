@@ -6551,7 +6551,7 @@ static bool process_player_end_aux(int Ind) {
 	    && magik(30 - (60 / (p_ptr->drain_exp + 2))) /* 10%/15%/18%/20% probability per dungeon tick (5/6 player's dungeon turn) to lose XP (for 1/2/3/4 drain sources) */
 	    ) {
 		//long exploss = 1 + p_ptr->lev + p_ptr->max_exp / 2000L; /* loss is 1+35+175 (lv 35), 1+40+525 (lv 40), 1+45+1250 (lv 45), 1+50+2900 (lv 50) */
-		long exploss = 1 + p_ptr->lev + p_ptr->max_exp / 3000L; /* experimental: reduce divisor to 3000...4000 */
+		long exploss = 1 + p_ptr->lev + p_ptr->max_exp / 3000L; /* experimental: reduce divisor to 3000...4000 (for slower-paced chars) */
 
 		/* Reduce exploss the more difficult it is for a race/class combination
 		   to aquire exp, ie depending on the character's exp% penalty.
