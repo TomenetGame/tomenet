@@ -439,9 +439,9 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 
 		switch (o_tsval) {
 		/* Note: These three are actually handled outside of this function so we should never arrive here */
-		case SV_FOOD_UNHEALTH:
 		case SV_FOOD_DISEASE:
 		case SV_FOOD_POISON:
+		case SV_FOOD_UNHEALTH: // <- vs player this also decreases CON
 			dt = GF_POIS;
 			dam = 7;
 			ident = TRUE;
@@ -483,15 +483,15 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			dt = GF_BLIND;
 			ident = TRUE;
 			break;
-		case SV_FOOD_PARANOIA:
 		case SV_FOOD_CONFUSION:
-		case SV_FOOD_HALLUCINATION:
+		case SV_FOOD_HALLUCINATION: // <- make more powerful?
+		case SV_FOOD_PARANOIA: // <- make more powerful?
 			dam = damroll(10, 8);
 			dt = GF_OLD_CONF;
 			ident = TRUE;
 			break;
 
-		case SV_FOOD_PARALYSIS:
+		case SV_FOOD_PARALYSIS: // <- make more powerful? GF_STASIS?
 			dt = GF_OLD_SLEEP;
 			dam = damroll(10, 8);
 			ident = TRUE;
@@ -552,7 +552,7 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			break;
 		case SV_POTION_SALT_WATER:
 			return(FALSE);
-		case SV_POTION_LOSE_MEMORIES:
+		case SV_POTION_LOSE_MEMORIES: // <- make more powerful?
 			dt = GF_OLD_CONF;
 			dam = damroll(10, 11);
 			ident = TRUE;
@@ -622,7 +622,7 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			dam = damroll(2, 10);
 			ident = TRUE;
 			break;
-		case SV_POTION_SLOWNESS:
+		case SV_POTION_SLOWNESS: // <- make more powerful? (like slow spells)
 			dt = GF_OLD_SLOW;
 			dam = damroll(5, 10);
 			ident = TRUE;
@@ -647,7 +647,7 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			dam = damroll(10, 8);
 			ident = TRUE;
 			break;
-		case SV_POTION_RUINATION:
+		case SV_POTION_RUINATION: // <- make more powerful?
 			dt = GF_RUINATION;
 			ident = TRUE;
 			dam = 1; /* dummy */
