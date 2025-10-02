@@ -3916,12 +3916,20 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "Dol Guldur   ");
 					continue;
 				}
+				/* Check "Ash Mountains" before "Mount Doom" */
+				if (my_strcasestr(buf, " Ash") || /* Ash somewhere, with space before it */
+				    (prefix_case(buf, "ash") && (buf[3] < 'a' || buf[3] > 'z') && (buf[3] < 'A' || buf[3] > 'Z'))) { /* Start on Ash */
+					strcpy(chapter, "The Ash Mountains  ");
+					continue;
+				}
 				if ((my_strcasestr(buf, "Moun")
 				    && !my_strcasestr(buf, "Mounta")) //don't confuse with Sacred Lands of Mountains
 				    || (my_strcasestr(buf, "Doom")
 				    && !my_strcasestr(buf, "Doome")) //don't confuse with Doomed Grounds spell
-				    || !strcasecmp(buf, "mtd")) { //note: TSLoM has been filtered out before us already
-					strcpy(chapter, "Mount Doom   ");
+				    || !strcasecmp(buf, "mtd") //note: TSLoM has been filtered out before us already
+				    || !strcasecmp(buf, "mt d")
+				    || !strcasecmp(buf, "mt.d")) {
+					strcpy(chapter, "Mount Doom   "); // If we ever want to require mount+doom, also enable "mt" instead of "mount"
 					continue;
 				}
 				if ((my_strcasestr(buf, "Clou") && my_strcasestr(buf, "Pla")) || !strcasecmp(buf, "cp")) {
