@@ -8203,7 +8203,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Powerful monsters can resist */
 		if ((r_ptr->flags1 & RF1_UNIQUE) ||
 		    (r_ptr->flags9 & RF9_NO_REDUCE) ||
-		    (r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND) || (r_ptr->flags3 & RF3_NONLIVING)) {
+		    (r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags2 & RF2_EMPTY_MIND)) {
 			note = " is unaffected";
 			obvious = FALSE;
 			break;
@@ -8237,6 +8237,42 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 	/* Slow Monster (Use "dam" as "power") */
 	case GF_OLD_SLOW: //Slowing effect -- NOTE: KEEP CONSISTENT WITH GF_INERTIA AND GF_CURSE
+		no_dam = TRUE;
+		if (seen) obvious = TRUE;
+
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags4 & RF4_BR_INER) ||
+		    (r_ptr->flags9 & RF9_NO_REDUCE)) {
+			note = " is unaffected";
+			obvious = FALSE;
+		} else if (!(m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10)) { /* Cannot slow down infinitely */
+			//note = " is unaffected"; /* Try without this message perhaps, might be less spammy on repeated casts */
+			obvious = FALSE;
+		} else if (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) { /* cannot randint higher? (see 'resist' branch below) */
+			/* Allow un-hasting a monster! - suggested by Dj_Wolf */
+			if (m_ptr->mspeed >= m_ptr->speed + 3) {
+				m_ptr->mspeed -= 3;
+				note = " starts moving less fast again";
+			} else {
+				note = " resists easily"; /* vs damaging it's "resists a lot" and vs effects it's "resists easily" :-o */
+				obvious = FALSE;
+			}
+		} else if (RES_OLD(r_ptr->level, dam)) {
+			/* Allow un-hasting a monster! - suggested by Dj_Wolf */
+			if (m_ptr->mspeed >= m_ptr->speed + 3) {
+				m_ptr->mspeed -= 3;
+				note = " starts moving less fast again";
+			} else {
+				note = " resists";
+				obvious = FALSE;
+			}
+		} else {
+			m_ptr->mspeed -= 10;
+			if (m_ptr->mspeed < m_ptr->speed - 10) m_ptr->mspeed = m_ptr->speed - 10;
+			note = " starts moving slower";
+		}
+		break;
+
 	case GF_VINE_SLOW:
 		no_dam = TRUE;
 		if (seen) obvious = TRUE;
@@ -12163,21 +12199,55 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_LIFE_SLOW:
-		if (p_ptr->prace == RACE_VAMPIRE) {
-			if (fuzzy || self) msg_print(Ind, "Something drains power from your muscles!");
-			else msg_format(Ind, "%^s drains power from your muscles!", killer);
+		if (fuzzy || self) msg_print(Ind, "Something tries to numb your mind!");
+		else msg_format(Ind, "%^s tries to numb your mind!", killer);
+
+		if (p_ptr->prace == RACE_VAMPIRE) /* Also: mimic form UNDEAD/NONLIVING? */
 			msg_print(Ind, "You are unaffected!");
-			dam = 0;
-			break;
-		}
-		/* fall through */
-	case GF_MIND_SLOW: /* <- we're not IM_PSI, NONLIVING or EMPTY_MIND, so just fall through... */
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav ||
+		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
+			msg_print(Ind, "You resist the effects!");
+		//else set_slow(Ind, p_ptr->slow + dam); too much for pvp..
+		else set_slow(Ind, p_ptr->slow + 2 + rand_int(3));
+
+		dam = 0;
+		break;
+	case GF_MIND_SLOW:
+		if (fuzzy || self) msg_print(Ind, "Something drains power from your muscles!");
+		else msg_format(Ind, "%^s drains power from your muscles!", killer);
+
+		if (p_ptr->reduce_insanity == 2) // IM_PSI/RES_PSI/Mindcrafter class, NONLIVING/EMPTY_MIND monster form
+			msg_print(Ind, "You are unaffected!");
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav ||
+		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
+			msg_print(Ind, "You resist the effects!");
+		//else set_slow(Ind, p_ptr->slow + dam); too much for pvp..
+		else set_slow(Ind, p_ptr->slow + 2 + rand_int(3));
+
+		dam = 0;
+		break;
 	case GF_OLD_SLOW:
+		if (fuzzy || self) msg_print(Ind, "Something drains power from your muscles!");
+		else msg_format(Ind, "%^s drains power from your muscles!", killer);
+
+		if (p_ptr->free_act) msg_print(Ind, "You are unaffected!"); //(r_ptr->flags4 & RF4_BR_INER) -- mimic flag translates to FA
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav ||
+		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
+			msg_print(Ind, "You resist the effects!");
+		//else set_slow(Ind, p_ptr->slow + dam); too much for pvp..
+		else set_slow(Ind, p_ptr->slow + 2 + rand_int(3));
+
+		dam = 0;
+		break;
 	case GF_VINE_SLOW:
 		if (fuzzy || self) msg_print(Ind, "Something drains power from your muscles!");
 		else msg_format(Ind, "%^s drains power from your muscles!", killer);
 
-		if (p_ptr->free_act) msg_print(Ind, "You are unaffected!");
+		if (p_ptr->levitate) dam = (dam + 1) / 2;
+
+		if (p_ptr->tim_wraith || p_ptr->auto_tunnel || //PASS_WALL/KILL_WALL
+		    r_ptr->d_char == 'I' || (r_ptr->d_char == 'W' && !r_ptr->weight)) /* Insects, Wraiths */
+			msg_print(Ind, "You are unaffected!");
 		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav ||
 		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			msg_print(Ind, "You resist the effects!");
@@ -14847,9 +14917,19 @@ int approx_damage(int m_idx, int dam, int typ) {
 			dam = 0;
 		break;
 	case GF_OLD_SLOW:
-	case GF_VINE_SLOW:
 		if ((r_ptr->flags1 & RF1_UNIQUE) ||
 		    (r_ptr->flags4 & RF4_BR_INER) ||
+		    (r_ptr->flags9 & RF9_NO_REDUCE) ||
+		    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) ||
+		    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10) || /* RES_OLD() */
+		    !(m_ptr->mspeed >= 100 && m_ptr->mspeed > m_ptr->speed - 10))
+			dam = 0;
+		break;
+	case GF_VINE_SLOW:
+		if (r_ptr->flags7 & RF7_CAN_FLY) dam /= 2;
+		if ((r_ptr->flags1 & RF1_UNIQUE) ||
+		    (r_ptr->flags2 & (RF2_PASS_WALL | RF2_KILL_WALL)) || /* Ghosts and Wallkillers */
+		    r_ptr->d_char == 'I' || (r_ptr->d_char == 'W' && !r_ptr->weight) || /* Insects, Wraiths */
 		    (r_ptr->flags9 & RF9_NO_REDUCE) ||
 		    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) + 10) ||
 		    (r_ptr->level > ((dam - 10) < 1 ? 1 : (dam - 10)) / 2 + 10) || /* RES_OLD() */
