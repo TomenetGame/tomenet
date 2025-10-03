@@ -59,7 +59,8 @@
    reach of the caster over MAX_RANGE? */
 #define NO_EXPLOSION_OUT_OF_MAX_RANGE
 
-/* Typical resistance check for all GF_OLD_ and GF_TURN_ attacks */
+/* Typical resistance check for all GF_OLD_ and GF_TURN_ attacks.
+   Interpretation: target "level > roll(1...<dam-5>) + 5" -> resisted; which means levels <= 6 never resist: */
 #define RES_OLD(lev, dam) ((lev) > randint(((dam) - 5) < 1 ? 1 : ((dam) - 5)) + 5)
 
 /* Sleep power of any GF_OLD_SLEEP spell [500] */
