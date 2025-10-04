@@ -1254,6 +1254,7 @@ void cmd_subinven(int islot) {
 
 	/* End redirection of inventory-related commands, as we left the subinventory */
 	using_subinven = -1;
+	using_subinven_size = -1;
 	using_subinven_item = -1;
 
 	screen_line_icky = -1;

@@ -1063,6 +1063,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 }
 
 bool (*get_item_extra_hook)(int *cp, int mode);
+/* (pmt = prompt, for measuring total prompt length and possibly shorten some things to find into the line) */
 bool c_get_item(int *cp, cptr pmt, int mode) {
 	//char n1, n2;
 	char which = ' ';
@@ -1598,6 +1599,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 				/* Select this bag (subinventory) */
 				using_subinven = i;
+				using_subinven_size = inventory[i].bpval;
 
 				/* Continue looking for our original item type(s) in this newly selected subinventory */
 				item_tester_tval = old_tval;
@@ -1625,6 +1627,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 				/* Leave subinventory again and return to our main inventory */
 				using_subinven = -1;
+				using_subinven_size = -1;
 
 				/* Fix the screen if necessary */
 				//if (command_see) Term_save();
