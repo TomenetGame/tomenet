@@ -5358,7 +5358,8 @@ void do_cmd_store(int Ind) {
 		}
 	}
 
-	if (p_ptr->tim_blacklist >= 4800)
+	if (st_ptr->st_idx == STORE_CASINO) ; /* Shady biz - even more so than the BM apparently :-p */
+	else if (p_ptr->tim_blacklist >= 4800)
 		msg_print(Ind, "As you enter, the owner gives you a murderous look.");
 	else if (p_ptr->tim_blacklist >= 2400)
 		msg_print(Ind, "As you enter, the owner gazes at you angrily.");
