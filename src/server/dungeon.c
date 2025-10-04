@@ -437,15 +437,23 @@ cptr value_check_aux2_magic(object_type *o_ptr) {
 /*
  * Sense the inventory aka Pseudo-ID.
  * We're called every 5/6 of a player's dungeon turn from process_player_end_aux().
+ * NOTE: Currently does not affect items inside bags. (ENABLE_SUBINVEN)
  */
+#define INVEN_FAIL 80 /* Occasional failure on inventory items */
 static void sense_inventory(int Ind) {
 	player_type *p_ptr = Players[Ind];
 
 	int i, dur, in = -1;
+#ifdef ENABLE_SUBINVEN
+	int si = -2, ii = -1;
+#endif
 
 	bool heavy_combat = FALSE, heavy_magic = FALSE, heavy_archery = FALSE, heavy_traps = FALSE, heavy_food = FALSE;
-	bool ok_combat = FALSE, ok_magic = FALSE, ok_archery = FALSE, ok_traps = FALSE, ok_food = FALSE;
-	bool ok_curse = FALSE, force_curse = FALSE, force_shrooms = (p_ptr->prace == RACE_HOBBIT || p_ptr->prace == RACE_KOBOLD);
+
+	bool ok_combat_base = FALSE, ok_magic_base = FALSE, ok_archery_base = FALSE, ok_traps_base = FALSE, ok_food_base = FALSE;
+	bool ok_curse_base = FALSE, force_curse_base = FALSE, force_shrooms_base = (p_ptr->prace == RACE_HOBBIT || p_ptr->prace == RACE_KOBOLD);
+
+	bool ok_combat, ok_magic, ok_archery, ok_traps, ok_food, ok_curse, force_curse, force_shrooms;
 
 	cptr feel;
 	bool felt_heavy, fail_light;
@@ -467,34 +475,34 @@ static void sense_inventory(int Ind) {
 
 	/* instead, allow more use at lower SKILL_COMBAT levels already,
 	otherwise huge stacks of ID scrolls will remain mandatory for maybe too long a time - C. Blue */
-	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20) - 28)) ok_combat = TRUE;
-	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_ARCHERY, 80) + 20) - 28)) ok_archery = TRUE;
-	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_MAGIC, 80) + 20) - 28)) ok_magic = ok_curse = TRUE;
-	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_TRAPPING, 80) + 20) - 28)) ok_traps = TRUE;
-	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_HEALTH, 80) + 20) - 28)) ok_food = TRUE;
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_COMBAT, 80) + 20) - 28)) ok_combat_base = TRUE;
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_ARCHERY, 80) + 20) - 28)) ok_archery_base = TRUE;
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_MAGIC, 80) + 20) - 28)) ok_magic_base = ok_curse_base = TRUE;
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_TRAPPING, 80) + 20) - 28)) ok_traps_base = TRUE;
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_HEALTH, 80) + 20) - 28)) ok_food_base = TRUE;
 	/* note: SKILL_PRAY is currently unused */
-	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_PRAY, 80) + 20) - 28)) ok_curse = TRUE;
+	if (!rand_int(dur / (get_skill_scale(p_ptr, SKILL_PRAY, 80) + 20) - 28)) ok_curse_base = TRUE;
 
 	/* A powerful warrior can pseudo-id ranged weapons and ammo too,
 	   even if (s)he's not good at archery in general */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 30 && ok_combat) ok_archery = TRUE; /* (apply 33% chance, see below) - allow basic feelings */
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 30 && ok_combat_base) ok_archery_base = TRUE; /* (apply 33% chance, see below) - allow basic feelings */
 
 	/* A very powerful warrior can even distinguish magic items */
-	if (get_skill(p_ptr, SKILL_COMBAT) >= 40 && ok_combat) ok_curse = TRUE;
+	if (get_skill(p_ptr, SKILL_COMBAT) >= 40 && ok_combat_base) ok_curse_base = TRUE;
 
 	/* extra class-specific boni */
-	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) force_curse = ok_curse = TRUE;
+	if (p_ptr->ptrait == TRAIT_ENLIGHTENED) force_curse_base = ok_curse_base = TRUE;
 	else if (p_ptr->pclass == CLASS_PRIEST
  #ifdef ENABLE_CPRIEST
 	    || p_ptr->pclass == CLASS_CPRIEST
  #endif
 	    ) {
 		//i = (p_ptr->lev < 35) ? (135 - (p_ptr->lev + 10) * 3) : 1;
-		if (p_ptr->lev >= 35 || !rand_int(dur / (p_ptr->lev * 2 + 30) - 29)) force_curse = ok_curse = TRUE;
+		if (p_ptr->lev >= 35 || !rand_int(dur / (p_ptr->lev * 2 + 30) - 29)) force_curse_base = ok_curse_base = TRUE;
 	}
 
 	/* nothing to feel? exit */
-	if (!ok_combat && !ok_magic && !ok_archery && !ok_traps && !ok_curse && !ok_food && !force_shrooms) return;
+	if (!ok_combat_base && !ok_magic_base && !ok_archery_base && !ok_traps_base && !ok_curse_base && !ok_food_base && !force_shrooms_base) return;
 
 	heavy_combat = (get_skill(p_ptr, SKILL_COMBAT) >= 10) ? TRUE : FALSE;
 	heavy_magic = (get_skill(p_ptr, SKILL_MAGIC) >= 10) ? TRUE : FALSE;
@@ -502,26 +510,62 @@ static void sense_inventory(int Ind) {
 	heavy_traps = (get_skill(p_ptr, SKILL_TRAPPING) >= 10) ? TRUE : FALSE;
 	heavy_food = (get_skill(p_ptr, SKILL_HEALTH) >= 10) ? TRUE : FALSE;
 
-	/*** Sense everything ***/
-
 	/* Check everything */
+#ifdef ENABLE_SUBINVEN
+	while (ii < INVEN_TOTAL) {
+		if (si != -2) {
+			si++;
+			if (si == p_ptr->inventory[ii].bpval) {
+				si = -2;
+				continue;
+			}
+			o_ptr = &p_ptr->subinventory[ii][si];
+			i = (ii + 1) * SUBINVEN_INVEN_MUL + si;
+		} else {
+			ii++;
+			o_ptr = &p_ptr->inventory[ii];
+			i = ii;
+		}
+#else
 	for (i = 0; i < INVEN_TOTAL; i++) {
 		o_ptr = &p_ptr->inventory[i];
-		fail_light = FALSE;
-
+#endif
 		/* Skip empty slots */
 		if (!o_ptr->k_idx) continue;
+#ifdef ENABLE_SUBINVEN
+		/* Enter subinventory? */
+		if (o_ptr->tval == TV_SUBINVEN) {
+			si = -1;
+			continue;
+		}
+#endif
+
 		/* It is fully known, no information needed */
 		if (object_known_p(Ind, o_ptr)) continue;
 		/* We have pseudo-id'ed it heavily before, do not tell us again */
 		if (o_ptr->ident & ID_SENSE_HEAVY) continue;
+
 		/* If already pseudo-id'ed normally, fail for non-heavy pseudo-id, but allow heavy one as an upgrade if we meanwhile trained the responsible skill */
-		if (o_ptr->ident & ID_SENSE) fail_light = TRUE; /* Note for force_curse handling: This also means we already know if the item is cursed! */
+		fail_light = (o_ptr->ident & ID_SENSE); /* Note for force_curse handling: This also means we already know if the item is cursed! */
+
+		ok_combat = ok_combat_base;
+		ok_magic = ok_magic_base;
+		ok_archery = ok_archery_base;
+		ok_traps = ok_traps_base;
+		ok_food = ok_food_base;
+		ok_curse = ok_curse_base;
+		force_curse = force_curse_base;
+		force_shrooms = force_shrooms_base;
+
 		/* Occasional failure on inventory items */
-		if ((i < INVEN_WIELD) && (magik(80) || UNAWARENESS(p_ptr))) {
+		if ((i < INVEN_WIELD
+#ifdef ENABLE_SUBINVEN
+		    || i >= SUBINVEN_INVEN_MUL
+#endif
+		    ) && (magik(INVEN_FAIL) || UNAWARENESS(p_ptr))) {
 			if ((!force_curse && !force_shrooms) || fail_light) continue; /* Either we don't need to process force_curse, or we already know the item is cursed */
 			/* if we're forced to insta-sense a curse/shroom, do just that, as we'd have failed for all other actions */
-			fail_light = ok_magic = ok_combat = ok_archery = ok_traps = ok_food = FALSE;
+			ok_magic = ok_combat = ok_archery = ok_traps = ok_food = FALSE;
 			/* We're just here for the shrooms, ie if force_curse is FALSE, prevent curse-detection. */
 			ok_curse = force_curse;
 		}
@@ -610,7 +654,7 @@ static void sense_inventory(int Ind) {
 			/* First check for 'force_shrooms'. Note that we use 'heavy' detection (aux1 instead of aux2) for now. */
 			if (force_shrooms && o_ptr->sval <= SV_FOOD_MUSHROOMS_MAX && !object_aware_p(Ind, o_ptr)) {
 				feel = value_check_aux1_magic(o_ptr);
-				felt_heavy = heavy_combat = TRUE; /* Hack 'heavy' */
+				felt_heavy = TRUE;
 				break;
 			}
 
@@ -644,16 +688,23 @@ static void sense_inventory(int Ind) {
 		/* Hack -- suppress messages */
 		if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
-		/* Message (equipment) */
-		if (i >= INVEN_WIELD) {
-			msg_format(Ind, "You feel the %s (%c) you are %s %s %s...",
-			    o_name, index_to_label(i), describe_use(Ind, i),
-			    ((o_ptr->number == 1) ? "is" : "are"), feel);
-		}
 		/* Message (inventory) */
-		else {
+#ifdef ENABLE_SUBINVEN
+		if (i >= SUBINVEN_INVEN_MUL) {
+			msg_format(Ind, "You feel the %s (%c)(%c) in your pack %s %s...",
+			    o_name, index_to_label(ii), index_to_label(si),
+			    ((o_ptr->number == 1) ? "is" : "are"), feel);
+		} else
+#endif
+		if (i < INVEN_WIELD) {
 			msg_format(Ind, "You feel the %s (%c) in your pack %s %s...",
 			    o_name, index_to_label(i),
+			    ((o_ptr->number == 1) ? "is" : "are"), feel);
+		}
+		/* Message (equipment) */
+		else {
+			msg_format(Ind, "You feel the %s (%c) you are %s %s %s...",
+			    o_name, index_to_label(i), describe_use(Ind, i),
 			    ((o_ptr->number == 1) ? "is" : "are"), feel);
 		}
 
@@ -691,7 +742,6 @@ static void sense_inventory(int Ind) {
 			if (felt_heavy) p_ptr->obj_felt_heavy[o_ptr->k_idx] = TRUE;
 		}
 
-#if 1
 		/* new: remove previous pseudo-id tag completely, since we've bumped our p-id tier meanwhile */
 		if (fail_light) {
 			char note2[80], noteid[10];
@@ -700,7 +750,6 @@ static void sense_inventory(int Ind) {
 			if (!note2[0]) o_ptr->note = o_ptr->note_utag = 0;
 			else o_ptr->note = quark_add(note2);
 		}
-#endif
 
 		/* Inscribe it textually */
 #if 0 /* make pseudo-id remove previous unique tag? */
@@ -724,10 +773,16 @@ static void sense_inventory(int Ind) {
 			}
 		}
 
+#ifdef ENABLE_SUBINVEN
+		if (i >= SUBINVEN_INVEN_MUL) {
+			/* Redraw subinven item */
+			display_subinven_aux(Ind, ii, si);
+		} else
+#endif
+		if (i >= INVEN_WIELD) p_ptr->window |= PW_EQUIP;
+		else p_ptr->window |= PW_INVEN;
 		/* Combine / Reorder the pack (later) */
 		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
-		/* Window stuff */
-		p_ptr->window |= (PW_INVEN | PW_EQUIP);
 
 		in = i;
 
