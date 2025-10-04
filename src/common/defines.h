@@ -9107,7 +9107,8 @@ extern int PlayerUID;
 	(istown(wpos) || ((wpos)->wz == 0 && wild_info[(wpos)->wy][(wpos)->wx].radius <= rad))
 
 
-/* paralysis should be handled by other means! (0..80, or 1000 if paralyzed. Usually 10..25.) */
+/* Reduce chance to perform various actions if we're affected by bad status effects that distract us.
+   Paralysis should be handled by other means! (0..80, or 1000 if paralyzed. Usually 10..25.) */
 #define UNAWARENESS(p_ptr) ( \
 	(p_ptr->stun > 50 ? 10 : 0) + \
 	(p_ptr->stun ? 15 : 0) + \
