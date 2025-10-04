@@ -4524,12 +4524,14 @@ bool apply_disenchant(int Ind, int mode) {
  */
 bool apply_discharge(int Ind, int dam) {
 	player_type *p_ptr = Players[Ind];
-
-	int	i, chance = 95;
-	bool	damaged_any = FALSE, damaged;
+	int i, chance = 95;
+	bool damaged_any = FALSE, damaged;
 	object_type *o_ptr;
-	char	o_name[ONAME_LEN];
+	char o_name[ONAME_LEN];
 	u32b fx, f2, f3;
+#ifdef MSTAFF_MDEV_COMBO
+	int tv;
+#endif
 
 	if (safe_area(Ind)) return(FALSE);
 
@@ -4571,6 +4573,15 @@ bool apply_discharge(int Ind, int dam) {
 		/* Describe the object */
 		object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
+#ifdef MSTAFF_MDEV_COMBO
+		if (o_ptr->tval == TV_MSTAFF) {
+			if (o_ptr->xtra1) tv = TV_STAFF;
+			else if (o_ptr->xtra2) tv = TV_WAND;
+			else if (o_ptr->xtra3) tv = TV_ROD;
+			else tv = o_ptr->tval;
+		} else tv = o_ptr->tval;
+#endif
+
 		/* damage it */
 		if (o_ptr->timeout_magic) {
 			damaged = TRUE;
@@ -4578,12 +4589,23 @@ bool apply_discharge(int Ind, int dam) {
 			else if (o_ptr->timeout_magic > 100) o_ptr->timeout_magic -= 15 + rand_int(11);
 			else if (o_ptr->timeout_magic > 10) o_ptr->timeout_magic -= 3 + rand_int(3);
 			else if (o_ptr->timeout_magic) o_ptr->timeout_magic--;
+#ifdef MSTAFF_MDEV_COMBO
+		} else if (tv == TV_ROD) {
+#else
 		} else if (o_ptr->tval == TV_ROD) {
+#endif
 			discharge_rod(o_ptr, 5 + rand_int(5));
 			damaged = TRUE;
 		}
 
+#ifdef MSTAFF_MDEV_COMBO
+		if (o_ptr->pval) switch (tv) {
+#else
 		if (o_ptr->pval) switch (o_ptr->tval) {
+#endif
+		case TV_RING: /* Usually never called, as rings already got destroyed instead, as this function is called for electricity damage. */
+			if (o_ptr->sval == SV_RING_POLYMORPH) break;
+			/* Fall through */
 		case TV_AMULET:
 			if (o_ptr->pval < 2) break; /* stop at +1 */
 			/* Fall through */
@@ -4592,7 +4614,9 @@ bool apply_discharge(int Ind, int dam) {
 			o_ptr->pval--;
 			damaged = TRUE;
 			break;
-		} else if (o_ptr->bpval > 1 && o_ptr->tval == TV_AMULET) {
+		} else if (o_ptr->bpval > 1 &&
+		    (o_ptr->tval == TV_AMULET ||
+		    (o_ptr->tval == TV_RING && o_ptr->sval != SV_RING_POLYMORPH))) {
 			o_ptr->bpval--;
 			damaged = TRUE;
 		}
@@ -4626,10 +4650,13 @@ bool apply_discharge(int Ind, int dam) {
    (important, as ethereal arrows getting destroyed would have to reduce the player's weight,
    which this function doesn't/cannot do. That's what apply_discharge() does). */
 bool apply_discharge_item(int o_idx, int dam) {
-	int	chance = 95;
-	bool	damaged = FALSE;
+	int chance = 95;
+	bool damaged = FALSE;
 	object_type *o_ptr = &o_list[o_idx];
 	u32b fx, f2, f3;
+#ifdef MSTAFF_MDEV_COMBO
+	int tv;
+#endif
 
 	/* No item, nothing happens */
 	if (!o_ptr->k_idx) return(FALSE);
@@ -4649,6 +4676,15 @@ bool apply_discharge_item(int o_idx, int dam) {
 	    (f2 & TR2_IM_ELEC) ||
 	    (f2 & TR2_RES_ELEC)) return(FALSE);
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (o_ptr->tval == TV_MSTAFF) {
+		if (o_ptr->xtra1) tv = TV_STAFF;
+		else if (o_ptr->xtra2) tv = TV_WAND;
+		else if (o_ptr->xtra3) tv = TV_ROD;
+		else tv = o_ptr->tval;
+	} else tv = o_ptr->tval;
+#endif
+
 	/* damage it */
 	if (o_ptr->timeout_magic) {
 		damaged = TRUE;
@@ -4656,30 +4692,43 @@ bool apply_discharge_item(int o_idx, int dam) {
 		else if (o_ptr->timeout_magic > 100) o_ptr->timeout_magic -= 15 + rand_int(11);
 		else if (o_ptr->timeout_magic > 10) o_ptr->timeout_magic -= 3 + rand_int(3);
 		else if (o_ptr->timeout_magic) o_ptr->timeout_magic--;
+#ifdef MSTAFF_MDEV_COMBO
+	} else if (tv == TV_ROD) {
+#else
 	} else if (o_ptr->tval == TV_ROD) {
+#endif
 		discharge_rod(o_ptr, 5 + rand_int(5));
-		damaged = TRUE;
+		return(TRUE);
 	}
 
+#ifdef MSTAFF_MDEV_COMBO
+	if (o_ptr->pval) switch (tv) {
+#else
 	if (o_ptr->pval) switch (o_ptr->tval) {
+#endif
+	case TV_RING: /* Usually never called, as rings already got destroyed instead, as this function is called for electricity damage. */
+		if (o_ptr->sval == SV_RING_POLYMORPH) break;
+		/* Fall through */
 	case TV_AMULET:
 		if (o_ptr->pval < 2) break; /* stop at +1 */
 		/* Fall through */
 	case TV_STAFF:
 	case TV_WAND:
 		o_ptr->pval--;
-		damaged = TRUE;
+		return(TRUE);
 		break;
-	} else if (o_ptr->bpval > 1 && o_ptr->tval == TV_AMULET) {
+	} else if (o_ptr->bpval > 1 &&
+	    (o_ptr->tval == TV_AMULET ||
+	    (o_ptr->tval == TV_RING && o_ptr->sval != SV_RING_POLYMORPH))) {
 		o_ptr->bpval--;
-		damaged = TRUE;
+		return(TRUE);
 	}
 
 	/* Special treatment for new ego-type: Ethereal (ammunition): */
 	if (is_ammo(o_ptr->tval) && (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL)) {
 		if (o_ptr->number == 1) delete_object_idx(o_idx, TRUE, FALSE);
 		else o_ptr->number--;
-		damaged = TRUE;
+		return(TRUE);
 	}
 
 	return(damaged);
@@ -5946,6 +5995,10 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	bool in_iddc = in_irondeepdive(wpos);
  #endif
 #endif
+#ifdef MSTAFF_MDEV_COMBO
+	int tv;
+#endif
+
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	c_ptr = &zcave[y][x];
@@ -6253,7 +6306,17 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (o_ptr->to_d > k_ptr->to_d) o_ptr->to_d--;
 			if (o_ptr->to_a > k_ptr->to_a) o_ptr->to_a--;
 
+#ifdef MSTAFF_MDEV_COMBO
+			if (o_ptr->tval == TV_MSTAFF) {
+				if (o_ptr->xtra1) tv = TV_STAFF;
+				else if (o_ptr->xtra2) tv = TV_WAND;
+				else if (o_ptr->xtra3) tv = TV_ROD;
+				else tv = o_ptr->tval;
+			} else tv = o_ptr->tval;
+			switch (tv) {
+#else
 			switch (o_ptr->tval) {
+#endif
 			case TV_ROD:
 				discharge_rod(o_ptr, 10 + rand_int(10));
 				break;

@@ -4888,7 +4888,11 @@ bool recharge_aux(int Ind, int item, int pow) {
 			t = (pow / (lev + 2)) + 1; // -> 16..36 (lv2), 1..2 (lv75) for wands; 9..21 (lv5), 1..2 (lv80) for staves
 #else /* new way, using charge_wand()/charge_staff() values */
 			/* Calculate a base charges amount */
-			t = o_ptr->tval == TV_WAND ?
+			t = ((o_ptr->tval == TV_WAND)
+ #ifdef MSTAFF_MDEV_COMBO
+			    || (o_ptr->tval == TV_MSTAFF && o_ptr->xtra2)
+ #endif
+			    ) ?
 			    charge_wand_fix[o_ptr->sval] + randint(charge_wand_rnd[o_ptr->sval] / 2) + charge_wand_rnd[o_ptr->sval] / 4:
 			    charge_staff_fix[o_ptr->sval] + randint(charge_staff_rnd[o_ptr->sval] / 2) + charge_staff_rnd[o_ptr->sval] / 4;
 			/* Recharging power vs k-level affects # of charges, strongly if power is low compared to item level. */

@@ -11104,6 +11104,7 @@ void trap_found(struct worldpos *wpos, int y, int x) {
 	everyone_lite_spot(wpos, y, x);
 }
 
+/* (Must keep compliance for MSTAFF_MDEV_COMBO) */
 void discharge_rod(object_type *o_ptr, int c) {
 	//discharge whole stack
 #ifndef NEW_MDEV_STACKING
@@ -11517,7 +11518,12 @@ void floor_item_charges(int item) {
 	object_type *o_ptr = &o_list[item];
 
 	/* Require staff/wand */
-	if ((o_ptr->tval != TV_STAFF) && (o_ptr->tval != TV_WAND)) return;
+	if (o_ptr->tval != TV_STAFF && o_ptr->tval != TV_WAND
+#ifdef MSTAFF_MDEV_COMBO
+	    && (o_ptr->tval != TV_MSTAFF || (!o_ptr->xtra1 && !o_ptr->xtra2))
+#endif
+	    )
+		return;
 
 	/* Require known item */
 	/*if (!object_known_p(o_ptr)) return;*/

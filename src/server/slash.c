@@ -1531,6 +1531,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			char const *candidate_destination;
 			char *c, *c2;
 			int x = -1, y = -1;
+#ifdef MSTAFF_MDEV_COMBO
+			int tv;
+ #ifdef R_REQUIRES_AWARE
+			int sv;
+ #endif
+#endif
 
 			if (admin) {
 				/* Ultra-hack: Admins may specify "/x,y" to teleport directly to a specific [x,y] coord after recall */
@@ -1561,6 +1567,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			} else {
 				int item = -1, spell = -1, spell_rec = -1, spell_rel = -1;
 				bool spell_rec_found = FALSE, spell_rel_found = FALSE;
+				int found_empty = 0;
 				object_type *o_ptr;
 
 
@@ -1606,10 +1613,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						for (j = 0; j < o_ptr->bpval; j++) {
 							o2_ptr = &p_ptr->subinventory[i][j];
 							if (!o2_ptr->k_idx) break;
+							if (!o2_ptr->note) continue;
  #ifdef R_REQUIRES_AWARE
 							if (!object_aware_p(Ind, o2_ptr)) continue;
  #endif
 							if (!find_inscription(o2_ptr->note, "@R")) continue;
+							if (is_empty_magicdevice(o_ptr)) {
+								found_empty++;
+								continue;
+							}
 
 							item = (i + 1) * SUBINVEN_INVEN_MUL + j; /* Encode index for global inventory (inven+subinvens) */
 							o_ptr = o2_ptr;
@@ -1623,7 +1635,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #ifdef R_REQUIRES_AWARE
 					if (!object_aware_p(Ind, o2_ptr)) continue;
 #endif
+					if (!o_ptr->note) continue;
 					if (!find_inscription(o_ptr->note, "@R")) continue;
+					if (is_empty_magicdevice(o_ptr)) {
+						found_empty++;
+						continue;
+					}
 
 					/* For spell books: Test if we can actually use this item at all,
 					   ie have learned the spell yet, otherwise skip it completely!
@@ -1684,17 +1701,55 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				if (item == -1) {
-					msg_print(Ind, "\377oNo usable item with '@R' inscription found.");
+					if (found_empty)
+						msg_format(Ind, "\377oYour device%s inscribed '@R' %sn't charged, no other usable item found.",
+						    found_empty == 1 ? "" : "s", found_empty == 1 ? "is" : "are");
+					else msg_print(Ind, "\377oNo usable item with '@R' inscription found.");
 					return;
 				}
 
 				disturb(Ind, 1, 0);
 
 				/* ALERT! Hard-coded! */
+#ifdef MSTAFF_MDEV_COMBO
+				if (o_ptr->tval == TV_MSTAFF) {
+					if (o_ptr->xtra1) {
+						tv = TV_STAFF;
+						item += 10000;
+ #ifdef R_REQUIRES_AWARE
+						sv = o_ptr->xtra1 - 1;
+ #endif
+					} else if (o_ptr->xtra2) {
+						tv = TV_WAND;
+						item += 10000;
+ #ifdef R_REQUIRES_AWARE
+						sv = o_ptr->xtra2 - 1;
+ #endif
+					} else if (o_ptr->xtra3) {
+						tv = TV_ROD;
+						item += 10000;
+ #ifdef R_REQUIRES_AWARE
+						sv = o_ptr->xtra3 - 1;
+ #endif
+					} else {
+						tv = o_ptr->tval;
+ #ifdef R_REQUIRES_AWARE
+						sv = o_ptr->sval;
+ #endif
+					}
+				} else {
+					tv = o_ptr->tval;
+ #ifdef R_REQUIRES_AWARE
+					sv = o_ptr->sval;
+ #endif
+				}
+				switch (tv) {
+#else
 				switch (o_ptr->tval) {
+#endif
 				case TV_SCROLL:
 #ifdef R_REQUIRES_AWARE
-					if (o_ptr->sval != SV_SCROLL_WORD_OF_RECALL) {
+					if (sv != SV_SCROLL_WORD_OF_RECALL) {
 						msg_print(Ind, "\377oThat is not a scroll of word of recall.");
 						return;
 					}
@@ -1703,7 +1758,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					break;
 				case TV_ROD:
 #ifdef R_REQUIRES_AWARE
-					if (o_ptr->sval != SV_ROD_RECALL) {
+					if (sv != SV_ROD_RECALL) {
 						msg_print(Ind, "\377oThat is not a rod of recall.");
 						return;
 					}

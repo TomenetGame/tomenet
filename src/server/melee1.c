@@ -1345,13 +1345,14 @@ bool make_attack_melee(int Ind, int m_idx) {
 						o_ptr = &p_ptr->inventory[i];
 
 						/* Drain charged wands/staffs/rods/polyrings -- what about activatable items? */
-						if ((((o_ptr->tval == TV_STAFF) ||
-						     (o_ptr->tval == TV_WAND)) &&
-						    (o_ptr->pval)) ||
+						if (((o_ptr->tval == TV_STAFF || o_ptr->tval == TV_WAND) && o_ptr->pval) ||
 						    o_ptr->tval == TV_ROD ||
-						     ((o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH) &&
-						      (o_ptr->timeout_magic > 1)))
-						{
+#ifdef MSTAFF_MDEV_COMBO
+						    (o_ptr->tval == TV_MSTAFF &&
+						    (((o_ptr->xtra1 || o_ptr->xtra2) && o_ptr->pval) || o_ptr->xtra3)) ||
+#endif
+						    (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH && o_ptr->timeout_magic > 1)
+						    ) {
 							s16b chance = rand_int(get_skill_scale(p_ptr, SKILL_DEVICE, 80));
 
 							/* Message */

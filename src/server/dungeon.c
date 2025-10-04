@@ -2977,6 +2977,9 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	int res, choice = 0, spell = 0;
+#ifdef MSTAFF_MDEV_COMBO
+	int tv, item_x;
+#endif
 
 	if (item < 0) return(FALSE);
 	o_ptr = &p_ptr->inventory[item];
@@ -3078,10 +3081,40 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 		case TV_WAND:
 			do_cmd_aim_wand(Ind, item, 5);
 			return(TRUE);
+ #ifdef MSTAFF_MDEV_COMBO
+		case TV_MSTAFF:
+			if (o_ptr->xtra1) {
+				do_cmd_use_staff(Ind, item + 10000);
+				return(TRUE);
+			} else if (o_ptr->xtra2) {
+				do_cmd_aim_wand(Ind, item + 10000, 5);
+				return(TRUE);
+			} else if (o_ptr->xtra3) {
+				do_cmd_zap_rod(Ind, item + 10000, 5);
+				return(TRUE);
+			}
+ #endif
 		}
 	}
 #else
+ #ifdef MSTAFF_MDEV_COMBO
+	item_x = item;
+	if (o_ptr->tval == TV_MSTAFF) {
+		if (o_ptr->xtra1) {
+			tv = TV_STAFF;
+			item_x = item + 10000;
+		} else if (o_ptr->xtra2) {
+			tv = TV_WAND;
+			item_x = item + 10000;
+		} else if (o_ptr->xtra3) {
+			tv = TV_ROD;
+			item_x = item + 10000;
+		} else tv = o_ptr->tval;
+	} else tv = o_ptr->tval;
+	switch (tv) {
+ #else
 	switch (o_ptr->tval) {
+ #endif
 	case TV_STAFF:
 		/* Check if we're out of charges, to handle 'fallback' to melee  --
 		   in any case suppress out-of-charges message (which would be displayed if do_cmd_use_staff() gets called) */
@@ -3094,7 +3127,11 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 			}
 			return(FALSE); //fallback to melee
 		}
+ #ifdef MSTAFF_MDEV_COMBO
+		do_cmd_use_staff(Ind, item_x);
+ #else
 		do_cmd_use_staff(Ind, item);
+ #endif
 		return(TRUE);
 	case TV_WAND:
 		/* Check if we're out of charges, to handle 'fallback' to melee  --
@@ -3108,7 +3145,11 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 			}
 			return(FALSE); //fallback to melee
 		}
+ #ifdef MSTAFF_MDEV_COMBO
+		do_cmd_aim_wand(Ind, item_x, 5);
+ #else
 		do_cmd_aim_wand(Ind, item, 5);
+ #endif
 		return(TRUE);
 	case TV_ROD:
 		/* Check if we're out of energy, to handle 'fallback' to melee  --
@@ -3122,7 +3163,11 @@ static bool retaliate_item(int Ind, int item, cptr inscription, bool fallback) {
 			}
 			return(FALSE); //fallback to melee
 		}
+ #ifdef MSTAFF_MDEV_COMBO
+		do_cmd_zap_rod(Ind, item_x, 5);
+ #else
 		do_cmd_zap_rod(Ind, item, 5);
+ #endif
 		return(TRUE);
 	}
 #endif

@@ -3293,8 +3293,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 #ifndef NEW_MDEV_STACKING
 			if (o_ptr->pval) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
 #else
-			if (o_ptr->bpval == o_ptr->number
-			    && o_ptr->number) /* <- special case: 'You have no more rods..' */
+			if (!o_ptr->number) { /* <- special case: 'You have no more rods..' */
+				if (o_ptr->pval) t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
+			} else if (o_ptr->bpval == o_ptr->number)
 				t = object_desc_str(t, !(mode & 8) ? " (charging)" : "(#)");
  #if 0
 			else if (o_ptr->pval) t = object_desc_str(t, !(mode & 8) ? " (partially charging)" : "(~)");
@@ -7594,10 +7595,12 @@ byte get_spellbook_name_colour(int pval) {
 /* Allow BAGIDENTIFY spell to be used with !X inscription? */
  #define ALLOW_X_BAGID
 #endif
+// TODO: Implement !X for MSTAFF_MDEV_COMBO */
 void apply_XID(int Ind, object_type *o_ptr, int slot) {
 	player_type *p_ptr = Players[Ind];
 	object_type *i_ptr;
 	int index, tc;
+	int tv, sv; // MSTAFF_MDEV_COMBO ... too many #if clauses :-s
 	bool ID_spell1_found = FALSE, ID_spell1a_found = FALSE, ID_spell1b_found = FALSE, ID_spell2_found = FALSE, ID_spell3_found = FALSE, ID_spell4_found = FALSE;
 	byte failure = 0x0;
 #ifdef ENABLE_SUBINVEN
@@ -7644,7 +7647,7 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		return;
 	}
 
-	/* Check activatable items we have equipped */
+	/* Check for specific activatable true artifacts we have equipped */
 	for (index = INVEN_WIELD; index < INVEN_TOTAL; index++) {
 		i_ptr = &(p_ptr->inventory[index]);
 		if (!i_ptr->k_idx) continue;
@@ -7683,7 +7686,11 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 
 #ifdef ENABLE_XID_MDEV
 	/* Check for ID rods/staves */
+ #if defined(MSTAFF_MDEV_COMBO) || defined(WIELD_DEVICES)
+	for (index = 0; index <= INVEN_WIELD; index++) {
+ #else
 	for (index = 0; index < INVEN_PACK; index++) {
+ #endif
  #ifdef ENABLE_SUBINVEN
 		/* Currently operating on subinven instead of backpack? */
 		if (k != -1) {
@@ -7726,18 +7733,42 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		}
  #endif
 
+		/* Item is still charging up? */
+		if (is_empty_magicdevice(i_ptr)) continue;
+
+		if (!can_use(Ind, i_ptr)) continue;
+
+#ifdef MSTAFF_MDEV_COMBO
+		if (i_ptr->tval == TV_MSTAFF) {
+			if (i_ptr->xtra1) {
+				tv = TV_STAFF;
+				sv = i_ptr->xtra1 - 1;
+			} else if (o_ptr->xtra2) {
+				tv = TV_WAND;
+				sv = i_ptr->xtra2 - 1;
+			} else if (o_ptr->xtra3) {
+				tv = TV_ROD;
+				sv = i_ptr->xtra3 - 1;
+			} else {
+				tv = i_ptr->tval;
+				sv = i_ptr->sval;
+			}
+		} else {
+			tv = i_ptr->tval;
+			sv = i_ptr->sval;
+		}
+#endif
+
 		/* ID rod && ID staff (no *perc*) */
-		if (!(i_ptr->tval == TV_ROD && i_ptr->sval == SV_ROD_IDENTIFY &&
+		if (!(tv == TV_ROD && sv == SV_ROD_IDENTIFY &&
  #ifndef NEW_MDEV_STACKING
 		    !i_ptr->pval
  #else
 		    i_ptr->bpval < i_ptr->number
  #endif
-		    ) && !(i_ptr->tval == TV_STAFF && i_ptr->sval == SV_STAFF_IDENTIFY &&
+		    ) && !(tv == TV_STAFF && sv == SV_STAFF_IDENTIFY &&
 		     (i_ptr->pval > 0 || (!object_known_p(Ind, i_ptr) && !(i_ptr->ident & ID_EMPTY)))))
 			continue;
-
-		if (!can_use(Ind, i_ptr)) continue;
 
 		/* Check if the player does want this feature (!X - for now :) ) */
 		if (!(tc = check_guard_inscription(i_ptr->note, 'X'))) continue;
@@ -7757,7 +7788,12 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 		else
  #endif
 		p_ptr->delayed_index = index;
-		p_ptr->delayed_spell = (i_ptr->tval == TV_ROD) ? -3 : -2;
+		p_ptr->delayed_spell = (
+ #ifdef MSTAFF_MDEV_COMBO
+		    /* Note: mstaff-mdevs use delayed_spell -1 for 'activate', not staff/rd codes -2/-3 */
+		    i_ptr->tval == TV_MSTAFF ? -1 :
+ #endif
+		    (i_ptr->tval == TV_ROD ? -3 : -2));
 		p_ptr->current_item = slot;
 
  #ifdef XID_REPEAT
@@ -7941,4 +7977,26 @@ void clear_comboset(object_type *o_ptr) {
 
 	o_ptr->wId = 0; //deprecated, superceded by comboset_lags
 	o_ptr->comboset_flags = 0;
+}
+
+/* Returns FALSE if not a magic device or not empty aka instead ready for use, TRUE otherwise. */
+bool is_empty_magicdevice(object_type *o_ptr) {
+	switch (o_ptr->tval) {
+#ifdef MSTAFF_MDEV_COMBO
+	case TV_MSTAFF:
+		if (o_ptr->xtra1 || o_ptr->xtra2) return(o_ptr->pval == 0);
+		if (o_ptr->xtra3) return(o_ptr->pval != 0);
+		return(FALSE); /* Not a magic device evem */
+#endif
+	case TV_STAFF:
+	case TV_WAND:
+		return(o_ptr->pval == 0);
+	case TV_ROD:
+#ifndef NEW_MDEV_STACKING
+		return(o_ptr->pval != 0);
+#else
+		return(!o_ptr->number ? o_ptr->pval != 0 : (o_ptr->bpval == o_ptr->number ? TRUE : FALSE)); /* !number: special case 'no more rods...' */
+#endif
+	}
+	return(FALSE); /* Not a magic device even */
 }
