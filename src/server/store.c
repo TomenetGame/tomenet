@@ -3883,7 +3883,9 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 
 	/* always 1% chance to fail, so that ppl won't macro it */
 	/* 1% pfft. 5% and rising...
-	   (experimental, 2025) Reduced it to 3% for supplying potion-heavy characters better */
+	   Experimental, 2025:
+	    Changed it to 1/30 for supplying potion-heavy characters better.
+	    It seems the best value may probably be 1/25...1/30. */
 	if (rand_int(chance) < 10 && !rand_int(30)) {
 		if (p_ptr->store_num > -2) { /* Never become aware of player store items */
 			/* Hack -- buying an item makes you aware of it */
