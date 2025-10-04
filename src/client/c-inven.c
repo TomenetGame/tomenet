@@ -394,7 +394,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 	int start, stop, step;
 	bool inven_first = (mode & INVEN_FIRST) != 0;
 #ifdef SMART_SWAP
-	int i_found = -1, tval, sval;
+	int i_found = -1, tval = -1, sval = -1;
 #endif
 
 	/* neither inventory nor equipment is allowed to be searched? */
@@ -422,6 +422,8 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 			i = j;
 		else /* Translate, so equip and inven are processed in normal order _each_ */
 			i = INVEN_WIELD + (j > INVEN_WIELD ? INVEN_TOTAL : 0) - j;
+
+		if (!inventory[i].tval) continue;
 
 #ifdef SMART_SWAP
 		if (i_found != -1) {
@@ -457,9 +459,10 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 		/* Also scan all items inside sub-bags */
 		if (inventory[i].tval == TV_SUBINVEN)
 			for (si = 0; si < inventory[i].bpval; si++) {
+				if (!subinventory[i][si].tval) break;
 				if (get_tag_aux((i + 1) * SUBINVEN_INVEN_MUL + si, cp, tag, mode)) return(TRUE);
 				/* (Note: Items in subinven cannot be smart-swapped, so there is no check here regarding that, unlike above for normal inventory.) */
-		}
+			}
 #endif
 	}
 
@@ -500,40 +503,41 @@ bool get_item_hook_find_obj(int *item, int mode) {
 	if (!get_string(get_item_hook_find_obj_what, buf, 79)) return(FALSE);
 
 #ifdef ENABLE_SUBINVEN
-    if (using_subinven != -1) {
-	for (j = 0; j < using_subinven_size; j++) {
-		i = j; /* Identity translation (too lazy to change copy-pasted code to remove this =p WOW!) */
+	if (using_subinven != -1) {
+		for (j = 0; j < using_subinven_size; j++) {
+			i = j; /* Identity translation (too lazy to change copy-pasted code to remove this =p WOW!) */
 
-		o_ptr = &subinventory[using_subinven][i];
-		if (!item_tester_okay(o_ptr)) continue;
-
+			o_ptr = &subinventory[using_subinven][i];
+			if (o_ptr->tval) break;
+			if (!item_tester_okay(o_ptr)) continue;
  #if 0
-		if (my_strcasestr(subinventory_name[using_subinven][i], buf)) {
+			if (!my_strcasestr(subinventory_name[using_subinven][i], buf)) continue;
  #else
-		strcpy(buf1, subinventory_name[using_subinven][i]);
-		strcpy(buf2, buf);
-		ptr = buf1;
-		while (*ptr) {
-			/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
-			   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-			if (*ptr == '@') {
+			strcpy(buf1, subinventory_name[using_subinven][i]);
+			strcpy(buf2, buf);
+			ptr = buf1;
+			while (*ptr) {
+				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+				if (*ptr == '@') {
+					ptr++;
+					if (!*ptr) break;
+				} else *ptr = tolower(*ptr);
 				ptr++;
-				if (!*ptr) break;
-			} else *ptr = tolower(*ptr);
-			ptr++;
-		}
-		ptr = buf2;
-		while (*ptr) {
-			/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
-			   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-			if (*ptr == '@') {
+			}
+			ptr = buf2;
+			while (*ptr) {
+				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+				if (*ptr == '@') {
+					ptr++;
+					if (!*ptr) break;
+				} else *ptr = tolower(*ptr);
 				ptr++;
-				if (!*ptr) break;
-			} else *ptr = tolower(*ptr);
-			ptr++;
-		}
-		if (strstr(buf1, buf2)) {
+			}
+			if (!strstr(buf1, buf2)) continue;
  #endif
+
 			if (charged && (
 			    strstr(buf1, "(charging)") || strstr(buf1, "(#)") || /* rods (and other devices, in theory) */
 			    //(partially charging) || strstr(buf1, "(~)")
@@ -545,7 +549,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 
 				if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
 				for (k = 0; k <= using_subinven_size; k++) {
+					if (!subinventory[using_subinven][k].tval) continue;
 					if (k == i) continue;
+
 					strcpy(buf3, subinventory_name[using_subinven][k]);
 					ptr = buf3;
 					while (*ptr) {
@@ -574,49 +580,50 @@ bool get_item_hook_find_obj(int *item, int mode) {
 			*item = i;
 			return(TRUE);
 		}
-	}
-	return(FALSE);
-    } else if (subinven) {
-	/* Scan all subinvens for item name match */
-	int l;
-	object_type *o_ptr;
+		return(FALSE);
+	} else if (subinven) {
+		/* Scan all subinvens for item name match */
+		int l;
+		object_type *o_ptr;
 
-	/* Exception: If !inven_first, we need to scan equip, then subinvens, then normal inven.
-	   This is important for magic devices that can be equipped (WIELD_DEVICES). */
-	if (!inven_first) {
-		/* Scan the equipment now, before subinventories */
-		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
-			o_ptr = &inventory[i];
-			if (!item_tester_okay(o_ptr)) continue;
+		/* Exception: If !inven_first, we need to scan equip, then subinvens, then normal inven.
+		   This is important for magic devices that can be equipped (WIELD_DEVICES). */
+		if (!inven_first) {
+			/* Scan the equipment now, before subinventories */
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+				if (!inventory[i].tval) continue;
 
+				o_ptr = &inventory[i];
+				if (!item_tester_okay(o_ptr)) continue;
 #if 0
-			if (my_strcasestr(inventory_name[i], buf)) {
+				if (!my_strcasestr(inventory_name[i], buf)) continue;
 #else
-			strcpy(buf1, inventory_name[i]);
-			strcpy(buf2, buf);
-			ptr = buf1;
-			while (*ptr) {
-				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
-				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-				if (*ptr == '@') {
+				strcpy(buf1, inventory_name[i]);
+				strcpy(buf2, buf);
+				ptr = buf1;
+				while (*ptr) {
+					/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+					   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+					if (*ptr == '@') {
+						ptr++;
+						if (!*ptr) break;
+					} else *ptr = tolower(*ptr);
 					ptr++;
-					if (!*ptr) break;
-				} else *ptr = tolower(*ptr);
-				ptr++;
-			}
-			ptr = buf2;
-			while (*ptr) {
-				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
-				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-				if (*ptr == '@') {
+				}
+				ptr = buf2;
+				while (*ptr) {
+					/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+					   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+					if (*ptr == '@') {
+						ptr++;
+						if (!*ptr) break;
+					} else *ptr = tolower(*ptr);
 					ptr++;
-					if (!*ptr) break;
-				} else *ptr = tolower(*ptr);
-				ptr++;
-			}
+				}
 //printf("comparing '%s','%s'\n", buf1, buf2);
-			if (strstr(buf1, buf2)) {
+				if (!strstr(buf1, buf2)) continue;
 #endif
+
 				if (charged && (
 				    strstr(buf1, "(charging)") || strstr(buf1, "(#)") || /* rods (and other devices, in theory) */
 				    //(partially charging) || strstr(buf1, "(~)")
@@ -628,10 +635,13 @@ bool get_item_hook_find_obj(int *item, int mode) {
 
 					if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
 					for (k = 0; k < INVEN_PACK; k++) {
+						if (!inventory[k].tval) continue;
 						if (k == i) continue;
 
 						if (inventory[k].tval == TV_SUBINVEN) {
 							for (j = 0; j < inventory[k].bpval; j++) {
+								if (!subinventory[k][j].tval) break;
+
 								strcpy(buf3, subinventory_name[k][j]);
 								ptr = buf3;
 								while (*ptr) {
@@ -653,12 +663,14 @@ bool get_item_hook_find_obj(int *item, int mode) {
 								if (//subinventory[k][j].tval == inventory[i].tval && /* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
 								    strstr(buf3, buf2)) {
 									i = (k + 1) * SUBINVEN_INVEN_MUL + j;
-									break;
+									//use this item!
+									*item = i;
+									return(TRUE);
 								}
 							}
-							if (j == inventory[k].bpval) continue;
-							k = INVEN_PACK - 1; //hax (to leave the outer loop too, and use this item) */
-							break;
+							/* Proceed to next inventory slot, we don't want to scan this slot any further as it was a subinven,
+							   so only its contents were of interest, not the item itself. */
+							continue;
 						}
 
 						strcpy(buf3, inventory_name[k]);
@@ -685,57 +697,61 @@ bool get_item_hook_find_obj(int *item, int mode) {
 							break;
 						}
 					}
+					/* While under 'charged' restriction, we didn't find an item in inventory matching our equipped one?
+					   Continue scanning the next equipment item then. */
 					if (k == INVEN_PACK) continue;
 				}
+				/* use this item */
 				*item = i;
 				return(TRUE);
 			}
+
+			/* Later on, scan only the normal inven, not the equipment again */
+			inven_first = TRUE;
+			start = 0;
+			stop = INVEN_WIELD;
+			step = 1;
 		}
 
-		/* Later on, scan only the normal inven, not the equipment again */
-		inven_first = TRUE;
-		start = 0;
-		stop = INVEN_WIELD;
-		step = 1;
-	}
+		for (l = 0; l < INVEN_PACK; l++) {
+			if (!inventory[l].tval) continue;
+			/* Assume that subinvens are always at the beginning of the inventory! */
+			if (inventory[l].tval != TV_SUBINVEN) break;
 
-	for (l = 0; l < INVEN_PACK; l++) {
-		/* Assume that subinvens are always at the beginning of the inventory! */
-		if (inventory[l].tval != TV_SUBINVEN) break;
+			for (j = 0; j < inventory[l].bpval; j++) {
+				i = j; /* Identity translation - laziness */
 
-		for (j = 0; j < inventory[l].bpval; j++) {
-			i = j; /* Identity translation - laziness */
-
-			o_ptr = &subinventory[l][i];
-			if (!item_tester_okay(o_ptr)) continue;
-
+				o_ptr = &subinventory[l][i];
+				if (!o_ptr->tval) break;
+				if (!item_tester_okay(o_ptr)) continue;
  #if 0
-			if (my_strcasestr(subinventory_name[l][i], buf)) {
+				if (!my_strcasestr(subinventory_name[l][i], buf)) continue;
  #else
-			strcpy(buf1, subinventory_name[l][i]);
-			strcpy(buf2, buf);
-			ptr = buf1;
-			while (*ptr) {
-				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
-				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-				if (*ptr == '@') {
+				strcpy(buf1, subinventory_name[l][i]);
+				strcpy(buf2, buf);
+				ptr = buf1;
+				while (*ptr) {
+					/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+					   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+					if (*ptr == '@') {
+						ptr++;
+						if (!*ptr) break;
+					} else *ptr = tolower(*ptr);
 					ptr++;
-					if (!*ptr) break;
-				} else *ptr = tolower(*ptr);
-				ptr++;
-			}
-			ptr = buf2;
-			while (*ptr) {
-				/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
-				   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-				if (*ptr == '@') {
+				}
+				ptr = buf2;
+				while (*ptr) {
+					/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+					   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+					if (*ptr == '@') {
+						ptr++;
+						if (!*ptr) break;
+					} else *ptr = tolower(*ptr);
 					ptr++;
-					if (!*ptr) break;
-				} else *ptr = tolower(*ptr);
-				ptr++;
-			}
-			if (strstr(buf1, buf2)) {
+				}
+				if (!strstr(buf1, buf2)) continue;
  #endif
+
 				if (charged && (
 				    strstr(buf1, "(charging)") || strstr(buf1, "(#)") || /* rods (and other devices, in theory) */
 				    //(partially charging) || strstr(buf1, "(~)")
@@ -750,7 +766,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 					/* WIELD_DEVICES : Check equip first! */
 					//if (stop != INVEN_WIELD) /* no need, as we just already processed equipment? */
 					for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
+						if (!inventory[k].tval) continue;
 						if (k == i) continue;
+
 						strcpy(buf3, inventory_name[k]);
 						ptr = buf3;
 						while (*ptr) {
@@ -779,7 +797,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 					/* Check the current subinventory */
 					if (ic == -1)
 					for (k = 0; k < inventory[l].bpval; k++) {
+						if (!subinventory[l][k].tval) break;
 						if (k == i) continue;
+
 						strcpy(buf3, subinventory_name[l][k]);
 						ptr = buf3;
 						while (*ptr) {
@@ -808,7 +828,9 @@ bool get_item_hook_find_obj(int *item, int mode) {
 					/* Check normal inventory too */
 					if (ic == -1)
 					for (k = 0; k < INVEN_PACK; k++) {
+						if (!subinventory[l][k].tval) break;
 						if (k == i) continue;
+
 						strcpy(buf3, subinventory_name[l][k]);
 						ptr = buf3;
 						while (*ptr) {
@@ -840,9 +862,8 @@ bool get_item_hook_find_obj(int *item, int mode) {
 				return(TRUE);
 			}
 		}
+		/* Fall through and scan inventory normally, after we didn't find anything in subinvens. */
 	}
-	/* Fall through and scan inventory normally, after we didn't find anything in subinvens. */
-    }
 #endif
 //c_msg_format("start %d, stop %d, step %d", start, stop, step);
 	for (j = start; j != stop; j += step) {
@@ -853,6 +874,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 			i = INVEN_WIELD + (j > INVEN_WIELD ? INVEN_TOTAL : 0) - j;
 
 		o_ptr = &inventory[i];
+		if (!o_ptr->tval) continue;
 		if (!item_tester_okay(o_ptr)) continue;
 
 #ifdef SMART_SWAP
@@ -866,7 +888,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 #endif
 
 #if 0
-		if (my_strcasestr(inventory_name[i], buf)) {
+		if (!my_strcasestr(inventory_name[i], buf)) continue;
 #else
 		strcpy(buf1, inventory_name[i]);
 		strcpy(buf2, buf);
@@ -891,135 +913,144 @@ bool get_item_hook_find_obj(int *item, int mode) {
 			ptr++;
 		}
 //c_msg_format("comparing '%s','%s'\n", buf1, buf2);
-		if (strstr(buf1, buf2)) {
+		if (!strstr(buf1, buf2)) continue;
 #endif
+
 #ifdef SMART_SWAP /* not really cool, with the ' of ' hack.. problem was eg 'ring' vs 'rings' */
-			if (chk_multi && i < INVEN_PACK) {
-				/* Check for same item in the equipment, if found, search inventory for a non-same alternative */
-				char *buf1p, *buf3p;
-				int k;
+		if (chk_multi && i < INVEN_PACK) {
+			/* Check for same item in the equipment, if found, search inventory for a non-same alternative */
+			char *buf1p, *buf3p;
+			int k;
 
-				tval = inventory[i].tval;
-				sval = inventory[i].sval;
-				pval = inventory[i].pval; //basically only for spellbooks
+			tval = inventory[i].tval;
+			sval = inventory[i].sval;
+			pval = inventory[i].pval; //basically only for spellbooks
 
-				/* Compare tval and sval directly, assuming they are available - true for non-flavour items */
-				if (sval != 255 || tval == TV_BOOK) {
-					buf1p = buf1;
-					method = 1; /* compare tval+sval (non-flavour items, or known flavour items (hahaa!)) */
+			/* Compare tval and sval directly, assuming they are available - true for non-flavour items */
+			if (sval != 255 || tval == TV_BOOK) {
+				buf1p = buf1;
+				method = 1; /* compare tval+sval (non-flavour items, or known flavour items (hahaa!)) */
+			}
+			/* Compare item names, assuming flavoured item*/
+			else {
+				buf1p = strstr(buf1, " of ");
+				if (!buf1p) method = 3; /* aka auto-accept anything -_- */
+				else method = 2; /* compare rest of the item name (unknown flavoured items) */
+			}
+
+			for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
+				if (!inventory[k].tval) continue;
+
+				strcpy(buf3, inventory_name[k]);
+				ptr = buf3;
+				while (*ptr) {
+					/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+					   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+					if (*ptr == '@') {
+						ptr++;
+					if (!*ptr) break;
+					} else *ptr = tolower(*ptr);
+					ptr++;
 				}
+ #if 0 /* old, unclean (and 'buggy' for items of same tval+sval but with different pval, yet we certainly don't want to treat them as 'different') */
+				/* Compare tval and sval directly, assuming they are available - true for non-flavour items */
+				if (invenory[k].sval != 255 || inventory[k]tval == TV_BOOK)
+					buf3p = buf3;
 				/* Compare item names, assuming flavoured item*/
 				else {
-					buf1p = strstr(buf1, " of ");
-					if (!buf1p) method = 3; /* aka auto-accept anything -_- */
-					else method = 2; /* compare rest of the item name (unknown flavoured items) */
+					buf3p = strstr(buf1, " of ");
+					if (!buf3p) buf3p = buf3;
 				}
-
-				for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
-					strcpy(buf3, inventory_name[k]);
-					ptr = buf3;
-					while (*ptr) {
-						/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
-						   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-						if (*ptr == '@') {
-							ptr++;
-							if (!*ptr) break;
-						} else *ptr = tolower(*ptr);
-						ptr++;
-					}
- #if 0 /* old, unclean (and 'buggy' for items of same tval+sval but with different pval, yet we certainly don't want to treat them as 'different') */
-					/* Actually we should only test for equipment slots that fulfill wield_slot() condition
-					   for the inventory item, but since we don't have this function client-side we just test all.. */
-					if (strstr(buf3, buf2) && !strcmp(buf1p, buf3p)) {
+				/* Actually we should only test for equipment slots that fulfill wield_slot() condition
+				   for the inventory item, but since we don't have this function client-side we just test all.. */
+				if (!strstr(buf3, buf2) && !strcmp(buf1p, buf3p)) continue;
  #else /* quick, rough fix, copy-pasted from new get_tag_aux(). Todo: clean this mess up in a similar fashion to get_tag()+get_tag_aux() */
-					if (!inventory[k].tval) continue;
+				switch (method) {
+				case 1:
+					/* Compare tval and sval directly, assuming they are available - true for non-flavour items.
+					   Almost no need to check bpval or pval, because switching items in such a manner doesn't make much sense,
+					   not even for polymorph rings, EXCEPT for spell books! */
+					if (inventory[k].tval != tval || inventory[k].sval != sval || (inventory[k].tval == TV_BOOK && inventory[k].sval == SV_SPELLBOOK && inventory[k].pval != pval)
+					    //only for books (as we might stack multiple of the same type), rings (as only these and weapons have two equip slots - and for weapons we might want this (eg 2x dagger vs 1x 2hander))!
+					    || (inventory[k].tval != TV_RING && inventory[k].tval != TV_BOOK))
+						continue;
+					break;
+				case 2:
+					/* Compare item names, assuming flavoured item*/
+					buf3p = strstr(buf3, " of ");
 
-					switch (method) {
-					case 1:
-						/* Compare tval and sval directly, assuming they are available - true for non-flavour items.
-						   Almost no need to check bpval or pval, because switching items in such a manner doesn't make much sense,
-						   not even for polymorph rings, EXCEPT for spell books! */
-						if (inventory[k].tval != tval || inventory[k].sval != sval || (inventory[k].tval == TV_BOOK && inventory[k].sval == SV_SPELLBOOK && inventory[k].pval != pval)
-						    //only for books (as we might stack multiple of the same type), rings (as only these and weapons have two equip slots - and for weapons we might want this (eg 2x dagger vs 1x 2hander))!
-						    || (inventory[k].tval != TV_RING && inventory[k].tval != TV_BOOK))
-							continue;
-						break;
-					case 2:
-						/* Compare item names, assuming flavoured item*/
-						buf3p = strstr(buf3, " of ");
+					/* paranoia or very long item name that got shortened, omitting the 'of', for some reason by object_desc() perhaps -
+					   anyway, we accept the item for now, might need changing -_- */
+					if (!buf3p) break;
 
-						/* paranoia or very long item name that got shortened, omitting the 'of', for some reason by object_desc() perhaps -
-						   anyway, we accept the item for now, might need changing -_- */
-						if (!buf3p) break;
-
-						/* If name is equal -> 'Success' - same item exists in equipment as our original inventory item :/.
-						    So, postpone our original item for now and continue searching the equipment for a different one instead. */
-						if (strcmp(buf1p, buf3p)) continue;
-						break;
-					case 3: /* Badly processable item name - always accept -_- */
-						break;
-					}
-
-					/* Final check: It must have a matching tag though, of course */
-					if (strstr(buf3, buf2)) {
- #endif
-						/* remember this item to use it if we don't find a different one.. */
-						i_found = i;
-
-						/* Only search the inventory this time though -- assume non inven_first aka reversed traversal direction >_> */
-						if (stop > INVEN_PACK) stop = INVEN_PACK;
-						if (j >= stop) j = stop - 1;
-						/* Do not AGAIN replace the alternative item we might find */
-						mode &= ~CHECK_MULTI;
-
-						break;
-					}
+					/* If name is equal -> 'Success' - same item exists in equipment as our original inventory item :/.
+					    So, postpone our original item for now and continue searching the equipment for a different one instead. */
+					if (strcmp(buf1p, buf3p)) continue;
+					break;
+				case 3: /* Badly processable item name - always accept -_- */
+					break;
 				}
-				if (k < INVEN_TOTAL && i_found != -1) continue;
+
+				/* Final check: It must have a matching tag though, of course */
+				if (!strstr(buf3, buf2)) continue;
+ #endif
+				/* remember this item to use it if we don't find a different one.. */
+				i_found = i;
+
+				/* Only search the inventory this time though -- assume non inven_first aka reversed traversal direction >_> */
+				if (stop > INVEN_PACK) stop = INVEN_PACK;
+				if (j >= stop) j = stop - 1;
+				/* Do not AGAIN replace the alternative item we might find */
+				mode &= ~CHECK_MULTI;
+
+				break;
 			}
+			if (k < INVEN_TOTAL && i_found != -1) continue;
+		}
 #endif
 //c_msg_format("charged = %d, charged_ready = %d", charged, charged_ready);
 //c_msg_format("<%s> charged = %d", buf1, charged);
-			if (charged && (
-			    strstr(buf1, "(charging)") || strstr(buf1, "(#)") || /* rods (and other devices, in theory) */
-			    //(partially charging) || strstr(buf1, "(~)")
-			    strstr(buf1, "(0 charges") || strstr(buf1, "{empty}") /* wands, staves */
-			    )) {
-				/* Especially added for non-stackable rods (Havoc): check for same rod, but not 'charging' */
-				char *buf1p, *buf3p;
-				int k;
+		if (charged && (
+		    strstr(buf1, "(charging)") || strstr(buf1, "(#)") || /* rods (and other devices, in theory) */
+		    //(partially charging) || strstr(buf1, "(~)")
+		    strstr(buf1, "(0 charges") || strstr(buf1, "{empty}") /* wands, staves */
+		    )) {
+			/* Especially added for non-stackable rods (Havoc): check for same rod, but not 'charging' */
+			char *buf1p, *buf3p;
+			int k;
 
-				if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
-				for (k = 0; k < INVEN_PACK; k++) {
-					if (k == i) continue;
-					strcpy(buf3, inventory_name[k]);
-					ptr = buf3;
-					while (*ptr) {
-						/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
-						   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
-						if (*ptr == '@') {
-							ptr++;
-							if (!*ptr) break;
-						} else *ptr = tolower(*ptr);
+			if (!(buf1p = strstr(buf1, " of "))) buf1p = buf1; //skip item's article/amount
+			for (k = 0; k < INVEN_PACK; k++) {
+				if (!inventory[k].tval) continue;
+				if (k == i) continue;
+
+				strcpy(buf3, inventory_name[k]);
+				ptr = buf3;
+				while (*ptr) {
+					/* hack: if search string is actually an inscription (we just test if it starts on '@' char),
+					   do not lower-case the following character! (Because for example @a0 is a different command than @A0) */
+					if (*ptr == '@') {
 						ptr++;
-					}
-					/* Skip fully charging stacks */
-					if (strstr(buf3, "(charging)") || strstr(buf3, "(#)") || /* rods (and other devices, in theory) */
-					    //(partially charging) || strstr(buf3, "(~)")
-					    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
-						continue;
+						if (!*ptr) break;
+					} else *ptr = tolower(*ptr);
+					ptr++;
+				}
+				/* Skip fully charging stacks */
+				if (strstr(buf3, "(charging)") || strstr(buf3, "(#)") || /* rods (and other devices, in theory) */
+				    //(partially charging) || strstr(buf3, "(~)")
+				    strstr(buf3, "(0 charges") || strstr(buf3, "{empty}")) /* wands, staves */
+					continue;
 
-					if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
-					if (//inventory[k].tval == inventory[i].tval && /* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
-					    strstr(buf3, buf2)) {
-						i = k;
-						break;
-					}
+				if (!(buf3p = strstr(buf3, " of "))) buf3p = buf3; //skip item's article/amount
+				if (//inventory[k].tval == inventory[i].tval && /* unnecessary check, but whatever -- no, actually this should even be disabled if we want to use the all-in-one command with two different item types of same tag!*/
+				    strstr(buf3, buf2)) {
+					i = k;
+					break;
 				}
 			}
-			*item = i;
-			return(TRUE);
 		}
+		*item = i;
+		return(TRUE);
 	}
 
 #ifdef SMART_SWAP
@@ -1219,12 +1250,15 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 		/* Also scan all subinventories for at least one valid item */
 		for (k = 0; k < INVEN_PACK; k++) {
+			if (!inventory[k].tval) continue;
 			if (inventory[k].tval != TV_SUBINVEN) continue;
 			/* Check all _specialized_ container types. Chests are not eligible. */
 			if (inventory[k].sval >= SV_SI_CHEST_SMALL_WOODEN && inventory[k].sval <= SV_SI_CHEST_LARGE_STEEL) continue;
 
 			for (j = 0; j < inventory[k].bpval; j++) {
+				if (!subinventory[k][j].tval) break;
 				if (!get_item_okay((k + 1) * SUBINVEN_INVEN_MUL + j)) continue;
+
 				found_subinven = TRUE;
 				autoswitch_subinven = k;
 				break;
