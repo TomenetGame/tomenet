@@ -376,7 +376,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		break;
 	case SV_POTION_CURING:
 		dt = GF_CURING; //GF_OLD_HEAL;
-		dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //damroll(5,10);
+		dam = 0x4 + 0x200 + 0x10 + 0x20 + 0x100; //damroll(5,10);
 		ident = TRUE;
 		break;
 	case SV_POTION_HEALING:
@@ -699,7 +699,7 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			break;
 		case SV_POTION_CURING:
 			dt = GF_CURING; //GF_OLD_HEAL;
-			dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //damroll(5,10);
+			dam = 0x4 + 0x200 + 0x10 + 0x20 + 0x100; //damroll(5,10);
 			ident = TRUE;
 			break;
 		case SV_POTION_HEALING:
@@ -11985,11 +11985,11 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		}
 		if (p_ptr->cut && p_ptr->cut < CUT_MORTAL_WOUND) {
 			if (hack_dam & 0x2000) /* CCW */
-				(void)set_cut(Ind, p_ptr->cut - 250, 0, FALSE);
+				(void)set_cut(Ind, HEAL_CUT(p_ptr, 100), 0, FALSE);
 			else if (hack_dam & 0x1000) /* CSW */
-				(void)set_cut(Ind, p_ptr->cut - 50, 0, FALSE);
+				(void)set_cut(Ind, HEAL_CUT(p_ptr, 50), 0, FALSE);
 			else if (hack_dam & 0x800) { /* CLW */
-				(void)set_cut(Ind, p_ptr->cut - 20, 0, FALSE);
+				(void)set_cut(Ind, HEAL_CUT(p_ptr, 20), 0, FALSE);
 			}
 		}
 
@@ -12191,8 +12191,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-	case GF_CURING:
-	case GF_CURE_PLAYER:
+	case GF_CURING: /* <- can also affect monsters */
+	case GF_CURE_PLAYER: /* <- only affects players */
 		if (dam & 0x1) { /* Slow Poison */
 			if (p_ptr->poisoned && !p_ptr->slow_poison) {
 				p_ptr->slow_poison = 1;
@@ -12207,7 +12207,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			(void)set_diseased(Ind, 0, 0); //mh
 		}
 		if (dam & 0x8) /* Close cuts */
-			(void)set_cut(Ind, -1, 0, FALSE);
+			(void)set_cut(Ind, -10000, 0, FALSE);
 		if (dam & 0x10) { /* Remove conf/blind/stun */
 			(void)set_confused(Ind, 0);
 			(void)set_blind(Ind, 0);
@@ -12225,6 +12225,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (dam & 0x80) /* Restore exp */
 			(void)restore_level(Ind);
 		if (dam & 0x100) (void)set_stun(Ind, 0);
+		if (dam & 0x200) /* Close cuts I */
+			(void)set_cut(Ind, p_ptr->cut - 100, 0, FALSE);
+		if (dam & 0x400) /* Close cuts II */
+			(void)set_cut(Ind, p_ptr->cut - 200, 0, FALSE);
+		if (dam & 0x800) /* Close cuts III */
+			(void)set_cut(Ind, p_ptr->cut - 300, 0, FALSE);
 		dam = 0;
 		break;
 

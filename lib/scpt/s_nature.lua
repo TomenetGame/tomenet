@@ -127,11 +127,11 @@ RECOVERY_I = add_spell	{
 	["fail"] = 	-5,
 	["spell"] = 	function()
 			set_poisoned(Ind, 0, 0)
-			set_cut(Ind, 0, 0, FALSE)
+			set_cut(Ind, player.cut - 100, 0, FALSE)
 			set_confused(Ind, 0)
 			set_blind(Ind, 0)
 			set_stun(Ind, 0)
-			fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256, 2, "")
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 512 + 16 + 256, 2, "")
 	end,
 	["info"] = 	function()
 			return ""
@@ -152,7 +152,7 @@ RECOVERY_II = add_spell	{
 	["spell"] = 	function()
 			set_poisoned(Ind, 0, 0)
 			set_diseased(Ind, 0, 0)
-			set_cut(Ind, 0, 0, FALSE)
+			set_cut(Ind, player.cut - 300, 0, FALSE)
 			set_confused(Ind, 0)
 			set_blind(Ind, 0)
 			set_stun(Ind, 0)
@@ -163,7 +163,7 @@ RECOVERY_II = add_spell	{
 			do_res_stat(Ind, A_INT)
 			do_res_stat(Ind, A_CHR)
 			restore_level(Ind)
-			fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 8 + 16 + 256 + 64 + 128, 2, "")
+			fire_ball(Ind, GF_CURE_PLAYER, 0, 4 + 2048 + 16 + 256 + 64 + 128, 2, "")
 	end,
 	["info"] = 	function()
 			return ""

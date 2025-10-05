@@ -4455,7 +4455,7 @@ static bool mon_hit_trap_aux_rod(int who, int m_idx, object_type *o_ptr) {
 		break;
 	case SV_ROD_CURING:
 		typ = GF_CURING; //GF_OLD_HEAL;
-		dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //damroll(3, 4); /* and heal conf? */
+		dam = 0x4 + 0x200 + 0x10 + 0x20 + 0x100; //damroll(3, 4); /* and heal conf? */
 		fixed = TRUE;
 		break;
 	case SV_ROD_HEALING:
@@ -4691,7 +4691,7 @@ static bool mon_hit_trap_aux_staff(int who, int m_idx, object_type *o_ptr) {
 		break;
 	case SV_STAFF_CURING:
 		typ = GF_CURING; //GF_OLD_HEAL;
-		dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //randint(4); /* hack */
+		dam = 0x4 + 0x200 + 0x10 + 0x20 + 0x100; //randint(4); /* hack */
 		fixed = TRUE;
 		break;
 	case SV_STAFF_HEALING:
@@ -5482,7 +5482,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_POTION_CURING:
 			typ = GF_CURING; //GF_OLD_HEAL;
-			dam = 0x4 + 0x8 + 0x10 + 0x20 + 0x100; //300;
+			dam = 0x4 + 0x200 + 0x10 + 0x20 + 0x100; //300;
 			fixed = TRUE;
 			rad = 3;
 			break;

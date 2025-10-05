@@ -15355,6 +15355,21 @@ Grinding Tool       Used by demolitionists (see "Digging" skill in (7.2)) to
                     grind items containing wood or metal, which they don't have
                     any other use for, to wood chips or reactive metal powder.
 
+Bandage             Stops some bleeding of open wounds, reducing the wound
+                    severeness. Only one bandage can be applied on a character
+                    at a time.
+                    Bandages can be applied to yourself (direction '5') or to
+                    another player standing next to you. To apply the bandage
+                    correctly, a basic amount of dexterity and intelligence is
+                    required.
+                    Bandaged wounds also heal up faster and are more affected
+                    by cure-wounds or healing effects than open wounds.
+                    Bandages can be purchased in the temple or general store or
+                    can be made ad hoc via /tear or /rip command from cloth-
+                    based items you no longer need (they get destroyed).
+                    It is advisable to stay out of combat until the wound has
+                    fully healed so as not to rip your bandage accidentally.
+
 
 (5.9a) Activatable items
 ------------------------

@@ -5207,7 +5207,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/*** Damage over Time ***/
 #define POISON_DIV 30
-#define CUT_DIV 75
+#define CUT_DIV 200
 #define CUT_HEAL_SPEED 50 /* [1..100] Speed in % at which cuts heal, skipping a heal-turn at (100-this)% probability. */
 
 
@@ -5247,11 +5247,11 @@ static bool process_player_end_aux(int Ind) {
 		if (!k) k = 1;
 
 		if (p_ptr->cut >= CUT_MORTAL_WOUND) i = 7;	/* Mortal wound */
-		if (p_ptr->cut >= CUT_DEEP_GASH) i = 6;		/* Deep gash */
-		if (p_ptr->cut >= CUT_SEVERE_CUT) i = 5;	/* Severe cut */
-		if (p_ptr->cut >= CUT_NASTY_CUT) i = 4;		/* Nasty cut */
-		if (p_ptr->cut >= CUT_BAD_CUT) i = 3;		/* Bad cut */
-		if (p_ptr->cut >= CUT_LIGHT_CUT) i = 2;		/* Light cut */
+		else if (p_ptr->cut >= CUT_DEEP_GASH) i = 6;	/* Deep gash */
+		else if (p_ptr->cut >= CUT_SEVERE_CUT) i = 5;	/* Severe cut */
+		else if (p_ptr->cut >= CUT_NASTY_CUT) i = 4;	/* Nasty cut */
+		else if (p_ptr->cut >= CUT_BAD_CUT) i = 3;	/* Bad cut */
+		else if (p_ptr->cut >= CUT_LIGHT_CUT) i = 2;	/* Light cut */
 		else i = 1; /* CUT_GRAZE:			   Graze */
 
 		/* Take damage */
@@ -5763,7 +5763,9 @@ static bool process_player_end_aux(int Ind) {
 			if (i) msg_format(Ind, "\377gYou are healed for %d points.", i);
 
 			/* For spell: Also heal cuts */
-			if (p_ptr->cut && !p_ptr->tim_regen_cost && magik(CUT_HEAL_SPEED)) {
+			if ((p_ptr->cut || p_ptr->cut_bandaged) && !p_ptr->tim_regen_cost &&
+			    (!p_ptr->cut || magik(CUT_HEAL_SPEED)) /* bandaged wounds heal at max speed! */
+			    ) {
 				int nonlin, healcut; // tim_regen_pow is 134 at 50.000 Nature (0.000 SP), 183 at 50.000 SP.
 
 #if 0
@@ -6319,7 +6321,9 @@ static bool process_player_end_aux(int Ind) {
 	}
 
 	/* Cut - heal over time */
-	if ((p_ptr->cut || p_ptr->cut_bandaged) && magik(CUT_HEAL_SPEED)) {
+	if ((p_ptr->cut || p_ptr->cut_bandaged) &&
+	    (!p_ptr->cut || magik(CUT_HEAL_SPEED)) /* bandaged wounds heal at max speed! */
+	    ) {
 		int adjust = minus;// = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
 		/* Hack -- Truly "mortal" wound */

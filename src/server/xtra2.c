@@ -2916,7 +2916,7 @@ bool set_martyr(int Ind, int v) {
 			msg_print(Ind, "\377vYou feel the heavens grant your their powers.");
 
 			/* Cancel all DoTs initially */
-			set_cut(Ind, -1, 0, FALSE);
+			set_cut(Ind, -10000, 0, FALSE);
 			set_diseased(Ind, 0, 0);
 			set_poisoned(Ind, 0, 0);
 
@@ -3614,17 +3614,28 @@ bool set_stun(int Ind, int v) { /* bad status effect */
 /*
  * Set "p_ptr->cut", notice observable changes
  * Note the special code to only notice "range" changes.
- * If 'v' is '-1' this is the same as '0' but will also heal any bandaged cuts.
+ * If 'v' is '-10000' this is the same as '0' but will also heal any bandaged cuts.
  */
 bool set_cut(int Ind, int v, int attacker, bool quiet) { /* bad status effect */
 	player_type *p_ptr = Players[Ind];
 	int old_aux, new_aux, cut = p_ptr->cut + p_ptr->cut_bandaged;
 	bool notice = FALSE, heal_bandaged = FALSE;
 
-	if (v == -1) {
+	/* Unhack */
+	if (v == -10000) {
 		if (p_ptr->cut_bandaged) {
 			heal_bandaged = TRUE;
 			p_ptr->cut_bandaged = 0;
+		}
+		v = 0;
+	}
+
+	/* Heal wound under the bandage? */
+	if (v < 0) {
+		p_ptr->cut_bandaged += v;
+		if (p_ptr->cut_bandaged <= 0) {
+			p_ptr->cut_bandaged = 0;
+			heal_bandaged = TRUE;
 		}
 		v = 0;
 	}
@@ -9979,7 +9990,7 @@ void player_death(int Ind) {
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
 		if (p_ptr->stun) (void)set_stun(Ind, 0);
-		if (p_ptr->cut) (void)set_cut(Ind, -1, 0, FALSE);
+		if (p_ptr->cut) (void)set_cut(Ind, -10000, 0, FALSE);
 		/* if (p_ptr->food < PY_FOOD_ALERT) */
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
@@ -10135,7 +10146,7 @@ void player_death(int Ind) {
 
 		if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 		if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
-		if (p_ptr->cut) (void)set_cut(Ind, -1, 0, FALSE);
+		if (p_ptr->cut) (void)set_cut(Ind, -10000, 0, FALSE);
 		(void)set_food(Ind, PY_FOOD_FULL - 1);
 
 		if (!sector000downstairs) p_ptr->global_event_temp &= ~PEVF_SAFEDUN_00; /* no longer safe from death */
@@ -10290,7 +10301,7 @@ void player_death(int Ind) {
 			if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 			if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
 			if (p_ptr->stun) (void)set_stun(Ind, 0);
-			if (p_ptr->cut) (void)set_cut(Ind, -1, 0, FALSE);
+			if (p_ptr->cut) (void)set_cut(Ind, -10000, 0, FALSE);
 			(void)set_food(Ind, PY_FOOD_FULL - 1);
 
 			//msg_print(Ind, "The hold of the Black Breath on you is broken!");
@@ -11141,7 +11152,7 @@ void player_death(int Ind) {
 	if (p_ptr->poisoned) (void)set_poisoned(Ind, 0, 0);
 	if (p_ptr->diseased) (void)set_diseased(Ind, 0, 0);
 	if (p_ptr->stun) (void)set_stun(Ind, 0);
-	if (p_ptr->cut) (void)set_cut(Ind, -1, 0, FALSE);
+	if (p_ptr->cut) (void)set_cut(Ind, -10000, 0, FALSE);
 	/* if (p_ptr->food < PY_FOOD_FULL) */
 	(void)set_food(Ind, PY_FOOD_FULL - 1);
 

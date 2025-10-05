@@ -2313,6 +2313,11 @@
 #define CUT_MORTAL_WOUND	800	/* Was 1000 */
 #define CUT_MAX			1001	/* Ie +1 above former 'Mortal Wound' tier */
 
+/* Cut healing via HP-healing effects (instead of using curing-type effects) has less effect on bigger cuts. [ */
+#define HEAL_CUT_FACTOR		50	/* [200 (easygoing) ... 50 (strict)] */
+//todo: implement curing/healing while bandaged to factor in the wound size under the bandage (so atm it is not diminishing the healing power, unlike a 'real' cut would, as we just ignore the cut_bandaged part)
+//#define HEAL_CUT(p_ptr, heal)	((p_ptr->cut + p_ptr->cut_bandaged) - ((heal * HEAL_CUT_FACTOR) / ((p_ptr->cut + p_ptr->cut_bandaged) + HEAL_CUT_FACTOR)) - (p_ptr->cut + p_ptr->cut_bandaged) / 50 - 1)
+#define HEAL_CUT(p_ptr, heal)	(p_ptr->cut - ((heal * HEAL_CUT_FACTOR) / (p_ptr->cut + HEAL_CUT_FACTOR)) - p_ptr->cut / 50 - 1)
 
 /*** Option Definitions ***/
 #define OPT_PAGES	9	/* at least: number of pages of options in = menu */
@@ -5679,8 +5684,8 @@
 #define GF_CUREPOISON_PLAYER	119
 #define GF_SEEINVIS_PLAYER	120
 #define GF_SEEMAP_PLAYER	121
-#define GF_CURECUT_PLAYER	122
-#define GF_CURESTUN_PLAYER	123
+#define GF_CURECUT_PLAYER	122	/* unused */
+#define GF_CURESTUN_PLAYER	123	/* unused */
 #define GF_DETECTCREATURE_PLAYER	124
 #define GF_DETECTDOOR_PLAYER	125
 #define GF_DETECTTRAP_PLAYER	126
