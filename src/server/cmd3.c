@@ -2663,6 +2663,9 @@ bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr in
 void do_cmd_uninscribe(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
+#ifdef POWINS_DYNAMIC
+	char tmp[ONAME_LEN], tmp2[ONAME_LEN], *c;
+#endif
 
 	/* Get the item (in the pack) */
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
@@ -2688,7 +2691,21 @@ void do_cmd_uninscribe(int Ind, int item) {
 	}
 
 	/* Message */
+#ifdef POWINS_DYNAMIC
+	/* Clear power-inscription markers */
+	strcpy(tmp, quark_str(o_ptr->note));
+	while ((c = strstr(tmp, "@&"))) {
+		strcpy(tmp2, c + 2);
+		strcpy(c, tmp2);
+	}
+	while ((c = strstr(tmp, "@^"))) {
+		strcpy(tmp2, c + 2);
+		strcpy(c, tmp2);
+	}
+	msg_format(Ind, "Inscription '%s' removed.", tmp);
+#else
 	msg_format(Ind, "Inscription '%s' removed.", quark_str(o_ptr->note));
+#endif
 
 	/* Remove the incription */
 	o_ptr->note = 0;

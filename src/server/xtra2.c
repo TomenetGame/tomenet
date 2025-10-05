@@ -15345,8 +15345,11 @@ void telekinesis_aux(int Ind, int item) {
 
 			while (*scan != '\0') {
 				if (*scan == '@'
+#ifdef POWINS_DYNAMIC
 				    /* exempt power-inscriptions: */
-				    && *(scan + 1) != '&' && *(scan + 1) != '^') {
+				    && *(scan + 1) != '&' && *(scan + 1) != '^'
+#endif
+				    ) {
 					/* Replace @ with space */
 					*scan = ' ';
 				}
