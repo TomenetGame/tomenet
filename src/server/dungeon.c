@@ -5207,7 +5207,9 @@ static bool process_player_end_aux(int Ind) {
 
 	/*** Damage over Time ***/
 #define POISON_DIV 30
-#define CUT_DIV 200
+#define CUT_DIV 75
+#define CUT_HEAL_SPEED 50 /* [1..100] Speed in % at which cuts heal, skipping a heal-turn at (100-this)% probability. */
+
 
 	/* Take damage from poison */
 	if (p_ptr->poisoned) {
@@ -5227,7 +5229,7 @@ static bool process_player_end_aux(int Ind) {
 			take_hit(Ind, k, "poison", p_ptr->poisoned_attacker);
 		}
 	}
-	/* Suffer from disease */
+	/* Suffer from disease - basically same amount of damage and duration as poison except it cannot be cured as easily */
 	if (p_ptr->diseased) {
 		k = p_ptr->mhp / POISON_DIV;
 		k += (rand_int(POISON_DIV) < p_ptr->mhp % POISON_DIV) ? 1 : 0;
@@ -5756,11 +5758,12 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->tim_regen) {
 		/* Regeneration spell (Nature) and mushroom of fast metabolism */
 		if (p_ptr->tim_regen_pow > 0) {
-			/* Actually 'quiet' and give msg afterwards */
+			/* Actually 'quiet' HP heal, add the actual message afterwards here */
 			i = hp_player(Ind, p_ptr->tim_regen_pow / 10 + (magik((p_ptr->tim_regen_pow % 10) * 10) ? 1 : 0), TRUE, TRUE);
 			if (i) msg_format(Ind, "\377gYou are healed for %d points.", i);
+
 			/* For spell: Also heal cuts */
-			if (!p_ptr->tim_regen_cost && p_ptr->cut) {
+			if (p_ptr->cut && !p_ptr->tim_regen_cost && magik(CUT_HEAL_SPEED)) {
 				int nonlin, healcut; // tim_regen_pow is 134 at 50.000 Nature (0.000 SP), 183 at 50.000 SP.
 
 #if 0
@@ -6315,8 +6318,8 @@ static bool process_player_end_aux(int Ind) {
 		(void)set_stun_raw(Ind, p_ptr->stun - adjust);
 	}
 
-	/* Cut */
-	if (p_ptr->cut || p_ptr->cut_bandaged) {
+	/* Cut - heal over time */
+	if ((p_ptr->cut || p_ptr->cut_bandaged) && magik(CUT_HEAL_SPEED)) {
 		int adjust = minus;// = (adj_con_fix[p_ptr->stat_ind[A_CON]] + minus);
 
 		/* Hack -- Truly "mortal" wound */
@@ -6335,8 +6338,7 @@ static bool process_player_end_aux(int Ind) {
 		else if (adjust >= p_ptr->cut_bandaged) {
 			p_ptr->cut_bandaged = p_ptr->cut_attacker = 0;
 			msg_print(Ind, "\376Your wound seems healed, you remove the bandage.");
-		}
-		else p_ptr->cut_bandaged -= adjust;
+		} else p_ptr->cut_bandaged -= adjust;
 	}
 
 #ifdef IRRITATING_WEATHER

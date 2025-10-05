@@ -842,7 +842,7 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			else if (msg == 1) take_hit(Ind, dam, "a fountain of detonation", 0); //disabled
 			else take_hit(Ind, dam, "detonations", 0);
 			(void)set_stun_raw(Ind, p_ptr->stun + 75);
-			(void)set_cut(Ind, p_ptr->cut + 5000, Ind, FALSE);
+			(void)set_cut(Ind, CUT_MAX, Ind, FALSE);
 			ident = TRUE;
 			break;
 		case SV_POTION_DEATH:
