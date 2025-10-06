@@ -2549,8 +2549,8 @@ static void player_setup(int Ind, bool new) {
 		    !(zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) {
 			/* house here which we are allowed to enter? */
 			if (!wraith_access(Ind)) {
-				teleport_player_force(Ind, 1);
 				s_printf("Login-blink (Out-of-House): %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
+				teleport_player_force(Ind, 1);
 			}
 		}
 		/* In case town layout has changed or something: Ensure we always login on floor (instead of inside perma walls) */
@@ -2568,8 +2568,8 @@ static void player_setup(int Ind, bool new) {
 		}
 	} else if (in_hallsofmandos(wpos) && cave_perma_wall(zcave, p_ptr->py, p_ptr->px) && !p_ptr->admin_dm) {
 		/* Extra for Halls of Mandos: Ensure we always login on floor (instead of inside perma walls) */
-		teleport_player_force(Ind, 1);
 		s_printf("Login-blink (Halls of Mandos): %s at wx %d wy %d wz %d\n", p_ptr->name, wpos->wx, wpos->wy, wpos->wz);
+		teleport_player_force(Ind, 1);
 	}
 	/* Note: Could also use player_can_enter(Ind, zcave[p_ptr->py][p_ptr->px].feat) instead of cave_floor_bold/cave_perma_wall checks. */
 
