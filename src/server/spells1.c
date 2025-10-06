@@ -1148,7 +1148,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 	int org_dis = dis;
 #endif
 	int d, i, min, ox, oy, x = p_ptr->px, y = p_ptr->py;
-	int xx , yy, m_idx, max_dis = 150, tries = 3000; /* (max_dis was 200 at some point) */
+	int xx , yy, m_idx, local_tries, max_dis = 175, tries = 3000; /* (max_dis was 200 at some point, then 150) */
 	worldpos *wpos = &p_ptr->wpos;
 	dun_level *l_ptr;
 
@@ -1225,6 +1225,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 	/* Minimum distance */
 	min = dis / 2;
+	if (!min) min = 1;
 
 #ifdef TELEPORTATION_MIN_LIMIT
 	if (min > TELEPORT_MIN_LIMIT) min = TELEPORT_MIN_LIMIT;
@@ -1235,8 +1236,14 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 		/* Verify max distance */
 		if (dis > max_dis) dis = max_dis;
 
+		/* Otoh hand don't use up many tries for low 'dis',
+		   but otoh do make sure to test out most close grids for very short distances.
+		   Also 'x3' the attempts to make up for the randomness/give the randomness more leeway. - C. Blue */
+		local_tries = (dis * dis) / 50 + (dis < 7 ? (dis + 2) * (dis + 2) : 81) * 3;
+		//s_printf("dis=%d, max=%d, t=%d (lt=%d)\n", dis, max_dis, tries, local_tries);
+
 		/* Try several locations */
-		for (i = 0; i < 500; i++) {
+		for (i = 0; i < local_tries; i++) {
 			/* Pick a (possibly illegal) location */
 			while (--tries) {
 				y = rand_spread(p_ptr->py, dis);
@@ -1244,7 +1251,7 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 
 				d = distance(p_ptr->py, p_ptr->px, y, x);
 				//plog(format("y%d x%d d%d min%d dis%d", y, x, d, min, dis));
-				if ((d >= min) && (d <= dis)) break;
+				if (d >= min && d <= dis) break;
 			}
 			/* Avoid server hang-up on 100%-tree-maps */
 			if (!tries) break;
