@@ -92,9 +92,9 @@ void add_rplayer(struct wpacket *wpk) {
 	}
 
 	switch (wpk->type) {
-	case WP_PLAYER: act = "ADD"; break;
-	case WQ_PLAYER: act = "REM"; break;
-	case WU_PLAYER: act = "UPD"; break;
+	case WP_NPLAYER: act = "ADD"; break;
+	case WP_QPLAYER: act = "REM"; break;
+	case WP_UPLAYER: act = "UPD"; break;
 	default: act = "???"; break;
 	}
 	printf("add_rplayer (%s): server %d, player %s\n", act, wpk->d.play.server, wpk->d.play.name);
