@@ -55,7 +55,7 @@ void send_rplay(struct client *ccl) {
 		spk.d.play.id = c_pl->id;
 		spk.d.play.server = c_pl->server;
 		strncpy(spk.d.play.name, c_pl->name, 30);
-		strncpy(spk.d.play.info, c_pl->info, 30);
+		strncpy(spk.d.play.info, c_pl->info, 40);
 		reply(&spk, ccl);
 		/* Temporary stderr output */
 		if (bpipe) {
@@ -127,10 +127,8 @@ void add_rplayer(struct wpacket *wpk) {
 	else if (wpk->type == WP_QPLAYER && found)
 		remlist(&rpmlist, lp);
 	/* If player is already listed, check if we want to update his info */
-	else if (wpk->type == WP_UPLAYER && found) {
-		n_pl = (struct rplist*)lp->data;
-		strncpy(n_pl->info, wpk->d.play.info, 40);
-	}
+	else if (wpk->type == WP_UPLAYER && found)
+		strncpy(c_pl->info, wpk->d.play.info, 40);
 
 	/* List all players for debugging purpose */
 	lp = rpmlist;

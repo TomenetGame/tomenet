@@ -561,8 +561,16 @@ void add_rplayer(struct wpacket *wpk) {
 	bool done;
 #endif
 
-	if (!wpk->d.play.silent)
-		msg_broadcast_format(0, "\374\377s%s (%d) has %s the game on another server.", wpk->d.play.name, atoi(wpk->d.play.info), (wpk->type == WP_NPLAYER ? "entered" : "left"));
+	if (!wpk->d.play.silent) {
+		switch (wpk->type) {
+		case WP_NPLAYER:
+			msg_broadcast_format(0, "\374\377s%s (%d) has %s the game on another server.", wpk->d.play.name, atoi(wpk->d.play.info), "entered");
+			break;
+		case WP_QPLAYER:
+			msg_broadcast_format(0, "\374\377s%s (%d) has %s the game on another server.", wpk->d.play.name, atoi(wpk->d.play.info), "left");
+			break;
+		}
+	}
 
 	if (wpk->type == WP_NPLAYER && !wpk->d.play.server) return;
 
@@ -590,8 +598,7 @@ void add_rplayer(struct wpacket *wpk) {
 	else if (wpk->type == WP_QPLAYER && found)
 		remlist(&rpmlist, lp);
 	else if (wpk->type == WP_UPLAYER && found) {
-		n_pl = (struct rplist*)lp->data;
-		strncpy(n_pl->info, wpk->d.play.info, 40);
+		strncpy(c_pl->info, wpk->d.play.info, 40);
 		/* Info changes don't affect sorting, which is only done by server name and player name, so we're done */
 		return;
 	}
