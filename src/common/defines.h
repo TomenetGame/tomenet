@@ -10253,6 +10253,6 @@ extern int PlayerUID;
  #ifdef ENABLE_SUBCLASS_TITLE
   #define WORLD_INFO(p_ptr)	(format("%2d %s%s%s%s", (p_ptr)->lev, get_prace2(p_ptr), get_ptitle((p_ptr), FALSE), ((p_ptr)->sclass) ? " " : "", get_ptitle2(p_ptr)))
  #else
-  #define WORLD_INFO(p_ptr)	(format("%2d %s%s", (p_ptr)->lev), get_prace2(p_ptr), get_ptitle((p_ptr), FALSE))
+  #define WORLD_INFO(p_ptr)	(format("%2d %s%s", (p_ptr)->lev, get_prace2(p_ptr), get_ptitle((p_ptr), FALSE)))
  #endif
 #endif
