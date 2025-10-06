@@ -3631,7 +3631,7 @@ bool set_cut(int Ind, int v, int attacker, bool quiet) { /* bad status effect */
 	}
 
 	/* Heal wound under the bandage? */
-	if (v < 0) {
+	if (v < 0 && p_ptr->cut_bandaged) {
 		p_ptr->cut_bandaged += v;
 		if (p_ptr->cut_bandaged <= 0) {
 			p_ptr->cut_bandaged = 0;
