@@ -23,7 +23,7 @@ extern void world_comm(int fd, int arg);
 extern int WorldSocket;
 
 extern void world_msg(char *text);
-extern void world_player(uint32_t id, char *name, uint16_t enter, byte quiet);
+extern void world_player(uint32_t id, const char *name, const char *info, int mode, byte quiet);
 extern void world_chat(uint32_t id, const char *text);
 extern void msg_to_irc(char *text);
 extern int world_remote_players(FILE *fff);

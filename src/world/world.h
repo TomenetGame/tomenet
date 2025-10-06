@@ -27,6 +27,7 @@
 #define WP_SINFO	13	/* server info */
 #define WP_IRCCHAT	14	/* chat message directed to a particular server (irc-relay) */
 #define WP_MSG_TO_IRC	15	/* chat message to IRC channel only (not to other game servers) */
+#define WP_UPLAYER	16	/* player's info got updated (its 'level' part, as race/class is permanent) */
 
 /* World packet flags */
 #define WPF_CHAT	0x0001	/* chat message - C */
@@ -78,10 +79,12 @@ struct list {
 	void *data;		/* pointer to the data structure */
 };
 
+/* 'r'emote 'p'layers list */
 struct rplist {
 	uint32_t id;
 	int16_t server;
 	char name[30];
+	char info[40]; /* Format "<level> <text ie race/class>" */
 };
 
 /* linked list will use less mem */
@@ -110,27 +113,28 @@ struct secure {
    changed when we merge data */
 
 struct player {
-	uint32_t id;	/* UNIQUE player id */
-	uint16_t server;		/* server info 0 means unknown */
+	uint32_t id;		/* UNIQUE player id */
+	uint16_t server;	/* server info 0 means unknown */
 	char name[30];		/* temp. player name */
-	uint8_t silent;	/* Left due to death for instance */
+	char info[40];		/* Format "<level> <text ie race/class>" */
+	uint8_t silent;		/* Left due to death for instance */
 };
 
 struct death {
 	uint32_t id;
-	uint16_t dtype;	/* death type */
+	uint16_t dtype;		/* death type */
 	char name[30];		/* temp. player name */
 	char method[40];	/* death method */
 };
 
 struct chat {
-	uint32_t id;	/* From ID */
+	uint32_t id;		/* From ID */
 	char ctxt[MSG_LEN];
 };
 
 struct pmsg {
-	uint32_t id;	/* From ID */
-	uint16_t sid;	/* To server ID */
+	uint32_t id;		/* From ID */
+	uint16_t sid;		/* To server ID */
 	char player[80];	/* thats what it is in server :( */
 	char victim[80];	/* thats what it is in server :( */
 	char ctxt[MSG_LEN];
@@ -138,7 +142,7 @@ struct pmsg {
 
 struct sinfo {
 	uint16_t sid;
-	uint16_t port;	/* needed for client transfers */
+	uint16_t port;		/* needed for client transfers */
 	char name[30];
 };
 

@@ -304,6 +304,7 @@ void wproto(struct client *ccl) {
 
 		case WP_NPLAYER:
 		case WP_QPLAYER:
+		case WP_UPLAYER:
 			/* STORE players here */
 			if (ccl->authed && (ccl->authed > 0 || secure.play)) {
 				wpk->d.play.server = ccl->authed - 1;

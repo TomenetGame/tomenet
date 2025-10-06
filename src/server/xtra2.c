@@ -5128,6 +5128,10 @@ void check_experience(int Ind) {
 
 		/* Update player level in the database */
 		clockin(Ind, 1);
+
+#ifdef TOMENET_WORLDS
+		world_player(p_ptr->id, p_ptr->name, WORLD_INFO(p_ptr), 2, TRUE); // mode 2 -> send WP_UPLAYER
+#endif
 	}
 
 	/* Update his level in everyone's player-list subwindow */
@@ -10767,7 +10771,7 @@ void player_death(int Ind) {
 		}
 
 #ifdef TOMENET_WORLDS
-		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
+		world_player(p_ptr->id, p_ptr->name, WORLD_INFO(p_ptr), 0, TRUE);
 #endif
 
 #if (MAX_PING_RECVS_LOGGED > 0)
@@ -11089,7 +11093,7 @@ void player_death(int Ind) {
 	/* Handle suicide */
 	if (p_ptr->suicided) {
 #ifdef TOMENET_WORLDS
-		world_player(p_ptr->id, p_ptr->name, FALSE, TRUE);
+		world_player(p_ptr->id, p_ptr->name, WORLD_INFO(p_ptr), 0, TRUE);
 #endif
 
 		/* prevent suicide spam, if set in cfg */

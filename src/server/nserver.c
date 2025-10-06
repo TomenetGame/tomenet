@@ -1555,7 +1555,7 @@ static void Delete_player(int Ind) {
 			else if (p_ptr->iron_winner) title = "Iron Champion ";
 
 #ifdef TOMENET_WORLDS /* idea: maybe use the 'quiet' flag as 'dungeon master' flag instead? */
-			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE); /* last flag is 'quiet' mode -> no public msg */
+			world_player(p_ptr->id, p_ptr->name, WORLD_INFO(p_ptr), 0, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
 
 			for (i = 1; i <= NumPlayers; i++) {
@@ -1575,7 +1575,7 @@ static void Delete_player(int Ind) {
 			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
 #if 0 /* Don't show admins in the list!! Reenable this when 'quiet' flag got reworked into 'dm' flag or sth. */
 #ifdef TOMENET_WORLDS
-			world_player(p_ptr->id, p_ptr->name, FALSE, TRUE); /* last flag is 'quiet' mode -> no public msg */
+			world_player(p_ptr->id, p_ptr->name, WORLD_INFO(p_ptr), 1, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
 #endif
 			for (i = 1; i <= NumPlayers; i++) {
@@ -4015,7 +4015,7 @@ static int Handle_login(int ind) {
 
 #if 0 /* not here, but below instead. Or admins will be shown in the list! */
  #ifdef TOMENET_WORLDS
-	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
+	world_player(p_ptr->id, p_ptr->name, WORLD_INFO(p_ptr), 1, TRUE); /* last flag is 'quiet' mode -> no public msg */
  #endif
 #endif
 
@@ -4074,7 +4074,7 @@ static int Handle_login(int ind) {
 	/* Non-admin character joined -> let everyone know */
 
 #ifdef TOMENET_WORLDS
-	world_player(p_ptr->id, p_ptr->name, TRUE, TRUE); /* last flag is 'quiet' mode -> no public msg */
+	world_player(p_ptr->id, p_ptr->name, WORLD_INFO(p_ptr), 1, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
 
 	/* Tell everyone about our new player */

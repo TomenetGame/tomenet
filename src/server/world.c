@@ -19,8 +19,9 @@
    The IRC-relay must be recent enough to handle the \373 code, otherwise you must comment out this definition: */
 #define USE_IRC_COMMANDREPLY_INDICATOR
 
-/* pfft. i'll use generic lists when i get around to it */
-struct svlist{
+/* pfft. i'll use generic lists when i get around to it.
+  server list: */
+struct svlist {
 	struct svlist *next;
 	uint16_t sid;
 	char name[30];
@@ -91,7 +92,7 @@ void world_update_players() {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (Players[i]->admin_dm) continue;
 
-		world_player(Players[i]->id, Players[i]->name, 1, 0);
+		world_player(Players[i]->id, Players[i]->name, WORLD_INFO(Players[i]), 1, 0);
 	}
 }
 
@@ -242,6 +243,7 @@ void world_comm(int fd, int arg) {
 			break;
 		case WP_NPLAYER:
 		case WP_QPLAYER:
+		case WP_UPLAYER:
 			/* we need to handle a list */
 			/* full death must count! */
 			add_rplayer(wpk);
@@ -499,7 +501,7 @@ int world_remote_players(FILE *fff) {
 		}
 
 		//fprintf(fff, "\377%c  %s\377s on '%s'\n", c_pl->server ? 'w' : 'W', c_pl->name, servername);
-		fprintf(fff, "\377s %s\377%c %s\n", servername, c_pl->server ? 'w' : 'W', c_pl->name);
+		fprintf(fff, "\377s %s\377%c %s Lv.%s\n", servername, c_pl->server ? 'w' : 'W', c_pl->name, c_pl->info);
 		num++;
 		lp = lp->next;
 	}
@@ -545,9 +547,9 @@ void rem_server(int16_t id) {
 
 
 /* This sorting is pointless on the worldd server side, because each game server still receives remote players solo and thereby unsortedly, and has to do sorting by itself.
-   It makes sense though when this code is used by an actual game server, so players received are then locally sorted per server type, which looks better in the @ list. */
+   It makes sense though when this code is used by an actual game server, so players received are then locally sorted per server type, which looks better in the @ list. - C. Blue */
 #define SORT_BY_SERVER
-
+/* This function adds players to a server's list (WP_NPLAYER), removes them again (WP_QPLAYER) or updates their 'info' (WP_UPLAYER). */
 void add_rplayer(struct wpacket *wpk) {
 	struct list *lp;
 	struct rplist *n_pl, *c_pl;
@@ -560,9 +562,10 @@ void add_rplayer(struct wpacket *wpk) {
 #endif
 
 	if (!wpk->d.play.silent)
-		msg_broadcast_format(0, "\374\377s%s has %s the game on another server.", wpk->d.play.name, (wpk->type == WP_NPLAYER ? "entered" : "left"));
+		msg_broadcast_format(0, "\374\377s%s (%d) has %s the game on another server.", wpk->d.play.name, atoi(wpk->d.play.info), (wpk->type == WP_NPLAYER ? "entered" : "left"));
 
 	if (wpk->type == WP_NPLAYER && !wpk->d.play.server) return;
+
 	lp = rpmlist;
 	while (lp) {
 		c_pl = (struct rplist*)lp->data;
@@ -573,6 +576,7 @@ void add_rplayer(struct wpacket *wpk) {
 		}
 		lp = lp->next;
 	}
+
 	if (wpk->type == WP_NPLAYER && !found) {
 		lp = addlist(&rpmlist, sizeof(struct rplist));
 		if (lp) {
@@ -580,10 +584,17 @@ void add_rplayer(struct wpacket *wpk) {
 			n_pl->id = wpk->d.play.id;
 			n_pl->server = wpk->d.play.server;
 			strncpy(n_pl->name, wpk->d.play.name, 30);
+			strncpy(n_pl->info, wpk->d.play.info, 40);
 		}
 	}
 	else if (wpk->type == WP_QPLAYER && found)
 		remlist(&rpmlist, lp);
+	else if (wpk->type == WP_UPLAYER && found) {
+		n_pl = (struct rplist*)lp->data;
+		strncpy(n_pl->info, wpk->d.play.info, 40);
+		/* Info changes don't affect sorting, which is only done by server name and player name, so we're done */
+		return;
+	}
 
 #ifdef SORT_BY_SERVER
 	/* Sort list of players by server */
@@ -727,13 +738,20 @@ void msg_to_irc(char *text) {
 }
 
 /* we can rely on ID alone when we merge data */
-void world_player(uint32_t id, char *name, uint16_t enter, byte quiet) {
+void world_player(uint32_t id, const char *name, const char *info, int mode, byte quiet) {
 	int len;
 
 	if (WorldSocket == -1) return;
-	spk.type = (enter ? WP_NPLAYER : WP_QPLAYER);
+	switch (mode) {
+	case 0: spk.type = WP_QPLAYER; break;
+	case 1: spk.type = WP_NPLAYER; break;
+	case 2: spk.type = WP_QPLAYER; break;
+	}
 	len = sizeof(struct wpacket);
 	strncpy(spk.d.play.name, name, 30);
+	spk.d.play.name[29] = 0;
+	strncpy(spk.d.play.info, info, 40);
+	spk.d.play.info[39] = 0;
 	spk.d.play.id = id;
 	spk.d.play.silent = quiet;
 	send(WorldSocket, &spk, len, 0);
