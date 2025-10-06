@@ -501,7 +501,7 @@ int world_remote_players(FILE *fff) {
 		}
 
 		//fprintf(fff, "\377%c  %s\377s on '%s'\n", c_pl->server ? 'w' : 'W', c_pl->name, servername);
-		fprintf(fff, "\377s %s\377%c %s Lv.%s\n", servername, c_pl->server ? 'w' : 'W', c_pl->name, c_pl->info);
+		fprintf(fff, "\377s %s\377%c %s (Lv.%s)\n", servername, c_pl->server ? 'w' : 'W', c_pl->name, c_pl->info);
 		num++;
 		lp = lp->next;
 	}
