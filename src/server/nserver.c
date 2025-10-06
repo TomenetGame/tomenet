@@ -1575,7 +1575,7 @@ static void Delete_player(int Ind) {
 			if (p_ptr->admin_wiz) title = "Dungeon Wizard ";
 #if 0 /* Don't show admins in the list!! Reenable this when 'quiet' flag got reworked into 'dm' flag or sth. */
 #ifdef TOMENET_WORLDS
-			world_player(p_ptr->id, p_ptr->name, WORLD_INFO(p_ptr), 1, TRUE); /* last flag is 'quiet' mode -> no public msg */
+			world_player(p_ptr->id, p_ptr->name, WORLD_INFO(p_ptr), 0, TRUE); /* last flag is 'quiet' mode -> no public msg */
 #endif
 #endif
 			for (i = 1; i <= NumPlayers; i++) {

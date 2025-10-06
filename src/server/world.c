@@ -745,7 +745,7 @@ void world_player(uint32_t id, const char *name, const char *info, int mode, byt
 	switch (mode) {
 	case 0: spk.type = WP_QPLAYER; break;
 	case 1: spk.type = WP_NPLAYER; break;
-	case 2: spk.type = WP_QPLAYER; break;
+	case 2: spk.type = WP_UPLAYER; break;
 	}
 	len = sizeof(struct wpacket);
 	strncpy(spk.d.play.name, name, 30);
