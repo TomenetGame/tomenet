@@ -5951,7 +5951,7 @@ N:701:& Sprig~ of Athelas
 G:,:g
 I:80:210:0
 W:25:5:2:850
-A:25/20:55/10:85/10
+A:25/16:55/8:85/8
 D:Also known as Asea Aranion and Kingsfoil, heals for 8d8, cures poison,
 D:disease, stun, cuts, confusion, hallucination, and even Black Breath.
 
