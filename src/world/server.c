@@ -98,7 +98,7 @@ void loadservers() {
 				slist[i].rflags |= WPF_CHAT;
 				break;
 			case 'N':
-				slist[i].rflags |= WPF_NPLAYER;
+				slist[i].rflags |= WPF_NPLAYER | WPF_UPLAYER; //note: Listing players implies listing their info, and therefore the info must be kept updated too
 				break;
 			case 'Q':
 				slist[i].rflags |= WPF_QPLAYER;
@@ -142,6 +142,7 @@ void loadservers() {
 			case 'p': /* SERVER_PORTALS */
 				slist[i].rflags |= WPF_PORTAL;
 				break;
+			//hole: WP_UPLAYER has no customizable flag but is implied by 'N' above.
 			}
 		}
 

@@ -27,25 +27,27 @@
 #define WP_SINFO	13	/* server info */
 #define WP_IRCCHAT	14	/* chat message directed to a particular server (irc-relay) */
 #define WP_MSG_TO_IRC	15	/* chat message to IRC channel only (not to other game servers) */
-#define WP_UPLAYER	16	/* player's info got updated (its 'level' part, as race/class is permanent) */
+//hole: flag WPF_PORTAL has no corresponding packet type here
+#define WP_UPLAYER	17	/* player's info got updated (its 'level' part, as race/class is permanent) */
 
 /* World packet flags */
-#define WPF_CHAT	0x0001	/* chat message - C */
-#define WPF_NPLAYER	0x0002	/* player enters - N */
-#define WPF_QPLAYER	0x0004	/* player leaves - Q */
-#define WPF_DEATH	0x0008	/* player death - D */
-#define WPF_LOCK	0x0010
-#define WPF_UNLOCK	0x0020
-#define WPF_MESSAGE	0x0040	/* all critical server messages - M */
-#define WPF_AUTH	0x0080
-#define WPF_SQUIT	0x0100
-#define WPF_RESTART	0x0200
-#define WPF_LACCOUNT	0x0400
-#define WPF_PMSG	0x0800	/* private message - P */
-#define WPF_SINFO	0x1000
-#define WPF_IRCCHAT	0x2000	/* chat message from IRC relay - S */
-//hole
-#define WPF_PORTAL	0x8000	/* SERVER_PORTALS */
+#define WPF_CHAT	0x00000001	/* chat message - C */
+#define WPF_NPLAYER	0x00000002	/* player enters - N */
+#define WPF_QPLAYER	0x00000004	/* player leaves - Q */
+#define WPF_DEATH	0x00000008	/* player death - D */
+#define WPF_LOCK	0x00000010
+#define WPF_UNLOCK	0x00000020
+#define WPF_MESSAGE	0x00000040	/* all critical server messages - M */
+#define WPF_AUTH	0x00000080
+#define WPF_SQUIT	0x00000100
+#define WPF_RESTART	0x00000200
+#define WPF_LACCOUNT	0x00000400
+#define WPF_PMSG	0x00000800	/* private message - P */
+#define WPF_SINFO	0x00001000
+#define WPF_IRCCHAT	0x00002000	/* chat message from IRC relay - S */
+//hole: WP_MSG_TO_IRC has no corresponding transmit-flag here
+#define WPF_PORTAL	0x00008000	/* SERVER_PORTALS */
+#define WPF_UPLAYER	0x00010000
 
 /* World message flags */
 #define WMF_LVLUP	0x01
