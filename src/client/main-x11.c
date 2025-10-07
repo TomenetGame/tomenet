@@ -3910,7 +3910,9 @@ int init_graphics_x11(void) {
 	}
 
 	for (i = 0; i < MAX_SUBFONTS; i++) {
-		//XPutPixel(graphics_image_sub[i], x, y, create_pixel(Metadpy->dpy, data[4 * (x + y * width)], data[4 * (x + y * width) + 1], data[4 * (x + y * width) + 2]));
+		if (graphics_image_sub[i] == None) continue;
+		//...todo...
+		//... XPutPixel(graphics_image_sub[i], x, y, create_pixel(Metadpy->dpy, data[4 * (x + y * width)], data[4 * (x + y * width) + 1], data[4 * (x + y * width) + 2]));
 	}
 
 gfx_skip:
@@ -4187,21 +4189,25 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 			    graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask),
 			    td);
-			for (i = 0; i < MAX_SUBFONTS; i++)
+			for (i = 0; i < MAX_SUBFONTS; i++) {
+				if (graphics_image_sub[i] == None) continue;
 				td->tiles_sub[i] = ResizeImage_2mask(Metadpy->dpy, graphics_image_sub[i],
 				    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 				    graphics_bgmask_sub[i], graphics_fgmask_sub[i], graphics_bg2mask_sub[i], &(td->bgmask_sub[i]), &(td->fgmask_sub[i]), &(td->bg2mask_sub[i]),
 				    td);
+			}
  #else
 			td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
 			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 			    graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask),
 			    td);
-			for (i = 0; i < MAX_SUBFONTS; i++)
+			for (i = 0; i < MAX_SUBFONTS; i++) {
+				if (graphics_image_sub[i] == None) continue;
 				td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i],
 				    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 				    graphics_bgmask_sub[i], graphics_fgmask_sub[i], &(td->bgmask_sub[i]), &(td->fgmask_sub[i]),
 				    td);
+			}
  #endif
 
 			/* Reinitialize preparation pixmap with new size. */
