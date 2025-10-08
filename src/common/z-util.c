@@ -218,6 +218,9 @@ void (*quit_aux)(cptr) = NULL;
 extern bool is_client_side;
 extern bool rl_connection_destructible, rl_connection_destroyed;
 extern byte rl_connection_state;
+#ifdef CLIENT_SIDE
+extern void logprint(const char *out); /* client/c-util.c */
+#endif
 void quit(cptr str) {
 	char buf[1024];
 
