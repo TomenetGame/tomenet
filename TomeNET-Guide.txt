@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. October 2025 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 8. October 2025 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -18979,6 +18979,15 @@ stated.
                                 is too heavy so that you get a 'flexibility'
                                 warning, compare (5.5).
 
+                                A stolen item will be inscribed "stolen", but
+                                that is purely cosmetic and you may uninscribe
+                                it at will.
+                                What does last though is that stolen items will
+                                be set to 100% discounted, so they cannot be
+                                sold to NPC stores again.
+                                They can be sold in player stores though (also
+                                see (4.10a) for info about player stores).
+
                                 Your chance to steal an item from a shop
                                 depends on your stealing skill (by far your
                                 most important aspect), your dexterity, and to
@@ -27491,6 +27500,8 @@ don't waste your artifact creation scroll on it!
 DISCOUNTED ITEMS:
 
 -Items will lose any discount tag when they are artified.
+ (Stolen items are just items that are 100% discounted, so stolen items will
+ revert to full value too.)
 
 
 Also note that randarts cannot get more than two immunities in total.
