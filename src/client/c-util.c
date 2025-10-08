@@ -11611,6 +11611,7 @@ static void do_cmd_options_fonts(void) {
 
 	check_for_playerlist();
 }
+  #ifdef USE_GRAPHICS
 /* These are .bmp files in xtra/graphics, on all systems. - C. Blue
    The global vars are use_graphics (TRUE/FALSE) and graphic_tiles (string of filename, without path, without '.bmp' extension, gets inserted to "graphics-%s.prf").
    Filename convention added: "graphics-<tilesetname>[#<0..9>_<subname>].bmp" */
@@ -11625,9 +11626,9 @@ static void do_cmd_options_tilesets(void) {
 	int filenames_tmp = 0, tilesets = 0;
 	char tmp_name[256], tmp_name2[256], *csub, *csub_end;
 
-  #ifdef WINDOWS
+   #ifdef WINDOWS
 	char *cp, *cpp;
-  #endif
+   #endif
 
 	DIR *dir;
 	struct dirent *ent;
@@ -11714,7 +11715,7 @@ static void do_cmd_options_tilesets(void) {
 	}
 	/* Some post-processing ^^ */
 	for (j = 0; j < tilesets; j++) {
-   #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
+    #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
 		strcpy(tmp_name, tileset_name[j]);
 		//path_build(tileset_name[j], 1024, path, tileset_name[j]);
 		//strcpy(tileset_name[j], ".\\");
@@ -11722,7 +11723,7 @@ static void do_cmd_options_tilesets(void) {
 		strcat(tileset_name[j], path);
 		strcat(tileset_name[j], "\\");
 		strcat(tileset_name[j], tmp_name);
-   #endif
+    #endif
 		/* Find index of currently used tileset */
 		if (strcasecmp(tileset_name[j], graphic_tiles)) continue;
 		cur_set = j;
@@ -11748,11 +11749,11 @@ static void do_cmd_options_tilesets(void) {
 		/* Prompt XXX XXX XXX */
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377y-\377w/\377y+\377w,\377y=\377w switch tileset (requires restart), \377yENTER\377w enter a specific tileset name,");
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377y0\377w...\377y9\377w to enable/disable subset of currently selected tileset, if available,");
-  #ifdef GRAPHICS_BG_MASK
+   #ifdef GRAPHICS_BG_MASK
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377yv\377w cycle graphics mode - requires client restart! \377yESC\377w keep changes and exit.");
-  #else
+   #else
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377yv\377w toggle graphics on/off - requires client restart! \377yESC\377w keep changes and exit.");
-  #endif
+   #endif
 		l++;
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377sTilesets AUTO-ZOOM to font size which you can change in Window Fonts menu (\377yf\377s).");
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377sSo for graphics to look good, you should selected a font size that matches it");
@@ -11763,13 +11764,13 @@ static void do_cmd_options_tilesets(void) {
 		Term_putstr(1, l++, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", tilesets, tilesets == 1 ? "" : "s"));
 
 		//GRAPHICS_BG_MASK @ UG_2MASK:
-  #ifdef GRAPHICS_BG_MASK
+   #ifdef GRAPHICS_BG_MASK
 		Term_putstr(1, l++, -1, TERM_WHITE, format("Graphical tileset mode is %s\377w ('\377yv\377w' %s).",
 		    use_graphics_new == UG_2MASK ? "\377Genabled (dual-mask mode)" : (use_graphics_new ? "\377Genabled (standard)\377-" : "\377sdisabled\377-"),
 		    use_graphics_new == UG_2MASK ? "to disable" : (use_graphics_new ? "to enable 2-mask mode" : "to enable standard graphics mode")));
-  #else
+   #else
 		Term_putstr(1, l++, -1, TERM_WHITE, format("Graphical tilesets are currently %s ('v' to toggle).", use_graphics_new == UG_2MASK ? "\377Genabled (dual)" : (use_graphics_new ? "\377Genabled\377-" : "\377sdisabled\377-")));
-  #endif
+   #endif
 		l++;
 
 		/* Tilesets are atm a global setting, not depending on terminal window */
@@ -11792,7 +11793,7 @@ static void do_cmd_options_tilesets(void) {
 		if (found_subset) Term_putstr(40, l2 - 1 - found_subset, -1, TERM_WHITE, format("Available subsets of the selected set: "));
 		else Term_putstr(40, l2 - 1, -1, TERM_WHITE, format("(No subsets availabley)"));
 
-  #ifdef GFXERR_FALLBACK
+   #ifdef GFXERR_FALLBACK
 		if (use_graphics_err) {
 			Term_putstr(2, l + 0, -1, TERM_WHITE, "\377RClient was unable to startup with graphics and fell back to text mode.");
 			Term_putstr(2, l + 1, -1, TERM_WHITE, "\377RIf you re-enable graphics, ensure tileset is valid and its file name correct!");
@@ -11811,7 +11812,7 @@ static void do_cmd_options_tilesets(void) {
 				Term_putstr(0, l + 4, -1, TERM_RED, line2);
 			}
 		}
-  #endif
+   #endif
 
 		/* Place Cursor */
 		//Term_gotoxy(20, vertikal_offset + y);
@@ -11863,16 +11864,16 @@ static void do_cmd_options_tilesets(void) {
 			/* Hack: Never switch graphics settings, especially UG_2MASK, live,
 			   as it will cause instant packet corruption due to missing server-client synchronisation.
 			   So we just switch the savegame-affecting 'use_graphics_new' instead of actual 'use_graphics'. */
-  #ifdef GRAPHICS_BG_MASK
+   #ifdef GRAPHICS_BG_MASK
 			use_graphics_new = (use_graphics_new + 1) % 3;
 			if (use_graphics_new == UG_2MASK) c_msg_print("\377yGraphical tileset usage \377Genabled (dual)\377-. Requires client restart (use CTRL+Q).");
 			else
-  #else
+   #else
 			use_graphics_new = !use_graphics_new;
-  #endif
+   #endif
 			if (use_graphics_new) {
 				c_msg_print("\377yGraphical tileset usage \377Genabled\377-. Requires client restart (use CTRL+Q).");
-  #if 0 /* not really needed here, if gfx_autooff_fmsw is enabled it will be applied on next login anyway, and the warning about fmsw breaking gfx is good to read so the player knows about it. */
+   #if 0 /* not really needed here, if gfx_autooff_fmsw is enabled it will be applied on next login anyway, and the warning about fmsw breaking gfx is good to read so the player knows about it. */
 				if (c_cfg.gfx_autooff_fmsw) {
 					c_msg_print("Option 'font_map_solid_walls' was auto-disabled as graphics are enabled.");
 					c_cfg.font_map_solid_walls = FALSE;
@@ -11881,7 +11882,7 @@ static void do_cmd_options_tilesets(void) {
 					options_immediate(FALSE);
 					Send_options();
 				}
-  #endif
+   #endif
 			} else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart (use CTRL+Q).");
 			break;
 
@@ -11920,14 +11921,14 @@ static void do_cmd_options_tilesets(void) {
 			if (!tmp_name[0]) break;
 
 			for (j = 0; j < tilesets; j++) {
-  #ifdef WINDOWS
+   #ifdef WINDOWS
 				/* Windows tileset names contain the whole .\lib\xtra\graphics\xxx, crop that */
 				cpp = tileset_name[j];
 				while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
 				sprintf(tmp_name2, "%s", cpp);
-  #else
+   #else
 				sprintf(tmp_name2, "%s", tileset_name[j]);
-  #endif
+   #endif
 				if (strcasecmp(tmp_name2, tmp_name)) continue;
 				cur_set = j;
 				break;
@@ -11952,14 +11953,14 @@ static void do_cmd_options_tilesets(void) {
 				c_message_add(format("-- Graphical tilesets (%d): --", tilesets));
 				tmp_name2[0] = 0;
 				for (j = 0; j < tilesets; j++) {
-  #ifdef WINDOWS
+   #ifdef WINDOWS
 					/* Windows tileset names contain the whole .\lib\xtra\graphics\xxx, crop that */
 					cpp = tileset_name[j];
 					while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
 					sprintf(tmp_name, "%-18s", cpp);
-  #else
+   #else
 					sprintf(tmp_name, "%-18s", tileset_name[j]);
-  #endif
+   #endif
 
 					/* print up to 4 tileset names per line */
 					c++;
@@ -11986,6 +11987,7 @@ static void do_cmd_options_tilesets(void) {
 
 	check_for_playerlist();
 }
+  #endif
  #endif /* WINDOWS || USE_X11 */
 #endif /* ENABLE_SUBWINDOW_MENU */
 
@@ -13277,7 +13279,11 @@ void do_cmd_options(void) {
 		/* Font (and window) settings aren't available in command-line mode */
 		if (strcmp(ANGBAND_SYS, "gcu")) {
  #ifdef ENABLE_SUBWINDOW_MENU
+  #ifdef USE_GRAPHICS
 			Term_putstr(1, l++, -1, TERM_WHITE, "(\377yf\377w/\377yg\377w) Window Fonts and Visibility / Graphical tilesets");
+  #else
+			Term_putstr(1, l++, -1, TERM_WHITE, "(\377yf\377w)   Window Fonts and Visibility");
+  #endif
  #endif
 			/* CHANGE_FONTS_X11 */
 			Term_putstr(1, l++, -1, TERM_WHITE, "(\377yF\377w)   Cycle all font sizes at once (can be tapped multiple times)");
@@ -13584,8 +13590,10 @@ void do_cmd_options(void) {
  #ifdef ENABLE_SUBWINDOW_MENU
 		/* Change fonts separately and manually */
 		else if (k == 'f') do_cmd_options_fonts();
+  #ifdef USE_GRAPHICS
 		/* Enable/disable and select graphical tilesets */
 		else if (k == 'g') do_cmd_options_tilesets();
+  #endif
  #endif
 		/* Cycle all fonts */
 		else if (k == 'F') change_font(-1);

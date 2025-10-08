@@ -239,9 +239,7 @@ struct infofnt {
 };
 
 
-// (prototype)
 static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue);
-
 
 
 
@@ -2161,6 +2159,31 @@ static errr Term_text_x11(int x, int y, int n, byte a, cptr s) {
 	return(0);
 }
 
+/* Salvaged and adapted from http://www.phial.com/angdirs/angband-291/src/maid-x11.c */
+/*
+ * Hack -- Convert an RGB value to an X11 Pixel, or die.
+ *
+ * Note that this function is also used outside USE_GRAPHICS, for CUSTOMIZE_COLOURS_FREELY!
+ */
+static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue) {
+	Colormap cmap = DefaultColormapOfScreen(DefaultScreenOfDisplay(dpy));
+
+	char cname[8];
+
+	XColor xcolour;
+
+	/* Build the color. */
+	xcolour.red = red * 255;
+	xcolour.green = green * 255;
+	xcolour.blue = blue * 255;
+	xcolour.flags = DoRed | DoGreen | DoBlue;
+
+	/* Attempt to Allocate the Parsed color. */
+	if (!(XAllocColor(dpy, cmap, &xcolour)))
+		quit_fmt("Couldn't allocate bitmap color '%s'\n", cname);
+
+	return(xcolour.pixel);
+}
 
 #ifdef USE_GRAPHICS /* huge block */
 
@@ -2711,30 +2734,6 @@ static errr Term_rawpict_x11(int x, int y, int c) {
 
 	/* Success */
 	return(0);
-}
-
-/* Salvaged and adapted from http://www.phial.com/angdirs/angband-291/src/maid-x11.c */
-/*
- * Hack -- Convert an RGB value to an X11 Pixel, or die.
- */
-static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue) {
-	Colormap cmap = DefaultColormapOfScreen(DefaultScreenOfDisplay(dpy));
-
-	char cname[8];
-
-	XColor xcolour;
-
-	/* Build the color. */
-	xcolour.red = red * 255;
-	xcolour.green = green * 255;
-	xcolour.blue = blue * 255;
-	xcolour.flags = DoRed | DoGreen | DoBlue;
-
-	/* Attempt to Allocate the Parsed color. */
-	if (!(XAllocColor(dpy, cmap, &xcolour)))
-		quit_fmt("Couldn't allocate bitmap color '%s'\n", cname);
-
-	return(xcolour.pixel);
 }
 
 /*
@@ -4128,7 +4127,7 @@ void change_font(int s) {
 }
 static void term_force_font(int term_idx, cptr fnt_name) {
 	term_data *td = term_idx_to_term_data(term_idx);
-	int cols, rows, wid_outer, hgt_outer, i;
+	int cols, rows, wid_outer, hgt_outer;
 
 	/* non-visible window has no fnt-> .. */
 	if (!term_get_visibility(term_idx)) return;
@@ -4180,6 +4179,8 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 #ifdef USE_GRAPHICS
 		/* Resize graphic tiles if needed too. */
 		if (use_graphics) {
+			int i;
+
 			/* Free old tiles & masks */
 			free_graphics(td);
 

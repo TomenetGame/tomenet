@@ -1028,7 +1028,9 @@ bool write_mangrc_colourmap(void) {
 
 static void default_set(void) {
 	char *temp;
+#ifdef USE_GRAPHICS
 	int i;
+#endif
 
 #ifdef SET_UID
 	int player_uid;
@@ -1071,7 +1073,9 @@ static void default_set(void) {
 	if (temp) strcpy(real_name, temp);
 #endif
 
+#ifdef USE_GRAPHICS
 	for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = TRUE;
+#endif
 }
 
 int main(int argc, char **argv) {

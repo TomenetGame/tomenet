@@ -492,11 +492,11 @@ HBITMAP g_hbmFgMask = NULL;
 HBITMAP g_hbmBg2Mask = NULL;
  #endif
 
-HBITMAP g_hbmTiles_sub[MAX_SUBFONTS] = { NULL };
-HBITMAP g_hbmBgMask_sub[MAX_SUBFONTS] = { NULL };
-HBITMAP g_hbmFgMask_sub[MAX_SUBFONTS] = { NULL };
+HBITMAP g_hbmTiles_sub[MAX_SUBFONTS] = NULL;
+HBITMAP g_hbmBgMask_sub[MAX_SUBFONTS] = NULL;
+HBITMAP g_hbmFgMask_sub[MAX_SUBFONTS] = NULL;
  #ifdef GRAPHICS_BG_MASK
-HBITMAP g_hbmBg2Mask_sub[MAX_SUBFONTS] = { NULL };
+HBITMAP g_hbmBg2Mask_sub[MAX_SUBFONTS] = NULL;
  #endif
 
 /* These variables are computed at image load (in 'init_windows'). */
@@ -1583,7 +1583,7 @@ static void save_prefs_aux(int term_idx, cptr sec_name) {
 	term_data *td = &data[term_idx];
 	char buf[32];
 
-	sprintf(buf, "%d", term_idx);
+	wsprintf(buf, "%d", term_idx);
 	WritePrivateProfileString(sec_name, "WindowNumber", buf, ini_file);
 
 	if (td != &data[0]) {
@@ -1598,13 +1598,13 @@ static void save_prefs_aux(int term_idx, cptr sec_name) {
 #ifdef USE_LOGFONT
 	if (use_logfont) {
 		WritePrivateProfileString(sec_name, "Font", *(td->lf.lfFaceName) ? td->lf.lfFaceName : DEFAULT_LOGFONTNAME, ini_file);
-		sprintf(buf, "%ld", td->lf.lfWidth);
+		wsprintf(buf, "%d", td->lf.lfWidth);
 		WritePrivateProfileString(sec_name, "FontWid", buf, ini_file);
-		sprintf(buf, "%ld", td->lf.lfHeight);
+		wsprintf(buf, "%d", td->lf.lfHeight);
 		WritePrivateProfileString(sec_name, "FontHgt", buf, ini_file);
-		sprintf(buf, "%ld", td->lf.lfWeight);
+		wsprintf(buf, "%d", td->lf.lfWeight);
 		WritePrivateProfileString(sec_name, "FontWgt", buf, ini_file);
-		sprintf(buf, "%d", (td->lf.lfQuality == ANTIALIASED_QUALITY) ? 1 : 0);
+		wsprintf(buf, "%d", (td->lf.lfQuality == ANTIALIASED_QUALITY) ? 1 : 0);
 		WritePrivateProfileString(sec_name, "FontAA", buf, ini_file);
 	} else
 #endif
@@ -1616,11 +1616,11 @@ static void save_prefs_aux(int term_idx, cptr sec_name) {
 
 	if (td != &data[0]) {
 		/* Current size (x) */
-		sprintf(buf, "%d", td->cols);
+		wsprintf(buf, "%d", td->cols);
 		WritePrivateProfileString(sec_name, "Columns", buf, ini_file);
 
 		/* Current size (y) */
-		sprintf(buf, "%d", td->rows);
+		wsprintf(buf, "%d", td->rows);
 		WritePrivateProfileString(sec_name, "Rows", buf, ini_file);
 	} else {
 		int hgt;
@@ -1643,19 +1643,19 @@ static void save_prefs_aux(int term_idx, cptr sec_name) {
 		if (hgt > MAX_WINDOW_HGT) hgt = MAX_WINDOW_HGT;
 
 		/* Current size (y) - only change to double-screen if we're not already in some kind of enlarged screen */
-		sprintf(buf, "%d", hgt);
+		wsprintf(buf, "%d", hgt);
 		WritePrivateProfileString(sec_name, "Rows", buf, ini_file);
 	}
 
 	/* Current position (x) */
 	if (td->pos_x != -32000) { /* don't save windows in minimized state */
-		sprintf(buf, "%d", td->pos_x);
+		wsprintf(buf, "%d", td->pos_x);
 		WritePrivateProfileString(sec_name, "PositionX", buf, ini_file);
 	}
 
 	/* Current position (y) */
 	if (td->pos_y != -32000) { /* don't save windows in minimized state */
-		sprintf(buf, "%d", td->pos_y);
+		wsprintf(buf, "%d", td->pos_y);
 		WritePrivateProfileString(sec_name, "PositionY", buf, ini_file);
 	}
 }
@@ -1686,10 +1686,8 @@ void save_prefs(void) {
 	strcpy(buf, use_graphics_new == UG_2MASK ? "2" : (use_graphics_new ? "1" : "0"));
 	WritePrivateProfileString("Base", "Graphics", buf, ini_file);
 	WritePrivateProfileString("Base", "GraphicTiles", graphic_tiles, ini_file);
-	for (i = 0; i < MAX_SUBFONTS; i++) {
-		sprintf(buf, "%d", graphic_subtiles[i] ? 1 : 0);
-		WritePrivateProfileString("Base", format("GraphicSubTiles%d", i), buf, ini_file);
-	}
+	for (i = 0; i < MAX_SUBFONTS; i++)
+		WritePrivateProfileInt("Base", format("GraphicSubTiles%d", graphic_subtiles[i] ? 1 : 0), ini_file);
 #endif
 #ifdef USE_SOUND
 	strcpy(buf, use_sound_org ? "1" : "0");
@@ -3051,10 +3049,8 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 		rectFg = (RECT){ tc_x + fwid, tc_y, tc_x + 2 * fwid, tc_y + fhgt };
 		brushBg = CreateSolidBrush(bgColor);
 		brushFg = CreateSolidBrush(fgColor);
-		//FillSolidRect(td->hdcCacheTilePreparation, &rectBg, brushBg);
-		//FillSolidRect(td->hdcCacheTilePreparation, &rectFg, brushFg);
-		FillRect(td->hdcCacheTilePreparation, &rectBg, brushBg);
-		FillRect(td->hdcCacheTilePreparation, &rectFg, brushFg);
+		FillSolidRect(td->hdcCacheTilePreparation, &rectBg, brushBg);
+		FillSolidRect(td->hdcCacheTilePreparation, &rectFg, brushFg);
 		DeleteObject(brushBg);
 		DeleteObject(brushFg);
 
@@ -3979,10 +3975,9 @@ static void term_data_link(int i, term_data *td) {
 
 #ifdef USE_GRAPHICS
 /* Assumes 'use_graphics' is enabled, but may disable it if init fails. */
- #include <dirent.h>
 int init_graphics_win(void) {
 	BITMAP bm;
-	char filename[1024];
+	char filename[1024], subfilename[1024];
 	HDC hdc = GetDC(NULL);
 
 	DIR *dir;
