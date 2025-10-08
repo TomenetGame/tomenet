@@ -3026,7 +3026,8 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
    #if 0
 		entry->c_back = 32;
    #else
-		entry->c_back = Client_setup.f_char[FEAT_SOLID];;
+		if (use_graphics != UG_2MASK) entry->c_back = 32;
+		else entry->c_back = Client_setup.f_char[FEAT_SOLID];
    #endif
 		entry->a_back = TERM_DARK;
   #endif
@@ -3834,7 +3835,8 @@ static errr Term_rawpict_win(int x, int y, int c) {
    #if 0
 		entry->c_back = 32;
    #else
-		entry->c_back = Client_setup.f_char[FEAT_SOLID];;
+		if (use_graphics != UG_2MASK) entry->c_back = 32;
+		else entry->c_back = Client_setup.f_char[FEAT_SOLID];
    #endif
 		entry->a_back = TERM_DARK;
   #endif

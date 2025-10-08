@@ -1254,7 +1254,7 @@ struct term_data {
 	rawpict_tile tiles_rawpict_sub[MAX_SUBFONTS][MAX_TILES_RAWPICT + 1];
 	int rawpict_scale_wid_org_sub[MAX_SUBFONTS], rawpict_scale_hgt_org_sub[MAX_SUBFONTS], rawpict_scale_wid_use_sub[MAX_SUBFONTS], rawpict_scale_hgt_use_sub[MAX_SUBFONTS];
  #ifdef GRAPHICS_BG_MASK
-	Pixmap bg2mask_sub[MAX_SUBFONTS];;
+	Pixmap bg2mask_sub[MAX_SUBFONTS];
  #endif
 #endif
 };
@@ -2303,7 +2303,8 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
    #if 0
 		entry->c_back = 32;
    #else
-		entry->c_back = Client_setup.f_char[FEAT_SOLID];
+		if (use_graphics != UG_2MASK) entry->c_back = 32;
+		else entry->c_back = Client_setup.f_char[FEAT_SOLID];
    #endif
 		entry->a_back = TERM_DARK;
   #endif
@@ -2688,7 +2689,8 @@ static errr Term_rawpict_x11(int x, int y, int c) {
    #if 0
 		entry->c_back = 32;
    #else
-		entry->c_back = Client_setup.f_char[FEAT_SOLID];
+		if (use_graphics != UG_2MASK) entry->c_back = 32;
+		else entry->c_back = Client_setup.f_char[FEAT_SOLID];
    #endif
 		entry->a_back = TERM_DARK;
   #endif
