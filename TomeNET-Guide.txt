@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. October 2025 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 10. October 2025 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -29231,5 +29231,10 @@ Solution:   TomeNET writes a hint to its config file after asking this so next
              Edit .tomenetrc file (assumed you aren't using a command-line parm
              to load a differently named rc file) and add a line just saying:
              "hintBigmap".
+
+PROBLEM 79: On Windows OS using graphical tileset mode results in slow screen
+            drawing.
+Solution:   If Windows' "Aero" is enabled, turn it off, as it can greatly slow
+            down operations of apps used for graphics drawing (BitBlt).
 
 ===============================================================================
