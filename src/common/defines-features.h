@@ -693,8 +693,13 @@
 /* Traumaturgy + Dual-Wield + 2x Axe equipped -> Blood frenzy possibility. (Khorne Berserkers - C. Blue) */
 #define ENABLE_BLOOD_FRENZY
 
-/* Istar w/o reliance on disruption shield */
-#define NATURE_HP_SUPPLEMENT
+/* Istar w/o reliance on disruption shield; use one of experimental methods:  - C. Blue
+   Method 1: Flat +HP bonus before temp effects, tiered depending on max HP.
+             -- bad: evens out racial diffs and doesn't work for super-high levels as it cancels out their HP gains
+   Method 2: Grant minimum class hit dice.
+             -- seems good so far.
+*/
+#define NATURE_HP_SUPPLEMENT 2
 
 /* Super experimental:
    Boost dungeon boss HP for high level players to avoid insta-kill pushovers?

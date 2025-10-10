@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. October 2025 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 11. October 2025 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -23215,19 +23215,22 @@ these limitations will be lifted.
                     and brands melee attacks with venom.
                     Required skill level for first spell level: 30.
 
-    BONI:           While 'Disruption Shield' is not active, Nature grants
-                    a hit point bonus, that is applied on the total hit points
-                    after all other HP boni and modifications (eg from 'Health'
-                    skill, +LIFE items, mimic form HP or Corrupted Maia bonus)
-                    have been applied, except for Heroism or Berserk HP boni.
-                    These HP boni values fully apply at character level 50 or
-                    higher, for lower character levels they are scaled down.
-                    The final ie top-scaled (character level 50+) values are:
-                    ---------------------------------------------------------
-                    +4 for each 1.000 in Nature while HP is still below 800,
-                    +3 for each 1.000 in Nature while HP is still below 900,
-                    +2 for each 1.000 in Nature while HP is still below 1000,
-                    +1 for each 1.000 in Nature while HP is still below 1100.
+    BONI:           While 'Disruption Shield' is not active, Nature will grant
+                    minimum class hit dice of your Nature skill divided by 12.5
+                    ie 4 hd at 50.000. (Race hit dice are unaffected.)
+
+                    Example 1:
+                    The Istar class, which has 0 hit dice, will gain 4 hit dice
+                    at 50.000 Nature (difference between 4 and 0) and thereby
+                    end up with the same 4 hit dice as the runemaster class.
+                    Example 2:
+                    The Shaman class, which has 3 hit dice, will gain one hit
+                    die at 50.000 Nature (difference between 4 and 3), ending
+                    up with 4 hit dice, also same as the runemaster class.
+                    Example 3:
+                    The Ranger class, which has 7 hit dice, will not gain any
+                    hit dice bonus as 7 never less than the maximum attainable
+                    minimum limit of 5 hit dice at skill 50.000.
 
                     Regeneration (faster hit point regeneration, same as from
                     items that provide regeneration, so doesn't stack with

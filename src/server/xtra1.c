@@ -1691,14 +1691,20 @@ void calc_hitpoints(int Ind) {
 	//object_type *o_ptr;
 	//u32b f1, f2, f3, f4, f5, f6, esp;
 
-	int bonus, Ind2 = 0, cr_mhp = p_ptr->cp_ptr->c_mhp + p_ptr->rp_ptr->r_mhp;
+	int bonus, Ind2 = 0, cr_mhp = p_ptr->hitdie;
 	long mhp, mhp_playerform, weakling_boost;
 	u32b mHPLim, finalHP;
 	int bonus_cap, to_life;
 	int rlev = r_info[p_ptr->body_monster].level;
-#ifdef NATURE_HP_SUPPLEMENT
+#if NATURE_HP_SUPPLEMENT == 1
 	int nhps_cap, nhps_steps;
 #endif
+	// all just for NATURE_HP_SUPPLEMENT == 2:
+	int hitdie_eff = p_ptr->hitdie;
+	int player_hp_clv_eff = p_ptr->player_hp[p_ptr->lev - 1];
+	int player_hp_50_eff = p_ptr->player_hp[50 - 1];
+	int player_hp_70_eff = p_ptr->player_hp[70 - 1];
+	int player_hp_85_eff = p_ptr->player_hp[85 - 1];
 
 
 	p_ptr->mhp_tmp = 0; /* Track temporary buffs, just for client-side colourised indicator */
@@ -1706,19 +1712,34 @@ void calc_hitpoints(int Ind) {
 	if ((Ind2 = get_esp_link(Ind, LINKF_PAIN, &p_ptr2))) {
 	}
 
+#if NATURE_HP_SUPPLEMENT == 2
+	/* abuse 'bonus' and 'bonus_cap' -- resolution of 10x aka 1 digit */
+	if (!p_ptr->tim_manashield && p_ptr->cp_ptr->c_mhp * 10 < (bonus = get_skill_scale(p_ptr, SKILL_NATURE, 40))) { /* increase class-hitdice to mininum of this skill-scale value / 10 */
+		bonus_cap = bonus - p_ptr->cp_ptr->c_mhp * 10;
+
+		hitdie_eff += bonus_cap / 10;
+		cr_mhp += bonus_cap / 10;
+
+		player_hp_clv_eff += (p_ptr->lev * bonus_cap + 19) / 20;
+		player_hp_50_eff += (50 * bonus_cap + 19) / 20;
+		player_hp_70_eff += (70 * bonus_cap + 19) / 20;
+		player_hp_85_eff += (85 * bonus_cap + 19) / 20;
+	}
+#endif
+
 	/* do not increase a character's hit points too high post-king.
 	   They will just become immortal and that's no fun either. */
-	if (p_ptr->lev <= 50) player_hp_eff = p_ptr->player_hp[p_ptr->lev - 1]; /* the usual way */
+	if (p_ptr->lev <= 50) player_hp_eff = player_hp_clv_eff; /* the usual way */
 	else {
 		/* reduce post-king gain */
-		player_hp_eff = p_ptr->player_hp[50 - 1];
-		if (p_ptr->lev <= 70) player_hp_eff += (p_ptr->player_hp[p_ptr->lev - 1] - p_ptr->player_hp[50 - 1]) / 2;
+		player_hp_eff = player_hp_50_eff;
+		if (p_ptr->lev <= 70) player_hp_eff += (player_hp_clv_eff - player_hp_50_eff) / 2;
 		else {
-			player_hp_eff += (p_ptr->player_hp[70 - 1] - p_ptr->player_hp[50 - 1]) / 2;
-			if (p_ptr->lev <= 85) player_hp_eff += (p_ptr->player_hp[p_ptr->lev - 1] - p_ptr->player_hp[70 - 1]) / 3;
+			player_hp_eff += (player_hp_70_eff - player_hp_50_eff) / 2;
+			if (p_ptr->lev <= 85) player_hp_eff += (player_hp_clv_eff - player_hp_70_eff) / 3;
 			else {
-				player_hp_eff += (p_ptr->player_hp[85 - 1] - p_ptr->player_hp[70 - 1]) / 3;
-				player_hp_eff += (p_ptr->player_hp[p_ptr->lev - 1] - p_ptr->player_hp[85 - 1]) / 4;
+				player_hp_eff += (player_hp_85_eff - player_hp_70_eff) / 3;
+				player_hp_eff += (player_hp_clv_eff - player_hp_85_eff) / 4;
 			}
 		}
 	}
@@ -1825,7 +1846,7 @@ void calc_hitpoints(int Ind) {
 		mHPLim += p_ptr->lev > 50 ? (((p_ptr->lev - 50) * (rlev + 30)) / 100) * 20 : 0;
 #endif
 
-		raceHPbonus = mhp - ((mhp * 16) / p_ptr->hitdie); /* 10 human + 6 mimic */
+		raceHPbonus = mhp - ((mhp * 16) / hitdie_eff); /* 10 human + 6 mimic */
 		mhp -= (raceHPbonus * 3) / FORM_REDUCES_RACE_DICE_INFLUENCE;
 #if 0 /* nonsense^^ */
 		/* compensate overall HP gain for values > 3 */
@@ -1905,8 +1926,8 @@ void calc_hitpoints(int Ind) {
 	}
 #endif
 
-#ifdef NATURE_HP_SUPPLEMENT
-	/* Abuse bonus and bonus_cap */
+#if NATURE_HP_SUPPLEMENT == 1
+	/* Abuse 'bonus' and 'bonus_cap' */
 	if (!p_ptr->tim_manashield && (bonus = get_skill(p_ptr, SKILL_NATURE))) {
 		nhps_cap = (p_ptr->max_plv > 50 ? 50 : p_ptr->max_plv) + 10;
 		nhps_cap = (nhps_cap * nhps_cap * nhps_cap) / 270; //800 HP at 50
