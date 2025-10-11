@@ -6101,10 +6101,12 @@ void subinven_remove_aux(int Ind, int islot, int slot, int amt) {
 	*o_ptr = *i_ptr;
 	o_ptr->number = amt; /* Hack 'number' to match the full desired amount to move */
 	if (is_magic_device(o_ptr->tval)) divide_charged_item(o_ptr, i_ptr, amt);
+
 	o_ptr->marked = 0; //why change marked/marked2?...paranoia?
 	o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 	i_ptr->number -= amt; /* Unhack 'number'; if it's 0 that marks the source item for erasure */
 
+	/* Subtract weight for the moment, as this weigth will be re-added to your total weight from inven_carry() below. */
 	p_ptr->total_weight -= o_ptr->number * o_ptr->weight;
 
 	/* Careful! We assume that subinventories are always above all other items,
