@@ -399,6 +399,7 @@ G:7:D
 F:ALL_ITEM | MEDIUM_LEVEL | PRICE4
 W:36
 
+# Note: This is NOT the tavern but actually the player house template for list-style houses
 N:7:Tavern
 A:62:0:54:55:3:0
 O:0:0:0:0:0:0
@@ -1559,6 +1560,8 @@ F:ALL_ITEM | MEDIUM_LEVEL | PRICE2 | HARD_STEAL
 F:GREAT | EGO | RARE_EGO | NO_DISCOUNT | BUY67
 W:60
 
+# Note: This is NOT the tavern but actually the player house template for list-style houses
+# However, the real template is N:7, not 77. So this currently has no use.
 N:77:Tavern
 A:62:0:54:55:3:0
 O:0:0:0:0:0:0
