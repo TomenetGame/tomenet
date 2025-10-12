@@ -1182,7 +1182,8 @@ void display_store(void) {
 		clear_from(y + 18 + spacer);
 
 		/* Prompt */
-		prt(" ESC) Exit store", y + y2 + 17 + spacer, 0);
+		if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) prt(" ESC) Exit house", y + y2 + 17 + spacer, 0);
+		else prt(" ESC) Exit store", y + y2 + 17 + spacer, 0);
 		if (store.stock_num) prt("   c) Paste to chat", y + y2 + 18 + spacer, 0);
 		if (store.stock_num > 12 + spacer)
 			prt(format("%s1-%d) Go to page", (store.stock_num - 1) / (12 + spacer) + 1 >= 10 ? "" : " ", (store.stock_num - 1) / (12 + spacer) + 1), y + y2 + 19 + spacer, 0);
@@ -1260,7 +1261,8 @@ void display_store_special(void) {
 		clear_from(y + 18 + spacer);
 
 		/* Prompt */
-		prt("ESC) Exit store", y + y2 + 18 + spacer, 0);
+		if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) prt("ESC) Exit house", y + y2 + 18 + spacer, 0);
+		else prt("ESC) Exit store", y + y2 + 18 + spacer, 0);
 
 		/* Shop commands XXX XXX XXX */
 		display_store_action();
