@@ -211,6 +211,9 @@ LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl2-config --libs`
 #LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib
 
 
+CFLAGS += -Wno-format-overflow -Wno-format-truncation
+
+
 
 ## Test for OS type
 CFLAGS += $(shell ./os-check.sh)

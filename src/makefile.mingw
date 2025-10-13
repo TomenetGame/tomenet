@@ -232,6 +232,7 @@ CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc
 NCC = gcc
 
 
+
 ## Test for OS type -- not for Windows targets
 #CFLAGS += $(shell ./os-check.sh)
 
@@ -245,6 +246,8 @@ tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O2 -flto=auto -DCLIENT_SIDE
 tomenet.test.exe: PPFLAGS = -DTEST_CLIENT
 
 tomenet: CFLAGS += -DCLIENT_SIDE
+
+CFLAGS += -Wno-format-overflow -Wno-format-truncation
 
 # Lua
 SRCS += $(LUASRCS)

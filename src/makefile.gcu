@@ -291,6 +291,8 @@ LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
 #LIBS = -lsocket -lnsl -lcurses
 
 
+CFLAGS += -Wno-format-overflow -Wno-format-truncation
+
 # Some Linux distributions have a separate libtinfo, attempt to detect it
 HAVE_TINFO = $(shell ldconfig -p | grep -c libtinfo)
 ifneq (${HAVE_TINFO}, 0)

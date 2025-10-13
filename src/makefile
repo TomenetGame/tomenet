@@ -434,6 +434,8 @@ tomenet.server: CFLAGS += -g -O2
 # Server is compiled without optimizations, for debugging with gdb specifically:
 #tomenet.server: CFLAGS += -ggdb -O0
 
+CFLAGS += -Wno-format-overflow -Wno-format-truncation
+
 # Lua
 SRCS += $(LUASRCS)
 SRCS += $(CLI_LUASRCS)

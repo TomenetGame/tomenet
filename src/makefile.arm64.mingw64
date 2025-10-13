@@ -184,6 +184,7 @@ LIBS += -lregex
 #CFLAGS += `pcre2-config --cflags`
 #LIBS += `pcre2-config --libs8`
 
+CFLAGS += -Wno-format-overflow -Wno-format-truncation
 
 # Ensure Wine-64, as 32-bit Wine isn't available on ARM64 Ubuntu at this time.
 WINE = WINEARCH=win64 WINEPREFIX=~/.wine wine
@@ -224,6 +225,7 @@ CPPFLAGS = -x c -E -Wp,-C,-P,-nostdinc
 # Todo actually: Fix this to allow preproc-win.c -> preproc.exe compilation and use,
 # currently preproc.exe couldn't access the CPP from within wine environment.
 NCC = gcc
+
 
 
 ## Test for OS type -- not for Windows targets
