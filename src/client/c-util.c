@@ -5790,10 +5790,15 @@ void interact_macros(void) {
 		/* stop recording */
 		were_recording = TRUE;
 		recording_macro = FALSE;
+		c_msg_print("...macro recording finished.");
 		/* cut off the last key which was '%' to bring us back here */
 		recorded_macro[strlen(recorded_macro) - 1] = '\0';
 		/* use the recorded macro */
 		strcpy(macro__buf, recorded_macro);
+		/* redraw ie remove 'RECORDING' indicator before screen is saved */
+		if (screen_icky) Term_switch(0);
+		prt_extra_status(NULL);
+		if (screen_icky) Term_switch(0);
 	}
 
 	/* Process requests until done */
@@ -6848,6 +6853,7 @@ void interact_macros(void) {
 			/* enter recording mode */
 			strcpy(recorded_macro, "");
 			recording_macro = TRUE;
+			c_msg_print("Macro recording started...");
 
 			/* leave the macro menu */
 			inkey_msg = inkey_msg_old;

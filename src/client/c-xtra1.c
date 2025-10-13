@@ -1706,14 +1706,18 @@ void prt_encumberment(byte cumber_armor, byte awkward_armor, byte cumber_glove, 
 
 void prt_extra_status(cptr status) {
 	int x, y;
+	static char last_status[SCREEN_PAD_LEFT + 1] = { 0 };
 
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
+	if (!status) status = last_status;
+	else strncpy(last_status, status, SCREEN_PAD_LEFT);
+
 	if (ROW_EXSTA != -1) { /* paranoia: just in case we're a client
 				  without CONDENSED_HP_MP for some odd reason */
 		if (!recording_macro)
-			c_put_str(TERM_SLATE, status, ROW_EXSTA, COL_EXSTA);
+			c_put_str(TERM_SLATE, format("%*s", SCREEN_PAD_LEFT, status), ROW_EXSTA, COL_EXSTA); //ensure line cleanup after 'RECORDING' indicator
 		else
 			/* hack: 'abuse' this line to display that we're in recording mode */
 			c_put_str(TERM_L_RED, "*RECORDING*", ROW_EXSTA, COL_EXSTA);
