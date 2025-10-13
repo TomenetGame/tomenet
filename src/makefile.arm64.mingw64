@@ -297,7 +297,7 @@ server/$(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
 # below.
 #
 
-install: date tomenet.exe tomenet.server.exe
+install: date tomenet.server.exe tomenet.exe
 	cp tomenet.exe ..
 	cp tomenet.server.exe ..
 

@@ -331,8 +331,8 @@ CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
 
-all: tomenet tomenet.server accedit
-	@echo Now you need to copy the binaries out of the src directory or run \"make install\".
+all: tomenet.server tomenet accedit
+	@echo Now you need to move the binaries from the src directory up one level, or run \"make install\".
 
 # sorry. install on every make is a real pain ;)
 

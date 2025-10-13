@@ -266,7 +266,7 @@ TOLUA = server/tolua.exe
 # below.
 #
 
-install: date tomenet.exe tomenet.server.exe
+install: date tomenet.server.exe tomenet.exe
 	cp tomenet.exe ..
 	cp tomenet.server.exe ..
 
