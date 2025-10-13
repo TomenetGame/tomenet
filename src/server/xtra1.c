@@ -11798,7 +11798,11 @@ void handle_request_return_key(int Ind, int id, char c) {
 
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
 		connection_t *connp;
-		char32_t c_die[6 + 1], c_die_huge[6 + 1][2][2];
+ #ifndef DICE_HUGE //normal die
+		char32_t c_die[6 + 1];
+ #else
+		char32_t c_die_huge[6 + 1][2][2];
+ #endif
 		byte a_die[6 + 1];
 		bool custom_visuals = FALSE;
 		connp = Conn[p_ptr->conn];
@@ -11809,29 +11813,41 @@ void handle_request_return_key(int Ind, int id, char c) {
 			int k_idx;
 
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_1);
+ #ifndef DICE_HUGE //normal die
 			c_die[1] = p_ptr->k_char[k_idx];
+ #endif
 			a_die[1] = p_ptr->k_attr[k_idx];
 
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_2);
+ #ifndef DICE_HUGE //normal die
 			c_die[2] = p_ptr->k_char[k_idx];
+ #endif
 			a_die[2] = p_ptr->k_attr[k_idx];
 
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_3);
+ #ifndef DICE_HUGE //normal die
 			c_die[3] = p_ptr->k_char[k_idx];
+ #endif
 			a_die[3] = p_ptr->k_attr[k_idx];
 
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_4);
+ #ifndef DICE_HUGE //normal die
 			c_die[4] = p_ptr->k_char[k_idx];
+ #endif
 			a_die[4] = p_ptr->k_attr[k_idx];
 
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_5);
+ #ifndef DICE_HUGE //normal die
 			c_die[5] = p_ptr->k_char[k_idx];
+ #endif
 			a_die[5] = p_ptr->k_attr[k_idx];
 
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_6);
+ #ifndef DICE_HUGE //normal die
 			c_die[6] = p_ptr->k_char[k_idx];
+ #endif
 			a_die[6] = p_ptr->k_attr[k_idx];
-
+ #ifdef DICE_HUGE
 			/* Huge dice (1/4 tiles): */
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TL);
 			c_die_huge[4][0][0] = p_ptr->k_char[k_idx];
@@ -11875,6 +11891,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 			c_die_huge[3][1][1] = p_ptr->k_char[k_idx];
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_Br);
 			c_die_huge[2][1][1] = p_ptr->k_char[k_idx];
+ #endif
 
 			custom_visuals = TRUE;
 		}
