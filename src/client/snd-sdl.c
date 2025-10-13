@@ -3141,7 +3141,7 @@ static void fadein_next_music(void) {
 
 		/* If music was game-initiated, ie not from the jukebox, log it if desired */
 		if (!jukebox_screen && c_cfg.log_music) {
-			const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]);
+			const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
 
 #ifdef WINDOWS
 			while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
@@ -3149,7 +3149,9 @@ static void fadein_next_music(void) {
 			while (*c != '/' && c >= songs[music_cur].paths[music_cur_song]) c--;
 #endif
 			c++;
-			c_msg_format("(Music '%s' started.)", songs[music_cur].paths[music_cur_song]);
+			while (*c2 != '.' && c2 > c) c2--;
+			if (c2 == c) c_msg_format("Music <%s> started.", songs[music_cur].paths[music_cur_song]);
+			else c_msg_format("Music <%.*s> started.", (int)(c2 - c), songs[music_cur].paths[music_cur_song]);
 			//sprintf(out_val, "return get_music_name(%d)", j);
 			//lua_name = string_exec_lua(0, out_val);
 		}
@@ -3284,7 +3286,7 @@ static void fadein_next_music(void) {
 	/* If music was game-initiated, ie not from the jukebox, log it if desired */
 #ifdef WILDERNESS_MUSIC_RESUME
 	if (!jukebox_screen && c_cfg.log_music) {
-		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]);
+		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
 
  #ifdef WINDOWS
 		while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
@@ -3292,18 +3294,22 @@ static void fadein_next_music(void) {
 		while (*c != '/' && c >= songs[music_cur].paths[music_cur_song]) c--;
  #endif
 		c++;
-		c_msg_format("(Music '%s' %s.)", c, was_resumed ? "resumed" : "started");
+		while (*c2 != '.' && c2 > c) c2--;
+		if (c2 == c) c_msg_format("Music <%s> %s.", c, was_resumed ? "resumed" : "started");
+		else c_msg_format("Music <%.*s> %s.", (int)(c2 - c), c, was_resumed ? "resumed" : "started");
 #else
 	if (!jukebox_screen && c_cfg.log_music) {
-		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]);
+		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
 
  #ifdef WINDOWS
-		while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
+		while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;y
  #else
 		while (*c != '/' && c >= songs[music_cur].paths[music_cur_song]) c--;
  #endif
 		c++;
-		c_msg_format("(Music '%s' started.)", songs[music_cur].paths[music_cur_song]);
+		while (*c2 != '.' && c2 > c) c2--;
+		if (c2 == c) c_msg_format("Music <%s> started.", songs[music_cur].paths[music_cur_song]);
+		else c_msg_format("Music <%.*s> started.", (int)(c2 - c), songs[music_cur].paths[music_cur_song]);
 #endif
 		//sprintf(out_val, "return get_music_name(%d)", j);
 		//lua_name = string_exec_lua(0, out_val);
