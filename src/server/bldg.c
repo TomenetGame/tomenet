@@ -439,7 +439,11 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
 	connection_t *connp;
-	char32_t c_die[6 + 1], c_die_huge[6 + 1][2][2]; //huge die tile array layout: (x: left..right, y: top..bottom)
+ #ifndef DICE_HUGE //normal die
+	char32_t c_die[6 + 1];
+ #else
+	char32_t c_die_huge[6 + 1][2][2]; //huge die tile array layout: (x: left..right, y: top..bottom)
+ #endif
 	char32_t c_d10f[6]; //frame for any d10 die
 	//byte a_die[6 + 1];
 	bool custom_visuals = FALSE;
@@ -450,6 +454,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	if (connp->use_graphics && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) && !p_ptr->ascii_items) { //client must know PKT_CHAR_DIRECT ; && !p_ptr->ascii_feats?
 		int k_idx;
 
+ #ifndef DICE_HUGE //normal die -- since we don't set a_die[] here we can just avoid the whole block if we use huge dice
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_1);
 		c_die[1] = p_ptr->k_char[k_idx];
 		//a_die[1] = p_ptr->k_attr[k_idx];
@@ -473,7 +478,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_6);
 		c_die[6] = p_ptr->k_char[k_idx];
 		//a_die[6] = p_ptr->k_attr[k_idx];
-
+ #else
 		/* Huge dice (1/4 tiles): */
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TL);
 		c_die_huge[4][0][0] = p_ptr->k_char[k_idx];
@@ -517,6 +522,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		c_die_huge[3][1][1] = p_ptr->k_char[k_idx];
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_Br);
 		c_die_huge[2][1][1] = p_ptr->k_char[k_idx];
+ #endif
 
 		/* Generic D10 die frame*/
 		k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_D10F_TL);
