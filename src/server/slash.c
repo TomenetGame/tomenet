@@ -1653,7 +1653,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 								/* "No recall spell found in this book!" */
 								//continue;
 								/* Be severe and point out the wrong inscription: */
-								msg_print(Ind, "\377oThe inscribed spell scroll isn't a recall spell.");
+								msg_print(Ind, "\377yThe inscribed spell scroll isn't a recall spell.");
 								return;
 							}
 						} else {
@@ -1665,7 +1665,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 								if (!spell_rec_found && !spell_rel_found) {
 									/* Be severe and point out the wrong inscription: */
-									msg_print(Ind, "\377oThe inscribed book doesn't contain a recall spell.");
+									msg_print(Ind, "\377yThe inscribed book doesn't contain a recall spell.");
 									return;
 								}
 							} else {
@@ -1675,7 +1675,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 								if (!spell_rec_found && !spell_rel_found) {
 									/* Be severe and point out the wrong inscription: */
-									msg_print(Ind, "\377oThe inscribed book doesn't contain a recall spell.");
+									msg_print(Ind, "\377yThe inscribed book doesn't contain a recall spell.");
 									return;
 								}
 							}
@@ -1696,9 +1696,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (item == -1) {
 					if (found_empty)
-						msg_format(Ind, "\377oYour device%s inscribed '@R' %sn't charged, no other usable item found.",
+						msg_format(Ind, "\377yYour device%s inscribed '@R' %sn't charged, no other usable item found.",
 						    found_empty == 1 ? "" : "s", found_empty == 1 ? "is" : "are");
-					else msg_print(Ind, "\377oNo usable item with '@R' inscription found.");
+					else msg_print(Ind, "\377yNo usable item with '@R' inscription found.");
 					return;
 				}
 
@@ -1744,7 +1744,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				case TV_SCROLL:
 #ifdef R_REQUIRES_AWARE
 					if (sv != SV_SCROLL_WORD_OF_RECALL) {
-						msg_print(Ind, "\377oThat is not a scroll of word of recall.");
+						msg_print(Ind, "\377yThat is not a scroll of word of recall.");
 						return;
 					}
 #endif
@@ -1753,7 +1753,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				case TV_ROD:
 #ifdef R_REQUIRES_AWARE
 					if (sv != SV_ROD_RECALL) {
-						msg_print(Ind, "\377oThat is not a rod of recall.");
+						msg_print(Ind, "\377yThat is not a rod of recall.");
 						return;
 					}
 #endif
@@ -1769,15 +1769,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 					object_flags(o_ptr, &dummy, &dummy, &f3, &dummy, &dummy, &dummy, &dummy);
 					if (!(f3 & TR3_ACTIVATE)) {
-						msg_print(Ind, "\377oThat object cannot be activated.");
+						msg_print(Ind, "\377yThat object cannot be activated.");
 						return;
 					}
 					if (!item_activation(o_ptr)) { //paranoia
-						msg_print(Ind, "\377oThe item does not activate for word of recall.");
+						msg_print(Ind, "\377yThe item does not activate for word of recall.");
 						return;
 					}
 					if (!strstr(item_activation(o_ptr), "word of recall")) {
-						msg_print(Ind, "\377oThe item does not activate for word of recall.");
+						msg_print(Ind, "\377yThe item does not activate for word of recall.");
 						return;
 					}
 #endif
