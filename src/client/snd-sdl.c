@@ -3008,7 +3008,7 @@ static bool play_music_vol(int event, char vol) {
 static void fadein_next_music(void) {
 	Mix_Music *wave = NULL;
 #ifdef WILDERNESS_MUSIC_RESUME
-	bool prev_wilderness;
+	bool prev_wilderness, was_resumed = FALSE;
 	cptr pmn, mn;
 #endif
 
@@ -3138,6 +3138,22 @@ static void fadein_next_music(void) {
 #ifdef ENABLE_JUKEBOX
 		if (jukebox_screen) jukebox_update_songlength();
 #endif
+
+		/* If music was game-initiated, ie not from the jukebox, log it if desired */
+		if (!jukebox_screen && c_cfg.log_music) {
+			const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]);
+
+#ifdef WINDOWS
+			while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
+#else
+			while (*c != '/' && c >= songs[music_cur].paths[music_cur_song]) c--;
+#endif
+			c++;
+			c_msg_format("(Music '%s' started.)", songs[music_cur].paths[music_cur_song]);
+			//sprintf(out_val, "return get_music_name(%d)", j);
+			//lua_name = string_exec_lua(0, out_val);
+		}
+
 		return;
 	}
 
@@ -3257,12 +3273,41 @@ static void fadein_next_music(void) {
 		    ) {
 			music_cur_song = songs[music_cur].bak_song;
 			Mix_SetMusicPosition(songs[music_cur].bak_pos / 1000);
+			if (songs[music_cur].bak_pos) was_resumed = TRUE;
 		}
 	}
 #endif
 #ifdef ENABLE_JUKEBOX
 	if (jukebox_screen) jukebox_update_songlength();
 #endif
+
+	/* If music was game-initiated, ie not from the jukebox, log it if desired */
+#ifdef WILDERNESS_MUSIC_RESUME
+	if (!jukebox_screen && c_cfg.log_music) {
+		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]);
+
+ #ifdef WINDOWS
+		while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
+ #else
+		while (*c != '/' && c >= songs[music_cur].paths[music_cur_song]) c--;
+ #endif
+		c++;
+		c_msg_format("(Music '%s' %s.)", c, was_resumed ? "resumed" : "started");
+#else
+	if (!jukebox_screen && c_cfg.log_music) {
+		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]);
+
+ #ifdef WINDOWS
+		while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
+ #else
+		while (*c != '/' && c >= songs[music_cur].paths[music_cur_song]) c--;
+ #endif
+		c++;
+		c_msg_format("(Music '%s' started.)", songs[music_cur].paths[music_cur_song]);
+#endif
+		//sprintf(out_val, "return get_music_name(%d)", j);
+		//lua_name = string_exec_lua(0, out_val);
+	}
 }
 
 //#ifdef JUKEBOX_INSTANT_PLAY

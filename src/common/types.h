@@ -4971,6 +4971,7 @@ struct client_opts {
 	bool tavern_town_resume;
 	bool huge_bars_gfx;
 	bool show_newest;
+	bool log_music;
 };
 
 /*

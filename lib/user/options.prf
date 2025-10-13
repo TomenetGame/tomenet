@@ -140,6 +140,7 @@ Y:audio_paging
 X:paging_master_vol
 X:paging_max_vol
 X:quiet_os
+X:log_music
 
 
 # Gameplay options:
@@ -200,3 +201,4 @@ Y:autopickup_chemicals
 X:autoinsc_debug
 X:autoloot_dunonly
 X:autoloot_dununown
+X:show_newest
