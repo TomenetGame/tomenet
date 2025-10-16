@@ -1315,6 +1315,7 @@ static void recreateGraphicsObjects(term_data *td) {
 	HBITMAP hbmBgMask_sub[MAX_SUBFONTS], hbmFgMask_sub[MAX_SUBFONTS];
  #ifdef GRAPHICS_BG_MASK
 	HBITMAP hbmBg2Mask_sub[MAX_SUBFONTS];
+
 	HBITMAP hbmTiles_sub[MAX_SUBFONTS];
 	for (i = 0; i < MAX_SUBFONTS; i++) {
 		if (!graphic_subtiles[i]) continue;
@@ -1353,6 +1354,9 @@ static void recreateGraphicsObjects(term_data *td) {
 	/* Get device content for current window. */
 	HDC hdc = GetDC(td->w);
 
+
+	/* Main tileset */
+
 	/* Create a compatible device content in memory. */
 	td->hdcTilePreparation = CreateCompatibleDC(hdc);
 	td->hdcTiles = CreateCompatibleDC(hdc);
@@ -1383,6 +1387,48 @@ static void recreateGraphicsObjects(term_data *td) {
 	DeleteBitmap(hbmOldBg2Mask);
  #endif
 
+
+	/* Sub-tilesets */
+
+	for (i = 0; i < MAX_SUBFONTS; i++) {
+		/* Create a compatible device content in memory. */
+		td->hdcTiles_sub[i] = CreateCompatibleDC(hdc);
+		td->hdcBgMask_sub[i] = CreateCompatibleDC(hdc);
+		td->hdcFgMask_sub[i] = CreateCompatibleDC(hdc);
+ #ifdef GRAPHICS_BG_MASK
+		td->hdcBg2Mask_sub[i] = CreateCompatibleDC(hdc);
+ #endif
+
+		/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
+		HBITMAP hbmOldTiles = SelectObject(td->hdcTiles_sub[i], hbmTiles_sub[i]);
+		HBITMAP hbmOldBgMask = SelectObject(td->hdcBgMask_sub[i], hbmBgMask_sub[i]);
+		HBITMAP hbmOldFgMask = SelectObject(td->hdcFgMask_sub[i], hbmFgMask_sub[i]);
+ #ifdef GRAPHICS_BG_MASK
+		HBITMAP hbmOldBg2Mask = SelectObject(td->hdcBg2Mask_sub[i], hbmBg2Mask_sub[i]);
+ #endif
+
+		/* Delete the default HBITMAPs here, the above created tiles & masks should be deleted when the HDCs are released. */
+		DeleteBitmap(hbmOldTiles);
+		DeleteBitmap(hbmOldBgMask);
+		DeleteBitmap(hbmOldFgMask);
+ #ifdef GRAPHICS_BG_MASK
+		DeleteBitmap(hbmOldBg2Mask);
+ #endif
+
+		/* Verify */
+		if (td->hdcTiles_sub[i] == NULL || td->hdcBgMask_sub[i] == NULL || td->hdcFgMask_sub[i] == NULL
+ #ifdef GRAPHICS_BG_MASK
+		    || td->hdcBg2Mask_sub[i] == NULL
+ #endif
+		    ) {
+			logprint(format("(debug-sub-verify #%d) fwid %d, fhgt %d; ht %d - failed.\n", i, fwid, fhgt));
+			graphic_subtiles[i] = FALSE;
+		}
+	}
+
+
+	/* Cache tiles */
+
  #ifdef TILE_CACHE_SIZE
 	if (!disable_tile_cache) {
   #ifdef TILE_CACHE_SINGLEBMP
@@ -1409,9 +1455,11 @@ static void recreateGraphicsObjects(term_data *td) {
 	}
  #endif
 
+
 	/* Release */
 	ReleaseDC(td->w, hdc);
 
+	/* Finally verify that everything worked out */
 	if (td->hdcTiles == NULL || td->hdcBgMask == NULL || td->hdcFgMask == NULL || td->hdcTilePreparation == NULL
  #ifdef GRAPHICS_BG_MASK
 	    || td->hdcBg2Mask == NULL || td->hdcTilePreparation2 == NULL
