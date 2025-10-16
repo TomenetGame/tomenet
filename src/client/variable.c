@@ -73,10 +73,7 @@ char guildhall_pos[14];
 setup_t Setup;				/* The information given to us by the server */
 client_setup_t Client_setup;		/* The information we give to the server */
 /* Additional local graphics info for mapping a received character to a specific sub-tileset */
-signed char u_subtileset[TV_MAX];
-signed char f_subtileset[MAX_F_IDX];
-signed char k_subtileset[MAX_K_IDX];
-signed char r_subtileset[MAX_R_IDX];
+signed char c_subtileset[MAX_GFX_TILES];
 
 bool shopping = FALSE;			/* Are we in a store? */
 bool perusing = FALSE;			/* Are we browinsg a help file or similar? */

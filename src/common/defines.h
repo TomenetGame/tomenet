@@ -8471,6 +8471,9 @@ extern int PlayerUID;
 
 #define MAX_TILES_RAWPICT	256	//USE_GRAPHICS, client-side only (for now); NOTE: Index starts at 1, not 0
 
+/* Maximum amount of different graphical tiles */
+#define MAX_GFX_TILES		65536
+
 
 /*** Sound constants ***/
 /*

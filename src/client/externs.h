@@ -185,10 +185,7 @@ extern char guildhall_pos[14];
 extern setup_t Setup;
 extern client_setup_t Client_setup;
 /* Additional local graphics info for mapping a received character to a specific sub-tileset */
-extern signed char u_subtileset[TV_MAX];
-extern signed char f_subtileset[MAX_F_IDX];
-extern signed char k_subtileset[MAX_K_IDX];
-extern signed char r_subtileset[MAX_R_IDX];
+extern signed char c_subtileset[MAX_GFX_TILES];
 
 extern bool shopping, perusing, local_map_active;
 

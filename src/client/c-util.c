@@ -15346,28 +15346,25 @@ void handle_process_font_file(void) {
 	for (i = 0; i < MAX_F_IDX; i++) {
 		Client_setup.f_attr[i] = 0;
 		Client_setup.f_char[i] = 0;
-		f_subtileset[i] = -1;
 	}
 	floor_mapping_mod = u32b_char_dict_free(floor_mapping_mod);
 	//race info (monsters)
 	for (i = 0; i < MAX_R_IDX; i++) {
 		Client_setup.r_attr[i] = 0;
 		Client_setup.r_char[i] = 0;
-		r_subtileset[i] = -1;
 	}
 	monster_mapping_mod = u32b_char_dict_free(monster_mapping_mod);
 	//kind info (objects)
 	for (i = 0; i < MAX_K_IDX; i++) {
 		Client_setup.k_attr[i] = 0;
 		Client_setup.k_char[i] = 0;
-		k_subtileset[i] = -1;
 	}
 	//unknown items (objects)
 	for (i = 0; i < TV_MAX; i++) {
 		Client_setup.u_attr[i] = 0;
 		Client_setup.u_char[i] = 0;
-		u_subtileset[i] = -1;
 	}
+	for (i = 0; i < MAX_GFX_TILES; i++) c_subtileset[i] = -1;
  #endif
 
 	/* Just to be sure. During the font parsing the offset needs to be 0.*/

@@ -2243,6 +2243,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	int i, hole = -1;
  #endif
 	int x1, y1;
+	XImage *tiles;
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
@@ -2342,6 +2343,12 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	tilePreparation = td->tilePreparation;
  #endif
 
+	/* Choose between main tileset or a (partial) subset */
+	if (c_subtileset[c] == -1)
+		tiles = td->tiles;
+	else
+		tiles = td->tiles_sub[c_subtileset[c]];
+
 	/* Prepare tile to preparation pixmap. */
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
@@ -2354,7 +2361,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 	XPutImage(Metadpy->dpy, tilePreparation,
 		  Infoclr->gc,
-		  td->tiles,
+		  tiles,
 		  x1, y1,
 		  0, 0,
 		  td->fnt->wid, td->fnt->hgt);
@@ -2381,6 +2388,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	int i, hole = -1;
    #endif
 	int x1, y1;
+	XImage *tiles;
 
 	/* Avoid visual glitches while not in 2mask mode */
 	if (use_graphics != UG_2MASK) {
@@ -2511,6 +2519,12 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
     #endif
    #endif
 
+	/* Choose between main tileset or a (partial) subset */
+	if (c_subtileset[c] == -1)
+		tiles = td->tiles;
+	else
+		tiles = td->tiles_sub[c_subtileset[c]];
+
 	/* Prepare background tile to preparation pixmap. +chopchop+ */
 	if (c_back == 32) {
 		/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
@@ -2527,7 +2541,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 		XPutImage(Metadpy->dpy, tilePreparation2,
 			  Infoclr->gc,
-			  td->tiles,
+			  tiles,
 			  x1, y1,
 			  0, 0,
 			  td->fnt->wid, td->fnt->hgt);
@@ -2561,7 +2575,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 	XPutImage(Metadpy->dpy, tilePreparation,
 		  Infoclr->gc,
-		  td->tiles,
+		  tiles,
 		  x1, y1,
 		  0, 0,
 		  td->fnt->wid, td->fnt->hgt);
@@ -2617,6 +2631,7 @@ static void invalidate_graphics_cache_x11(term_data *td, int c_idx) {
     - C. Blue */
 static errr Term_rawpict_x11(int x, int y, int c) {
 	term_data *td;
+	rawpict_tile trp;
 
 	int x1, y1;
 
@@ -2729,9 +2744,15 @@ static errr Term_rawpict_x11(int x, int y, int c) {
  #endif
 #endif
 
+	/* Choose between main tileset or a (partial) subset */
+	if (tiles_rawpict_subtileset[c] == -1)
+		trp = td->tiles_rawpict[c];
+	else
+		trp = td->tiles_rawpict_sub[tiles_rawpict_subtileset[c]][c];
+
 	/* Prepare tile to preparation pixmap. */
-	x1 = td->tiles_rawpict[c].x;
-	y1 = td->tiles_rawpict[c].y;
+	x1 = trp.x;
+	y1 = trp.y;
 #if 0
 	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
 		   x1, y1,
@@ -2756,7 +2777,7 @@ static errr Term_rawpict_x11(int x, int y, int c) {
 #endif
 	XPutImage(Metadpy->dpy, td->inner->win, Infoclr->gc,
 	    td->tiles, x1, y1,
-	    x, y, td->tiles_rawpict[c].w, td->tiles_rawpict[c].h);
+	    x, y, trp.w, trp.h);
 
 	/* Success */
 	return(0);
@@ -3905,6 +3926,9 @@ int init_graphics_x11(void) {
 
 	/* Early-initialize paths, to get access to lib directories right now, we need it for loading the graphics: */
 	init_stuff();
+
+	/* Need to init this this early or meta screen will already crash */
+	for (i = 0; i < MAX_GFX_TILES; i++) c_subtileset[i] = -1;
 
 	/* Build & allocate the graphics path. */
 	path_build(path, 1024, ANGBAND_DIR_XTRA, "graphics");

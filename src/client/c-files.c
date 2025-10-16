@@ -891,7 +891,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 			{
 				Client_setup.r_char[i] = n2;
 				monster_mapping_mod = u32b_char_dict_set(monster_mapping_mod, n2, monster_mapping_org[i]);
-				r_subtileset[i] = subtileset;
+				c_subtileset[n2] = subtileset;
 			}
 			return(0);
 		}
@@ -917,7 +917,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 #endif
 			{
 				Client_setup.k_char[i] = n2;
-				k_subtileset[i] = subtileset;
+				c_subtileset[n2] = subtileset;
 			}
 			return(0);
 		}
@@ -944,7 +944,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 			{
 				Client_setup.f_char[i] = n2;
 				floor_mapping_mod = u32b_char_dict_set(floor_mapping_mod, n2, floor_mapping_org[i]);
-				f_subtileset[i] = subtileset;
+				c_subtileset[n2] = subtileset;
 
 				/* Hacky: Try to catch if a custom font mapping puts anything besides walls on '2' or '127' ie the solid-bar/wall symbols,
 				   in which case we assume the font is broken, as these symbols are reserved as 'solid blocks' for UI elements (mainly bars)!
@@ -977,7 +977,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 #endif
 			{
 				Client_setup.u_char[j] = n2;
-				u_subtileset[j] = subtileset;
+				c_subtileset[n2] = subtileset;
 			}
 			return(0);
 		}
@@ -1040,7 +1040,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 			{
 				Client_setup.r_char[i] = n2;
 				monster_mapping_mod = u32b_char_dict_set(monster_mapping_mod, n2, monster_mapping_org[i]);
-				r_subtileset[i] = subtileset;
+				c_subtileset[n2] = subtileset;
 			}
 			return(0);
 		}
@@ -1073,7 +1073,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 #endif
 			{
 				Client_setup.u_char[j] = n2;
-				u_subtileset[j] = subtileset;
+				c_subtileset[n2] = subtileset;
 			}
 			return(0);
 		}
@@ -1106,7 +1106,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 #endif
 			{
 				Client_setup.u_char[j] = n2;
-				u_subtileset[j] = subtileset;
+				c_subtileset[n2] = subtileset;
 			}
 			return(0);
 		}
@@ -1131,7 +1131,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 #endif
 			{
 				tval_to_char[j] = n2;
-				tval_to_char_subtileset[j] = subtileset;
+				c_subtileset[n2] = subtileset;
 			}
 			return(0);
 		}

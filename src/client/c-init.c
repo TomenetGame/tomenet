@@ -194,10 +194,7 @@ void initialize_main_pref_files(void) {
 	for (i = 0; i < MAX_K_IDX; i++) Client_setup.k_char[i] = Client_setup.k_attr[i] = 0;
 	for (i = 0; i < MAX_R_IDX; i++) Client_setup.r_char[i] = Client_setup.r_attr[i] = 0;
 	/* Additional local graphics info for mapping a received character to a specific sub-tileset */
-	for (i = 0; i < TV_MAX; i++) u_subtileset[i] = -1;
-	for (i = 0; i < MAX_F_IDX; i++) f_subtileset[i] = -1;
-	for (i = 0; i < MAX_K_IDX; i++) k_subtileset[i] = -1;
-	for (i = 0; i < MAX_R_IDX; i++) r_subtileset[i] = -1;
+	for (i = 0; i < MAX_GFX_TILES; i++) c_subtileset[i] = -1;
 
 	/* Access the "basic" pref file */
 	strcpy(buf, "pref.prf");

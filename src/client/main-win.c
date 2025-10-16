@@ -3993,6 +3993,9 @@ int init_graphics_win(void) {
 	int i, j;
 
 
+	/* Need to init this this early or meta screen will already crash */
+	for (i = 0; i < MAX_GFX_TILES; i++) c_subtileset[i] = -1;
+
 	logprint("Initializing graphics.\n");
 	if (GetDeviceCaps(hdc, BITSPIXEL) < 24) {
 		sprintf(use_graphics_errstr, "Using graphic tiles needs a device content with at least 24 bits per pixel.");
