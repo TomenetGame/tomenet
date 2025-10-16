@@ -88,6 +88,18 @@ graphics	0
 ##   Important: The value has to be in format "{int width}x{int height}[{string}]", because tile width and height is extracted from the string.
 graphic_tiles 16x24sv
 
+## - Enable optional sub-tilesets (0 = disabled, 1 = active)^M
+GraphicSubTiles0	1
+GraphicSubTiles1	1
+GraphicSubTiles2	1
+GraphicSubTiles3	1
+GraphicSubTiles4	1
+GraphicSubTiles5	1
+GraphicSubTiles6	1
+GraphicSubTiles7	1
+GraphicSubTiles8	1
+GraphicSubTiles9	1
+
 ## - Disable cache for graphics tiles? (Not recommended, basically just slows down drawing)
 ##   Set to '0' to keep the the cache enabled, 1 to disable the cache.
 disableGfxCache 0
@@ -117,7 +129,9 @@ audioBuffer		1024
 
 ## - Subfolders within lib/xtra folder that contain audio packs
 soundpackFolder		sound
+soundpackSubset		1
 musicpackFolder		music
+musicpackSubset		1
 
 ## - Turn various things on(1) or off(0)
 audioMaster		1
