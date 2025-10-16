@@ -1325,6 +1325,7 @@ extern bool st_bar;
 extern char cfg_soundpackfolder[1024], cfg_musicpackfolder[1024];
 extern char cfg_soundpack_name[MAX_CHARS], cfg_soundpack_version[MAX_CHARS];
 extern char cfg_musicpack_name[MAX_CHARS], cfg_musicpack_version[MAX_CHARS];
+extern char cfg_soundpack_subset, cfg_musicpack_subset;
 
 extern int NumPlayers;
 extern char playerlist_name[MAX_PLAYERS_LISTED][NAME_LEN], playerlist[MAX_PLAYERS_LISTED][MAX_CHARS_WIDE];

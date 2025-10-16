@@ -1697,7 +1697,9 @@ void save_prefs(void) {
 
  #ifdef USE_SOUND_2010
 	WritePrivateProfileString("Base", "SoundpackFolder", cfg_soundpackfolder, ini_file);
+	WritePrivateProfileString("Base", "SoundpackSubset", format("%d", cfg_soundpack_subset), ini_file);
 	WritePrivateProfileString("Base", "MusicpackFolder", cfg_musicpackfolder, ini_file);
+	WritePrivateProfileString("Base", "MusicpackSubset", format("%d", cfg_musicpack_subset), ini_file);
 	strcpy(buf, cfg_audio_master ? "1" : "0");
 	WritePrivateProfileString("Base", "AudioMaster", buf, ini_file);
 	strcpy(buf, cfg_audio_music ? "1" : "0");
@@ -1935,7 +1937,9 @@ static void load_prefs(void) {
 	cfg_audio_buffer = GetPrivateProfileInt("Base", "AudioBuffer", 1024, ini_file);
 	cfg_audio_master = (GetPrivateProfileInt("Base", "AudioMaster", 1, ini_file) != 0);
 	GetPrivateProfileString("Base", "SoundpackFolder", "sound", cfg_soundpackfolder, 1024, ini_file);
+	cfg_soundpack_subset = GetPrivateProfileInt("Base", "SoundpackSubset", "1", ini_file);
 	GetPrivateProfileString("Base", "MusicpackFolder", "music", cfg_musicpackfolder, 1024, ini_file);
+	cfg_musicpack_subset = GetPrivateProfileInt("Base", "MusicpackSubset", "1", ini_file);
 	cfg_audio_music = (GetPrivateProfileInt("Base", "AudioMusic", 1, ini_file) != 0);
 	cfg_audio_sound = (GetPrivateProfileInt("Base", "AudioSound", 1, ini_file) != 0);
 	cfg_audio_weather = (GetPrivateProfileInt("Base", "AudioWeather", 1, ini_file) != 0);
@@ -6366,7 +6370,9 @@ void store_crecedentials(void) {
 }
 void store_audiopackfolders(void) {
 	WritePrivateProfileString("Base", "SoundpackFolder", cfg_soundpackfolder, ini_file);
+	WritePrivateProfileString("Base", "SoundpackSubset", format("%s", cfg_soundpack_subset), ini_file);
 	WritePrivateProfileString("Base", "MusicpackFolder", cfg_musicpackfolder, ini_file);
+	WritePrivateProfileString("Base", "MusicpackSubset", format("%s", cfg_musicpack_subset), ini_file);
 }
 void get_term_main_font_name(char *buf) {
 	if (data[0].font_file) strcpy(buf, data[0].font_file);

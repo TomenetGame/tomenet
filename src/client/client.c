@@ -348,6 +348,13 @@ retry_mangrc:
 				p = strtok(NULL, "\t\n");
 				if (p) strcpy(cfg_soundpackfolder, p);
 			}
+			if (!strncmp(buf, "soundpackSubset", 15)) {
+				char *p;
+
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_soundpack_subset = atoi(p);
+			}
 			/* Folder of the currently selected music pack */
 			if (!strncmp(buf, "musicpackFolder", 15)) {
 				char *p;
@@ -355,6 +362,13 @@ retry_mangrc:
 				p = strtok(buf, " \t\n");
 				p = strtok(NULL, "\t\n");
 				if (p) strcpy(cfg_musicpackfolder, p);
+			}
+			if (!strncmp(buf, "musicpackSubset", 15)) {
+				char *p;
+
+				p = strtok(buf, " \t\n");
+				p = strtok(NULL, "\t\n");
+				if (p) cfg_musicpack_subset = atoi(p);
 			}
 			/* audio mixer settings */
 			if (!strncmp(buf, "audioMaster", 11)) {
@@ -556,7 +570,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 	char buf[1024];
 #ifdef USE_SOUND_2010
 	/* backward compatibility */
-	bool compat_apf = FALSE;
+	bool compat_apf = FALSE, compat_apf2 = FALSE;
 #endif
 #ifdef USE_X11
 	bool found_window[ANGBAND_TERM_MAX] = { FALSE };
@@ -611,6 +625,17 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 						strcpy(buf, "musicpackFolder\t\t");
 						strcat(buf, cfg_musicpackfolder);
 						strcat(buf, "\n");
+					} else if (!strncmp(buf, "soundpackSubset", 15)) {
+						strcpy(buf, "soundpackSubset\t\t");
+						strcat(buf, format("%d", cfg_soundpack_subset));
+						strcat(buf, "\n");
+#ifdef USE_SOUND_2010
+						compat_apf2 = TRUE;
+#endif
+					} else if (!strncmp(buf, "musicpackSubset", 15)) {
+						strcpy(buf, "musicpackSubset\t\t");
+						strcat(buf, format("%d", cfg_musicpack_subset));
+						strcat(buf, "\n");
 					}
 				} else {
 					if (!creds_only) {
@@ -623,8 +648,36 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 							compat_apf = TRUE;
 #endif
 						} else if (!strncmp(buf, "musicpackFolder", 15)) {
-							strcpy(buf, "musicpackFolder\t\t");
-							strcat(buf, cfg_musicpackfolder);
+#ifdef USE_SOUND_2010
+							/* add newly released entries to older config file versions */
+							if (!compat_apf2) {
+								fputs("soundpackSubset\t\t1\n", config2);
+
+								strcpy(buf, "musicpackFolder\t\t");
+								strcat(buf, cfg_musicpackfolder);
+								strcat(buf, "\n");
+								fputs(buf, config2);
+
+								strcpy(buf, "musicpackSubset\t\t1\n");
+							}
+							else
+#endif
+							/* normal op */
+							{
+								strcpy(buf, "musicpackFolder\t\t");
+								strcat(buf, cfg_musicpackfolder);
+								strcat(buf, "\n");
+							}
+						} else if (!strncmp(buf, "soundpackSubset", 15)) {
+							strcpy(buf, "soundpackSubset\t\t");
+							strcat(buf, format("%d", cfg_soundpack_subset));
+							strcat(buf, "\n");
+#ifdef USE_SOUND_2010
+							compat_apf2 = TRUE;
+#endif
+						} else if (!strncmp(buf, "musicpackSubset", 15)) {
+							strcpy(buf, "musicpackSubset\t\t");
+							strcat(buf, format("%d", cfg_musicpack_subset));
 							strcat(buf, "\n");
 						}
 #ifdef USE_SOUND_2010
@@ -636,7 +689,9 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 							/* add newly released entries to older config file versions */
 							if (!compat_apf) {
 								fputs("\nsoundpackFolder\t\tsound\n", config2);
-								fputs("musicpackFolder\t\tmusic\n\n", config2);
+								fputs("soundpackSubset\t\t1\n", config2);
+								fputs("musicpackFolder\t\tmusic\n", config2);
+								fputs("musicpackSubset\t\t1\n\n", config2);
 							}
 						} else if (!strncmp(buf, "audioMusic", 10)) {
 							strcpy(buf, "audioMusic\t\t");
@@ -897,7 +952,9 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			fputs(format("audioChannels\t\t%d\n", cfg_max_channels), config2);
 			fputs(format("audioBuffer\t\t%d\n", cfg_audio_buffer), config2);
 			fputs(format("soundpackFolder\t\t%s\n", cfg_soundpackfolder), config2);
+			fputs(format("soundpackSubset\t\t%s\n", cfg_soundpack_subset), config2);
 			fputs(format("musicpackFolder\t\t%s\n", cfg_musicpackfolder), config2);
+			fputs(format("musicpackSubset\t\t%s\n", cfg_musicpack_subset), config2);
 			fputs(format("audioMaster\t\t%s\n", cfg_audio_master ? "1" : "0"), config2);
 			fputs(format("audioMusic\t\t%s\n", cfg_audio_music ? "1" : "0"), config2);
 			fputs(format("audioSound\t\t%s\n", cfg_audio_sound ? "1" : "0"), config2);
@@ -1153,6 +1210,7 @@ int main(int argc, char **argv) {
 			no_cache_audio = FALSE;
 #endif
 			cfg_soundpackfolder[0] = cfg_musicpackfolder[0] = 0;
+			cfg_soundpack_subset = cfg_musicpack_subset = 1;
 			firstrun = TRUE;
 			bigmap_hint = TRUE;
 #ifdef GLOBAL_BIG_MAP
