@@ -184,6 +184,11 @@ extern char guildhall_pos[14];
 
 extern setup_t Setup;
 extern client_setup_t Client_setup;
+/* Additional local graphics info for mapping a received character to a specific sub-tileset */
+extern signed char u_subtileset[TV_MAX];
+extern signed char f_subtileset[MAX_F_IDX];
+extern signed char k_subtileset[MAX_K_IDX];
+extern signed char r_subtileset[MAX_R_IDX];
 
 extern bool shopping, perusing, local_map_active;
 
@@ -373,6 +378,8 @@ extern char32_t kidx_po_rain_char, kidx_po_rain_e1_char, kidx_po_rain_e2_char, k
 extern char32_t kidx_po_d10f_tl, kidx_po_d10f_t, kidx_po_d10f_tr, kidx_po_d10f_bl, kidx_po_d10f_b, kidx_po_d10f_br;
 extern byte kidx_po_rain_attr, kidx_po_rain_e1_attr, kidx_po_rain_e2_attr, kidx_po_rain_w1_attr, kidx_po_rain_w2_attr, kidx_po_snow_attr, kidx_po_sand_attr;
 extern rawpict_tile tiles_rawpict_org[MAX_TILES_RAWPICT + 1];
+extern rawpict_tile tiles_rawpict_org_sub[MAX_SUBFONTS][MAX_TILES_RAWPICT + 1];
+extern signed char tiles_rawpict_subtileset[MAX_TILES_RAWPICT + 1];
 #endif
 extern bool use_sound, use_sound_org;
 extern bool quiet_mode;
@@ -599,7 +606,7 @@ extern void init_file_paths(char *path);
 extern errr process_pref_file(cptr buf);
 extern errr process_pref_file_manual(cptr buf);
 extern errr process_pref_file_aux(char *buf, cptr name, bool quiet);
-extern errr process_pref_file_aux_aux(char *buf, byte fmt);
+extern errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset);
 extern errr load_charspec_macros(cptr cname);
 extern void show_motd(int delay);
 extern void peruse_file(void);

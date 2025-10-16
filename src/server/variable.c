@@ -424,6 +424,8 @@ char *allow_uniques, *reject_uniques, *orcs_only;
  */
 byte tval_to_attr[128];
 char tval_to_char[128];
+byte tval_to_char_subtileset[128];
+
 /*
  * The vault generation arrays
  */

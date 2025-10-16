@@ -4060,7 +4060,7 @@ int init_graphics_win(void) {
 		/* check whether it's a valid subtile file */
 		if (!(csub = strchr(tmp_name, '#'))) continue; //valid sub index marker
 		*csub = 0;
-		if (strcmp(tmp_name, graphic_tiles)) continue; //is same base filename as the selected graphical_tiles file
+		if (strcmp(tmp_name, graphic_tiles)) continue; //is same base filename as the selected graphic_tiles file
 		if (!(csub_end = strchr(csub + 1, '_'))) continue; //valid sub index terminator
 		*csub_end = 0;
 		i = atoi(csub + 1);

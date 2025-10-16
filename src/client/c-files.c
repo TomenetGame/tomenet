@@ -825,7 +825,7 @@ static void key_autoconvert(char *tmp, byte fmt) {
  * value, otherwise is 0. This will be usefull, if the MAX_FONT_CHAR constant
  * changes, there will be no need to update the graphical .prf files.
  */
-errr process_pref_file_aux_aux(char *buf, byte fmt) {
+errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 	int i, j, k;
 	int n1, n2;
 
@@ -891,6 +891,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			{
 				Client_setup.r_char[i] = n2;
 				monster_mapping_mod = u32b_char_dict_set(monster_mapping_mod, n2, monster_mapping_org[i]);
+				r_subtileset[i] = subtileset;
 			}
 			return(0);
 		}
@@ -914,7 +915,10 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 #ifndef CUSTOM_MAPPING_ALWAYS
 			if (n2)
 #endif
+			{
 				Client_setup.k_char[i] = n2;
+				k_subtileset[i] = subtileset;
+			}
 			return(0);
 		}
 		break;
@@ -940,6 +944,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			{
 				Client_setup.f_char[i] = n2;
 				floor_mapping_mod = u32b_char_dict_set(floor_mapping_mod, n2, floor_mapping_org[i]);
+				f_subtileset[i] = subtileset;
 
 				/* Hacky: Try to catch if a custom font mapping puts anything besides walls on '2' or '127' ie the solid-bar/wall symbols,
 				   in which case we assume the font is broken, as these symbols are reserved as 'solid blocks' for UI elements (mainly bars)!
@@ -970,7 +975,10 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 #ifndef CUSTOM_MAPPING_ALWAYS
 			if (n2)
 #endif
+			{
 				Client_setup.u_char[j] = n2;
+				u_subtileset[j] = subtileset;
+			}
 			return(0);
 		}
 		break;
@@ -996,6 +1004,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			tiles_rawpict_org[j].w = strtol(zz[3], NULL, 0);
 			tiles_rawpict_org[j].h = strtol(zz[4], NULL, 0);
 			tiles_rawpict_org[j].defined = TRUE;
+			tiles_rawpict_subtileset[j] = subtileset;
 
 			/* For first client startup: Since we're called here _after_ tileset loading, we have to scale here */
  #if defined(WINDOWS) || defined(USE_X11)
@@ -1031,6 +1040,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 			{
 				Client_setup.r_char[i] = n2;
 				monster_mapping_mod = u32b_char_dict_set(monster_mapping_mod, n2, monster_mapping_org[i]);
+				r_subtileset[i] = subtileset;
 			}
 			return(0);
 		}
@@ -1061,7 +1071,10 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 #ifndef CUSTOM_MAPPING_ALWAYS
 			if (n2)
 #endif
+			{
 				Client_setup.u_char[j] = n2;
+				u_subtileset[j] = subtileset;
+			}
 			return(0);
 		}
 #endif
@@ -1091,7 +1104,10 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 #ifndef CUSTOM_MAPPING_ALWAYS
 			if (n2)
 #endif
+			{
 				Client_setup.u_char[j] = n2;
+				u_subtileset[j] = subtileset;
+			}
 			return(0);
 		}
 #endif
@@ -1113,7 +1129,10 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 #ifndef CUSTOM_MAPPING_ALWAYS
 			if (n2)
 #endif
+			{
 				tval_to_char[j] = n2;
+				tval_to_char_subtileset[j] = subtileset;
+			}
 			return(0);
 		}
 #endif
@@ -1253,9 +1272,10 @@ errr process_pref_file_aux_aux(char *buf, byte fmt) {
 errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	FILE *fp;
 	int n, err;
-	char *buf2;
+	char *buf2, *c, *c2;
 	byte fmt;
 	//bool errors = FALSE;
+	int subtileset = -1;
 
 	fp = my_fopen(buf, "r");
 	if (!fp) {
@@ -1266,10 +1286,27 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 		return(-1);
 	}
 
+	/* Recognize from filename part (basename suffix) '#...'.bmp when we're a sub-tileset file
+	   (this is somewhat better than passing a parm, because it will also catch user loading it manually).
+	   Then remember desired character-specific subtileset file accordingly. */
+	/* Are we reading a graphical tileset file? Check whether file name starts on "graphics-" */
+	c = buf + strlen(buf);
+#ifdef WINDOWS
+	while (c >= buf && *c != '\\') c--;
+#else
+	while (c >= buf && *c != '/') c--;
+#endif
+	c++;
+	if (prefix(c, "graphics-")) {
+		/* (We do not check for .bmp extension, not really needed if we already checked for 'graphics' filename prefix) */
+		/* check whether it's a valid subtile file */
+		if ((c2 = strchr(c, '#')) && atoi(c2) >= 0 && atoi(c2) < MAX_SUBFONTS) subtileset = atoi(c2);
+	}
+
 	/* Process the file */
 	while (0 == (err = my_fgets2(fp, &buf2, &n, &fmt))) {
 		/* Process the line */
-		if (process_pref_file_aux_aux(buf2, fmt)) {
+		if (process_pref_file_aux_aux(buf2, fmt, subtileset)) {
 			/* Useful error message */
 			if (rl_connection_state == 1) c_msg_format("\377yError in '%s' parsing '%s'.", buf2, name);
 			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Error in '%s' parsing '%s'.\n", buf2, name));

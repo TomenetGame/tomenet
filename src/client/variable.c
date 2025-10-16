@@ -72,6 +72,11 @@ char guildhall_pos[14];
 
 setup_t Setup;				/* The information given to us by the server */
 client_setup_t Client_setup;		/* The information we give to the server */
+/* Additional local graphics info for mapping a received character to a specific sub-tileset */
+signed char u_subtileset[TV_MAX];
+signed char f_subtileset[MAX_F_IDX];
+signed char k_subtileset[MAX_K_IDX];
+signed char r_subtileset[MAX_R_IDX];
 
 bool shopping = FALSE;			/* Are we in a store? */
 bool perusing = FALSE;			/* Are we browinsg a help file or similar? */
@@ -229,6 +234,8 @@ char32_t kidx_po_rain_char = 0, kidx_po_rain_e1_char = 0, kidx_po_rain_e2_char =
 byte kidx_po_rain_attr = 0, kidx_po_rain_e1_attr = 0, kidx_po_rain_e2_attr = 0, kidx_po_rain_w1_attr = 0, kidx_po_rain_w2_attr = 0, kidx_po_snow_attr = 0, kidx_po_sand_attr = 0; /* pseudo objects for graphical weather particles */
 char32_t kidx_po_d10f_tl = 0, kidx_po_d10f_t = 0, kidx_po_d10f_tr = 0, kidx_po_d10f_bl = 0, kidx_po_d10f_b = 0, kidx_po_d10f_br = 0;
 rawpict_tile tiles_rawpict_org[MAX_TILES_RAWPICT + 1];
+rawpict_tile tiles_rawpict_org_sub[MAX_SUBFONTS][MAX_TILES_RAWPICT + 1];
+signed char tiles_rawpict_subtileset[MAX_TILES_RAWPICT + 1];
 #endif
 #ifdef USE_SOUND_2010
 bool use_sound = TRUE, use_sound_org = TRUE; //ought to be set via TOMENET_SOUND environment var in linux, probably (compare TOMENET_GRAPHICS) -C. Blue

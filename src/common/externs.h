@@ -153,6 +153,7 @@ extern s16b alloc_race_size;
 extern alloc_entry *alloc_race_table;
 extern byte tval_to_attr[128];
 extern char tval_to_char[128];
+extern byte tval_to_char_subtileset[128];
 
 extern header *v_head;
 extern vault_type *v_info;

@@ -1844,6 +1844,8 @@ static errr CheckEvent(bool wait) {
 #ifdef USE_GRAPHICS
 /* Frees all graphics structures in provided term_data and sets them to zero values. */
 static void free_graphics(term_data *td) {
+	int i;
+
 	if (td->tiles) {
 		XDestroyImage(td->tiles);
 		td->tiles = NULL;
@@ -1870,6 +1872,28 @@ static void free_graphics(term_data *td) {
 		XFreePixmap(Metadpy->dpy, td->tilePreparation);
 		td->tilePreparation = None;
 	}
+
+	for (i = 0; i < MAX_SUBFONTS; i++) {
+		if (td->tiles_sub[i]) {
+			XDestroyImage(td->tiles_sub[i]);
+			td->tiles_sub[i] = NULL;
+		}
+		if (td->bgmask_sub[i]) {
+			XFreePixmap(Metadpy->dpy, td->bgmask_sub[i]);
+			td->bgmask_sub[i] = None;
+		}
+		if (td->fgmask_sub[i]) {
+			XFreePixmap(Metadpy->dpy, td->fgmask_sub[i]);
+			td->fgmask_sub[i] = None;
+		}
+ #ifdef GRAPHICS_BG_MASK
+		if (td->bg2mask_sub[i]) {
+			XFreePixmap(Metadpy->dpy, td->bg2mask_sub[i]);
+			td->bg2mask_sub[i] = None;
+		}
+ #endif
+	}
+
  #ifdef TILE_CACHE_SIZE
 	if (!disable_tile_cache)
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
@@ -2731,8 +2755,8 @@ static errr Term_rawpict_x11(int x, int y, int c) {
 		  x, y);
 #endif
 	XPutImage(Metadpy->dpy, td->inner->win, Infoclr->gc,
-		  td->tiles, x1, y1,
-		  x, y, td->tiles_rawpict[c].w, td->tiles_rawpict[c].h);
+	    td->tiles, x1, y1,
+	    x, y, td->tiles_rawpict[c].w, td->tiles_rawpict[c].h);
 
 	/* Success */
 	return(0);
@@ -3013,9 +3037,9 @@ static void createMasksFromData_2mask(char* data, int width, int height, char **
  */
  #ifndef GRAPHICS_BG_MASK
 static XImage *ResizeImage(Display *disp, XImage *Im,
-                           int ix, int iy, int ox, int oy,
-                           char *bgbits, char *fgbits, Pixmap *bgmask_return, Pixmap *fgmask_return,
-                           term_data *td) {
+    int ix, int iy, int ox, int oy,
+    char *bgbits, char *fgbits, Pixmap *bgmask_return, Pixmap *fgmask_return,
+    term_data *td, int sub) {
 	int width1, height1, width2, height2;
 	int x1, x2, y1, y2, Tx, Ty;
 	int *px1, *px2, *dx1, *dx2;
@@ -3115,29 +3139,47 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 	(*fgmask_return) = XCreateBitmapFromData(disp, root_win, fgmask_data, width2, height2);
 
 	/* Also rescale rawpict image dimensions/coordinates according to new dimensions */
-	int i;
+	if (sub == -1) {
+		int i;
 
-	td->rawpict_scale_wid_org = width1;
-	td->rawpict_scale_hgt_org = height1;
-	td->rawpict_scale_wid_use = width2;
-	td->rawpict_scale_hgt_use = height2;
+		td->rawpict_scale_wid_org = width1;
+		td->rawpict_scale_hgt_org = height1;
+		td->rawpict_scale_wid_use = width2;
+		td->rawpict_scale_hgt_use = height2;
 
-	for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
-		if (!tiles_rawpict_org[i].defined) continue;
-		if (!width1 || !height1) continue;
-		td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
-		td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
-		td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
-		td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+			if (!tiles_rawpict_org[i].defined) continue;
+			if (!width1 || !height1) continue;
+			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
+			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
+			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
+			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+		}
+	} else {
+		int i;
+
+		td->rawpict_scale_wid_org_sub[sub] = width1;
+		td->rawpict_scale_hgt_org_sub[sub] = height1;
+		td->rawpict_scale_wid_use_sub[sub] = width2;
+		td->rawpict_scale_hgt_use_sub[sub] = height2;
+
+		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+			if (!tiles_rawpict_org_sub[sub][i].defined) continue;
+			if (!width1 || !height1) continue;
+			td->tiles_rawpict_sub[sub][i].x = (tiles_rawpict_org_sub[sub][i].x * width2) / width1;
+			td->tiles_rawpict_sub[sub][i].w = (tiles_rawpict_org_sub[sub][i].w * width2) / width1;
+			td->tiles_rawpict_sub[sub][i].y = (tiles_rawpict_org_sub[sub][i].y * height2) / height1;
+			td->tiles_rawpict_sub[sub][i].h = (tiles_rawpict_org_sub[sub][i].h * height2) / height1;
+		}
 	}
 
 	return(Tmp);
 }
  #else
 static XImage *ResizeImage_2mask(Display *disp, XImage *Im,
-                           int ix, int iy, int ox, int oy,
-                           char *bgbits, char *fgbits, char *bg2bits, Pixmap *bgmask_return, Pixmap *fgmask_return, Pixmap *bg2mask_return,
-                           term_data *td) {
+    int ix, int iy, int ox, int oy,
+    char *bgbits, char *fgbits, char *bg2bits, Pixmap *bgmask_return, Pixmap *fgmask_return, Pixmap *bg2mask_return,
+    term_data *td, int sub) {
 	int width1, height1, width2, height2;
 	int x1, x2, y1, y2, Tx, Ty;
 	int *px1, *px2, *dx1, *dx2;
@@ -3249,20 +3291,38 @@ static XImage *ResizeImage_2mask(Display *disp, XImage *Im,
 	(*bg2mask_return) = XCreateBitmapFromData(disp, root_win, bg2mask_data, width2, height2);
 
 	/* Also rescale rawpict image dimensions/coordinates according to new dimensions */
-	int i;
+	if (sub == -1) {
+		int i;
 
-	td->rawpict_scale_wid_org = width1;
-	td->rawpict_scale_hgt_org = height1;
-	td->rawpict_scale_wid_use = width2;
-	td->rawpict_scale_hgt_use = height2;
+		td->rawpict_scale_wid_org = width1;
+		td->rawpict_scale_hgt_org = height1;
+		td->rawpict_scale_wid_use = width2;
+		td->rawpict_scale_hgt_use = height2;
 
-	for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
-		if (!tiles_rawpict_org[i].defined) continue;
-		if (!width1 || !height1) continue;
-		td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
-		td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
-		td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
-		td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+			if (!tiles_rawpict_org[i].defined) continue;
+			if (!width1 || !height1) continue;
+			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
+			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
+			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
+			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+		}
+	} else {
+		int i;
+
+		td->rawpict_scale_wid_org_sub[sub] = width1;
+		td->rawpict_scale_hgt_org_sub[sub] = height1;
+		td->rawpict_scale_wid_use_sub[sub] = width2;
+		td->rawpict_scale_hgt_use_sub[sub] = height2;
+
+		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+			if (!tiles_rawpict_org_sub[sub][i].defined) continue;
+			if (!width1 || !height1) continue;
+			td->tiles_rawpict_sub[sub][i].x = (tiles_rawpict_org_sub[sub][i].x * width2) / width1;
+			td->tiles_rawpict_sub[sub][i].w = (tiles_rawpict_org_sub[sub][i].w * width2) / width1;
+			td->tiles_rawpict_sub[sub][i].y = (tiles_rawpict_org_sub[sub][i].y * height2) / height1;
+			td->tiles_rawpict_sub[sub][i].h = (tiles_rawpict_org_sub[sub][i].h * height2) / height1;
+		}
 	}
 
 	return(Tmp);
@@ -3271,7 +3331,7 @@ static XImage *ResizeImage_2mask(Display *disp, XImage *Im,
 
 /* Rescale rawpict image dimensions/coordinates according to new dimensions */
 void tiles_rawpict_scale(void) {
-	int t, i, width1, width2, height1, height2;
+	int t, i, j, width1, width2, height1, height2;
 	term_data *td;
 
 	for (t = 0; t < ANGBAND_TERM_MAX; t++) {
@@ -3282,13 +3342,33 @@ void tiles_rawpict_scale(void) {
 		width2 = td->rawpict_scale_wid_use;
 		height2 = td->rawpict_scale_hgt_use;
 
-		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
-			if (!tiles_rawpict_org[i].defined) continue;
-			if (!width1 || !height1) continue;
-			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
-			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
-			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
-			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+		if (width1 && height1) {
+			for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+				if (!tiles_rawpict_org[i].defined) continue;
+				td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
+				td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
+				td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
+				td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+			}
+		}
+
+		for (j = 0; j < MAX_SUBFONTS; j++) {
+			if (!td->tiles_sub[j]) continue;
+
+			width1 = td->rawpict_scale_wid_org_sub[j];
+			height1 = td->rawpict_scale_hgt_org_sub[j];
+			width2 = td->rawpict_scale_wid_use_sub[j];
+			height2 = td->rawpict_scale_hgt_use_sub[j];
+
+			if (width1 && height1) {
+				for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+					if (!tiles_rawpict_org_sub[j][i].defined) continue;
+					td->tiles_rawpict_sub[j][i].x = (tiles_rawpict_org_sub[j][i].x * width2) / width1;
+					td->tiles_rawpict_sub[j][i].w = (tiles_rawpict_org_sub[j][i].w * width2) / width1;
+					td->tiles_rawpict_sub[j][i].y = (tiles_rawpict_org_sub[j][i].y * height2) / height1;
+					td->tiles_rawpict_sub[j][i].h = (tiles_rawpict_org_sub[j][i].h * height2) / height1;
+				}
+			}
 		}
 	}
 }
@@ -3307,6 +3387,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	int win_cols, win_lines, wid_outer, hgt_outer;
 	cptr n;
 	int topx, topy; /* 0, 0 default */
+	int i;
 
 
 	/* Use values from .tomenetrc;
@@ -3449,6 +3530,16 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	td->tilePreparation2 = None;
  #endif
 	td->tilePreparation = None;
+
+	for (i = 0; i < MAX_SUBFONTS; i++) {
+		td->tiles_sub[i] = NULL;
+		td->bgmask_sub[i] = None;
+		td->fgmask_sub[i] = None;
+ #ifdef GRAPHICS_BG_MASK
+		td->bg2mask_sub[i] = None;
+ #endif
+	}
+
  #ifdef TILE_CACHE_SIZE
 	if (!disable_tile_cache)
 	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
@@ -3490,14 +3581,32 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		/* Use resized tiles & masks. */
 #ifdef GRAPHICS_BG_MASK
 		td->tiles = ResizeImage_2mask(Metadpy->dpy, graphics_image,
-				graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-				graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask),
-				td);
+		    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
+		    graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask),
+		    td, -1);
+
+		for (i = 0; i < MAX_SUBFONTS; i++) {
+			if (graphics_image_sub[i] == None) continue;
+
+			td->tiles_sub[i] = ResizeImage_2mask(Metadpy->dpy, graphics_image_sub[i],
+			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
+			    graphics_bgmask_sub[i], graphics_fgmask_sub[i], graphics_bg2mask_sub[i], &(td->bgmask_sub[i]), &(td->fgmask_sub[i]), &(td->bg2mask_sub[i]),
+			    td, i);
+		}
 #else
 		td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
-				graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-				graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask),
-				td);
+		    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
+		    graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask),
+		    td, -1);
+
+		for (i = 0; i < MAX_SUBFONTS; i++) {
+			if (graphics_image_sub[i] == None) continue;
+
+			td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i],
+			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
+			    graphics_bgmask_sub[i], graphics_fgmask_sub[i], &(td->bgmask_sub[i]), &(td->fgmask_sub[i]),
+			    td, i);
+		}
 #endif
 
 		/* Initialize preparation pixmap. */
@@ -3821,7 +3930,7 @@ int init_graphics_x11(void) {
 		/* check whether it's a valid subtile file */
 		if (!(csub = strchr(tmp_name, '#'))) continue; //valid sub index marker
 		*csub = 0;
-		if (strcmp(tmp_name, graphic_tiles)) continue; //is same base filename as the selected graphical_tiles file
+		if (strcmp(tmp_name, graphic_tiles)) continue; //is same base filename as the selected graphic_tiles file
 		if (!(csub_end = strchr(csub + 1, '_'))) continue; //valid sub index terminator
 		*csub_end = 0;
 		i = atoi(csub + 1);
@@ -3830,9 +3939,12 @@ int init_graphics_x11(void) {
 		/* accept if enabled */
 		graphic_subtiles_file[i][0] = 0;
 		if (!graphic_subtiles[i]) continue;
-		strcpy(graphic_subtiles_file[i], tmp_name);
+		strcpy(graphic_subtiles_file[i], ent->d_name);
 	}
 	closedir(dir);
+
+
+	/* --- Load main tileset file --- */
 
 	/* Load .bmp image. */
 	if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
@@ -3910,11 +4022,84 @@ int init_graphics_x11(void) {
 		}
 	}
 
-	for (i = 0; i < MAX_SUBFONTS; i++) {
-		if (graphics_image_sub[i] == None) continue;
-		//...todo...
-		//... XPutPixel(graphics_image_sub[i], x, y, create_pixel(Metadpy->dpy, data[4 * (x + y * width)], data[4 * (x + y * width) + 1], data[4 * (x + y * width) + 2]));
+
+	/* --- Load the (partial) sub-tilesets --- */
+
+    for (i = 0; i < MAX_SUBFONTS; i++) {
+	if (!graphic_subtiles[i]) continue; //subset is disabled?
+	if (!graphic_subtiles_file[i][0]) continue; //file does not exist?
+	//if (graphics_image_sub[i] == None) continue;
+
+	/* Build the name of the graphics file. */
+	path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_subtiles_file[i]);
+
+	/* Load .bmp image. */
+	if (0 != (rerr = ReadBMPData(filename, &data, &width, &height))) {
+		sprintf(use_graphics_errstr, "Graphics subfile \"%s\" ", filename);
+		switch (rerr) {
+		case ReadBMPNoFile:			strcat(use_graphics_errstr, "can not be read."); break;
+		case ReadBMPReadErrorOrUnexpectedEOF:	strcat(use_graphics_errstr, "read error or unexpected end."); break;
+		case ReadBMPInvalidFile:		strcat(use_graphics_errstr, "has incorrect BMP file format."); break;
+		case ReadBMPNoImageData:		strcat(use_graphics_errstr, "contains no image data."); break;
+		case ReadBMPUnexpectedEOF:		strcat(use_graphics_errstr, "unexpected end."); break;
+		case ReadBMPIllegalBitCount:		strcat(use_graphics_errstr, "has illegal bit count, only 24bit and 32bit images are allowed."); break;
+		default: 				strcat(use_graphics_errstr, "unexpected error.");
+		}
+		fprintf(stderr, "%s\n", use_graphics_errstr);
+
+		graphic_subtiles[i] = FALSE; //disable this subset
+		continue;
 	}
+
+	/* Ensure the BMP isn't empty or too small */
+	if (width < graphics_tile_wid || height < graphics_tile_hgt) {
+		sprintf(use_graphics_errstr, "Invalid subimage dimensions (width x height): %dx%d", width, height);
+		logprint(format("%s\n", use_graphics_errstr));
+
+		graphic_subtiles[i] = FALSE; //disable this subset
+		continue;
+	}
+
+	/* Calculate tiles per row. */
+	graphics_image_tpr = width / graphics_tile_wid;
+	if (graphics_image_tpr <= 0) { /* Paranoia. */
+		sprintf(use_graphics_errstr, "Invalid subimage tiles per row count: %d", graphics_image_tpr);
+		fprintf(stderr, "%s\n", use_graphics_errstr);
+
+		graphic_subtiles[i] = FALSE; //disable this subset
+		continue;
+	}
+
+	/* Create masks from loaded data */
+#ifdef GRAPHICS_BG_MASK
+	createMasksFromData_2mask(data, width, height, &graphics_bgmask_sub[i], &graphics_fgmask_sub[i], &graphics_bg2mask_sub[i]);
+#else
+	createMasksFromData(data, width, height, &graphics_bgmask_sub[i], &graphics_fgmask_sub[i]);
+#endif
+
+	/* Store loaded image data in XImage format */
+	depth = DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
+	visual = DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
+	graphics_image_sub[i] = XCreateImage(
+		Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
+		data, width, height, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
+
+	/* Speedup Hack. Don't create and allocate pixel if default depth is 24bit. Is this kosher? */
+	if (depth != 24) {
+		/* Allocate color for each pixel and rewrite in image */
+		for (y = 0; y < height; y++) {
+			for (x = 0; x < width; x++) {
+				/* Utilize XAllocColor() in create_pixel() to get an 'official' X11 colour for our desired RGB value.
+				   On 24-bit(also 32-bit?)-depth visuals this will be identical,
+				   so this is mainly for super old/weird hardware that has indexed colours or <8 bits per channel. */
+				XPutPixel(graphics_image_sub[i], x, y, create_pixel(Metadpy->dpy, data[4 * (x + y * width)], data[4 * (x + y * width) + 1], data[4 * (x + y * width) + 2]));
+			}
+		}
+	}
+    }
+
+
+	/* --- Done --- */
 
 gfx_skip:
 	if (!use_graphics) {
@@ -4191,25 +4376,25 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 			td->tiles = ResizeImage_2mask(Metadpy->dpy, graphics_image,
 			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 			    graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask),
-			    td);
+			    td, -1);
 			for (i = 0; i < MAX_SUBFONTS; i++) {
 				if (graphics_image_sub[i] == None) continue;
 				td->tiles_sub[i] = ResizeImage_2mask(Metadpy->dpy, graphics_image_sub[i],
 				    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 				    graphics_bgmask_sub[i], graphics_fgmask_sub[i], graphics_bg2mask_sub[i], &(td->bgmask_sub[i]), &(td->fgmask_sub[i]), &(td->bg2mask_sub[i]),
-				    td);
+				    td, i);
 			}
  #else
 			td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
 			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 			    graphics_bgmask, graphics_fgmask, &(td->bgmask), &(td->fgmask),
-			    td);
+			    td, -1);
 			for (i = 0; i < MAX_SUBFONTS; i++) {
 				if (graphics_image_sub[i] == None) continue;
 				td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i],
 				    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 				    graphics_bgmask_sub[i], graphics_fgmask_sub[i], &(td->bgmask_sub[i]), &(td->fgmask_sub[i]),
-				    td);
+				    td, i);
 			}
  #endif
 
