@@ -2244,6 +2244,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
  #endif
 	int x1, y1;
 	XImage *tiles;
+	Pixmap fgmask, bgmask;
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top checks: main screen top chat line or status line) */
@@ -2344,20 +2345,25 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
  #endif
 
 	/* Choose between main tileset or a (partial) subset */
-	if (c_subtileset[c] == -1)
+	if (c_subtileset[c] == -1) {
 		tiles = td->tiles;
-	else
+		fgmask = td->fgmask;
+		bgmask = td->bgmask;
+	} else {
 		tiles = td->tiles_sub[c_subtileset[c]];
+		fgmask = td->fgmask_sub[c_subtileset[c]];
+		bgmask = td->bgmask_sub[c_subtileset[c]];
+	}
 
 	/* Prepare tile to preparation pixmap. */
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
-	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
+	XCopyPlane(Metadpy->dpy, fgmask, tilePreparation, Infoclr->gc,
 		   x1, y1,
 		   td->fnt->wid, td->fnt->hgt,
 		   0, 0,
 		   1);
-	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, bgmask);
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 	XPutImage(Metadpy->dpy, tilePreparation,
 		  Infoclr->gc,
@@ -2389,6 +2395,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
    #endif
 	int x1, y1;
 	XImage *tiles;
+	Pixmap fgmask, bgmask, bg2mask;
 
 	/* Avoid visual glitches while not in 2mask mode */
 	if (use_graphics != UG_2MASK) {
@@ -2520,10 +2527,18 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
    #endif
 
 	/* Choose between main tileset or a (partial) subset */
-	if (c_subtileset[c] == -1)
+	if (c_subtileset[c] == -1) {
 		tiles = td->tiles;
-	else
+		fgmask = td->fgmask;
+		bgmask = td->bgmask;
+		bg2mask = td->bg2mask;
+	} else {
 		tiles = td->tiles_sub[c_subtileset[c]];
+		fgmask = td->fgmask_sub[c_subtileset[c]];
+		bgmask = td->bgmask_sub[c_subtileset[c]];
+		bg2mask = td->bg2mask_sub[c_subtileset[c]];
+	}
+
 
 	/* Prepare background tile to preparation pixmap. +chopchop+ */
 	if (c_back == 32) {
@@ -2532,12 +2547,12 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	} else {
 		x1 = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
 		y1 = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
-		XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation2, Infoclr->gc,
+		XCopyPlane(Metadpy->dpy, fgmask, tilePreparation2, Infoclr->gc,
 			   x1, y1,
 			   td->fnt->wid, td->fnt->hgt,
 			   0, 0,
 			   1);
-		XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
+		XSetClipMask(Metadpy->dpy, Infoclr->gc, bgmask);
 		XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 		XPutImage(Metadpy->dpy, tilePreparation2,
 			  Infoclr->gc,
@@ -2566,12 +2581,12 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	/* Prepare foreground tile to preparation pixmap. */
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
-	XCopyPlane(Metadpy->dpy, td->fgmask, tilePreparation, Infoclr->gc,
+	XCopyPlane(Metadpy->dpy, fgmask, tilePreparation, Infoclr->gc,
 		   x1, y1,
 		   td->fnt->wid, td->fnt->hgt,
 		   0, 0,
 		   1);
-	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bgmask);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, bgmask);
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 	XPutImage(Metadpy->dpy, tilePreparation,
 		  Infoclr->gc,
@@ -2583,7 +2598,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
    #if 1
 	/* Finally copy foreground tile onto background tile, via bg2mask. */
-	XSetClipMask(Metadpy->dpy, Infoclr->gc, td->bg2mask);
+	XSetClipMask(Metadpy->dpy, Infoclr->gc, bg2mask);
 	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
 	//XPutImage(Metadpy->dpy, tilePreparation, Infoclr->gc, tilePreparation2, 0, 0, 0, 0, td->fnt->wid, td->fnt->hgt);
 	XCopyArea(Metadpy->dpy, tilePreparation, tilePreparation2, Infoclr->gc, 0, 0, td->fnt->wid, td->fnt->hgt, 0, 0);	// NOTE that tilePreparation2 holds the final tile, NOT tilePreparation! (Compare tile-caching!)
