@@ -11840,6 +11840,7 @@ static void do_cmd_options_tilesets(void) {
 
 				graphic_subtiles[sub] = !graphic_subtiles[sub];
 				subset_enabled[cur_set][sub] = graphic_subtiles[sub];
+				c_msg_print("\377yGraphical tilesubset was changed. Requires client restart (use CTRL+Q).");
 				break;
 			}
 		} else switch (ch) {
