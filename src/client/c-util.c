@@ -15290,6 +15290,7 @@ u32b parse_color_code(const char *str) {
    "Access the "graphic visual" system pref file (if any)". */
 static void handle_process_graphics_file(void) {
 	char fname[255 + 13 + 1];
+	int i;
 
 	/* Figure out graphics prefs file name to be loaded. */
 	sprintf(fname, "graphics-%s.prf", graphic_tiles);
@@ -15300,6 +15301,20 @@ static void handle_process_graphics_file(void) {
 	 * there is no need to update graphics files after MAX_FONT_CHAR is changed. */
 	char_map_offset = MAX_FONT_CHAR + 1;
 	if (process_pref_file(fname) == -1) logprint(format("ERROR: Can't read graphics preferences file: %s\n", fname));
+	else {
+		/* Also initialize (partial) subtilesets */
+		for (i = 0; i < MAX_SUBFONTS; i++) {
+			if (!graphic_subtiles[i]) continue; //subset is disabled?
+			if (!graphic_subtiles_file[i][0]) continue; //file does not exist?
+			//if (graphics_image_sub[i] == None) continue;
+
+			sprintf(fname, "graphics-%s" , graphic_subtiles_file[i]);
+			//replace extension '.bmp' by '.prf'
+			strcpy(fname + strlen(fname) - 4, ".prf");
+
+			if (process_pref_file(fname) == -1) logprint(format("ERROR: Can't read subgraphics preferences file: %s\n", fname));
+		}
+	}
 	char_map_offset = 0;
 
 	/* Initialize pseudo-features and pseudo-objects that don't exist in the game world but are just used for graphical tilesets */

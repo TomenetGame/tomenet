@@ -1300,7 +1300,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	if (prefix(c, "graphics-")) {
 		/* (We do not check for .bmp extension, not really needed if we already checked for 'graphics' filename prefix) */
 		/* check whether it's a valid subtile file */
-		if ((c2 = strchr(c, '#')) && atoi(c2) >= 0 && atoi(c2) < MAX_SUBFONTS) subtileset = atoi(c2);
+		if ((c2 = strchr(c, '#')) && atoi(c2 + 1) >= 0 && atoi(c2 + 1) < MAX_SUBFONTS) subtileset = atoi(c2 + 1);
 	}
 
 	/* Process the file */
