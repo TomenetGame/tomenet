@@ -3913,6 +3913,7 @@ int init_graphics_x11(void) {
 	struct dirent *ent;
 	char tmp_name[256], *csub, *csub_end;
 	int i, j;
+	int graphics_image_tpr_sub;
 
 
 	/* Load graphics file. Quit if file missing or load error. */
@@ -4104,9 +4105,9 @@ int init_graphics_x11(void) {
 	}
 
 	/* Calculate tiles per row. */
-	graphics_image_tpr = width / graphics_tile_wid;
-	if (graphics_image_tpr <= 0) { /* Paranoia. */
-		sprintf(use_graphics_errstr, "Invalid subimage tiles per row count: %d", graphics_image_tpr);
+	graphics_image_tpr_sub = width / graphics_tile_wid;
+	if (graphics_image_tpr_sub <= 0) { /* Paranoia. */
+		sprintf(use_graphics_errstr, "Invalid subimage tiles per row count: %d", graphics_image_tpr_sub);
 		fprintf(stderr, "%s\n", use_graphics_errstr);
 
 		graphic_subtiles[i] = FALSE; //disable this subset
