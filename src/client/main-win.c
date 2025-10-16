@@ -3000,7 +3000,7 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	struct tile_cache_entry *entry;
 	int i, hole = -1;
   #ifdef TILE_CACHE_SINGLEBMP
-	int tc_idx, tc_x, tc_y;
+	int tc_idx = 0, tc_x, tc_y; // tc_idx init: wrong compiler warning
   #endif
  #endif
 
@@ -3268,7 +3268,7 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	struct tile_cache_entry *entry;
 	int i, hole = -1;
    #ifdef TILE_CACHE_SINGLEBMP
-	int tc_idx, tc_x, tc_y;
+	int tc_idx = 0, tc_x, tc_y; // tc_idx init: wrong compiler warning
    #endif
   #endif
 
@@ -4134,6 +4134,7 @@ int init_graphics_win(void) {
 	struct dirent *ent;
 	char tmp_name[256], *csub, *csub_end;
 	int i, j;
+	int graphics_image_tpr_sub;
 
 
 	/* Need to init this this early or meta screen will already crash */
@@ -4197,7 +4198,6 @@ int init_graphics_win(void) {
 	}
 	while ((ent = readdir(dir))) {
 		strcpy(tmp_name, ent->d_name);
-
 		/* file must end on '.bmp' */
 		j = strlen(tmp_name) - 4;
 		if (j < 1) continue;
@@ -4215,9 +4215,12 @@ int init_graphics_win(void) {
 		/* accept if enabled */
 		graphic_subtiles_file[i][0] = 0;
 		if (!graphic_subtiles[i]) continue;
-		strcpy(graphic_subtiles_file[i], tmp_name);
+		strcpy(graphic_subtiles_file[i], ent->d_name);
 	}
 	closedir(dir);
+
+
+	/* --- Load main tileset file --- */
 
 	/* Load .bmp image into memory */
  #ifndef CBM_METHOD_DIB
@@ -4298,6 +4301,86 @@ int init_graphics_win(void) {
  #endif
 		}
 	}
+
+
+	/* --- Load the (partial) sub-tilesets --- */
+
+    for (i = 0; i < MAX_SUBFONTS; i++) {
+	if (!graphic_subtiles[i]) continue; //subset is disabled?
+	if (!graphic_subtiles_file[i][0]) continue; //file does not exist?
+	//if (graphics_image_sub[i] == None) continue;
+
+	/* Build the name of the graphics file. */
+	path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, graphic_subtiles_file[i]);
+
+	/* Load .bmp image into memory */
+ #ifndef CBM_METHOD_DIB
+	g_hbmTiles_sub[i] = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE);
+ #else
+	g_hbmTiles_sub[i] = LoadImageA(NULL, filename, IMAGE_BITMAP, 0, 0, LR_LOADFROMFILE | LR_CREATEDIBSECTION); // see CreateBitmapMask() for LR_CREATEDIBSECTION flag explanation
+ #endif
+	/* Calculate tiles per row. */
+	GetObject(g_hbmTiles_sub[i], sizeof(BITMAP), &bm);
+
+	/* Ensure the BMP isn't empty or too small */
+	if (bm.bmWidth < graphics_tile_wid || bm.bmHeight < graphics_tile_hgt) {
+		sprintf(use_graphics_errstr, "Invalid sub-image #%d dimensions (width x height): %ldx%ld", i, bm.bmWidth, bm.bmHeight);
+		logprint(format("%s\n", use_graphics_errstr));
+
+		graphic_subtiles[i] = FALSE; //disable this subset
+		continue;
+	}
+
+	graphics_image_tpr_sub = bm.bmWidth / graphics_tile_wid;
+	if (graphics_image_tpr_sub <= 0) { /* Paranoia. */
+		sprintf(use_graphics_errstr, "Invalid sub-image #%d tiles per row count: %d", i, graphics_image_tpr_sub);
+		logprint(format("%s\n", use_graphics_errstr));
+
+		graphic_subtiles[i] = FALSE; //disable this subset
+		continue;
+	}
+
+	/* Create masks. */
+ #ifdef GRAPHICS_BG_MASK
+	if (use_graphics == UG_2MASK) {
+		int err1, err2, err3;
+
+		g_hbmBgMask_sub[i] = CreateBitmapMask(g_hbmTiles_sub[i], RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), &err1);
+		g_hbmFgMask_sub[i] = CreateBitmapMask(g_hbmTiles_sub[i], RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), &err2);
+		g_hbmBg2Mask_sub[i] = CreateBitmapMask(g_hbmTiles_sub[i], RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), &err3);
+		if (!g_hbmBgMask_sub[i] || !g_hbmFgMask_sub[i] || !g_hbmBg2Mask_sub[i]) {
+			sprintf(use_graphics_errstr, "Sub-Mask #%d creation failed (2) (%d,%d,%d)", i, err1, err2, err3);
+			logprint(format("%s\n", use_graphics_errstr));
+
+			graphic_subtiles[i] = FALSE; //disable this subset
+			continue;
+		}
+	} else
+ #endif
+	/* actually always process the bg2mask even if not running 2mask mode,
+	   just to change BG2 colours in a 2mask-ready tileset to just black. This ensures tileset "backward compatibility". */
+	{
+		int err1, err2, err3;
+
+		/* Note the order: First, we set the unused bg2mask (transparency mask), but it'll be to bg instead of zero,
+		   via hack inside CreateBitmapMask that recognizes bg2 colour in non-2mask-mode */
+		void *res = CreateBitmapMask(g_hbmTiles_sub[i], RGB(GFXMASK_BG2_R, GFXMASK_BG2_G, GFXMASK_BG2_B), &err1);
+		/* so it instead becomes part of the bgmask now. */
+		g_hbmBgMask_sub[i] = CreateBitmapMask(g_hbmTiles_sub[i], RGB(GFXMASK_BG_R, GFXMASK_BG_G, GFXMASK_BG_B), &err2);
+		g_hbmFgMask_sub[i] = CreateBitmapMask(g_hbmTiles_sub[i], RGB(GFXMASK_FG_R, GFXMASK_FG_G, GFXMASK_FG_B), &err3);
+		if (!g_hbmBgMask_sub[i] || !g_hbmFgMask_sub[i] || !res) {
+			sprintf(use_graphics_errstr, "Sub-Mask #%d creation failed (1) (%d,%d,%d)", i, err1, err2, err3);
+			logprint(format("%s\n", use_graphics_errstr));
+
+			graphic_subtiles[i] = FALSE; //disable this subset
+			continue;
+		}
+	}
+
+    }
+
+
+	/* --- Done --- */
 
 gfx_skip:
 	if (!use_graphics) {
