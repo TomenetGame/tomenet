@@ -449,6 +449,13 @@ struct _term_data {
    #endif
   #endif
  #endif
+
+	HDC hdcTiles_sub[MAX_SUBFONTS], hdcBgMask_sub[MAX_SUBFONTS], hdcFgMask_sub[MAX_SUBFONTS];
+	rawpict_tile tiles_rawpict_sub[MAX_SUBFONTS][MAX_TILES_RAWPICT + 1];
+	int rawpict_scale_wid_org_sub[MAX_SUBFONTS], rawpict_scale_hgt_org_sub[MAX_SUBFONTS], rawpict_scale_wid_use_sub[MAX_SUBFONTS], rawpict_scale_hgt_use_sub[MAX_SUBFONTS];
+ #ifdef GRAPHICS_BG_MASK
+	HDC hdcBg2Mask_sub[MAX_SUBFONTS];
+ #endif
 #endif
 
 	DWORD    dwStyle;
@@ -924,7 +931,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
  * Function will not free resources if already allocated in hbmBgMask_return or hbmFgMask_return input variable.
  */
  #ifdef GRAPHICS_BG_MASK
-static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP hbmBg2Mask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return, HBITMAP *hbmBg2Mask_return, term_data *td) {
+static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP hbmBg2Mask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return, HBITMAP *hbmBg2Mask_return, term_data *td, int sub) {
  #else
 static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return, term_data *td) {
  #endif
@@ -1083,21 +1090,38 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
  #endif
 
 	/* Also rescale rawpict image dimensions/coordinates according to new dimensions */
-	int i;
+	if (sub == -1) {
+		int i;
 
-	td->rawpict_scale_wid_org = width1;
-	td->rawpict_scale_hgt_org = height1;
-	td->rawpict_scale_wid_use = width2;
-	td->rawpict_scale_hgt_use = height2;
+		td->rawpict_scale_wid_org = width1;
+		td->rawpict_scale_hgt_org = height1;
+		td->rawpict_scale_wid_use = width2;
+		td->rawpict_scale_hgt_use = height2;
 
-	for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
-		if (!tiles_rawpict_org[i].defined) continue;
-		if (!width1 || !height1) continue;
-		td->tiles_rawpict[i].defined = TRUE;
-		td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
-		td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
-		td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
-		td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+			if (!tiles_rawpict_org[i].defined) continue;
+			if (!width1 || !height1) continue;
+			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
+			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
+			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
+			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+		}
+	} else {
+		int i;
+
+		td->rawpict_scale_wid_org_sub[sub] = width1;
+		td->rawpict_scale_hgt_org_sub[sub] = height1;
+		td->rawpict_scale_wid_use_sub[sub] = width2;
+		td->rawpict_scale_hgt_use_sub[sub] = height2;
+
+		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+			if (!tiles_rawpict_org_sub[sub][i].defined) continue;
+			if (!width1 || !height1) continue;
+			td->tiles_rawpict_sub[sub][i].x = (tiles_rawpict_org_sub[sub][i].x * width2) / width1;
+			td->tiles_rawpict_sub[sub][i].w = (tiles_rawpict_org_sub[sub][i].w * width2) / width1;
+			td->tiles_rawpict_sub[sub][i].y = (tiles_rawpict_org_sub[sub][i].y * height2) / height1;
+			td->tiles_rawpict_sub[sub][i].h = (tiles_rawpict_org_sub[sub][i].h * height2) / height1;
+		}
 	}
 
 	return(hbmResTiles);
@@ -1105,7 +1129,7 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
 
 /* Rescale rawpict image dimensions/coordinates according to new dimensions */
 void tiles_rawpict_scale(void) {
-	int t, i, width1, width2, height1, height2;
+	int t, i, j, width1, width2, height1, height2;
 	term_data *td;
 
 	for (t = 0; t < ANGBAND_TERM_MAX; t++) {
@@ -1116,13 +1140,33 @@ void tiles_rawpict_scale(void) {
 		width2 = td->rawpict_scale_wid_use;
 		height2 = td->rawpict_scale_hgt_use;
 
-		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
-			if (!tiles_rawpict_org[i].defined) continue;
-			if (!width1 || !height1) continue;
-			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
-			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
-			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
-			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+		if (width1 && height) {
+			for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+				if (!tiles_rawpict_org[i].defined) continue;
+				td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
+				td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
+				td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
+				td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+			}
+		}
+
+		for (j = 0; j < MAX_SUBFONTS; j++) {
+			if (!td->tiles_sub[j]) continue;
+
+			width1 = td->rawpict_scale_wid_org_sub[j];
+			height1 = td->rawpict_scale_hgt_org_sub[j];
+			width2 = td->rawpict_scale_wid_use_sub[j];
+			height2 = td->rawpict_scale_hgt_use_sub[j];
+
+			if (width1 && height1) {
+				for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
+					if (!tiles_rawpict_org_sub[j][i].defined) continue;
+					td->tiles_rawpict_sub[j][i].x = (tiles_rawpict_org_sub[j][i].x * width2) / width1;
+					td->tiles_rawpict_sub[j][i].w = (tiles_rawpict_org_sub[j][i].w * width2) / width1;
+					td->tiles_rawpict_sub[j][i].y = (tiles_rawpict_org_sub[j][i].y * height2) / height1;
+					td->tiles_rawpict_sub[j][i].h = (tiles_rawpict_org_sub[j][i].h * height2) / height1;
+				}
+			}
 		}
 	}
 }
