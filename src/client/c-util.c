@@ -5363,7 +5363,7 @@ int macroset_scan(void) {
 	int k, m;
 	bool style_cyclic, style_free;
 
-	int f, n, stage;
+	int f, n, stage = -1; //-1: silence compiler warning
 	char *cc, *cf, *cfile;
 	char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
 	char buf_basename[1024], tmpbuf[1024];
@@ -11630,11 +11630,7 @@ static void do_cmd_options_tilesets(void) {
 	char filename_tmp[MAX_FONTS][256], tileset_name[MAX_FONTS][256], path[1024];
 	char tileset_subname[MAX_FONTS][MAX_SUBFONTS][256] = { 0 };
 	int filenames_tmp = 0, tilesets = 0;
-	char tmp_name[256], tmp_name2[256], *csub, *csub_end;
-
-   #ifdef WINDOWS
-	char *cp, *cpp;
-   #endif
+	char tmp_name[256], *csub, *csub_end;
 
 	DIR *dir;
 	struct dirent *ent;
@@ -11721,15 +11717,6 @@ static void do_cmd_options_tilesets(void) {
 	}
 	/* Some post-processing ^^ */
 	for (j = 0; j < tilesets; j++) {
-    #ifdef WINDOWS /* windows client currently saves full paths (todo: just change to filename only) */
-		strcpy(tmp_name, tileset_name[j]);
-		//path_build(tileset_name[j], 1024, path, tileset_name[j]);
-		//strcpy(tileset_name[j], ".\\");
-		tileset_name[j][0] = 0;
-		strcat(tileset_name[j], path);
-		strcat(tileset_name[j], "\\");
-		strcat(tileset_name[j], tmp_name);
-    #endif
 		/* Find index of currently used tileset */
 		if (strcasecmp(tileset_name[j], graphic_tiles)) continue;
 		cur_set = j;
@@ -11928,15 +11915,7 @@ static void do_cmd_options_tilesets(void) {
 			if (!tmp_name[0]) break;
 
 			for (j = 0; j < tilesets; j++) {
-   #ifdef WINDOWS
-				/* Windows tileset names contain the whole .\lib\xtra\graphics\xxx, crop that */
-				cpp = tileset_name[j];
-				while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
-				sprintf(tmp_name2, "%s", cpp);
-   #else
-				sprintf(tmp_name2, "%s", tileset_name[j]);
-   #endif
-				if (strcasecmp(tmp_name2, tmp_name)) continue;
+				if (strcasecmp(tileset_name[j], tmp_name)) continue;
 				cur_set = j;
 				break;
 			}
@@ -11960,14 +11939,7 @@ static void do_cmd_options_tilesets(void) {
 				c_message_add(format("-- Graphical tilesets (%d): --", tilesets));
 				tmp_name2[0] = 0;
 				for (j = 0; j < tilesets; j++) {
-   #ifdef WINDOWS
-					/* Windows tileset names contain the whole .\lib\xtra\graphics\xxx, crop that */
-					cpp = tileset_name[j];
-					while ((cp = strchr(cpp, '\\'))) cpp = cp + 1;
-					sprintf(tmp_name, "%-18s", cpp);
-   #else
 					sprintf(tmp_name, "%-18s", tileset_name[j]);
-   #endif
 
 					/* print up to 4 tileset names per line */
 					c++;
