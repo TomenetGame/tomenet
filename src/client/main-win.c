@@ -933,7 +933,7 @@ HBITMAP CreateBitmapMask(HBITMAP hbmColour, COLORREF crTransparent, int *error) 
  #ifdef GRAPHICS_BG_MASK
 static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP hbmBg2Mask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return, HBITMAP *hbmBg2Mask_return, term_data *td, int sub) {
  #else
-static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return, term_data *td) {
+static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy, HBITMAP hbmBgMask, HBITMAP hbmFgMask, HBITMAP *hbmBgMask_return, HBITMAP *hbmFgMask_return, term_data *td, int sub) {
  #endif
 	BITMAP bm;
 	GetObject(hbm, sizeof(BITMAP), &bm);
@@ -1140,7 +1140,7 @@ void tiles_rawpict_scale(void) {
 		width2 = td->rawpict_scale_wid_use;
 		height2 = td->rawpict_scale_hgt_use;
 
-		if (width1 && height) {
+		if (width1 && height1) {
 			for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
 				if (!tiles_rawpict_org[i].defined) continue;
 				td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
@@ -1151,7 +1151,7 @@ void tiles_rawpict_scale(void) {
 		}
 
 		for (j = 0; j < MAX_SUBFONTS; j++) {
-			if (!td->tiles_sub[j]) continue;
+			if (!td->hdcTiles_sub[j]) continue;
 
 			width1 = td->rawpict_scale_wid_org_sub[j];
 			height1 = td->rawpict_scale_hgt_org_sub[j];
@@ -1260,6 +1260,7 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
    However, this beckons the question whether the other gfx tileset code requires something similar perhaps. - C. Blue */
 static void recreateGraphicsObjects(term_data *td) {
 	int fwid, fhgt;
+	int i;
 
  #ifdef USE_LOGFONT
 	if (use_logfont) {
@@ -1279,9 +1280,35 @@ static void recreateGraphicsObjects(term_data *td) {
  #ifdef GRAPHICS_BG_MASK
 	HBITMAP hbmTilePreparation2 = CreateBitmap(2 * fwid, fhgt, 1, 32, NULL);
 	HBITMAP hbmBg2Mask;
-	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, g_hbmBg2Mask, &hbmBgMask, &hbmFgMask, &hbmBg2Mask, td);
+	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, g_hbmBg2Mask, &hbmBgMask, &hbmFgMask, &hbmBg2Mask, td, -1);
  #else
-	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask, td);
+	HBITMAP hbmTiles = ResizeTilesWithMasks(g_hbmTiles, graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask, g_hbmFgMask, &hbmBgMask, &hbmFgMask, td, -1);
+ #endif
+
+	HBITMAP hbmBgMask_sub[MAX_SUBFONTS], hbmFgMask_sub[MAX_SUBFONTS];
+ #ifdef GRAPHICS_BG_MASK
+	HBITMAP hbmBg2Mask_sub[MAX_SUBFONTS];
+	HBITMAP hbmTiles_sub[MAX_SUBFONTS];
+	for (i = 0; i < MAX_SUBFONTS; i++) {
+		if (!graphic_subtiles[i]) continue;
+		if (!g_hbmTiles_sub[i]) continue;
+		hbmTiles_sub[i] = ResizeTilesWithMasks(g_hbmTiles_sub[i], graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask_sub[i], g_hbmFgMask_sub[i], g_hbmBg2Mask_sub[i], &hbmBgMask_sub[i], &hbmFgMask_sub[i], &hbmBg2Mask_sub[i], td, i);
+		if (!hbmTiles_sub[i]) {
+			logprint(format("(debug-sub #%d) fwid %d, fhgt %d; ht %d - failed.\n", i, fwid, fhgt));
+			graphic_subtiles[i] = FALSE;
+		}
+	}
+ #else
+	HBITMAP hbmTiles_sub[MAX_SUBFONTS];
+	for (i = 0; i < MAX_SUBFONTS; i++) {
+		if (!graphic_subtiles[i]) continue;
+		if (!g_hbmTiles_sub[i]) continue;
+		hbmTiles_sub[i] = ResizeTilesWithMasks(g_hbmTiles_sub[i], graphics_tile_wid, graphics_tile_hgt, fwid, fhgt, g_hbmBgMask_sub[i], g_hbmFgMask_sub[i], &hbmBgMask_sub[i], &hbmFgMask_sub[i], td, i);
+		if (!hbmTiles_sub[i]) {
+			logprint(format("(debug-sub #%d) fwid %d, fhgt %d; ht %d - failed.\n", i, fwid, fhgt));
+			graphic_subtiles[i] = FALSE;
+		}
+	}
  #endif
 
 	if (hbmTiles == NULL || hbmBgMask == NULL || hbmFgMask == NULL || hbmTilePreparation == NULL
@@ -1981,9 +2008,9 @@ static void load_prefs(void) {
 	cfg_audio_buffer = GetPrivateProfileInt("Base", "AudioBuffer", 1024, ini_file);
 	cfg_audio_master = (GetPrivateProfileInt("Base", "AudioMaster", 1, ini_file) != 0);
 	GetPrivateProfileString("Base", "SoundpackFolder", "sound", cfg_soundpackfolder, 1024, ini_file);
-	cfg_soundpack_subset = GetPrivateProfileInt("Base", "SoundpackSubset", "1", ini_file);
+	cfg_soundpack_subset = GetPrivateProfileInt("Base", "SoundpackSubset", 1, ini_file);
 	GetPrivateProfileString("Base", "MusicpackFolder", "music", cfg_musicpackfolder, 1024, ini_file);
-	cfg_musicpack_subset = GetPrivateProfileInt("Base", "MusicpackSubset", "1", ini_file);
+	cfg_musicpack_subset = GetPrivateProfileInt("Base", "MusicpackSubset", 1, ini_file);
 	cfg_audio_music = (GetPrivateProfileInt("Base", "AudioMusic", 1, ini_file) != 0);
 	cfg_audio_sound = (GetPrivateProfileInt("Base", "AudioSound", 1, ini_file) != 0);
 	cfg_audio_weather = (GetPrivateProfileInt("Base", "AudioWeather", 1, ini_file) != 0);
