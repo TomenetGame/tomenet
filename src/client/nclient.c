@@ -4163,6 +4163,8 @@ c_msg_format("RLI wx,wy=%d,%d; mmsx,mmsy=%d,%d, mmpx,mmpy=%d,%d, y_offset=%d", p
 		c = 0; /* Needs to be reset for proper packet read. */
 #ifdef GRAPHICS_BG_MASK
 		c_back = 0;
+		//c_back_real = 32;
+		c_back_real = Client_setup.f_char[FEAT_SOLID];
 #endif
 
 		/* Read the char/attr pair */
