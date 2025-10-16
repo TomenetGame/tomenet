@@ -811,6 +811,7 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Lines are always of the form "name = sample [sample ...]" */
 	cur_line = 0;
 	cat_this_line = cat_next_line = FALSE;
+	sets = 0;
 	while (fgets(buffer0, sizeof(buffer0), fff) != 0) {
 		char *cfg_name;
 		cptr lua_name;
@@ -1066,6 +1067,8 @@ static bool sound_sdl_init(bool no_cache) {
 		if (disabled) samples[event].disabled = TRUE;
 	}
 
+	soundpack_subsets = sets;
+
 #ifdef WINDOWS
 	/* On Windows we must have a second config file just to store disabled-state, since we cannot write to Program Files folder after Win XP anymore..
 	   So if it exists, let it override the normal config file. */
@@ -1310,9 +1313,8 @@ static bool sound_sdl_init(bool no_cache) {
 		if (ctmp1 && ctmp2 && ctmp2 > ctmp1) {
 			/* 'set' detected */
 			set = atoi(buffer);
+			if (set > AUDIO_SUBSETS_MAX) continue; //excess sets? discard
 			if (set > sets) sets = set;
-
-			//TODO: implement...
 
 			/* eat set info, advance line processing */
 			buffer = ctmp1 + 1;
@@ -1338,8 +1340,18 @@ static bool sound_sdl_init(bool no_cache) {
 			//if (!strncmp(buffer, "author", 6)) ;
 			//if (!strncmp(buffer, "description", 11)) ;
 			if (!strncmp(buffer, "version", 7)) strncpy(cfg_musicpack_version, cval, MAX_CHARS);
+
+			/* Remember all relevant [title] info at least, for subset selection menu */
+			if (set) {
+				if (!strncmp(buffer, "packname", 8)) strcpy(musicpack_packname[set], cfg_musicpack_name);
+				if (!strncmp(buffer, "description", 11)) strncpy(musicpack_description[set], cval, MAX_CHARS * 3);
+			}
+
 			continue;
 		}
+
+		/* Skip all lines from sets that aren't currently selected */
+		if (set && set != cfg_musicpack_subset) continue;
 
 
 		/* Split the line into two: the key, and the rest */
@@ -1537,6 +1549,8 @@ static bool sound_sdl_init(bool no_cache) {
 		/* disable this song? */
 		if (disabled) songs[event].disabled = TRUE;
 	}
+
+	musicpack_subsets = sets;
 
 #ifndef WINDOWS //assume POSIX
 #ifdef DEBUG_SOUND

@@ -745,6 +745,9 @@ char cfg_soundpackfolder[1024], cfg_musicpackfolder[1024];
 char cfg_soundpack_name[MAX_CHARS], cfg_soundpack_version[MAX_CHARS];
 char cfg_musicpack_name[MAX_CHARS], cfg_musicpack_version[MAX_CHARS];
 char cfg_soundpack_subset = 1, cfg_musicpack_subset = 1;
+char soundpack_subsets = 0, musicpack_subsets = 0;
+//char soundpack_description[AUDIO_SUBSETS_MAX][MAX_CHARS * 3], soundpack_packname[AUDIO_SUBSETS_MAX][MAX_CHARS];
+char musicpack_description[AUDIO_SUBSETS_MAX][MAX_CHARS * 3], musicpack_packname[AUDIO_SUBSETS_MAX][MAX_CHARS];
 
 bool within_cmd_player = FALSE;
 int within_cmd_player_ticks;

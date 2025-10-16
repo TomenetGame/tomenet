@@ -8505,6 +8505,8 @@ extern int PlayerUID;
  #define MUSIC_MAX	350 /*for experimenting purpose - C. Blue*/
  #define REFERENCES_MAX	MUSIC_MAX
 
+ #define AUDIO_SUBSETS_MAX	9	/* At most this number of different subsets to switch to, index starting from '1', to this number. */
+
  /* for ovl_sfx_.. client options */
  #define SFX_TYPE_ATTACK	0
  #define SFX_TYPE_COMMAND	1

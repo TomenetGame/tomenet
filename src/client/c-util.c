@@ -14664,7 +14664,9 @@ void toggle_weather(void) {
 #define PACKS_SCREEN 10
 void audio_pack_selector(void) {
 	int k, soundpacks = 0, musicpacks = 0;
+	int old_cfg_soundpack_subset = cfg_soundpack_subset, old_cfg_musicpack_subset = cfg_musicpack_subset;
 	static int cur_sp = 0, cur_mp = 0, cur_sy = 0, cur_my = 0;
+	static int cur_mp_org = -1, cur_sp_org = -1;
 	bool redraw = TRUE, quit = FALSE;
 	char buf[1024], path[1024];
 	char sp_dir[MAX_PACKS][MAX_CHARS], mp_dir[MAX_PACKS][MAX_CHARS];
@@ -14876,16 +14878,37 @@ void audio_pack_selector(void) {
 	/* suppress hybrid macros */
 	inkey_msg = TRUE;
 
+	/* remember the packs we loaded the client with */
+	if (cur_mp_org == -1) cur_mp_org = cur_mp;
+	if (cur_sp_org == -1) cur_sp_org = cur_sp;
+
 	while (1) {
+		//strcpy(sp_name[cur_sp_org], soundpack_packname[cfg_soundpack_subset]);
+		//strcpy(sp_diz[cur_sp_org], soundpack_description[cfg_soundpack_subset]);
+		strcpy(mp_name[cur_mp_org], musicpack_packname[(int)cfg_musicpack_subset]);
+		strcpy(mp_diz[cur_mp_org], musicpack_description[(int)cfg_musicpack_subset]);
+
 		if (redraw) {
 			/* Clear screen */
 			Term_clear();
 
 			/* Describe */
 			Term_putstr(25,  0, -1, TERM_L_UMBER, "*** Audio Pack Selector ***");
-			Term_putstr(1, 1, -1, TERM_L_WHITE, "Press \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377yESC\377w to accept.");
-			Term_putstr(5, 3, -1, TERM_L_UMBER, "Available sound packs:");
-			Term_putstr(45, 3, -1, TERM_L_UMBER, "Available music packs:");
+			//Term_putstr(1, 1, -1, TERM_L_WHITE, "Press \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377yESC\377w to accept.");
+			//for now music subsets only:
+			Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377y+\377w/\377y-\377w for subsets.");
+			Term_putstr(0, 3, -1, TERM_L_UMBER, "Available sound packs:");
+
+			if (!strcmp(cfg_soundpackfolder, sp_dir[cur_sp])
+			    && soundpack_subsets > 1)
+				Term_putstr(23, 3, -1, TERM_SELECTOR, format("(Set %d of %d)", cfg_soundpack_subset, soundpack_subsets));
+			else Term_putstr(23, 3, -1, TERM_DARK, "                ");
+
+			Term_putstr(40, 3, -1, TERM_L_UMBER, "Available music packs:");
+			if (!strcmp(cfg_musicpackfolder, mp_dir[cur_mp])
+			    && musicpack_subsets > 1)
+				Term_putstr(63, 3, -1, TERM_SELECTOR, format("(Set %d of %d)", cfg_musicpack_subset, musicpack_subsets));
+			else Term_putstr(63, 3, -1, TERM_DARK, "                ");
 
 			for (k = 0; k < PACKS_SCREEN; k++) {
 				if (k - cur_sy + cur_sp >= soundpacks) break;
@@ -14958,6 +14981,13 @@ void audio_pack_selector(void) {
 			}
 			//redraw = FALSE;
 			break;
+		case '+':
+			cfg_musicpack_subset = (cfg_musicpack_subset % musicpack_subsets) + 1;
+			break;
+		case '-':
+			cfg_musicpack_subset--;
+			if (!cfg_musicpack_subset) cfg_musicpack_subset = musicpack_subsets;
+			break;
 		default:
 			/* Oops */
 			bell();
@@ -14968,7 +14998,9 @@ void audio_pack_selector(void) {
 	}
 
 	/* No changes were made? */
-	if (!strcmp(cfg_soundpackfolder, sp_dir[cur_sp]) && !strcmp(cfg_musicpackfolder, mp_dir[cur_mp])) {
+	if (!strcmp(cfg_soundpackfolder, sp_dir[cur_sp]) && !strcmp(cfg_musicpackfolder, mp_dir[cur_mp])
+	    && old_cfg_musicpack_subset == cfg_musicpack_subset && old_cfg_soundpack_subset == cfg_soundpack_subset
+	    ) {
 		/* Reload screen */
 		Term_load();
 
