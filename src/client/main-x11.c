@@ -2646,6 +2646,7 @@ static void invalidate_graphics_cache_x11(term_data *td, int c_idx) {
     - C. Blue */
 static errr Term_rawpict_x11(int x, int y, int c) {
 	term_data *td;
+	XImage *tiles;
 	rawpict_tile trp;
 
 	int x1, y1;
@@ -2760,10 +2761,13 @@ static errr Term_rawpict_x11(int x, int y, int c) {
 #endif
 
 	/* Choose between main tileset or a (partial) subset */
-	if (tiles_rawpict_subtileset[c] == -1)
+	if (tiles_rawpict_subtileset[c] == -1) {
 		trp = td->tiles_rawpict[c];
-	else
+		tiles = td->tiles;
+	} else {
 		trp = td->tiles_rawpict_sub[tiles_rawpict_subtileset[c]][c];
+		tiles = td->tiles_sub[tiles_rawpict_subtileset[c]];
+	}
 
 	/* Prepare tile to preparation pixmap. */
 	x1 = trp.x;
@@ -2791,7 +2795,7 @@ static errr Term_rawpict_x11(int x, int y, int c) {
 		  x, y);
 #endif
 	XPutImage(Metadpy->dpy, td->inner->win, Infoclr->gc,
-	    td->tiles, x1, y1,
+	    tiles, x1, y1,
 	    x, y, trp.w, trp.h);
 
 	/* Success */
