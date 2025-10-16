@@ -437,6 +437,13 @@ struct _term_data {
 	HDC hdcTilePreparation;
 	HBITMAP hbmTilePreparation;
 
+	HDC hdcTiles_sub[MAX_SUBFONTS], hdcBgMask_sub[MAX_SUBFONTS], hdcFgMask_sub[MAX_SUBFONTS];
+	rawpict_tile tiles_rawpict_sub[MAX_SUBFONTS][MAX_TILES_RAWPICT + 1];
+	int rawpict_scale_wid_org_sub[MAX_SUBFONTS], rawpict_scale_hgt_org_sub[MAX_SUBFONTS], rawpict_scale_wid_use_sub[MAX_SUBFONTS], rawpict_scale_hgt_use_sub[MAX_SUBFONTS];
+ #ifdef GRAPHICS_BG_MASK
+	HDC hdcBg2Mask_sub[MAX_SUBFONTS];
+ #endif
+
  #ifdef TILE_CACHE_SIZE
 	int cache_position;
 	struct tile_cache_entry tile_cache[TILE_CACHE_SIZE];
@@ -448,13 +455,6 @@ struct _term_data {
 	HDC hdcCacheTilePreparation2;
    #endif
   #endif
- #endif
-
-	HDC hdcTiles_sub[MAX_SUBFONTS], hdcBgMask_sub[MAX_SUBFONTS], hdcFgMask_sub[MAX_SUBFONTS];
-	rawpict_tile tiles_rawpict_sub[MAX_SUBFONTS][MAX_TILES_RAWPICT + 1];
-	int rawpict_scale_wid_org_sub[MAX_SUBFONTS], rawpict_scale_hgt_org_sub[MAX_SUBFONTS], rawpict_scale_wid_use_sub[MAX_SUBFONTS], rawpict_scale_hgt_use_sub[MAX_SUBFONTS];
- #ifdef GRAPHICS_BG_MASK
-	HDC hdcBg2Mask_sub[MAX_SUBFONTS];
  #endif
 #endif
 
@@ -1172,6 +1172,8 @@ void tiles_rawpict_scale(void) {
 }
 
 static void releaseCreatedGraphicsObjects(term_data *td) {
+	int i;
+
 	if (td == NULL) {
 		logprint("(debug) releaseCreatedGraphicsObjects : NULL\n");
 		return;
@@ -1209,6 +1211,31 @@ static void releaseCreatedGraphicsObjects(term_data *td) {
 		td->hdcBg2Mask = NULL;
 	}
  #endif
+
+	for (i = 0; i < MAX_SUBFONTS; i++) {
+		if (td->hdcTiles_sub[i] != NULL) {
+			//associated bitmap gets auto-deleted?
+			DeleteDC(td->hdcTiles_sub[i]);
+			td->hdcTiles_sub[i] = NULL;
+		}
+		if (td->hdcBgMask_sub[i] != NULL) {
+			//associated bitmap gets auto-deleted?
+			DeleteDC(td->hdcBgMask_sub[i]);
+			td->hdcBgMask_sub[i] = NULL;
+		}
+		if (td->hdcFgMask_sub[i] != NULL) {
+			//associated bitmap gets auto-deleted?
+			DeleteDC(td->hdcFgMask_sub[i]);
+			td->hdcFgMask_sub[i] = NULL;
+		}
+ #ifdef GRAPHICS_BG_MASK
+		if (td->hdcBg2Mask_sub[i] != NULL) {
+			//associated bitmap gets auto-deleted?
+			DeleteDC(td->hdcBg2Mask_sub[i]);
+			td->hdcBg2Mask_sub[i] = NULL;
+		}
+ #endif
+	}
 
  #ifdef TILE_CACHE_SIZE
 	if (!disable_tile_cache) {
@@ -2977,6 +3004,9 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
   #endif
  #endif
 
+	HDC tiles;
+	HDC fgmask, bgmask;
+
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
 	   (term-idx 0 is the main window; screen-pad-left check: In case it is used in the status bar for some reason; screen-pad-top check: main screen top chat line) */
@@ -3116,6 +3146,16 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 	SelectObject(td->hdcTilePreparation, td->hbmTilePreparation);
  #endif
 
+	/* Choose between main tileset or a (partial) subset */
+	if (c_subtileset[c] == -1) {
+		tiles = td->hdcTiles;
+		fgmask = td->hdcFgMask;
+		bgmask = td->hdcBgMask;
+	} else {
+		tiles = td->hdcTiles_sub[c_subtileset[c]];
+		fgmask = td->hdcFgMask_sub[c_subtileset[c]];
+		bgmask = td->hdcBgMask_sub[c_subtileset[c]];
+	}
 
  #if defined(TILE_CACHE_SIZE) && defined(TILE_CACHE_SINGLEBMP)
 	if (!disable_tile_cache) {
@@ -3137,16 +3177,16 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 
 		//BitBlt(hdc, 0, 0, 2*9, 15, td->hdcCacheTilePreparation, 0, 0, SRCCOPY);
 
-		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
-		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, fgmask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, tiles, x1, y1, SRCPAINT);
 
 		//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcCacheTilePreparation, 0, 0, SRCCOPY);
 
-		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, bgmask, x1, y1, SRCAND);
 		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, td->hdcCacheTilePreparation, tc_x + fwid, tc_y, SRCPAINT);
 
-		//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
-		//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 15, 5*9, 15, bgmask, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 2*15, 5*9, 15, fgmask, 0, 0, SRCCOPY);
 		//
 		/* Copy the picture from the tile preparation memory to the window */
   #ifdef GRAPHICS_SHADED_ALPHA
@@ -3175,16 +3215,16 @@ static errr Term_pict_win(int x, int y, byte a, char32_t c) {
 
 		//BitBlt(hdc, 0, 0, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
 
-		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
-		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, fgmask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, tiles, x1, y1, SRCPAINT);
 
 		//BitBlt(hdc, 0, 15, 2*9, 15, td->hdcTilePreparation, 0, 0, SRCCOPY);
 
-		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, bgmask, x1, y1, SRCAND);
 		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
 
-		//BitBlt(hdc, 0, 15, 5*9, 15, td->hdcBgMask, 0, 0, SRCCOPY);
-		//BitBlt(hdc, 0, 2*15, 5*9, 15, td->hdcFgMask, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 15, 5*9, 15, bgmask, 0, 0, SRCCOPY);
+		//BitBlt(hdc, 0, 2*15, 5*9, 15, fgmask, 0, 0, SRCCOPY);
 		//
 		/* Copy the picture from the tile preparation memory to the window */
 		BitBlt(hdc, x, y, fwid, fhgt, td->hdcTilePreparation, 0, 0, SRCCOPY);
@@ -3231,6 +3271,10 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	int tc_idx, tc_x, tc_y;
    #endif
   #endif
+
+	HDC tiles;
+	HDC fgmask, bgmask, bg2mask;
+
 
 	/* Avoid visual glitches while not in 2mask mode */
 	if (use_graphics != UG_2MASK) {
@@ -3391,6 +3435,18 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * fwid;
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * fhgt;
 
+	/* Choose between main tileset or a (partial) subset */
+	if (c_subtileset[c] == -1) {
+		tiles = td->hdcTiles;
+		fgmask = td->hdcFgMask;
+		bgmask = td->hdcBgMask;
+		bg2mask = td->hdcBg2Mask;
+	} else {
+		tiles = td->hdcTiles_sub[c_subtileset[c]];
+		fgmask = td->hdcFgMask_sub[c_subtileset[c]];
+		bgmask = td->hdcBgMask_sub[c_subtileset[c]];
+		bg2mask = td->hdcBg2Mask_sub[c_subtileset[c]];
+	}
 
   #if defined(TILE_CACHE_SIZE) && defined(TILE_CACHE_SINGLEBMP)
 	if (!disable_tile_cache) {
@@ -3408,10 +3464,10 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		DeleteObject(brushFg);
 
 
-		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
-		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, fgmask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation, tc_x + fwid, tc_y, fwid, fhgt, tiles, x1, y1, SRCPAINT);
 
-		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, bgmask, x1, y1, SRCAND);
 		BitBlt(td->hdcCacheTilePreparation, tc_x, tc_y, fwid, fhgt, td->hdcCacheTilePreparation, tc_x + fwid, tc_y, SRCPAINT);
 
 
@@ -3460,17 +3516,17 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		if (c_back == 32) {
 			/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
 		} else {
-			BitBlt(td->hdcCacheTilePreparation2, tc_x + fwid, tc_y, fwid, fhgt, td->hdcFgMask, x1b, y1b, SRCAND);
-			BitBlt(td->hdcCacheTilePreparation2, tc_x + fwid, tc_y, fwid, fhgt, td->hdcTiles, x1b, y1b, SRCPAINT);
+			BitBlt(td->hdcCacheTilePreparation2, tc_x + fwid, tc_y, fwid, fhgt, fgmask, x1b, y1b, SRCAND);
+			BitBlt(td->hdcCacheTilePreparation2, tc_x + fwid, tc_y, fwid, fhgt, tiles, x1b, y1b, SRCPAINT);
 
-			BitBlt(td->hdcCacheTilePreparation2, tc_x, tc_y, fwid, fhgt, td->hdcBgMask, x1b, y1b, SRCAND);
+			BitBlt(td->hdcCacheTilePreparation2, tc_x, tc_y, fwid, fhgt, bgmask, x1b, y1b, SRCAND);
 			BitBlt(td->hdcCacheTilePreparation2, tc_x, tc_y, fwid, fhgt, td->hdcCacheTilePreparation2, tc_x + fwid, tc_y, SRCPAINT);
 		}
 
 
 		/* --- Merge the foreground tile onto the background tile, using the bg2Mask from the foreground tile --- */
 
-		BitBlt(td->hdcCacheTilePreparation2, tc_x, tc_y, fwid, fhgt, td->hdcBg2Mask, x1, y1, SRCAND);
+		BitBlt(td->hdcCacheTilePreparation2, tc_x, tc_y, fwid, fhgt, bg2mask, x1, y1, SRCAND);
 		BitBlt(td->hdcCacheTilePreparation2, tc_x, tc_y, fwid, fhgt, td->hdcCacheTilePreparation, tc_x + fwid, tc_y, SRCPAINT);
 
 
@@ -3490,10 +3546,10 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		DeleteObject(brushFg);
 
 
-		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcFgMask, x1, y1, SRCAND);
-		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, td->hdcTiles, x1, y1, SRCPAINT);
+		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, fgmask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation, fwid, 0, fwid, fhgt, tiles, x1, y1, SRCPAINT);
 
-		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcBgMask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, bgmask, x1, y1, SRCAND);
 		BitBlt(td->hdcTilePreparation, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
 
 
@@ -3542,17 +3598,17 @@ static errr Term_pict_win_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 		if (c_back == 32) {
 			/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
 		} else {
-			BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcFgMask, x1b, y1b, SRCAND);
-			BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, td->hdcTiles, x1b, y1b, SRCPAINT);
+			BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, fgmask, x1b, y1b, SRCAND);
+			BitBlt(td->hdcTilePreparation2, fwid, 0, fwid, fhgt, tiles, x1b, y1b, SRCPAINT);
 
-			BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBgMask, x1b, y1b, SRCAND);
+			BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, bgmask, x1b, y1b, SRCAND);
 			BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcTilePreparation2, fwid, 0, SRCPAINT);
 		}
 
 
 		/* --- Merge the foreground tile onto the background tile, using the bg2Mask from the foreground tile --- */
 
-		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcBg2Mask, x1, y1, SRCAND);
+		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, bg2mask, x1, y1, SRCAND);
 		BitBlt(td->hdcTilePreparation2, 0, 0, fwid, fhgt, td->hdcTilePreparation, fwid, 0, SRCPAINT);
 
 
@@ -3774,6 +3830,9 @@ static errr Term_rawpict_win(int x, int y, int c) {
 #ifdef USE_GRAPHICS
 	int fwid, fhgt;
 
+	rawpict_tile trp;
+	HDC tiles;
+
 	term_data *td;
 	int x1, y1;
 	HDC hdc;
@@ -3839,9 +3898,18 @@ static errr Term_rawpict_win(int x, int y, int c) {
 	x = x * fwid + td->size_ow1;
 	y = y * fhgt + td->size_oh1;
 
+	/* Choose between main tileset or a (partial) subset */
+	if (c_subtileset[c] == -1) {
+		trp = td->tiles_rawpict[c];
+		tiles = td->hdcTiles;
+	} else {
+		trp = td->tiles_rawpict_sub[c_subtileset[c]][c];
+		tiles = td->hdcTiles_sub[c_subtileset[c]];
+	}
+
 	/* Location of graphics tile in the tileset */
-	x1 = td->tiles_rawpict[c].x;
-	y1 = td->tiles_rawpict[c].y;
+	x1 = trp.x;
+	y1 = trp.y;
 
 	hdc = myGetDC(td->w);
 
@@ -3988,7 +4056,7 @@ static errr Term_rawpict_win(int x, int y, int c) {
 	}
 #endif
 	/* Copy the picture from the graphics tiles map image to the window */
-	BitBlt(hdc, x, y, td->tiles_rawpict[c].w, td->tiles_rawpict[c].h, td->hdcTiles, x1, y1, SRCCOPY);
+	BitBlt(hdc, x, y, trp.w, trp.h, tiles, x1, y1, SRCCOPY);
 
  #ifndef OPTIMIZE_DRAWING
 	ReleaseDC(td->w, hdc);
@@ -4186,7 +4254,7 @@ int init_graphics_win(void) {
  #endif
 	}
 
-		/* Create masks. */
+	/* Create masks. */
  #ifdef GRAPHICS_BG_MASK
 	if (use_graphics == UG_2MASK) {
 		int err1, err2, err3;
@@ -5617,6 +5685,17 @@ static void hook_quit(cptr str) {
 	DeleteObject(g_hbmTiles);
 	DeleteObject(g_hbmBgMask);
 	DeleteObject(g_hbmFgMask);
+ #ifdef GRAPHICS_BG_MASK
+	DeleteObject(g_hbmBg2Mask);
+ #endif
+	for (i = 0; i < MAX_SUBFONTS; i++) {
+		if (g_hbmTiles_sub[i]) DeleteObject(g_hbmTiles_sub[i]);
+		if (g_hbmBgMask_sub[i]) DeleteObject(g_hbmBgMask_sub[i]);
+		if (g_hbmFgMask_sub[i]) DeleteObject(g_hbmFgMask_sub[i]);
+ #ifdef GRAPHICS_BG_MASK
+		if (g_hbmBg2Mask_sub[i]) DeleteObject(g_hbmBg2Mask_sub[i]);
+ #endif
+	}
 #endif
 
 	DeleteObject(hbrYellow);
