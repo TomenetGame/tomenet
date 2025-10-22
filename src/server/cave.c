@@ -9664,8 +9664,6 @@ void recent_track(int r_idx)
  *
  * The first arg indicates a major disturbance, which affects search.
  *
- * The second arg is currently unused, but could induce output flush.
- *
  * All disturbance cancels repeated commands, resting, and running.
  */
 void disturb(int Ind, int stop_search, int keep_resting) {
