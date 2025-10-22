@@ -10630,6 +10630,12 @@ void player_death(int Ind) {
 
 	/* Get rid of him if he's a ghost or suffers a no-ghost death */
 	if (p_ptr->tmp_x) {
+		/* Display his ongoing timer, if any */
+		if (p_ptr->custom_timer) {
+			if (p_ptr->custom_timer > 0) msg_format(Ind, "Your custom timer was running: \377B%ds\377w left.", p_ptr->custom_timer);
+			else msg_format(Ind, "Your custom timer was running: \377B%ds\377w passed.", -p_ptr->custom_timer - 1);
+		}
+
 		/* Tell players */
 		if (p_ptr->ghost) {
 			/* Tell him */
@@ -10930,6 +10936,11 @@ void player_death(int Ind) {
 
 		/* Done */
 		return;
+	}
+	/* For suiciders too: Display his ongoing timer, if any */
+	else if (p_ptr->suicided && p_ptr->custom_timer) {
+		if (p_ptr->custom_timer > 0) msg_format(Ind, "Your custom timer was running: \377B%ds\377w left.", p_ptr->custom_timer);
+		else msg_format(Ind, "Your custom timer was running: \377B%ds\377w passed.", -p_ptr->custom_timer - 1);
 	}
 
 	/* --- non-noghost-death: everlasting or more lives left or suicide --- */
