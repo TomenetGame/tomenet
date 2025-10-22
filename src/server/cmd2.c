@@ -5105,6 +5105,13 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 	}
 
 
+	/* Hack: Digging cancels Searching Mode */
+	if (p_ptr->searching) {
+		p_ptr->searching = FALSE;
+		p_ptr->update |= PU_BONUS;
+		p_ptr->redraw |= PR_STATE | PR_MAP;
+	}
+
 	/* --- Handle secret, permanent, monster, NO_TFORM - finally if we pass, deduce energy and stop our other actions --- */
 
 
