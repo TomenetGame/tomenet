@@ -7643,7 +7643,7 @@ static void do_unstat(struct worldpos *wpos, byte fast_unstat) {
 	// --- If this level is static and no one is actually on it: ---
 
 	/* limit static time in Ironman Deep Dive Challenge a lot */
-	if (in_irondeepdive(wpos)) {
+	if (in_irondeepdive(wpos) || in_hallsofmandos(wpos)) {
 		if (isdungeontown(wpos)) {
 			if (stale_level(wpos, 300)) new_players_on_depth(wpos, 0, FALSE);//5 min
 		} else if ((getlevel(wpos) < cfg.min_unstatic_level) && (0 < cfg.min_unstatic_level)) {
@@ -8828,7 +8828,7 @@ static void process_world(void) {
 				if (admin_p(i) || p_ptr->ghost) continue;
 
 				/* Don't free people from the Ironman Deep Dive Challenge */
-				if (in_irondeepdive(&p_ptr->wpos)) continue;
+				if (in_irondeepdive(&p_ptr->wpos) || in_hallsofmandos(&p_ptr->wpos)) continue;
 
 				if (p_ptr->wpos.wz) {
 					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
