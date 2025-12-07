@@ -4935,16 +4935,16 @@ void store_confirm(int Ind) {
 
 		if (o_ptr->name1 == ART_RANDART) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_RANDART: <%s> (<%s>, %d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
+			s_printf("SOLD_UNID_RANDART: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 		} else if (o_ptr->name1) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_TRUEART: <%s> (<%s>, %d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
+			s_printf("SOLD_UNID_TRUEART: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 		} else if (o_ptr->name2 || o_ptr->name2b) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_EGO: <%s> (<%s>, %d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
+			s_printf("SOLD_UNID_EGO: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 		} else if (price * 10 <= value) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_UNID_VALUE: <%s> (<%s>, %d) sold '%s' for %ldAu, worth %ld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
+			s_printf("SOLD_UNID_VALUE: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 		}
 
 		/* Actually this warning is rather specifically a warning about selling unid'ed but already aware-of magic devices with charges! */
@@ -5486,10 +5486,10 @@ void do_cmd_store(int Ind) {
 				if (slot != -1) {
 					object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
-					s_printf("item_order_store: <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, forge.number, o_name, p_ptr->item_order_cost);
+					s_printf("item_order_store: <%s> st %d, to %d: %d %s (%lld Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, forge.number, o_name, p_ptr->item_order_cost);
 				} else {
 					object_desc(Ind, o_name, &forge, TRUE, 3);
-					s_printf("item_order_store (NOSLOT): <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, forge.number, o_name, p_ptr->item_order_cost);
+					s_printf("item_order_store (NOSLOT): <%s> st %d, to %d: %d %s (%lld Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, forge.number, o_name, p_ptr->item_order_cost);
 				}
 
 				/* clear order */
@@ -7037,7 +7037,7 @@ void home_purchase(int Ind, int item, int amt) {
 				showtime(), name ? name : "(Dead player)", lev,
 				p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 				o_name);
-		c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
+		c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %lld(%d%%) %s\n",
 				showtime(), name ? name : "(---)", lev, acc_name,
 				p_ptr->name, p_ptr->lev, p_ptr->accountname,
 				object_value_real(0, o_ptr), o_ptr->discount, o_name);	// add "* o_ptr->number"?
@@ -7046,7 +7046,7 @@ void home_purchase(int Ind, int item, int amt) {
 				showtime(), name ? name : "(Dead player)", lev,
 				p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 				o_name);
-		c_printf("%s item %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
+		c_printf("%s item %s(%d,%s) %s(%d,%s) %lld(%d%%) %s\n",
 				showtime(), name ? name : "(---)", lev, acc_name,
 				p_ptr->name, p_ptr->lev, p_ptr->accountname,
 				object_value_real(0, o_ptr), o_ptr->discount, o_name);	// add "* o_ptr->number"?
@@ -7057,7 +7057,7 @@ void home_purchase(int Ind, int item, int amt) {
 				p_ptr->name, p_ptr->lev, p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 				p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 				o_name);
-		c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %" PRId64 "(%d%%) : %s\n",
+		c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %lld(%d%%) : %s\n",
 				showtime(), name ? name : "(---)", lev, acc_name,
 				p_ptr->name, p_ptr->lev, p_ptr->accountname,
 				p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
@@ -9063,7 +9063,7 @@ void export_player_store_offers(int *export_turns) {
 
 				s_printf("EXPORT_PLAYER_STORE_OFFERS: Init at %s.\n", showtime());
 #ifdef EXPORT_JSON
-				fprintf(fp, "{\"timestamp\": %" PRId64 ", \"objects\":[\n", (s64b)time(NULL));
+				fprintf(fp, "{\"timestamp\": %lld, \"objects\":[\n", (s64b)time(NULL));
 				kommao = FALSE;
  #ifndef USE_MANG_HOUSE_ONLY
 				kommao2 = FALSE;
@@ -9278,7 +9278,7 @@ void export_player_store_offers(int *export_turns) {
 				return;
 			}
  #ifdef EXPORT_JSON
-			fprintf(fph, "{\"timestamp\": %" PRId64 ", \"houses\":[\n", (s64b)time(NULL));
+			fprintf(fph, "{\"timestamp\": %lld, \"houses\":[\n", (s64b)time(NULL));
  #endif
 
 			/* memcpy gets its own frame now, continue the actual exporting next turn */

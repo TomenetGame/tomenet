@@ -248,6 +248,8 @@ tomenet.test.exe: PPFLAGS = -DTEST_CLIENT
 tomenet: CFLAGS += -DCLIENT_SIDE
 
 CFLAGS += -Wno-format-overflow -Wno-format-truncation
+# Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
+CFLAGS += -Wformat
 
 # Lua
 SRCS += $(LUASRCS)

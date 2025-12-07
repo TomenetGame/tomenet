@@ -11778,7 +11778,7 @@ void kill_xorder(int Ind) {
 		/* New: Sometimes generate consumables instead */
 		if (val < 1000 && rand_int(3)) { /* eg instead of basic (non-ego) enchanted armour/weapon */
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("XORDER_REPLACE_REWARD: Tier 1, %s, value %ld\n", o_name, object_value_real(0, o_ptr));
+			s_printf("XORDER_REPLACE_REWARD: Tier 1, %s, value %lld\n", o_name, object_value_real(0, o_ptr));
 			/* basic consumables */
 			switch (rand_int(2)) {
 			case 0:
@@ -11829,7 +11829,7 @@ void kill_xorder(int Ind) {
 			o_ptr->ident |= ID_MENTAL;
 		} else if (val < 3000 && !rand_int(3)) { /* eg instead of trivial (resfire) egos */
 			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("XORDER_REPLACE_REWARD: Tier 2, %s, value %ld\n", o_name, object_value_real(0, o_ptr));
+			s_printf("XORDER_REPLACE_REWARD: Tier 2, %s, value %lld\n", o_name, object_value_real(0, o_ptr));
 			/* great consumables / bigger stacks of basic consumables */
 			switch (rand_int(2)) {
 			case 0:

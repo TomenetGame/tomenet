@@ -11689,10 +11689,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				    o_name, k);
 				msg_format(Ind, "Flag cost: %d; for artifact: %d.",
 				    flag_cost(o_ptr, o_ptr->pval), artifact_flag_cost(o_ptr, o_ptr->pval));
-				msg_format(Ind, "Your value: %" PRId64 ".", object_value(Ind, o_ptr));
-				msg_format(Ind, "Your real value: %" PRId64 "; for artifact: " PRId64 ".",
+				msg_format(Ind, "Your value: %lld.", object_value(Ind, o_ptr));
+				msg_format(Ind, "Your real value: %lld; for artifact: %lld.",
 				    object_value_real(Ind, o_ptr), artifact_value_real(Ind, o_ptr));
-				msg_format(Ind, "Full real value: %" PRId64 "; for artifact: " PRId64 ".",
+				msg_format(Ind, "Full real value: %lld; for artifact: %lld.",
 				    object_value_real(0, o_ptr), artifact_value_real(0, o_ptr));
 				msg_format(Ind, "Discount %d; aware? %d; known? %d; broken? %d.",
 				    o_ptr->discount, object_aware_p(Ind, o_ptr), object_known_p(Ind, o_ptr), broken_p(o_ptr));

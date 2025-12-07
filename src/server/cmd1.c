@@ -1830,7 +1830,7 @@ void handle_pickup_item(int Ind, object_type *o_ptr, u32b cave_info) {
 #if CHEEZELOG_LEVEL > 2
 		/* Log when an item is found that is especially valuable (for its dungeon level, relative for dlevs < 30). */
 		if (value >= min_value)
-			s_printf("EXPENSIVE_ITEM: %s (%ld Au) found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
+			s_printf("EXPENSIVE_ITEM: %s (%lld Au) found by %s(lv %d) at %d,%d,%d%s%s (dlv %d)\n",
 			    o_name_real, value, p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 			    (cave_info & CAVE_STCK) ? "N" : (cave_info & CAVE_ICKY) ? "V" : "", (o_ptr->marked2 == ITEM_REMOVAL_NEVER) ? "G" : "", dlev);
 #endif
@@ -1894,7 +1894,7 @@ void handle_pickup_item(int Ind, object_type *o_ptr, u32b cave_info) {
 				showtime(), name ? name : "(Dead player)", lev,
 				p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 				o_name);
-			c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
+			c_printf("%s ITEM %s(%d,%s) %s(%d,%s) %lld (%d%%) %s\n",
 				showtime(), name ? name : "(---)", lev, acc_name,
 				p_ptr->name, p_ptr->lev, p_ptr->accountname,
 				object_value_real(0, o_ptr), o_ptr->discount, o_name);
@@ -1903,7 +1903,7 @@ void handle_pickup_item(int Ind, object_type *o_ptr, u32b cave_info) {
 				showtime(), name ? name : "(Dead player)", lev,
 				p_ptr->name, p_ptr->lev, p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 				o_name);
-			c_printf("%s item %s(%d,%s) %s(%d,%s) %" PRId64 "(%d%%) %s\n",
+			c_printf("%s item %s(%d,%s) %s(%d,%s) %lld (%d%%) %s\n",
 				showtime(), name ? name : "(---)", lev, acc_name,
 				p_ptr->name, p_ptr->lev, p_ptr->accountname,
 				object_value_real(0, o_ptr), o_ptr->discount, o_name);
@@ -1914,7 +1914,7 @@ void handle_pickup_item(int Ind, object_type *o_ptr, u32b cave_info) {
 				p_ptr->name, p_ptr->lev, p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),
 				p_ptr->wpos.wx, p_ptr->wpos.wy, p_ptr->wpos.wz,
 				o_name);
-		c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %" PRId64 "(%d%%) : %s\n",
+		c_printf("%s ITEM %s(%d,%s) : %s(%d,%s%s) %lld (%d%%) : %s\n",
 				showtime(), name ? name : "(---)", lev, acc_name,
 				p_ptr->name, p_ptr->lev, p_ptr->accountname,
 				p_ptr->total_winner ? ",W" : (p_ptr->once_winner ? ",O" : ""),

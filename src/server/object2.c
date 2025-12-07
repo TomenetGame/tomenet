@@ -6740,7 +6740,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			resf_fallback = FALSE;
 		} else continue;
 
-		s_printf(" dpt %ld, dptval %ld, egoval %d / %d, realval %d, flags %d (%s), resf %#lx\n",
+		s_printf(" dpt %ld, dptval %ld, egoval %d / %d, realval %d, flags %d (%s), resf %#llx\n",
 		    depth, depth_value, ego_value1, ego_value2, ovr, fc, o_name, resf);
 
 		/* When called from create_reward() exclusively:
@@ -6800,7 +6800,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 	if (verygreat) {
 		if (resf_fallback) {
 			/* Fallback to lowest value item in case resf proved too strict - mikaelh */
-			s_printf(" lowest value fallback used in apply_magic (resf = %#lx)\n", resf);
+			s_printf(" lowest value fallback used in apply_magic (resf = %#llx)\n", resf);
 
 			object_copy(o_ptr, o_ptr_lowest);
 
@@ -9563,7 +9563,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			s_printf(" REWARD_WIPED\n");
 			continue; //shouldn't happen for this specific apply_magic() call, but better safe than sorry anyway [paranoia] */
 		}
-		s_printf(" REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d), resf %#lx\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, resf);
+		s_printf(" REWARD_REAL: final_choice %d, reward_tval %d, k_idx %d, tval %d, sval %d, weight %d(%d), resf %#llx\n", final_choice, reward_tval, k_idx, o_ptr->tval, o_ptr->sval, o_ptr->weight, reward_maxweight, resf);
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		s_printf(" REWARD_PASSING: 0-"); //REWARD_PASSING
 

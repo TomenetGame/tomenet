@@ -185,6 +185,8 @@ LIBS += -lregex
 #LIBS += `pcre2-config --libs8`
 
 CFLAGS += -Wno-format-overflow -Wno-format-truncation
+# Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
+CFLAGS += -Wformat
 
 # Ensure Wine-64, as 32-bit Wine isn't available on ARM64 Ubuntu at this time.
 WINE = WINEARCH=win64 WINEPREFIX=~/.wine wine

@@ -320,6 +320,9 @@ tomenet: CFLAGS += -DCLIENT_SIDE
 tomenet.server: CFLAGS += -g -O2
 accedit: CFLAGS += -g -O2
 
+# Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
+CFLAGS += -Wformat
+
 # Lua
 SRCS += $(LUASRCS)
 SRCS += $(CLI_LUASRCS)

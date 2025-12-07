@@ -435,6 +435,8 @@ tomenet.server: CFLAGS += -g -O2
 #tomenet.server: CFLAGS += -ggdb -O0
 
 CFLAGS += -Wno-format-overflow -Wno-format-truncation
+# Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
+CFLAGS += -Wformat
 
 # Lua
 SRCS += $(LUASRCS)

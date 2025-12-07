@@ -126,8 +126,16 @@ typedef int32_t s32b;
 typedef uint32_t u32b;
 
 /* Signed/Unsigned 64 bit value */
+#if 0
+ /* On 64 bit Linux this will result in int64_t being '%ld' aka 'long int', \
+    but that will not work on Windows as there a 64-bit int is '%lld' aka 'long long',
+    resulting in all '%ld' arguments that are 64-bit being misinterpreted as 32-bit arguments instead. */
 typedef int64_t s64b;
 typedef uint64_t u64b;
+#else
+typedef signed long long s64b;
+typedef unsigned long long u64b;
+#endif
 
 /* An int big enough to store a pointer. */
 typedef uintptr_t uintptr;

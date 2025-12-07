@@ -12042,7 +12042,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		p_ptr->item_order_town = gettown(Ind);
 
 		object_desc(0, o_name, &p_ptr->item_order_forge, FALSE, 256);
-		s_printf("RID_ITEM_ORDER: <%s> st %d, to %d: %d %s (%" PRId64 " Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, p_ptr->item_order_forge.number, o_name, p_ptr->item_order_cost);
+		s_printf("RID_ITEM_ORDER: <%s> st %d, to %d: %d %s (%lld Au)\n", p_ptr->name, p_ptr->item_order_store, p_ptr->item_order_town, p_ptr->item_order_forge.number, o_name, p_ptr->item_order_cost);
 
 		/* calculate time, real-time minutes depending on store template rarity */
 		//dur = (cfg.fps * 60 * 5 * (113 - p_ptr->item_order_rarity)) / 13; //5..43 min

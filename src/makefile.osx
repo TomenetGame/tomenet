@@ -212,6 +212,8 @@ LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl2-config --libs`
 
 
 CFLAGS += -Wno-format-overflow -Wno-format-truncation
+# Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
+CFLAGS += -Wformat
 
 
 
