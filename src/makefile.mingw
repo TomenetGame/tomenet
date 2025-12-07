@@ -186,8 +186,10 @@ LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 #LIBS += -lSDL2_mixer `$(SDL_CONFIG) --libs`
 ##
 ## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually above:
-CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
-LIBS += -lSDL2_mixer $(SDL_LIB_PATH)
+tomenet: CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
+tomenet: LIBS += -lSDL2_mixer $(SDL_LIB_PATH)
+tomenet.test: CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
+tomenet.test: LIBS += -lSDL2_mixer $(SDL_LIB_PATH)
 
 #added regexp capability for guide searching via mingw-libgnurx -> link against regex
 LIBS += -lregex

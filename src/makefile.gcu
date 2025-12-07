@@ -218,12 +218,14 @@ SERVER_EXTRA_LIBS = -lcrypt
 ## This is a command-line client that relies on ncurses.
 ##
 ## With SDL
-CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char
-LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
+tomenet: CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char
+tomenet: LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
+tomenet.test: CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char
+tomenet.test: LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
 ##
 ## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -fsigned-char
-#LIBS = -L/usr/pkg/lib -lncurses -lm
+tomenet.server: CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -fsigned-char
+tomenet.server: LIBS = -L/usr/pkg/lib -lncurses -lm
 
 # Optional: Compile with Link Time Optimization (LTO)
 #CFLAGS += -flto=auto
