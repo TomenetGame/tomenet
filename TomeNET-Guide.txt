@@ -12159,6 +12159,16 @@ Speed stat | Moves per game turn
 So this means that for example a +Speed stat increase from +70 to +80 Speed
 which seems like a ~14% gain would really 'only' increase your actions/move
 by ~7%.
+
+Another important viewpoint is that for any fixed amount of +Speed gained
+subsequently, you will actually gain much less relative benefit:
+At normal speed (+0) adding +10 Speed will give you a whopping +100% increase
+in actions per turn, ie doubling your action/walk rate.
+At quite fast speeds however, eg +30, adding another +10 Speed will only give
+you a much smaller +25% increase in actions per turn.
+And at extremely fast speeds, eg +60, adding +10 Speed will only give you a
+very small +7.7% increase in actions per turn.
+
 And as depicted, any speed gains above +90 have no effect.
 
 
