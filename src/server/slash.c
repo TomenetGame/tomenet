@@ -15313,6 +15313,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
+			else if (prefix(messagelc, "/printturnspeeds")) {
+				//for non-admins: min speed is 10, max speed 210
+				for (i = 10; i <= 110; i++) {
+				//for (i = 110; i <= 210; i++) {
+					msg_format(Ind, "%3d: %2d.%d",
+					    i,
+					    extract_energy[i] / 100,
+					    (extract_energy[i]
+					    - (extract_energy[i] / 100) * 100) / 10);
+				}
+				return;
+			}
 		}
 	}
 
