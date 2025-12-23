@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 25. November 2025 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 23. December 2025 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -12117,7 +12117,9 @@ This is done once each turn, so it will allow you to observe how long a turn
 actually lasts in real time.
 Same for lamp fuel: It runs out by 1 point of energy each turn.
 
-The speed of characters and monsters also depends on game turns:
+
+The perceived speed of characters and monsters also depends on game turns:
+
 A creature (including players) moving at +0 speed can move once per game turn,
 while creatures at higher speed may move several times per game turn, and of
 lower speed only once in several game turns, depending on the exact speed.
@@ -12125,14 +12127,47 @@ lower speed only once in several game turns, depending on the exact speed.
 Note that +SPEED is actually not linear in absolute time! To find out how often
 your character can really move per game turn, use the /ex command. You will
 find that increasing your speed more and more will yield somewhat diminishing
-returns on the amount of actions your character can actually perform per turn.
+returns on the amount of actions your character can actually perform per turn:
+
+Speed stat | Moves per game turn
+-----------+--------------------
+     -100  |  0.1  minimum reachable 'Speed' stat (lower cap)
+     - 40  |  0.2
+     - 27  |  0.3
+     - 15  |  0.4
+      -10  |  0.5
+      - 7  |  0.5
+      - 6  |  0.6
+      - 4  |  0.7
+      - 2  |  0.8
+      - 1  |  0.9
+        0  |  1.0  (normal base speed, 1 action/move per turn)
+       10  |  2.0
+       20  |  3.0
+       30  |  4.0
+       40  |  5.0
+    44-45  |  5.4
+    46-47  |  5.5
+    50-51  |  5.8
+    56-57  |  6.3  from here on, movement gain remains +1 every +2 speed
+       60  |  6.5
+       70  |  7.0
+       80  |  7.5
+       90  |  8.0  from here on, movements remain at 8.0/turn
+      100  |  8.0  maximum reachable 'Speed' stat (upper cap)
+
+So this means that for example a +Speed stat increase from +70 to +80 Speed
+which seems like a ~14% gain would really 'only' increase your actions/move
+by ~7%.
+And as depicted, any speed gains above +90 have no effect.
+
 
 So how long is one game turn actually?
 
 The simplest way to notice is creating a new character and walking around Bree
 (not run, but walk), as it will be able to move exactly one grid per turn it
-gets. So you'd observe that a turn takes a bit longer than 1/2 and a bit less
-than 2/3 seconds, roughly - that is, on the world surface at least! Read on..
+gets. So you'd observe that a turn takes very slightly longer than 1/2 - it's
+the aforementioned 0.52s/turn - that is, on the world surface! Read on..
 
 An special thing about game turns is that their passing depends on the dungeon
 level your character is on!
