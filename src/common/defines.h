@@ -1260,7 +1260,7 @@
 
 /* New take (2026-01-04):
    Leave energy-storing/using system as it used to be (ie without NEW_AUTORET_1_ENERGY) but add an extra (up to) 1-turn-energy storage
-   that can only be used after at least 1 turn of either auto-retaliating (AR) or fire-till-kill (FTK) and can only be used for instant teleportation effects (excluding WoR cast)!
+   that can only be used after at least 1 turn of either auto-retaliating (AR) or fire-till-kill (FTK) and can only be used for instant teleportation effects (excluding WoR cast) or movement (walk)!
    This energy storage starts up depleted and is filled up by engaging for AR or FTK for at least 1 turn.
    It can also be filled up by engaging for AR/FTK while having 2 full turns of energy stored up (ie 1 excess turn, from just standing idle while getting approached by an enemy);
     in this case, the excess turn will be deducted from normal energy and fill up the extra tenergy storage. */
