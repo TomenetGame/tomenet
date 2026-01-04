@@ -512,7 +512,7 @@ static void sense_inventory(int Ind) {
 
 	/* Check everything */
 #ifdef ENABLE_SUBINVEN
-	while (ii < INVEN_TOTAL) {
+	while (ii < INVEN_TOTAL - 1) {
 		if (si != -2) {
 			si++;
 			if (si == p_ptr->inventory[ii].bpval) {
