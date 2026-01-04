@@ -3793,9 +3793,17 @@ struct player_type {
 
 	s16b energy;			/* Current energy */
 	bool requires_energy;		/* Player requires energy to perform a normal action instead of shooting-till-kill (and auto-retaliating?) */
-#ifdef NEW_AUTORET_RESERVE_ENERGY
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
 	s16b reserve_energy;
 	bool triggered_auto_attacking;
+#endif
+#ifdef NEW_AUTORET_2_ENERGY
+	s16b reserve_energy;
+	bool triggered_auto_attacking;
+	u32b auto_attacking_turn; //maybe
+#endif
+#ifdef RESTRICT_DOUBLE_ENERGY
+	s16b double_energy; //excess energy (above 1 turn, ie gained a 2nd turn of energy on top) kept here for use when running/walking
 #endif
 
 	s16b food;			/* Current nutrition */

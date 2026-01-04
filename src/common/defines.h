@@ -1236,25 +1236,46 @@
    if this option is enabled, they will be unable to use @OM inscription for that instead. */
 #define AUTO_RET_CMD
 
-/* New auto-retaliator: Wait for almost two turns of energy stored up before we use up one for auto-retaliation/FTK.
+
+/* First take [disabled, not good enough as it is]:
+   New auto-retaliator: Wait for almost two turns of energy stored up before we use up one for auto-retaliation/FTK.
    ADVANTAGE is that the player has a lot of energy left for manual intervention, eg escape macros.
    Usually melee/archers with lots of BpR/SpR had an advantage here as they'd be able to trigger macros in between their attacks, with a lot of turn energy left,
    while casters who need full turn of energy per cast had to wait longer till their escape/manual keypresses kicked in.
    DISADVANTAGE is that it takes longer until auto-retaliation/FTK starts, as we need to recuperate enough energy worth almost two turns before we can begin. */
-#define NEW_AUTORET_ENERGY
-
-#ifdef NEW_AUTORET_ENERGY
-/* If new auto-retaliator is active: Reserve ~one turn of stored up energy specifically for an after-autoret-action, so the player doesn't notice the recuperation
+//#define NEW_AUTORET_1_ENERGY
+#ifdef NEW_AUTORET_1_ENERGY
+/* First take [disabled, not good enough as it is]:
+   If new auto-retaliator is active: Reserve ~one turn of stored up energy specifically for an after-autoret-action, so the player doesn't notice the recuperation
    in almost all cases (except if the player never stays idle for a moment before engaging into another autoretaliation), making the overall feel much more
    smooth and delay-free.
    Drawback: Since ~one of the ~two turns of energy is reserved, that includes walking, so the player cannot double-tap 'jump' over hazardous terrain anymore for example (DK). */
- //#define NEW_AUTORET_RESERVE_ENERGY
+ //#define NEW_AUTORET_1_RESERVE_ENERGY
 
- #ifdef NEW_AUTORET_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY
   /* See comment in dungeon.c about TODO; meanwhile this workaround just disables the reserve-energy effect while player is running, to allow using all commands normally (firing). */
-  #define NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+  #define NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
  #endif
 #endif
+
+/* New take (2026-01-04):
+   Leave energy-storing/using system as it used to be (ie without NEW_AUTORET_1_ENERGY) but add an extra (up to) 1-turn-energy storage
+   that can only be used after at least 1 turn of either auto-retaliating (AR) or fire-till-kill (FTK) and can only be used for instant teleportation effects (excluding WoR cast)!
+   This energy storage starts up depleted and is filled up by engaging for AR or FTK for at least 1 turn.
+   It can also be filled up by engaging for AR/FTK while having 2 full turns of energy stored up (ie 1 excess turn, from just standing idle while getting approached by an enemy);
+    in this case, the excess turn will be deducted from normal energy and fill up the extra tenergy storage. */
+#define NEW_AUTORET_2_ENERGY
+
+/* Kinda independant of this actually, but still currently only enable in tandem: */
+#ifdef NEW_AUTORET_2_ENERGY
+/* Fix having stored up double energy (2 turns) for any actions besides moving:
+   1) Walking aka 'hopping' over a grid using the double energy.
+   2) Running which requires 2 energy to initiate).
+   Doing anything else except basic movement:
+   Spell-casting, firing, melee will discard a 2nd turn of pre-stored energy. */
+ #define RESTRICT_DOUBLE_ENERGY
+#endif
+
 
 /* Does a projection 'explode' ON a wall grid it hits, or BEFORE the wall grid?
    Exploding before it means that players standing in walls will only take 50%

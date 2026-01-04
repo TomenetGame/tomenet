@@ -4165,7 +4165,7 @@ void process_pending_commands(int ind) {
 	// to lack of energy will be put into the queue for next turn by the
 	// respective receive function.
 
-#ifdef NEW_AUTORET_RESERVE_ENERGY
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
 	/* Make only up to one turn of energy available for manual player actions,
 	   keep the rest in reserve to let the auto-retaliator/FTK kick in without an extra delay of up to a turn.
 	   Drawback: Player can no longer double-tap actions to effectively execute two actions (in just about a single turn)
@@ -4173,7 +4173,7 @@ void process_pending_commands(int ind) {
 	   Also, this hack affects running so running has to handle reserve_energy properly to keep working normally. */
 	//if (!p_ptr->auto_retaliating && !p_ptr->shooting_till_kill /* For these two scenarios we saved up the extra turn of energy, to be able to act instantly (eg teleport out) */
 	if (!p_ptr->instant_retaliator && !p_ptr->triggered_auto_attacking
- #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
 	    && !p_ptr->running
  #endif
 	    && p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
@@ -4202,8 +4202,8 @@ void process_pending_commands(int ind) {
 
 		connp->r.state &= ~SOCKBUF_LOCK;
 
-#ifdef NEW_AUTORET_RESERVE_ENERGY
- #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
 		if (!p_ptr->running)
  #endif
 		/* Reset our one-time ticket of 'use reserve energy after auto-attacking' again, for next time. */
@@ -4213,6 +4213,45 @@ void process_pending_commands(int ind) {
 		/* See 'p_ptr->requires_energy' below in 'result == 0' clause. */
 		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED)
 			p_ptr->requires_energy = (result == 0);
+
+#ifdef RESTRICT_DOUBLE_ENERGY
+		/* Any actions besides walking (PKT_WALK)/running (PKT_RUN) will clear the double_energy reservoir.
+		  Note: All inven/equip commands are also exempt. */
+		switch (type) {
+		case PKT_TUNNEL:
+		case PKT_AIM_WAND:
+		case PKT_FIRE:
+		//case PKT_STAND:
+		case PKT_SPELL:
+		case PKT_OPEN:
+		case PKT_PRAY:
+		case PKT_QUAFF:
+		case PKT_READ:
+		case PKT_USE:
+		case PKT_THROW:
+		case PKT_ZAP:
+		case PKT_ACTIVATE:
+		case PKT_BASH:
+		case PKT_DISARM:
+		case PKT_EAT:
+		case PKT_FILL:
+		case PKT_FIGHT:
+		case PKT_CLOSE:
+		case PKT_GO_UP:
+		case PKT_GO_DOWN:
+		case PKT_REST:
+		case PKT_STEAL:
+		case PKT_ZAP_DIR:
+		case PKT_ACTIVATE_DIR:
+		case PKT_SPIKE:
+		case PKT_ACTIVATE_SKILL:
+		case PKT_SIP:
+		case PKT_TELEKINESIS:
+		//case PKT_CLOAK:
+		//case PKT_STAND_ONE:
+			p_ptr->double_energy = 0;
+		}
+#endif
 
 		/* Check whether the socket buffer has advanced */
 		if (connp->r.ptr == foo) {
@@ -4234,8 +4273,8 @@ void process_pending_commands(int ind) {
 		}
 		if (connp->state == CONN_PLAYING) connp->start = turn;
 		if (result == -1) {
-#ifdef NEW_AUTORET_RESERVE_ENERGY
- #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
 			if (!p_ptr->running)
  #endif
 			/* Don't forget to reverse hack before we leave here: Restore reserved energy */
@@ -4290,8 +4329,8 @@ void process_pending_commands(int ind) {
 	 */
 	if (NumPlayers == num_players_start && !p_ptr->energy) p_ptr->energy = old_energy;
 
-#ifdef NEW_AUTORET_RESERVE_ENERGY
- #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
 	if (!p_ptr->running)
  #endif
 	/* Reverse the hack: Restore reserved energy */
@@ -11439,7 +11478,11 @@ static int Receive_walk(int ind) {
 		p_ptr->command_rep = -1;
 	}
 
+#ifdef RESTRICT_DOUBLE_ENERGY
+	if (player && p_ptr->energy + p_ptr->double_energy >= level_speed(&p_ptr->wpos)) {
+#else
 	if (player && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+#endif
 		if (p_ptr->warning_run < 3) {
 			p_ptr->warning_run_steps++;
 			/* Give a warning after first 10 walked steps, then every 50 walked steps. */
@@ -14089,7 +14132,7 @@ int toggle_rest(int Ind, int turns) {
 
 	/* Resting takes a lot of energy! */
 	if (p_ptr->energy
-#ifdef NEW_AUTORET_RESERVE_ENERGY
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
 	    + (p_ptr->instant_retaliator ? 0 : p_ptr->reserve_energy)
 #endif
 	    >= (level_speed(&p_ptr->wpos) * 2) - 1) {
@@ -14114,7 +14157,7 @@ int toggle_rest(int Ind, int turns) {
 		// use Handle_clear_actions(Ind) instead of all this?
 
 		/* Take a lot of energy to enter "rest mode" */
-#ifdef NEW_AUTORET_RESERVE_ENERGY
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
 		if (!p_ptr->instant_retaliator) {
 			p_ptr->energy += p_ptr->reserve_energy;
 			p_ptr->reserve_energy = 0;

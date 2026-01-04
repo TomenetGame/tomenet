@@ -1787,6 +1787,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
+#ifdef RESTRICT_DOUBLE_ENERGY
+			/* Any actions (here: WoR) besides walking/running will clear the movement extra energy reservoir */
+			p_ptr->double_energy = 0;
+#endif
+
 			// here we check to make sure the user didn't enter a depth or a coordinate
 			// we could use isalpha, except we'd like it to be robust against town names
 			// that start with special characters.

@@ -4207,7 +4207,7 @@ static void process_player_begin(int Ind) {
 	}
 
 #if defined(TARGET_SWITCHING_COST) || defined(TARGET_SWITCHING_COST_RANGED)
-	//Verify: This code should not require additional modifications for NEW_AUTORET_ENERGY:reserve_energy feat
+	//Verify: This code should not require additional modifications for NEW_AUTORET_1_ENERGY:reserve_energy feat
 	if (p_ptr->tsc_lasttarget && p_ptr->energy >= level_speed(&p_ptr->wpos) * 2 - 1) {
 		if (p_ptr->tsc_idle_energy >= level_speed(&p_ptr->wpos)) {
 			p_ptr->tsc_lasttarget = 0;
@@ -4219,6 +4219,11 @@ static void process_player_begin(int Ind) {
 	/* Give the player some energy */
 	p_ptr->energy += extract_energy[p_ptr->pspeed];
 	limit_energy(p_ptr);
+#if 1
+#ifdef RESTRICT_DOUBLE_ENERGY
+//	msg_format(Ind, "e = %4d, d = %4d", p_ptr->energy, p_ptr->double_energy);
+#endif
+#endif
 
 	/* clear 'quaked' flag for p_ptr->impact limiting */
 	p_ptr->quaked = FALSE;
@@ -7381,7 +7386,7 @@ static void process_player_end(int Ind) {
 			   when it happens, can be very irritating. The best way to fix perceived responsiveness
 			   (of the old way) would be to not add full floor speed energy all at once, but in multiple
 			   parts, to (ideally) immediately cover the energy loss for a single attack performed. */
-#ifndef NEW_AUTORET_ENERGY
+#ifndef NEW_AUTORET_1_ENERGY
 			/* old way - get the usual 'double initial attack' in.
 			   Drawback: Have to wait for nearly a full turn (1-(1/attacksperround))
 			   for FTK/meleeret to break out for performing a different action. -- this should be fixed now. May break out in 1/attacksperround now.) */
@@ -7406,8 +7411,8 @@ static void process_player_end(int Ind) {
 					if (target_okay(Ind)) {
 						p_ptr->auto_retaliating = TRUE;
 
-#ifdef NEW_AUTORET_RESERVE_ENERGY
- #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
 						if (!p_ptr->running)
  #endif
 						if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = TRUE;
@@ -7430,6 +7435,10 @@ static void process_player_end(int Ind) {
 							p_ptr->auto_retaliating = !p_ptr->auto_retaliating; /* hack, it's unset in do_cmd_fire IF it WAS successfull, ie reverse */
 #endif
 						}
+#ifdef RESTRICT_DOUBLE_ENERGY
+						/* Any actions (here: attacking) besides walking/running will clear the movement extra energy reservoir */
+						p_ptr->double_energy = 0;
+#endif
 
 						//not required really	if (p_ptr->ranged_double && p_ptr->shooting_till_kill) do_cmd_fire(Ind, 5);
 						p_ptr->shooty_till_kill = FALSE; /* if we didn't succeed shooting till kill, then we don't intend it anymore */
@@ -7447,13 +7456,17 @@ static void process_player_end(int Ind) {
 					 */
 					p_ptr->auto_retaliaty = TRUE; /* hack: prevent going un-AFK from auto-retaliating */
 					if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
-					    && (attackstatus = auto_retaliate(Ind))) { /* attackstatus seems to be unused! */
+					    && (attackstatus = auto_retaliate(Ind))) { /* attackstatus seems to be unused! (now used for RESTRICT_DOUBLE_ENERGY) */
 						p_ptr->auto_retaliating = TRUE;
-#ifdef NEW_AUTORET_RESERVE_ENERGY
- #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
 						if (!p_ptr->running)
  #endif
 						if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = TRUE;
+#endif
+#ifdef RESTRICT_DOUBLE_ENERGY
+						/* Any actions (here: attacking) besides walking/running will clear the movement extra energy reservoir */
+						if (attackstatus) p_ptr->double_energy = 0;
 #endif
 						/* Use energy */
 						//p_ptr->energy -= level_speed(p_ptr->dun_depth);
@@ -7471,11 +7484,11 @@ static void process_player_end(int Ind) {
 
 		/* ('Handle running' from above was originally at this place) */
 		/* Handle running -- 5 times the speed of walking */
-		//Verify: This code should not require additional modifications for NEW_AUTORET_ENERGY:reserve_energy feat
-#ifdef NEW_AUTORET_ENERGY
+		//Verify: This code should not require additional modifications for NEW_AUTORET_1_ENERGY:reserve_energy feat
+#ifdef NEW_AUTORET_1_ENERGY
 		if (p_ptr->instant_retaliator || !p_ptr->shooting_till_kill) /* Required to keep allowing 'shooting on the run' */
  #if 0
- #ifdef NEW_AUTORET_RESERVE_ENERGY
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY
     /* TODO: This currently doesn't work because nserver.c command-retrieval first checks if there is a turn of energy available,
 	and THEN executes the command. However, the command might fail for different reasons than having not enough energy (or the
 	command might not require the full amount of energy allocated - but this is probably not the case currently for any command,
@@ -7491,7 +7504,12 @@ static void process_player_end(int Ind) {
  #endif
  #endif
 #endif
+
+#ifdef RESTRICT_DOUBLE_ENERGY
+		while (p_ptr->running && p_ptr->energy + p_ptr->double_energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
+#else
 		while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
+#endif
 			char consume_full_energy;
 
 			run_step(Ind, 0, &consume_full_energy);

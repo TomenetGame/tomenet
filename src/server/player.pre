@@ -542,7 +542,7 @@ struct player_type {
 	s16b word_recall;	/* Word of recall counter */
 
 	s16b energy;		/* Current energy */
-#ifdef NEW_AUTORET_RESERVE_ENERGY
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
 	s16b reserve_energy;
 	bool triggered_auto_attacking;
 #endif

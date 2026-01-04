@@ -6372,8 +6372,12 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 		p_ptr->warning_autoret_ok = 0;
 
 		/* Take a turn (or less) */
-		if (consume_full_energy) p_ptr->energy -= level_speed(&p_ptr->wpos);//force-attacking always costs a whole turn
-		else {
+		if (consume_full_energy) {
+			p_ptr->energy -= level_speed(&p_ptr->wpos);//force-attacking always costs a whole turn
+#ifdef RESTRICT_DOUBLE_ENERGY
+			p_ptr->double_energy = 0;
+#endif
+		} else {
 			int fast_move = 100;
 
 			if (p_ptr->melee_sprint || p_ptr->shadow_running) fast_move /= 2;
@@ -6382,6 +6386,16 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			if (get_skill(p_ptr, SKILL_OSHADOW) >= 10 && no_real_lite(Ind))
 				fast_move = (fast_move * (15 - get_skill_scale(p_ptr, SKILL_OSHADOW, 5))) / 15;
 
+#ifdef RESTRICT_DOUBLE_ENERGY
+			/* Subtract energy from double_energy reservoir first */
+			if (p_ptr->double_energy > 0) {
+				p_ptr->double_energy -= (level_speed(&p_ptr->wpos) * fast_move) / 100;
+				if (p_ptr->double_energy < 0) {
+					p_ptr->energy += p_ptr->double_energy;
+					p_ptr->double_energy = 0;
+				}
+			} else
+#endif
 			p_ptr->energy -= (level_speed(&p_ptr->wpos) * fast_move) / 100;
 		}
 
@@ -6410,6 +6424,7 @@ int do_cmd_run(int Ind, int dir) {
 
 	/* slower 'running' movement over certain terrain */
 	int real_speed = cfg.running_speed;
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -6427,6 +6442,10 @@ int do_cmd_run(int Ind, int dir) {
 	if (dir) {
 		/* Handle confinement */
 		if (p_ptr->stopped && dir != 5) {
+
+			// POTENTIAL BUG - need to verify here that we actually have enough energy to move?*/
+			// aka if (p_ptr->energy >= level_speed(&p_ptr->wpos))
+
 			/* Try to break the rune */
 			if (rand_int(200) < p_ptr->lev) {
 				msg_print(Ind, "You break the rune!");
@@ -6443,6 +6462,10 @@ int do_cmd_run(int Ind, int dir) {
 		if (see_wall(Ind, dir, p_ptr->py, p_ptr->px)) {
 			/* Prob travel */
 			if (p_ptr->prob_travel && (!cave_floor_bold(zcave, p_ptr->py, p_ptr->px))) {
+
+				// POTENTIAL BUG - need to verify here that we actually have enough energy to move?*/
+				// aka if (p_ptr->energy >= level_speed(&p_ptr->wpos))
+
 				(void)do_prob_travel(Ind, dir);
 				return(2);
 			}
@@ -6482,13 +6505,17 @@ int do_cmd_run(int Ind, int dir) {
 		}
 
 		/* Make sure we have enough energy to start running */
-#ifdef NEW_AUTORET_RESERVE_ENERGY
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
 		p_ptr->energy += (p_ptr->instant_retaliator
- #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
 		    || p_ptr->running
  #endif
 		    ? 0 : p_ptr->reserve_energy);
 #endif
+#ifdef RESTRICT_DOUBLE_ENERGY
+		p_ptr->energy += p_ptr->double_energy;
+#endif
+
 		if (p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed)
 		//if (p_ptr->energy >= level_speed(&p_ptr->wpos)) /* otherwise auto-retaliation will never allow running */
 		{
@@ -6507,10 +6534,14 @@ int do_cmd_run(int Ind, int dir) {
 				/* Reset the player's energy so he can't sprint several spaces
 				 * in the first round of running.  */
 				p_ptr->energy = level_speed(&p_ptr->wpos);
+#ifdef RESTRICT_DOUBLE_ENERGY
+			/* For both the above cases, reset the extra running/walking energy pool. */
+			p_ptr->double_energy = 0;
+#endif
 
-#ifdef NEW_AUTORET_RESERVE_ENERGY
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
 			if (!p_ptr->instant_retaliator &&
- #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
 			    !p_ptr->running &&
  #endif
 			    p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
@@ -6522,9 +6553,9 @@ int do_cmd_run(int Ind, int dir) {
 			return(2);
 		}
 
-#ifdef NEW_AUTORET_RESERVE_ENERGY
+#ifdef NEW_AUTORET_1_RESERVE_ENERGY
 		if (!p_ptr->instant_retaliator &&
- #ifdef NEW_AUTORET_RESERVE_ENERGY_WORKAROUND
+ #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
 		    !p_ptr->running &&
  #endif
 		    p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
