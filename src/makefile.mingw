@@ -186,10 +186,10 @@ LUALIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 #LIBS += -lSDL2_mixer `$(SDL_CONFIG) --libs`
 ##
 ## With SDL, without using 'sdl-config', entered SDL's include/lib folders manually above:
-tomenet: CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
-tomenet: LIBS += -lSDL2_mixer $(SDL_LIB_PATH)
-tomenet.test: CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
-tomenet.test: LIBS += -lSDL2_mixer $(SDL_LIB_PATH)
+tomenet.exe: CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
+tomenet.exe: LIBS += -lSDL2_mixer $(SDL_LIB_PATH)
+tomenet.test.exe: CFLAGS += -DSOUND_SDL $(SDL_INCLUDE_PATH)
+tomenet.test.exe: LIBS += -lSDL2_mixer $(SDL_LIB_PATH)
 
 #added regexp capability for guide searching via mingw-libgnurx -> link against regex
 LIBS += -lregex
@@ -247,7 +247,7 @@ NCC = gcc
 tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O2 -flto=auto -DCLIENT_SIDE
 tomenet.test.exe: PPFLAGS = -DTEST_CLIENT
 
-tomenet: CFLAGS += -DCLIENT_SIDE
+tomenet.exe: CFLAGS += -DCLIENT_SIDE
 
 CFLAGS += -Wno-format-overflow -Wno-format-truncation
 # Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
@@ -397,7 +397,7 @@ common/w_z_pack.c: common/z_pack.pkg $(TOLUA)
 
 client/icon.o: client/icon.rc client/tomenet4.ico
 	cd client; $(WINDRES) -o icon.o icon.rc; cd ..
-client/manifest.o: client/manifest.rc client/TomeNET.exe.manifest
+client/manifest.o: client/manifest.rc client/tomenet.exe.manifest
 	cd client; $(WINDRES) -o manifest.o manifest.rc; cd ..
 
 #
