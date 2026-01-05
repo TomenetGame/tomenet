@@ -4130,6 +4130,9 @@ void process_pending_commands(int ind) {
 	player_type *p_ptr = NULL;
 	int player = -1, type, result, (**receive_tbl)(int ind) = playing_receive, old_energy = 0;
 	int num_players_start = NumPlayers; // Hack to see if we have quit in this function
+#ifdef NEW_AUTORET_2_ENERGY
+	s16b total_energy;
+#endif
 
 	// Hack -- take any pending commands from the command que connp->q
 	// and move them to connp->r, where the Receive functions get their
@@ -4180,59 +4183,63 @@ void process_pending_commands(int ind) {
 		connp->r.state |= SOCKBUF_LOCK; /* needed for rollbacks to work properly */
 
 #ifdef NEW_AUTORET_2_ENERGY
-		s16b total_energy = p_ptr->energy + p_ptr->reserve_energy;
+		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED) {
+			total_energy = p_ptr->energy + p_ptr->reserve_energy;
 
  #ifdef NEW_AUTORET_2_DEEPCHECK /* This is only useful if we actually provide reserve_energy ONLY for teleport/walk/run/etc actions,
 				   and not for ALL actions (as we currently do, as it's practically impossible to discern between the action types in advance,
 				   as not all of them use distinct packet types (eg teleport spells are just part of cast_schoo_spell which is just part of activating a skill etc)). */
 
-		/* Any action that uses energy AND involves movement/teleportation will reset the reserve energy,
-		   but others such as healing will not!
-		   Since we cannot check for 'teleportation' effects here specifically, that is done in teleport_player...() routines instead. */
-		if (p_ptr->reserve_energy) switch (type) { //also check if our p_ptr->energy is < level speed actually?
-		case PKT_WALK:
-		case PKT_RUN:
-		case PKT_GO_UP:
-		case PKT_GO_DOWN:
-			p_ptr->reserve_flag = TRUE;
-			p_ptr->energy = total_energy;
-			break;
-		/* Also inspect PKT_READ (scroll), PKT_USE (staff) and PKT_SKILL (spell) for teleport mechanisms */
-		case PKT_READ:
-		case PKT_USE:
-		case PKT_ACTIVATE_SKILL:
-		//todo: add activatable items (code '4')
-			p_ptr->reserve_flag = TRUE;
-			break;
-		}
+			/* Any action that uses energy AND involves movement/teleportation will reset the reserve energy,
+			   but others such as healing will not!
+			   Since we cannot check for 'teleportation' effects here specifically, that is done in teleport_player...() routines instead. */
+			if (p_ptr->reserve_energy) switch (type) { //also check if our p_ptr->energy is < level speed actually?
+			case PKT_WALK:
+			case PKT_RUN:
+			case PKT_GO_UP:
+			case PKT_GO_DOWN:
+				p_ptr->reserve_flag = TRUE;
+				p_ptr->energy = total_energy;
+				break;
+			/* Also inspect PKT_READ (scroll), PKT_USE (staff) and PKT_SKILL (spell) for teleport mechanisms */
+			case PKT_READ:
+			case PKT_USE:
+			case PKT_ACTIVATE_SKILL:
+			//todo: add activatable items (code '4')
+				p_ptr->reserve_flag = TRUE;
+				break;
+			}
  #else
-		/* Grant reserve energy for ANY kind of action, not just escape mechanisms, as we cannot discern really */
-		p_ptr->energy = total_energy;
+			/* Grant reserve energy for ANY kind of action, not just escape mechanisms, as we cannot discern really */
+			p_ptr->energy = total_energy;
  #endif
+		}
 #endif
 
 		result = (*receive_tbl[type])(ind);
-
-#ifdef NEW_AUTORET_2_ENERGY
- #ifdef NEW_AUTORET_2_DEEPCHECK
-		/* We always assume that a full turn (ie all reserve_energy) was used up for whatever reserve-action (move/tele) we performed */
-		if (p_ptr->reserve_flag && p_ptr->energy != total_energy) p_ptr->reserve_energy = 0;
-		/* Reset it again (in case it was set) */
-		p_ptr->reserve_flag = FALSE;
- #else
-		/* If we cannot easily discern between actions that involve movement/teleportation and others,
-		   we will just reset 'auto-attacking' state whenever an action was performed that required some energy,
-		   and we will provide the reserve_energy for any kind of action. */
-		if (p_ptr->energy != total_energy) p_ptr->triggered_auto_attacking = FALSE;
-		/* No action that uses energy was performed? Restore energy to normal then, as we're still within the process of 'charged auto-attacking' */
-		else p_ptr->energy -= p_ptr->reserve_energy;
- #endif
-#endif
 
 		/* Check that the player wasn't disconnected - mikaelh */
 		if (!Conn[ind]) return;
 
 		connp->r.state &= ~SOCKBUF_LOCK;
+
+#ifdef NEW_AUTORET_2_ENERGY
+		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED) {
+ #ifdef NEW_AUTORET_2_DEEPCHECK
+			/* We always assume that a full turn (ie all reserve_energy) was used up for whatever reserve-action (move/tele) we performed */
+			if (p_ptr->reserve_flag && p_ptr->energy != total_energy) p_ptr->reserve_energy = 0;
+			/* Reset it again (in case it was set) */
+			p_ptr->reserve_flag = FALSE;
+ #else
+			/* If we cannot easily discern between actions that involve movement/teleportation and others,
+			   we will just reset 'auto-attacking' state whenever an action was performed that required some energy,
+			   and we will provide the reserve_energy for any kind of action. */
+			if (p_ptr->energy != total_energy) p_ptr->triggered_auto_attacking = FALSE;
+			/* No action that uses energy was performed? Restore energy to normal then, as we're still within the process of 'charged auto-attacking' */
+			else p_ptr->energy -= p_ptr->reserve_energy;
+ #endif
+		}
+#endif
 
 		/* See 'p_ptr->requires_energy' below in 'result == 0' clause. */
 		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED)
@@ -4241,7 +4248,7 @@ void process_pending_commands(int ind) {
 #ifdef RESTRICT_DOUBLE_ENERGY
 		/* Any actions besides walking (PKT_WALK)/running (PKT_RUN) will clear the double_energy reservoir.
 		  Note: All inven/equip commands are also exempt. */
-		switch (type) {
+		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED) switch (type) {
 		case PKT_TUNNEL:
 		case PKT_AIM_WAND:
 		case PKT_FIRE:
