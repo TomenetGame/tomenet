@@ -1243,7 +1243,7 @@
    Usually melee/archers with lots of BpR/SpR had an advantage here as they'd be able to trigger macros in between their attacks, with a lot of turn energy left,
    while casters who need full turn of energy per cast had to wait longer till their escape/manual keypresses kicked in.
    DISADVANTAGE is that it takes longer until auto-retaliation/FTK starts, as we need to recuperate enough energy worth almost two turns before we can begin. */
-//#define NEW_AUTORET_1_ENERGY
+//#define NEW_AUTORET_1_ENERGY		-- removed implementation from the code, so it cannot be enabled anymore!
 #ifdef NEW_AUTORET_1_ENERGY
 /* First take [disabled, not good enough as it is]:
    If new auto-retaliator is active: Reserve ~one turn of stored up energy specifically for an after-autoret-action, so the player doesn't notice the recuperation
@@ -1268,6 +1268,9 @@
 
 /* Kinda independant of this actually, but still currently only enable in tandem: */
 #ifdef NEW_AUTORET_2_ENERGY
+/* We're able to discern via packet analysis whether player wants to use an escape mechanism or not? */
+ #define NEW_AUTORET_2_DEEPCHECK
+
 /* Fix having stored up double energy (2 turns) for any actions besides moving:
    1) Walking aka 'hopping' over a grid using the double energy.
    2) Running which requires 2 energy to initiate).

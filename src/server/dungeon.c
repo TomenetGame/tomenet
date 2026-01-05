@@ -4219,9 +4219,22 @@ static void process_player_begin(int Ind) {
 	/* Give the player some energy */
 	p_ptr->energy += extract_energy[p_ptr->pspeed];
 	limit_energy(p_ptr);
-#if 1
+#if 0
+#ifdef NEW_AUTORET_2_ENERGY
+..if extracted energy accumulated is same as level speed, it means 1 player turn passed for us,
+..so if we didnt auto-ret/ftk all this time, nullify reserve energy now (otherwise gain reserve energy, alternatively done in dungeon.c AR/FTK trigger code)
+	/* On FTK or AR, gain a full extra turn of energy for use specifically with escape mechanisms */
+	if (p_ptr->triggered_auto_attacking) p_ptr->reserve_energy = level_speed(&p_ptr->wpos);
+	else p_ptr->reserve_energy = 0;
+#endif
+#endif
+#if 0
 #ifdef RESTRICT_DOUBLE_ENERGY
-//	msg_format(Ind, "e = %4d, d = %4d", p_ptr->energy, p_ptr->double_energy);
+#ifdef NEW_AUTORET_2_ENERGY
+	msg_format(Ind, " e = %4d, d = %4d, r = %4d", p_ptr->energy, p_ptr->double_energy, p_ptr->reserve_energy);
+#else
+	msg_format(Ind, " e = %4d, d = %4d", p_ptr->energy, p_ptr->double_energy);
+#endif
 #endif
 #endif
 
@@ -7235,6 +7248,9 @@ static void process_player_end(int Ind) {
 	int real_speed = cfg.running_speed;
 	cave_type *c_ptr, **zcave;
 
+	bool old_triggered_auto_attacking;
+
+
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
@@ -7360,6 +7376,7 @@ static void process_player_end(int Ind) {
 
 	process_games(Ind); //todo: actually instead call this when changing grid ie moving/porting -> grid_affects_player() perhaps
 
+	old_triggered_auto_attacking = p_ptr->triggered_auto_attacking;
 	/* Mind Fusion/Control disables the char's automatic 'background' behaviour: No auto-retaliation and no running. */
 	if (!(p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ))) {
 		/* Check for fire-till-kill and auto-retaliation */
@@ -7386,21 +7403,16 @@ static void process_player_end(int Ind) {
 			   when it happens, can be very irritating. The best way to fix perceived responsiveness
 			   (of the old way) would be to not add full floor speed energy all at once, but in multiple
 			   parts, to (ideally) immediately cover the energy loss for a single attack performed. */
-#ifndef NEW_AUTORET_1_ENERGY
-			/* old way - get the usual 'double initial attack' in.
+
+			/* If RESTRICT_DOUBLE_ENERGY is NOT defined: Old way - get the usual 'double initial attack' in.
 			   Drawback: Have to wait for nearly a full turn (1-(1/attacksperround))
 			   for FTK/meleeret to break out for performing a different action. -- this should be fixed now. May break out in 1/attacksperround now.) */
 			if (p_ptr->energy >= energy) {
-#else
-			/* new way - allows to instantly break out and perform another action (quaff/read)
-			   but doesn't give the 'double initial attack' anymore, just a normal, single attack.
-			   Main drawback: Walking into a mob will not smoothly transgress into auto-ret the next turn,
-			   but wait for an extra turn before it begins, ie taking 2 turns (minus '1 point of energy', to be exact) until first attack got in.
-			   (Note that this e*2-1 amount of energy is also the maximum a player can store, according to limit_energy().) */
-			if (p_ptr->energy >= (p_ptr->instant_retaliator ? energy : energy * 2 - 1)) {
-#endif
 				/* assume nothing will happen here */
 				p_ptr->auto_retaliating = FALSE;
+#ifdef NEW_AUTORET_2_ENERGY
+				if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = FALSE;
+#endif
 
 				/* New feat: @O inscription will break FTK to enter melee auto-ret instead */
 				if (auto_retaliate_test(Ind)) p_ptr->shooting_till_kill = FALSE;
@@ -7411,10 +7423,7 @@ static void process_player_end(int Ind) {
 					if (target_okay(Ind)) {
 						p_ptr->auto_retaliating = TRUE;
 
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
- #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
-						if (!p_ptr->running)
- #endif
+#ifdef NEW_AUTORET_2_ENERGY
 						if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = TRUE;
 #endif
 
@@ -7458,10 +7467,7 @@ static void process_player_end(int Ind) {
 					if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
 					    && (attackstatus = auto_retaliate(Ind))) { /* attackstatus seems to be unused! (now used for RESTRICT_DOUBLE_ENERGY) */
 						p_ptr->auto_retaliating = TRUE;
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
- #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
-						if (!p_ptr->running)
- #endif
+#ifdef NEW_AUTORET_2_ENERGY
 						if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = TRUE;
 #endif
 #ifdef RESTRICT_DOUBLE_ENERGY
@@ -7484,27 +7490,6 @@ static void process_player_end(int Ind) {
 
 		/* ('Handle running' from above was originally at this place) */
 		/* Handle running -- 5 times the speed of walking */
-		//Verify: This code should not require additional modifications for NEW_AUTORET_1_ENERGY:reserve_energy feat
-#ifdef NEW_AUTORET_1_ENERGY
-		if (p_ptr->instant_retaliator || !p_ptr->shooting_till_kill) /* Required to keep allowing 'shooting on the run' */
- #if 0
- #ifdef NEW_AUTORET_1_RESERVE_ENERGY
-    /* TODO: This currently doesn't work because nserver.c command-retrieval first checks if there is a turn of energy available,
-	and THEN executes the command. However, the command might fail for different reasons than having not enough energy (or the
-	command might not require the full amount of energy allocated - but this is probably not the case currently for any command,
-	it's eg verified for do_cmd_fire() in nserver.c how much energy it really needs based on p_ptr->num_fire).
-	That means that running will be stopped until a full turn of energy has been built up - for nothing! - and then is spent all
-	at once at running, making us hop 5 grids at a time.
-	Easiest way to reproduce: Hold down firing key while running without any valid target in sight -> running stops for a full turn of
-	energy and then when receive_fire() doesn't complain into requires_energy but still cannot fire (as there is no target) and hence
-	burn the energy, we'll run for the full worth of energy (ie 5 grids).
-	The 'best' solution would be to rewrite ALL commands to report into requires_energy only if the only reason they failed to trigger
-	was actually a lack of energy and nothing else (eg for do_cmd_fire(): valid target, ammo, all fine, just needing the energy now). */
-		if (p_ptr->instant_retaliator || !p_ptr->requires_energy) /* While running, we'd have no energy left at all to start shooting */
- #endif
- #endif
-#endif
-
 #ifdef RESTRICT_DOUBLE_ENERGY
 		while (p_ptr->running && p_ptr->energy + p_ptr->double_energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
 #else
@@ -7520,6 +7505,14 @@ static void process_player_end(int Ind) {
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / real_speed;
 		}
 	}
+
+#ifdef NEW_AUTORET_2_ENERGY
+	/* On FTK or AR, gain a full extra turn of energy for use specifically with escape mechanisms */
+	if (!p_ptr->instant_retaliator) {
+		if (!old_triggered_auto_attacking && p_ptr->triggered_auto_attacking) p_ptr->reserve_energy = level_speed(&p_ptr->wpos); //alternatively done in dungeon.c via extract_energy[] gain
+		else if (!p_ptr->triggered_auto_attacking) p_ptr->reserve_energy = 0;
+	} else p_ptr->reserve_energy = 0; //paranoia?
+#endif
 
 
 	/* Notice stuff -- any reason to call it twice here in process_player_end()? Further down again, see APD's comment */

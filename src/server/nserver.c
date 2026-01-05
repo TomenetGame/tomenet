@@ -4165,23 +4165,6 @@ void process_pending_commands(int ind) {
 	// to lack of energy will be put into the queue for next turn by the
 	// respective receive function.
 
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
-	/* Make only up to one turn of energy available for manual player actions,
-	   keep the rest in reserve to let the auto-retaliator/FTK kick in without an extra delay of up to a turn.
-	   Drawback: Player can no longer double-tap actions to effectively execute two actions (in just about a single turn)
-	   after building up almost 2 turns of energy, such as 'hopping' over lava in Dungeon Keeper.
-	   Also, this hack affects running so running has to handle reserve_energy properly to keep working normally. */
-	//if (!p_ptr->auto_retaliating && !p_ptr->shooting_till_kill /* For these two scenarios we saved up the extra turn of energy, to be able to act instantly (eg teleport out) */
-	if (!p_ptr->instant_retaliator && !p_ptr->triggered_auto_attacking
- #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
-	    && !p_ptr->running
- #endif
-	    && p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
-		p_ptr->reserve_energy = level_speed(&p_ptr->wpos) - 1;
-		p_ptr->energy -= p_ptr->reserve_energy;
-	} else p_ptr->reserve_energy = 0;
-#endif
-
 	//while ((p_ptr->energy >= level_speed(p_ptr->dun_depth)) &&
 	//while ((connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
 	//while ((connp->state == CONN_PLAYING ? p_ptr->energy >= level_speed(p_ptr->dun_depth) : 1) &&
@@ -4195,20 +4178,61 @@ void process_pending_commands(int ind) {
 			if (connp->id != -1) p_ptr->idle = 0;
 		}
 		connp->r.state |= SOCKBUF_LOCK; /* needed for rollbacks to work properly */
+
+#ifdef NEW_AUTORET_2_ENERGY
+		s16b total_energy = p_ptr->energy + p_ptr->reserve_energy;
+
+ #ifdef NEW_AUTORET_2_DEEPCHECK /* This is only useful if we actually provide reserve_energy ONLY for teleport/walk/run/etc actions,
+				   and not for ALL actions (as we currently do, as it's practically impossible to discern between the action types in advance,
+				   as not all of them use distinct packet types (eg teleport spells are just part of cast_schoo_spell which is just part of activating a skill etc)). */
+
+		/* Any action that uses energy AND involves movement/teleportation will reset the reserve energy,
+		   but others such as healing will not!
+		   Since we cannot check for 'teleportation' effects here specifically, that is done in teleport_player...() routines instead. */
+		if (p_ptr->reserve_energy) switch (type) { //also check if our p_ptr->energy is < level speed actually?
+		case PKT_WALK:
+		case PKT_RUN:
+		case PKT_GO_UP:
+		case PKT_GO_DOWN:
+			p_ptr->reserve_flag = TRUE;
+			p_ptr->energy = total_energy;
+			break;
+		/* Also inspect PKT_READ (scroll), PKT_USE (staff) and PKT_SKILL (spell) for teleport mechanisms */
+		case PKT_READ:
+		case PKT_USE:
+		case PKT_ACTIVATE_SKILL:
+		//todo: add activatable items (code '4')
+			p_ptr->reserve_flag = TRUE;
+			break;
+		}
+ #else
+		/* Grant reserve energy for ANY kind of action, not just escape mechanisms, as we cannot discern really */
+		p_ptr->energy = total_energy;
+ #endif
+#endif
+
 		result = (*receive_tbl[type])(ind);
+
+#ifdef NEW_AUTORET_2_ENERGY
+ #ifdef NEW_AUTORET_2_DEEPCHECK
+		/* We always assume that a full turn (ie all reserve_energy) was used up for whatever reserve-action (move/tele) we performed */
+		if (p_ptr->reserve_flag && p_ptr->energy != total_energy) p_ptr->reserve_energy = 0;
+		/* Reset it again (in case it was set) */
+		p_ptr->reserve_flag = FALSE;
+ #else
+		/* If we cannot easily discern between actions that involve movement/teleportation and others,
+		   we will just reset 'auto-attacking' state whenever an action was performed that required some energy,
+		   and we will provide the reserve_energy for any kind of action. */
+		if (p_ptr->energy != total_energy) p_ptr->triggered_auto_attacking = FALSE;
+		/* No action that uses energy was performed? Restore energy to normal then, as we're still within the process of 'charged auto-attacking' */
+		else p_ptr->energy -= p_ptr->reserve_energy;
+ #endif
+#endif
 
 		/* Check that the player wasn't disconnected - mikaelh */
 		if (!Conn[ind]) return;
 
 		connp->r.state &= ~SOCKBUF_LOCK;
-
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
- #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
-		if (!p_ptr->running)
- #endif
-		/* Reset our one-time ticket of 'use reserve energy after auto-attacking' again, for next time. */
-		if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = FALSE;
-#endif
 
 		/* See 'p_ptr->requires_energy' below in 'result == 0' clause. */
 		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED)
@@ -4272,16 +4296,7 @@ void process_pending_commands(int ind) {
 			break;
 		}
 		if (connp->state == CONN_PLAYING) connp->start = turn;
-		if (result == -1) {
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
- #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
-			if (!p_ptr->running)
- #endif
-			/* Don't forget to reverse hack before we leave here: Restore reserved energy */
-			if (!p_ptr->instant_retaliator) p_ptr->energy += p_ptr->reserve_energy;
-#endif
-			return;
-		}
+		if (result == -1) return;
 
 		// We didn't have enough energy to execute an important command.
 		if (result == 0) {
@@ -4328,14 +4343,6 @@ void process_pending_commands(int ind) {
 	 * a BAD thing to do if we ever went multithreaded.
 	 */
 	if (NumPlayers == num_players_start && !p_ptr->energy) p_ptr->energy = old_energy;
-
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
- #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
-	if (!p_ptr->running)
- #endif
-	/* Reverse the hack: Restore reserved energy */
-	if (!p_ptr->instant_retaliator) p_ptr->energy += p_ptr->reserve_energy;
-#endif
 }
 
 /*
@@ -4761,6 +4768,78 @@ void ang_sort_swap_order(int Ind, vptr u, vptr v, int a, int b) {
 	i[a] = i[b];
 	i[b] = temp;
 }
+
+#ifdef NEW_AUTORET_2_ENERGY
+ #ifdef NEW_AUTORET_2_DEEPCHECK
+static bool reserve_flag_item_relocate(int typ, int Ind, int item) {
+	object_type *o_ptr;
+
+	if (!Ind) return(FALSE);
+
+	switch(typ) {
+	case 0: /* PKT_READ */
+		item = replay_inven_changes(Ind, item);
+		if (item == 0x7FFF) return(FALSE);
+		if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
+
+		if (o_ptr->tval != TV_SCROLL) return(FALSE);
+		switch (o_ptr->sval) {
+		case SV_SCROLL_TELEPORT:
+		case SV_SCROLL_TELEPORT_LEVEL:
+		case SV_SCROLL_PHASE_DOOR:
+		//SV_SCROLL_STAR_DESTRUCTION, SV_SCROLL_OBLITERATION
+			return(TRUE);
+		}
+		return(FALSE);
+	case 1: /* PKT_USE */
+		item = replay_inven_changes(Ind, item);
+		if (item == 0x7FFF) return(FALSE);
+		if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
+
+		if (o_ptr->tval == TV_STAFF && o_ptr->sval == SV_STAFF_TELEPORTATION) return(TRUE);
+		//SV_STAFF_DESTRUCTION, SV_STAFF_EARTHQUAKES
+		return(FALSE);
+	case 2: /* PKT_ACTIVATE_SKILL -> MKEY_MIMICRY */
+		switch (item) {
+		case 68: //BLINK
+		case 69: //TPORT
+			return(TRUE);
+		}
+		return(FALSE);
+	case 3: /* PKT_ACTIVATE_SKILL -> MKEY_SCHOOL */
+		switch (item) {
+		case 179: //MBLINK
+		case 180: //MTELEPORT
+		case 181: //MTELETOWARDS
+		case 59: //BLINK
+		case 61: //TELEPORT
+		case 243: //OBLINK
+			return(TRUE);
+		}
+		return(FALSE);
+	case 4: /* Activatable items -- currently not used */
+		item = replay_inven_changes(Ind, item);
+		if (item == 0x7FFF) return(FALSE);
+		if (!get_inven_item(Ind, item, &o_ptr)) return(FALSE);
+
+		switch (o_ptr->name1) {
+		case ART_BELEGENNON:
+		case ART_COLANNON:
+		case ART_ANGUIREL:
+		case ART_SEVENLEAGUE:
+			return(TRUE);
+		}
+
+		if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_TELEPORTATION) return(TRUE);
+
+		if (is_ego_p(o_ptr, EGO_DRAGON) || is_ego_p(o_ptr, EGO_JUMP)) return(TRUE);
+
+		break;
+	}
+	return(FALSE);
+}
+ #endif
+#endif
 
 static int Receive_login(int ind) {
 	connection_t *connp = Conn[ind], *connp2 = NULL;
@@ -12093,6 +12172,21 @@ static int Receive_activate_skill(int ind) {
 		return(n);
 	}
 
+#ifdef NEW_AUTORET_2_ENERGY
+ #ifdef NEW_AUTORET_2_DEEPCHECK
+	if (p_ptr->reserve_flag) {
+		switch (mkey) {
+		case MKEY_MIMICRY:
+			if (reserve_flag_item_relocate(2, player, spell - 3)) p_ptr->energy += p_ptr->reserve_energy; //powers offset 3
+			break;
+		case MKEY_SCHOOL:
+			if (reserve_flag_item_relocate(3, player, spell)) p_ptr->energy += p_ptr->reserve_energy;
+			break;
+		}
+	}
+ #endif
+#endif
+
 	/* Not by class nor by item; by skill */
 	if (p_ptr &&
 	    (p_ptr->energy >= level_speed(&p_ptr->wpos) ||
@@ -12514,6 +12608,14 @@ static int Receive_read(int ind) {
 	/* Sanity check - mikaelh */
 	if (item >= INVEN_PACK) return(1);
 
+#ifdef NEW_AUTORET_2_ENERGY
+ #ifdef NEW_AUTORET_2_DEEPCHECK
+	if (p_ptr->reserve_flag) {
+		if (reserve_flag_item_relocate(0, player, item)) p_ptr->energy += p_ptr->reserve_energy;
+	}
+ #endif
+#endif
+
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
 		if (item == 0x7FFF) {
@@ -12688,6 +12790,14 @@ static int Receive_use(int ind) {
 		return(0);
 	}
 	if (p_ptr && p_ptr->command_rep != PKT_USE) p_ptr->command_rep = -1;
+#endif
+
+#ifdef NEW_AUTORET_2_ENERGY
+ #ifdef NEW_AUTORET_2_DEEPCHECK
+	if (p_ptr->reserve_flag) {
+		if (reserve_flag_item_relocate(1, player, item)) p_ptr->energy += p_ptr->reserve_energy;
+	}
+ #endif
 #endif
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -14131,11 +14241,7 @@ int toggle_rest(int Ind, int turns) {
 #endif
 
 	/* Resting takes a lot of energy! */
-	if (p_ptr->energy
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
-	    + (p_ptr->instant_retaliator ? 0 : p_ptr->reserve_energy)
-#endif
-	    >= (level_speed(&p_ptr->wpos) * 2) - 1) {
+	if (p_ptr->energy >= (level_speed(&p_ptr->wpos) * 2) - 1) {
 		/* Set flag */
 		p_ptr->resting = turns;
 #if WARNING_REST_TIMES > 0
@@ -14157,12 +14263,6 @@ int toggle_rest(int Ind, int turns) {
 		// use Handle_clear_actions(Ind) instead of all this?
 
 		/* Take a lot of energy to enter "rest mode" */
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
-		if (!p_ptr->instant_retaliator) {
-			p_ptr->energy += p_ptr->reserve_energy;
-			p_ptr->reserve_energy = 0;
-		}
-#endif
 		p_ptr->energy -= (level_speed(&p_ptr->wpos) * 2) - 1;
 
 		/* Redraw */

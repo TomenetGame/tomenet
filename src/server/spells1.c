@@ -1330,6 +1330,12 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 		return(FALSE);
 	}
 
+#ifdef NEW_AUTORET_2_DEEPCHECK
+#ifdef NEW_AUTORET_2_ENERGY
+	p_ptr->reserve_energy = 0;
+#endif
+#endif
+
 	break_cloaking(Ind, 7);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -1605,6 +1611,13 @@ void teleport_player_to(int Ind, int ny, int nx, char forced) {
 	}
 	if (!tries) return;
 
+	/* This needs to be here too for Autokinesis III aka do_autokinesis_to()! */
+#ifdef NEW_AUTORET_2_DEEPCHECK
+#ifdef NEW_AUTORET_2_ENERGY
+	p_ptr->reserve_energy = 0;
+#endif
+#endif
+
 	break_cloaking(Ind, 7);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -1775,6 +1788,12 @@ void teleport_player_level(int Ind, bool force) {
 		return;
 	}
 
+#ifdef NEW_AUTORET_2_DEEPCHECK
+#ifdef NEW_AUTORET_2_ENERGY
+	p_ptr->reserve_energy = 0;
+#endif
+#endif
+
 	break_cloaking(Ind, 7);
 	stop_precision(Ind);
 	stop_shooting_till_kill(Ind);
@@ -1912,6 +1931,12 @@ void teleport_players_level(struct worldpos *wpos) {
 			p_ptr->request_id = RID_NONE;
 		}
 
+#ifdef NEW_AUTORET_2_DEEPCHECK
+#ifdef NEW_AUTORET_2_ENERGY
+		p_ptr->reserve_energy = 0;
+#endif
+#endif
+
 		/* Tell the player */
 		msg_print(i, msg);
 
@@ -2040,6 +2065,12 @@ bool retreat_player(int Ind, int dis) {
 
 	/* No movement path? */
 	if (p_ptr->px == x && p_ptr->py == y) return(FALSE);
+
+#ifdef NEW_AUTORET_2_DEEPCHECK
+#ifdef NEW_AUTORET_2_ENERGY
+	p_ptr->reserve_energy = 0;
+#endif
+#endif
 
 	break_cloaking(Ind, 7);
 	stop_precision(Ind);

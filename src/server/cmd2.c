@@ -6505,13 +6505,6 @@ int do_cmd_run(int Ind, int dir) {
 		}
 
 		/* Make sure we have enough energy to start running */
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
-		p_ptr->energy += (p_ptr->instant_retaliator
- #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
-		    || p_ptr->running
- #endif
-		    ? 0 : p_ptr->reserve_energy);
-#endif
 #ifdef RESTRICT_DOUBLE_ENERGY
 		p_ptr->energy += p_ptr->double_energy;
 #endif
@@ -6539,30 +6532,8 @@ int do_cmd_run(int Ind, int dir) {
 			p_ptr->double_energy = 0;
 #endif
 
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
-			if (!p_ptr->instant_retaliator &&
- #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
-			    !p_ptr->running &&
- #endif
-			    p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
-				p_ptr->reserve_energy = level_speed(&p_ptr->wpos) - 1;
-				p_ptr->energy -= p_ptr->reserve_energy;
-			} else p_ptr->reserve_energy = 0;
-#endif
-
 			return(2);
 		}
-
-#ifdef NEW_AUTORET_1_RESERVE_ENERGY
-		if (!p_ptr->instant_retaliator &&
- #ifdef NEW_AUTORET_1_RESERVE_ENERGY_WORKAROUND
-		    !p_ptr->running &&
- #endif
-		    p_ptr->energy >= level_speed(&p_ptr->wpos) - 1) {
-			p_ptr->reserve_energy = level_speed(&p_ptr->wpos) - 1;
-			p_ptr->energy -= p_ptr->reserve_energy;
-		} else p_ptr->reserve_energy = 0;
-#endif
 
 		/* If we don't have enough energy to run and monsters aren't around,
 		 * try to queue the run command.
