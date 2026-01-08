@@ -7411,7 +7411,7 @@ static void process_player_end(int Ind) {
 				/* assume nothing will happen here */
 				p_ptr->auto_retaliating = FALSE;
 #ifdef NEW_AUTORET_2_ENERGY
-				if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = FALSE;
+				if (p_ptr->new_retaliator) p_ptr->triggered_auto_attacking = FALSE;
 #endif
 
 				/* New feat: @O inscription will break FTK to enter melee auto-ret instead */
@@ -7424,7 +7424,7 @@ static void process_player_end(int Ind) {
 						p_ptr->auto_retaliating = TRUE;
 
 #ifdef NEW_AUTORET_2_ENERGY
-						if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = TRUE;
+						if (p_ptr->new_retaliator) p_ptr->triggered_auto_attacking = TRUE;
 #endif
 
 						if (p_ptr->shoot_till_kill_spell) {
@@ -7468,7 +7468,7 @@ static void process_player_end(int Ind) {
 					    && (attackstatus = auto_retaliate(Ind))) { /* attackstatus seems to be unused! (now used for RESTRICT_DOUBLE_ENERGY) */
 						p_ptr->auto_retaliating = TRUE;
 #ifdef NEW_AUTORET_2_ENERGY
-						if (!p_ptr->instant_retaliator) p_ptr->triggered_auto_attacking = TRUE;
+						if (p_ptr->new_retaliator) p_ptr->triggered_auto_attacking = TRUE;
 #endif
 #ifdef RESTRICT_DOUBLE_ENERGY
 						/* Any actions (here: attacking) besides walking/running will clear the movement extra energy reservoir */
@@ -7508,9 +7508,11 @@ static void process_player_end(int Ind) {
 
 #ifdef NEW_AUTORET_2_ENERGY
 	/* On FTK or AR, gain a full extra turn of energy for use specifically with escape mechanisms */
-	if (!p_ptr->instant_retaliator) {
-		if (!old_triggered_auto_attacking && p_ptr->triggered_auto_attacking) p_ptr->reserve_energy = level_speed(&p_ptr->wpos); //alternatively done in dungeon.c via extract_energy[] gain
-		else if (!p_ptr->triggered_auto_attacking) p_ptr->reserve_energy = 0;
+	if (p_ptr->new_retaliator) {
+		if (!old_triggered_auto_attacking && p_ptr->triggered_auto_attacking)
+			p_ptr->reserve_energy = (level_speed(&p_ptr->wpos) * NEW_AUTORET_2_ENERGY) / 100; //alternatively done in dungeon.c via extract_energy[] gain
+		else if (!p_ptr->triggered_auto_attacking)
+			p_ptr->reserve_energy = 0;
 	} else p_ptr->reserve_energy = 0; //paranoia?
 #endif
 

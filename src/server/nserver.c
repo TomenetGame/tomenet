@@ -2958,13 +2958,14 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->autopickup_chemicals = options[162];
 		p_ptr->add_kind_diz = options[163];
 		p_ptr->hide_lore_paste = options[164];
-		p_ptr->instant_retaliator = options[165];
-		if (!p_ptr->instant_retaliator) p_ptr->warning_newautoret = 1;
+		p_ptr->new_retaliator = options[165];
+		if (p_ptr->new_retaliator) p_ptr->warning_newautoret = 1;
 		p_ptr->sunburn_msg = options[166];
 		p_ptr->wide_scroll_margin = options[167];
 		p_ptr->basic_players_col = options[67];
 	} else {
-		p_ptr->instant_retaliator = p_ptr->sunburn_msg = TRUE;
+		p_ptr->new_retaliator = FALSE;
+		p_ptr->sunburn_msg = TRUE;
 		p_ptr->basic_players_col = p_ptr->basic_players_symb;
 	}
 

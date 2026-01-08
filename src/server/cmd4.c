@@ -1622,7 +1622,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 						    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 						    , version
  #endif
-						    , !q_ptr->instant_retaliator ? "\377Dr" : ""
+						    , !q_ptr->new_retaliator ? "\377Dr" : ""
 						    );
 #else
 						fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname);
@@ -1719,7 +1719,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #else /* combine custom font and OS type O_o */
 						    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 						    , version
-						    , !q_ptr->instant_retaliator ? "\377Dr" : ""
+						    , !q_ptr->new_retaliator ? "\377Dr" : ""
  #endif
 						    );
 #else
@@ -1778,7 +1778,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #else /* combine custom font and OS type O_o */
 						    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 						    , version
-						    , !q_ptr->instant_retaliator ? "\377Dr" : ""
+						    , !q_ptr->new_retaliator ? "\377Dr" : ""
  #endif
 				    );
 #endif
@@ -1875,7 +1875,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
  #else /* combine custom font and OS type O_o */
 					    , connp->use_graphics == UG_2MASK ? "\377G" : (connp->use_graphics ? "\377g" : (q_ptr->custom_font ? "\377w" : "\377D"))
 					    , version
-					    , !q_ptr->instant_retaliator ? "\377Dr" : ""
+					    , !q_ptr->new_retaliator ? "\377Dr" : ""
  #endif
 					    );
 #endif

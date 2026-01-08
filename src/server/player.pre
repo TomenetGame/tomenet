@@ -974,7 +974,7 @@ struct player_type {
 	int item_newest_2nd;
 	bool add_kind_diz;
 	bool hide_lore_paste;
-	bool instant_retaliator;
+	bool new_retaliator;
 	bool sunburn_msg;
 };
 

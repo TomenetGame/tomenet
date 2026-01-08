@@ -593,8 +593,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.hide_lore_paste,	FALSE,	0,	0, 164, TRUE,
 	    "hide_lore_paste",		"Hide artifact/monster lore pastes in public chat" },
 
-	{ &c_cfg.instant_retaliator,	TRUE,	2,	0, 165, TRUE,
-	    "instant_retaliator",	"Autoretaliate instantly but forego reserve energy" }, //note: includes FTK
+	{ &c_cfg.new_retaliator,	TRUE,	2,	0, 165, TRUE,
+	    "new_retaliator",		"Grant extra energy for a teleport/walk/run action" }, //note: includes FTK
 	{ &c_cfg.sunburn_msg,		TRUE,	0,	0, 166, TRUE,
 	    "sunburn_msg",		"Show message if you start/stop burning in the sun" },
 	{ &c_cfg.wide_scroll_margin,	TRUE,	1,	0, 167, TRUE,

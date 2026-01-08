@@ -6554,12 +6554,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		} else if (prefix(messagelc, "/instar")) { //for before next client release, to make this already accessible
 			p_ptr->warning_newautoret = 1;
-			if (p_ptr->instant_retaliator == FALSE) {
-				p_ptr->instant_retaliator = TRUE;
+			if (p_ptr->new_retaliator == TRUE) {
+				p_ptr->new_retaliator = FALSE;
+#ifdef NEW_AUTORET_1_ENERGY
 				msg_print(Ind, "Auto-retaliator works the old way, starts instantly but saves no reserve energy.");
+#elif defined(NEW_AUTORET_2_ENERGY)
+				msg_print(Ind, "Auto-retaliator works the old way, not granting any extra energy.");
+#endif
 			} else {
-				p_ptr->instant_retaliator = FALSE;
+				p_ptr->new_retaliator = TRUE;
+#ifdef NEW_AUTORET_1_ENERGY
 				msg_print(Ind, "Auto-retaliator works the new way, wind-up delay to save reserve energy.");
+#elif defined(NEW_AUTORET_2_ENERGY)
+				msg_print(Ind, "Auto-retaliator works the new way, granting extra energy for teleport/walk/run.");
+#endif
 			}
 			return;
 		} else if (prefix(messagelc, "/email")) { //set or check email for notifications

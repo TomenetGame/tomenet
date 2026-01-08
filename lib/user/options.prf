@@ -165,7 +165,7 @@ Y:thin_down_flush
 X:disable_flush
 X:macros_in_stores
 Y:load_form_macros
-Y:instant_retaliator
+Y:new_retaliator
 
 X:find_ignore_stairs
 Y:find_ignore_doors

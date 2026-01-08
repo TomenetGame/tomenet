@@ -5267,13 +5267,13 @@ void check_experience(int Ind) {
 		if (is_older_than(&p_ptr->version, 4, 9, 2, 1, 0, 1))
 			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377o/instar\377y command:");
 		else
-			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377oinstant_retaliator\377y option in \377o= 1\377y:");
+			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377onew_retaliator\377y option in \377o= 1\377y:");
 #ifdef NEW_AUTORET_1_ENERGY
-		msg_print(Ind, "\374\377y      If \377ooff\377y, you will take an extra turn on initiating auto-attacking, but you");
+		msg_print(Ind, "\374\377y      If \377oon\377y, you will take an extra turn on initiating auto-attacking, but you");
 		msg_print(Ind, "\374\377y      will be able to perform a near-instantanous action during it, eg teleport.");
 #elif defined(NEW_AUTORET_2_ENERGY)
-		msg_print(Ind, "\374\377y      If \377ooff\377y, your next teleport-type action is near-instantanous if you are");
-		msg_print(Ind, "\374\377y      performing auto-retaliation or fire-till-kill for at least 1 turn.");
+		msg_print(Ind, "\374\377y      If \377oon\377y, your next teleport-type/walk/run action is near-instantanous if you");
+		msg_print(Ind, "\374\377y      were performing auto-retaliation or fire-till-kill for at least 1 turn.");
 #endif
 		s_printf("warning_newautoret: %s\n", p_ptr->name);
 	}

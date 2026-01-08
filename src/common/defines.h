@@ -1263,8 +1263,10 @@
    that can only be used after at least 1 turn of either auto-retaliating (AR) or fire-till-kill (FTK) and can only be used for instant teleportation effects (excluding WoR cast) or movement (walk)!
    This energy storage starts up depleted and is filled up by engaging for AR or FTK for at least 1 turn.
    It can also be filled up by engaging for AR/FTK while having 2 full turns of energy stored up (ie 1 excess turn, from just standing idle while getting approached by an enemy);
-    in this case, the excess turn will be deducted from normal energy and fill up the extra tenergy storage. */
-#define NEW_AUTORET_2_ENERGY
+    in this case, the excess turn will be deducted from normal energy and fill up the extra tenergy storage.
+    The macro holds the percentage of a turn of energy to hand out to the character, from 0 to 100. [75...100].
+    TODO: Alternatively, just increase energy to 1 turn, from whatever it currenty is. That way, high-BpR melee'ers would hardly profit, as they're already in an excellent position. */
+#define NEW_AUTORET_2_ENERGY 75
 
 /* Kinda independant of this actually, but still currently only enable in tandem: */
 #ifdef NEW_AUTORET_2_ENERGY

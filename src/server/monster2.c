@@ -34,7 +34,7 @@
 /* Bloodletters that are level-boosted can 1-round k.o. low-AC chars. - C. Blue
    To alleviate this, we have two ways:
    1) Use the defines for nerfs below here.
-   2) Turn off 'instant_retaliator' option (4.9.3+) for low-AC chars to ensure almost-instant escape in case of bloodletter-spawns/summons.
+   2) Turn on 'new_retaliator' option (4.9.3+) for low-AC chars to ensure almost-instant escape in case of bloodletter-spawns/summons.
    Currently let's still enable (1) and not require players to rely on (2): */
 /* Nerf summoning for the specific case of summoning Bloodletters of Khorne?
    This avoids instant-ko in cases where the player might've been unlucky. */
