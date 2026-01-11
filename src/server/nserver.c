@@ -4271,7 +4271,7 @@ void process_pending_commands(int ind) {
 		case PKT_CLOSE:
 		case PKT_GO_UP:
 		case PKT_GO_DOWN:
-		case PKT_REST:
+		//case PKT_REST: /* Resting requires extra energy to not freeze the player until resting ends on its own (if ever) */
 		case PKT_STEAL:
 		case PKT_ZAP_DIR:
 		case PKT_ACTIVATE_DIR:
@@ -14249,7 +14249,11 @@ int toggle_rest(int Ind, int turns) {
 #endif
 
 	/* Resting takes a lot of energy! */
-	if (p_ptr->energy >= (level_speed(&p_ptr->wpos) * 2) - 1) {
+#ifdef RESTRICT_DOUBLE_ENERGY
+	if (p_ptr->energy + p_ptr->double_energy >= level_speed(&p_ptr->wpos) * 2 - 1) {
+#else
+	if (p_ptr->energy >= level_speed(&p_ptr->wpos) * 2 - 1) {
+#endif
 		/* Set flag */
 		p_ptr->resting = turns;
 #if WARNING_REST_TIMES > 0
@@ -14271,6 +14275,16 @@ int toggle_rest(int Ind, int turns) {
 		// use Handle_clear_actions(Ind) instead of all this?
 
 		/* Take a lot of energy to enter "rest mode" */
+#ifdef RESTRICT_DOUBLE_ENERGY
+		/* Subtract energy from double_energy reservoir first */
+		if (p_ptr->double_energy > 0) {
+			p_ptr->double_energy -= level_speed(&p_ptr->wpos) * 2 - 1;
+			if (p_ptr->double_energy < 0) {
+				p_ptr->energy += p_ptr->double_energy;
+				p_ptr->double_energy = 0;
+			}
+		} else
+#endif
 		p_ptr->energy -= (level_speed(&p_ptr->wpos) * 2) - 1;
 
 		/* Redraw */
