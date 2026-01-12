@@ -10068,6 +10068,7 @@ void season_change(int s, bool force) {
 void player_weather(int Ind, bool entered_level, bool weather_changed, bool panel_redraw) {
 	player_type *p_ptr = Players[Ind];
 	int w;
+	struct dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 
 	/* running custom weather for debugging purpose? */
 	if (p_ptr->custom_weather) return;
@@ -10086,8 +10087,10 @@ void player_weather(int Ind, bool entered_level, bool weather_changed, bool pane
 	}
 #endif
 
-	/* not in dungeon? erase weather and exit */
-	if (p_ptr->wpos.wz) {
+	/* not on world surface? erase weather and exit */
+	if (p_ptr->wpos.wz
+	    && (!d_ptr || !(d_ptr->flags3 & DF3_OUTDOORS) /* Except for 'outdoor' dungeons (should be towers) */
+	    || d_ptr->type == DI_CLOUD_PLANES)) { /* CP is above the clouds ^^ */
 		if (!entered_level) return;
 		/* erase weather */
 		Send_weather(Ind, -1, 0, WEATHER_GEN_TICKS,
