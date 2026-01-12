@@ -2593,7 +2593,7 @@ bool outdoor_affects(struct worldpos *wpos) {
 
 	/* Otherwise included locations */
 	if (!wpos->wz || /* World surface */
-	    (d_ptr && d_ptr->type == DI_CLOUD_PLANES)) /* The Cloud Planes */
+	    (d_ptr && (d_ptr->flags3 & DF3_OUTDOORS))) /* The Cloud Planes */
 		return(TRUE);
 
 	/* Default */

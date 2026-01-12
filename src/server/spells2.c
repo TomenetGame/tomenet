@@ -7798,7 +7798,7 @@ bool cast_fireworks(worldpos *wpos, int x, int y, int typ) {
 	/* Adjustments - mikaelh */
 	project_interval = 5;
 	/* Fireworks flies lower inside dungeons */
-	if (wpos->wz && !(d_ptr && d_ptr->type == DI_CLOUD_PLANES)) project_time = 4 + 4;
+	if (wpos->wz && !(d_ptr && (d_ptr->flags3 & DF3_OUTDOORS))) project_time = 4 + 4;
 	else project_time = 8 + 8; /* X units to rise into the air, X units to explode */
 	//if (project_time_effect & EFF_FIREWORKS3) project_time += 2 + 2;
 #endif

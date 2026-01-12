@@ -1962,7 +1962,7 @@ bool player_day(int Ind) {
 	if (!zcave) return(FALSE); /* paranoia */
 
 	if (outdoor_affects(&p_ptr->wpos)) {
-		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes shading */
+		p_ptr->redraw |= (PR_MAP); /* For Cloud Planes (and now Ash Mountains) shading */
 		ret = TRUE;
 	}
 	if (p_ptr->wpos.wz) return(ret);
@@ -1993,7 +1993,6 @@ bool player_day(int Ind) {
 
 
 	/* Lastly, handle music */
-
 #ifdef USE_SOUND_2010
 	if (p_ptr->is_day) return(FALSE);
 	p_ptr->is_day = TRUE;
@@ -2055,7 +2054,6 @@ bool player_night(int Ind) {
 
 
 	/* Lastly, handle music */
-
 #ifdef USE_SOUND_2010
 	if (!p_ptr->is_day) return(FALSE);
 	p_ptr->is_day = FALSE;

@@ -7523,7 +7523,7 @@
 
 #define DF3_NO_VAULTS		0x00100000U	/* Less room_build() calls for any sort of struct (including vaults) */
 #define DF3_NO_MAZE		0x00200000U	/* don't build (perma)mazes */
-//HOLE #define DF3_XXX		0x00400000U	/* */
+#define DF3_OUTDOORS		0x00400000U	/* This dungeon is considered outdoors (usually tower type), potentially regarding weather, day/night, seasons. */
 #define DF3_NO_DESTROYED	0x00800000U	/* don't build 'destroyed' levels */
 
 #define DF3_NO_TELE		0x01000000U	/* Disallow any teleportation (to go with NO_SUMMON -- for new experimental dungeoneering). Implies LF1_NO_MAGIC! */
