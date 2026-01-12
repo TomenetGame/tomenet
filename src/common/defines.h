@@ -7483,7 +7483,7 @@
 
 #define DF2_ADJUST_LEVEL_1_2	0x10000000U /* Minimum monster level will be half the dungeon level --- not implemented (HOLE) */
 #define DF2_NO_SHAFT		0x20000000U /* No shafts --- #if0'ed, todo: check and reenable! -- related to DF1_FLAT (which also has no effect atm)? */
-#define DF2_WALL_STREAMER_ADD	0x00010000U /* More than usual wall streamers - stacks with DF3_WALL_STREAMERS but can also be used solo for generating 1 (usually) wall streamer */
+#define DF2_WALL_STREAMER_ADD	0x40000000U /* More than usual wall streamers - stacks with DF3_WALL_STREAMERS but can also be used solo for generating 1 (usually) wall streamer */
 #define DF2_DELETED		0x80000000U /* Deleted, but not yet removed */
 
 #define DF2_NO_ENTRY_MASK	(DF2_NO_ENTRY_STAIR | DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT)
