@@ -6552,7 +6552,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "You will see true artifact/monster lore pasted to public chat.");
 			}
 			return;
-		} else if (prefix(messagelc, "/instar")) { //for before next client release, to make this already accessible
+		} else if (prefix(messagelc, "/newar")) { //for before next client release, to make this already accessible
 			p_ptr->warning_newautoret = 1;
 			if (p_ptr->new_retaliator == TRUE) {
 				p_ptr->new_retaliator = FALSE;

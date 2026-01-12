@@ -5265,7 +5265,7 @@ void check_experience(int Ind) {
 	if (old_lev < 13 && p_ptr->lev >= 13) {
 		p_ptr->warning_newautoret = 1;
 		if (is_older_than(&p_ptr->version, 4, 9, 2, 1, 0, 1))
-			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377o/instar\377y command:");
+			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377o/newar\377y command:");
 		else
 			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377onew_retaliator\377y option in \377o= 1\377y:");
 #ifdef NEW_AUTORET_1_ENERGY
