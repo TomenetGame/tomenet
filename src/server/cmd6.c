@@ -10205,11 +10205,12 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 bool create_snowball(int Ind, cave_type *c_ptr) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;
+	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	int slot;
 
 	if (cold_place(wpos) && /* during winter we can make snowballs~ */
 	    /* not in dungeons (helcaraxe..?) -- IC we assume they're just ice, not really snow, snow is only found on the world surface :p */
-	    !wpos->wz &&
+	    (!wpos->wz || (d_ptr && (d_ptr->flags3 & DF3_OUTDOORS) && d_ptr->type != DI_CLOUD_PLANES)) && /* CP is above the clouds */
 	    /* not inside houses or on house walls (wraithform into own house) */
 	    !(c_ptr->info & CAVE_ICKY) && !((f_info[c_ptr->feat].flags1 & FF1_WALL) && (f_info[c_ptr->feat].flags1 & FF1_PERMANENT)) &&
 	    /* must be floor or tree/bush to grab snow from, just not solid walls basically: */

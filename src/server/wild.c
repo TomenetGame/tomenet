@@ -5074,11 +5074,12 @@ void knock_window(int Ind, int x, int y) {
 void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave) {
 	int x, y;
 	cave_type *c_ptr;
+	dungeon_type *d_ptr = getdungeon(wpos);
 
 	/* hack - abuse for WILD_ICE */
 	if (wild_info[wpos->wy][wpos->wx].type == WILD_ICE) {
 		/* Turn all water into ice */
-		if (!wpos->wz)
+		if (!wpos->wz || (d_ptr && (d_ptr->flags3 & DF3_OUTDOORS)))
 			for (y = 1; y < MAX_HGT - 1; y++)
 			for (x = 1; x < MAX_WID - 1; x++) {
 				c_ptr = &zcave[y][x];
@@ -5090,7 +5091,7 @@ void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave) {
 	    && wild_info[wpos->wy][wpos->wx].type != WILD_DESERT
 	    && wild_info[wpos->wy][wpos->wx].type != WILD_VOLCANO) {
 		/* Turn some water into ice */
-		if (!wpos->wz)
+		if (!wpos->wz || (d_ptr && (d_ptr->flags3 & DF3_OUTDOORS)))
 			for (y = 1; y < MAX_HGT - 1; y++)
 			for (x = 1; x < MAX_WID - 1; x++) {
 				c_ptr = &zcave[y][x];
@@ -5099,7 +5100,7 @@ void wpos_apply_season_daytime(worldpos *wpos, cave_type **zcave) {
 	}
 
 	/* apply nightly darkening or daylight */
-	if (!wpos->wz) {
+	if (!wpos->wz || (d_ptr && (d_ptr->flags3 & DF3_OUTDOORS))) {
 		if (IS_DAY) world_surface_day(wpos);
 		else world_surface_night(wpos);
 	}
