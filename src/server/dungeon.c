@@ -13273,25 +13273,33 @@ bool cold_place(struct worldpos *wpos) {
 	if (wpos->wz > 0) d_ptr = wild_info[wpos->wy][wpos->wx].tower;
 	else if (wpos->wz < 0) d_ptr = wild_info[wpos->wy][wpos->wx].dungeon;
 	if (d_ptr) {
-		u32b dflags1;
+		u32b dflags1, dflags3;
 
 #ifdef IRONDEEPDIVE_MIXED_TYPES
-		if (in_irondeepdive(wpos)) dflags1 = d_info[iddc[ABS(wpos->wz)].type].flags1;
-		else
+		if (in_irondeepdive(wpos)) {
+			dflags1 = d_info[iddc[ABS(wpos->wz)].type].flags1;
+			dflags3 = d_info[iddc[ABS(wpos->wz)].type].flags3;
+		} else
 #endif
 		/* custom 'wilderness' (type-0) dungeon, admin-added */
 		if (d_ptr->theme) {
 			/* start with original flags of this type-0 dungeon */
 			dflags1 = d_ptr->flags1;
+			dflags3 = d_ptr->flags3;
 			/* add 'theme' flags that don't mess up our main flags too much */
 			dflags1 |= (d_info[d_ptr->theme].flags1 & DF1_THEME_MASK);
+			dflags3 |= (d_info[d_ptr->theme].flags3 & DF3_THEME_MASK);
 		}
 		/* normal dungeon from d_info.txt */
-		else dflags1 = d_ptr->flags1;
+		else {
+			dflags1 = d_ptr->flags1;
+			dflags3 = d_ptr->flags3;
+		}
 
 		if (dflags1 & DF1_COLD_PLACE) cold = TRUE;
-		//else if (dflags1 & DF1_HOT_PLACE) cold = FALSE;
-		else cold = FALSE;
+		else if (dflags1 & DF1_HOT_PLACE) cold = FALSE;
+		else if (dflags3 & DF3_OUTDOORS) ; /* 'cold' keeps its value from wild sector type and season */
+		else cold = FALSE; /* by default, dungeons (that aren't outside) are not especially cold */
 	}
 
 	return(cold);
