@@ -397,7 +397,7 @@ common/w_z_pack.c: common/z_pack.pkg $(TOLUA)
 
 client/icon.o: client/icon.rc client/tomenet4.ico
 	cd client; $(WINDRES) -o icon.o icon.rc; cd ..
-client/manifest.o: client/manifest.rc client/tomenet.exe.manifest
+client/manifest.o: client/manifest.rc client/TomeNET.exe.manifest
 	cd client; $(WINDRES) -o manifest.o manifest.rc; cd ..
 
 #
