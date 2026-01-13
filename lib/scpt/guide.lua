@@ -168,7 +168,7 @@ guide_school = {
 }
 
 -- note: indices start at 0, so number is final index + 1
-guide_spells = 193
+guide_spells = 195
 guide_spell = {
     "Manathrust",
     "Recharge",
@@ -191,19 +191,21 @@ guide_spell = {
     "Tidal Wave",
     "Frost Barrier",
     "Frost Ball",
+    "Hailstorm",
 
     "Lightning Bolt",
     "Noxious Cloud",
     "Thunderstorm",
     "Wings of Winds",
-    "Invisibility", --24
-    "Mirage Mirror",
+    "Invisibility",
+    "Mirage Mirror",--26
 
     "Dig",
     "Acid Bolt",
     "Stone Prison",
     "Strike",
     "Shake",
+    "Impaling Spikes",
 
     "Healing",
     "Grasping Vines",
@@ -212,7 +214,7 @@ guide_spell = {
     --"Thunderstorm", --duplicate (Air)
     "Regeneration",
     "Grow Trees",
-    "Poison Blood", --37
+    "Poison Blood", --39
 
     "Phase Door",
     "Disarm",
@@ -229,7 +231,7 @@ guide_spell = {
     "Vision",
     "Sense Hidden",
     "Reveal Ways",
-    "Sense Minds", --52
+    "Sense Minds", --54
 
     "Magelock",
     "Slow Monster",
@@ -243,7 +245,7 @@ guide_spell = {
     "Wraithform",
     "Stop Wraithform",
     "Disenchantment Ray",
-    "Hellfire", --64
+    "Hellfire", --66
 
     "Curse",
     "Call Light",
@@ -252,7 +254,7 @@ guide_spell = {
     "Redemption",
     "Orb of Draining",
     "Doomed Grounds",
-    "Earthquake", --71
+    "Earthquake", --73
 
     "Blessing",
     "Holy Resistance",
@@ -269,7 +271,7 @@ guide_spell = {
     "Restoration",
     "Faithful Focus",
     "Resurrection",
-    "Soul Curing", --86
+    "Soul Curing", --88
 
     "Remove Fear",
     "Call Light",
@@ -278,7 +280,7 @@ guide_spell = {
     "Sanctuary",
     "Satisfy Hunger",
     "Sense Surroundings",
-    "Zeal", --94
+    "Zeal", --96
 
     "Cause Fear",
     "Blindness",
@@ -291,7 +293,7 @@ guide_spell = {
     "Shadow Shroud",
     "Chaos Bolt",
     "Drain Life",
-    "Darkness Storm", --106
+    "Darkness Storm", --108
 
     "Cause Wounds",
     "Tame Fear",
@@ -304,7 +306,7 @@ guide_spell = {
     "Ethereal Eye",
     "Possess",
     "Stop Possess",
-    "Guardian Spirit", --118
+    "Guardian Spirit", --120
     "Purification Rites",
 
     "Terror",
@@ -318,7 +320,7 @@ guide_spell = {
     "Wicked Oath",
     "Levitation",
     "Robes of Havoc",
-    "Blood Sacrifice", --130
+    "Blood Sacrifice", --132
 
     "Nature's Call",
     "Toxic Moisture",
@@ -330,7 +332,7 @@ guide_spell = {
     "Quickfeet",
     "Herbal Tea",
     "Extra Growth",
-    "Focus", --140
+    "Focus", --142
 
     "Psychic Hammer",
     "Psychokinesis",
@@ -350,7 +352,7 @@ guide_spell = {
     "Accelerate Nerves",
     "Telepathy",
     "Recognition",
-    "Stabilize Thoughts", --158
+    "Stabilize Thoughts", --160
 
     "Psionic Blast",
     "Psi Storm",
@@ -372,7 +374,7 @@ guide_spell = {
     "Empowerment",
     "The Silent Force",
     "Sphere of Destruction",
-    "Gateway", --178
+    "Gateway", --180
 
     "Fatigue",
     "Detect Lifeforce",
@@ -383,12 +385,12 @@ guide_spell = {
     "Permeation",
     "Siphon Life",
     "Touch of Hunger",
-    "Wraithstep", --188
+    "Wraithstep", --190
     "Mists of Decay",
 
     --additional Shadow spells
     "Retreat",
     "Shadow Stream",
     "Dispersion",
-    "Stop Dispersion", --193
+    "Stop Dispersion", --195
 }
