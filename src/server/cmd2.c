@@ -6421,6 +6421,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 int do_cmd_run(int Ind, int dir) {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr, **zcave;
+	int ls = level_speed(&p_ptr->wpos);
 
 	/* slower 'running' movement over certain terrain */
 	int real_speed = cfg.running_speed;
@@ -6444,14 +6445,14 @@ int do_cmd_run(int Ind, int dir) {
 		if (p_ptr->stopped && dir != 5) {
 
 			// POTENTIAL BUG - need to verify here that we actually have enough energy to move?*/
-			// aka if (p_ptr->energy >= level_speed(&p_ptr->wpos))
+			// aka if (p_ptr->energy >= ls)
 
 			/* Try to break the rune */
 			if (rand_int(200) < p_ptr->lev) {
 				msg_print(Ind, "You break the rune!");
 				set_stopped(Ind, 0);
 			} else {
-				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				p_ptr->energy -= ls;
 				msg_print(Ind, "You fail to break the confinement rune!");
 				disturb(Ind, 0, 0);
 				return(2);
@@ -6464,7 +6465,7 @@ int do_cmd_run(int Ind, int dir) {
 			if (p_ptr->prob_travel && (!cave_floor_bold(zcave, p_ptr->py, p_ptr->px))) {
 
 				// POTENTIAL BUG - need to verify here that we actually have enough energy to move?*/
-				// aka if (p_ptr->energy >= level_speed(&p_ptr->wpos))
+				// aka if (p_ptr->energy >= ls)
 
 				(void)do_prob_travel(Ind, dir);
 				return(2);
@@ -6481,7 +6482,7 @@ int do_cmd_run(int Ind, int dir) {
 					bool ret = TRUE;
 
 					/* Check if we have enough energy to open the door */
-					if (p_ptr->energy >= level_speed(&p_ptr->wpos)) {
+					if (p_ptr->energy >= ls) {
 #ifdef ENABLE_OUNLIFE
 						/* Wraithstep gets auto-cancelled on forced interaction with solid environment */
 						if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1)) set_tim_wraith(Ind, 0);
@@ -6509,8 +6510,8 @@ int do_cmd_run(int Ind, int dir) {
 		p_ptr->energy += p_ptr->double_energy;
 #endif
 
-		if (p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed)
-		//if (p_ptr->energy >= level_speed(&p_ptr->wpos)) /* otherwise auto-retaliation will never allow running */
+		if (p_ptr->energy >= (ls * (real_speed + 1)) / real_speed)
+		//if (p_ptr->energy >= ls) /* otherwise auto-retaliation will never allow running */
 		{
 			char consume_full_energy;
 
@@ -6522,14 +6523,33 @@ int do_cmd_run(int Ind, int dir) {
 
 			if (consume_full_energy)
 				/* Consume the normal full amount of energy in case we have e.g. attacked a monster */
-				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				p_ptr->energy -= ls;
 			else
 				/* Reset the player's energy so he can't sprint several spaces
 				 * in the first round of running.  */
-				p_ptr->energy = level_speed(&p_ptr->wpos);
+#ifndef RESTRICT_DOUBLE_ENERGY
+				p_ptr->energy = ls;
+#else
+ #if 0
+				/* Actually deduct 1 turn worth of energy, which was the 'start to run' reserve. */
+				p_ptr->energy -= ls;
+ #else
+				p_ptr->energy = ls;
+ #endif
+#endif
 #ifdef RESTRICT_DOUBLE_ENERGY
+ #if 0
 			/* For both the above cases, reset the extra running/walking energy pool. */
 			p_ptr->double_energy = 0;
+ #else
+			/* Re-split energy into both reservoirs */
+			p_ptr->double_energy = 0;
+			if (p_ptr->energy > ls) {
+				p_ptr->double_energy = (p_ptr->energy - ls);
+				p_ptr->energy = ls;
+				if (p_ptr->double_energy > ls - 1) p_ptr->double_energy = ls - 1;
+			}
+ #endif
 #endif
 
 			return(2);

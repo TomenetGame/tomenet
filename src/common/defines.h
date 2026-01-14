@@ -1278,7 +1278,7 @@
    2) Running which requires 2 energy to initiate).
    Doing anything else except basic movement:
    Spell-casting, firing, melee will discard a 2nd turn of pre-stored energy. */
- #define RESTRICT_DOUBLE_ENERGY
+ //#define RESTRICT_DOUBLE_ENERGY
 #endif
 
 

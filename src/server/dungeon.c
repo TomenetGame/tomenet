@@ -4228,11 +4228,17 @@ static void process_player_begin(int Ind) {
 #endif
 #if 0
 #ifdef RESTRICT_DOUBLE_ENERGY
-#ifdef NEW_AUTORET_2_ENERGY
-	msg_format(Ind, " e = %4d, d = %4d, r = %4d", p_ptr->energy, p_ptr->double_energy, p_ptr->reserve_energy);
+ #ifdef NEW_AUTORET_2_ENERGY
+	msg_format(Ind, " e=%4d, d=%4d (%4d), r=%4d; run=%5d, t=%d", p_ptr->energy, p_ptr->double_energy, p_ptr->energy + p_ptr->double_energy, p_ptr->reserve_energy, p_ptr->running, turn % 60000);
+ #else
+	msg_format(Ind, " e=%4d, d=%4d (%4d)", p_ptr->energy, p_ptr->double_energyp_ptr->energy + p_ptr->double_energy, );
+ #endif
 #else
-	msg_format(Ind, " e = %4d, d = %4d", p_ptr->energy, p_ptr->double_energy);
-#endif
+ #ifdef NEW_AUTORET_2_ENERGY
+	msg_format(Ind, " e=%4d, r=%4d; run=%5d, t=%d", p_ptr->energy, p_ptr->reserve_energy, p_ptr->running, turn);
+ #else
+	msg_format(Ind, " e=%4d", p_ptr->energy);
+ #endif
 #endif
 #endif
 
@@ -7377,6 +7383,8 @@ static void process_player_end(int Ind) {
 	old_triggered_auto_attacking = p_ptr->triggered_auto_attacking;
 	/* Mind Fusion/Control disables the char's automatic 'background' behaviour: No auto-retaliation and no running. */
 	if (!(p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ))) {
+		int ls = level_speed(&p_ptr->wpos);
+
 		/* Check for fire-till-kill and auto-retaliation */
 		if (!p_ptr->requires_energy && /* <- new, required for allowing actions here (fire-till-kill)
 						  at <= 100% energy to prevent character lock-up. - C. Blue */
@@ -7390,7 +7398,6 @@ static void process_player_end(int Ind) {
 			    still have that small delay in the beginning, if player could fire multiple shots/round.
 			    This cannot be changed easily because here we don't know yet with which methid the
 			    player might auto-ret. - C. Blue) */
-			int energy = level_speed(&p_ptr->wpos);
 
 			/* is this line even required at all..? */
 			if (p_ptr->shooting_till_kill && !target_okay(Ind)) p_ptr->shooting_till_kill = FALSE;
@@ -7405,7 +7412,7 @@ static void process_player_end(int Ind) {
 			/* If RESTRICT_DOUBLE_ENERGY is NOT defined: Old way - get the usual 'double initial attack' in.
 			   Drawback: Have to wait for nearly a full turn (1-(1/attacksperround))
 			   for FTK/meleeret to break out for performing a different action. -- this should be fixed now. May break out in 1/attacksperround now.) */
-			if (p_ptr->energy >= energy) {
+			if (p_ptr->energy >= ls) {
 				/* assume nothing will happen here */
 				p_ptr->auto_retaliating = FALSE;
 #ifdef NEW_AUTORET_2_ENERGY
@@ -7489,18 +7496,29 @@ static void process_player_end(int Ind) {
 		/* ('Handle running' from above was originally at this place) */
 		/* Handle running -- 5 times the speed of walking */
 #ifdef RESTRICT_DOUBLE_ENERGY
-		while (p_ptr->running && p_ptr->energy + p_ptr->double_energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
+		while (p_ptr->running && p_ptr->energy + p_ptr->double_energy >= (ls * (real_speed + 1)) / real_speed) {
 #else
-		while (p_ptr->running && p_ptr->energy >= (level_speed(&p_ptr->wpos) * (real_speed + 1)) / real_speed) {
+		while (p_ptr->running && p_ptr->energy >= (ls * (real_speed + 1)) / real_speed) {
 #endif
 			char consume_full_energy;
 
 			run_step(Ind, 0, &consume_full_energy);
 			if (consume_full_energy)
 				/* Consume a full turn of energy in case we have e.g. attacked a monster */
-				p_ptr->energy -= level_speed(&p_ptr->wpos);
+				p_ptr->energy -= ls;
 			else
-				p_ptr->energy -= level_speed(&p_ptr->wpos) / real_speed;
+				p_ptr->energy -= ls / real_speed;
+
+#ifdef RESTRICT_DOUBLE_ENERGY
+			/* Re-split energy into both reservoirs */
+			p_ptr->energy += p_ptr->double_energy;
+			p_ptr->double_energy = 0;
+			if (p_ptr->energy > ls) {
+				p_ptr->double_energy = (p_ptr->energy - ls);
+				p_ptr->energy = ls;
+				if (p_ptr->double_energy > ls - 1) p_ptr->double_energy = ls - 1;
+			}
+#endif
 		}
 	}
 
