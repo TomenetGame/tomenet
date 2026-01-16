@@ -1,0 +1,76 @@
+# File: graphics-16x24sv#1_filled_floors.prf
+#
+# TomeNET graphics redefinitions for 16x24sv#1_filled_floors.bmp file.
+# This file defines special attr/char mappings for use in "graphics" mode.
+#
+# Highly inspired by Tangar's font https://tangar.info/en/t/tileset
+# And Urizen tileset https://vurmux.itch.io/urizen-onebit-tileset
+#
+
+##### Floors (white / centered dot) #####
+
+F:1:/50 # open floor
+F:137:/50 # open floor (Permanent floor, added for t_refuge.txt, just to prevent monster spawn)
+# No tiles in TG
+F:31:/50 # open floor
+F:133:/50 # off-grid floor
+F:134:/50 # inn floor
+F:138:/50 # alpha-transparent floor
+F:172:/50 # floor (Used as a marked for random quests)
+# F:208:/50 # team A goal
+# F:209:/50 # team B goal
+F:226:/50 # highly protected floor
+F:236:/50 # barred floor
+F:232:/50 # sickbay area
+
+F:88:/51 # dirt
+
+# cobblestone road, protected floor
+F:109:/52 # volcanic rock
+F:200:/52 # cobblestone road
+F:201:/52 # cobblestone with outlet
+F:207:/52 # rocky ground
+
+F:89:/53 # patch of grass
+
+F:199:/54 # grass with flowers
+
+F:90:/55 # ice
+F:210:/55 # protected floor
+
+F:83:/152 # snow
+
+F:19:/69 # loose dirt
+
+F:91:/62 # sand
+F:93:/63 # ash
+F:102:/64 # nether mist
+
+F:18:/68 # crops
+
+F:82:/60 # solidified clouds
+
+F:86:/156 # stream of shallow lava
+
+F:266:/156 # stream of lava (eastward)
+F:267:/156 # stream of lava (westward)
+F:268:/156 # stream of lava (northward)
+F:269:/156 # stream of lava (southward)
+
+F:85:/157 # pool of deep lava
+F:270:/157 # stream of deep lava (eastward)
+F:271:/157 # stream of deep lava (westward)
+F:272:/157 # stream of deep lava (northward)
+F:273:/157 # stream of deep lava (southward)
+
+F:84:/56 # stream of shallow water
+F:174:/56 # stream of tainted water
+F:110:/56 # puddle of water
+F:94:/56 # mud
+F:258:/56 # stream of water (eastward)
+F:259:/56 # stream of water (westward)
+F:260:/56 # stream of water (northward)
+F:261:/56 # stream of water (southward)
+
+F:87:/356 # dark pit
+
