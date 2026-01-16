@@ -12272,7 +12272,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
    Make sure they don't have too much, but let them store up some extra.
    Storing up extra energy lets us perform actions while we are running */
 void limit_energy(player_type *p_ptr) {
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 	/* Only fill up energy up to 1 turn, spill-over everything else up to the usual limit (2 turns - 1) into a separate reservoir,
 	   which is available specifically only for running and walking (especially intended: not for attacking). */
 	int ls = level_speed(&p_ptr->wpos);

@@ -3801,7 +3801,7 @@ struct player_type {
 	bool reserve_flag;
  #endif
 #endif
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 	s16b double_energy; //excess energy (above 1 turn, ie gained a 2nd turn of energy on top) kept here for use when running/walking
 #endif
 

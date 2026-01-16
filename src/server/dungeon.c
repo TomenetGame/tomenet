@@ -4227,7 +4227,7 @@ static void process_player_begin(int Ind) {
 #endif
 #endif
 #if 0
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
  #ifdef NEW_AUTORET_2_ENERGY
 	msg_format(Ind, " e=%4d, d=%4d (%4d), r=%4d; run=%5d, t=%d", p_ptr->energy, p_ptr->double_energy, p_ptr->energy + p_ptr->double_energy, p_ptr->reserve_energy, p_ptr->running, turn % 60000);
  #else
@@ -7409,7 +7409,7 @@ static void process_player_end(int Ind) {
 			   (of the old way) would be to not add full floor speed energy all at once, but in multiple
 			   parts, to (ideally) immediately cover the energy loss for a single attack performed. */
 
-			/* If RESTRICT_DOUBLE_ENERGY is NOT defined: Old way - get the usual 'double initial attack' in.
+			/* If RESTRICT_DOUBLE_ENERGY_1 is NOT defined: Old way - get the usual 'double initial attack' in.
 			   Drawback: Have to wait for nearly a full turn (1-(1/attacksperround))
 			   for FTK/meleeret to break out for performing a different action. -- this should be fixed now. May break out in 1/attacksperround now.) */
 			if (p_ptr->energy >= ls) {
@@ -7431,6 +7431,10 @@ static void process_player_end(int Ind) {
 #ifdef NEW_AUTORET_2_ENERGY
 						if (p_ptr->new_retaliator) p_ptr->triggered_auto_attacking = TRUE;
 #endif
+#ifdef RESTRICT_DOUBLE_ENERGY_2
+						/* Any actions (here: attacking) besides walking/running will clear one-turn-excess energy */
+						if (p_ptr->energy > level_speed(&p_ptr->wpos)) p_ptr->energy = level_speed(&p_ptr->wpos);
+#endif
 
 						if (p_ptr->shoot_till_kill_spell) {
 							cast_school_spell(Ind, p_ptr->shoot_till_kill_book, p_ptr->shoot_till_kill_spell - 1, 5, -1, 0);
@@ -7449,7 +7453,7 @@ static void process_player_end(int Ind) {
 							p_ptr->auto_retaliating = !p_ptr->auto_retaliating; /* hack, it's unset in do_cmd_fire IF it WAS successfull, ie reverse */
 #endif
 						}
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 						/* Any actions (here: attacking) besides walking/running will clear the movement extra energy reservoir */
 						p_ptr->double_energy = 0;
 #endif
@@ -7464,18 +7468,25 @@ static void process_player_end(int Ind) {
 				/* Parania: Don't break fire-till-kill by starting to auto-retaliate when monster enters melee range!
 				   (note: that behaviour was reported, but haven't reproduced it in local testing so far) */
 				if (!p_ptr->shooting_till_kill) {
+#ifdef RESTRICT_DOUBLE_ENERGY_2
+					int old_energy = p_ptr->energy;
+
+					/* Any actions (here: attacking) besides walking/running will clear one-turn-excess energy */
+					if (p_ptr->energy > level_speed(&p_ptr->wpos)) p_ptr->energy = level_speed(&p_ptr->wpos);
+#endif
+
 					/* Check for nearby monsters and try to kill them */
 					/* If auto_retaliate returns nonzero than we attacked
 					 * something and so should use energy.
 					 */
 					p_ptr->auto_retaliaty = TRUE; /* hack: prevent going un-AFK from auto-retaliating */
 					if ((!p_ptr->auto_retaliating) /* aren't we doing fire_till_kill already? */
-					    && (attackstatus = auto_retaliate(Ind))) { /* attackstatus seems to be unused! (now used for RESTRICT_DOUBLE_ENERGY) */
+					    && (attackstatus = auto_retaliate(Ind))) { /* attackstatus seems to be unused! (now used for RESTRICT_DOUBLE_ENERGY_1) */
 						p_ptr->auto_retaliating = TRUE;
 #ifdef NEW_AUTORET_2_ENERGY
 						if (p_ptr->new_retaliator) p_ptr->triggered_auto_attacking = TRUE;
 #endif
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 						/* Any actions (here: attacking) besides walking/running will clear the movement extra energy reservoir */
 						if (attackstatus) p_ptr->double_energy = 0;
 #endif
@@ -7483,6 +7494,11 @@ static void process_player_end(int Ind) {
 						//p_ptr->energy -= level_speed(p_ptr->dun_depth);
 					}
 					p_ptr->auto_retaliaty = FALSE;
+
+#ifdef RESTRICT_DOUBLE_ENERGY_2
+					/* If we didn't auto-retaliate, restore our original energy (which could exceed one full turn) */
+					if (p_ptr->energy == level_speed(&p_ptr->wpos)) p_ptr->energy = old_energy;
+#endif
 				}
 
 				/* Reset attack sfx counter in case player enabled half_sfx_attack or cut_sfx_attack. */
@@ -7495,7 +7511,7 @@ static void process_player_end(int Ind) {
 
 		/* ('Handle running' from above was originally at this place) */
 		/* Handle running -- 5 times the speed of walking */
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 		while (p_ptr->running && p_ptr->energy + p_ptr->double_energy >= (ls * (real_speed + 1)) / real_speed) {
 #else
 		while (p_ptr->running && p_ptr->energy >= (ls * (real_speed + 1)) / real_speed) {
@@ -7509,7 +7525,7 @@ static void process_player_end(int Ind) {
 			else
 				p_ptr->energy -= ls / real_speed;
 
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 			/* Re-split energy into both reservoirs */
 			p_ptr->energy += p_ptr->double_energy;
 			p_ptr->double_energy = 0;

@@ -1277,8 +1277,12 @@
    1) Walking aka 'hopping' over a grid using the double energy.
    2) Running which requires 2 energy to initiate).
    Doing anything else except basic movement:
-   Spell-casting, firing, melee will discard a 2nd turn of pre-stored energy. */
- //#define RESTRICT_DOUBLE_ENERGY
+   Spell-casting, firing, melee will discard a 2nd turn of pre-stored energy. -- STILL BUGGED, see comment below */
+ //#define RESTRICT_DOUBLE_ENERGY_1
+/* Alternative, simpler method, as the above one is still buggy (regarding auto-repeated actions and spamming running key): */
+ #ifndef RESTRICT_DOUBLE_ENERGY_1
+  #define RESTRICT_DOUBLE_ENERGY_2
+ #endif
 #endif
 
 

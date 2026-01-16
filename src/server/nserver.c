@@ -4217,6 +4217,44 @@ void process_pending_commands(int ind) {
 		}
 #endif
 
+#ifdef RESTRICT_DOUBLE_ENERGY_2 /* alternative method for testing */
+		/* For actions where double-initial action is unwanted (basically all except movement), cap energy to one turn */
+		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED) switch (type) {
+		case PKT_TUNNEL:
+		case PKT_AIM_WAND:
+		case PKT_FIRE:
+		//case PKT_STAND:
+		case PKT_SPELL:
+		case PKT_OPEN:
+		case PKT_PRAY:
+		case PKT_QUAFF:
+		case PKT_READ:
+		case PKT_USE:
+		case PKT_THROW:
+		case PKT_ZAP:
+		case PKT_ACTIVATE:
+		case PKT_BASH:
+		case PKT_DISARM:
+		case PKT_EAT:
+		case PKT_FILL:
+		case PKT_FIGHT:
+		case PKT_CLOSE:
+		//case PKT_GO_UP: /* maybe allow it for stairs */
+		//case PKT_GO_DOWN:
+		//case PKT_REST: /* Resting requires extra energy to not freeze the player until resting ends on its own (if ever) */
+		case PKT_STEAL:
+		case PKT_ZAP_DIR:
+		case PKT_ACTIVATE_DIR:
+		case PKT_SPIKE:
+		case PKT_ACTIVATE_SKILL:
+		case PKT_SIP:
+		case PKT_TELEKINESIS:
+		//case PKT_CLOAK:
+		//case PKT_STAND_ONE:
+			if (p_ptr->energy > level_speed(&p_ptr->wpos)) p_ptr->energy = level_speed(&p_ptr->wpos);
+		}
+#endif
+
 		result = (*receive_tbl[type])(ind);
 
 		/* Check that the player wasn't disconnected - mikaelh */
@@ -4246,7 +4284,7 @@ void process_pending_commands(int ind) {
 		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED)
 			p_ptr->requires_energy = (result == 0);
 
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 		/* Any actions besides walking (PKT_WALK)/running (PKT_RUN) will clear the double_energy reservoir.
 		  Note: All inven/equip commands are also exempt. */
 		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED) switch (type) {
@@ -4269,7 +4307,7 @@ void process_pending_commands(int ind) {
 		case PKT_FILL:
 		case PKT_FIGHT:
 		case PKT_CLOSE:
-		case PKT_GO_UP:
+		case PKT_GO_UP: /* maybe allow it for stairs? */
 		case PKT_GO_DOWN:
 		//case PKT_REST: /* Resting requires extra energy to not freeze the player until resting ends on its own (if ever) */
 		case PKT_STEAL:
@@ -11565,7 +11603,7 @@ static int Receive_walk(int ind) {
 		p_ptr->command_rep = -1;
 	}
 
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 	if (player && p_ptr->energy + p_ptr->double_energy >= level_speed(&p_ptr->wpos)) {
 #else
 	if (player && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
@@ -14249,7 +14287,7 @@ int toggle_rest(int Ind, int turns) {
 #endif
 
 	/* Resting takes a lot of energy! */
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 	if (p_ptr->energy + p_ptr->double_energy >= level_speed(&p_ptr->wpos) * 2 - 1) {
 #else
 	if (p_ptr->energy >= level_speed(&p_ptr->wpos) * 2 - 1) {
@@ -14275,7 +14313,7 @@ int toggle_rest(int Ind, int turns) {
 		// use Handle_clear_actions(Ind) instead of all this?
 
 		/* Take a lot of energy to enter "rest mode" */
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 		/* Subtract energy from double_energy reservoir first */
 		if (p_ptr->double_energy > 0) {
 			p_ptr->double_energy -= level_speed(&p_ptr->wpos) * 2 - 1;

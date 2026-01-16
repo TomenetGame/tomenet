@@ -6374,7 +6374,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 		/* Take a turn (or less) */
 		if (consume_full_energy) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);//force-attacking always costs a whole turn
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 			p_ptr->double_energy = 0;
 #endif
 		} else {
@@ -6386,7 +6386,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			if (get_skill(p_ptr, SKILL_OSHADOW) >= 10 && no_real_lite(Ind))
 				fast_move = (fast_move * (15 - get_skill_scale(p_ptr, SKILL_OSHADOW, 5))) / 15;
 
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 			/* Subtract energy from double_energy reservoir first */
 			if (p_ptr->double_energy > 0) {
 				p_ptr->double_energy -= (level_speed(&p_ptr->wpos) * fast_move) / 100;
@@ -6506,7 +6506,7 @@ int do_cmd_run(int Ind, int dir) {
 		}
 
 		/* Make sure we have enough energy to start running */
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
 		p_ptr->energy += p_ptr->double_energy;
 #endif
 
@@ -6527,7 +6527,7 @@ int do_cmd_run(int Ind, int dir) {
 			else
 				/* Reset the player's energy so he can't sprint several spaces
 				 * in the first round of running.  */
-#ifndef RESTRICT_DOUBLE_ENERGY
+#ifndef RESTRICT_DOUBLE_ENERGY_1
 				p_ptr->energy = ls;
 #else
  #if 0
@@ -6537,7 +6537,7 @@ int do_cmd_run(int Ind, int dir) {
 				p_ptr->energy = ls;
  #endif
 #endif
-#ifdef RESTRICT_DOUBLE_ENERGY
+#ifdef RESTRICT_DOUBLE_ENERGY_1
  #if 0
 			/* For both the above cases, reset the extra running/walking energy pool. */
 			p_ptr->double_energy = 0;
