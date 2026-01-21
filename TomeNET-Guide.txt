@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 12. January 2026 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 21. January 2026 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2996,7 +2996,8 @@ DEW         Dark-elven warlock. A very deadly monster that comes in packs and
 Dive        A trip into the dungeon, usually quite deep compared to the
             diver's character level.
 
-DS          Disruption shield. A must-have spell for istari (mages).
+DS          Disruption shield. A spell most istari (mages) use, except those
+            who decide to instead rely on Nature school's survivability boost.
 
 DSM         Dragon Scale Mail. Legendary pieces of armour, that actually has
             neutral water buoyancy. When mentioned, its meaning usually
@@ -5509,7 +5510,7 @@ Static colours:
 Animated (flickering in multiple hues) colours:
 16  multi          17  poison         18  fire           19  cold
 20  acid           21  electricity    22  confusion      23  sound
-24  shards         25  light          26  darkness       27  mana-shield
+24  shards         25  light          26  darkness       27  disruption shield
 28  invulnerable   29  curse          30  annihilation   31  half-multi
 32  psi            33  nexus          34  nether         35  disenchantment
 36  inertia        37  force          38  gravity        39  time
@@ -20676,8 +20677,9 @@ create a character!):
     useful supportive spells (at least for their own benefit) of very wide
     variety.
     On the downside, they are the worst fighters, being unable to use any
-    weapon but a Mage Staff comfortably, and until they learn how to
-    effectively use the 'Disruption Shield' spell they are very vulnerable.
+    weapon but a Mage Staff comfortably, and until they either learn how to
+    effectively use the 'Disruption Shield' spell or train in the 'Nature'
+    school (which grants a large hit point bonus) they are very vulnerable.
     A high-level istar can be very powerful, but getting there can be a
     difficult journey.
     As a specialty, vampire istari are able to learn the occult shadow school
@@ -21754,7 +21756,8 @@ Note: For some classes the power curve can depend heavily on the way you
       'Start' and 'Early' stages, no matter the class.
 
       Istari lose their weakness aka their fragility when they acquire the
-      Mana school spell 'Disruption Shield' which is considered essential.
+      Mana school spell 'Disruption Shield' or if they train in the 'Nature'
+      school which grants a lot of extra hit points.
       They are unmatched in terms of controlling almost any situation and
       at the same time being able to focus on raw +speed accumulation while
       maintaining very high survivability thanks to disruption shield.
@@ -22956,7 +22959,7 @@ these limitations will be lifted.
                     for each damage point.
                     Note that Disruption Shield actually prevents being
                     intercepted by enemies, making a skill like 'Calmness'
-                    obsolete for higher-level istari!
+                    obsolete for higher-level istari.
                     While disruption shield is active the player will see
                     himself turning from '@' into numbers depending on his MP
                     pool instead of HP.
