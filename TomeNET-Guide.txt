@@ -6533,7 +6533,7 @@ A few generic commands are always available from within subinventory:
     The xhtml files take up extremely little space and can be viewed in any
     web browser. The screenshots are saved to the lib/user folder on POSIX
     clients (Linux/OSX) and to the tomenet-user folder on Windows clients.
-  - Inspect item (x).
+  - Inspect (aka examine) an item (x).
   - Drop an item (d).
   - Destroy (kill) an item (k or CTRL+D).
   - Inscribe or uninscribe an item ({ or }).
