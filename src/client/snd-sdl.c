@@ -3403,6 +3403,24 @@ static bool play_music_instantly(int event) {
 		/* We're going through the complete jukebox with 'a'/'A': Never repeat a single song. */
 		Mix_PlayMusic(wave, 0);
 	}
+
+	/* Also log songs while 'play/shuffle all' is active */
+	if (!jukebox_screen && c_cfg.log_music && jukebox_play_all) {
+		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
+
+#ifdef WINDOWS
+		while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
+#else
+		while (*c != '/' && c >= songs[music_cur].paths[music_cur_song]) c--;
+#endif
+		c++;
+		while (*c2 != '.' && c2 > c) c2--;
+		if (c2 == c) c_msg_format("\377WMusic <%s> started.", c);
+		else c_msg_format("\377WMusic <%.*s> started.", (int)(c2 - c), c);
+		//sprintf(out_val, "return get_music_name(%d)", j);
+		//lua_name = string_exec_lua(0, out_val);
+	}
+
 	return(TRUE);
 }
 //#endif
