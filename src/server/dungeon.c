@@ -11096,6 +11096,16 @@ void dungeon(void) {
 					/* Truncate so we don't exceed our maximum message length! (Panic save ensues) */
 					str[maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
 
+					/* Trim trailing spaces and - this is important - add a dot at the end if it doesn't end on one of the below recognized punctuation marks,
+					   or stuff will get cut off below at (++++). In earlier versions, it was desired to cut off remains of a sentence because AI responses were weird,
+					   but now we want to keep the full response instead of randomly cutting things off (as long as the response isn't too long). */
+					while (*str && str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
+					c = str + (strlen(str) - 1);
+					if (*str && *c != '.' && *c != '?'  && *c != '!' && *c != ';') {
+						if (strlen(str) < maxlen) strcat(str, ".");
+						else *c = '.'; //ouch, we just overwrite a legal character with a dot in this edge case -_- todo: improve
+					}
+
 					/* Anything left to process? Or we will get buffer overflows from accessing strlen-1 positions */
 					if (*str) {
 						/* Special maintenance/status response given by control scripts? */
@@ -11103,7 +11113,7 @@ void dungeon(void) {
 							/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
 							   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
 							c = str + strlen(str) - 1;
-							while(c > str && ((*c != '.' && *c != '?'  && *c != '!' && *c != ';') || within_parentheses)) {
+							while (c > str && ((*c != '.' && *c != '?'  && *c != '!' && *c != ';') || within_parentheses)) {
 								if (open_parenthesis) {
 									if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE;
 									if (*c == '(') within_parentheses = FALSE;
@@ -11139,7 +11149,7 @@ void dungeon(void) {
 								if (c < str + 10) c = NULL;
 							}
 
-							/* Found any valid way to somehow truncate the line? =_= */
+							/* Found any valid way to somehow truncate the line? =_= (++++) */
 							if (c) {
 								if (*c != '?' && *c != '!') *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
 								*(c + 1) = 0;
