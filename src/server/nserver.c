@@ -10314,6 +10314,10 @@ int Send_encumberment(int Ind, byte cumber_armor, byte awkward_armor, byte cumbe
 			Ind, connp->state, connp->id));
 		return(0);
 	}
+
+	/* If we're the target, we won't see our own boni */
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		if (!is_newer_than(&connp2->version, 4, 4, 2, 0, 0, 0)) {
