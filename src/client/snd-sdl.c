@@ -5451,6 +5451,23 @@ void do_cmd_options_mus_sdl(void) {
 				Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT: Play at maximum allowed volume aka 200% boost. */
 				jukebox_static200vol = TRUE;
 			} else jukebox_static200vol = FALSE;
+
+			/* Also log songs for 'play/shuffle all' */
+			if (c_cfg.log_music) {
+				const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
+
+  #ifdef WINDOWS
+				while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
+  #else
+				while (*c != '/' && c >= songs[music_cur].paths[music_cur_song]) c--;
+  #endif
+				c++;
+				while (*c2 != '.' && c2 > c) c2--;
+				if (c2 == c) c_msg_format("\377WMusic <%s> started.", c);
+				else c_msg_format("\377WMusic <%.*s> started.", (int)(c2 - c), c);
+				//sprintf(out_val, "return get_music_name(%d)", j);
+				//lua_name = string_exec_lua(0, out_val);
+			}
  #else
 			for (j = 0; j < MUSIC_MAX; j++) {
 				d = jukebox_shuffle_map[j];
