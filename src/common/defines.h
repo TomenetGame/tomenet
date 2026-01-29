@@ -8671,9 +8671,9 @@ extern int PlayerUID;
 #define MODE_STARTER_ITEM	0x00001000U	/* Items only: Mark as 'starter item', making it potentially unsalable, depending on server settings. */
 #define MODE_NEWLOOT_ITEM	0x00002000U	/* Items only: Mark as 'new loot', to be used if item is pre-owned, so ownership cannot be used to check whether it's new loot or not. */
 #define MODE_NOT_NEWEST_ITEM	0x00004000U	/* Items only, temporary flag, specifically for inven_carry(): This item is not to become the 'newest_item'. */
-
-#define MODE_REMOTE		0x00008000U	/* SERVER_PORTALS: Player is a guest from a remote server who traveled here temporarily and is therefore restricted in some ways */
-
+#ifdef SERVER_PORTALS
+ #define MODE_REMOTE		0x00008000U	/* SERVER_PORTALS: Player is a guest from a remote server who traveled here temporarily and is therefore restricted in some ways */
+#endif
 #define MODE_ADMIN_WIZ		0x00010000U
 #define MODE_ADMIN_DM		0x00020000U
 #define MODE_PRIVILEGED		0x00040000U	/* privileged == 1 */
@@ -10056,8 +10056,10 @@ extern int PlayerUID;
  #define ACC_EMN_CX	0x00010000U	/* (to avoid duplicate notifications) Account has been notified about one or more characters being about to expire */
  #define ACC_EMN_AX	0x00020000U	/* (to avoid duplicate notifications) Account has been notified about it being about to expire */
 #endif
-#define ACC_LOCKED	0x08000000U	/* Account is locked because it far-travelled to another server temporarily via SERVER_PORTALS */
-#define ACC_REMOTE	0x10000000U	/* Temporary account generated here, traveled to from a remote server via SERVER_PORTALS */
+#ifdef SERVER_PORTALS
+ #define ACC_LOCKED	0x08000000U	/* Account is locked because it far-travelled to another server temporarily via SERVER_PORTALS */
+ #define ACC_REMOTE	0x10000000U	/* Temporary account generated here, traveled to from a remote server via SERVER_PORTALS */
+#endif
 #define ACC_GUILD_ADDER	0x20000000U	/* Character who died last was a guild adder (for auto-re-add) */
 #define ACC_WARN_SALE	0x40000000U	/* 'Warn' that he has sold items in a player store */
 #define ACC_WARN_REST	0x80000000U	/* Received a one-time warning about resting */
@@ -10286,7 +10288,7 @@ extern int PlayerUID;
 /* Format of the new info part (added 2025-10-06) of remote players in the players list - C. Blue */
 #ifdef TOMENET_WORLDS
  #ifdef ENABLE_SUBCLASS_TITLE
-  #define WORLD_INFO(p_ptr)	(format("%2d %s%s%s%s", (p_ptr)->lev, get_prace2(p_ptr), get_ptitle((p_ptr), FALSE), ((p_ptr)->sclass) ? " " : "", get_ptitle2(p_ptr)))
+  #define WORLD_INFO(p_ptr)	(format("%2d %s%s%s%s", (p_ptr)->lev, get_prace2(p_ptr), get_ptitle((p_ptr), FALSE), ((p_ptr)->sclass) ? " " : "", get_ptitle2(p_ptr, FALSE)))
  #else
   #define WORLD_INFO(p_ptr)	(format("%2d %s%s", (p_ptr)->lev, get_prace2(p_ptr), get_ptitle((p_ptr), FALSE)))
  #endif

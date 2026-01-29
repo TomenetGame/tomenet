@@ -1604,16 +1604,18 @@ unsigned char Net_login() {
 #endif
 		quit(&rbuf.ptr[1]);
 	}
+#ifdef SERVER_PORTALS
 	/* Same/similar (WiP) for SERVER_PORTALS - C. Blue */
 	if (rbuf.len > 1 && rbuf.ptr[0] == (char)PKT_RELOGIN) {
-#ifdef RETRY_LOGIN
+ #ifdef RETRY_LOGIN
 		rl_connection_destroyed = TRUE;
 		/* should be illegal character name this time.. */
 		plog(&rbuf.ptr[1]);
 		return(E_RETRY_LOGIN);
-#endif
+ #endif
 		quit(&rbuf.ptr[1]);
 	}
+#endif
 #ifdef RETRY_LOGIN
 	/* back to normal - can quit() anytime */
 	rl_connection_destructible = 0;
@@ -2010,6 +2012,8 @@ int Receive_quit(void) {
 	}
 	return(-1);
 }
+
+#ifdef SERVER_PORTALS
 /* Quit like Receive_quit(), but relogin to an IP specified to us by the server - for SERVER_PORTALS. */
 int Receive_relogin(void) {
 	unsigned char pkt;
@@ -2027,19 +2031,20 @@ int Receive_relogin(void) {
 		return(-1);
 	}
 
-#ifdef RETRY_LOGIN
+ #ifdef RETRY_LOGIN
 	rl_connection_destructible = TRUE;
 	rl_connection_state = 2;
-#endif
+ #endif
 
 	quit(format("Relog to %s\n(%s)", relogin_host, reason));
-#ifdef WINDOWS
+ #ifdef WINDOWS
 	Sleep(delay * 100); //ms
-#else
+ #else
 	usleep(delay * 100000); //us
-#endif
+ #endif
 	return(-1);
 }
+#endif
 
 int Receive_sanity(void) {
 #ifdef SHOW_SANITY

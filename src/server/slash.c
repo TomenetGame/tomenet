@@ -15149,7 +15149,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
-#ifdef TRUE //SERVER_PORTALS
+#ifdef SERVER_PORTALS
 			else if (prefix(messagelc, "/relog")) { /* debugging/testing: Send PKT_RELOGIN request to our client */
 				if (!message3[0]) {
 					msg_print(Ind, "Usage: /relog <hostname/ip>");

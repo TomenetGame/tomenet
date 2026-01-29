@@ -3697,6 +3697,7 @@ void client_init(char *argv1, bool skip) {
 #ifdef RETRY_LOGIN
 	retry_contact:
 
+ #ifdef SERVER_PORTALS
 	/* Via PKT_RELOGIN? (SERVER_PORTALS): Server asked us to relogin to a specific server. */
 	if (relogin_host[0]) {
 		strcpy(server_name, relogin_host);
@@ -3705,6 +3706,7 @@ void client_init(char *argv1, bool skip) {
 		strcpy(pass, relogin_accpass);
 		strcpy(cname, relogin_charname);
 	}
+ #endif
 
 	/* clear all windows of previous text */
 	for (retries = 1; retries < ANGBAND_TERM_MAX; retries++) {

@@ -1825,6 +1825,7 @@ bool Destroy_connection(int ind, char *reason_orig) {
 	return(TRUE);
 }
 
+#ifdef SERVER_PORTALS
 bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char *relogin_accpass, char *relogin_charname, char *reason_orig) {
 	connection_t	*connp = Conn[ind];
 	int		id = -1, len, sock;
@@ -2009,6 +2010,7 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 
 	return(TRUE);
 }
+#endif
 
 int Check_connection(char *real, char *nick, char *addr) {
 	int i;
