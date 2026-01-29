@@ -545,6 +545,7 @@ int	port;
 #endif /* __STDC__ */
 {
     int			fd;
+    struct timeval timeout;
 
 #ifdef UNIX_SOCKETS
     struct sockaddr_un  peer;
@@ -576,6 +577,12 @@ int	port;
 	sl_errno = SL_ESOCKET;
 	return (-1);
     }
+
+    /* Actually don't freeze the server indefinitely in case of failing to connect to world server */
+    timeout.tv_sec = 4;
+    timeout.tv_usec = 0;
+    if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof timeout) < 0)
+	printf("CreateClientSocket() ERROR: setsockopt failed\n");
 
     if (connect(fd, (struct sockaddr *)&peer, sizeof(peer)) < 0) {
 	sl_errno = SL_ECONNECT;

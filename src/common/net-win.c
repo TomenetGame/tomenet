@@ -1672,6 +1672,7 @@ int CreateClientSocket(char *host, int port) {
     struct sockaddr_in	peer;
     struct hostent	*hp;
     int			fd;
+    struct timeval timeout;
 
     memset((char *)&peer, 0, sizeof(struct sockaddr_in));
     peer.sin_family = AF_INET;
@@ -1691,6 +1692,12 @@ int CreateClientSocket(char *host, int port) {
 	sl_errno = SL_ESOCKET;
 	return (-1);
     }
+
+    /* Actually don't freeze the server indefinitely in case of failing to connect to world server */
+    timeout.tv_sec = 4;
+    timeout.tv_usec = 0;
+    if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof timeout) < 0)
+	printf("CreateClientSocket() ERROR: setsockopt failed\n");
 
     if (connect(fd, (struct sockaddr *)&peer, sizeof(struct sockaddr_in)) == SOCKET_ERROR) {
 	sl_errno = SL_ECONNECT;
