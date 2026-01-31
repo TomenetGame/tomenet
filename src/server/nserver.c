@@ -4056,7 +4056,7 @@ static int Handle_login(int ind) {
 	/* Handle the cfg_secret_dungeon_master option: Only tell other admins. */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
 		/* Tell other secret dungeon masters about our new player */
-		for (i = 1; i < NumPlayers; i++) {
+		for (i = 1; i < NumPlayers; i++) { //skip ourself (Ind is NumPlayers)
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!is_admin(Players[i])) continue;
 
@@ -4081,7 +4081,7 @@ static int Handle_login(int ind) {
 #endif
 
 	/* Tell everyone about our new player */
-	for (i = 1; i < NumPlayers; i++) {
+	for (i = 1; i < NumPlayers; i++) { //skip ourself (Ind is NumPlayers)
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (newly_created_msg) {
 			if (p_ptr->fruit_bat)

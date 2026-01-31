@@ -6242,13 +6242,13 @@ static bool process_player_end_aux(int Ind) {
 					int i;
 
 					//look for its owner to see if he's hostile or not
-					for (i = 1; i < NumPlayers; i++)
+					for (i = 1; i <= NumPlayers; i++)
 						if (Players[i]->id == m_ptr->owner) {
 							if (!check_hostile(Ind, i)) continue;
 							break;
 						}
 					//if his owner is not online, assume friendly(!)
-					if (i == NumPlayers) continue;
+					if (i == NumPlayers + 1) continue;
 				}
 				//if (m_ptr->pet) continue;
 			}

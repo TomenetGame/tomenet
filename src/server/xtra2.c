@@ -14786,13 +14786,13 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 					int i;
 
 					//look for its owner to see if he's hostile or not
-					for (i = 1; i < NumPlayers; i++)
+					for (i = 1; i <= NumPlayers; i++)
 						if (Players[i]->id == m_ptr->owner) {
 							if (!check_hostile(Ind, i)) continue;
 							break;
 						}
 					//if his owner is not online, assume friendly(!)
-					if (i == NumPlayers) continue;
+					if (i == NumPlayers + 1) continue;
 				}
 			}
 
@@ -14869,13 +14869,13 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 				int i;
 
 				//look for its owner to see if he's hostile or not
-				for (i = 1; i < NumPlayers; i++)
+				for (i = 1; i <= NumPlayers; i++)
 					if (Players[i]->id == m_ptr->owner) {
 						if (!check_hostile(Ind, i)) continue;
 						break;
 					}
 				//if his owner is not online, assume friendly(!)
-				if (i == NumPlayers) continue;
+				if (i == NumPlayers + 1) continue;
 			}
 		}
 

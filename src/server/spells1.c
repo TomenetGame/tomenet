@@ -7006,13 +7006,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	//if (IS_PVP)
 	if (m_ptr->owner && who < 0 && who > PROJECTOR_UNUSUAL) {
 		//look for its owner to see if he's hostile or not
-		for (i = 1; i < NumPlayers; i++)
+		for (i = 1; i <= NumPlayers; i++)
 			if (Players[i]->id == m_ptr->owner) {
 				if (!check_hostile(0 - who, i)) return(FALSE);
 				break;
 			}
 		//if his owner is not online, assume friendly(!)
-		if (i == NumPlayers) return(FALSE);
+		if (i == NumPlayers + 1) return(FALSE);
 	}
 
 
@@ -10324,7 +10324,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	int dark_spell = FALSE;
 	cave_type **zcave, *c_ptr;
-
 
 	/* Bad player number */
 	if (Ind <= 0) return(FALSE);
