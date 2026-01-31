@@ -323,6 +323,7 @@ HCURING_I = add_spell {
 			end
 			if (player.poisoned ~= 0 and player.slow_poison == 0) then
 				player.slow_poison = 1
+				player.redraw = bor(player.redraw, 524288) --PR_POISONED
 			end
 			set_cut(Ind, player.cut - 100, 0, FALSE)
 			fire_ball(Ind, GF_CURE_PLAYER, 0, 1 + 2 + 512, 1, " concentrates on your maladies.")
