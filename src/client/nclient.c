@@ -333,7 +333,9 @@ static void Receive_init(void) {
 
 	receive_tbl[PKT_RELIABLE]	= NULL; /* Server shouldn't be sending this */
 	receive_tbl[PKT_QUIT]		= Receive_quit;
+#ifdef SERVER_PORTALS
 	receive_tbl[PKT_RELOGIN]	= Receive_relogin;
+#endif
 	receive_tbl[PKT_START]		= NULL; /* Server shouldn't be sending this */
 	receive_tbl[PKT_END]		= Receive_end;
 	receive_tbl[PKT_LOGIN]		= NULL; /* Should not be called like this */

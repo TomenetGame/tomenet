@@ -14,7 +14,9 @@ int Net_start(int sex, int race, int class);
 int Net_input(void);
 int Receive_end(void);
 int Receive_quit(void);
+#ifdef SERVER_PORTALS
 int Receive_relogin(void);
+#endif
 void Receive_login(void);
 int Receive_file(void);
 int Receive_reply(int *replyto, int *result);
