@@ -5162,6 +5162,8 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 
 	/* Affect all (nearby) non-partied players */
 	for (i = 1; i <= NumPlayers; i++) {
+		if (is_admin(Players[i]) && !is_admin(p_ptr)) continue;
+
 		/* If he's not playing, skip him */
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
@@ -5185,9 +5187,79 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 		if (!player_has_los_bold(Ind, y, x)) continue;
 
 		/* Jump directly to the target player */
-		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, pattacker)) obvious = TRUE;
+		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg | PROJECT_GRID, pattacker)) obvious = TRUE; //grid-flag added for GF_VINE_SLOW :)
 	}
 #endif
+
+	/* Result */
+	return(obvious);
+}
+
+/*
+ * Apply a FRIENDLY "project()" directly to all viewable players
+ */
+bool project_los_players(int Ind, int typ, int pow, char *attacker) {
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	struct worldpos *wpos = &p_ptr->wpos;
+	int		i, x, y;
+	//note: PROJECT_KILL is needed for project() to invoke project_p(), even for friendly effects!
+	int		flg = PROJECT_NORF | PROJECT_JUMP | PROJECT_PLAY | PROJECT_KILL | PROJECT_HIDE;
+	bool		obvious = FALSE;
+	char		pattacker[80];
+
+	if (Ind) snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
+	else snprintf(pattacker, 80, "Something%s", attacker);
+
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) pow = divide_spell_damage(pow, 2, typ);
+#ifdef MARTYR_CUT_DISP
+	/* hack for Martyrdom, to avoid easy deep pit sweeping */
+	else if (p_ptr->martyr)
+		switch (typ) {
+		case GF_DISP_UNDEAD:
+		case GF_DISP_DEMON:
+		case GF_DISP_EVIL:
+		case GF_DISP_ALL:
+		case GF_DISP_UNDEAD_DEMON:
+			pow /= 2;
+			break;
+		}
+#endif
+
+	/* Affect all (nearby) players */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Ind == i) continue;
+
+		q_ptr = Players[i];
+
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+		if (is_admin(q_ptr) && !is_admin(p_ptr)) continue;
+
+		/* if we aren't in the same party, don't affect target player */
+		//if (!q_ptr->party || (!player_in_party(p_ptr->party, i))) continue;
+
+		/* Skip players not on this depth */
+		if (!inarea(wpos, &q_ptr->wpos)) continue;
+
+		/* Ignore players we are hostile to */
+		if (check_hostile(Ind, i)) continue;
+
+		/* Location */
+		y = q_ptr->py;
+		x = q_ptr->px;
+
+		/* Require line of sight */
+		if (!player_has_los_bold(Ind, y, x)) continue;
+
+		/* Don't exceed max range (which may be < sight range)! */
+		if (distance(p_ptr->py, p_ptr->px, y, x) > MAX_RANGE) continue;
+		/* Maybe also check for BLOCK_LOS/BLOCK_CONTACT grids? (glass walls..) */
+		if (!projectable_wall(wpos, p_ptr->py, p_ptr->px, y, x, MAX_RANGE)) continue;
+
+		/* Jump directly to the target player */
+		if (project(0 - Ind, 0, wpos, y, x, pow, typ, flg | PROJECT_GRID, pattacker)) obvious = TRUE; //grid-flag added for GF_VINE_SLOW :)
+	}
 
 	/* Result */
 	return(obvious);

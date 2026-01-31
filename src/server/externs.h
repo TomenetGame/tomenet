@@ -1874,6 +1874,7 @@ extern bool obliteration(int who);
 extern bool probing(int Ind);
 extern bool project_los_wall(int Ind, int typ, int dam, int time, int interval, char *attacker);
 extern bool project_los(int Ind, int typ, int dam, char *attacker);
+extern bool project_los_players(int Ind, int typ, int dam, char *attacker);
 extern bool away_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);
 extern bool dispel_undead(int Ind, int dam);

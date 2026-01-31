@@ -3818,7 +3818,11 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		if (set_blind(Ind, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, HEAL_CUT(p_ptr, 50), p_ptr->cut_attacker, FALSE)) ident = TRUE;
-		if (hp_player(Ind, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8), FALSE, FALSE)) ident = TRUE;
+		k = damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8);
+		if (hp_player(Ind, k, FALSE, FALSE)) ident = TRUE;
+#if 1 /* Experimental: Try AoE heal on everyone friendly in LoS! */
+		project_los_players(Ind, GF_HEAL_PLAYER, k, " uses a staff of healing"); //Note: GF_OLD_HEAL would heal monsters too ;)
+#endif
 		break;
 
 	case SV_STAFF_CURING:
