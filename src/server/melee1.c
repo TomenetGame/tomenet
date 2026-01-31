@@ -1626,7 +1626,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 						object_desc(Ind, o_name, o_ptr, FALSE, 0);
 
 						/* Message */
-						msg_format(Ind, "%sour %s (%c) was eaten!",
+						msg_format(Ind, "\376\377o%sour %s (%c) was eaten!",
 							   ((o_ptr->number > 1) ? "One of y" : "Y"),
 							   o_name, index_to_label(i));
 
