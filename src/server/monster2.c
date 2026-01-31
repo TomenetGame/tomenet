@@ -1141,7 +1141,7 @@ errr get_mon_num_prep(int dun_type, char *reject_monsters) {
 		if (reject_monsters && reject_monsters[entry->index]) continue;
 
 #ifdef BLOODLETTER_SUMMON_NERF
-		if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) continue;
+		if (r_idx == RI_BLOODLETTER && !level_generation_time && summon_override_checks != SO_ALL) continue;
 #endif
 
 		/* Accept monsters which pass the restriction, if any */
@@ -1201,7 +1201,7 @@ errr get_mon_num_prep_wild(int town_distance, char *reject_monsters) {
 		if (reject_monsters && reject_monsters[entry->index]) continue;
 
 #ifdef BLOODLETTER_SUMMON_NERF
-		if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) continue;
+		if (r_idx == RI_BLOODLETTER && !level_generation_time && summon_override_checks != SO_ALL) continue;
 #endif
 
 		/* Accept monsters which pass the restriction, if any */
@@ -3145,25 +3145,25 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 0\n");
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 #endif
-	/* No live spawn inside IDDC -- except for breeder clones/summons */
-	if (!(summon_override_checks & SO_IDDC) &&
-	    !level_generation_time &&
-	    (in_irondeepdive(wpos) || in_hallsofmandos(wpos)) /* Both IDDC and HoM use character-'stale'ness, so they should both prevent live spawns accordingly. */
-	    && !clo && !clone_summoning)
+	/* No live spawn inside IDDC/Mandos -- except for breeder clones/summons */
+	if (!level_generation_time &&
+	    (((in_irondeepdive(wpos) || in_hallsofmandos(wpos)) && !(summon_override_checks & SO_IDDC)) || /* Both IDDC and HoM use character-'stale'ness, so they should both prevent live spawns accordingly. */
+	    (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON) && !(summon_override_checks & SO_NO_SUMMON)))
+	    && !clo && !clone_summoning && !(r_ptr->flags7 & RF7_MULTIPLY)) /* Allow breeders only, not eg Warriors of the Dawn */
 		return(6);
 
 	/* new: no Darkling/Candlebearer live spawns (not needed because of granted spawn on level generation;
 		and no dungeon boss live spawn either (experimental)?
 		and no unmakers, hm! */
-	if (!level_generation_time && !(summon_override_checks & SO_BOSS_MONSTERS) &&
+	if (!level_generation_time && summon_override_checks != SO_ALL &&
 	    (r_idx == RI_DARKLING || r_idx == RI_CANDLEBEARER
-	    || (r_ptr->flags8 & RF8_FINAL_GUARDIAN)
+	    || ((r_ptr->flags8 & RF8_FINAL_GUARDIAN) && !(summon_override_checks & SO_BOSS_MONSTERS))
 	    || (r_idx == RI_UNMAKER && !clo && !clone_summoning)
 	    )) return(50);
 
 #ifdef IDDC_MANDOS_NO_UNMAKERS
 	/* No unmakers at all in IDDC/Mandos? (At all, as live-spawning is prohibited for them anyway, so only need to check at generation time here) */
-	if (level_generation_time && r_idx == RI_UNMAKER && !(summon_override_checks & SO_BOSS_MONSTERS)
+	if (level_generation_time && r_idx == RI_UNMAKER && summon_override_checks != SO_ALL
 	    && (in_irondeepdive(wpos) || in_hallsofmandos(wpos)))
 		return(58);
 #endif
@@ -4109,7 +4109,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 		if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return(-3);
 	}
 #ifdef BLOODLETTER_SUMMON_NERF
-	if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) return(0);
+	if (r_idx == RI_BLOODLETTER && !level_generation_time && summon_override_checks != SO_ALL) return(0);
 #endif
 
 	/* Place one monster, or fail */
@@ -4125,7 +4125,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 	/* Require the "group" flag */
 	if (!grp) return(0);
 #ifdef BLOODLETTER_SUMMON_GROUP_NERF
-	if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) return(0);
+	if (r_idx == RI_BLOODLETTER && !level_generation_time && summon_override_checks != SO_ALL) return(0);
 #endif
 
 	/* Friend for certain monsters */

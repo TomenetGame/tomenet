@@ -1912,7 +1912,7 @@
 
 /* Summoning/spawning override flags for checks in monster placement routines */
 #define SO_NONE			0x0000	/* apply all checks (default) */
-#define SO_ALL			0xFFFF	/* ignore ALL checks (admin summmoning) */
+#define SO_ALL			0xFFFF	/* ignore ALL checks (also treated as special flag combination to allow unrestricted admin summmoning) */
 
 #define SO_PROTECTED		0x0001	/* ignore PROTECTED grids (Inn) */
 #define SO_HOUSE		0x0002	/* ignore CAVE_ICKY grids on surface around towns (houses) */
@@ -1931,6 +1931,7 @@
 
 #define SO_IDDC			0x1000	/* legalize uncheezable summoning in ironman deep dive challenge. Note: clone/clone_summoning imply this flag! */
 #define SO_PLAYER_SUMMON	0x2000	/* player deliberately summoned -> do not reduce monster starting energy helpfully */
+#define SO_NO_SUMMON		0x4000	/* allow monster live placement even on DF3_NO_SUMMON / LF2_NO_SUMMON floors. */
 
 
 /*
@@ -7532,7 +7533,7 @@
 
 #define DF3_NO_TELE		0x01000000U	/* Disallow any teleportation (to go with NO_SUMMON -- for new experimental dungeoneering). Implies LF1_NO_MAGIC! */
 #define DF3_NO_ESP		0x02000000U	/* Disallow any ESP */
-#define DF3_NO_SUMMON		0x04000000U	/* Disallow any summoning (to go with NO_TELE -- for new experimental dungeoneering) */
+#define DF3_NO_SUMMON		0x04000000U	/* Disallow any summoning (to go with NO_TELE -- for new experimental dungeoneering) : imprints LF2_NO_SUMMON on all floors inside. */
 #define DF3_LIMIT_ESP		0x08000000U	/* All ESP gets its range limited */
 
 #define DF3_DARK		0x10000000U	/* All unlit levels */
