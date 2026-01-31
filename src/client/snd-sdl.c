@@ -5470,6 +5470,7 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_play_all_prev = jukebox_play_all_prev_song = -1;
 
 			jukebox_paused = FALSE;
+			music_cur = -1; //ensures that we start at subsong 0, even if the event-to-play is the same as the currently already playing music event
 			play_music_instantly(d);
 			if (ch == 'A' || ch == 'U' || ch == 'E' || ch == 'F') {
 				Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT: Play at maximum allowed volume aka 200% boost. */
