@@ -1066,6 +1066,12 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 #ifdef MANDOS_BUYALL_EATALL
 	/* DF2_MISC_STORES/basic dungeon shops in Halls of Mandos will buy anything (but not display it) */
 	if (in_hallsofmandos(&p_ptr->wpos)) {
+		/* XXX XXX XXX Ignore "worthless" items */
+		if (object_value(Ind, o_ptr) <= 0) return(1);
+
+		/* XXX Never OK to sell keys */
+		if (o_ptr->tval == TV_KEY) return(4);
+
 		switch (p_ptr->store_num) {
 		case STORE_HERBALIST:
 		case STORE_HIDDENLIBRARY:
@@ -1183,6 +1189,7 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 		case TV_BLUNT:
 			break;
 		default:
+			/* Buy non-blunt weapons only if they are blessed */
 			if (is_melee_weapon(o_ptr->tval)) {
 				u32b dummy, f3;
 
