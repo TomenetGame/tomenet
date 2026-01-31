@@ -121,7 +121,7 @@ static int thread_load_audio(void *dummy);
 static Mix_Chunk* load_sample(int idx, int subidx);
 static Mix_Music* load_song(int idx, int subidx);
 
-static bool play_music_instantly(int event);
+static bool play_music_instantly(int event, bool override_log);
 
 
 /* Arbitrary limit of mixer channels */
@@ -2724,7 +2724,7 @@ void jukebox_update_songlength(void) {
 static bool play_music(int event) {
 	int n, initials = 0, vols = 100;
 
-	if (event > 9000) return(play_music_instantly(event - 10000)); //scouter (just in case: carry over all event-hax, which might be negative numbers, so we end up <10000 even with +10000 hack specified)
+	if (event > 9000) return(play_music_instantly(event - 10000, FALSE)); //scouter (just in case: carry over all event-hax, which might be negative numbers, so we end up <10000 even with +10000 hack specified)
 
 	/* Paranoia */
 	if (event < -4 || event >= MUSIC_MAX) return(FALSE);
@@ -3058,16 +3058,17 @@ static void fadein_next_music(void) {
 				/* Pseudo-turn off music to indicate that our play-all 'playlist' has finished?
 				   When the playlist finished we auto-return to the 'normal' song that was actually playing in the game,
 				   so if we turn off music here, it'll be shown as playing but be silent until user leaves the jukebox. */
-				cfg_audio_music = FALSE;
+				//cfg_audio_music = FALSE;
+				/* Give message that playlist has finished? */
+				if (!jukebox_screen && c_cfg.log_music) c_msg_format("\377WMusic auto-play finished.");
 
 				set_mixing();
-
 				d = jukebox_org;
 			} else jukebox_playing = d;
 			music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 		}
 		/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
-		play_music_instantly(d);
+		play_music_instantly(d, TRUE);
 		if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 		jukebox_update_songlength();
@@ -3337,7 +3338,7 @@ static void fadein_next_music(void) {
 //#ifdef JUKEBOX_INSTANT_PLAY
 /* Hack: event >= 20000 means 'no repeat'. */
 /* This function ignores some music-options and is only used for special stuff like meta list or jukebox. */
-static bool play_music_instantly(int event) {
+static bool play_music_instantly(int event, bool override_log) {
 	Mix_Music *wave = NULL;
 	bool no_repeat = FALSE;
 
@@ -3409,7 +3410,7 @@ static bool play_music_instantly(int event) {
 	}
 
 	/* Also log songs while 'play/shuffle all' is active */
-	if (!jukebox_screen && c_cfg.log_music && jukebox_play_all) {
+	if (!jukebox_screen && c_cfg.log_music && (jukebox_play_all || override_log)) {
 		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
 
 #ifdef WINDOWS
@@ -4923,7 +4924,7 @@ void do_cmd_options_mus_sdl(void) {
 				   However, if the currently jukeboxed song is the same one as the disabled one we do need to halt it. --- */
 				/* Check if we want to stop music or play/resume music */
 				if (jukebox_org == -1 || songs[jukebox_org].disabled)
-					play_music_instantly(-2);//halt song instantly instead of fading out
+					play_music_instantly(-2, FALSE);//halt song instantly instead of fading out
  #else
 				if (jukebox_org == -1 || songs[jukebox_org].disabled) {
 					jukebox_playing = -1; //required for play_music() to work correctly
@@ -5352,7 +5353,7 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_playing = j_sel;
 			jukebox_used = TRUE; //we actually used the jukebox
 			jukebox_paused = FALSE;
-			play_music_instantly(j_sel);
+			play_music_instantly(j_sel, FALSE);
   #ifdef ENABLE_SHIFT_SPECIALKEYS
 			if (inkey_shift_special == 0x1) {
 				Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT+ENTER: Play at maximum allowed volume aka 200% boost. */
@@ -5405,7 +5406,7 @@ void do_cmd_options_mus_sdl(void) {
 
 				music_cur = -1; /* Prevent auto-advancing of play_music_instantly(), but freshly start at subsong #0 */
 				/* Note that this will auto-advance the subsong if j is already == jukebox_playing: */
-				play_music_instantly(jukebox_org);
+				play_music_instantly(jukebox_org, FALSE);
 				if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 				jukebox_update_songlength();
@@ -5471,28 +5472,11 @@ void do_cmd_options_mus_sdl(void) {
 
 			jukebox_paused = FALSE;
 			music_cur = -1; //ensures that we start at subsong 0, even if the event-to-play is the same as the currently already playing music event
-			play_music_instantly(d);
+			play_music_instantly(d, TRUE);
 			if (ch == 'A' || ch == 'U' || ch == 'E' || ch == 'F') {
 				Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200)); /* SHIFT: Play at maximum allowed volume aka 200% boost. */
 				jukebox_static200vol = TRUE;
 			} else jukebox_static200vol = FALSE;
-
-			/* Also log songs for 'play/shuffle all' */
-			if (c_cfg.log_music) {
-				const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
-
-  #ifdef WINDOWS
-				while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
-  #else
-				while (*c != '/' && c >= songs[music_cur].paths[music_cur_song]) c--;
-  #endif
-				c++;
-				while (*c2 != '.' && c2 > c) c2--;
-				if (c2 == c) c_msg_format("\377WMusic <%s> started.", c);
-				else c_msg_format("\377WMusic <%.*s> started.", (int)(c2 - c), c);
-				//sprintf(out_val, "return get_music_name(%d)", j);
-				//lua_name = string_exec_lua(0, out_val);
-			}
  #else
 			for (j = 0; j < MUSIC_MAX; j++) {
 				d = jukebox_shuffle_map[j];
@@ -5532,7 +5516,7 @@ void do_cmd_options_mus_sdl(void) {
 
 				dis = songs[d].disabled;
 				songs[d].disabled = FALSE;
-				play_music_instantly(d);
+				play_music_instantly(d, FALSE);
 				songs[d].disabled = dis;
 
 				if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
@@ -5584,7 +5568,7 @@ void do_cmd_options_mus_sdl(void) {
 
 			dis = songs[d].disabled;
 			songs[d].disabled = FALSE;
-			play_music_instantly(d);
+			play_music_instantly(d, FALSE);
 			songs[d].disabled = dis;
 
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
@@ -5628,7 +5612,7 @@ void do_cmd_options_mus_sdl(void) {
 			jukebox_paused = FALSE;
 			jukebox_used = TRUE; //we actually used the jukebox
 
-			play_music_instantly(d);
+			play_music_instantly(d, FALSE);
 
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
@@ -5660,7 +5644,7 @@ void do_cmd_options_mus_sdl(void) {
 
 				dis = songs[d].disabled;
 				songs[d].disabled = FALSE;
-				play_music_instantly(d);
+				play_music_instantly(d, FALSE);
 				songs[d].disabled = dis;
 
 				if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
@@ -5720,7 +5704,7 @@ void do_cmd_options_mus_sdl(void) {
 
 			dis = songs[d].disabled;
 			songs[d].disabled = FALSE;
-			play_music_instantly(d);
+			play_music_instantly(d, FALSE);
 			songs[d].disabled = dis;
 
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
@@ -5768,7 +5752,7 @@ void do_cmd_options_mus_sdl(void) {
 			/* Note that this will auto-advance the subsong if d is already == jukebox_playing: */
 			jukebox_paused = FALSE;
 			jukebox_used = TRUE; //we actually used the jukebox
-			play_music_instantly(d);
+			play_music_instantly(d, FALSE);
 			if (jukebox_static200vol) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 200));
 
 			jukebox_update_songlength();
