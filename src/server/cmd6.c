@@ -3821,7 +3821,7 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		k = damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8);
 		if (hp_player(Ind, k, FALSE, FALSE)) ident = TRUE;
 #if 1 /* Experimental: Try AoE heal on everyone friendly in LoS! */
-		project_los_players(Ind, GF_HEAL_PLAYER, k, " uses a staff of healing"); //Note: GF_OLD_HEAL would heal monsters too ;)
+		project_los_players(Ind, GF_HEAL_PLAYER, ((k * 2) + 2) / 3, " uses a staff of healing"); //Note: GF_OLD_HEAL would heal monsters too ;)
 #endif
 		break;
 
