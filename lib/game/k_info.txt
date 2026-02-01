@@ -2626,6 +2626,8 @@ A:5/1
 P:0:1d2:0:0:0
 D:Heals 6d8..15d8 hit points, depending on magic device skill,
 D:and cures blindness and confusion and heals cuts somewhat.
+#experimental:
+D:Also heals all friendly targets in line of sight.
 
 N:313:Detect Invisible
 G:_:d
