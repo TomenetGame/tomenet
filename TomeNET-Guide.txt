@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. January 2026 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 1. Febuary 2026 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.3a - official websites are:                     :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9891,6 +9891,9 @@ the game. For more information, see (4.13), Ironman Challenge.
   level.
  -There are various shops similar to those found in normal towns, appearing
   randomly in the dungeon. Some might offer certain goods cheaper than usual.
+  Shops will buy all types of items, but will offer less money for items the
+  less they match their specific theme (eg selling a weapon to a potion store).
+  Items sold to stores cannot be bought back!
  -Similar to IDDC, minimum floor depth vs character level regarding experience
   gain is not enforced: Normal experience is gained on any depth regardless of
   your character's level. But unlike in IDDC this is only true for characters
