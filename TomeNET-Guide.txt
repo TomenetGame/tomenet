@@ -2392,6 +2392,8 @@ The ! inscriptions:
                 once inscribing an item '!*' will do ALL of these checks:
         !d      Prevent dropping an item.
                 If on a bag this will also prevent storing it in a list house.
+                This inscription will actually also prevent spilling an item to
+                the ground randomly if a backpack overflow happens.
         !k      Prevent killing (destroying) an item. (Note that '!k' on a
                 torch also prevents using that torch to refuel another one.)
         !s      Prevent selling an item to shop (!s).
