@@ -11184,7 +11184,7 @@ void dungeon(void) {
 #else
 				exec_lua(0, format("eight_ball(\"%s\")", str));
 #endif
-			}
+			} else exec_lua(0, "eight_ball(\"Auxiliary brain malfunction. Skipping a response.\")");
 
 			/* Clear response file after having processed the response (through 8ball), as it's no longer pending but has been processed now. */
 			/* Create a backup just for debugging/checking: */
