@@ -290,7 +290,7 @@ static void arena_comm(int cmd) {
 			prt("               Arena Victor!", 5, 0);
 			prt("Congratulations!  You have defeated all before you.", 7, 0);
 			prt("For that, receive the prize: 10,000 gold pieces", 8, 0);
-			prt("",10,0);
+			prt("", 10, 0);
 			prt("", 11, 0);
 
 			gain_au(Ind, 10000, FALSE, FALSE);
@@ -3254,7 +3254,7 @@ void do_cmd_bldg(void) {
 
 	while (!leave_bldg) {
 		validcmd = FALSE;
-		prt("",1,0);
+		prt("", 1, 0);
 		command = inkey();
 
 		if (command == ESCAPE) {
