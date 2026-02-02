@@ -1177,8 +1177,8 @@
    NOTE: Alternatively the PA_IRONTEAM_CLOSED flag can simply be used. */
 //#define IRON_TEAM_LEVEL9
 
-/* Give a crazy form learning boost inside Ironman Deep Dive Challenge? [9] */
-#define IDDC_MIMICRY_BOOST 9
+/* Give a crazy form learning boost inside Ironman Deep Dive Challenge/Halls of Mandos? [9] */
+#define IDDC_MANDOS_MIMICRY_BOOST 9
 
 /* Make true artifacts pass their rarity roll more easily in IDDC? */
 #define IDDC_EASY_TRUE_ARTIFACTS

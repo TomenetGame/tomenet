@@ -6367,7 +6367,7 @@ bool monster_death(int Ind, int m_idx) {
 
 	bool henc_cheezed = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
 	u64b resf_drops = make_resf(p_ptr), resf_chosen = resf_drops;
-	bool in_iddc;
+	bool in_iddc, in_mandos;
 
 
 	/* Avoid getting projected on by smash effect of our own dropped potions */
@@ -6438,6 +6438,7 @@ bool monster_death(int Ind, int m_idx) {
 	x = m_ptr->fx;
 	wpos = &m_ptr->wpos;
 	in_iddc = in_irondeepdive(wpos);
+	in_mandos = in_hallsofmandos(wpos);
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	if (ge_special_sector && /* training tower event running? and we are there? */
@@ -6714,7 +6715,7 @@ bool monster_death(int Ind, int m_idx) {
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_iddc
 #ifdef DED_IDDC_MANDOS
-	    && !in_hallsofmandos(&p_ptr->wpos)
+	    && !in_mandos
 #endif
 	    && r_ptr->mexp) /* Allow normal townie kills in Bree */
 		return(FALSE);
@@ -7373,13 +7374,18 @@ bool monster_death(int Ind, int m_idx) {
 
 			/* get bonus credit in Ironman Deep Dive Challenge */
 			if (in_iddc) {
-#ifndef IDDC_MIMICRY_BOOST
+#ifndef IDDC_MANDOS_MIMICRY_BOOST
 				if (!bonus) bonus = 1;
 #else /* give a possibly greater boost than just +1 */
-				if (bonus < IDDC_MIMICRY_BOOST) bonus = IDDC_MIMICRY_BOOST;
+				if (bonus < IDDC_MANDOS_MIMICRY_BOOST) bonus = IDDC_MANDOS_MIMICRY_BOOST;
+#endif
+			} else if (in_mandos) {
+#ifndef IDDC_MANDOS_MIMICRY_BOOST
+				if (!bonus) bonus = 1;
+#else /* give a possibly greater boost than just +1 */
+				if (bonus < IDDC_MANDOS_MIMICRY_BOOST) bonus = IDDC_MANDOS_MIMICRY_BOOST;
 #endif
 			}
-
 			/* Apply the highest bonus source, overriding other boni (ie they don't stack) */
 			p_ptr->r_mimicry[credit_idx] += bonus;
 

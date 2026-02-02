@@ -4589,11 +4589,11 @@ void recall_player(int Ind, char *message) {
 
 			/* reduce his accumulated mimicry form knowledge somewhat
 			   (keep some of the benefits of IDDC hunting) */
- #ifdef IDDC_MIMICRY_BOOST
-			if (IDDC_MIMICRY_BOOST <= 2) j = 5;
-			else if (IDDC_MIMICRY_BOOST == 3) j = 6;
-			else if (IDDC_MIMICRY_BOOST == 4) j = 7;
-			else if (IDDC_MIMICRY_BOOST <= 6) j = 10;
+ #ifdef IDDC_MANDOS_MIMICRY_BOOST
+			if (IDDC_MANDOS_MIMICRY_BOOST <= 2) j = 5;
+			else if (IDDC_MANDOS_MIMICRY_BOOST == 3) j = 6;
+			else if (IDDC_MANDOS_MIMICRY_BOOST == 4) j = 7;
+			else if (IDDC_MANDOS_MIMICRY_BOOST <= 6) j = 10;
 			else j = 13;
 			for (i = 1; i < max_r_idx; i++) {
 				if ((r_info[i].flags1 & RF1_UNIQUE)) continue;
