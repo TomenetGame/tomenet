@@ -9052,6 +9052,7 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 	if (f_info[feat].flags2 & FF2_SHINE) rad++;
 	if (f_info[feat].flags2 & FF2_SHINE2) rad += 2;
 	if (rad) cave_illuminate_rad(wpos, zcave, x, y, rad, (f_info[feat].flags2 & FF2_SHINE_FIRE) ? CAVE_GLOW_HACK_LAMP : CAVE_GLOW_HACK);
+	aquatic_terrain_hack(zcave, x, y);
 
 	/* Area of view for a player might have changed, among other consequences.. */
 	for (i = 1; i <= NumPlayers; i++) {
@@ -9118,9 +9119,10 @@ bool cave_force_feat_live(worldpos *wpos, int y, int x, int feat) {
 	if (f_info[feat].flags2 & FF2_SHINE) rad++;
 	if (f_info[feat].flags2 & FF2_SHINE2) rad += 2;
 	if (rad) cave_illuminate_rad(wpos, zcave, x, y, rad, (f_info[feat].flags2 & FF2_SHINE_FIRE) ? CAVE_GLOW_HACK_LAMP : CAVE_GLOW_HACK);
+	aquatic_terrain_hack(zcave, x, y);
 
 	/* Area of view for a player might have changed, among other consequences.. */
-	for (i = 1; i <= NumPlayers; i++) {
+	if (!level_generation_time) for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
 		/* Only works for players on the level */
@@ -9182,7 +9184,11 @@ bool custom_cave_set_feat_live(worldpos *wpos, int y, int x, int feat,
 	if (!(zcave = getcave(wpos))) return(FALSE);
 	if (!in_bounds_array(y, x)) return(FALSE);
 
+#if 0
 	if (!cave_set_feat_live(wpos, y, x, feat)) return(FALSE);
+#else
+	if (!cave_force_feat_live(wpos, y, x, feat)) return(FALSE);
+#endif
 	if (!(zcave = getcave(wpos))) return(TRUE); //we did set the feat!
 
 	zcave[y][x].custom_lua_tunnel_hand = custom_lua_tunnel_hand;
