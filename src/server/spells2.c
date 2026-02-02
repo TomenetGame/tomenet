@@ -3093,7 +3093,7 @@ void detect_bounty(int Ind) {
 				/* Clear mimic feature */
 				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 				/* Find the door XXX XXX XXX */
-				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+				cave_force_feat_live(wpos, i, j, FEAT_DOOR_HEAD + 0x00);
 
 				/* Memorize the door */
 				*w_ptr |= CAVE_MARK;
@@ -3573,7 +3573,7 @@ bool detect_sdoor(int Ind, int rad) {
 					cs_erase(c_ptr, cs_ptr);
 
 				/* Find the door XXX XXX XXX */
-				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+				cave_force_feat_live(wpos, i, j, FEAT_DOOR_HEAD + 0x00);
 
 				/* Memorize the door */
 				*w_ptr |= CAVE_MARK;

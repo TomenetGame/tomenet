@@ -5428,8 +5428,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				obvious = TRUE;
 			}
 
-			/* Unlock the door */
-			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+			/* Unlock the door -- really correct like this? oO */
+			if (quiet) c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+			else cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 
 			/* Clear mimic feature */
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
@@ -5720,9 +5721,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (door) {
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)))
 				cs_erase(c_ptr, cs_ptr);
-
 		}
-
 		/* Non s2m'able features */
 		else break;
 

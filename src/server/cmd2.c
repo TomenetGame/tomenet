@@ -3527,16 +3527,7 @@ void do_cmd_close(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* Close the door */
-			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
-
-			/* Notice */
-			note_spot_depth(wpos, y, x);
-
-			/* Redraw */
-			everyone_lite_spot(wpos, y, x);
-
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+			cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 		}
 	}
 
@@ -4494,12 +4485,10 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 
 			if (Ind && !quiet_full) msg_print(Ind, "You have found a secret door!");
 			/* un-hide the true feat (a door!) */
-			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+			cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 			/* Clear mimic feature */
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 
-			note_spot_depth(wpos, y, x);
-			everyone_lite_spot(wpos, y, x);
 			*door = TRUE;
 			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d)", Ind, c_ptr->custom_lua_search))) return;
 		} else {
@@ -4528,14 +4517,9 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			/* Message */
 			if (Ind && !quiet_full) msg_print(Ind, "You have found a secret door.");
 			/* Pick a door XXX XXX XXX */
-			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+			cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 			/* Clear mimic feature */
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
-
-			/* Notice */
-			note_spot_depth(wpos, y, x);
-			/* Redraw */
-			everyone_lite_spot(wpos, y, x);
 #endif
 			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d)", Ind, c_ptr->custom_lua_search))) return;
 		}
