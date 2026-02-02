@@ -11014,18 +11014,23 @@ void dungeon(void) {
 
 
 		/* EXPERIMENTAL: Poll for AI responses, output them through 8ball. - C. Blue */
-#define AI_MAXLEN 4096 /* Maximum length of AI's response string to read */
-#define AI_MULTILINE 3 /* Allow AI responses to be multiple [2] chat lines long */
+/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length, and -6 for world-broadcast server prefix eg '\377g[1] '
+   and note that this maxlen is the real content length, not a null-terminated string length (5 := strlen("8ball")): */
+#define AI_LINE_MAXLEN		(MSG_LEN - 1 - (3 + 3 + 5) - 6)
+#define AI_MULTILINE		3 /* Allow AI responses to be multiple [2] chat lines long */
+#if AI_MULTILINE > 0
+ #define AI_MAXLEN		(AI_LINE_MAXLEN * AI_MULTILINE) /* Maximum length of AI's response string to read */
+#else
+ #define AI_MAXLEN		(AI_LINE_MAXLEN) /* Maximum length of AI's response string to read */
+#endif
+#define AI_BUFSIZE		(AI_MAXLEN + 4096)
 #define is_punct_end(c)		((c) == '.' || (c) == '?' || (c) == '!' || (c) == ';')		/* Punctuation that wraps up a sentence and doesn't really requires continuation. */
 #define is_punct(c)		(is_punct_end(c) || (c) == ':' || (c) == ',')			/* Any punctuation */
 #define is_punct_hard(c)	((c) == '!' || (c) == '?' || (c) == '.')			/* Not: komma, semi-colon, colon (or any non-punctuation symbol/number/character) */
 #define	is_linebreak(c)		((c) == '\n' || (c) == '\r')
 		path_build(buf, 1024, ANGBAND_DIR_DATA, "external-response.log");
 		if ((fp = fopen(buf, "r")) != NULL) {
-			char strbase[AI_MAXLEN] = { 0 }, *str, *c, strtmp[AI_MAXLEN], *open_parenthesis, *o, *p;
-			bool within_parentheses = FALSE;
-			/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length, and -6 for world-broadcast server prefix eg '\377g[1] ': */
-			int maxlen = MSG_LEN - 1 - (3 + 3 + strlen("8ball")) - 6; /* and note that this maxlen is the real content length, not a null-terminated string length */
+			char strbase[AI_BUFSIZE] = { 0 }, *str, *c, strtmp[AI_BUFSIZE], *open_parenthesis, *o, *p, *strx;
 #if AI_MULTILINE > 0
 			char strm[AI_MULTILINE][MSG_LEN], c1;
 			int m_max = 0;
@@ -11033,158 +11038,171 @@ void dungeon(void) {
 			//for (i = 0; i < AI_MULTILINE; i++) strm[i][0] = 0;
 #endif
 
-			while (!feof(fp) && fgets(strtmp, AI_MAXLEN, fp)) {
-				if (strlen(strbase) + strlen(strtmp) > AI_MAXLEN - 1) {
-					strncat(strbase, strtmp, AI_MAXLEN - strlen(strbase) - 1);
-					break; //discard any further reads, would exceed AI_MAXLEN
+			while (!feof(fp) && fgets(strtmp, AI_BUFSIZE, fp)) {
+				if (strlen(strbase) + strlen(strtmp) > AI_BUFSIZE - 1) {
+					strncat(strbase, strtmp, AI_BUFSIZE - 1 - strlen(strbase));
+					//discarding any further reads as they would exceed AI_MAXLEN
 				} else strcat(strbase, strtmp);
 			}
 			fclose(fp);
 
 			str = strbase;
+
+			/* Remove all linebreaks or LUA will break */
+			c = str - 1;
+			while(*(++c)) if (is_linebreak(*c)) *c = ' ';
+
 			/* Skip leading and trim trailing spaces */
 			trimskip_spaces(str);
 
 			/* Semi-paranoia: String not empty? (So prompting '8ball, tell us...nothing!' won't work though :-p) */
-			if (*str) {
-				/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
-				c = str - 1;
-				while(*(++c)) if (*c == '"') *c = '\'';
-				/* Remove all linebreaks or LUA will break */
-				c = str - 1;
-				while(*(++c)) if (is_linebreak(*c)) *c = ' ';
+			if (!*str) goto ai_response_emptied;
 
-				/* If str actually isn't empty (buffer overflow then on accessing strlen-1), trim trailing spaces */
-				if (*c) while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
-#if AI_MULTILINE > 0
-				/* Dissect -possibly very long- response string into multiple chat messages if required;
-				   only treat the last one with shortening/cutting procedures. */
-				while (strlen(str) > maxlen && m_max < AI_MULTILINE - 1) {
-					/* Fill a chat line, cutting off the rest */
-					strncpy(strm[m_max], str, maxlen);
-					strm[m_max][maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
-					/* Try not to cut off the line within a word */
-					do {
-						c = strm[m_max] + strlen(strm[m_max]) - 1;
-						if (!isalpha(*c) && *c != '-') break;
-						*c = 0;
-					} while (TRUE);
+			/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
+			c = str - 1;
+			while(*(++c)) if (*c == '"') *c = '\'';
 
-					/* Prepare to fill another chat line if needed */
-					str = str + strlen(strm[m_max]);
-					m_max++;
-
-					/* Trim trailing spaces of the strm[] we just finished now (so we actually discard spaces completely, instead of them going into the next strm[]) */
-					while (strm[m_max - 1][strlen(strm[m_max - 1]) - 1] == ' ') strm[m_max - 1][strlen(strm[m_max - 1]) - 1] = 0;
+			/* If response exceeds our maximum message length, get rid of parentheses-structs first */
+			open_parenthesis = strchr(str, '(');
+			while (strlen(str) > AI_MAXLEN && open_parenthesis) {
+				/* skip smileys */
+				if (open_parenthesis != str && *(open_parenthesis - 1) == '-') {
+					open_parenthesis = strchr(open_parenthesis + 1, '(');
+					continue;
 				}
-#endif
 
-				open_parenthesis = strchr(str, '(');
+				p = NULL;
+				o = open_parenthesis;
+				while (!p) {
+					p = strchr(o, ')');
+					if (!p) break;
 
-				/* If response exceeds our maximum message length, get rid of parentheses-structs first */
-				while (strlen(str) > maxlen && open_parenthesis) {
+					/* Skip smileys within parentheses.. */
+					if (p == str || *(p - 1) != '-') break;
+					o = p;
 					p = NULL;
-					o = open_parenthesis;
-						while (!p) {
-						p = strchr(o, ')');
-						if (!p) break;
-
-						/* Skip smileys within parentheses.. */
-						if (p == str || *(p - 1) != '-') break;
-						o = p;
-						p = NULL;
-					}
-
-					/* Crop out the parentheses struct */
-					if (p) {
-						strcpy(strtmp, str);
-						if (*(p + 1) == ' ') p++; /* Skip a space after the closing parenthesis */
-						strcpy(o, strtmp + (p - str) + 1);
-
-						open_parenthesis = strchr(str, '(');
-					} else break;
 				}
 
-				/* Truncate so we don't exceed our maximum message length! (Panic save ensues) */
-				str[maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
+				/* Crop out the parentheses struct */
+				if (p) {
+					strcpy(strtmp, str);
+					if (*(p + 1) == ' ') p++; /* Skip a space after the closing parenthesis */
+					strcpy(o, strtmp + (p - str) + 1);
 
-				/* Trim trailing spaces and - this is important - add a dot at the end if it doesn't end on one of the below recognized punctuation marks,
-				   or stuff will get cut off below at (++++). In earlier versions, it was desired to cut off remains of a sentence because AI responses were weird,
-				   but now we want to keep the full response instead of randomly cutting things off (as long as the response isn't too long). */
-				while (*str && str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
-				c = str + (strlen(str) - 1);
-				if (*str && !is_punct(*c)) {
-					if (strlen(str) < maxlen) strcat(str, ".");
-					else *c = '.'; //ouch, we just overwrite a legal character with a dot in this edge case -_- todo: improve
+					open_parenthesis = strchr(str, '(');
+				} else {
+					*o = 0;
+					break;
 				}
+			}
 
-				/* Anything left to process? Or we will get buffer overflows from accessing strlen-1 positions */
-				if (*str) {
-					/* Special maintenance/status response given by control scripts? */
-					if (!((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']'))) {
-						/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
-						   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
-						c = str + strlen(str) - 1;
-						while (c > str && (!is_punct_end(*c) || within_parentheses)) {
-							if (open_parenthesis) {
-								if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE; //basic smiley detection @ '-'
-							if (*c == '(') within_parentheses = FALSE;
-							}
-							c--;
-						}
-						/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
-						if (c == str) {
-							c = str + strlen(str) - 1;
-							while(c > str && *c != ',') c--;
-							/* Avoid sillily short results */
-							if (c < str + 10) c = str;
-						}
-						/* ..and some crazy ones don't even have a comma :/ ..*/
-						if (c == str) {
-							char *c1, *c2, *c3, *c4, *c5;
+			trim_trailing_spaces(str);
+			if (!*str) goto ai_response_emptied;
 
-							c = str + strlen(str) - 1;
-							/* Beeeest effort at "language" gogo.. */
-							c1 = my_strcasestr(str, "that");
-							c2 = my_strcasestr(str, "what");
-							c3 = my_strcasestr(str, "which");
-							c4 = my_strcasestr(str, "who");
-							c5 = my_strcasestr(str, "where");
-							if (c2 > c1) c1 = c2;
-							if (c3 > c1) c1 = c3;
-							if (c4 > c1) c1 = c4;
-							if (c5 > c1) c1 = c5;
-							c = c1;
-							/* Also strip the space before this word */
-							if (c > str) c--;
-							/* Avoid sillily short results */
-							if (c < str + 10) c = NULL;
-						}
+			/* Special maintenance/status response given by control scripts are always ok */
+			if (strlen(str) < AI_MAXLEN &&
+			    ((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']')))
+				goto ai_response_okay;
 
-						/* Found any valid way to somehow truncate the line? =_= (++++) */
-						if (c) {
-							if (!is_punct_hard(*c)) *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
-							*(c + 1) = 0;
-						}
-
-						/* A new weirdness has popped up: It started generating [more and more] trailing dot-triplets, separated with spaces, at the end of each answer */
-						if (*str && *(str + 1)) // paranoia? ensure there is some string left, so strlen-2 doesn't buffer-overflow */
-							while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.'
-							    || str[strlen(str) - 2] == ' ' || str[strlen(str) - 2] == '?' || str[strlen(str) - 2] == '!')))
-								str[strlen(str) - 1] = 0;
-					}
-				}
 #if AI_MULTILINE > 0
-				/* Add the treated 'str' to our multiline array too, just to make it look orderly ^^ */
-				strcpy(strm[m_max], str);
+			/* Dissect -possibly very long- response string into multiple chat messages if required;
+			   only treat the last one with shortening/cutting procedures. */
+			while (*str && m_max < AI_MULTILINE) {
+				/* Fill a chat line, cutting off the rest */
+				strncpy(strm[m_max], str, AI_LINE_MAXLEN);
+				strm[m_max][AI_LINE_MAXLEN] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
+				/* Try not to cut off the line within a word */
+				do {
+					c = strm[m_max] + strlen(strm[m_max]) - 1;
+					if (!isalpha(*c) && *c != '-') break;
+					*c = 0;
+				} while (TRUE);
+
+				/* Prepare to fill another chat line if needed */
+				str = str + strlen(strm[m_max]);
+
+				/* Trim trailing spaces of the strm[] we just finished now (so we actually discard spaces completely, instead of them going into the next strm[]) */
+				trim_trailing_spaces(strm[m_max]);
+
 				m_max++;
-				/* ..and output all lines */
-				for (c1 = 0; c1 < m_max; c1++)
-					exec_lua(0, format("eight_ball(\"%s\")", strm[(int)c1])); //don't cry, compiler -_- @(int)
+			}
+
+			/* Get the (final) line */
+			try_reducing:
+			m_max--;
+			strx = strm[m_max];
 #else
-				exec_lua(0, format("eight_ball(\"%s\")", str));
+			strx = str;
 #endif
-			} else exec_lua(0, "eight_ball(\"Auxiliary brain malfunction. Skipping a response.\")");
+
+			/* _Final_ line is not too long? We're done then (a bit clumsy that this static check is actually repeated for try_reducing, pft) */
+			if (strlen(strbase) <= AI_LINE_MAXLEN) goto ai_response_okay;
+
+			/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
+			   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
+			c = strx + strlen(strx) - 1;
+			while (c > strx && !is_punct_end(*c)) c--;
+			/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
+			if (c == strx) {
+				c = strx + strlen(strx) - 1;
+				while(c > strx && *c != ',') c--;
+				/* Avoid sillily short results */
+				if (c < strx + 10) c = strx;
+			}
+			/* ..and some crazy ones don't even have a comma :/ ..*/
+			if (c == strx) {
+				char *c1, *c2, *c3, *c4, *c5;
+				c = strx + strlen(strx) - 1;
+				/* Beeeest effort at "language" gogo.. */
+				c1 = my_strcasestr(strx, "that");
+				c2 = my_strcasestr(strx, "what");
+				c3 = my_strcasestr(strx, "which");
+				c4 = my_strcasestr(strx, "who");
+				c5 = my_strcasestr(strx, "where");
+				if (c2 > c1) c1 = c2;
+				if (c3 > c1) c1 = c3;
+				if (c4 > c1) c1 = c4;
+				if (c5 > c1) c1 = c5;
+				c = c1;
+				/* Also strip the space before this word */
+				if (c > strx) c--;
+				/* Avoid sillily short results */
+				if (c < strx + 10) c = NULL;
+			}
+
+			/* Found any valid way to somehow truncate the line? =_= (++++) */
+			if (c) {
+				if (!is_punct_hard(*c)) *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
+				*(c + 1) = 0;
+			}
+
+			/* Oups, nothing left of the line? */
+			if (!*strx) {
+#if AI_MULTILINE > 0
+				if (!m_max) goto ai_response_emptied;
+				goto try_reducing;
+#else
+				goto ai_response_emptied;
+#endif
+			}
+
+			goto ai_response_okay;
+
+			ai_response_emptied:
+			exec_lua(0, "eight_ball(\"Auxiliary brain malfunction. Skipping a response.\")");
+			goto ai_response_done;
+
+			ai_response_okay:
+#if AI_MULTILINE > 0
+			/* output all lines */
+			for (c1 = 0; c1 <= m_max; c1++)
+				exec_lua(0, format("eight_ball(\"%s\")", strm[(int)c1])); //don't cry, compiler -_- @(int)
+#else
+			/* output line */
+			exec_lua(0, format("eight_ball(\"%s\")", strx));
+#endif
+
+			ai_response_done:
 
 			/* Clear response file after having processed the response (through 8ball), as it's no longer pending but has been processed now. */
 			/* Create a backup just for debugging/checking: */
