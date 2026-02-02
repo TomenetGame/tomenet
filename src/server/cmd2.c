@@ -3459,6 +3459,7 @@ void do_cmd_close(int Ind, int dir) {
 			/* fun exception: open door mimic players */
 			int i;
 
+			/* Note that door-mimics currently don't block LoS like a real door would =-p */
 			if ((i = -c_ptr->m_idx) > 0) {
 				player_type *q_ptr = Players[i];
 				if (q_ptr->body_monster == RI_DOOR_MIMIC && (q_ptr->temp_misc_1 & 0x01)) {
