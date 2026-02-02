@@ -4573,7 +4573,15 @@ pack or sound pack), read on:
 
 All you have to do is download a sound and/or music pack and then install it.
 For downloading the official packs, go to www.tomenet.eu and then click on
-'Downloads'. Other players might offer their own audio packs on the forums.
+'Downloads'. Other players might offer their own audio packs on the forums,
+here are two forum threads:
+- Official audio packs:
+  https://www.tomenet.eu/phpBB3/viewtopic.php?t=120
+- List of alternative audio packs made by various people:
+  https://tomenet.eu/phpBB3/viewtopic.php?p=7934#p7934
+(Note that if you downloaded the 'multi-music' client, that one should already
+contains all alternative audio packs! And the official ones of course.)
+
 Read on for instructions how to install those packs once you downloaded them.
 There are two ways, automatically (client does it for you) and manually (you
 unzip them to the correct location yourself):
