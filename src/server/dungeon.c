@@ -11034,148 +11034,147 @@ void dungeon(void) {
 #endif
 
 			while (!feof(fp) && fgets(strbase, AI_MAXLEN, fp)) {
-					strbase[AI_MAXLEN - 1] = 0;
-					str = strbase;
-					/* Trim leading spaces */
-					while (*str == ' ') str++;
+				strbase[AI_MAXLEN - 1] = 0;
+				str = strbase;
+				/* Trim leading spaces */
+				while (*str == ' ') str++;
 
-					/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
-					c = str - 1;
-					while(*(++c)) if (*c == '"') *c = '\'';
-					/* Remove all linebreaks or LUA will break */
-					c = str - 1;
-					while(*(++c)) if (is_linebreak(*c)) *c = ' ';
+				/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
+				c = str - 1;
+				while(*(++c)) if (*c == '"') *c = '\'';
+				/* Remove all linebreaks or LUA will break */
+				c = str - 1;
+				while(*(++c)) if (is_linebreak(*c)) *c = ' ';
 
-					/* If str actually isn't empty (buffer overflow then on accessing strlen-1), trim trailing spaces */
-					if (*c) while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
+				/* If str actually isn't empty (buffer overflow then on accessing strlen-1), trim trailing spaces */
+				if (*c) while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
 #if AI_MULTILINE > 0
-					/* Dissect -possibly very long- response string into multiple chat messages if required;
-					   only treat the last one with shortening/cutting procedures. */
-					while (strlen(str) > maxlen && m_max < AI_MULTILINE - 1) {
-						/* Fill a chat line, cutting off the rest */
-						strncpy(strm[m_max], str, maxlen);
-						strm[m_max][maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
-						/* Try not to cut off the line within a word */
-						do {
-							c = strm[m_max] + strlen(strm[m_max]) - 1;
-							if (!isalpha(*c) && *c != '-') break;
-							*c = 0;
-						} while (TRUE);
+				/* Dissect -possibly very long- response string into multiple chat messages if required;
+				   only treat the last one with shortening/cutting procedures. */
+				while (strlen(str) > maxlen && m_max < AI_MULTILINE - 1) {
+					/* Fill a chat line, cutting off the rest */
+					strncpy(strm[m_max], str, maxlen);
+					strm[m_max][maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
+					/* Try not to cut off the line within a word */
+					do {
+						c = strm[m_max] + strlen(strm[m_max]) - 1;
+						if (!isalpha(*c) && *c != '-') break;
+						*c = 0;
+					} while (TRUE);
 
-						/* Prepare to fill another chat line if needed */
-						str = str + strlen(strm[m_max]);
-						m_max++;
+					/* Prepare to fill another chat line if needed */
+					str = str + strlen(strm[m_max]);
+					m_max++;
 
-						/* Trim trailing spaces of the strm[] we just finished now (so we actually discard spaces completely, instead of them going into the next strm[]) */
-						while (strm[m_max - 1][strlen(strm[m_max - 1]) - 1] == ' ') strm[m_max - 1][strlen(strm[m_max - 1]) - 1] = 0;
-					}
+					/* Trim trailing spaces of the strm[] we just finished now (so we actually discard spaces completely, instead of them going into the next strm[]) */
+					while (strm[m_max - 1][strlen(strm[m_max - 1]) - 1] == ' ') strm[m_max - 1][strlen(strm[m_max - 1]) - 1] = 0;
+				}
 #endif
 
-					open_parenthesis = strchr(str, '(');
+				open_parenthesis = strchr(str, '(');
 
-					/* If response exceeds our maximum message length, get rid of parentheses-structs first */
-					while (strlen(str) > maxlen && open_parenthesis) {
-						p = NULL;
-						o = open_parenthesis;
-
+				/* If response exceeds our maximum message length, get rid of parentheses-structs first */
+				while (strlen(str) > maxlen && open_parenthesis) {
+					p = NULL;
+					o = open_parenthesis;
 						while (!p) {
-							p = strchr(o, ')');
-							if (!p) break;
+						p = strchr(o, ')');
+						if (!p) break;
 
-							/* Skip smileys within parentheses.. */
-							if (p == str || *(p - 1) != '-') break;
-							o = p;
-							p = NULL;
+						/* Skip smileys within parentheses.. */
+						if (p == str || *(p - 1) != '-') break;
+						o = p;
+						p = NULL;
+					}
+
+					/* Crop out the parentheses struct */
+					if (p) {
+						strcpy(strtmp, str);
+						if (*(p + 1) == ' ') p++; /* Skip a space after the closing parenthesis */
+						strcpy(o, strtmp + (p - str) + 1);
+
+						open_parenthesis = strchr(str, '(');
+					} else break;
+				}
+
+				/* Truncate so we don't exceed our maximum message length! (Panic save ensues) */
+				str[maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
+
+				/* Trim trailing spaces and - this is important - add a dot at the end if it doesn't end on one of the below recognized punctuation marks,
+				   or stuff will get cut off below at (++++). In earlier versions, it was desired to cut off remains of a sentence because AI responses were weird,
+				   but now we want to keep the full response instead of randomly cutting things off (as long as the response isn't too long). */
+				while (*str && str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
+				c = str + (strlen(str) - 1);
+				if (*str && !is_punct(*c)) {
+					if (strlen(str) < maxlen) strcat(str, ".");
+					else *c = '.'; //ouch, we just overwrite a legal character with a dot in this edge case -_- todo: improve
+				}
+
+				/* Anything left to process? Or we will get buffer overflows from accessing strlen-1 positions */
+				if (*str) {
+					/* Special maintenance/status response given by control scripts? */
+					if (!((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']'))) {
+						/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
+						   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
+						c = str + strlen(str) - 1;
+						while (c > str && (!is_punct_end(*c) || within_parentheses)) {
+							if (open_parenthesis) {
+								if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE; //basic smiley detection @ '-'
+							if (*c == '(') within_parentheses = FALSE;
+							}
+							c--;
 						}
-
-						/* Crop out the parentheses struct */
-						if (p) {
-							strcpy(strtmp, str);
-							if (*(p + 1) == ' ') p++; /* Skip a space after the closing parenthesis */
-							strcpy(o, strtmp + (p - str) + 1);
-
-							open_parenthesis = strchr(str, '(');
-						} else break;
-					}
-
-					/* Truncate so we don't exceed our maximum message length! (Panic save ensues) */
-					str[maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
-
-					/* Trim trailing spaces and - this is important - add a dot at the end if it doesn't end on one of the below recognized punctuation marks,
-					   or stuff will get cut off below at (++++). In earlier versions, it was desired to cut off remains of a sentence because AI responses were weird,
-					   but now we want to keep the full response instead of randomly cutting things off (as long as the response isn't too long). */
-					while (*str && str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
-					c = str + (strlen(str) - 1);
-					if (*str && !is_punct(*c)) {
-						if (strlen(str) < maxlen) strcat(str, ".");
-						else *c = '.'; //ouch, we just overwrite a legal character with a dot in this edge case -_- todo: improve
-					}
-
-					/* Anything left to process? Or we will get buffer overflows from accessing strlen-1 positions */
-					if (*str) {
-						/* Special maintenance/status response given by control scripts? */
-						if (!((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']'))) {
-							/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
-							   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
+						/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
+						if (c == str) {
 							c = str + strlen(str) - 1;
-							while (c > str && (!is_punct_end(*c) || within_parentheses)) {
-								if (open_parenthesis) {
-									if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE; //basic smiley detection @ '-'
-									if (*c == '(') within_parentheses = FALSE;
-								}
-								c--;
-							}
-							/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
-							if (c == str) {
-								c = str + strlen(str) - 1;
-								while(c > str && *c != ',') c--;
-								/* Avoid sillily short results */
-								if (c < str + 10) c = str;
-							}
-							/* ..and some crazy ones don't even have a comma :/ ..*/
-							if (c == str) {
-								char *c1, *c2, *c3, *c4, *c5;
-
-								c = str + strlen(str) - 1;
-								/* Beeeest effort at "language" gogo.. */
-								c1 = my_strcasestr(str, "that");
-								c2 = my_strcasestr(str, "what");
-								c3 = my_strcasestr(str, "which");
-								c4 = my_strcasestr(str, "who");
-								c5 = my_strcasestr(str, "where");
-								if (c2 > c1) c1 = c2;
-								if (c3 > c1) c1 = c3;
-								if (c4 > c1) c1 = c4;
-								if (c5 > c1) c1 = c5;
-								c = c1;
-								/* Also strip the space before this word */
-								if (c > str) c--;
-								/* Avoid sillily short results */
-								if (c < str + 10) c = NULL;
-							}
-
-							/* Found any valid way to somehow truncate the line? =_= (++++) */
-							if (c) {
-								if (!is_punct_hard(*c)) *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
-								*(c + 1) = 0;
-							}
-
-							/* A new weirdness has popped up: It started generating [more and more] trailing dot-triplets, separated with spaces, at the end of each answer */
-							if (*str && *(str + 1)) // paranoia? ensure there is some string left, so strlen-2 doesn't buffer-overflow */
-								while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.'
-								    || str[strlen(str) - 2] == ' ' || str[strlen(str) - 2] == '?' || str[strlen(str) - 2] == '!')))
-									str[strlen(str) - 1] = 0;
+							while(c > str && *c != ',') c--;
+							/* Avoid sillily short results */
+							if (c < str + 10) c = str;
 						}
+						/* ..and some crazy ones don't even have a comma :/ ..*/
+						if (c == str) {
+							char *c1, *c2, *c3, *c4, *c5;
+
+							c = str + strlen(str) - 1;
+							/* Beeeest effort at "language" gogo.. */
+							c1 = my_strcasestr(str, "that");
+							c2 = my_strcasestr(str, "what");
+							c3 = my_strcasestr(str, "which");
+							c4 = my_strcasestr(str, "who");
+							c5 = my_strcasestr(str, "where");
+							if (c2 > c1) c1 = c2;
+							if (c3 > c1) c1 = c3;
+							if (c4 > c1) c1 = c4;
+							if (c5 > c1) c1 = c5;
+							c = c1;
+							/* Also strip the space before this word */
+							if (c > str) c--;
+							/* Avoid sillily short results */
+							if (c < str + 10) c = NULL;
+						}
+
+						/* Found any valid way to somehow truncate the line? =_= (++++) */
+						if (c) {
+							if (!is_punct_hard(*c)) *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
+							*(c + 1) = 0;
+						}
+
+						/* A new weirdness has popped up: It started generating [more and more] trailing dot-triplets, separated with spaces, at the end of each answer */
+						if (*str && *(str + 1)) // paranoia? ensure there is some string left, so strlen-2 doesn't buffer-overflow */
+							while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.'
+							    || str[strlen(str) - 2] == ' ' || str[strlen(str) - 2] == '?' || str[strlen(str) - 2] == '!')))
+								str[strlen(str) - 1] = 0;
 					}
+				}
 #if AI_MULTILINE > 0
-					/* Add the treated 'str' to our multiline array too, just to make it look orderly ^^ */
-					strcpy(strm[m_max], str);
-					m_max++;
-					/* ..and output all lines */
-					for (c1 = 0; c1 < m_max; c1++)
-						exec_lua(0, format("eight_ball(\"%s\")", strm[(int)c1])); //don't cry, compiler -_- @(int)
+				/* Add the treated 'str' to our multiline array too, just to make it look orderly ^^ */
+				strcpy(strm[m_max], str);
+				m_max++;
+				/* ..and output all lines */
+				for (c1 = 0; c1 < m_max; c1++)
+					exec_lua(0, format("eight_ball(\"%s\")", strm[(int)c1])); //don't cry, compiler -_- @(int)
 #else
-					exec_lua(0, format("eight_ball(\"%s\")", str));
+				exec_lua(0, format("eight_ball(\"%s\")", str));
 #endif
 			}
 			fclose(fp);
