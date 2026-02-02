@@ -8752,7 +8752,8 @@ int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 
 	if (level_generation_time) return(0); //success
 
-	/* XXX it's not needed when called from generate.c */
+	/* XXX it's not needed when called from generate.c: but we also call this eg for fountains
+	   - todo: clean up usage cases, use cave_force_feat_live()! (also see comment below for PU_ flags!) */
 	for (i = 1; i <= NumPlayers; i++) {
 		p_ptr = Players[i];
 
@@ -8764,6 +8765,15 @@ int cave_set_feat(worldpos *wpos, int y, int x, int feat) {
 
 		/* Redraw */
 		lite_spot(i, y, x);
+
+		/* Currently not needed as the 'worst' feats changed live are
+		    - fountains
+		    - admin building
+		    - old void-gate spell removal
+		    - arcade server (FEAT_MARKER)
+		   but this is a mess -_- */
+		//p_ptr->update |= PU_VIEW | PU_DISTANCE;
+		//p_ptr->update |= PU_FLOW | PU_LITE;
 	}
 	return(0); //success
 }
@@ -9062,8 +9072,74 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 		lite_spot(i, y, x);
 
 		/* Update some things */
-		p_ptr->update |= (PU_VIEW | PU_DISTANCE);
-		//p_ptr->update |= PU_FLOW;
+		p_ptr->update |= PU_VIEW | PU_DISTANCE;
+		p_ptr->update |= PU_FLOW | PU_LITE;
+
+		//p_ptr->redraw |= PR_MAP;
+		//p_ptr->window |= PW_OVERHEAD;
+
+		/* Wraithstep spell stops if it's not a wall anymore */
+		if (p_ptr->tim_wraith && (p_ptr->tim_wraithstep & 0x1) &&
+		    cave_floor_grid(c_ptr) && wall && /* Floor now, but was wall? */
+		    p_ptr->px == x && p_ptr->py == y)
+			set_tim_wraithstep(i, 0);
+	}
+
+	if (c_ptr->custom_lua_newlivefeat) exec_lua(0, format("custom_newlivefeat(%d,%d,%d)", old_feat, feat, c_ptr->custom_lua_newlivefeat));
+	return(TRUE);
+}
+
+/* Like cave_set_feat_live() but forces a specific feat, without all the usual checks.
+   Added this for opening/closing doors, to properly refresh views (and handle wraithstep). - C. Blue */
+bool cave_force_feat_live(worldpos *wpos, int y, int x, int feat) {
+	player_type *p_ptr;
+	cave_type **zcave;
+	cave_type *c_ptr;
+	struct c_special *cs_ptr;
+	int i, rad = 0, old_feat;
+	bool wall;
+	//struct town_type *t_ptr; /* have town keep track of number of feature changes (not yet implemented) */
+
+	if (!(zcave = getcave(wpos))) return(FALSE);
+	if (!in_bounds_array(y, x)) return(FALSE);
+	c_ptr = &zcave[y][x];
+
+	/* Clear mimic feature left by a secret door - mikaelh */
+	if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
+
+	/* For Wraithstep check below */
+	wall = !cave_floor_grid(c_ptr);
+
+	/* Change the feature */
+	if (c_ptr->feat != feat) c_ptr->info &= ~(CAVE_NEST_PIT | CAVE_ENCASED); /* clear teleport protection for nest grid if it gets changed; clear treasure vein remote-flag too */
+	old_feat = c_ptr->feat;
+	c_ptr->feat = feat;
+	if (f_info[feat].flags2 & FF2_GLOW) c_ptr->info |= CAVE_GLOW;
+	if (f_info[feat].flags2 & FF2_SHINE) rad++;
+	if (f_info[feat].flags2 & FF2_SHINE2) rad += 2;
+	if (rad) cave_illuminate_rad(wpos, zcave, x, y, rad, (f_info[feat].flags2 & FF2_SHINE_FIRE) ? CAVE_GLOW_HACK_LAMP : CAVE_GLOW_HACK);
+
+	/* Area of view for a player might have changed, among other consequences.. */
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+
+		/* Only works for players on the level */
+		if (!inarea(wpos, &p_ptr->wpos)) continue;
+
+#if 0 /* done in melee2.c when a monster eats a wall, so it's visible from afar, if level is mapped, that "walls turn black" */
+		/* Forget the spot */
+		p_ptr->cave_flag[y][x] &= ~CAVE_MARK;
+#endif
+
+		/* Notice */
+		note_spot(i, y, x);
+
+		/* Redraw */
+		lite_spot(i, y, x);
+
+		/* Update some things */
+		p_ptr->update |= PU_VIEW | PU_DISTANCE;
+		p_ptr->update |= PU_FLOW | PU_LITE;
 
 		//p_ptr->redraw |= PR_MAP;
 		//p_ptr->window |= PW_OVERHEAD;
