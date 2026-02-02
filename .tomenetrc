@@ -12,6 +12,8 @@
 ## Lines that start with '#' will ignored. Please make sure that each line
 ## includes the expected number of parameters or your client may crash.
 
+
+
 ## Automatic login settings
 
 ## - Account name - can be left empty
@@ -35,9 +37,9 @@
 ## - Perform automatic login with nick, pass and also character name
 #fullauto
 
-# Use lighter 'dark blue' colour to increase readability on some screens
-# Sets blue to #0033ff instead of #0000ff
-lighterDarkBlue
+
+
+## Colour settings
 
 # Full color remapping (except 0 aka black, which is immutable)
 # 0 = black, 1 = white, 2 = gray, 3 = orange, 4 = red, 5 = green, 6 = blue
@@ -59,6 +61,10 @@ lighterDarkBlue
 #colormap_13	#00ff00
 #colormap_14	#00ffff
 #colormap_15	#c79d55
+
+# Use lighter 'dark blue' colour to increase readability on some screens
+# Sets blue to #0033ff instead of #0000ff
+lighterDarkBlue
 
 
 
