@@ -5862,7 +5862,7 @@ void init_stuff(void) {
 	argv0 = strdup(path); //save for execv() call
 	strcpy(path + strlen(path) - 4, ".ini");
 
-	/* If tomenet.ini file doesn't exist yet, check for tomenet.ini.default
+	/* If TomeNET.ini file doesn't exist yet, check for TomeNET.ini.default
 	   and copy it over. This way a full client update won't kill our config. */
 	fp0 = fopen(path, "r");
 	if (!fp0) {
