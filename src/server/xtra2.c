@@ -7731,10 +7731,8 @@ bool monster_death(int Ind, int m_idx) {
 	}
 #endif
 
-	if (r_idx == RI_BLUE) { /* just for now, testing */
-		zcave[2][55].feat = FEAT_UNSEALED_DOOR;
-		everyone_lite_spot(wpos, 2, 55);
-	}
+	if (r_idx == RI_BLUE) /* just for now, testing */
+		cave_force_feat_live(wpos, 2, 55, FEAT_UNSEALED_DOOR);
 
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
@@ -8941,20 +8939,7 @@ bool monster_death(int Ind, int m_idx) {
 		/* Explain the stairway */
 		msg_print(Ind, "A magical stairway appears...");
 
-		/* Access the grid */
-		c_ptr = &zcave[y][x];
-
-		/* Create stairs down */
-		c_ptr->feat = FEAT_MORE;
-
-		/* Note the spot */
-		note_spot_depth(wpos, y, x);
-
-		/* Draw the spot */
-		everyone_lite_spot(wpos, y, x);
-
-		/* Remember to update everything */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+		cave_force_feat_live(wpos, y, x, FEAT_MORE);
 	}
 
 	FREE(m_ptr->r_ptr, monster_race);

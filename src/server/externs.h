@@ -557,6 +557,7 @@ extern void custom_cave_set_feat(worldpos *wpos, int y, int x, int feat,
     s16b custom_lua_tunnel_hand, s16b custom_lua_tunnel, s16b custom_lua_search, byte custom_lua_search_diff_minus, byte custom_lua_search_diff_chance, s16b custom_lua_newlivefeat, s16b custom_lua_way);
 extern bool custom_cave_set_feat_live(worldpos *wpos, int y, int x, int feat,
     s16b custom_lua_tunnel_hand, s16b custom_lua_tunnel, s16b custom_lua_search, byte custom_lua_search_diff_minus, byte custom_lua_search_diff_chance, s16b custom_lua_newlivefeat, s16b custom_lua_way);
+extern bool cave_force_feat_live(worldpos *wpos, int y, int x, int feat);
 #if defined(ARCADE_SERVER) || defined(DM_MODULES)
 extern int check_feat(worldpos *wpos, int y, int x);
 #endif

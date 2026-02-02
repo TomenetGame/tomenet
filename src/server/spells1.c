@@ -5196,7 +5196,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (feat == FEAT_MON_TRAP) {
 			(void)erase_mon_trap(wpos, y, x, 0);
 			/* erasing the monster trap will reset feature to previous type, so have to overwrite it again with the new wall */
-			c_ptr->feat = FEAT_WALL_EXTRA;
+			cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA);
 		}
 
 		if (feat != FEAT_WALL_EXTRA) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
@@ -5246,7 +5246,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (feat == FEAT_MON_TRAP) {
 			(void)erase_mon_trap(wpos, y, x, 0);
 			/* erasing the monster trap will reset feature to previous type, so have to overwrite it again with the new wall */
-			c_ptr->feat = FEAT_WALL_EXTRA;
+			cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA);
 		}
 
 		if (feat != FEAT_RIFT) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
@@ -5409,7 +5409,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			/* Destroy the trap */
-			//c_ptr->feat = FEAT_FLOOR;
 			cs_erase(c_ptr, cs_ptr);
 
 			if (!quiet) note = TRUE;
@@ -5750,19 +5749,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Require a "naked" floor grid */
 		if (!cave_naked_bold(zcave, y, x)) break;
 
-		/* Create a closed door */
-		c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
-
+		/* Create a closed door -- really correct like this? oO */
 		if (!quiet) {
-			/* Notice */
-			note_spot(Ind, y, x);
-			/* Redraw */
-			everyone_lite_spot(wpos, y, x);
+			cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 			/* Observe */
 			if (*w_ptr & CAVE_MARK) obvious = TRUE;
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
-		}
+		} else c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 		break;
 
 	/* Make traps */

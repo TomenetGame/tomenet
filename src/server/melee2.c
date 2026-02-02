@@ -10761,19 +10761,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 				/* Break down the door */
 				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
-					c_ptr->feat = FEAT_BROKEN;
+					cave_force_feat_live(wpos, ny, nx, FEAT_BROKEN);
 				/* Open the door */
 				else
-					c_ptr->feat = FEAT_OPEN;
-
-				/* Notice */
-				note_spot_depth(wpos, ny, nx);
-
-				/* Redraw */
-				everyone_lite_spot(wpos, ny, nx);
-
-				/* Handle viewable doors */
-				if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
+					cave_force_feat_live(wpos, ny, nx, FEAT_OPEN);
 			}
 
 			/* Note: Since do_melee isn't false'd if rand(opening/bashing) fails, monsters could still attack
@@ -11647,6 +11638,10 @@ static void process_monster_pet(int Ind, int m_idx) {
 					/* The door is open */
 					did_open_door = TRUE;
 
+#ifdef USE_SOUND_2010
+					sound_near_site(ny, nx, wpos, 0, "open_door", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 					/* Do not bash the door */
 					may_bash = FALSE;
 				}
@@ -11665,10 +11660,13 @@ static void process_monster_pet(int Ind, int m_idx) {
 #endif
 
 					/* Try to unlock it XXX XXX XXX */
-					if (rand_int(m_ptr->hp / 10) > k)
-					{
+					if (rand_int(m_ptr->hp / 10) > k) {
 						/* Unlock the door */
 						c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+
+#ifdef USE_SOUND_2010
+						sound_near_site(ny, nx, wpos, 0, "open_pick", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 						/* Do not bash the door */
 						may_bash = FALSE;
@@ -11694,6 +11692,13 @@ static void process_monster_pet(int Ind, int m_idx) {
 					/* The door was bashed open */
 					did_bash_door = TRUE;
 
+#ifdef USE_SOUND_2010
+					if (rand_int(3)) /* some variety, although not entirely correct :) */
+						sound_near_site(ny, nx, wpos, 0, "bash_door_break", NULL, SFX_TYPE_COMMAND, FALSE);
+					else
+						sound_near_site(ny, nx, wpos, 0, "bash_door_hold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 					/* Hack -- fall into doorway */
 					do_move = TRUE;
 				}
@@ -11712,10 +11717,10 @@ static void process_monster_pet(int Ind, int m_idx) {
 
 				/* Break down the door */
 				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
-					c_ptr->feat = FEAT_BROKEN;
+					cave_force_feat_live(wpos, ny, nx, FEAT_BROKEN);
 				/* Open the door */
 				else
-					c_ptr->feat = FEAT_OPEN;
+					cave_force_feat_live(wpos, ny, nx, FEAT_OPEN);
 
 				/* notice */
 				note_spot_depth(wpos, ny, nx);
@@ -12091,6 +12096,10 @@ static void process_monster_golem(int Ind, int m_idx) {
 					/* The door is open */
 					did_open_door = TRUE;
 
+#ifdef USE_SOUND_2010
+					sound_near_site(ny, nx, wpos, 0, "open_door", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 					/* Do not bash the door */
 					may_bash = FALSE;
 				}
@@ -12111,6 +12120,10 @@ static void process_monster_golem(int Ind, int m_idx) {
 					if (rand_int(m_ptr->hp / 10) > k) {
 						/* Unlock the door */
 						c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+
+#ifdef USE_SOUND_2010
+						sound_near_site(ny, nx, wpos, 0, "open_pick", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 						/* Do not bash the door */
 						may_bash = FALSE;
@@ -12136,6 +12149,13 @@ static void process_monster_golem(int Ind, int m_idx) {
 					/* The door was bashed open */
 					did_bash_door = TRUE;
 
+#ifdef USE_SOUND_2010
+					if (rand_int(3)) /* some variety, although not entirely correct :) */
+						sound_near_site(ny, nx, wpos, 0, "bash_door_break", NULL, SFX_TYPE_COMMAND, FALSE);
+					else
+						sound_near_site(ny, nx, wpos, 0, "bash_door_hold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 					/* Hack -- fall into doorway */
 					do_move = TRUE;
 				}
@@ -12155,10 +12175,10 @@ static void process_monster_golem(int Ind, int m_idx) {
 
 				/* Break down the door */
 				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
-					c_ptr->feat = FEAT_BROKEN;
+					cave_force_feat_live(wpos, ny, nx, FEAT_BROKEN);
 				/* Open the door */
 				else
-					c_ptr->feat = FEAT_OPEN;
+					cave_force_feat_live(wpos, ny, nx, FEAT_OPEN);
 
 				/* Notice */
 				note_spot_depth(wpos, ny, nx);

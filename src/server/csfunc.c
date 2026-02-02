@@ -142,6 +142,7 @@ int keyhit(c_special *cs_ptr, int y, int x, int Ind) {
 	int j;
 	struct cave_type **zcave, *c_ptr;
 	struct key_type *key = cs_ptr->sc.ptr;
+	object_type *o_ptr;
 
 	p_ptr = Players[Ind];
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
@@ -151,15 +152,11 @@ int keyhit(c_special *cs_ptr, int y, int x, int Ind) {
 	if (!(cfg.door_bump_open && p_ptr->easy_open)) return(FALSE);
 	if (p_ptr == (struct player_type*)NULL) return(FALSE);
 	for (j = 0; j < INVEN_PACK; j++) {
-		object_type *o_ptr = &p_ptr->inventory[j];
-
+		o_ptr = &p_ptr->inventory[j];
 		if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
-			c_ptr->feat = FEAT_HOME_OPEN;
 			p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-			note_spot_depth(&p_ptr->wpos, y, x);
-			everyone_lite_spot(&p_ptr->wpos, y, x);
-			p_ptr->update |= (PU_VIEW | PU_LITE);
 			msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
+			cave_force_feat_live(&p_ptr->wpos, y, x, FEAT_HOME_OPEN);
 			return(TRUE);
 		}
 	}
@@ -172,14 +169,14 @@ void keysee(c_special *cs_ptr, char32_t *c, byte *a, int Ind) {
 	struct player_type *p_ptr;
 	int j;
 	struct key_type *key = cs_ptr->sc.ptr;
+	object_type *o_ptr;
 
 	p_ptr = Players[Ind];
 
 	if (*c == FEAT_HOME_OPEN) return;	/* dont bother */
 	if (p_ptr == (struct player_type*)NULL) return;
 	for (j = 0; j < INVEN_PACK; j++) {
-		object_type *o_ptr = &p_ptr->inventory[j];
-
+		o_ptr = &p_ptr->inventory[j];
 		if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
 			/* colours are only test colours! */
 			*c = '*';

@@ -2545,7 +2545,8 @@ static void quest_add_dungeon(int q_idx, int stage) {
 		q_stage->dun_x = rand_int((MAX_WID) - 4) + 2;
 	} while (!cave_floor_bold(zcave, q_stage->dun_y, q_stage->dun_x)
 	    && (++tries < 1000));
-	zcave[q_stage->dun_y][q_stage->dun_x].feat = q_stage->dun_tower ? FEAT_LESS : FEAT_MORE;
+	//zcave[q_stage->dun_y][q_stage->dun_x].feat = q_stage->dun_tower ? FEAT_LESS : FEAT_MORE;
+	cave_force_feat_live(&q_stage->dun_wpos, q_stage->dun_y, q_stage->dun_x, q_stage->dun_tower ? FEAT_LESS : FEAT_MORE);
 }
 /* Remove all quest-specific dungeons (called on quest deactivation) */
 static void quest_remove_dungeons(int q_idx) {

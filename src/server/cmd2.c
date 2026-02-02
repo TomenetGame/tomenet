@@ -3132,13 +3132,7 @@ void do_cmd_open(int Ind, int dir) {
 				}
 
 				/* Open the door */
-				c_ptr->feat = FEAT_OPEN;
-				/* Notice */
-				note_spot_depth(wpos, y, x);
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-				/* Update some things */
-				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+				cave_force_feat_live(wpos, y, x, FEAT_OPEN);
 			}
 
 			/* Failure */
@@ -3162,7 +3156,7 @@ void do_cmd_open(int Ind, int dir) {
 				if (access_door(Ind, cs_ptr->sc.ptr, TRUE) || is_admin(p_ptr)) {
 #if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
-					c_ptr->feat = FEAT_HOME_OPEN;
+					cave_force_feat_live(wpos, y, x, FEAT_OPEN);
  #ifdef USE_SOUND_2010
 					sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
  #endif
@@ -3178,12 +3172,6 @@ void do_cmd_open(int Ind, int dir) {
 
 					/* Take half a turn */
 					p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-					/* Notice */
-					note_spot_depth(wpos, y, x);
-					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
-					/* Update some things */
-					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 
 				/* We cannot access this house. Special hack: Never get stuck inside a house that we don't have access to!
 				   Make sure we ignore drawbridge and moat, since these are outside of the house yet cave-icky.
@@ -3224,7 +3212,7 @@ void do_cmd_open(int Ind, int dir) {
 				for (j = 0; j < INVEN_PACK; j++) {
 					object_type *o_ptr = &p_ptr->inventory[j];
 					if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
-						c_ptr->feat = FEAT_HOME_OPEN;
+						cave_force_feat_live(wpos, y, x, FEAT_HOME_OPEN);
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
 						break_cloaking(Ind, 3);
@@ -3232,16 +3220,13 @@ void do_cmd_open(int Ind, int dir) {
 						stop_precision(Ind);
 						stop_shooting_till_kill(Ind);
 						p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-						note_spot_depth(wpos, y, x);
-						everyone_lite_spot(wpos, y, x);
-						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
 #ifdef USE_SOUND_2010
 						sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 						return;
 					} else if (is_admin(p_ptr)) {
-						c_ptr->feat = FEAT_HOME_OPEN;
+						cave_force_feat_live(wpos, y, x, FEAT_HOME_OPEN);
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
 						break_cloaking(Ind, 3);
@@ -3249,9 +3234,6 @@ void do_cmd_open(int Ind, int dir) {
 						stop_precision(Ind);
 						stop_shooting_till_kill(Ind);
 						p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-						note_spot_depth(wpos, y, x);
-						everyone_lite_spot(wpos, y, x);
-						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe door crashes open. %d",key->id);
 #ifdef USE_SOUND_2010
 						sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND, TRUE);
@@ -3285,16 +3267,10 @@ void do_cmd_open(int Ind, int dir) {
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Open the door */
-				c_ptr->feat = FEAT_OPEN;
+				cave_force_feat_live(wpos, y, x, FEAT_OPEN);
 #ifdef USE_SOUND_2010
 				sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
-				/* Notice */
-				note_spot_depth(wpos, y, x);
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-				/* Update some things */
-				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 			} else {
 				/* Message */
 				msg_print(Ind, "You fumble..");
@@ -3525,19 +3501,10 @@ void do_cmd_close(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* Close the door */
-			c_ptr->feat = FEAT_HOME;
+			cave_force_feat_live(wpos, y, x, FEAT_HOME);
 #ifdef USE_SOUND_2010
 			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
-
-			/* Notice */
-			note_spot_depth(wpos, y, x);
-
-			/* Redraw */
-			everyone_lite_spot(wpos, y, x);
-
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 		}
 
 		/* Close the door */
@@ -5662,7 +5629,6 @@ void do_cmd_disarm(int Ind, int dir) {
 
 				/* Remove the trap */
 				cs_erase(c_ptr, cs_ptr);
-				//c_ptr->feat = FEAT_FLOOR;
 
 				/* Forget the "field mark" */
 				everyone_forget_spot(wpos, y, x);
@@ -6030,9 +5996,9 @@ void do_cmd_bash(int Ind, int dir) {
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Break down the door */
-				if (magik(DOOR_BASH_BREAKAGE)) c_ptr->feat = FEAT_BROKEN;
+				if (magik(DOOR_BASH_BREAKAGE)) cave_force_feat_live(wpos, y, x, FEAT_BROKEN);
 				/* Open the door */
-				else c_ptr->feat = FEAT_OPEN;
+				else cave_force_feat_live(wpos, y, x, FEAT_OPEN);
 
 				/* Notice */
 				note_spot_depth(wpos, y, x);
@@ -10084,8 +10050,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 				kill_house_contents(h_idx);
 
 				/* take note of door colour change */
-				c_ptr->feat = FEAT_HOME; /* make sure door is closed, in case it was open when we sold it */
-				everyone_lite_spot(wpos, y, x);
+				cave_force_feat_live(wpos, y, x, FEAT_HOME); /* make sure door is closed, in case it was open when we sold it */
 				return;
 			}
 			msg_print(Ind, "That house does not belong to you!");

@@ -3649,23 +3649,16 @@ void stair_creation(int Ind) {
 	delete_object(wpos, p_ptr->py, p_ptr->px, TRUE, TRUE);
 
 	/* Create a staircase */
-	if (!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)) {
-		/* special..? */
-	} else if (can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)) {
-		c_ptr->feat = FEAT_MORE;
-	} else if (can_go_up(wpos, 0x1) && !can_go_down(wpos, 0x1)) {
-		c_ptr->feat = FEAT_LESS;
-	} else if (rand_int(100) < 50) {
-		c_ptr->feat = FEAT_MORE;
-	} else {
-		c_ptr->feat = FEAT_LESS;
-	}
-
-	/* Notice */
-	note_spot(Ind, p_ptr->py, p_ptr->px);
-
-	/* Redraw */
-	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+	if (!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1))
+		; /* special..? */
+	else if (can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1))
+		cave_force_feat_live(wpos, p_ptr->py, p_ptr->px, FEAT_MORE);
+	else if (can_go_up(wpos, 0x1) && !can_go_down(wpos, 0x1))
+		cave_force_feat_live(wpos, p_ptr->py, p_ptr->px, FEAT_LESS);
+	else if (rand_int(100) < 50)
+		cave_force_feat_live(wpos, p_ptr->py, p_ptr->px, FEAT_MORE);
+	else
+		cave_force_feat_live(wpos, p_ptr->py, p_ptr->px, FEAT_LESS);
 }
 
 

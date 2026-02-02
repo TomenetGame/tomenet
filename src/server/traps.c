@@ -1355,6 +1355,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 					if (zcave[cy][cx].info & CAVE_ICKY) continue;
 					if (zcave[cy][cx].info & CAVE_NEST_PIT) continue;
 
+					...use cave_set_feat_live() instead, to properly update views...
+
 					tmpf = zcave[cy][cx].feat;
 					tmps = zcave[cy][cx].info;
 					tmpx = zcave[cy][cx].mimic;

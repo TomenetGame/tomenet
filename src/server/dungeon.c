@@ -8521,7 +8521,7 @@ static void process_various(void) {
 			if (c_ptr->o_idx) continue;
 
 			/* Grow a tree here */
-			c_ptr->feat = get_seasonal_tree();
+			cave_force_feat_live(&p_ptr->wpos, y, x, get_seasonal_tree());
 
 			/* Show it */
 			everyone_lite_spot(0, y, x);
@@ -11884,8 +11884,7 @@ void process_timers() {
 					for (i = 1; i <= 6; i++) {
 						y = 2;
 						x = (i * 10) - 3;
-						zcave[y][x].feat = FEAT_SEALED_DOOR;
-						everyone_lite_spot(&wpos, y, x);
+						cave_force_feat_live(&wpos, y, x, FEAT_SEALED_DOOR);
 					}
 				}
 
@@ -11955,8 +11954,7 @@ void process_timers() {
 					/* open current door to release monster */
 					y = 2;
 					x = (timer_pvparena2 * 10) - 3;
-					zcave[y][x].feat = FEAT_UNSEALED_DOOR;
-					everyone_lite_spot(&wpos, y, x);
+					cave_force_feat_live(&wpos, y, x, FEAT_UNSEALED_DOOR);
 
 					/* after 6th monster, take a break and switch wave cycle */
 					if (timer_pvparena2 == 6) {
