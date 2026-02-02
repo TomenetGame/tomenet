@@ -35,6 +35,9 @@
 // gettimeofday() requires <sys/time.h>
 #include <sys/time.h>
 
+#include <math.h>
+#include "graphics_common.h"
+
 /*
  * Notes on Colors:
  *
@@ -1233,12 +1236,14 @@ struct term_data {
 
 #ifdef USE_GRAPHICS
 	XImage *tiles;
+	XImage *graphics_fgmask_new;
 	Pixmap bgmask;
 	Pixmap fgmask;
 	rawpict_tile tiles_rawpict[MAX_TILES_RAWPICT + 1];
 	int rawpict_scale_wid_org, rawpict_scale_hgt_org, rawpict_scale_wid_use, rawpict_scale_hgt_use;
  #ifdef GRAPHICS_BG_MASK
 	Pixmap bg2mask;
+	XImage *bg2mask_new;
 	Pixmap tilePreparation2;
  #endif
 	Pixmap tilePreparation;
@@ -1251,10 +1256,12 @@ struct term_data {
 	XImage *tiles_sub[MAX_SUBFONTS];
 	Pixmap bgmask_sub[MAX_SUBFONTS];
 	Pixmap fgmask_sub[MAX_SUBFONTS];
+	XImage *fgmask_sub_new[MAX_SUBFONTS];
 	rawpict_tile tiles_rawpict_sub[MAX_SUBFONTS][MAX_TILES_RAWPICT + 1];
 	int rawpict_scale_wid_org_sub[MAX_SUBFONTS], rawpict_scale_hgt_org_sub[MAX_SUBFONTS], rawpict_scale_wid_use_sub[MAX_SUBFONTS], rawpict_scale_hgt_use_sub[MAX_SUBFONTS];
  #ifdef GRAPHICS_BG_MASK
 	Pixmap bg2mask_sub[MAX_SUBFONTS];
+	XImage *bg2mask_sub_new[MAX_SUBFONTS];
  #endif
 #endif
 };
@@ -1850,6 +1857,10 @@ static void free_graphics(term_data *td) {
 		XDestroyImage(td->tiles);
 		td->tiles = NULL;
 	}
+	if (td->graphics_fgmask_new) {
+		XDestroyImage(td->graphics_fgmask_new);
+		td->graphics_fgmask_new = NULL;
+	}
 	if (td->bgmask) {
 		XFreePixmap(Metadpy->dpy, td->bgmask);
 		td->bgmask = None;
@@ -1862,6 +1873,10 @@ static void free_graphics(term_data *td) {
 	if (td->bg2mask) {
 		XFreePixmap(Metadpy->dpy, td->bg2mask);
 		td->bg2mask = None;
+	}
+	if (td->bg2mask_new) {
+		XDestroyImage(td->bg2mask_new);
+		td->bg2mask_new = NULL;
 	}
 	if (td->tilePreparation2) {
 		XFreePixmap(Metadpy->dpy, td->tilePreparation2);
@@ -1886,10 +1901,18 @@ static void free_graphics(term_data *td) {
 			XFreePixmap(Metadpy->dpy, td->fgmask_sub[i]);
 			td->fgmask_sub[i] = None;
 		}
+        if (td->fgmask_sub_new[i]) {
+			XDestroyImage(td->fgmask_sub_new[i]);
+			td->fgmask_sub_new[i] = NULL;
+		}
  #ifdef GRAPHICS_BG_MASK
 		if (td->bg2mask_sub[i]) {
 			XFreePixmap(Metadpy->dpy, td->bg2mask_sub[i]);
 			td->bg2mask_sub[i] = None;
+		}
+		if (td->bg2mask_sub_new[i]) {
+			XDestroyImage(td->bg2mask_sub_new[i]);
+			td->bg2mask_sub_new[i] = NULL;
 		}
  #endif
 	}
@@ -2232,6 +2255,58 @@ char *graphics_bg2mask_sub[MAX_SUBFONTS] = { NULL };
 int graphics_tile_wid, graphics_tile_hgt;
 int graphics_image_tpr; /* Tiles per row. */
 
+
+XImage * prepareTile(XImage *tiles, XImage *fgmask, s16b font_width, s16b font_height, char32_t c)
+{
+	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * font_width;
+	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * font_height;
+
+	char *preparedTileData = (char *)malloc(font_width * font_height * tiles->bits_per_pixel / 8);
+	XImage *preparedTile = XCreateImage(
+			Metadpy->dpy, DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy)), tiles->depth, ZPixmap, 0,
+			preparedTileData, font_width, font_height, tiles->bits_per_pixel, 0);
+
+	color_rgb objectColorRGB = hex_to_rgb(Infoclr->fg);
+
+	color_rgb fgColor;
+	fgColor.red = 252;
+	fgColor.green = 0;
+	fgColor.blue = 251;
+
+	for (int tileX = 0; tileX < font_width; tileX++)
+	{
+		for (int tileY = 0; tileY < font_height; tileY++)
+		{
+			// 1)
+			// получить цвет пикселя из td->tiles
+			color_rgb tilePixelColorRGB = x_get_pixel_rgb(tiles, x1 + tileX, y1 + tileY);
+
+			if (fgmask != NULL)
+			{
+				// 2)
+				// получить цвет маски
+				color_rgb fgMaskPixelColorRGB = x_get_pixel_rgb(fgmask, x1 + tileX, y1 + tileY);
+				// собрать цвет объекта от цвета маски
+				color_rgb maskedObjectColorRGB;
+				maskedObjectColorRGB.red = objectColorRGB.red * fgMaskPixelColorRGB.red / fgColor.red;
+				maskedObjectColorRGB.blue = objectColorRGB.blue * fgMaskPixelColorRGB.red / fgColor.red;
+				maskedObjectColorRGB.green = objectColorRGB.green * fgMaskPixelColorRGB.red / fgColor.red;
+
+				// добавить цвет объекта к цветку тайла
+				tilePixelColorRGB.red += maskedObjectColorRGB.red;
+				tilePixelColorRGB.blue += maskedObjectColorRGB.blue;
+				tilePixelColorRGB.green += maskedObjectColorRGB.green;
+				//tilePixelColorRGB = objectColorRGB;
+			}
+
+			unsigned long tilePixelColorHex = rgb_to_hex(tilePixelColorRGB.red, tilePixelColorRGB.green, tilePixelColorRGB.blue);
+			XPutPixel(preparedTile, tileX, tileY, tilePixelColorHex);
+		}
+	}
+
+	return preparedTile;
+}
+
 /*
  * Draw some graphical characters.
  */
@@ -2243,7 +2318,7 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	int i, hole = -1;
  #endif
 	int x1, y1;
-	XImage *tiles;
+	XImage *tiles, *fgmask_new;
 	Pixmap fgmask, bgmask;
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
@@ -2348,27 +2423,21 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	if (c_subtileset[c] == -1) {
 		tiles = td->tiles;
 		fgmask = td->fgmask;
+		fgmask_new = td->graphics_fgmask_new;
 		bgmask = td->bgmask;
 	} else {
 		tiles = td->tiles_sub[c_subtileset[c]];
 		fgmask = td->fgmask_sub[c_subtileset[c]];
+		fgmask_new = td->fgmask_sub_new[c_subtileset[c]];
 		bgmask = td->bgmask_sub[c_subtileset[c]];
 	}
 
-	/* Prepare tile to preparation pixmap. */
-	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
-	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
-	XCopyPlane(Metadpy->dpy, fgmask, tilePreparation, Infoclr->gc,
-		   x1, y1,
-		   td->fnt->wid, td->fnt->hgt,
-		   0, 0,
-		   1);
-	XSetClipMask(Metadpy->dpy, Infoclr->gc, bgmask);
-	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
+	XImage *preparedTile = prepareTile(tiles, fgmask_new, td->fnt->wid, td->fnt->hgt, c);
+
 	XPutImage(Metadpy->dpy, tilePreparation,
 		  Infoclr->gc,
-		  tiles,
-		  x1, y1,
+		  preparedTile,
+		  0, 0,
 		  0, 0,
 		  td->fnt->wid, td->fnt->hgt);
 	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
@@ -2382,29 +2451,34 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	/* Success */
 	return(0);
 }
- #ifdef GRAPHICS_BG_MASK
+
 static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
-  #if 0 /* use fallback hook until 2mask routines are complete? */
+#if 0 /* use fallback hook until 2mask routines are complete? */
 	return(Term_pict_x11(x, y, a, c));
-  #else
+#else
 	term_data *td;
 	Pixmap tilePreparation, tilePreparation2;
-   #ifdef TILE_CACHE_SIZE
+#ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
-	int i, hole = -1;
-   #endif
+	int i, j, hole = -1;
+#endif
 	int x1, y1;
-	XImage *tiles;
+	XImage *tiles, *fgmask_new, *bgmask2_new;
 	Pixmap fgmask, bgmask, bg2mask;
+
+	XImage *back_tiles, *back_fgmask_new, *back_bgmask2_new;
+	Pixmap back_fgmask, back_bgmask, back_bg2mask;
+
+
 
 	/* Avoid visual glitches while not in 2mask mode */
 	if (use_graphics != UG_2MASK) {
 		a_back = TERM_DARK;
-   #if 0
+#if 0
 		c_back = 32; //space! NOT zero!
-   #else
+#else
 		c_back = Client_setup.f_char[FEAT_SOLID]; //'graphical space' for erasure
-   #endif
+#endif
 	}
 
 	/* SPACE = erase background, aka black background. This is for places where we have no bg-info, such as client-lore in knowledge menu. */
@@ -2421,19 +2495,19 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	a_back = term2attr(a_back);
 
 	/* Draw the tile in Xor. */
-   #ifndef EXTENDED_COLOURS_PALANIM
-    #ifndef EXTENDED_BG_COLOURS
+#ifndef EXTENDED_COLOURS_PALANIM
+#ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
-    #else
+#else
 	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
-    #endif
-   #else
-    #ifndef EXTENDED_BG_COLOURS
+#endif
+#else
+#ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
-    #else
+#else
 	Infoclr_set(clr[a & 0x3F]);
-    #endif
-   #endif
+#endif
+#endif
 
 	if (Infoclr->fg == Infoclr->bg) {
 		/* Foreground color is the same as background color. If this was text, the tile would be rendered as solid block of color.
@@ -2446,65 +2520,65 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	x *= Infofnt->wid;
 	y *= Infofnt->hgt;
 
-   #ifdef TILE_CACHE_SIZE
-    if (!disable_tile_cache) {
-	entry = NULL;
-	for (i = 0; i < TILE_CACHE_SIZE; i++) {
-		entry = &td->tile_cache[i];
-		if (!entry->is_valid) hole = i;
-		else if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back
-    #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
+#ifdef TILE_CACHE_SIZE
+	if (!disable_tile_cache) {
+		entry = NULL;
+		for (i = 0; i < TILE_CACHE_SIZE; i++) {
+			entry = &td->tile_cache[i];
+			if (!entry->is_valid) hole = i;
+			else if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back
+#ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
 		    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
 		    && Infoclr->fg == entry->fg && Infoclr->bg == entry->bg
-    #endif
-		    ) {
-			/* Copy cached tile to window. */
-			XCopyArea(Metadpy->dpy, entry->tilePreparation2, td->inner->win, Infoclr->gc, // NOTE that tilePreparation2 holds the final tile, NOT tilePreparation!
-				0, 0,
-				td->fnt->wid, td->fnt->hgt,
-				x, y);
+#endif
+			) {
+				/* Copy cached tile to window. */
+				XCopyArea(Metadpy->dpy, entry->tilePreparation2, td->inner->win, Infoclr->gc, // NOTE that tilePreparation2 holds the final tile, NOT tilePreparation!
+				          0, 0,
+				          td->fnt->wid, td->fnt->hgt,
+				          x, y);
 
-			/* Success */
-			return(0);
+				/* Success */
+				return(0);
+			}
 		}
-	}
 
-	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
-	if (hole != -1) {
-    #ifdef TILE_CACHE_LOG
+		// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+		if (hole != -1) {
+#ifdef TILE_CACHE_LOG
 		c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
-    #endif
-		entry = &td->tile_cache[hole];
-	} else {
-    #ifdef TILE_CACHE_LOG
+#endif
+			entry = &td->tile_cache[hole];
+		} else {
+#ifdef TILE_CACHE_LOG
 		c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
-    #endif
-		// Replace valid cache entries in FIFO order
-		entry = &td->tile_cache[td->cache_position++];
-		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
-	}
+#endif
+			// Replace valid cache entries in FIFO order
+			entry = &td->tile_cache[td->cache_position++];
+			if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+		}
 
-	tilePreparation = entry->tilePreparation; //in 2mask-mode actually not used, as only tilePreparation2 is interesting as it holds the final result
-	tilePreparation2 = entry->tilePreparation2;
-	entry->c = c;
-	entry->a = a;
-    #ifdef GRAPHICS_BG_MASK
-	entry->c_back = c_back;
-	entry->a_back = a_back;
-    #endif
-	entry->is_valid = TRUE;
-    #ifdef TILE_CACHE_FGBG
+		tilePreparation = entry->tilePreparation; //in 2mask-mode actually not used, as only tilePreparation2 is interesting as it holds the final result
+		tilePreparation2 = entry->tilePreparation2;
+		entry->c = c;
+		entry->a = a;
+#ifdef GRAPHICS_BG_MASK
+		entry->c_back = c_back;
+		entry->a_back = a_back;
+#endif
+		entry->is_valid = TRUE;
+#ifdef TILE_CACHE_FGBG
 	entry->fg = Infoclr->fg;
 	entry->bg = Infoclr->bg;
-    #endif
-    } else {
+#endif
+	} else {
+		tilePreparation = td->tilePreparation;
+		tilePreparation2 = td->tilePreparation2;
+	}
+#else /* (TILE_CACHE_SIZE) No caching: */
 	tilePreparation = td->tilePreparation;
 	tilePreparation2 = td->tilePreparation2;
-    }
-   #else /* (TILE_CACHE_SIZE) No caching: */
-	tilePreparation = td->tilePreparation;
-	tilePreparation2 = td->tilePreparation2;
-   #endif
+#endif
 
 	/* Start with background tile to preparation pixmap,
 	   so the background mask can be reverse AND'ed (draw bg where there's 0x000000 in the foreground)
@@ -2512,110 +2586,137 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	   After that, the foreground can be OR'd onto the image. - C. Blue */
 
 	/* Switch fgmask'ing colour to background-tile colour */
-   #ifndef EXTENDED_COLOURS_PALANIM
-    #ifndef EXTENDED_BG_COLOURS
+#ifndef EXTENDED_COLOURS_PALANIM
+#ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a_back & 0x0F]);
-    #else
+#else
 	Infoclr_set(clr[a_back & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
-    #endif
-   #else
-    #ifndef EXTENDED_BG_COLOURS
+#endif
+#else
+#ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a_back & 0x1F]);
-    #else
+#else
 	Infoclr_set(clr[a_back & 0x3F]);
-    #endif
-   #endif
+#endif
+#endif
 
 	/* Choose between main tileset or a (partial) subset */
 	if (c_subtileset[c] == -1) {
 		tiles = td->tiles;
 		fgmask = td->fgmask;
+		fgmask_new = td->graphics_fgmask_new;
 		bgmask = td->bgmask;
 		bg2mask = td->bg2mask;
+		bgmask2_new = td->bg2mask_new;
 	} else {
 		tiles = td->tiles_sub[c_subtileset[c]];
 		fgmask = td->fgmask_sub[c_subtileset[c]];
 		bgmask = td->bgmask_sub[c_subtileset[c]];
+		fgmask_new = td->fgmask_sub_new[c_subtileset[c]];
 		bg2mask = td->bg2mask_sub[c_subtileset[c]];
+		bgmask2_new = td->bg2mask_sub_new[c_subtileset[c]];
 	}
 
+	if (c_subtileset[c_back] == -1) {
+		back_tiles = td->tiles;
+		back_fgmask = td->fgmask;
+		back_fgmask_new = td->graphics_fgmask_new;
+		back_bgmask = td->bgmask;
+		back_bg2mask = td->bg2mask;
+		back_bgmask2_new = td->bg2mask_new;
+	} else {
+		back_tiles = td->tiles_sub[c_subtileset[c_back]];
+		back_fgmask = td->fgmask_sub[c_subtileset[c_back]];
+		back_bgmask = td->bgmask_sub[c_subtileset[c_back]];
+		back_fgmask_new = td->fgmask_sub_new[c_subtileset[c_back]];
+		back_bg2mask = td->bg2mask_sub[c_subtileset[c_back]];
+		back_bgmask2_new = td->bg2mask_sub_new[c_subtileset[c_back]];
+	}
+
+	XImage *preparedBackTile;
 
 	/* Prepare background tile to preparation pixmap. +chopchop+ */
-	if (c_back == 32) {
+	if (c_back == 32 || !back_tiles || !back_fgmask_new) {
 		/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
-		XFillRectangle(Metadpy->dpy, tilePreparation2, Infoclr->gc, 0, 0, td->fnt->wid, td->fnt->hgt);
+		char *preparedBackTileData = (char *)malloc(td->fnt->wid * td->fnt->hgt * tiles->bits_per_pixel / 8);
+		preparedBackTile = XCreateImage(
+			Metadpy->dpy, DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy)), tiles->depth, ZPixmap, 0,
+			preparedBackTileData, td->fnt->wid, td->fnt->hgt, tiles->bits_per_pixel, 0);
+
+		for (i = 0; i < td->fnt->wid; i++)
+		{
+			for (j = 0; j < td->fnt->hgt; j++)
+			{
+				XPutPixel(preparedBackTile, i, j, 0x000000);
+			}
+		}
 	} else {
-		x1 = ((c_back - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
-		y1 = ((c_back - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
-		XCopyPlane(Metadpy->dpy, fgmask, tilePreparation2, Infoclr->gc,
-			   x1, y1,
-			   td->fnt->wid, td->fnt->hgt,
-			   0, 0,
-			   1);
-		XSetClipMask(Metadpy->dpy, Infoclr->gc, bgmask);
-		XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
-		XPutImage(Metadpy->dpy, tilePreparation2,
-			  Infoclr->gc,
-			  tiles,
-			  x1, y1,
-			  0, 0,
-			  td->fnt->wid, td->fnt->hgt);
-		XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
+		preparedBackTile = prepareTile(back_tiles, back_fgmask_new, td->fnt->wid, td->fnt->hgt, c_back);
+		// preparedBackTile = prepareTile(tiles, fgmask_new, td->fnt->wid, td->fnt->hgt, c_back);
 	}
 
 	/* Revert fgmask'ing colour to foreground-tile colour */
-   #ifndef EXTENDED_COLOURS_PALANIM
-    #ifndef EXTENDED_BG_COLOURS
+#ifndef EXTENDED_COLOURS_PALANIM
+#ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
-    #else
+#else
 	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
-    #endif
-   #else
-    #ifndef EXTENDED_BG_COLOURS
+#endif
+#else
+#ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
-    #else
+#else
 	Infoclr_set(clr[a & 0x3F]);
-    #endif
-   #endif
+#endif
+#endif
 
 	/* Prepare foreground tile to preparation pixmap. */
+	XImage *preparedFromTile = prepareTile(tiles, fgmask_new, td->fnt->wid, td->fnt->hgt, c);
+
+#if 1
 	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
 	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
-	XCopyPlane(Metadpy->dpy, fgmask, tilePreparation, Infoclr->gc,
-		   x1, y1,
-		   td->fnt->wid, td->fnt->hgt,
-		   0, 0,
-		   1);
-	XSetClipMask(Metadpy->dpy, Infoclr->gc, bgmask);
-	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
-	XPutImage(Metadpy->dpy, tilePreparation,
-		  Infoclr->gc,
-		  tiles,
-		  x1, y1,
-		  0, 0,
-		  td->fnt->wid, td->fnt->hgt);
-	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
+	color_rgb transparancyColor = {29, 33, 28};
 
-   #if 1
-	/* Finally copy foreground tile onto background tile, via bg2mask. */
-	XSetClipMask(Metadpy->dpy, Infoclr->gc, bg2mask);
-	XSetClipOrigin(Metadpy->dpy, Infoclr->gc, 0 - x1, 0 - y1);
-	//XPutImage(Metadpy->dpy, tilePreparation, Infoclr->gc, tilePreparation2, 0, 0, 0, 0, td->fnt->wid, td->fnt->hgt);
-	XCopyArea(Metadpy->dpy, tilePreparation, tilePreparation2, Infoclr->gc, 0, 0, td->fnt->wid, td->fnt->hgt, 0, 0);	// NOTE that tilePreparation2 holds the final tile, NOT tilePreparation! (Compare tile-caching!)
-	XSetClipMask(Metadpy->dpy, Infoclr->gc, None);
-   #endif
+	for (i = 0; i < td->fnt->wid; i++)
+	{
+		for (j = 0; j < td->fnt->hgt; j++)
+		{
+			// получить цвет пикселя маски
+			// получить цвет пикселя нижнего тайла
+			color_rgb backPixel = x_get_pixel_rgb(preparedBackTile, i, j);
+			color_rgb frontPixel = x_get_pixel_rgb(preparedFromTile, i, j);
+			color_rgb maskPixel = x_get_pixel_rgb(bgmask2_new, x1 + i, y1 + j);
+
+			if (isRGBColorsEqual(maskPixel, transparancyColor))
+			{
+				// вариант 1: если цвет пикселя маски соответствует цвету маски, то заменить пиксель в верхнем тайле на пиксель нижнего тайла
+				XPutPixel(preparedFromTile, i, j, rgb_to_hex(backPixel.red, backPixel.green, backPixel.blue));
+			}
+
+			// вариант 2: к пикселю верхнего тайла прибавить пиксель нижнего тайла уменьшив цвет в соответствии с тем на сколько уменьшен цвет маски
+		}
+	}
+	XPutImage(Metadpy->dpy, tilePreparation2,
+	          Infoclr->gc,
+	          preparedFromTile,
+	          0, 0,
+	          0, 0,
+	          td->fnt->wid, td->fnt->hgt);
+#endif
 
 	/* Copy prepared combo-tile to window. */
 	XCopyArea(Metadpy->dpy, tilePreparation2, td->inner->win, Infoclr->gc,
-		  0, 0,
-		  td->fnt->wid, td->fnt->hgt,
-		  x, y);
+	          0, 0,
+	          td->fnt->wid, td->fnt->hgt,
+	          x, y);
 
 	/* Success */
 	return(0);
-  #endif
+#endif
 }
- #endif /* GRAPHICS_BG_MASK */
+#ifdef GRAPHICS_BG_MASK
+#endif /* GRAPHICS_BG_MASK */
  #ifdef TILE_CACHE_SIZE
 /* c_idx: -1 = invalidate all; otherwise only tiles that use this colour are invalidated. */
 static void invalidate_graphics_cache_x11(term_data *td, int c_idx) {
@@ -3216,35 +3317,261 @@ static XImage *ResizeImage(Display *disp, XImage *Im,
 	return(Tmp);
 }
  #else
-static XImage *ResizeImage_2mask(Display *disp, XImage *Im,
-    int ix, int iy, int ox, int oy,
-    char *bgbits, char *fgbits, char *bg2bits, Pixmap *bgmask_return, Pixmap *fgmask_return, Pixmap *bg2mask_return,
-    term_data *td, int sub) {
-	int width1, height1, width2, height2;
-	int x1, x2, y1, y2, Tx, Ty;
-	int *px1, *px2, *dx1, *dx2;
-	int *py1, *py2, *dy1, *dy2;
 
-	XImage *Tmp;
-	char *Data;
+Pixell x_bilinear_interpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+{
+	Pixell new_pixel = 0;
+    originalX -= 0.5; // dont know why, bit without it all algo work like near interpolation
+	originalY -= 0.5; // dont know why, bit without it all algo work like near interpolation
+	int originalLoopX = round(originalX);
+	int originalLoopY = round(originalY);
+	float fractionOfY = originalY - floor(originalY);
+	float fractionOfX = originalX - floor(originalX);
+	//fprintf(stderr, "x_bilinear_interpolation\n");
+
+	originalLoopX = round(originalX);
+	originalLoopY = round(originalY);
+
+	// top left
+	coordinates topLeftPixelCoordinates;
+	topLeftPixelCoordinates = correctPixelCoordinates(originalLoopX, originalLoopY, tile_boundaries);
+	color_rgb topLeftPixelColor = x_get_pixel_rgb(originalImage, topLeftPixelCoordinates.x, topLeftPixelCoordinates.y);
+	// top right
+	coordinates topRightPixelCoordinates;
+	topRightPixelCoordinates = correctPixelCoordinates(originalLoopX + 1, originalLoopY, tile_boundaries);
+	color_rgb topRightPixelColor = x_get_pixel_rgb(originalImage, topRightPixelCoordinates.x, topRightPixelCoordinates.y);
+	// bottom left
+	coordinates bottomLeftPixelCoordinates;
+	bottomLeftPixelCoordinates = correctPixelCoordinates(originalLoopX, originalLoopY + 1, tile_boundaries);
+	color_rgb bottomLeftPixelColor = x_get_pixel_rgb(originalImage, bottomLeftPixelCoordinates.x, bottomLeftPixelCoordinates.y);
+	// bottom right
+	coordinates bottomRightPixelCoordinates;
+	bottomRightPixelCoordinates = correctPixelCoordinates(originalLoopX + 1, originalLoopY + 1, tile_boundaries);
+	color_rgb bottomRightPixelColor = x_get_pixel_rgb(originalImage, bottomRightPixelCoordinates.x, bottomRightPixelCoordinates.y);
+
+	topLeftPixelColor = color_filter_function(topLeftPixelColor);
+	topRightPixelColor = color_filter_function(topRightPixelColor);
+	bottomLeftPixelColor = color_filter_function(bottomLeftPixelColor);
+	bottomRightPixelColor = color_filter_function(bottomRightPixelColor);
+
+	// if (topLeftPixelColor.blue != 0 && topLeftPixelColor.blue == topRightPixelColor.blue == bottomLeftPixelColor.blue == bottomRightPixelColor.blue)
+	// {
+	// 	fprintf(stderr, "Error: Pixels are the same\n");
+	// }
+
+	color_rgb newPixelRGB = pixel_bilinear_interpolation(fractionOfX, fractionOfY, topLeftPixelColor, topRightPixelColor, bottomLeftPixelColor, bottomRightPixelColor);
+	new_pixel = rgb_to_hex(newPixelRGB.red, newPixelRGB.green, newPixelRGB.blue);
+
+	return new_pixel;
+}
+
+Pixell x_lanczos_interpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+{
+	Pixell new_pixel = 0;
+    originalX -= 0.5; // dont know why, bit without it all algo work like near interpolation
+	originalY -= 0.5; // dont know why, bit without it all algo work like near interpolation
+	int originalLoopX = round(originalX);
+	int originalLoopY = round(originalY);
+
+	color_rgb newPixelRgb;
+
+	/* Most of implementation is here because making sample and then go through it take too much time  */
+	lanczos_sample_2d sample_red;
+	lanczos_sample_2d sample_green;
+	lanczos_sample_2d sample_blue;
+
+	originalLoopX = round(originalX);
+	originalLoopY = round(originalY);
 
 
-	width1 = Im->width;
-	height1 = Im->height;
+	double sum_red = 0.0;
+	double sum_green = 0.0;
+	double sum_blue = 0.0;
+	double weight_sum = 0.0;
+	for (int y = originalLoopY - LANCZOS_A; y <= originalLoopY + LANCZOS_A; y++)
+	{
+		for (int x = originalLoopX - LANCZOS_A; x <= originalLoopX + LANCZOS_A; x++)
+		{
+			coordinates sample_pixel_coordinates = correctPixelCoordinates(x, y, tile_boundaries);
+			color_rgb sample_pixel_color = x_get_pixel_rgb(originalImage, sample_pixel_coordinates.x, sample_pixel_coordinates.y);
+			sample_pixel_color = color_filter_function(sample_pixel_color);
 
-	width2 = ox * width1 / ix;
-	height2 = oy * height1 / iy;
+			// int sample_x = x - (originalLoopX - LANCZOS_A);
+			// int sample_y = y - (originalLoopY - LANCZOS_A);
 
-	Data = (char *)malloc(width2 * height2 * Im->bits_per_pixel / 8);
-
-	Tmp = XCreateImage(
-			disp, DefaultVisual(disp, DefaultScreen(disp)), Im->depth, ZPixmap, 0,
-			Data, width2, height2, Im->bits_per_pixel, 0);
+			// sample_red.data[sample_x][sample_y] = sample_pixel_color.red;
+			// sample_green.data[sample_x][sample_y] = sample_pixel_color.green;
+			// sample_blue.data[sample_x][sample_y] = sample_pixel_color.blue;
 
 
-	int linePadBits = 8;
-	int paddedWidth2 = width2 + ((linePadBits - (width2 % linePadBits)) % linePadBits);
-	int new_masks_size = paddedWidth2 * height2 / 8;
+			double dist_x = originalX - x; // probably need to adjust `-` sign
+			double dist_y = originalY - y; // probably need to adjust `-` sign
+
+			double weight = lanczos_kernel(dist_x, LANCZOS_A) * lanczos_kernel(dist_y, LANCZOS_A);
+
+			sum_red += weight * sample_pixel_color.red;
+			sum_green += weight * sample_pixel_color.green;
+			sum_blue += weight * sample_pixel_color.blue;
+			weight_sum += weight;
+
+		}
+	}
+	// newPixelRgb.red = (int) lanczos_resample(sample_red, originalX - originalLoopX + LANCZOS_A, originalLoopY - originalY + LANCZOS_A);
+	// newPixelRgb.green = (int) lanczos_resample(sample_green, originalX - originalLoopX + LANCZOS_A, originalLoopY - originalY + LANCZOS_A);
+	// newPixelRgb.blue = (int) lanczos_resample(sample_blue, originalX - originalLoopX + LANCZOS_A, originalLoopY - originalY + LANCZOS_A);
+
+	newPixelRgb.red = (int) fmin(sum_red / weight_sum, 255);
+	newPixelRgb.green = (int)fmin(sum_green / weight_sum, 255);
+	newPixelRgb.blue = (int)fmin (sum_blue / weight_sum, 255);
+
+	new_pixel = rgb_to_hex(newPixelRgb.red, newPixelRgb.green, newPixelRgb.blue);
+	return new_pixel;
+}
+
+Pixell x_quadratic_interpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+{
+	//fprintf(stderr, "Quadratic interpolation\n");
+
+	Pixell new_pixel = 0;
+
+	int originalLoopX = round(originalX);
+	int originalLoopY = round(originalY);
+
+	color_rgb newPixelRgb;
+
+	originalX += 0.5;
+	originalY += 0.5;
+	originalLoopX = floor(originalX);
+	originalLoopY = floor(originalY);
+
+	double dist_y = (originalY - 0.5) - floor(originalY - 0.5);
+	double dist_x = (originalX - 0.5) - floor(originalX - 0.5);
+
+	if (floor(originalX) == floor(originalX - 0.5))
+	{
+		dist_x += 1;
+	}
+
+	if (floor(originalY) == floor(originalY - 0.5))
+	{
+		dist_y += 1;
+	}
+
+	color_rgb colors[3];
+
+	int index = 0;
+	for (int y = originalLoopY - 1; y <= originalLoopY + 1; y++, index++)
+	{
+		// left
+		coordinates leftPixelCoordinates;
+		leftPixelCoordinates = correctPixelCoordinates(originalLoopX - 1, y, tile_boundaries);
+		color_rgb leftPixelColor = x_get_pixel_rgb(originalImage, leftPixelCoordinates.x, leftPixelCoordinates.y);
+		leftPixelColor = color_filter_function(leftPixelColor);
+		// middle
+		coordinates middlePixelCoordinates;
+		middlePixelCoordinates = correctPixelCoordinates(originalLoopX, y, tile_boundaries);
+		color_rgb middlePixelColor = x_get_pixel_rgb(originalImage, middlePixelCoordinates.x, middlePixelCoordinates.y);
+		middlePixelColor = color_filter_function(middlePixelColor);
+		// right
+		coordinates rightPixelCoordinates;
+		rightPixelCoordinates = correctPixelCoordinates(originalLoopX + 1, y, tile_boundaries);
+		color_rgb rightPixelColor = x_get_pixel_rgb(originalImage, rightPixelCoordinates.x, rightPixelCoordinates.y);
+		rightPixelColor = color_filter_function(rightPixelColor);
+
+		colors[index].red = (int) quadratic_interpolation(dist_x, leftPixelColor.red, middlePixelColor.red, rightPixelColor.red);
+		colors[index].green = (int) quadratic_interpolation(dist_x, leftPixelColor.green, middlePixelColor.green, rightPixelColor.green);
+		colors[index].blue = (int) quadratic_interpolation(dist_x, leftPixelColor.blue, middlePixelColor.blue, rightPixelColor.blue);
+	}
+
+	int new_red = (int) quadratic_interpolation(dist_y, colors[0].red, colors[1].red, colors[2].red);
+	int new_green = (int) quadratic_interpolation(dist_y, colors[0].green, colors[1].green, colors[2].green);
+	int new_blue = (int) quadratic_interpolation(dist_y, colors[0].blue, colors[1].blue, colors[2].blue);
+
+	new_red =  (int) fmin(new_red, 255);
+	new_green = (int) fmin(new_green, 255);
+	new_blue = (int) fmin(new_blue, 255);
+
+	new_pixel = rgb_to_hex(new_red, new_green, new_blue);
+
+	return new_pixel;
+}
+
+Pixell x_interpolation_near(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+{
+	Pixell new_pixel = 0;
+
+	int originalLoopX = round(originalX);
+	int originalLoopY = round(originalY);
+
+	color_rgb newPixelRgb;
+
+	coordinates pixel_coordinates_near = correctPixelCoordinates(originalLoopX, originalLoopY, tile_boundaries);
+	newPixelRgb = x_get_pixel_rgb(originalImage, pixel_coordinates_near.x, pixel_coordinates_near.y);
+	newPixelRgb = color_filter_function(newPixelRgb);
+	new_pixel = rgb_to_hex(newPixelRgb.red, newPixelRgb.green, newPixelRgb.blue);
+
+	return new_pixel;
+}
+
+Pixell XPixelInterpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb), int interpolation_type)
+{
+	Pixell new_pixel = 0;
+
+	switch (interpolation_type)
+	{
+		case INTERPOLATION_LINEAR:
+			new_pixel = x_bilinear_interpolation(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			break;
+		case INTERPOLATION_LANCZOS:
+			new_pixel = x_lanczos_interpolation(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			break;
+		case INTERPOLATION_QUADRATIC:
+			new_pixel = x_quadratic_interpolation(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			break;
+		case INTERPOLATION_NEAR:
+		default:
+			new_pixel = x_interpolation_near(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			break;
+	}
+
+	return new_pixel;
+}
+
+static XImage *ResizeImage_2mask(Display *display, XImage *originalImage,
+	int tileWidth, int tileHeight, int fontWidth, int fontHeight,
+	char *bgbits, char *fgbits, char *bg2bits,
+	Pixmap *bgmask_return, Pixmap *fgmask_return, Pixmap *bg2mask_return, XImage **graphics_fgmask_new, XImage **graphics_bgmask2_new, term_data *td, int sub_tileset_index) {
+	int originalImageWidth, originalImageHeight, targetWidth, targetHeight;
+
+	XImage *targetImage;
+	char *targetImageData;
+
+	originalImageWidth = originalImage->width;
+	originalImageHeight = originalImage->height;
+
+	targetWidth = fontWidth * originalImageWidth / tileWidth;
+	targetHeight = fontHeight * originalImageHeight / tileHeight;
+
+	targetImageData = (char *)malloc(targetWidth * targetHeight * originalImage->bits_per_pixel / 8);
+
+	targetImage = XCreateImage(
+			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
+			targetImageData, targetWidth, targetHeight, originalImage->bits_per_pixel, 0);
+
+	char *fgmaskImageData = (char *)malloc(targetWidth * targetHeight * originalImage->bits_per_pixel / 8);
+	*graphics_fgmask_new = XCreateImage(
+			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
+			fgmaskImageData, targetWidth, targetHeight, originalImage->bits_per_pixel, 0);
+
+	char *bg2maskImageData = (char *)malloc(targetWidth * targetHeight * originalImage->bits_per_pixel / 8);
+	*graphics_bgmask2_new = XCreateImage(
+			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
+			bg2maskImageData, targetWidth, targetHeight, originalImage->bits_per_pixel, 0);
+
+
+	int linePadBits = 8; // TODO - why 8?
+	int targetWidthPadded = targetWidth + ((linePadBits - (targetWidth % linePadBits)) % linePadBits);
+	int new_masks_size = targetWidthPadded * targetHeight / 8;
 
 	char *bgmask_data;
 	C_MAKE(bgmask_data, new_masks_size, char);
@@ -3258,114 +3585,112 @@ static XImage *ResizeImage_2mask(Display *disp, XImage *Im,
 	C_MAKE(bg2mask_data, new_masks_size, char);
 	memset(bg2mask_data, 0, new_masks_size);
 
-	if (ix >= ox) {
-		px1 = &x1;
-		px2 = &x2;
-		dx1 = &ix;
-		dx2 = &ox;
-	} else {
-		px1 = &x2;
-		px2 = &x1;
-		dx1 = &ox;
-		dx2 = &ix;
-	}
+	for (int targetLoopY = 0; targetLoopY < targetHeight; targetLoopY++) {
+		float originalY = targetLoopY * originalImageHeight / targetHeight;
 
-	if (iy >= oy) {
-		py1 = &y1;
-		py2 = &y2;
-		dy1 = &iy;
-		dy2 = &oy;
-	} else {
-		py1 = &y2;
-		py2 = &y1;
-		dy1 = &oy;
-		dy2 = &iy;
-	}
+		int tileYCount = targetLoopY / fontHeight;
 
-	Ty = *dy1;
+		for (int targetLoopX = 0; targetLoopX < targetWidth; targetLoopX++) {
+			float originalX = targetLoopX * originalImageWidth / targetWidth;
 
-	for (y1 = 0, y2 = 0; (y1 < height1) && (y2 < height2); ) { /* Wrong compiler warning, the loop vars _are_ modified via px/dx/py/dy */
-		Tx = *dx1;
+			int tileXCount = targetLoopX / fontWidth;
 
-		for (x1 = 0, x2 = 0; (x1 < width1) && (x2 < width2); ) { /* Wrong compiler warning, the loop vars _are_ modified via px/dx/py/dy */
-			XPutPixel(Tmp, x2, y2, XGetPixel(Im, x1, y1));
-			u32b maskbitno = (x1 + (y1 * width1));
-			u32b newmaskbitno = (x2 + (y2 * paddedWidth2));
+			int originalTileStartY = tileYCount * tileHeight;
+			int originalTileEndY = (tileYCount + 1) * tileHeight - 1;
+
+			int originalTileStartX = tileXCount * tileWidth;
+			int originalTileEndX = (tileXCount + 1) * tileWidth - 1;
+
+			rectangle tile_boundaries;
+			tile_boundaries.top_left.x = originalTileStartX;
+			tile_boundaries.top_left.y = originalTileStartY;
+			tile_boundaries.bottom_right.x = originalTileEndX;
+			tile_boundaries.bottom_right.y = originalTileEndY;
+
+			// fixed colors
+			unsigned long newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, get_not_mask_pixel_color, INTERPOLATION_LINEAR);
+			XPutPixel(targetImage, targetLoopX, targetLoopY, newPixelHex);
+
+			// fg mask
+			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, get_fg_mask_pixel_color, INTERPOLATION_LINEAR);
+			XPutPixel(*graphics_fgmask_new, targetLoopX, targetLoopY, newPixelHex);
+
+			// bgmask2
+			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, get_bg_mask2_pixel_color, INTERPOLATION_LINEAR);
+			XPutPixel(*graphics_bgmask2_new, targetLoopX, targetLoopY, newPixelHex);
+
+			coordinates topLeftPixelCoordinates = correctPixelCoordinates(round(originalX), round(originalY), tile_boundaries);
+
+			// Bitmasks stuff
+			u32b maskbitno = (topLeftPixelCoordinates.x + (topLeftPixelCoordinates.y * originalImageWidth));
+			u32b newmaskbitno = (targetLoopX + (targetLoopY * targetWidthPadded));
 
 			bool bgbit = bgbits[maskbitno / 8] & (1 << (maskbitno % 8));
 
 			if (bgbit) bgmask_data[newmaskbitno / 8] |= 1 << (newmaskbitno % 8);
 			else bgmask_data[newmaskbitno / 8] &= ~(1 << (newmaskbitno % 8));
 
-			bool fgbit = fgbits[maskbitno / 8] & (1 << (maskbitno % 8));
-
-			if (fgbit) fgmask_data[newmaskbitno / 8] |= 1 << (newmaskbitno % 8);
-			else fgmask_data[newmaskbitno / 8] &= ~(1 << (newmaskbitno % 8));
+			// bool fgbit = fgbits[maskbitno / 8] & (1 << (maskbitno % 8));
+			//
+			// if (fgbit) fgmask_data[newmaskbitno / 8] |= 1 << (newmaskbitno % 8);
+			// else fgmask_data[newmaskbitno / 8] &= ~(1 << (newmaskbitno % 8));
 
 			bool bg2bit = bg2bits[maskbitno / 8] & (1 << (maskbitno % 8));
 
 			if (bg2bit) bg2mask_data[newmaskbitno / 8] |= 1 << (newmaskbitno % 8);
 			else bg2mask_data[newmaskbitno / 8] &= ~(1 << (newmaskbitno % 8));
-
-			(*px1)++;
-
-			Tx -= *dx2;
-			if (Tx <= 0) {
-				Tx += *dx1;
-				(*px2)++;
-			}
-		}
-
-		(*py1)++;
-
-		Ty -= *dy2;
-		if (Ty <= 0) {
-			Ty += *dy1;
-			(*py2)++;
 		}
 	}
 
-	Window root_win = DefaultRootWindow(disp);
-	(*bgmask_return) = XCreateBitmapFromData(disp, root_win, bgmask_data, width2, height2);
-	(*fgmask_return) = XCreateBitmapFromData(disp, root_win, fgmask_data, width2, height2);
-	(*bg2mask_return) = XCreateBitmapFromData(disp, root_win, bg2mask_data, width2, height2);
+	// if (sub_tileset_index == -1)
+	// {
+	// 	save_ximage_as_bmp(originalImage, "originalImage.bmp");
+	// 	save_ximage_as_bmp(targetImage, "targetImage.bmp");
+	// 	save_ximage_as_bmp(*graphics_fgmask_new, "graphics_fgmask_new.bmp");
+	// 	save_ximage_as_bmp(*graphics_bgmask2_new, "graphics_bgmask2_new.bmp");
+	// }
+
+	Window root_window = DefaultRootWindow(display);
+	(*bgmask_return) = XCreateBitmapFromData(display, root_window, bgmask_data, targetWidth, targetHeight);
+	(*fgmask_return) = XCreateBitmapFromData(display, root_window, fgmask_data, targetWidth, targetHeight);
+	(*bg2mask_return) = XCreateBitmapFromData(display, root_window, bg2mask_data, targetWidth, targetHeight);
 
 	/* Also rescale rawpict image dimensions/coordinates according to new dimensions */
-	if (sub == -1) {
+	if (sub_tileset_index == -1) {
 		int i;
 
-		td->rawpict_scale_wid_org = width1;
-		td->rawpict_scale_hgt_org = height1;
-		td->rawpict_scale_wid_use = width2;
-		td->rawpict_scale_hgt_use = height2;
+		td->rawpict_scale_wid_org = originalImageWidth;
+		td->rawpict_scale_hgt_org = originalImageHeight;
+		td->rawpict_scale_wid_use = targetWidth;
+		td->rawpict_scale_hgt_use = targetHeight;
 
 		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
 			if (!tiles_rawpict_org[i].defined) continue;
-			if (!width1 || !height1) continue;
-			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * width2) / width1;
-			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * width2) / width1;
-			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * height2) / height1;
-			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * height2) / height1;
+			if (!originalImageWidth || !originalImageHeight) continue;
+			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * targetWidth) / originalImageWidth;
+			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * targetWidth) / originalImageWidth;
+			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * targetHeight) / originalImageHeight;
+			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * targetHeight) / originalImageHeight;
 		}
 	} else {
 		int i;
 
-		td->rawpict_scale_wid_org_sub[sub] = width1;
-		td->rawpict_scale_hgt_org_sub[sub] = height1;
-		td->rawpict_scale_wid_use_sub[sub] = width2;
-		td->rawpict_scale_hgt_use_sub[sub] = height2;
+		td->rawpict_scale_wid_org_sub[sub_tileset_index] = originalImageWidth;
+		td->rawpict_scale_hgt_org_sub[sub_tileset_index] = originalImageHeight;
+		td->rawpict_scale_wid_use_sub[sub_tileset_index] = targetWidth;
+		td->rawpict_scale_hgt_use_sub[sub_tileset_index] = targetHeight;
 
 		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
-			if (!tiles_rawpict_org_sub[sub][i].defined) continue;
-			if (!width1 || !height1) continue;
-			td->tiles_rawpict_sub[sub][i].x = (tiles_rawpict_org_sub[sub][i].x * width2) / width1;
-			td->tiles_rawpict_sub[sub][i].w = (tiles_rawpict_org_sub[sub][i].w * width2) / width1;
-			td->tiles_rawpict_sub[sub][i].y = (tiles_rawpict_org_sub[sub][i].y * height2) / height1;
-			td->tiles_rawpict_sub[sub][i].h = (tiles_rawpict_org_sub[sub][i].h * height2) / height1;
+			if (!tiles_rawpict_org_sub[sub_tileset_index][i].defined) continue;
+			if (!originalImageWidth || !originalImageHeight) continue;
+			td->tiles_rawpict_sub[sub_tileset_index][i].x = (tiles_rawpict_org_sub[sub_tileset_index][i].x * targetWidth) / originalImageWidth;
+			td->tiles_rawpict_sub[sub_tileset_index][i].w = (tiles_rawpict_org_sub[sub_tileset_index][i].w * targetWidth) / originalImageWidth;
+			td->tiles_rawpict_sub[sub_tileset_index][i].y = (tiles_rawpict_org_sub[sub_tileset_index][i].y * targetHeight) / originalImageHeight;
+			td->tiles_rawpict_sub[sub_tileset_index][i].h = (tiles_rawpict_org_sub[sub_tileset_index][i].h * targetHeight) / originalImageHeight;
 		}
 	}
 
-	return(Tmp);
+	return(targetImage);
 }
  #endif
 
@@ -3565,6 +3890,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 #ifdef USE_GRAPHICS
 	/* No graphics yet */
 	td->tiles = NULL;
+	td->graphics_fgmask_new = NULL;
 	td->bgmask = None;
 	td->fgmask = None;
  #ifdef GRAPHICS_BG_MASK
@@ -3577,6 +3903,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		td->tiles_sub[i] = NULL;
 		td->bgmask_sub[i] = None;
 		td->fgmask_sub[i] = None;
+		td->fgmask_sub_new[i] = None;
  #ifdef GRAPHICS_BG_MASK
 		td->bg2mask_sub[i] = None;
  #endif
@@ -3622,18 +3949,28 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 
 		/* Use resized tiles & masks. */
 #ifdef GRAPHICS_BG_MASK
+        XImage *test;
+        XImage *test_bg2mask_new;
 		td->tiles = ResizeImage_2mask(Metadpy->dpy, graphics_image,
 		    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 		    graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask),
-		    td, -1);
+		    &(test), &(test_bg2mask_new), td,-1);
+		td->graphics_fgmask_new = test;
+		td->bg2mask_new = test_bg2mask_new;
 
 		for (i = 0; i < MAX_SUBFONTS; i++) {
 			if (graphics_image_sub[i] == None) continue;
+			XImage *test2;
+			XImage *test2_bg2mask_new;
 
 			td->tiles_sub[i] = ResizeImage_2mask(Metadpy->dpy, graphics_image_sub[i],
 			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 			    graphics_bgmask_sub[i], graphics_fgmask_sub[i], graphics_bg2mask_sub[i], &(td->bgmask_sub[i]), &(td->fgmask_sub[i]), &(td->bg2mask_sub[i]),
-			    td, i);
+			    &(test2), &(test2_bg2mask_new), td, i);
+            td->fgmask_sub_new[i] = test2;
+            td->bg2mask_sub_new[i] = test2_bg2mask_new;
+
+
 		}
 #else
 		td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
@@ -4419,16 +4756,28 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 
 			/* If window was resized, grapics tiles need to be resized too. */
  #ifdef GRAPHICS_BG_MASK
+            XImage *test;
+			XImage *test_bg2mask_new;
+
 			td->tiles = ResizeImage_2mask(Metadpy->dpy, graphics_image,
 			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 			    graphics_bgmask, graphics_fgmask, graphics_bg2mask, &(td->bgmask), &(td->fgmask), &(td->bg2mask),
-			    td, -1);
+			     &(test), &(test_bg2mask_new), td,-1);
+            td->graphics_fgmask_new = test;
+			td->bg2mask_new = test_bg2mask_new;
+
 			for (i = 0; i < MAX_SUBFONTS; i++) {
 				if (graphics_image_sub[i] == None) continue;
+				XImage *test2;
+				XImage *test2_bg2mask_new;
+
 				td->tiles_sub[i] = ResizeImage_2mask(Metadpy->dpy, graphics_image_sub[i],
 				    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
 				    graphics_bgmask_sub[i], graphics_fgmask_sub[i], graphics_bg2mask_sub[i], &(td->bgmask_sub[i]), &(td->fgmask_sub[i]), &(td->bg2mask_sub[i]),
-				    td, i);
+				     &(test2), &(test2_bg2mask_new), td, i);
+                td->fgmask_sub_new[i] = test2;
+				td->bg2mask_sub_new[i] = test2_bg2mask_new;
+
 			}
  #else
 			td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
