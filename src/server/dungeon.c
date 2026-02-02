@@ -11052,6 +11052,21 @@ void dungeon(void) {
 			c = str - 1;
 			while(*(++c)) if (is_linebreak(*c)) *c = ' ';
 
+			/* Qwen3-Next-80B-A3B-Instruct-UD-Q5_K_XL creates annoying text emphasis chars: ** ## -- .
+			   Trim ** and ## completely and change -- to - : */
+			while ((c = strstr(str, "**"))) {
+				strcpy(strtmp, c + 2);
+				strcpy(c, strtmp);
+			}
+			while ((c = strstr(str, "##"))) {
+				strcpy(strtmp, c + 2);
+				strcpy(c, strtmp);
+			}
+			while ((c = strstr(str, "--"))) {
+				strcpy(strtmp, c + 1);
+				strcpy(c, strtmp);
+			}
+
 			/* Skip leading and trim trailing spaces */
 			trimskip_spaces(str);
 
