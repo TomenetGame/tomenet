@@ -11022,7 +11022,7 @@ void dungeon(void) {
 #define	is_linebreak(c)		((c) == '\n' || (c) == '\r')
 		path_build(buf, 1024, ANGBAND_DIR_DATA, "external-response.log");
 		if ((fp = fopen(buf, "r")) != NULL) {
-			char strbase[AI_MAXLEN], *str, *c, strtmp[1024], *open_parenthesis, *o, *p;
+			char strbase[AI_MAXLEN] = { 0 }, *str, *c, strtmp[AI_MAXLEN], *open_parenthesis, *o, *p;
 			bool within_parentheses = FALSE;
 			/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length, and -6 for world-broadcast server prefix eg '\377g[1] ': */
 			int maxlen = MSG_LEN - 1 - (3 + 3 + strlen("8ball")) - 6; /* and note that this maxlen is the real content length, not a null-terminated string length */
@@ -11033,12 +11033,20 @@ void dungeon(void) {
 			//for (i = 0; i < AI_MULTILINE; i++) strm[i][0] = 0;
 #endif
 
-			while (!feof(fp) && fgets(strbase, AI_MAXLEN, fp)) {
-				strbase[AI_MAXLEN - 1] = 0;
-				str = strbase;
-				/* Trim leading spaces */
-				while (*str == ' ') str++;
+			while (!feof(fp) && fgets(strtmp, AI_MAXLEN, fp)) {
+				if (strlen(strbase) + strlen(strtmp) > AI_MAXLEN - 1) {
+					strncat(strbase, strtmp, AI_MAXLEN - strlen(strbase) - 1);
+					break; //discard any further reads, would exceed AI_MAXLEN
+				} else strcat(strbase, strtmp);
+			}
+			fclose(fp);
 
+			str = strbase;
+			/* Skip leading and trim trailing spaces */
+			trimskip_spaces(str);
+
+			/* Semi-paranoia: String not empty? (So prompting '8ball, tell us...nothing!' won't work though :-p) */
+			if (*str) {
 				/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
 				c = str - 1;
 				while(*(++c)) if (*c == '"') *c = '\'';
@@ -11177,7 +11185,6 @@ void dungeon(void) {
 				exec_lua(0, format("eight_ball(\"%s\")", str));
 #endif
 			}
-			fclose(fp);
 
 			/* Clear response file after having processed the response (through 8ball), as it's no longer pending but has been processed now. */
 			/* Create a backup just for debugging/checking: */

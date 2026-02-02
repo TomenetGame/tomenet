@@ -183,6 +183,48 @@ bool prefix_case(cptr s, cptr t) {
 	return (TRUE);
 }
 
+/* Trim both leading and trailing spaces; CAREFUL: Leading spaces are 'trimmed' by advancing the char pointer!
+   So always use it on a copy of the original string pointer if you still want to access the original string. - C. Blue */
+void trimskip_spaces(char *s) {
+	/* Trim leading spaces by skipping them */
+	while (*s == ' ') s++;
+	/* Trim trailing spaces */
+	while (*s && s[strlen(s) - 1] == ' ') s[strlen(s) - 1] = 0;
+}
+/* Trim leading spaces; CAREFUL: Leading spaces are 'trimmed' by advancing the char pointer!
+   So always use it on a copy of the original string pointer if you still want to access the original string. - C. Blue */
+void trimskip_leading_spaces(char *s) {
+	/* Trim leading spaces by skipping them */
+	while (*s == ' ') s++;
+	/* Trim trailing spaces */
+	while (*s && s[strlen(s) - 1] == ' ') s[strlen(s) - 1] = 0;
+}
+/* Trim trailing spaces */
+void trim_trailing_spaces(char *s) {
+	/* Trim trailing spaces */
+	while (*s && s[strlen(s) - 1] == ' ') s[strlen(s) - 1] = 0;
+}
+/* Trim both leading and trailing spaces (actual trimming, string pointer remains unchanged) */
+void trim_spaces(char *s) {
+	char temp_s[sizeof(char) * strlen(s)], *t = temp_s;
+
+	/* Trim leading spaces by skipping them */
+	strcpy(temp_s, s);
+	while (*t == ' ') t++;
+	strcpy(s, t);
+	/* Trim trailing spaces */
+	while (*s && s[strlen(s) - 1] == ' ') s[strlen(s) - 1] = 0;
+}
+/* Trim leading spaces (actual trimming, string pointer remains unchanged) */
+void trim_leading_spaces(char *s) {
+	char temp_s[sizeof(char) * strlen(s)], *t = temp_s;
+
+	/* Trim leading spaces by skipping them */
+	strcpy(temp_s, s);
+	while (*t == ' ') t++;
+	strcpy(s, t);
+}
+
 
 
 /*
