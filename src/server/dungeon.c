@@ -11015,7 +11015,7 @@ void dungeon(void) {
 
 		/* EXPERIMENTAL: Poll for AI responses, output them through 8ball. - C. Blue */
 #define AI_MAXLEN 4096 /* Maximum length of AI's response string to read */
-#define AI_MULTILINE 2 /* Allow AI responses to be multiple [2] chat lines long */
+#define AI_MULTILINE 3 /* Allow AI responses to be multiple [2] chat lines long */
 #define is_punct_end(c)		((c) == '.' || (c) == '?' || (c) == '!' || (c) == ';')		/* Punctuation that wraps up a sentence and doesn't really requires continuation. */
 #define is_punct(c)		(is_punct_end(c) || (c) == ':' || (c) == ',')			/* Any punctuation */
 #define is_punct_hard(c)	((c) == '!' || (c) == '?' || (c) == '.')			/* Not: komma, semi-colon, colon (or any non-punctuation symbol/number/character) */
