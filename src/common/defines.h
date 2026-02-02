@@ -5428,7 +5428,7 @@
 #define PU_LITE		0x00200000U	/* Update lite */
 /* xxx */
 #define PU_MONSTERS	0x01000000U	/* Update monsters (without updating their distances to player, except on LF2_LIMIT_ESP floors; also updates players) */
-#define PU_DISTANCE	0x02000000U	/* Update distances (updates monsters and players) */
+#define PU_DISTANCE	0x02000000U	/* Update distances (updates monsters (and their distances to player) and players) */
 /* xxx */
 #define PU_FLOW		0x10000000U	/* Update flow */
 #define PU_MUSIC	0x40000000U	/* Update music */
