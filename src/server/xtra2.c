@@ -16141,7 +16141,7 @@ bool master_build(int Ind, char * parms) {
 
 	if (set_new_feat) {
 		/* Never destroy real house doors! Work on this later */
-		if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) return(FALSE);
+		if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR)) && !is_admin(p_ptr)) return(FALSE);
 
 		if (new_feat == FEAT_TREE || new_feat == FEAT_BUSH) new_feat = magik(80) ? FEAT_TREE : FEAT_BUSH;
 		/* This part to be rewritten for stacked CS */
