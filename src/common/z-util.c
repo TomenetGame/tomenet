@@ -206,7 +206,7 @@ void trim_trailing_spaces(char *s) {
 }
 /* Trim both leading and trailing spaces (actual trimming, string pointer remains unchanged) */
 void trim_spaces(char *s) {
-	char temp_s[sizeof(char) * strlen(s)], *t = temp_s;
+	char temp_s[sizeof(char) * (strlen(s) + 1)], *t = temp_s;
 
 	/* Trim leading spaces by skipping them */
 	strcpy(temp_s, s);
@@ -217,7 +217,7 @@ void trim_spaces(char *s) {
 }
 /* Trim leading spaces (actual trimming, string pointer remains unchanged) */
 void trim_leading_spaces(char *s) {
-	char temp_s[sizeof(char) * strlen(s)], *t = temp_s;
+	char temp_s[sizeof(char) * (strlen(s) + 1)], *t = temp_s;
 
 	/* Trim leading spaces by skipping them */
 	strcpy(temp_s, s);
