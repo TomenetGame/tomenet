@@ -175,7 +175,7 @@ retry_mangrc:
 				if (p) strcpy(meta_address, p);
 			}
 
-			/* game server line (note: should be named 'host' for consistency with tomenet.ini) */
+			/* game server line */
 			if (!strncmp(buf, "server", 6)) {
 				char *p;
 
