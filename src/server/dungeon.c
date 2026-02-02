@@ -11012,22 +11012,28 @@ void dungeon(void) {
 			}
 		}
 
+
 		/* EXPERIMENTAL: Poll for AI responses, output them through 8ball. - C. Blue */
 #define AI_MAXLEN 4096 /* Maximum length of AI's response string to read */
 #define AI_MULTILINE 2 /* Allow AI responses to be multiple [2] chat lines long */
+#define is_punct_end(c)		((c) == '.' || (c) == '?' || (c) == '!' || (c) == ';')		/* Punctuation that wraps up a sentence and doesn't really requires continuation. */
+#define is_punct(c)		(is_punct_end(c) || (c) == ':' || (c) == ',')			/* Any punctuation */
+#define is_punct_hard(c)	((c) == '!' || (c) == '?' || (c) == '.')			/* Not: komma, semi-colon, colon (or any non-punctuation symbol/number/character) */
+#define	is_linebreak(c)		((c) == '\n' || (c) == '\r')
 		path_build(buf, 1024, ANGBAND_DIR_DATA, "external-response.log");
 		if ((fp = fopen(buf, "r")) != NULL) {
-			if (!feof(fp)) {
-				char strbase[AI_MAXLEN], *str, *c, strtmp[1024], *open_parenthesis, *o, *p;
-				bool within_parentheses = FALSE;
-				/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length, and -6 for world-broadcast server prefix eg '\377g[1] ': */
-				int maxlen = MSG_LEN - 1 - 11 - 6; /* and note that this maxlen is the real content length, not a null-terminated string length */
+			char strbase[AI_MAXLEN], *str, *c, strtmp[1024], *open_parenthesis, *o, *p;
+			bool within_parentheses = FALSE;
+			/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length, and -6 for world-broadcast server prefix eg '\377g[1] ': */
+			int maxlen = MSG_LEN - 1 - (3 + 3 + strlen("8ball")) - 6; /* and note that this maxlen is the real content length, not a null-terminated string length */
 #if AI_MULTILINE > 0
-				char strm[AI_MULTILINE][MSG_LEN], c1;
-				int m_max = 0;
+			char strm[AI_MULTILINE][MSG_LEN], c1;
+			int m_max = 0;
+
+			//for (i = 0; i < AI_MULTILINE; i++) strm[i][0] = 0;
 #endif
 
-				if (fgets(strbase, AI_MAXLEN, fp) != NULL) {
+			while (!feof(fp) && fgets(strbase, AI_MAXLEN, fp)) {
 					strbase[AI_MAXLEN - 1] = 0;
 					str = strbase;
 					/* Trim leading spaces */
@@ -11038,7 +11044,7 @@ void dungeon(void) {
 					while(*(++c)) if (*c == '"') *c = '\'';
 					/* Remove all linebreaks or LUA will break */
 					c = str - 1;
-					while(*(++c)) if (*c == '\n' || *c == '\r') *c = ' ';
+					while(*(++c)) if (is_linebreak(*c)) *c = ' ';
 
 					/* If str actually isn't empty (buffer overflow then on accessing strlen-1), trim trailing spaces */
 					if (*c) while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
@@ -11052,8 +11058,7 @@ void dungeon(void) {
 						/* Try not to cut off the line within a word */
 						do {
 							c = strm[m_max] + strlen(strm[m_max]) - 1;
-							c1 = tolower(*c);
-							if (c1 < 'a' || c1 > 'z') break;
+							if (!isalpha(*c) && *c != '-') break;
 							*c = 0;
 						} while (TRUE);
 
@@ -11101,7 +11106,7 @@ void dungeon(void) {
 					   but now we want to keep the full response instead of randomly cutting things off (as long as the response isn't too long). */
 					while (*str && str[strlen(str) - 1] == ' ') str[strlen(str) - 1] = 0;
 					c = str + (strlen(str) - 1);
-					if (*str && *c != '.' && *c != '?'  && *c != '!' && *c != ';') {
+					if (*str && !is_punct(*c)) {
 						if (strlen(str) < maxlen) strcat(str, ".");
 						else *c = '.'; //ouch, we just overwrite a legal character with a dot in this edge case -_- todo: improve
 					}
@@ -11113,9 +11118,9 @@ void dungeon(void) {
 							/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
 							   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
 							c = str + strlen(str) - 1;
-							while (c > str && ((*c != '.' && *c != '?'  && *c != '!' && *c != ';') || within_parentheses)) {
+							while (c > str && (!is_punct_end(*c) || within_parentheses)) {
 								if (open_parenthesis) {
-									if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE;
+									if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE; //basic smiley detection @ '-'
 									if (*c == '(') within_parentheses = FALSE;
 								}
 								c--;
@@ -11151,7 +11156,7 @@ void dungeon(void) {
 
 							/* Found any valid way to somehow truncate the line? =_= (++++) */
 							if (c) {
-								if (*c != '?' && *c != '!') *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
+								if (!is_punct_hard(*c)) *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
 								*(c + 1) = 0;
 							}
 
@@ -11172,7 +11177,6 @@ void dungeon(void) {
 #else
 					exec_lua(0, format("eight_ball(\"%s\")", str));
 #endif
-				}
 			}
 			fclose(fp);
 
@@ -11182,6 +11186,7 @@ void dungeon(void) {
 			rename(buf, format("%s.bak", buf));
 		}
 	}
+
 
 #ifdef DUNGEON_VISIT_BONUS
 	/* Keep track of frequented dungeons, every minute */
