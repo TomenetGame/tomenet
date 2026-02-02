@@ -16141,11 +16141,14 @@ bool master_build(int Ind, char * parms) {
 
 	if (set_new_feat) {
 		/* Never destroy real house doors! Work on this later */
-		if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR)) && !is_admin(p_ptr)) return(FALSE);
+		if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
+			if (!is_admin(p_ptr)) return(FALSE);
+			cs_erase(c_ptr, cs_ptr);
+		}
 
 		if (new_feat == FEAT_TREE || new_feat == FEAT_BUSH) new_feat = magik(80) ? FEAT_TREE : FEAT_BUSH;
 		/* This part to be rewritten for stacked CS */
-		cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
+		cave_force_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
 		// cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
 
 		/* These feats cannot be used in build-mode (aka feat painting mode): */
