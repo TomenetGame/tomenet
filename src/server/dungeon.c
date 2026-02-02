@@ -11058,6 +11058,10 @@ void dungeon(void) {
 			/* Semi-paranoia: String not empty? (So prompting '8ball, tell us...nothing!' won't work though :-p) */
 			if (!*str) goto ai_response_emptied;
 
+			/* Translate to or add a '_' before every ASCII > 127 character, as these won't be displayed correctly.
+			   However, some translations work well, for example a superscript 8 will become a normal 8. */
+			// ---todo
+
 			/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
 			c = str - 1;
 			while(*(++c)) if (*c == '"') *c = '\'';
