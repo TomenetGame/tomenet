@@ -3156,7 +3156,7 @@ void do_cmd_open(int Ind, int dir) {
 				if (access_door(Ind, cs_ptr->sc.ptr, TRUE) || is_admin(p_ptr)) {
 #if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
-					cave_force_feat_live(wpos, y, x, FEAT_OPEN);
+					cave_force_feat_live(wpos, y, x, FEAT_HOME_OPEN);
  #ifdef USE_SOUND_2010
 					sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
  #endif

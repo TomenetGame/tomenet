@@ -5750,7 +5750,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		/* Create a closed door -- really correct like this? oO */
 		if (!quiet) {
-			cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
+			cave_set_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 			/* Observe */
 			if (*w_ptr & CAVE_MARK) obvious = TRUE;
 		} else c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
