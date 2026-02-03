@@ -8471,8 +8471,13 @@ static void do_meta_pings(void) {
 			    &si[i],	// Pointer to STARTUPINFO structure
 			    &pi[i]);	// Pointer to PROCESS_INFORMATION structure
   #endif
+ #elif defined(OSX)
+			/* Note that OSX doen't have '-w' option, but that doesn't really matter */
+			r = system(format("ping -c 1 -W 1 %s > %s &", meta_pings_server_name[i], path));
+			(void)r; //slay compiler warning;
  #else /* assume POSIX */
-			r = system(format("ping -c 1 -w 1 %s > %s &", meta_pings_server_name[i], path));
+			//r = system(format("ping -c 1 -w 1 %s > %s &", meta_pings_server_name[i], path));
+			r = system(format("ping -c 1 -W 1 %s > %s &", meta_pings_server_name[i], path));
   #ifdef DEBUG_PING
 printf("SENT  i=%d : <ping -c 1 -w 1 %s > %s &>\n", i, meta_pings_server_name[i], path);
   #endif
