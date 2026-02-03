@@ -824,8 +824,8 @@ static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *
 		if (!in_bounds(ycen,xcen)) {
 #ifdef DEVEL_TOWN_COMPATIBILITY
 			/* the upper left corner */
-			*x1 = randint(MAX_WID - xlen - 3);
-			*y1 = randint(MAX_HGT - ylen - 3);
+			*x1 = randint(MAX_WID - xlen - 2);
+			*y1 = randint(MAX_HGT - ylen - 2);
 #else
 			/* the upper left corner */
 			*x1 = rand_int(MAX_WID - xlen - 4) + 2;

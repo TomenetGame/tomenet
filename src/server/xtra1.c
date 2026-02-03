@@ -9502,8 +9502,8 @@ static void process_global_event(int ge_id) {
 
 					/* place staircase on an empty accessible grid */
 					do {
-						y = randint(MAX_HGT - 3);
-						x = randint(MAX_WID - 3);
+						y = randint(MAX_HGT - 2);
+						x = randint(MAX_WID - 2);
 					} while (!cave_floor_bold(zcave, y, x)
 					    && (++tries < 1000));
 					zcave[y][x].feat = FEAT_MORE;

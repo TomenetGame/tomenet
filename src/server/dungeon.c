@@ -9718,8 +9718,8 @@ void process_player_change_wpos(int Ind) {
 			tries = 1000;
 			do {
 				if (!(--tries)) break;
-				starty = randint((l_ptr ? l_ptr->hgt : MAX_HGT) - 3);
-				startx = randint((l_ptr ? l_ptr->wid : MAX_WID) - 3);
+				starty = randint((l_ptr ? l_ptr->hgt : MAX_HGT) - 2);
+				startx = randint((l_ptr ? l_ptr->wid : MAX_WID) - 2);
 			} while (zcave[starty][startx].feat == FEAT_SICKBAY_AREA); /* don't recall him into sickbay areas */
 			if (!tries) { /* just this one time */
 				starty = p_ptr->py;
@@ -9747,8 +9747,8 @@ void process_player_change_wpos(int Ind) {
 		/* make sure we aren't in an "icky" location */
 		emergency_x = 0; emergency_y = 0; tries = 0;
 		do {
-			starty = randint((l_ptr ? l_ptr->hgt : MAX_HGT) - 3);
-			startx = randint((l_ptr ? l_ptr->wid : MAX_WID) - 3);
+			starty = randint((l_ptr ? l_ptr->hgt : MAX_HGT) - 2);
+			startx = randint((l_ptr ? l_ptr->wid : MAX_WID) - 2);
 			if (cave_floor_bold(zcave, starty, startx)) {
 				emergency_x = startx;
 				emergency_y = starty;
@@ -9839,8 +9839,8 @@ void process_player_change_wpos(int Ind) {
 		/* make sure we aren't in an "icky" location */
 		emergency_x = 0; emergency_y = 0; tries = 0;
 		do {
-			starty = randint(l_ptr->hgt - 3);
-			startx = randint(l_ptr->wid - 3);
+			starty = randint(l_ptr->hgt - 2);
+			startx = randint(l_ptr->wid - 2);
 			if (cave_floor_bold(zcave, starty, startx)
 			    && !(zcave[starty][startx].info & CAVE_STCK)) {
 				emergency_x = startx;
