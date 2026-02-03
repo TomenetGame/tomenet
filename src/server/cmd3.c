@@ -5535,7 +5535,7 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool 
    For !X0: Return TRUE only if there is an existing stack that has any space left (even if only for partial merging).
    For !X1: Return TRUE too if there is no existing stack that has space left, but there is an object_similar() item in the bag at least.
    (...with 'X' being one of A,S,O) */
-bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bought) {
+bool subinven_can_accept(int Ind, object_type *i_ptr, int sslot, bool store_bought) {
 	player_type *p_ptr = Players[Ind];
 	object_type *s_ptr = &p_ptr->inventory[sslot], *o_ptr;
 	int i, inum = i_ptr->number, xnum, Gnum, maxG;

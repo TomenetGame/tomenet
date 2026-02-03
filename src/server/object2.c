@@ -3994,7 +3994,7 @@ bool object_similar_tval(int Ind, object_type *o_ptr, object_type *j_ptr, s16b t
  * +0x80 - hack for subinventory stuff (work in progress) some items can be stacked in stores but not in inventory.
  * +0x100- ignore stack sizes, so a 99 stack + another 99 stack can still be 'similar' even though they couldn't really stack.
  *         This mustn't be used without +0x20 at the same time!
- * +0x200- store_bought marker, for passing it through to subinven_can_stack() in inven_carry_okay().
+ * +0x200- store_bought marker, for passing it through to subinven_can_accept() in inven_carry_okay().
  *
  * Returns 0 if not similar, -1 if whole stack can be merged (similar, normal case), or...
  * a number how many items are acceptable, specifically for !Gn inscription.
@@ -11808,7 +11808,7 @@ int inven_carry_okay(int Ind, object_type *o_ptr, s16b tolerance) {
 			for (j = 0; j < j_ptr->bpval; j++) {
 				k_ptr = &p_ptr->subinventory[i][j];
 				if (!k_ptr->tval) break;
-				if (!subinven_can_stack(Ind, o_ptr, i, tolerance & 0x200)) continue;
+				if (!subinven_can_accept(Ind, o_ptr, i, tolerance & 0x200)) continue;
 
 				/* Check if the two items can be combined - here we can also check for !Gn inscription via 0x20 tolerance.
 				   We do not check the actual bag type, as we can assume that if a similar-enough item exists in that bag, we must be compatible with the bag type too. */

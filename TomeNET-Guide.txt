@@ -2600,6 +2600,9 @@ Bags (subinventory):
                 !S0 : And only if they stack with existing items.
                 !S1 : And only if they are similar(*) to existing items.
 
+    !I          Prevents auto-stowing unknown or unidentified items into this
+                bag.
+
     (*) 'Similar' just means they can stack with the item, but there might not
         be enough space to get fully absorbed into the existing stack.
         So only part of the items may stack and the rest or even all of it has
@@ -6565,6 +6568,8 @@ There are also inscriptions that can be put onto these bags (don't mix them):
   !S  Only auto-stow items into this bag when buying from a store.
   !S0 ..and only if this item can stack with already existing items in the bag.
   !S1 ..and only if they are at least similar(*) to existing items.
+
+  !I  Prevents auto-stowing unknown or unidentified items into this bag.
 
   (*) 'Similar' just means they can stack with the item, but there might not
       be enough space to get fully absorbed into the existing stack.

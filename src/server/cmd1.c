@@ -1638,7 +1638,7 @@ bool auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
 		if (!item_matches_subinven(Ind, get_subinven_group(s_ptr->sval), o_ptr)) continue;
 
 		/* Player disabled auto-stow via bag inscription? */
-		if (!subinven_can_stack(Ind, o_ptr, i, store_bought)) {
+		if (!subinven_can_accept(Ind, o_ptr, i, store_bought)) {
  #ifdef SUBINVEN_LIMIT_GROUP
 			break;
  #else
@@ -1680,8 +1680,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	   exception for true-art trapkits is possible, but would need to add subinvens to art-location and -erasure code first. */
 	if (true_artifact_p(o_ptr)) return(FALSE);
 
-	/* Don't auto-stow unidentified items */
-	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
+	/* Wrapping isn't eligible for unid'ed rods is handled further down via subinven_can_accept(). */
 
 	/* Don't auto-stow if player cannot access stowed items due to outdated client */
 	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
@@ -1703,11 +1702,22 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		s_ptr = &p_ptr->inventory[i];
+
 		/* Subinvens are at the top of the inventory */
 		if (s_ptr->tval != TV_SUBINVEN) break;
 
 		/* Must fit the object type */
 		if (s_ptr->sval != sub_sval) continue;
+
+		/* Player doesn't want to auto-stow unidentified items?
+		   (Note that unidentified rods can never be auto-stowed anyway, as they might be directional.) */
+		if ((!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr))
+		    && check_guard_inscription(s_ptr->note, 'I'))
+ #ifdef SUBINVEN_LIMIT_GROUP
+			return(FALSE);
+ #else
+			continue;
+ #endif
 
 		/* Don't auto-stow if player cannot access stowed items due to outdated client */
 		if (s_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) continue;
@@ -1717,7 +1727,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
  #endif
 
 		/* Player disabled auto-stow via bag inscription? */
-		if (!subinven_can_stack(Ind, o_ptr, i, store_bought)) {
+		if (!subinven_can_accept(Ind, o_ptr, i, store_bought)) {
  #ifdef SUBINVEN_LIMIT_GROUP
 			break;
  #else
@@ -1729,7 +1739,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 		/* Eligible subinventory found, try to move as much as possible */
 		slot = subinven_stow_aux(Ind, o_ptr, i, quiet, pick_all);
-		if (slot) { /* Paranoia. Will always be TRUE as we already checked subinven_can_stack() just above. */
+		if (slot) { /* Paranoia. Will always be TRUE as we already checked subinven_can_accept() just above. */
 			stowed_some = TRUE;
 			globalslot = (i + 1) * SUBINVEN_INVEN_MUL + ABS(slot) - 1;
 			Send_item_newest(Ind, globalslot);

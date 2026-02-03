@@ -781,7 +781,7 @@ extern void power_inscribe(object_type *o_ptr, bool redux, char *powins);
 extern bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name, cptr inscription);
 #ifdef ENABLE_SUBINVEN
 extern s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool pick_all);
-extern bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bought);
+extern bool subinven_can_accept(int Ind, object_type *i_ptr, int sslot, bool store_bought);
 extern bool item_matches_subinven(int Ind, int subinven_group_type, object_type *o_ptr);
 extern void do_cmd_subinven_move(int Ind, int islot, int amt_spec);
 extern s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet);
