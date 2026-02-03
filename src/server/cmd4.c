@@ -4173,9 +4173,9 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		    p_ptr->r_killed[RI_DARKLING] != 0)
 			msg_print(Ind, "\377rYour presence in the realm is forfeit.");
 		else if (p_ptr->r_killed[RI_CANDLEBEARER] != 0)
-			msg_print(Ind, "Your are treading on the path to corruption.");
+			msg_print(Ind, "You are treading on the path to corruption.");
 		else if (p_ptr->r_killed[RI_DARKLING] != 0)
-			msg_print(Ind, "Your are treading on the path to enlightenment.");
+			msg_print(Ind, "You are treading on the path to enlightenment.");
 		else
 			msg_print(Ind, "Your destiny in the realm is still undecided.");
 	}
