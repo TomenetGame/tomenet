@@ -7060,6 +7060,9 @@ void display_inven(int Ind) {
 #ifdef SUBINVEN_LIMIT_GROUP
 		if (o_ptr->tval == TV_SUBINVEN && subinven_group_player(Ind, get_subinven_group(o_ptr->sval), i)) attr = TERM_L_DARK;
 #endif
+#ifdef USE_SUBINVEN
+		if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval == SV_SI_MDEVP_WRAPPING && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) attr = TERM_L_DARK;
+#endif
 
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
@@ -7275,6 +7278,11 @@ void display_invenequip(int Ind) {
 
 #ifdef SUBINVEN_LIMIT_GROUP
 		if (o_ptr->tval == TV_SUBINVEN && subinven_group_player(Ind, get_subinven_group(o_ptr->sval), i)) attr = TERM_L_DARK;
+#endif
+#ifdef USE_SUBINVEN
+		if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval == SV_SI_MDEVP_WRAPPING && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) {
+			attr = TERM_L_DARK;
+		}
 #endif
 
 		/* Hack -- fake monochrome */

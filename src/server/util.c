@@ -10881,14 +10881,38 @@ void verify_expfact(int Ind, int p) {
 bool verify_inven_item(int Ind, int item) {
 #ifdef ENABLE_SUBINVEN
 	if (item >= SUBINVEN_INVEN_MUL) {
+		player_type *p_ptr = Players[Ind];
+		object_type *o_ptr = &p_ptr->inventory[item / SUBINVEN_INVEN_MUL - 1];
+
+		/* Paranoia - location indicates we must be within a container item */
+		if (o_ptr->tval != TV_SUBINVEN) return(FALSE);
+
 		/* Verify container location, must be inside inventory */
 		if (item / SUBINVEN_INVEN_MUL - 1 < 0) return(FALSE);
 		if (item / SUBINVEN_INVEN_MUL - 1 >= INVEN_PACK) return(FALSE);
-		if (Players[Ind]->inventory[item / SUBINVEN_INVEN_MUL - 1].tval != TV_SUBINVEN) return(FALSE);
+		if (o_ptr->tval != TV_SUBINVEN) return(FALSE);
 
 		/* Verify item location inside container */
 		if (item % SUBINVEN_INVEN_MUL < 0) return(FALSE); //is this even... compiler specs please
-		if ((item % SUBINVEN_INVEN_MUL) >= Players[Ind]->inventory[item / SUBINVEN_INVEN_MUL - 1].bpval) return(FALSE);
+		if ((item % SUBINVEN_INVEN_MUL) >= o_ptr->bpval) return(FALSE);
+
+		/* Not allowed to operate on any items inside a disabled (because duplicate) subinventory.
+		   (Only way for the player to clear the situation is to drop the (now-)ineligible bag to empty it.)
+		   This can happen eg if 'Trapping' skill was reset, making an anti-static wrapping ineligible, which had items in it. */
+ #ifdef SUBINVEN_LIMIT_GROUP
+		/* Paranoia - cannot use items inside a duplicate bag type (if we're not in the first bag of this type) */
+		if (subinven_group_player(Ind, get_subinven_group(o_ptr->sval), item / SUBINVEN_INVEN_MUL - 1)) {
+			msg_print(Ind, "You cannot handle items inside a duplicate bag type. Drop the bag to empty it.");
+			Send_beep(Ind);
+			return(FALSE);
+		}
+		/* Not paranoia (due to Lose Memories skill reset -> Trapping skill at least) - cannot use items inside (now-)ineligible container */
+		if (o_ptr->sval == SV_SI_MDEVP_WRAPPING && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) {
+			msg_print(Ind, "You are not skillful enough to handle this bag type. Drop the bag to empty it.");
+			Send_beep(Ind);
+			return(FALSE);
+		}
+ #endif
 
 		return(TRUE);
 	}

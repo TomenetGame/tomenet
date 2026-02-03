@@ -777,6 +777,7 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 					msg_print(Ind, "\374\377GYou gained expertise in magic-device handling to use antistatic wrappings. To save bag space, buy one at the magic store.");
 				else
 					msg_print(Ind, "\374\377GYou gained expertise in magic-device handling to use antistatic wrappings.");
+				p_ptr->window |= PW_ALLITEMS;
 			}
 #endif
 		}
@@ -789,6 +790,7 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 				msg_print(Ind, "\374\377GYou gained expertise in magic-device handling to use antistatic wrappings. To save bag space, buy one at the magic store.");
 			else
 				msg_print(Ind, "\374\377GYou gained expertise in magic-device handling to use antistatic wrappings.");
+			p_ptr->window |= PW_ALLITEMS;
 		}
 #else
 		if (old_value < 20 && new_value >= 20 && p_ptr->newbie_hints) //no p_ptr->warning_.. needed for this one really
@@ -1180,6 +1182,9 @@ void respec_skill(int Ind, int i, bool update_skill, bool polymorph) {
 
 	/* Special: Thunderstorm spell knowledge stipulates /tss command usage */
 	if (exec_lua(Ind, format("return get_level(%d, THUNDERSTORM, 50, -50)", Ind)) < 1) p_ptr->ts_sleeping = FALSE;
+
+	/* For Anti-Static Wrapping eligibility (SKILL_DEVICE, SKILL_TRAPPING): */
+	p_ptr->window |= PW_ALLITEMS;
 }
 
 #ifdef ENABLE_SUBCLASS
@@ -1232,6 +1237,9 @@ void subclass_skills(int Ind, int class) {
 
 	/* Update the client */
 	for (i = 0; i < MAX_SKILLS; i++) Send_skill_info(Ind, i, FALSE);
+
+	/* For Anti-Static Wrapping eligibility (SKILL_DEVICE, SKILL_TRAPPING): */
+	p_ptr->window |= PW_ALLITEMS;
 }
 #endif
 
@@ -1296,6 +1304,9 @@ void respec_skills(int Ind, bool update_skills) {
 
 	/* Special: Thunderstorm spell knowledge stipulates /tss command usage */
 	if (exec_lua(Ind, format("return get_level(%d, THUNDERSTORM, 50, -50)", Ind)) < 1) p_ptr->ts_sleeping = FALSE;
+
+	/* For Anti-Static Wrapping eligibility (SKILL_DEVICE, SKILL_TRAPPING): */
+	p_ptr->window |= PW_ALLITEMS;
 }
 
 /* return amount of points that were invested into a skill */
