@@ -216,8 +216,7 @@ void do_cmd_go_up(int Ind) {
 		int dir = 5, tries = 10;
 
 		/* Prevent walking nowhere */
-		while (dir == 5 && --tries)
-			dir = rand_int(9) + 1;
+		while (dir == 5 && --tries) dir = randint(9);
 
 		do_cmd_walk(Ind, dir, FALSE);
 		return;
@@ -1049,8 +1048,7 @@ void do_cmd_go_down(int Ind) {
 		int dir = 5, tries = 10;
 
 		/* Prevent walking nowhere */
-		while (dir == 5 && --tries)
-			dir = rand_int(9) + 1;
+		while (dir == 5 && --tries) dir = randint(9);
 
 		do_cmd_walk(Ind, dir, FALSE);
 		return;
@@ -6219,8 +6217,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			dir = 5;
 
 			/* Prevent walking nowhere */
-			while (dir == 5 && --tries)
-				dir = rand_int(9) + 1;
+			while (dir == 5 && --tries) dir = randint(9);
 		}
 
 		if (p_ptr->steamblast && dir != 5) {

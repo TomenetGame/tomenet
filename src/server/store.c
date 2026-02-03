@@ -736,7 +736,7 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 static int mass_roll(int num, int max) {
 	int i, t = 0;
 
-	max++;
+	max++; /* ie randint0(), for efficiency */
 	for (i = 0; i < num; i++) t += rand_int(max);
 	return(t);
 }
@@ -2008,10 +2008,10 @@ static void store_delete(store_type *st_ptr) {
 	num = o_ptr->number;
 
 	/* Hack -- sometimes, only destroy half the items */
-	if (rand_int(100) < 50) num = (num + 1) / 2;
+	if (magik(50)) num = (num + 1) / 2;
 
 	/* Hack -- sometimes, only destroy a single item */
-	if (rand_int(100) < 50) num = 1;
+	if (magik(50)) num = 1;
 
 	/* Hack -- preserve artifacts */
 	if (true_artifact_p(o_ptr)) {

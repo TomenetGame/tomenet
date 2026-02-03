@@ -542,8 +542,8 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 		if (q_loc->terrain_patch && !wpos->wz) {
 			tries = 500;
 			while (--tries) {
-				x2 = wpos->wx - QI_TERRAIN_PATCH_RADIUS + rand_int(QI_TERRAIN_PATCH_RADIUS * 2 + 1);
-				y2 = wpos->wy - QI_TERRAIN_PATCH_RADIUS + rand_int(QI_TERRAIN_PATCH_RADIUS * 2 + 1);
+				x2 = wpos->wx - QI_TERRAIN_PATCH_RADIUS + randint0(QI_TERRAIN_PATCH_RADIUS * 2);
+				y2 = wpos->wy - QI_TERRAIN_PATCH_RADIUS + randint0(QI_TERRAIN_PATCH_RADIUS * 2);
 				if (distance(y2, x2, wpos->wy, wpos->wx) <= QI_TERRAIN_PATCH_RADIUS &&
 				    wild_info[y2][x2].type == wild_info[wpos->wy][wpos->wx].type) break;
 
@@ -712,7 +712,7 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 #ifdef WPOS_IRONDEEPDIVE_X
 				wpos->wx = WPOS_IRONDEEPDIVE_X;
 				wpos->wy = WPOS_IRONDEEPDIVE_Y;
-				wpos->wz = WPOS_IRONDEEPDIVE_Z * (rand_int(q_loc->dlevmax - q_loc->dlevmin + 1) + q_loc->dlevmin);
+				wpos->wz = WPOS_IRONDEEPDIVE_Z * (randint0(q_loc->dlevmax - q_loc->dlevmin) + q_loc->dlevmin);
 #else
 				wpos->wx = 0;
 				wpos->wy = 0;
@@ -737,14 +737,14 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 							if (!(min > q_loc->dlevmax || max < q_loc->dlevmin)) {
 								if (min <= q_loc->dlevmin) {
 									if (max >= q_loc->dlevmax)
-										i = q_loc->dlevmin + rand_int(q_loc->dlevmax - q_loc->dlevmin + 1) - min + 1;
+										i = q_loc->dlevmin + randint0(q_loc->dlevmax - q_loc->dlevmin) - min + 1;
 									else
-										i = q_loc->dlevmin + rand_int(max - q_loc->dlevmin + 1) - min + 1;
+										i = q_loc->dlevmin + randint0(max - q_loc->dlevmin) - min + 1;
 								} else {
 									if (max >= q_loc->dlevmax)
-										i = rand_int(q_loc->dlevmax - min + 1) + 1;
+										i = randint0(q_loc->dlevmax - min) + 1;
 									else
-										i = rand_int(max - min + 1) + 1;
+										i = randint0(max - min) + 1;
 								}
 
 								wpos->wz = i;
@@ -761,14 +761,14 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 							if (!(min > q_loc->dlevmax || max < q_loc->dlevmin)) {
 								if (min <= q_loc->dlevmin) {
 									if (max >= q_loc->dlevmax)
-										i = q_loc->dlevmin + rand_int(q_loc->dlevmax - q_loc->dlevmin + 1) - min + 1;
+										i = q_loc->dlevmin + randint0(q_loc->dlevmax - q_loc->dlevmin) - min + 1;
 									else
-										i = q_loc->dlevmin + rand_int(max - q_loc->dlevmin + 1) - min + 1;
+										i = q_loc->dlevmin + randint0(max - q_loc->dlevmin) - min + 1;
 								} else {
 									if (max >= q_loc->dlevmax)
-										i = rand_int(q_loc->dlevmax - min + 1) + 1;
+										i = randint0(q_loc->dlevmax - min) + 1;
 									else
-										i = rand_int(max - min + 1) + 1;
+										i = randint0(max - min) + 1;
 								}
 
 								wpos->wz = -i;
@@ -806,8 +806,8 @@ static bool quest_special_spawn_location(struct worldpos *wpos, s16b *x_result, 
 		if (q_loc->radius) {
 			tries = 100;
 			while (--tries) {
-				x2 = q_loc->start_x - q_loc->radius + rand_int(q_loc->radius * 2 + 1);
-				y2 = q_loc->start_y - q_loc->radius + rand_int(q_loc->radius * 2 + 1);
+				x2 = q_loc->start_x - q_loc->radius + randint0(q_loc->radius * 2);
+				y2 = q_loc->start_y - q_loc->radius + randint0(q_loc->radius * 2);
 				if (!in_bounds(y2, x2)) continue;
 				if (!cave_naked_bold(zcave, y2, x2)) continue;
 				if (distance(y2, x2, y, x) <= q_loc->radius) break;
@@ -2541,8 +2541,8 @@ static void quest_add_dungeon(int q_idx, int stage) {
 
 	/* place staircase */
 	do {
-		q_stage->dun_y = rand_int((MAX_HGT) - 4) + 2;
-		q_stage->dun_x = rand_int((MAX_WID) - 4) + 2;
+		q_stage->dun_y = rand_int(MAX_HGT - 4) + 2;
+		q_stage->dun_x = rand_int(MAX_WID - 4) + 2;
 	} while (!cave_floor_bold(zcave, q_stage->dun_y, q_stage->dun_x)
 	    && (++tries < 1000));
 	//zcave[q_stage->dun_y][q_stage->dun_x].feat = q_stage->dun_tower ? FEAT_LESS : FEAT_MORE;

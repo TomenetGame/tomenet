@@ -9502,8 +9502,8 @@ static void process_global_event(int ge_id) {
 
 					/* place staircase on an empty accessible grid */
 					do {
-						y = rand_int((MAX_HGT) - 3) + 1;
-						x = rand_int((MAX_WID) - 3) + 1;
+						y = randint(MAX_HGT - 3);
+						x = randint(MAX_WID - 3);
 					} while (!cave_floor_bold(zcave, y, x)
 					    && (++tries < 1000));
 					zcave[y][x].feat = FEAT_MORE;
@@ -10156,8 +10156,8 @@ static void process_global_event(int ge_id) {
 			for (i = 0; i < 6; i++) {
 				n = 1000;
 				while (--n) {
-					x = rand_int(MAX_WID - 1) + 1;
-					y = rand_int(MAX_HGT - 1) + 1;
+					x = randint(MAX_WID - 1);
+					y = randint(MAX_HGT - 1);
 					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
 					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
 						break;
@@ -10176,8 +10176,8 @@ static void process_global_event(int ge_id) {
 				n = 10000;
 				while (--n) {
 #if 0 /* place them anywhere in a chamber */
-					x = rand_int(MAX_WID - 1) + 1;
-					y = rand_int(MAX_HGT - 1) + 1;
+					x = randint(MAX_WID - 1);
+					y = randint(MAX_HGT - 1);
 #else /* place them in the center of a chamber */
 					x = rand_int(MAX_WID / 4) * 4 + 2;
 					y = rand_int(MAX_HGT / 4) * 4 + 2;
@@ -10200,8 +10200,8 @@ static void process_global_event(int ge_id) {
 			/* place Horned Reaper :D */
 			n = 10000;
 			while (--n) {
-				x = rand_int(MAX_WID - 1) + 1;
-				y = rand_int(MAX_HGT - 1) + 1;
+				x = randint(MAX_WID - 1);
+				y = randint(MAX_HGT - 1);
 				if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
 				    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
 					break;
@@ -10318,8 +10318,8 @@ static void process_global_event(int ge_id) {
 			for (i = 0; i < 50 + n * 5; i++) {
 				j = 100;
 				while (--j) {
-					x = rand_int(MAX_WID - 1) + 1;
-					y = rand_int(MAX_HGT - 1) + 1;
+					x = randint(MAX_WID - 1);
+					y = randint(MAX_HGT - 1);
 					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
 					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR) &&
 					    zcave[y][x].feat != FEAT_BETWEEN &&

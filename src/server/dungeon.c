@@ -6776,7 +6776,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Drain Hitpoints */
 	if (p_ptr->drain_life) {
-		int drain = (p_ptr->drain_life) * (rand_int(p_ptr->mhp / 100) + 1);
+		int drain = p_ptr->drain_life * randint(p_ptr->mhp / 100);
 
 		p_ptr->no_alert = TRUE;
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
@@ -9718,8 +9718,8 @@ void process_player_change_wpos(int Ind) {
 			tries = 1000;
 			do {
 				if (!(--tries)) break;
-				starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT) - 3) + 1;
-				startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID) - 3) + 1;
+				starty = randint((l_ptr ? l_ptr->hgt : MAX_HGT) - 3);
+				startx = randint((l_ptr ? l_ptr->wid : MAX_WID) - 3);
 			} while (zcave[starty][startx].feat == FEAT_SICKBAY_AREA); /* don't recall him into sickbay areas */
 			if (!tries) { /* just this one time */
 				starty = p_ptr->py;
@@ -9747,8 +9747,8 @@ void process_player_change_wpos(int Ind) {
 		/* make sure we aren't in an "icky" location */
 		emergency_x = 0; emergency_y = 0; tries = 0;
 		do {
-			starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT) - 3) + 1;
-			startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID) - 3) + 1;
+			starty = randint((l_ptr ? l_ptr->hgt : MAX_HGT) - 3);
+			startx = randint((l_ptr ? l_ptr->wid : MAX_WID) - 3);
 			if (cave_floor_bold(zcave, starty, startx)) {
 				emergency_x = startx;
 				emergency_y = starty;
@@ -9772,8 +9772,8 @@ void process_player_change_wpos(int Ind) {
 	case LEVEL_OUTSIDE_CENTER: /* Special admin debugging, not for player transport */
 		tries = 0;
 		do {
-			startx = (l_ptr ? l_ptr->wid : MAX_WID) / 2 + (rand_int(tries * 2 + 1) - tries) / 4;
-			starty = (l_ptr ? l_ptr->hgt : MAX_HGT) / 2 + (rand_int(tries * 2 + 1) - tries) / 4;
+			startx = (l_ptr ? l_ptr->wid : MAX_WID) / 2 + (randint0(tries * 2) - tries) / 4;
+			starty = (l_ptr ? l_ptr->hgt : MAX_HGT) / 2 + (randint0(tries * 2) - tries) / 4;
 		} while (!cave_floor_bold(zcave, starty, startx) && (++tries < 100));
 		if (tries == 100) {
 			startx = 1;
@@ -9839,8 +9839,8 @@ void process_player_change_wpos(int Ind) {
 		/* make sure we aren't in an "icky" location */
 		emergency_x = 0; emergency_y = 0; tries = 0;
 		do {
-			starty = rand_int(l_ptr->hgt - 3) + 1;
-			startx = rand_int(l_ptr->wid - 3) + 1;
+			starty = randint(l_ptr->hgt - 3);
+			startx = randint(l_ptr->wid - 3);
 			if (cave_floor_bold(zcave, starty, startx)
 			    && !(zcave[starty][startx].info & CAVE_STCK)) {
 				emergency_x = startx;
@@ -10764,8 +10764,8 @@ void dungeon(void) {
 				if (!t && available < 2 && !rand_int(6)) { //on average once per 60 minutes
 					t = 200;
 					while (--t) {
-						x = rand_int(MAX_WID - 2) + 1;
-						y = rand_int(MAX_HGT - 2) + 1;
+						x = randint(MAX_WID - 2);
+						y = randint(MAX_HGT - 2);
 						if (drop_near(FALSE, 0, &forge, 0, &wpos, y, x) > 0) break;
 					}
 				}
@@ -12070,8 +12070,8 @@ void process_timers() {
 		wpos.wy = WPOS_DF_Y;
 		wpos.wz = -WPOS_DF_Z * 2;
 		if ((zcave = getcave(&wpos))) {
-			x = rand_int(65 - 20) + 1 + 15;
-			y = rand_int(7 - 1) + 1;
+			x = randint(65 - 20) + 15;
+			y = randint(7 - 1);
 			i = 7 + rand_int(22);
 			cast_falling_star(&wpos, x, y, i);
 		}
@@ -12435,7 +12435,7 @@ static void process_weather_effect_creation() {
 
 			/* Create snowflakes in Bree */
 			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
-			cast_snowflake(&wpos, rand_int(MAX_WID - 2) + 1, 8);
+			cast_snowflake(&wpos, randint(MAX_WID - 2), 8);
 		}
 	/* spring, summer or autumn? it rains: */
 	} else {
@@ -12444,8 +12444,8 @@ static void process_weather_effect_creation() {
 
 			/* Create raindrops in Bree */
 			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
-			cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
-			cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
+			cast_raindrop(&wpos, randint(MAX_WID - 2));
+			cast_raindrop(&wpos, randint(MAX_WID - 2));
 		}
 	}
 }

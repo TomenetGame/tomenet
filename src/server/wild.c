@@ -824,8 +824,8 @@ static void reserve_building_plot(struct worldpos *wpos, int *x1, int *y1, int *
 		if (!in_bounds(ycen,xcen)) {
 #ifdef DEVEL_TOWN_COMPATIBILITY
 			/* the upper left corner */
-			*x1 = rand_int(MAX_WID - xlen - 3) + 1;
-			*y1 = rand_int(MAX_HGT - ylen - 3) + 1;
+			*x1 = randint(MAX_WID - xlen - 3);
+			*y1 = randint(MAX_HGT - ylen - 3);
 #else
 			/* the upper left corner */
 			*x1 = rand_int(MAX_WID - xlen - 4) + 2;
@@ -2041,7 +2041,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 			dist_win_y = side_y / max_win_y;
 
 			/* North & south sides */
-			num_win = rand_int(max_win_x + 1);
+			num_win = randint0(max_win_x);
 			tmp = (max_win_total + rand_int(2)) / 2;
 			if (num_win > tmp) num_win = tmp;
 			max_win_total -= num_win;
@@ -2065,7 +2065,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 			}
 
 			/* East & west sides */
-			num_win = rand_int(max_win_y + 1);
+			num_win = randint0(max_win_y);
 			if (num_win > max_win_total) num_win = max_win_total;
 			windows_left = num_win;
 			for (tmp = 0; tmp < num_win; tmp++) {
@@ -2512,7 +2512,7 @@ static void wild_add_hotspot(struct worldpos *wpos) {
 	magsqr = magnitude * magnitude;
 
 	/* the "roughness" of the hotspot */
-	chopiness = 2 * magsqr / (rand_int(5) + 1);
+	chopiness = 2 * magsqr / randint(5);
 
 	/* for each point in the square enclosing the circle
 	   this algorithm could probably use some optimization

@@ -1251,8 +1251,8 @@ sptr++;
 
 	/* note: if we reach 10000 tries now, we just accept the grid anyway! */
 	do {
-		starty = rand_int(dun->l_ptr->hgt - 2) + 1;
-		startx = rand_int(dun->l_ptr->wid - 2) + 1;
+		starty = randint(dun->l_ptr->hgt - 2);
+		startx = randint(dun->l_ptr->wid - 2);
 	} while (!cave_floor_bold(zcave, starty, startx) && (++tries < 10000));
 
 	c_ptr = &zcave[starty][startx];
@@ -9695,7 +9695,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	/* Do this before placing a dungeon boss, so the boss doesn't accidentally get steamrolled and erased */
 	dun->l_ptr->refuge_x = 0;
 	if (in_irondeepdive(wpos) && !town && !((dun_lev % 20) % IDDC_REFUGE_INTERVAL)) {
-		int x1 = rand_int(dun->l_ptr->wid - 2 - 25) + 1, y1 = rand_int(dun->l_ptr->hgt - 2 - 17) + 1;
+		int x1 = randint(dun->l_ptr->wid - 2 - 25), y1 = randint(dun->l_ptr->hgt - 2 - 17);
 
 		if (x1 < dun->l_ptr->wid - 1 - 25 && y1 < dun->l_ptr->hgt - 1 - 17) {
 			int x2, y2;
@@ -9997,7 +9997,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* Build hidden library if desired (good for challenge dungeons actually) - very frequent store!
 		   Note that even if these checks fail, the hidden library can still be built via build_special_store == 3 aka DF2_MISC_STORES (Halls of Mandos)! */
 		if ((!build_special_store) && (d_ptr->flags3 & DF3_HIDDENLIB) && (dun_lev >= 8)) { // && !store_failed
-			if (!rand_int(dun_lev / 2 + 1))
+			if (!randint0(dun_lev / 2))
 #ifdef IDDC_REFUGE_EXTRA_STORES /* Disable the random Hidden Library here in turn */
  #ifndef IDDC_REFUGE_EXTRA_STORES_RANDOM
 				if (!in_irondeepdive(wpos))
@@ -10970,8 +10970,8 @@ static void town_gen_hack(struct worldpos *wpos) {
 		if ((d_ptr->flags1 & (DF1_NO_UP | DF1_FORCE_DOWN)) || (d_ptr->flags2 & DF2_IRON)) {
 			n = 1000;
 			while (--n) {
-				x = rand_int(MAX_WID - 2) + 1;
-				y = rand_int(MAX_HGT - 2) + 1;
+				x = randint(MAX_WID - 2);
+				y = randint(MAX_HGT - 2);
 				if (cave_floor_bold(zcave, y, x)) break;
 			}
 			if (!n) {

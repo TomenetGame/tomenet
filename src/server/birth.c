@@ -1951,12 +1951,12 @@ static void player_outfit(int Ind) {
 		case TV_WAND:
 			j = charge_wand_fix[sv] + (charge_wand_rnd[sv] + 1) / 2;
 			if (charge_wand_rnd[sv] <= j / 4) o_ptr->pval = charge_wand_fix[sv] + randint(charge_wand_rnd[sv]);
-			else o_ptr->pval = j + rand_int(j / 4 + 1) - j / 8;
+			else o_ptr->pval = j + randint0(j / 4) - j / 8;
 			break;
 		case TV_STAFF:
 			j = charge_staff_fix[sv] + (charge_staff_rnd[sv] + 1) / 2;
 			if (charge_staff_rnd[sv] <= j / 4) o_ptr->pval = charge_staff_fix[sv] + randint(charge_staff_rnd[sv]);
-			else o_ptr->pval = j + rand_int(j / 4 + 1) - j / 8;
+			else o_ptr->pval = j + randint0(j / 4) - j / 8;
 			break;
 		}
 

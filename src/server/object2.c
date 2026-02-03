@@ -8520,7 +8520,7 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 		forge.number2 = forge.number;
 		forge.number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
 		forge.tval = TV_SPECIAL;
-		forge.sval = SV_GIFT_WRAPPING_START + rand_int(SV_GIFT_WRAPPING_END - SV_GIFT_WRAPPING_START + 1);
+		forge.sval = SV_GIFT_WRAPPING_START + randint0(SV_GIFT_WRAPPING_END - SV_GIFT_WRAPPING_START);
 		forge.k_idx = lookup_kind(TV_SPECIAL, forge.sval);
 		forge.weight += 1; /* Gift wrapping paper is added */
 	}

@@ -5639,7 +5639,7 @@ void do_weather(bool no_weather) {
 			for (i = 0; i < intensity; i++) {
 				/* NOTE: Basically same code in c-xtra1.c:do_weather(), dungeon.c:cloud_move(), wild.c:pos_in_weather() */
 				/* generate random starting pos */
-				x = rand_int(MAX_WID - 2) + 1;
+				x = randint(MAX_WID - 2);
 				y = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
 
 				/* test pos for validity in regards to cloud */

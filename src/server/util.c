@@ -8181,7 +8181,7 @@ void intshuffle(int *array, int size) {
 	int i, j, tmp;
 
 	for (i = size - 1; i > 0; i--) {
-		j = rand_int(i + 1);
+		j = randint0(i);
 		tmp = array[i];
 		array[i] = array[j];
 		array[j] = tmp;

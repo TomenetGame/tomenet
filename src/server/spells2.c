@@ -266,8 +266,8 @@ void grow_trees(int Ind, int rad) {
 	if (!zcave || !allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
 
 	for (a = 0; a < rad * rad + 11; a++) {
-		i = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
-		j = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
+		i = (randint0(rad * 2) - rad + randint0(rad * 2) - rad) / 2;
+		j = (randint0(rad * 2) - rad + randint0(rad * 2) - rad) / 2;
 
 		if (!in_bounds(p_ptr->py + j, p_ptr->px + i)) continue;
 		if (distance(p_ptr->py, p_ptr->px, p_ptr->py + j, p_ptr->px + i) > rad) continue;
