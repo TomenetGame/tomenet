@@ -2081,7 +2081,7 @@ static void player_outfit(int Ind) {
 			do_player_outfit();
 
 			invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
-			o_ptr->number = rand_range(4, 6);
+			o_ptr->number = 1; //rand_range(4, 6);
 			do_player_outfit();
 		}
 		/* Give the player some torches */
