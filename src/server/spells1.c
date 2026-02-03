@@ -9805,7 +9805,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 	/* Check for death */
 	if ((dam > m_ptr->hp) &&
-	    /* Some mosnters are immune to death */
+	    /* Some monsters are immune to death */
 	    !(r_ptr->flags7 & RF7_NO_DEATH)
 	    && !(m_ptr->status & M_STATUS_FRIENDLY)) {
 		/* Extract method of death */
@@ -10008,7 +10008,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Redraw (later) if needed */
 		update_health(c_ptr->m_idx);
 		if (!no_dam) {
-			/* Some mosnters are immune to death */
+			/* Some monsters are immune to death */
 			if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
 			if (m_ptr->status & M_STATUS_FRIENDLY) dam = 0;
 			/* Wake the monster up */

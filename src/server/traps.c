@@ -5876,7 +5876,7 @@ bool mon_hit_trap(int m_idx) {
 						/* Redraw (later) if needed */
 						update_health(c_ptr->m_idx);
 
-						/* Some mosnters are immune to death */
+						/* Some monsters are immune to death */
 						if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
 						if (m_ptr->status & M_STATUS_FRIENDLY) dam = 0;
 
