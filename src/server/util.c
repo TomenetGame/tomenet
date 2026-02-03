@@ -10322,9 +10322,11 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	p_ptr->melee_timeout_crit_dual = 0;
 }
 
-/* Items that can be shared even between incompatible character modes or if level 0! */
+/* Items that can be shared even between incompatible character modes or if level 0!
+   Contains all items from shareable_starter_item() below and adds some. */
 bool exceptionally_shareable_item(object_type *o_ptr) {
 	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return(FALSE);
+	if (o_ptr->questor) return(FALSE);
 
 	if ((o_ptr->tval == TV_SCROLL && (
 	    o_ptr->sval == SV_SCROLL_WORD_OF_RECALL ||
@@ -10339,9 +10341,10 @@ bool exceptionally_shareable_item(object_type *o_ptr) {
 		return(TRUE);
 	return(FALSE);
 }
-/* Starter items that can be shared despite being level 0! */
+/* Starter items that can be shared despite being level 0! (Smaller subset of the items in exceptionally_shareable_item().) */
 bool shareable_starter_item(object_type *o_ptr) {
 	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return(FALSE);
+	if (o_ptr->questor) return(FALSE);
 
 	if ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||

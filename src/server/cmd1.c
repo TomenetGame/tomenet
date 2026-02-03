@@ -1997,6 +1997,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	cave_type **zcave;
 
 	bool forbidden = FALSE; /* for leaderless guild halls */
+	bool shareable_discount = FALSE;
 
 #ifdef USE_SOUND_2010
 	bool inven_carried = FALSE; /* avoid duplicate sfx */
@@ -2415,6 +2416,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			}
 		}
 #ifdef IDDC_IRON_COOP
+ #if 0 /* hrm... */
+		if (exceptionally_shareable_item(o_ptr)) shareable_discount = TRUE;
+		else
+ #endif
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    //&& (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
 		    && o_ptr->iron_trade != p_ptr->iron_trade) {
@@ -2433,7 +2438,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #ifdef IDDC_RESTRICTED_TRADING
 		if (in_irondeepdive(&p_ptr->wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
  #if 1
-			if (exceptionally_shareable_item(o_ptr)) o_ptr->discount = 100;
+			if (exceptionally_shareable_item(o_ptr)) shareable_discount = TRUE;
 			else
  #endif
 			if (p_ptr->IDDC_logscum) {//todo: DED_IDDC_MANDOS
@@ -2642,6 +2647,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			}
 		}
 #endif
+
+		/* Paranoia: Too early? */
+		if (shareable_discount) o_ptr->discount = 100;
 
 		/* Even if it's not guaranteed yet that we can pick up this item, just clear the newloot flag already anyway, it did enough... */
 		o_ptr->mode &= ~MODE_NEWLOOT_ITEM;
