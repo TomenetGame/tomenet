@@ -5278,7 +5278,7 @@ void do_cmd_store(int Ind) {
 	}
 
 	/* Set the timer */
-	p_ptr->tim_store = STORE_TURNOUT;
+	p_ptr->tim_store = (p_ptr->wpos.wz ? STORE_TURNOUT_DUN : STORE_TURNOUT);
 
 	/* Calculate the number of store maintainances since the last visit */
 	maintain_num = (turn - st_ptr->last_visit) / (10L *
@@ -8322,7 +8322,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	fake_store_visited[fsidx] = Ind;
 
 	/* Set the timer (30000 used for homes aka "don't" kick out) */
-	p_ptr->tim_store = STORE_TURNOUT * 2; /* extra long duration for player stores */
+	p_ptr->tim_store = (p_ptr->wpos.wz ? STORE_TURNOUT_DUN : STORE_TURNOUT) * 2; /* extra long duration for player stores */
 
 	/* Hack: display house colour when pasting items to chat */
 	if (h_ptr->colour >= 100 && !(p_ptr->mode & MODE_EVERLASTING)) p_ptr->tmp_x = 0;

@@ -2027,6 +2027,7 @@
 #define STORE_TURNOVER_DIV	3		/* Normal shop turnover, per day (stock_size / this = randint(amount of items to turnover)) */
 #define STORE_SHUFFLE		20		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNOUT		60		/* Max turns a player may stay in a store if crowded */
+#define STORE_TURNOUT_DUN	240		/* Max turns a player may stay in a store if crowded */
 
 #define STORE_PURSE_BOOST	10	/* Multiplier for max_cost (15) */
 
