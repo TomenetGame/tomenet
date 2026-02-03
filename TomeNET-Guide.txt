@@ -20720,7 +20720,7 @@ create a character!):
     recommended for beginners.
 
     You can create macros by pressing % for macro menu, then z to invoke the
-    wizard, then d for prayers that don't use a target or e for spells that
+    wizard, then d for spells that don't use a target or e for spells that
     use a target.
 
 - Priest
