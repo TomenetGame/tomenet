@@ -4029,14 +4029,11 @@ void check_parryblock(int Ind) {
 
 void toggle_shoot_till_kill(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	if (p_ptr->shoot_till_kill) {
-		msg_print(Ind, "\377wFire-till-kill mode now off.");
-		p_ptr->shooting_till_kill = FALSE;
-	} else {
-		msg_print(Ind, "\377wFire-till-kill mode now on!");
-	}
+
+	if (p_ptr->shoot_till_kill) msg_print(Ind, "\377wFire-till-kill mode now off.");
+	else msg_print(Ind, "\377wFire-till-kill mode now on!");
 	p_ptr->shoot_till_kill = !p_ptr->shoot_till_kill;
-s_printf("SHOOT_TILL_KILL: Player %s toggles %s.\n", p_ptr->name, p_ptr->shoot_till_kill ? "true" : "false");
+	s_printf("SHOOT_TILL_KILL: Player %s toggles %s.\n", p_ptr->name, p_ptr->shoot_till_kill ? "true" : "false");
 	p_ptr->redraw |= PR_STATE;
 	return;
 }
@@ -4058,7 +4055,7 @@ void toggle_dual_mode(int Ind) {
 	} else msg_print(Ind, "\377wDual-wield mode: Dual-hand.");
 
 	p_ptr->dual_mode = !p_ptr->dual_mode;
-s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "true" : "false");
+	s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "true" : "false");
 	p_ptr->redraw |= PR_STATE | PR_PLUSSES;
 	calc_boni(Ind);
 	return;

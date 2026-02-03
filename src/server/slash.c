@@ -4180,16 +4180,38 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/ftkon")) {
-			msg_print(Ind, "\377wFire-till-kill mode now on.");
-			p_ptr->shoot_till_kill = TRUE;
-			s_printf("SHOOT_TILL_KILL: Player %s sets true.\n", p_ptr->name);
-			p_ptr->redraw |= PR_STATE;
+			if (p_ptr->shoot_till_kill) {
+				msg_print(Ind, "\377wFire-till-kill mode already on.");
+				return;
+			}
+			toggle_shoot_till_kill(Ind);
 			return;
 		} else if (prefix(messagelc, "/ftkoff")) {
-			msg_print(Ind, "\377wFire-till-kill mode now off.");
-			p_ptr->shoot_till_kill = p_ptr->shooting_till_kill = FALSE;
-			s_printf("SHOOT_TILL_KILL: Player %s sets false.\n", p_ptr->name);
-			p_ptr->redraw |= PR_STATE;
+			if (!p_ptr->shoot_till_kill) {
+				msg_print(Ind, "\377wFire-till-kill mode already off.");
+				return;
+			}
+			toggle_shoot_till_kill(Ind);
+			return;
+		} else if (prefix(messagelc, "/ftk")) {
+			toggle_shoot_till_kill(Ind);
+			return;
+		} else if (prefix(messagelc, "/dwon")) {
+			if (p_ptr->dual_mode) {
+				msg_print(Ind, "\377wDual-wield mode: Dual-hand already set.");
+				return;
+			}
+			toggle_dual_mode(Ind);
+			return;
+		} else if (prefix(messagelc, "/dwoff")) {
+			if (!p_ptr->dual_mode) {
+				msg_print(Ind, "\377wDual-wield mode: Main-hand already set.");
+				return;
+			}
+			toggle_dual_mode(Ind);
+			return;
+		} else if (prefix(messagelc, "/dw")) {
+			toggle_dual_mode(Ind);
 			return;
 		}
 #ifdef PLAYER_STORES

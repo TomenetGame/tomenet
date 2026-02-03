@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 2. Febuary 2026 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 3. Febuary 2026 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1562,6 +1562,11 @@ They all start with a slash '/' hence they're called slash commands:
 
 /dun        Displays the name of the dungeon you're currently in.
 
+/dw         Toggles, or...
+/dwon       Enables, and respectively..
+/dwoff      Disables dual-wield mode (see (7.2)).
+            Alternatively, you can toggle it in 'm' menu.
+
 /edmt       This toggles the client option 'easy_disarm_montraps' manually.
             (Note that this will not change the option in =9 if you enter that
             menu, the option state will be reset to what it is in there.)
@@ -1671,6 +1676,7 @@ They all start with a slash '/' hence they're called slash commands:
             A minimum monster level can be specified optionally.
             (This is a convenient shortcut for pressing  ~ 2 @ ESC  .)
 
+/ftk        Toggles, or...
 /ftkon      Enables, and respectively..
 /ftkoff     Disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
