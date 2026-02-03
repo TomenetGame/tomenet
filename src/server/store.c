@@ -730,11 +730,13 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 #endif
 
 /*
- * Special "mass production" computation
+ * Special "mass production" computation for store items.
+ * Unlike damroll() this returns <num * (0...max)> eg range 0...num*max.
  */
 static int mass_roll(int num, int max) {
 	int i, t = 0;
 
+	max++;
 	for (i = 0; i < num; i++) t += rand_int(max);
 	return(t);
 }
@@ -744,7 +746,7 @@ static int mass_roll(int num, int max) {
  * Certain "cheap" objects should be created in "piles"
  * Some objects can be sold at a "discount" (in small piles)
  */
-static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
+static void store_mass_produce(object_type *o_ptr, store_type *st_ptr) {
 	int size = 1;
 	int discount = 0;
 
@@ -757,24 +759,24 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 	case TV_FLASK:
 	case TV_LITE:
 	case TV_PARCHMENT:
-		if (cost <= 5L) size += mass_roll(3, 5);
-		if (cost <= 20L) size += mass_roll(3, 5);
+		if (cost <= 5L) size += mass_roll(3, 4);
+		if (cost <= 20L) size += mass_roll(3, 4);
 		break;
 
 	case TV_POTION:
 	case TV_SCROLL:
-		if (cost <= 60L) size += mass_roll(3, 5);
-		if (cost <= 240L) size += mass_roll(1, 5);
+		if (cost <= 60L) size += mass_roll(3, 4);
+		if (cost <= 240L) size += mass_roll(1, 4);
 		if (st_ptr->st_idx == STORE_BTSUPPLY &&
 		    (o_ptr->sval == SV_POTION_STAR_HEALING ||
 		    o_ptr->sval == SV_POTION_RESTORE_MANA /* for mages - mikaelh */
 		    ))
-			size += mass_roll(3, 5);
+			size += mass_roll(3, 4);
 		break;
 
 	case TV_BOOK:
-		if (cost <= 50L) size += mass_roll(2, 3);
-		if (cost <= 500L) size += mass_roll(1, 3);
+		if (cost <= 50L) size += mass_roll(2, 2);
+		if (cost <= 500L) size += mass_roll(1, 2);
 		break;
 
 	case TV_SOFT_ARMOR:
@@ -799,8 +801,8 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 		/* No ego-stacks */
 		if (o_ptr->name2) break;
 
-		if (cost <= 10L) size += mass_roll(3, 5);
-		if (cost <= 100L) size += mass_roll(3, 5);
+		if (cost <= 10L) size += mass_roll(3, 4);
+		if (cost <= 100L) size += mass_roll(3, 4);
 		break;
 	case TV_DRAG_ARMOR:
 		/* Only single items of these */
@@ -817,6 +819,10 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 
 	case TV_JUNK:
 		if (o_ptr->sval == SV_BANDAGE) size += damroll(10, 3);
+		break;
+
+	case TV_SUBINVEN:
+		if (o_ptr->sval == SV_SI_FOOD_BAG) size += mass_roll(2, 1);
 		break;
 	}
 
@@ -2651,7 +2657,7 @@ static void store_create(store_type *st_ptr) {
 		}
 
 		/* Mass produce and/or Apply discount */
-		mass_produce(o_ptr, st_ptr);
+		store_mass_produce(o_ptr, st_ptr);
 
 		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT)
 		    /* Reduce discount */
@@ -2719,7 +2725,7 @@ static void store_create(store_type *st_ptr) {
 
 		if (force_num && !is_ammo(o_ptr->tval)) o_ptr->number = force_num;
 
-		/* If wands, update the # of charges. stack size can be set by force_num or mass_produce (occurance 1 of 2, keep in sync) */
+		/* If wands, update the # of charges. stack size can be set by force_num or store_mass_produce (occurance 1 of 2, keep in sync) */
 		if ((o_ptr->tval == TV_WAND
 #ifdef NEW_MDEV_STACKING
 		    || o_ptr->tval == TV_STAFF
