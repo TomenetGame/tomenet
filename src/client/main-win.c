@@ -6652,9 +6652,9 @@ void store_crecedentials(void) {
 }
 void store_audiopackfolders(void) {
 	WritePrivateProfileString("Base", "SoundpackFolder", cfg_soundpackfolder, ini_file);
-	WritePrivateProfileString("Base", "SoundpackSubset", format("%s", cfg_soundpack_subset), ini_file);
+	WritePrivateProfileString("Base", "SoundpackSubset", format("%d", cfg_soundpack_subset), ini_file);
 	WritePrivateProfileString("Base", "MusicpackFolder", cfg_musicpackfolder, ini_file);
-	WritePrivateProfileString("Base", "MusicpackSubset", format("%s", cfg_musicpack_subset), ini_file);
+	WritePrivateProfileString("Base", "MusicpackSubset", format("%d", cfg_musicpack_subset), ini_file);
 }
 void get_term_main_font_name(char *buf) {
 	if (data[0].font_file) strcpy(buf, data[0].font_file);
