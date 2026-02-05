@@ -11118,10 +11118,17 @@ void dungeon(void) {
 			trim_trailing_spaces(str);
 			if (!*str) goto ai_response_emptied;
 
-			/* Special maintenance/status response given by control scripts are always ok */
-			if (strlen(str) < AI_MAXLEN &&
-			    ((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']')))
+			/* Special one-liner maintenance/status response given by control scripts are always ok */
+			if (strlen(str) < AI_LINE_MAXLEN &&
+			    ((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']'))) {
+#if AI_MULTILINE > 0
+				strcpy(strm[m_max], str);
+				strx = strm[m_max];
+#else
+				strx = str;
+#endif
 				goto ai_response_okay;
+			}
 
 #if AI_MULTILINE > 0
 			/* Dissect -possibly very long- response string into multiple chat messages if required;
