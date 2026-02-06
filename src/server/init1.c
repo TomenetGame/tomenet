@@ -63,30 +63,31 @@ extern u32b fake_text_size;
  */
 static cptr r_info_blow_method[] = {
 	"*",
+
 	"HIT",
-	"TOUCH",
 	"PUNCH",
 	"KICK",
+	"CHARGE",
+
+	"TOUCH",
 	"CLAW",
 	"BITE",
 	"STING",
-	"XXX1",
 	"BUTT",
 	"CRUSH",
 	"ENGULF",
-	"CHARGE",	// "XXX2",
 	"CRAWL",
 	"DROOL",
 	"SPIT",
-	"EXPLODE",	// "XXX3",
+	"EXPLODE",
 	"GAZE",
 	"WAIL",
 	"SPORE",
-	"XXX4",
+
 	"BEG",
 	"INSULT",
 	"MOAN",
-	"SHOW",		// "XXX5",
+	"SHOW",
 	"WHISPER",
 	NULL
 };

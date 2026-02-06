@@ -894,9 +894,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 				act = "stings you";
 				touched = TRUE;
 				break;
-			case RBM_XXX1:
-				act = "XXX1's you";
-				break;
 			case RBM_BUTT:
 				act = "butts you";
 				do_stun = 1;
@@ -911,11 +908,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 				act = "engulfs you";
 				touched = TRUE;
 				break;
-#if 0
-			case RBM_XXX2:
-				act = "XXX2's you";
-				break;
-#endif	// 0
 			case RBM_CHARGE:
 				act = "charges you";
 				touched = TRUE;
@@ -934,11 +926,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 			case RBM_SPIT:
 				act = "spits on you";
 				break;
-#if 0
-			case RBM_XXX3:
-				act = "XXX3's on you";
-				break;
-#endif	// 0
 			case RBM_EXPLODE:
 				act = "explodes";
 				explode = TRUE;
@@ -951,9 +938,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 				break;
 			case RBM_SPORE:
 				act = "releases spores at you";
-				break;
-			case RBM_XXX4:
-				act = "projects XXX4's at you";
 				break;
 			case RBM_BEG:
 				act = "begs you for money.";
@@ -969,11 +953,6 @@ bool make_attack_melee(int Ind, int m_idx) {
 				else
 					act = desc_moan[rand_int(4)];
 				break;
-#if 0
-			case RBM_XXX5:
-				act = "XXX5's you";
-				break;
-#endif	// 0
 			case RBM_SHOW:
 				if (randint(3) == 1)
 					act = "sings 'We are a happy family'.";
@@ -3148,10 +3127,8 @@ bool make_attack_melee(int Ind, int m_idx) {
 			case RBM_CLAW:
 			case RBM_BITE:
 			case RBM_STING:
-			case RBM_XXX1:
 			case RBM_BUTT:
 			case RBM_CRUSH:
-			//case RBM_XXX2:
 			case RBM_CHARGE:
 				/* Visible monsters */
 				if (p_ptr->mon_vis[m_idx]) {

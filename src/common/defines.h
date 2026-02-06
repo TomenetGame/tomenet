@@ -6468,37 +6468,35 @@
  * New monster blow methods
  */
 #define RBM_NONE	0
+/* From here on assuming non-intrinsic elemental brand, if any: Used for poison-essence dropping for Apply Poison. */
 #define RBM_HIT		1
-#define RBM_TOUCH	2
-#define RBM_PUNCH	3
-#define RBM_KICK	4
-#define RBM_CLAW	5
-#define RBM_BITE	6
-#define RBM_STING	7
-#define RBM_XXX1	8
+#define RBM_PUNCH	2
+#define RBM_KICK	3
+#define RBM_CHARGE	4
+/* From here on assuming intrinsic elemental brand, if any: Used for poison-essence dropping for Apply Poison. */
+#define RBM_TOUCH	5
+#define RBM_CLAW	6
+#define RBM_BITE	7
+#define RBM_STING	8
 #define RBM_BUTT	9
 #define RBM_CRUSH	10
 #define RBM_ENGULF	11
-/*#define RBM_XXX2	12 */
-#define RBM_CRAWL	13
-#define RBM_DROOL	14
-#define RBM_SPIT	15
-/*#define RBM_XXX3	16 */
-#define RBM_GAZE	17
-#define RBM_WAIL	18
-#define RBM_SPORE	19
-#define RBM_XXX4	20
-#define RBM_BEG		21
-#define RBM_INSULT	22
-#define RBM_MOAN	23
-/*#define RBM_XXX5	24 */
+#define RBM_CRAWL	12
+#define RBM_DROOL	13
+#define RBM_SPIT	14
+#define RBM_EXPLODE	15
+#define RBM_GAZE	16
+#define RBM_WAIL	17
+#define RBM_SPORE	18
+/* From here on assuming non-intrinsic elemental brand, if any: Used for poison-essence dropping for Apply Poison. */
+#define RBM_BEG		19
+#define RBM_INSULT	20
+#define RBM_MOAN	21
+#define RBM_SHOW	22
+#define RBM_WHISPER	23
 
-#define RBM_ANY		0
-#define RBM_CHARGE	12
-#define RBM_EXPLODE	16
-#define RBM_SHOW	24
-
-#define RBM_WHISPER	25
+/* Assume intrinsic elemental brand, if any: Used for poison-essence dropping for Apply Poison: */
+#define RBM_INTRINSIC_BRAND(RBM) ((RBM) >= 5 && (RBM <= 18))
 
 /*
  * New monster blow effects
