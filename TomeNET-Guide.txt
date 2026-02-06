@@ -2142,7 +2142,7 @@ They all start with a slash '/' hence they're called slash commands:
             /t * !*   inscribes all uninscribed inventory items '!*'
             /t c !*   inscribes uninscribed inventory item in slot c) '!*'
 
-            The /tag command Will not affect equipped items.
+            The /tag command will not affect equipped items.
             Inscriptions can also be undone again with the /ut command.
 
             A specialty is specifying '@@' or '@@@' in the inscription. This
@@ -14112,7 +14112,7 @@ XTRA_MIGHT
         Note that the multiplier may also affect the maximum shooting range.
 
 MANA ('It affects your mana capacity.')
-        For istari and runemasters, this Will increase your total mana points
+        For istari and runemasters, this will increase your total mana points
         by +x0%. Example: Gloves of the magi (+3) increase your mana by 30%.
         For other classes, the increase will be a bit smaller.
 
@@ -19052,7 +19052,7 @@ stated.
                                 You need to be at least level 5 to steal
                                 and at least level 10 to steal anything of
                                 somewhat higher value.
-                                This skill Will have no effect if your armour
+                                This skill will have no effect if your armour
                                 is too heavy so that you get a 'flexibility'
                                 warning, compare (5.5).
 
