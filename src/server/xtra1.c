@@ -2411,6 +2411,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		case RI_DARK_ELVEN_WARRIOR:	case RI_DARK_ELVEN_PRIEST:
 		case RI_DRIDER:			case RI_DARK_ELVEN_LORD:	case RI_DARK_ELVEN_WARLOCK:
 		case RI_NIGHTBLADE:		case RI_DARK_ELVEN_SORCEROR:
+			//side note: all of these dark elves also have HURT_LITE except for Drider
 			p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK;
 			break;
 		case RI_ELVEN_ARCHER: // PET flag -> doesn't exist
