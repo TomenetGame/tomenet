@@ -484,7 +484,7 @@ D:A small strange growth.
 N:21:Large white snake
 G:J:w
 I:100:3d6:4:30:99
-W:1:1:600:2
+W:1:1:100:2
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:BITE:HURT:1d1
@@ -573,7 +573,7 @@ D:It is about three feet long with large teeth.
 N:28:Large brown snake
 G:J:u
 I:100:4d6:4:35:99
-W:1:1:800:3
+W:1:1:115:3
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:BITE:HURT:1d3
@@ -990,7 +990,7 @@ D:It is a large slimy mass of worms.
 N:59:Large yellow snake
 G:J:y
 I:100:4d8:5:38:75
-W:2:1:1000:9
+W:2:1:135:9
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:BITE:HURT:1d4
@@ -1409,7 +1409,7 @@ D:It is a large slimy mass of worms.
 N:90:Large grey snake
 G:J:s
 I:100:6d8:6:41:50
-W:4:1:1300:14
+W:4:1:150:14
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:BITE:HURT:1d5
@@ -1626,7 +1626,7 @@ D:It is a large slimy mass of worms.
 N:106:Copperhead snake
 G:J:o
 I:110:4d6:6:20:1
-W:5:1:200:15
+W:5:1:7:15
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:BITE:POISON:2d4
@@ -1807,7 +1807,7 @@ D:goblin.
 N:119:Rattlesnake
 G:J:W
 I:110:6d7:6:24:1
-W:6:1:200:20
+W:6:1:24:20
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:BITE:POISON:2d5
@@ -2569,7 +2569,7 @@ D:It has been terrorizing the nearby villages.
 N:171:King cobra
 G:J:u
 I:110:8d10:8:30:1
-W:9:2:300:28
+W:9:2:170:28
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:SPIT:BLIND:1d2
@@ -3156,7 +3156,7 @@ D:A strange hybrid of eagle and horse. It looks weird.
 N:210:Black mamba
 G:J:D
 I:120:10d8:10:32:1
-W:12:3:300:40
+W:12:3:36:40
 E:0:0:0:0:1:0
 O:0:0:0:0
 B:BITE:POISON:4d4
@@ -15643,7 +15643,7 @@ D:It's a common fresh-water predatory fish.
 N:880:Electric eel
 G:J:B
 I:110:15d15:15:40:70
-W:20:2:500:145
+W:20:2:420:145
 E:0:1:0:2:1:0
 O:0:0:0:0
 B:TOUCH:ELEC:2d7
