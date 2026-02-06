@@ -13600,7 +13600,7 @@ Disintegration  This is an irresistible attack of raw destruction.
                 Damage (breath only) is monster HP/3, capping at 300.
 
 Annihilation    Deals a percentage of your current hit points as damage points,
-                caping at 400 damage, but after applying the cap is always
+                capping at 400 damage, but after applying the cap is always
                 randomly reduced further down to 6/7...6/12.
 
 
