@@ -1,4 +1,4 @@
-#font-custom-12x18tg.prf # File: font-win.prf
+#font-custom-24x36tg.prf # File: font-win.prf
 
 #######################################################################
 #
@@ -158,32 +158,32 @@ F:55:/15 # Quartz vein + known treasure
 
 
 # closed door, locked door, jammed door, door
-F:25:/127 # Closed door
-F:32:/127 # Locked door (power 0)
-F:33:/127 # Locked door (power 1)
-F:34:/127 # Locked door (power 2)
-F:35:/127 # Locked door (power 3)
-F:36:/127 # Locked door (power 4)
-F:37:/127 # Locked door (power 5)
-F:38:/127 # Locked door (power 6)
-F:39:/127 # Locked door (power 7)
-F:40:/127 # Jammed door (power 0)
-F:41:/127 # Jammed door (power 1)
-F:42:/127 # Jammed door (power 2)
-F:43:/127 # Jammed door (power 3)
-F:44:/127 # Jammed door (power 4)
-F:45:/127 # Jammed door (power 5)
-F:46:/127 # Jammed door (power 6)
-F:47:/127 # Jammed door (power 7)
-F:224:/127 # Sealed door for PvP-Arena
-F:230:/127 # Sealed door
-F:231:/127 # Sickbay exit
+F:25:/128 # Closed door
+F:32:/128 # Locked door (power 0)
+F:33:/128 # Locked door (power 1)
+F:34:/128 # Locked door (power 2)
+F:35:/128 # Locked door (power 3)
+F:36:/128 # Locked door (power 4)
+F:37:/128 # Locked door (power 5)
+F:38:/128 # Locked door (power 6)
+F:39:/128 # Locked door (power 7)
+F:40:/128 # Jammed door (power 0)
+F:41:/128 # Jammed door (power 1)
+F:42:/128 # Jammed door (power 2)
+F:43:/128 # Jammed door (power 3)
+F:44:/128 # Jammed door (power 4)
+F:45:/128 # Jammed door (power 5)
+F:46:/128 # Jammed door (power 6)
+F:47:/128 # Jammed door (power 7)
+F:224:/128 # Sealed door for PvP-Arena
+F:230:/128 # Sealed door
+F:231:/128 # Sickbay exit
 
 # open door, broken door
-F:4:/128 # Open door
-F:5:/128 # Broken door
-F:20:/128 # Open door to a home
-F:225:/128 # Unsealed door
+F:4:/129 # Open door
+F:5:/129 # Broken door
+F:20:/129 # Open door to a home
+F:225:/129 # Unsealed door
 
 # up staircases '<'
 F:6:/60 # Up stairs (perm)
@@ -237,11 +237,15 @@ F:215:/147 # Decorative yellow crystal
 F:216:/147 # Decorative orange crystal
 F:217:/147 # Decorative red crystal
 
-F:196:35/ # Window
+F:274:/16 # Barred window
+F:196:/17 # Window
+F:256:/18 # Open window
 
-F:197:42/ # Small window
+F:275:/19 # Small barred window
+F:197:/20 # Small window
+F:257:/21 # Small open window
 
-F:203:7/ # Town entrance
+F:203:/ # Town entrance
 
 
 
@@ -267,8 +271,8 @@ R:934:/ # Level=52 NAME='Fangorn the Treebeard, Lord of the Ents' Comments=// NO
 R:1033:/160 # Level=52 NAME='The Glass Golem' Comments=GOLEM
 R:1035:/ # Level=45 NAME='Golgarach, the Living Rock' Comments=// NO TILE protected at server
 R:698:/ # Level=45 NAME='The Stormbringer' Comments=// NO TILE protected at server
-R:517:/163 # Level=45 NAME='The Watcher in the Water' Comments=SEA MONSTER but actually it’s a bizzare... Tooths
-R:650:/163 # Level=38 NAME='Giganto, the Gargantuan' Comments=SEA MONSTER but actually it’s a giant..
+R:517:/163 # Level=45 NAME='The Watcher in the Water' Comments=SEA MONSTER but actually it s a bizzare... Tooths
+R:650:/163 # Level=38 NAME='Giganto, the Gargantuan' Comments=SEA MONSTER but actually it s a giant..
 R:669:/163 # Level=42 NAME='Charybdis' Comments=SEA MONSTER
 R:788:/163 # Level=67 NAME='Glaaki' Comments=SEA MONSTER
 R:903:/163 # Level=40 NAME='Jaws' Comments=SEA MONSTER
@@ -435,7 +439,7 @@ R:1063:/162 # Level=70 NAME='Zeus, the Omnipotent' Comments=// GIANT joke
 R:159:/191 # Level=12 NAME='The wounded bear' Comments=BEAR
 R:467:/191 # Level=28 NAME='Beorn, the Shape-Changer' Comments=BEAR
 R:629:/192 # Level=40 NAME='Shadowfax, steed of Gandalf' Comments=HORSE
-R:681:/192 # Level=44 NAME='Chaugnar Faugn, Horror from the Hills' Comments=HORSE actually a horse…
+R:681:/192 # Level=44 NAME='Chaugnar Faugn, Horror from the Hills' Comments=HORSE actually a horse 
 R:859:/192 # Level=75 NAME='The Unicorn of Order' Comments=HORSE
 R:572:/193 # Level=36 NAME='The Greater hell magic mushroom were-quylthulg' Comments=// Q joke
 R:822:/193 # Level=79 NAME='Qlzqqlzuup, the Lord of Flesh' Comments=Q
@@ -448,6 +452,7 @@ R:832:/196 # Level=84 NAME='Godzilla' Comments=// DINOSAUR joke
 R:838:/195 # Level=84 NAME='The Tarrasque' Comments=DINOSAUR
 R:654:/197 # Level=41 NAME='Judge Fire' Comments=// SKELETON joke
 R:830:/197 # Level=84 NAME='Cantoras, the Skeletal Lord' Comments=SKELETON druj like? Separate bodyparts
+R:1155:/198 # Level=34 NAME='Saenathra, Daughter of Shelob' Comments=SPIDER
 R:481:/198 # Level=55 NAME='Shelob, Spider of Darkness' Comments=SPIDER
 R:797:/198 # Level=70 NAME='Rhan-Tegoth' Comments=SPIDER
 R:808:/198 # Level=75 NAME='Ungoliant, the Unlight' Comments=SPIDER
@@ -493,7 +498,7 @@ R:950:/205 # Level=52 NAME='Ji Indur Dawndeath' Comments=WRAITH NAZGUL
 R:951:/205 # Level=56 NAME='Dwar, Dog Lord of Waw' Comments=WRAITH NAZGUL
 R:952:/205 # Level=64 NAME='Hoarmurath of Dir' Comments=WRAITH NAZGUL
 R:953:/205 # Level=72 NAME='Khamul, the Black Easterling' Comments=WRAITH NAZGUL
-R:954:/205 # Level=80 NAME='The Witch-King of Angmar' Comments=WRAITH NAZGUL
+R:954:/141 # Level=80 NAME='The Witch-King of Angmar' Comments=WRAITH NAZGUL
 R:971:/204 # Level=35 NAME='The Wight-King of the Barrow-downs' Comments=WRAITH
 R:1067:/160 # Level=128 NAME='The Hellraiser' Comments=GOLEM
 R:180:/176 # Level=11 NAME='Orfax, Son of Boldor' Comments=SMALL HUMANOID
@@ -504,7 +509,7 @@ R:112:/207 # Level=6 NAME='The disembodied hand that strangled people' Comments=
 R:409:/208 # Level=26 NAME='Khufu, the Mummified King' Comments=ZOMBIE
 R:656:/208 # Level=41 NAME='Judge Mortis' Comments=// ZOMBIE joke
 R:684:/208 # Level=44 NAME='Quachil Uttaus, Treader of the Dust' Comments=ZOMBIE
-R:1040:/ # Level=40 NAME='Emperor Mimic' Comments=MIMIC… No tile?
+R:1040:/ # Level=40 NAME='Emperor Mimic' Comments=MIMIC  No tile?
 
 
 
@@ -683,7 +688,7 @@ R:347:/ # Level=20 NAME='Werewolf' Comments=
 R:363:/ # Level=26 NAME='Wolf chieftain' Comments=
 R:374:/ # Level=30 NAME='Fleshhound of Khorne' Comments=
 R:613:/ # Level=35 NAME='Hellhound' Comments=
-R:829:/154 # Level=78 NAME='Black Dog' Comments=DOGGY…
+R:829:/154 # Level=78 NAME='Black Dog' Comments=DOGGY 
 R:163:/ # Level=9 NAME='Baby blue dragon' Comments=
 R:164:/ # Level=9 NAME='Baby white dragon' Comments=
 R:165:/ # Level=9 NAME='Baby green dragon' Comments=
