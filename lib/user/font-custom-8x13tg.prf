@@ -97,7 +97,7 @@ F:28:/10 # Permanent wall HOUSE upper storeys (no light)
 
 F:60:/10 # Permanent wall STORES !!!
 
-F:61:/11 # Permanent wall inner VAULTS // 
+F:61:/11 # Permanent wall inner VAULTS //
 F:62:/11 # Permanent wall outer VAULTS
 F:63:/11 # Permanent wall solid VAULTS // BORDER?
 
