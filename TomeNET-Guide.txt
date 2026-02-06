@@ -25882,8 +25882,8 @@ The techniques are as follows:
         Since the brand is only temporary it is a good idea to apply it right
         before engaging in a fight.
         Learning this technique also causes you to occasionally harvest potions
-        of poison from larger poison breathing monsters, as long as you wield
-        a weapon when killing them.
+        of poison from poisonous monsters, as long as you wield a weapon when
+        killing them.
         If you do not wish to find these extra potions you can toggle it with
         the "/ing" slash command ("/ingredients").
     Perceive Noise      1 stamina

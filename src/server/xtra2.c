@@ -7230,11 +7230,19 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 
 	/* Rogues can harvest poison for their Apply Poison technique */
-	if ((p_ptr->melee_techniques & MT_POISON) && (r_ptr->flags4 & RF4_BR_POIS) && !p_ptr->IDDC_logscum
-	    && (r_ptr->weight >= 4000 /* Dragon-league basically, but also Aklash (exactly 4000)! */
-	     || (r_ptr->weight >= 400 &&
-	      ((r_ptr->d_char != 'w' && r_ptr->d_char != 'I' && r_ptr->d_char != 'Z') || (!(r_ptr->flags7 & RF7_MULTIPLY) && !(r_ptr->flags1 & RF1_FRIENDS)))))
-	    ) {
+	for (i = 0; i < 4; i++)
+		if (r_ptr->blow[i].effect == RBE_POISON && RBM_INTRINSIC_BRAND(r_ptr->blow[i].method)) {
+			i = -1;
+			break;
+		}
+	if ((p_ptr->melee_techniques & MT_POISON) && !p_ptr->IDDC_logscum &&
+	    (i == -1 || (r_ptr->flags4 & RF4_BR_POIS)) && /* Either intrinsically-poisonous melee attacks or poison breath */
+	    (r_ptr->weight >= 4000 || /* Dragon-league basically, but also Aklash (exactly 4000)! */
+	    (r_ptr->weight >= 400 && /* Mid-size creatures also ok, with some races and mass-creatures filtered out */
+	      ((r_ptr->d_char != 'w' && r_ptr->d_char != 'I' && r_ptr->d_char != 'Z') || (!(r_ptr->flags7 & RF7_MULTIPLY) && !(r_ptr->flags1 & RF1_FRIENDS)))) ||
+	    /* Smallest animals at reduced chances [hounds 600, insects 10-20 (Mi-Go 800), worm masses 25-45, snakes 7-170 wide spread, argh] */
+	    ((r_ptr->d_char == 'I' && !rand_int(10)) || (r_ptr->d_char == 'J' && !rand_int(2)) || (r_ptr->d_char == 'w' && !rand_int(10)) || (r_ptr->d_char == 'Z' && !rand_int(5)))
+	    )) {
 		/* Actually require weapons though so martial arts rogues don't get potion spammed for nothing */
 		if ((p_ptr->inventory[INVEN_WIELD].k_idx || (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) &&
 		    !p_ptr->suppress_ingredients && rand_int(7) < 3 * r_ptr->weight / 1000) {
