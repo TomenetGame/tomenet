@@ -18824,7 +18824,7 @@ stated.
                                 (The 'body modification' doesn't matter, eg
                                 whether in 'normal' body or 'fruit bat' form.)
 
-        .Aura of Fear           Monsters that hit you are stroke by fear.
+        .Aura of Fear           Monsters that hit you are stricken by fear.
          (0.500)                Mindless undead, non-living monsters and those
                                 that resist fear (NO_FEAR) are not affected.
                                 The chance for the aura to trigger depends on
