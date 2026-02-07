@@ -6805,7 +6805,7 @@ bool monster_dec_con(int who, int m_idx, bool unhealth) {
 	}
 
 	/* also take damage? */
-	if (unhealth && IS_PVP && !(r_ptr->flags3 & (RF3_NONLIVING || RF3_UNDEAD))) {
+	if (unhealth && IS_PVP && !(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD))) {
 		int dam = FLAT_BRAND_BONUS_POISON - kc;
 
 		/* damage potential only exists if HP weren't already reduced too much above, as a result of maxhp reduction */
