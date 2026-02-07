@@ -2219,55 +2219,123 @@ int graphics_tile_wid, graphics_tile_hgt;
 int graphics_image_tpr; /* Tiles per row. */
 
 
+/* Function to get the RGB values of a pixel in an XImage */
+color_rgb xGetPixelRgb(XImage *image, int x, int y) {
+	color_rgb pixel_rgb = blackColor; // Initialize to black
+
+	// Check for out-of-bounds coordinates
+	if (x < 0 || x >= image->width || y < 0 || y >= image->height) {
+		fprintf(stderr, "Error: Pixel coordinates out of bounds: x = %d, y = %d\n", x, y);
+		return pixel_rgb; // Return black if out of bounds
+	}
+
+	int bytes_per_pixel = image->bits_per_pixel / 8;
+	int offset = (y * image->bytes_per_line) + (x * bytes_per_pixel);
+
+	if (bytes_per_pixel == 1) { // Grayscale - treat as equal R, G, and B
+		unsigned char gray_value = image->data[offset];
+		pixel_rgb.red = gray_value;
+		pixel_rgb.green = gray_value;
+		pixel_rgb.blue = gray_value;
+	} else if (bytes_per_pixel == 3) { // RGB
+		// Assuming RGB format (R, G, B)
+		pixel_rgb.red = image->data[offset + 2];
+		pixel_rgb.green = image->data[offset + 1];
+		pixel_rgb.blue = image->data[offset + 0];
+	} else if (bytes_per_pixel == 4) { // RGBA (or BGRA - might need adjustment)
+		// Assuming ARGB (might need to swap R and B if it's BGRA)
+		pixel_rgb.red = image->data[offset + 2];
+		pixel_rgb.green = image->data[offset + 1];
+		pixel_rgb.blue = image->data[offset + 0];
+
+		// Note: You could also get the alpha value from image->data[offset + 3];
+	} else {
+		fprintf(stderr, "Error: Unsupported pixel depth.\n");
+	}
+
+	return pixel_rgb;
+}
+
+/* Combine non-mask tile pixels with foreground mask, considering that fgmask is resized and "blurry" from interpolation */
 XImage * prepareTile(XImage *tiles, XImage *fgmask, s16b font_width, s16b font_height, char32_t c)
 {
-	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * font_width;
-	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * font_height;
+	int topLeftX = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * font_width;
+	int topLeftY = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * font_height;
 
 	char *preparedTileData = (char *)malloc(font_width * font_height * tiles->bits_per_pixel / 8);
 	XImage *preparedTile = XCreateImage(
 			Metadpy->dpy, DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy)), tiles->depth, ZPixmap, 0,
 			preparedTileData, font_width, font_height, tiles->bits_per_pixel, 0);
 
-	color_rgb objectColorRGB = hex_to_rgb(Infoclr->fg);
-
-	color_rgb fgColor;
-	fgColor.red = 252;
-	fgColor.green = 0;
-	fgColor.blue = 251;
+	color_rgb objectColorRGB = hexToRgb(Infoclr->fg);
 
 	for (int tileX = 0; tileX < font_width; tileX++)
 	{
 		for (int tileY = 0; tileY < font_height; tileY++)
 		{
-			// 1)
-			// получить цвет пикселя из td->tiles
-			color_rgb tilePixelColorRGB = x_get_pixel_rgb(tiles, x1 + tileX, y1 + tileY);
+			color_rgb tilePixelColorRGB = xGetPixelRgb(tiles, topLeftX + tileX, topLeftY + tileY);
 
 			if (fgmask != NULL)
 			{
-				// 2)
-				// получить цвет маски
-				color_rgb fgMaskPixelColorRGB = x_get_pixel_rgb(fgmask, x1 + tileX, y1 + tileY);
-				// собрать цвет объекта от цвета маски
+				color_rgb fgMaskPixelColorRGB = xGetPixelRgb(fgmask, topLeftX + tileX, topLeftY + tileY);
+
 				color_rgb maskedObjectColorRGB;
 				maskedObjectColorRGB.red = objectColorRGB.red * fgMaskPixelColorRGB.red / fgColor.red;
 				maskedObjectColorRGB.blue = objectColorRGB.blue * fgMaskPixelColorRGB.red / fgColor.red;
 				maskedObjectColorRGB.green = objectColorRGB.green * fgMaskPixelColorRGB.red / fgColor.red;
 
-				// добавить цвет объекта к цветку тайла
 				tilePixelColorRGB.red += maskedObjectColorRGB.red;
 				tilePixelColorRGB.blue += maskedObjectColorRGB.blue;
 				tilePixelColorRGB.green += maskedObjectColorRGB.green;
-				//tilePixelColorRGB = objectColorRGB;
 			}
 
-			unsigned long tilePixelColorHex = rgb_to_hex(tilePixelColorRGB.red, tilePixelColorRGB.green, tilePixelColorRGB.blue);
+			unsigned long tilePixelColorHex = rgbToHex(tilePixelColorRGB.red, tilePixelColorRGB.green, tilePixelColorRGB.blue);
 			XPutPixel(preparedTile, tileX, tileY, tilePixelColorHex);
 		}
 	}
 
 	return preparedTile;
+}
+
+XImage *preapreBlackTile(XImage *tiles, s16b font_width, s16b font_height)
+{
+	int i, j;
+	char *preparedBackTileData = (char *)malloc(font_width * font_height * tiles->bits_per_pixel / 8);
+	XImage *preparedBackTile = XCreateImage(
+		Metadpy->dpy, DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy)), tiles->depth, ZPixmap, 0,
+		preparedBackTileData, font_width, font_height, tiles->bits_per_pixel, 0);
+	for (i = 0; i < font_width; i++)
+	{
+		for (j = 0; j < font_height; j++)
+		{
+			XPutPixel(preparedBackTile, i, j, 0x000000);
+		}
+	}
+
+	return preparedBackTile;
+}
+
+void combineFrontTileWithBackTile(XImage **prepared_front_tile, XImage *front_bgmask, XImage *prepared_back_tile, s16b font_width, s16b font_height, char32_t c)
+{
+	int i, j;
+	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * font_width;
+	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * font_height;
+
+	for (i = 0; i < font_width; i++)
+	{
+		for (j = 0; j < font_height; j++)
+		{
+			color_rgb backPixel = xGetPixelRgb(prepared_back_tile, i, j);
+			// color_rgb frontPixel = x_get_pixel_rgb(*prepared_front_tile, i, j); // dont needed right now as we working with front tile
+			color_rgb maskPixel = xGetPixelRgb(front_bgmask, x1 + i, y1 + j);
+
+			// If the color of the mask pixel matches the color of the mask, then replace the pixel in the fron tile with the pixel from the bottom tile
+			if (isRGBColorsEqual(maskPixel, transparancyColor))
+			{
+				XPutPixel(*prepared_front_tile, i, j, rgbToHex(backPixel.red, backPixel.green, backPixel.blue));
+			}
+		}
+	}
 }
 
 /*
@@ -2280,7 +2348,6 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	struct tile_cache_entry *entry;
 	int i, hole = -1;
  #endif
-	int x1, y1;
 	XImage *tiles, *fgmask;
 
 	/* Catch use in chat instead of as feat attr, or we crash :-s
@@ -2423,8 +2490,6 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	int x1, y1;
 	XImage *tiles, *fgmask, *bgmask;
 	XImage *back_tiles, *back_fgmask, *back_bgmask;
-
-
 
 	/* Avoid visual glitches while not in 2mask mode */
 	if (use_graphics != UG_2MASK) {
@@ -2581,18 +2646,7 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	/* Prepare background tile to preparation pixmap. +chopchop+ */
 	if (c_back == 32 || !back_tiles || !back_fgmask) {
 		/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
-		char *preparedBackTileData = (char *)malloc(td->fnt->wid * td->fnt->hgt * tiles->bits_per_pixel / 8);
-		preparedBackTile = XCreateImage(
-			Metadpy->dpy, DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy)), tiles->depth, ZPixmap, 0,
-			preparedBackTileData, td->fnt->wid, td->fnt->hgt, tiles->bits_per_pixel, 0);
-
-		for (i = 0; i < td->fnt->wid; i++)
-		{
-			for (j = 0; j < td->fnt->hgt; j++)
-			{
-				XPutPixel(preparedBackTile, i, j, 0x000000);
-			}
-		}
+		preparedBackTile = preapreBlackTile(back_tiles, td->fnt->wid, td->fnt->hgt);
 	} else {
 		preparedBackTile = prepareTile(back_tiles, back_fgmask, td->fnt->wid, td->fnt->hgt, c_back);
 	}
@@ -2613,35 +2667,14 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 #endif
 
 	/* Prepare foreground tile to preparation pixmap. */
-	XImage *preparedFromTile = prepareTile(tiles, fgmask, td->fnt->wid, td->fnt->hgt, c);
+	XImage *preparedFrontTile = prepareTile(tiles, fgmask, td->fnt->wid, td->fnt->hgt, c);
 
 #if 1
-	x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * td->fnt->wid;
-	y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * td->fnt->hgt;
-	color_rgb transparancyColor = {29, 33, 28};
+	combineFrontTileWithBackTile(&(preparedFrontTile), bgmask, preparedBackTile, td->fnt->wid, td->fnt->hgt, c);
 
-	for (i = 0; i < td->fnt->wid; i++)
-	{
-		for (j = 0; j < td->fnt->hgt; j++)
-		{
-			// получить цвет пикселя маски
-			// получить цвет пикселя нижнего тайла
-			color_rgb backPixel = x_get_pixel_rgb(preparedBackTile, i, j);
-			// color_rgb frontPixel = x_get_pixel_rgb(preparedFromTile, i, j);
-			color_rgb maskPixel = x_get_pixel_rgb(bgmask, x1 + i, y1 + j);
-
-			if (isRGBColorsEqual(maskPixel, transparancyColor))
-			{
-				// вариант 1: если цвет пикселя маски соответствует цвету маски, то заменить пиксель в верхнем тайле на пиксель нижнего тайла
-				XPutPixel(preparedFromTile, i, j, rgb_to_hex(backPixel.red, backPixel.green, backPixel.blue));
-			}
-
-			// вариант 2: к пикселю верхнего тайла прибавить пиксель нижнего тайла уменьшив цвет в соответствии с тем на сколько уменьшен цвет маски
-		}
-	}
 	XPutImage(Metadpy->dpy, tilePreparation2,
 	          Infoclr->gc,
-	          preparedFromTile,
+	          preparedFrontTile,
 	          0, 0,
 	          0, 0,
 	          td->fnt->wid, td->fnt->hgt);
@@ -2949,7 +2982,7 @@ static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int 
 	return(0);
 }
 
-Pixell x_bilinear_interpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+Pixell xInterpolationBilinear(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
 {
 	Pixell new_pixel = 0;
     originalX -= 0.5; // dont know why, bit without it all algo work like near interpolation
@@ -2964,33 +2997,33 @@ Pixell x_bilinear_interpolation(XImage *originalImage, float originalX, float or
 
 	// top left
 	coordinates topLeftPixelCoordinates;
-	topLeftPixelCoordinates = correctPixelCoordinates(originalLoopX, originalLoopY, tile_boundaries);
-	color_rgb topLeftPixelColor = x_get_pixel_rgb(originalImage, topLeftPixelCoordinates.x, topLeftPixelCoordinates.y);
+	topLeftPixelCoordinates = confineCoordinatesToRectangle(originalLoopX, originalLoopY, tile_boundaries);
+	color_rgb topLeftPixelColor = xGetPixelRgb(originalImage, topLeftPixelCoordinates.x, topLeftPixelCoordinates.y);
 	// top right
 	coordinates topRightPixelCoordinates;
-	topRightPixelCoordinates = correctPixelCoordinates(originalLoopX + 1, originalLoopY, tile_boundaries);
-	color_rgb topRightPixelColor = x_get_pixel_rgb(originalImage, topRightPixelCoordinates.x, topRightPixelCoordinates.y);
+	topRightPixelCoordinates = confineCoordinatesToRectangle(originalLoopX + 1, originalLoopY, tile_boundaries);
+	color_rgb topRightPixelColor = xGetPixelRgb(originalImage, topRightPixelCoordinates.x, topRightPixelCoordinates.y);
 	// bottom left
 	coordinates bottomLeftPixelCoordinates;
-	bottomLeftPixelCoordinates = correctPixelCoordinates(originalLoopX, originalLoopY + 1, tile_boundaries);
-	color_rgb bottomLeftPixelColor = x_get_pixel_rgb(originalImage, bottomLeftPixelCoordinates.x, bottomLeftPixelCoordinates.y);
+	bottomLeftPixelCoordinates = confineCoordinatesToRectangle(originalLoopX, originalLoopY + 1, tile_boundaries);
+	color_rgb bottomLeftPixelColor = xGetPixelRgb(originalImage, bottomLeftPixelCoordinates.x, bottomLeftPixelCoordinates.y);
 	// bottom right
 	coordinates bottomRightPixelCoordinates;
-	bottomRightPixelCoordinates = correctPixelCoordinates(originalLoopX + 1, originalLoopY + 1, tile_boundaries);
-	color_rgb bottomRightPixelColor = x_get_pixel_rgb(originalImage, bottomRightPixelCoordinates.x, bottomRightPixelCoordinates.y);
+	bottomRightPixelCoordinates = confineCoordinatesToRectangle(originalLoopX + 1, originalLoopY + 1, tile_boundaries);
+	color_rgb bottomRightPixelColor = xGetPixelRgb(originalImage, bottomRightPixelCoordinates.x, bottomRightPixelCoordinates.y);
 
 	topLeftPixelColor = color_filter_function(topLeftPixelColor);
 	topRightPixelColor = color_filter_function(topRightPixelColor);
 	bottomLeftPixelColor = color_filter_function(bottomLeftPixelColor);
 	bottomRightPixelColor = color_filter_function(bottomRightPixelColor);
 
-	color_rgb newPixelRGB = pixel_bilinear_interpolation(fractionOfX, fractionOfY, topLeftPixelColor, topRightPixelColor, bottomLeftPixelColor, bottomRightPixelColor);
-	new_pixel = rgb_to_hex(newPixelRGB.red, newPixelRGB.green, newPixelRGB.blue);
+	color_rgb newPixelRGB = pixelBilinearInterpolation(fractionOfX, fractionOfY, topLeftPixelColor, topRightPixelColor, bottomLeftPixelColor, bottomRightPixelColor);
+	new_pixel = rgbToHex(newPixelRGB.red, newPixelRGB.green, newPixelRGB.blue);
 
 	return new_pixel;
 }
 
-Pixell x_lanczos_interpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+Pixell xInterpolationLanczos(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
 {
 	Pixell new_pixel = 0;
     originalX -= 0.5; // dont know why, bit without it all algo work like near interpolation
@@ -3017,8 +3050,8 @@ Pixell x_lanczos_interpolation(XImage *originalImage, float originalX, float ori
 	{
 		for (int x = originalLoopX - LANCZOS_A; x <= originalLoopX + LANCZOS_A; x++)
 		{
-			coordinates sample_pixel_coordinates = correctPixelCoordinates(x, y, tile_boundaries);
-			color_rgb sample_pixel_color = x_get_pixel_rgb(originalImage, sample_pixel_coordinates.x, sample_pixel_coordinates.y);
+			coordinates sample_pixel_coordinates = confineCoordinatesToRectangle(x, y, tile_boundaries);
+			color_rgb sample_pixel_color = xGetPixelRgb(originalImage, sample_pixel_coordinates.x, sample_pixel_coordinates.y);
 			sample_pixel_color = color_filter_function(sample_pixel_color);
 
 			// int sample_x = x - (originalLoopX - LANCZOS_A);
@@ -3032,7 +3065,7 @@ Pixell x_lanczos_interpolation(XImage *originalImage, float originalX, float ori
 			double dist_x = originalX - x; // probably need to adjust `-` sign
 			double dist_y = originalY - y; // probably need to adjust `-` sign
 
-			double weight = lanczos_kernel(dist_x, LANCZOS_A) * lanczos_kernel(dist_y, LANCZOS_A);
+			double weight = lanczosKernel(dist_x, LANCZOS_A) * lanczosKernel(dist_y, LANCZOS_A);
 
 			sum_red += weight * sample_pixel_color.red;
 			sum_green += weight * sample_pixel_color.green;
@@ -3049,11 +3082,11 @@ Pixell x_lanczos_interpolation(XImage *originalImage, float originalX, float ori
 	newPixelRgb.green = (int)fmin(sum_green / weight_sum, 255);
 	newPixelRgb.blue = (int)fmin (sum_blue / weight_sum, 255);
 
-	new_pixel = rgb_to_hex(newPixelRgb.red, newPixelRgb.green, newPixelRgb.blue);
+	new_pixel = rgbToHex(newPixelRgb.red, newPixelRgb.green, newPixelRgb.blue);
 	return new_pixel;
 }
 
-Pixell x_quadratic_interpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+Pixell xInterpolationQuadratic(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
 {
 	Pixell new_pixel = 0;
 
@@ -3087,39 +3120,39 @@ Pixell x_quadratic_interpolation(XImage *originalImage, float originalX, float o
 	{
 		// left
 		coordinates leftPixelCoordinates;
-		leftPixelCoordinates = correctPixelCoordinates(originalLoopX - 1, y, tile_boundaries);
-		color_rgb leftPixelColor = x_get_pixel_rgb(originalImage, leftPixelCoordinates.x, leftPixelCoordinates.y);
+		leftPixelCoordinates = confineCoordinatesToRectangle(originalLoopX - 1, y, tile_boundaries);
+		color_rgb leftPixelColor = xGetPixelRgb(originalImage, leftPixelCoordinates.x, leftPixelCoordinates.y);
 		leftPixelColor = color_filter_function(leftPixelColor);
 		// middle
 		coordinates middlePixelCoordinates;
-		middlePixelCoordinates = correctPixelCoordinates(originalLoopX, y, tile_boundaries);
-		color_rgb middlePixelColor = x_get_pixel_rgb(originalImage, middlePixelCoordinates.x, middlePixelCoordinates.y);
+		middlePixelCoordinates = confineCoordinatesToRectangle(originalLoopX, y, tile_boundaries);
+		color_rgb middlePixelColor = xGetPixelRgb(originalImage, middlePixelCoordinates.x, middlePixelCoordinates.y);
 		middlePixelColor = color_filter_function(middlePixelColor);
 		// right
 		coordinates rightPixelCoordinates;
-		rightPixelCoordinates = correctPixelCoordinates(originalLoopX + 1, y, tile_boundaries);
-		color_rgb rightPixelColor = x_get_pixel_rgb(originalImage, rightPixelCoordinates.x, rightPixelCoordinates.y);
+		rightPixelCoordinates = confineCoordinatesToRectangle(originalLoopX + 1, y, tile_boundaries);
+		color_rgb rightPixelColor = xGetPixelRgb(originalImage, rightPixelCoordinates.x, rightPixelCoordinates.y);
 		rightPixelColor = color_filter_function(rightPixelColor);
 
-		colors[index].red = (int) quadratic_interpolation(dist_x, leftPixelColor.red, middlePixelColor.red, rightPixelColor.red);
-		colors[index].green = (int) quadratic_interpolation(dist_x, leftPixelColor.green, middlePixelColor.green, rightPixelColor.green);
-		colors[index].blue = (int) quadratic_interpolation(dist_x, leftPixelColor.blue, middlePixelColor.blue, rightPixelColor.blue);
+		colors[index].red = (int) quadraticInterpolation(dist_x, leftPixelColor.red, middlePixelColor.red, rightPixelColor.red);
+		colors[index].green = (int) quadraticInterpolation(dist_x, leftPixelColor.green, middlePixelColor.green, rightPixelColor.green);
+		colors[index].blue = (int) quadraticInterpolation(dist_x, leftPixelColor.blue, middlePixelColor.blue, rightPixelColor.blue);
 	}
 
-	int new_red = (int) quadratic_interpolation(dist_y, colors[0].red, colors[1].red, colors[2].red);
-	int new_green = (int) quadratic_interpolation(dist_y, colors[0].green, colors[1].green, colors[2].green);
-	int new_blue = (int) quadratic_interpolation(dist_y, colors[0].blue, colors[1].blue, colors[2].blue);
+	int new_red = (int) quadraticInterpolation(dist_y, colors[0].red, colors[1].red, colors[2].red);
+	int new_green = (int) quadraticInterpolation(dist_y, colors[0].green, colors[1].green, colors[2].green);
+	int new_blue = (int) quadraticInterpolation(dist_y, colors[0].blue, colors[1].blue, colors[2].blue);
 
 	new_red =  (int) fmin(new_red, 255);
 	new_green = (int) fmin(new_green, 255);
 	new_blue = (int) fmin(new_blue, 255);
 
-	new_pixel = rgb_to_hex(new_red, new_green, new_blue);
+	new_pixel = rgbToHex(new_red, new_green, new_blue);
 
 	return new_pixel;
 }
 
-Pixell x_interpolation_near(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+Pixell xInterpolationNear(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
 {
 	Pixell new_pixel = 0;
 
@@ -3128,10 +3161,10 @@ Pixell x_interpolation_near(XImage *originalImage, float originalX, float origin
 
 	color_rgb newPixelRgb;
 
-	coordinates pixel_coordinates_near = correctPixelCoordinates(originalLoopX, originalLoopY, tile_boundaries);
-	newPixelRgb = x_get_pixel_rgb(originalImage, pixel_coordinates_near.x, pixel_coordinates_near.y);
+	coordinates pixel_coordinates_near = confineCoordinatesToRectangle(originalLoopX, originalLoopY, tile_boundaries);
+	newPixelRgb = xGetPixelRgb(originalImage, pixel_coordinates_near.x, pixel_coordinates_near.y);
 	newPixelRgb = color_filter_function(newPixelRgb);
-	new_pixel = rgb_to_hex(newPixelRgb.red, newPixelRgb.green, newPixelRgb.blue);
+	new_pixel = rgbToHex(newPixelRgb.red, newPixelRgb.green, newPixelRgb.blue);
 
 	return new_pixel;
 }
@@ -3143,17 +3176,17 @@ Pixell XPixelInterpolation(XImage *originalImage, float originalX, float origina
 	switch (interpolation_type)
 	{
 		case INTERPOLATION_LINEAR:
-			new_pixel = x_bilinear_interpolation(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			new_pixel = xInterpolationBilinear(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
 			break;
 		case INTERPOLATION_LANCZOS:
-			new_pixel = x_lanczos_interpolation(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			new_pixel = xInterpolationLanczos(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
 			break;
 		case INTERPOLATION_QUADRATIC:
-			new_pixel = x_quadratic_interpolation(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			new_pixel = xInterpolationQuadratic(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
 			break;
 		case INTERPOLATION_NEAR:
 		default:
-			new_pixel = x_interpolation_near(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			new_pixel = xInterpolationNear(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
 			break;
 	}
 
@@ -3164,44 +3197,43 @@ Pixell XPixelInterpolation(XImage *originalImage, float originalX, float origina
  * Resize an image. XXX XXX XXX
  *
  * Added bg/fg masks resizing.
- * It's your responsibility to free returned XImage, bgmask_return and fgmask_return after usage.
- * Function will not free memory if already allocated in bgmask_return or fgmask_return input variable.
+ * It's your responsibility to free returned XImage after usage.
+ * Function will not free memory if already allocated in fgmask_return input variable.
  */
  #ifndef GRAPHICS_BG_MASK
 static XImage *ResizeImage(Display *display, XImage *originalImage,
     int tileWidth, int tileHeight, int fontWidth, int fontHeight,
-    XImage **fgmask,
+    XImage **fgmask_return,
     term_data *td, int sub_tileset_index) {
-	int originalImageWidth, originalImageHeight, targetWidth, targetHeight;
-	int x1, x2, y1, y2, Tx, Ty;
+	int originalImageWidth, originalImageHeight, resizedWidth, resizedHeight;
 
-	XImage *targetImage;
-	char *targetImageData;
+	XImage *resizedImage;
+	char *resizedImageData;
 
 	originalImageWidth = originalImage->width;
 	originalImageHeight = originalImage->height;
 
-	targetWidth = fontWidth * originalImageWidth / tileWidth;
-	targetHeight = fontHeight * originalImageHeight / tileHeight;
+	resizedWidth = fontWidth * originalImageWidth / tileWidth;
+	resizedHeight = fontHeight * originalImageHeight / tileHeight;
 
-	targetImageData = (char *)malloc(targetWidth * targetHeight * originalImage->bits_per_pixel / 8);
+	resizedImageData = (char *)malloc(resizedWidth * resizedHeight * originalImage->bits_per_pixel / 8);
 
-	targetImage = XCreateImage(
+	resizedImage = XCreateImage(
 			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
-			targetImageData, targetWidth, targetHeight, originalImage->bits_per_pixel, 0);
+			resizedImageData, resizedWidth, resizedHeight, originalImage->bits_per_pixel, 0);
 
-	char *fgmaskImageData = (char *)malloc(targetWidth * targetHeight * originalImage->bits_per_pixel / 8);
-	*fgmask = XCreateImage(
+	char *fgmaskImageData = (char *)malloc(resizedWidth * resizedHeight * originalImage->bits_per_pixel / 8);
+	*fgmask_return = XCreateImage(
 			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
-			fgmaskImageData, targetWidth, targetHeight, originalImage->bits_per_pixel, 0);
+			fgmaskImageData, resizedWidth, resizedHeight, originalImage->bits_per_pixel, 0);
 
-	for (int targetLoopY = 0; targetLoopY < targetHeight; targetLoopY++) {
-		float originalY = targetLoopY * originalImageHeight / targetHeight;
+	for (int targetLoopY = 0; targetLoopY < resizedHeight; targetLoopY++) {
+		float originalY = targetLoopY * originalImageHeight / resizedHeight;
 
 		int tileYCount = targetLoopY / fontHeight;
 
-		for (int targetLoopX = 0; targetLoopX < targetWidth; targetLoopX++) {
-			float originalX = targetLoopX * originalImageWidth / targetWidth;
+		for (int targetLoopX = 0; targetLoopX < resizedWidth; targetLoopX++) {
+			float originalX = targetLoopX * originalImageWidth / resizedWidth;
 
 			int tileXCount = targetLoopX / fontWidth;
 
@@ -3219,11 +3251,11 @@ static XImage *ResizeImage(Display *display, XImage *originalImage,
 
 			// fixed colors
 			unsigned long newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, get_not_mask_pixel_color, INTERPOLATION_LINEAR);
-			XPutPixel(targetImage, targetLoopX, targetLoopY, newPixelHex);
+			XPutPixel(resizedImagegetLoopX, targetLoopY, newPixelHex);
 
 			// fg mask
 			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, get_fg_mask_pixel_color, INTERPOLATION_LINEAR);
-			XPutPixel(*fgmask, targetLoopX, targetLoopY, newPixelHex);
+			XPutPixel(*fgmask_return, targetLoopX, targetLoopY, newPixelHex);
 		}
 	}
 
@@ -3233,77 +3265,78 @@ static XImage *ResizeImage(Display *display, XImage *originalImage,
 
 		td->rawpict_scale_wid_org = originalImageWidth;
 		td->rawpict_scale_hgt_org = originalImageHeight;
-		td->rawpict_scale_wid_use = targetWidth;
-		td->rawpict_scale_hgt_use = targetHeight;
+		td->rawpict_scale_wid_use = resizedWidth;
+		td->rawpict_scale_hgt_use = resizedHeight;
 
 		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
 			if (!tiles_rawpict_org[i].defined) continue;
 			if (!originalImageWidth || !originalImageHeight) continue;
-			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * targetWidth) / originalImageWidth;
-			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * targetWidth) / originalImageWidth;
-			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * targetHeight) / originalImageHeight;
-			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * targetHeight) / originalImageHeight;
+			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * resizedWidth) / originalImageWidth;
+			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * resizedWidth) / originalImageWidth;
+			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * resizedHeight) / originalImageHeight;
+			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * resizedHeight) / originalImageHeight;
 		}
 	} else {
 		int i;
 
 		td->rawpict_scale_wid_org_sub[sub_tileset_index] = originalImageWidth;
 		td->rawpict_scale_hgt_org_sub[sub_tileset_index] = originalImageHeight;
-		td->rawpict_scale_wid_use_sub[sub_tileset_index] = targetWidth;
-		td->rawpict_scale_hgt_use_sub[sub_tileset_index] = targetHeight;
+		td->rawpict_scale_wid_use_sub[sub_tileset_index] = resizedWidth;
+		td->rawpict_scale_hgt_use_sub[sub_tileset_index] = resizedHeight;
 
 		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
 			if (!tiles_rawpict_org_sub[sub_tileset_index][i].defined) continue;
 			if (!originalImageWidth || !originalImageHeight) continue;
-			td->tiles_rawpict_sub[sub_tileset_index][i].x = (tiles_rawpict_org_sub[sub_tileset_index][i].x * targetWidth) / originalImageWidth;
-			td->tiles_rawpict_sub[sub_tileset_index][i].w = (tiles_rawpict_org_sub[sub_tileset_index][i].w * targetWidth) / originalImageWidth;
-			td->tiles_rawpict_sub[sub_tileset_index][i].y = (tiles_rawpict_org_sub[sub_tileset_index][i].y * targetHeight) / originalImageHeight;
-			td->tiles_rawpict_sub[sub_tileset_index][i].h = (tiles_rawpict_org_sub[sub_tileset_index][i].h * targetHeight) / originalImageHeight;
+			td->tiles_rawpict_sub[sub_tileset_index][i].x = (tiles_rawpict_org_sub[sub_tileset_index][i].x * resizedWidth) / originalImageWidth;
+			td->tiles_rawpict_sub[sub_tileset_index][i].w = (tiles_rawpict_org_sub[sub_tileset_index][i].w * resizedWidth) / originalImageWidth;
+			td->tiles_rawpict_sub[sub_tileset_index][i].y = (tiles_rawpict_org_sub[sub_tileset_index][i].y * resizedHeight) / originalImageHeight;
+			td->tiles_rawpict_sub[sub_tileset_index][i].h = (tiles_rawpict_org_sub[sub_tileset_index][i].h * resizedHeight) / originalImageHeight;
 		}
 	}
 
-	return(targetImage);
+	return(resizedImage);
 }
  #else
 
 
 static XImage *ResizeImage_2mask(Display *display, XImage *originalImage,
 	int tileWidth, int tileHeight, int fontWidth, int fontHeight,
-	XImage **fgmask_return, XImage **bgmask_return, term_data *td, int sub_tileset_index) {
-	int originalImageWidth, originalImageHeight, targetWidth, targetHeight;
+	XImage **resized_fgmask_return, XImage **resized_bgmask_return, term_data *td, int sub_tileset_index)
+{
+	int originalImageWidth, originalImageHeight, resizedWidth, resizedHeight;
 
-	XImage *targetImage;
-	char *targetImageData;
+	XImage *resizedImage;
+	char *resizedImageData;
 
 	originalImageWidth = originalImage->width;
 	originalImageHeight = originalImage->height;
 
-	targetWidth = fontWidth * originalImageWidth / tileWidth;
-	targetHeight = fontHeight * originalImageHeight / tileHeight;
+	resizedWidth = fontWidth * originalImageWidth / tileWidth;
+	resizedHeight = fontHeight * originalImageHeight / tileHeight;
 
-	targetImageData = (char *)malloc(targetWidth * targetHeight * originalImage->bits_per_pixel / 8);
+	resizedImageData = (char *)malloc(resizedWidth * resizedHeight * originalImage->bits_per_pixel / 8);
 
-	targetImage = XCreateImage(
+	resizedImage = XCreateImage(
 			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
-			targetImageData, targetWidth, targetHeight, originalImage->bits_per_pixel, 0);
+			resizedImageData, resizedWidth, resizedHeight, originalImage->bits_per_pixel, 0);
 
-	char *fgmaskImageData = (char *)malloc(targetWidth * targetHeight * originalImage->bits_per_pixel / 8);
-	*fgmask_return = XCreateImage(
+	char *fgmaskImageData = (char *)malloc(resizedWidth * resizedHeight * originalImage->bits_per_pixel / 8);
+	*resized_fgmask_return = XCreateImage(
 			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
-			fgmaskImageData, targetWidth, targetHeight, originalImage->bits_per_pixel, 0);
+			fgmaskImageData, resizedWidth, resizedHeight, originalImage->bits_per_pixel, 0);
 
-	char *bgmaskImageData = (char *)malloc(targetWidth * targetHeight * originalImage->bits_per_pixel / 8);
-	*bgmask_return = XCreateImage(
+	char *bgmaskImageData = (char *)malloc(resizedWidth * resizedHeight * originalImage->bits_per_pixel / 8);
+	*resized_bgmask_return = XCreateImage(
 			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
-			bgmaskImageData, targetWidth, targetHeight, originalImage->bits_per_pixel, 0);
+			bgmaskImageData, resizedWidth, resizedHeight, originalImage->bits_per_pixel, 0);
 
-	for (int targetLoopY = 0; targetLoopY < targetHeight; targetLoopY++) {
-		float originalY = targetLoopY * originalImageHeight / targetHeight;
+	for (int targetLoopY = 0; targetLoopY < resizedHeight; targetLoopY++) {
+		float originalY = targetLoopY * originalImageHeight / resizedHeight;
 
 		int tileYCount = targetLoopY / fontHeight;
 
-		for (int targetLoopX = 0; targetLoopX < targetWidth; targetLoopX++) {
-			float originalX = targetLoopX * originalImageWidth / targetWidth;
+		for (int targetLoopX = 0; targetLoopX < resizedWidth; targetLoopX++) {
+			float originalX = targetLoopX * originalImageWidth / resizedWidth;
 
 			int tileXCount = targetLoopX / fontWidth;
 
@@ -3320,16 +3353,16 @@ static XImage *ResizeImage_2mask(Display *display, XImage *originalImage,
 			tile_boundaries.bottom_right.y = originalTileEndY;
 
 			// tiles fixed colors
-			unsigned long newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, get_not_mask_pixel_color, INTERPOLATION_LINEAR);
-			XPutPixel(targetImage, targetLoopX, targetLoopY, newPixelHex);
+			unsigned long newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, getNotMaskPixelColor, INTERPOLATION_LINEAR);
+			XPutPixel(resizedImage, targetLoopX, targetLoopY, newPixelHex);
 
 			// fgmask
-			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, get_fg_mask_pixel_color, INTERPOLATION_LINEAR);
-			XPutPixel(*fgmask_return, targetLoopX, targetLoopY, newPixelHex);
+			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, getFgmaskPixelColor, INTERPOLATION_LINEAR);
+			XPutPixel(*resized_fgmask_return, targetLoopX, targetLoopY, newPixelHex);
 
 			// bgmask
-			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, get_bg_mask2_pixel_color, INTERPOLATION_LINEAR);
-			XPutPixel(*bgmask_return, targetLoopX, targetLoopY, newPixelHex);
+			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, getBgmaskPixelColor, INTERPOLATION_LINEAR);
+			XPutPixel(*resized_bgmask_return, targetLoopX, targetLoopY, newPixelHex);
 		}
 	}
 
@@ -3339,36 +3372,36 @@ static XImage *ResizeImage_2mask(Display *display, XImage *originalImage,
 
 		td->rawpict_scale_wid_org = originalImageWidth;
 		td->rawpict_scale_hgt_org = originalImageHeight;
-		td->rawpict_scale_wid_use = targetWidth;
-		td->rawpict_scale_hgt_use = targetHeight;
+		td->rawpict_scale_wid_use = resizedWidth;
+		td->rawpict_scale_hgt_use = resizedHeight;
 
 		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
 			if (!tiles_rawpict_org[i].defined) continue;
 			if (!originalImageWidth || !originalImageHeight) continue;
-			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * targetWidth) / originalImageWidth;
-			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * targetWidth) / originalImageWidth;
-			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * targetHeight) / originalImageHeight;
-			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * targetHeight) / originalImageHeight;
+			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * resizedWidth) / originalImageWidth;
+			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * resizedWidth) / originalImageWidth;
+			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * resizedHeight) / originalImageHeight;
+			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * resizedHeight) / originalImageHeight;
 		}
 	} else {
 		int i;
 
 		td->rawpict_scale_wid_org_sub[sub_tileset_index] = originalImageWidth;
 		td->rawpict_scale_hgt_org_sub[sub_tileset_index] = originalImageHeight;
-		td->rawpict_scale_wid_use_sub[sub_tileset_index] = targetWidth;
-		td->rawpict_scale_hgt_use_sub[sub_tileset_index] = targetHeight;
+		td->rawpict_scale_wid_use_sub[sub_tileset_index] = resizedWidth;
+		td->rawpict_scale_hgt_use_sub[sub_tileset_index] = resizedHeight;
 
 		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
 			if (!tiles_rawpict_org_sub[sub_tileset_index][i].defined) continue;
 			if (!originalImageWidth || !originalImageHeight) continue;
-			td->tiles_rawpict_sub[sub_tileset_index][i].x = (tiles_rawpict_org_sub[sub_tileset_index][i].x * targetWidth) / originalImageWidth;
-			td->tiles_rawpict_sub[sub_tileset_index][i].w = (tiles_rawpict_org_sub[sub_tileset_index][i].w * targetWidth) / originalImageWidth;
-			td->tiles_rawpict_sub[sub_tileset_index][i].y = (tiles_rawpict_org_sub[sub_tileset_index][i].y * targetHeight) / originalImageHeight;
-			td->tiles_rawpict_sub[sub_tileset_index][i].h = (tiles_rawpict_org_sub[sub_tileset_index][i].h * targetHeight) / originalImageHeight;
+			td->tiles_rawpict_sub[sub_tileset_index][i].x = (tiles_rawpict_org_sub[sub_tileset_index][i].x * resizedWidth) / originalImageWidth;
+			td->tiles_rawpict_sub[sub_tileset_index][i].w = (tiles_rawpict_org_sub[sub_tileset_index][i].w * resizedWidth) / originalImageWidth;
+			td->tiles_rawpict_sub[sub_tileset_index][i].y = (tiles_rawpict_org_sub[sub_tileset_index][i].y * resizedHeight) / originalImageHeight;
+			td->tiles_rawpict_sub[sub_tileset_index][i].h = (tiles_rawpict_org_sub[sub_tileset_index][i].h * resizedHeight) / originalImageHeight;
 		}
 	}
 
-	return(targetImage);
+	return(resizedImage);
 }
  #endif
 
