@@ -125,7 +125,7 @@ typedef struct {
  * @param filename Имя файла BMP для сохранения.
  * @return 0 при успехе, -1 при ошибке.
  */
-int save_ximage_as_bmp(XImage *image, const char *filename);
+int save_ximage_as_bmp(XImage *image, const char *filename); // TODO remove
 
 
 
