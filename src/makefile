@@ -109,7 +109,7 @@ CLI_SRCS = \
   client/main-x11.c client/main-xaw.c client/nclient.c client/c-birth.c \
   client/c-xtra1.c client/c-xtra2.c client/c-spell.c client/client.c \
   client/skills.c common/files.c common/SFMT.c client/snd-sdl.c \
-  common/tables.c common/md5.c
+  common/tables.c common/md5.c client/graphics_common.c
 
 CLI_OBJS = \
   common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
@@ -120,7 +120,7 @@ CLI_OBJS = \
   client/main-x11.o client/main-xaw.o client/nclient.o client/c-birth.o \
   client/c-xtra1.o client/c-xtra2.o client/c-spell.o client/client.o \
   client/skills.o common/files.o common/SFMT.o client/snd-sdl.o \
-  common/tables.o common/md5.o
+  common/tables.o common/md5.o client/graphics_common.o
 
 
 CONS_SRCS = \
