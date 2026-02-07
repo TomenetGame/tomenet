@@ -6770,7 +6770,7 @@ bool monster_dec_dex(monster_type *m_ptr) {
 	int k;
 
 	/* already reduced too much? */
-	if (m_ptr->org_ac - m_ptr->ac >= m_ptr->org_ac / 2) return(FALSE);
+	if (m_ptr->ac <= m_ptr->org_ac / 2) return(FALSE);
 
 	/* to verify whether we really reduced the AC or the reduction got eaten up by rounding/limits */
 	k = m_ptr->ac;
@@ -6787,7 +6787,7 @@ bool monster_dec_con(monster_type *m_ptr) {
 	int k;
 
 	/* already reduced too much? */
-	if (m_ptr->org_maxhp - m_ptr->maxhp >= m_ptr->org_maxhp / 2) return(FALSE);
+	if (m_ptr->maxhp <= m_ptr->org_maxhp / 2) return(FALSE);
 
 	/* to verify whether we really reduced the AC or the reduction got eaten up by rounding/limits */
 	k = m_ptr->maxhp;
