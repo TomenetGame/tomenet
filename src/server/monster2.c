@@ -7397,3 +7397,32 @@ void py2mon_update_abilities(monster_type *m_ptr, player_type *p_ptr) {
 #ifdef SIMPLE_RI_MIRROR
 #endif
 }
+
+void mon_fear_note(int Ind, int m_idx, bool nearby) {
+	monster_type *m_ptr = &m_list[m_idx];
+
+	if (m_ptr->csleep || m_ptr->stunned > 100) return;
+
+	if (nearby || Ind <= 0) {
+		if (m_ptr->r_idx != RI_MORGOTH) msg_print_near_monster(m_idx, "flees in terror!");
+		else {
+#ifdef USE_SOUND_2010
+#else
+			sound(Ind, SOUND_FLEE);
+#endif
+			msg_print_near_monster(m_idx, "retreats!");
+		}
+	} else {
+		char m_name[MNAME_LEN];
+
+#ifdef USE_SOUND_2010
+#else
+		sound(Ind, SOUND_FLEE);
+#endif
+		/* Get the monster name (or "it") */
+		monster_desc(Ind, m_name, m_idx, 0);
+
+		if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+		else msg_format(Ind, "%^s retreats!", m_name);
+	}
+}

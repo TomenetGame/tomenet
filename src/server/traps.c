@@ -5904,14 +5904,7 @@ bool mon_hit_trap(int m_idx) {
 						if (who > 0 && p_ptr->mon_vis[m_idx]) {
 							msg_format(who, "%^s sets off a missile trap.", m_name);
 							message_pain(who, m_idx, dam);
-
-							/* Take note */
-							if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-								if (m_ptr->r_idx != RI_MORGOTH)
-									msg_print_near_monster(m_idx, "flees in terror!");
-								else
-									msg_print_near_monster(m_idx, "retreats!");
-							}
+							if (fear) mon_fear_note(who, m_idx, FALSE);
 						}
 					}
 

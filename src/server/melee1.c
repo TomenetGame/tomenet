@@ -3247,10 +3247,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear, " turns into a pile of ashes")) *alive = FALSE;
 				else {
 					msg_format(Ind, "%^s gets burned for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
-					if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-						if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
-						else msg_format(Ind, "%^s retreats!", m_name);
-					}
+					if (*fear) mon_fear_note(Ind, m_idx, FALSE);
 				}
 			}
 #ifdef OLD_MONSTER_LORE
@@ -3269,10 +3266,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear, " freezes and shatters")) *alive = FALSE;
 				else {
 					msg_format(Ind, "%^s freezes for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
-					if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-						if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
-						else msg_format(Ind, "%^s retreats!", m_name);
-					}
+					if (*fear) mon_fear_note(Ind, m_idx, FALSE);
 				}
 			}
 #ifdef OLD_MONSTER_LORE
@@ -3292,10 +3286,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear, " turns into a pile of ashes")) *alive = FALSE;
 				else {
 					msg_format(Ind, "%^s gets burned for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
-					if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-						if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
-						else msg_format(Ind, "%^s retreats!", m_name);
-					}
+					if (*fear) mon_fear_note(Ind, m_idx, FALSE);
 				}
 			}
 #ifdef OLD_MONSTER_LORE
@@ -3314,10 +3305,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 				if (mon_take_hit(Ind, m_idx, player_aura_dam, fear, " freezes and shatters")) *alive = FALSE;
 				else {
 					msg_format(Ind, "%^s freezes for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
-					if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-						if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
-						else msg_format(Ind, "%^s retreats!", m_name);
-					}
+					if (*fear) mon_fear_note(Ind, m_idx, FALSE);
 				}
 			}
 #ifdef OLD_MONSTER_LORE
@@ -3337,10 +3325,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 			if (mon_take_hit(Ind, m_idx, player_aura_dam, fear," turns into a pile of cinder")) *alive = FALSE;
 			else {
 				msg_format(Ind, "%^s gets zapped for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', player_aura_dam);
-				if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-					if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
-					else msg_format(Ind, "%^s retreats!", m_name);
-				}
+				if (*fear) mon_fear_note(Ind, m_idx, FALSE);
 			}
 		}
 #ifdef OLD_MONSTER_LORE
@@ -3366,10 +3351,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 		if (mon_take_hit(Ind, m_idx, d, fear, " got bashed by your mystc shield")) *alive = FALSE;
 		else {
 			msg_format(Ind, "Your mystic shield bashes %s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
-			if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-				if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
-				else msg_format(Ind, "%^s retreats!", m_name);
-			}
+			if (*fear) mon_fear_note(Ind, m_idx, FALSE);
 		}
 	}
 	/* fire shield */
@@ -3383,10 +3365,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 			if (mon_take_hit(Ind, m_idx, d, fear, " turns into a pile of ashes")) *alive = FALSE;
 			else {
 				msg_format(Ind, "Your fiery shield burns %^s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
-				if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-					if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
-					else msg_format(Ind, "%^s retreats!", m_name);
-				}
+				if (*fear) mon_fear_note(Ind, m_idx, FALSE);
 			}
 		}
 	}
@@ -3402,10 +3381,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 			if (mon_take_hit(Ind, m_idx, d, fear, " turns into a pile of cinder")) *alive = FALSE;
 			else {
 				msg_format(Ind, "Your lightning shield zaps %^s for \377%c%d\377w damage!", m_name, (r_ptr->flags1 & RF1_UNIQUE) ? 'e' : 'g', d);
-				if (*fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-					if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
-					else msg_format(Ind, "%^s retreats!", m_name);
-				}
+				if (*fear) mon_fear_note(Ind, m_idx, FALSE);
 			}
 		}
 	}

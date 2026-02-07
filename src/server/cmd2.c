@@ -8116,21 +8116,7 @@ void do_cmd_fire(int Ind, int dir) {
 						}
 
 						/* Take note */
-						if (fear && visible && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-							char m_name[MNAME_LEN];
-#ifdef USE_SOUND_2010
-#else
-							sound(Ind, SOUND_FLEE);
-#endif
-							/* Get the monster name (or "it") */
-							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-							/* Message */
-							if (m_ptr->r_idx != RI_MORGOTH)
-								msg_format(Ind, "%^s flees in terror!", m_name);
-							else
-								msg_format(Ind, "%^s retreats!", m_name);
-						}
+						if (fear && visible) mon_fear_note(Ind, c_ptr->m_idx, FALSE);
 					}
 
 					if (!boomerang && p_ptr->ammo_brand_t)
@@ -9557,25 +9543,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				else {
 					/* Message */
 					message_pain(Ind, c_ptr->m_idx, tdam);
-
 					/* Take note */
-					if (fear && visible) {
-						char m_name[MNAME_LEN];
-
-#ifdef USE_SOUND_2010
-#else
-						sound(Ind, SOUND_FLEE);
-#endif
-
-						/* Get the monster name (or "it") */
-						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-						/* Message */
-						if (m_ptr->r_idx != RI_MORGOTH)
-							msg_format(Ind, "%^s flees in terror!", m_name);
-						else
-							msg_format(Ind, "%^s retreats!", m_name);
-					}
+					if (fear && visible) mon_fear_note(Ind, c_ptr->m_idx, FALSE);
 				}
 				/* Unhack */
 				p_ptr->instakills = old_instakills;

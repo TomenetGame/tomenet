@@ -5977,18 +5977,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	}
 
 	/* Hack -- delay fear messages */
-	if (fear && p_ptr->mon_vis[c_ptr->m_idx] && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-#ifdef USE_SOUND_2010
-#else
-		sound(Ind, SOUND_FLEE);
-#endif
-
-		/* Message */
-		if (m_ptr->r_idx != RI_MORGOTH)
-			msg_format(Ind, "%^s flees in terror!", m_name);
-		else
-			msg_format(Ind, "%^s retreats!", m_name);
-	}
+	if (fear && p_ptr->mon_vis[c_ptr->m_idx]) mon_fear_note(Ind, c_ptr->m_idx, FALSE);
 
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake && !p_ptr->quaked && magik(QUAKE_CHANCE)) {
@@ -6387,18 +6376,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 	}
 
 	/* Hack -- delay fear messages */
-	if (fear && p_ptr->mon_vis[c_ptr->m_idx] && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-#ifdef USE_SOUND_2010
-#else
-		sound(Ind, SOUND_FLEE);
-#endif
-
-		/* Message */
-		if (m_ptr->r_idx != RI_MORGOTH)
-			msg_format(Ind, "%^s flees in terror!", m_name);
-		else
-			msg_format(Ind, "%^s retreats!", m_name);
-	}
+	if (fear && p_ptr->mon_vis[c_ptr->m_idx]) mon_fear_note(Ind, c_ptr->m_idx, FALSE);
 
 	suppress_message = FALSE;
 }

@@ -1227,6 +1227,7 @@ extern void py2mon_update_abilities(monster_type *m_ptr, player_type *p_ptr);
 #ifdef FINAL_GUARDIAN_DIFFBOOST
 extern void final_guardian_diffboost(int m_idx);
 #endif
+extern void mon_fear_note(int Ind, int m_idx, bool nearby);
 
 /* netserver.c (nserver.c) */
 /* XXX those entries are duplicated with those in netserver.h

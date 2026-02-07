@@ -6783,23 +6783,41 @@ bool monster_dec_dex(monster_type *m_ptr) {
 
 	return(m_ptr->ac != k);
 }
-bool monster_dec_con(monster_type *m_ptr) {
-	int k;
-
-	/* already reduced too much? */
-	if (m_ptr->maxhp <= m_ptr->org_maxhp / 2) return(FALSE);
+/* 'unhealth': Also deal damage if monster isn't undead/nonliving.
+   'who' should be -Ind. */
+bool monster_dec_con(int who, int m_idx, bool unhealth) {
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
 
 	/* to verify whether we really reduced the AC or the reduction got eaten up by rounding/limits */
-	k = m_ptr->maxhp;
+	int k = m_ptr->maxhp, kc = m_ptr->hp;
 
-	if (m_ptr->maxhp > 3) {
-		m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
-		if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
-		else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
-		if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
+	/* not already reduced too much? */
+	if (m_ptr->maxhp > m_ptr->org_maxhp / 2) {
+		if (m_ptr->maxhp > 3) {
+			m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
+			if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
+			else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
+			if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
+		}
+		k -= m_ptr->maxhp;
+		kc -= m_ptr->hp;
 	}
 
-	return(m_ptr->maxhp != k);
+	/* also take damage? */
+	if (unhealth && IS_PVP && !(r_ptr->flags3 & (RF3_NONLIVING || RF3_UNDEAD))) {
+		int dam = FLAT_BRAND_BONUS_POISON - kc;
+
+		/* damage potential only exists if HP weren't already reduced too much above, as a result of maxhp reduction */
+		if (dam > 0) {
+			bool fear = FALSE;
+
+			mon_take_hit(-who, m_idx, dam, &fear, NULL);
+			if (fear) mon_fear_note(-who, m_idx, FALSE);
+		}
+	}
+
+	return(k);
 }
 
 #if 0 /* commented out in project_m */
@@ -7402,7 +7420,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			no_dam = TRUE;
 			quiet = TRUE;
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-		} else if (monster_dec_con(m_ptr)) note = "appears less healthy"; //msg_print_near_monster(c_ptr->m_idx, "appears less healthy");
+		} else if (monster_dec_con(who, c_ptr->m_idx, TRUE)) note = "appears less healthy"; //msg_print_near_monster(c_ptr->m_idx, "appears less healthy");
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 		break;
 
@@ -9410,7 +9428,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			quiet = TRUE;
 			//note = "is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-		} else if (monster_dec_con(m_ptr))
+		} else if (monster_dec_con(who, c_ptr->m_idx, FALSE))
 			note = "appears less healthy.";
 			// msg_print_near_monster(c_ptr->m_idx, "appears less healthy.");
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
@@ -9679,7 +9697,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			// apparently we don't have any western/dunadan monsters (SUST_CON)
 			if (!(m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
 			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL))
-				dam |= monster_dec_con(m_ptr);
+				dam |= monster_dec_con(who, c_ptr->m_idx, FALSE);
 
 			if (dam) note = "appears less powerful";
 			else quiet = TRUE;
@@ -10105,14 +10123,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				else if (seen && note) msg_format(Ind, "%^s%s.", m_name, note);
 
 				/* Take note */
-				if ((fear || do_fear) && seen && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-#ifdef USE_SOUND_2010
-#else
-					sound(Ind, SOUND_FLEE);
-#endif
-					if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
-					else msg_format(Ind, "%^s retreats!", m_name);
-				}
+				if ((fear || do_fear) && seen) mon_fear_note(Ind, c_ptr->m_idx, FALSE);
 			}
 
 #ifdef ANTI_SEVEN_EXPLOIT /* code part: 'monster gets hit by a projection' */
