@@ -6,7 +6,6 @@
 #define SRC_GRAPHICS_COMMON_H
 
 #include <X11/Xlib.h>
-#include <X11/Xutil.h>
 
 #define INTERPOLATION_NEAR 0
 #define INTERPOLATION_LINEAR 1
@@ -30,9 +29,9 @@ typedef struct {
 
 typedef struct
 {
-    coordinates coordinates;
-    color_rgb color;
-} image_pixel;
+    coordinates top_left;
+    coordinates bottom_right;
+} rectangle;
 
 typedef struct
 {
@@ -48,45 +47,31 @@ typedef struct
 
 typedef struct
 {
-    coordinates top_left;
-    coordinates bottom_right;
-} rectangle;
-
-typedef struct
-{
     double data[LANCZOS_SAMPLE_LENGTH][LANCZOS_SAMPLE_LENGTH];
 } lanczos_sample_2d;
 
-coordinates correctPixelCoordinates(int x, int y, rectangle restriction_rectangle);
-color_rgb x_get_pixel_rgb(XImage *image, int x, int y);
-void x_set_pixel_color(XImage *image, int x, int y, unsigned long pixel_color);
-unsigned long rgb_to_hex(uint8_t red, uint8_t green, uint8_t blue);
+extern color_rgb blackColor;
+extern color_rgb transparancyColor;
+extern color_rgb bgColor;
+extern color_rgb fgColor;
 
-// float linear_interpolation(float ratio, int value_left, int value_right);
-float linear_interpolation(float ratio, linear_sample sample);
+coordinates confineCoordinatesToRectangle(int x, int y, rectangle restriction_rectangle);
 
-// float bilinear_interpolation(float ratio_x, float ratio_y, int value_11, int value_12, int value_21, int value_22);
-float bilinear_interpolatqion(float ratio_x, float ratio_y, bilinear_sample sample);
+unsigned long rgbToHex(uint8_t red, uint8_t green, uint8_t blue);
+color_rgb hexToRgb(unsigned long color_hex);
 
-// float quadratic_interpolation(float x, float x0, float f0, float x1, float f1, float x2, float f2);
-
-color_rgb pixel_bilinear_interpolation(float fractionOfX, float fractionOfY, color_rgb p11, color_rgb p12, color_rgb p21, color_rgb p22);
-color_rgb hex_to_rgb(unsigned long color_hex);
 int isRGBColorsEqual(color_rgb color_1, color_rgb color_2);
-color_rgb get_not_mask_pixel_color(color_rgb pixel_color);
-color_rgb get_fg_mask_pixel_color(color_rgb pixel_color);
-color_rgb get_bg_mask2_pixel_color(color_rgb pixel_color);
-color_rgb get_rgb_from_pixel(Display *display, unsigned long pixel);
+color_rgb getNotMaskPixelColor(color_rgb pixel_color);
+color_rgb getFgmaskPixelColor(color_rgb pixel_color);
+color_rgb getBgmaskPixelColor(color_rgb pixel_color);
 
-double quadratic_interpolation(double x, double y0, double y1, double y2);
+double quadraticInterpolation(double x, double y0, double y1, double y2);
+color_rgb pixelBilinearInterpolation(float fractionOfX, float fractionOfY, color_rgb p11, color_rgb p12, color_rgb p21, color_rgb p22);
 
-double lanczos_resample(lanczos_sample_2d sample, double target_x, double target_y);
-double lanczos_kernel(double x, int lanczos_a);
-
-
+double lanczosResample(lanczos_sample_2d sample, double target_x, double target_y);
+double lanczosKernel(double x, int lanczos_a);
 
 // --- Структуры для заголовков BMP-файла ---
-
 // Заголовок файла (14 байт)
 #pragma pack(push, 1) // Устанавливаем выравнивание в 1 байт
 typedef struct {
