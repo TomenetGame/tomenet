@@ -1511,6 +1511,19 @@ void self_knowledge(int Ind) {
 	if (p_ptr->can_swim) fprintf(fff, "You can swim easily.\n");
 #endif
 	if (p_ptr->free_act) fprintf(fff, "You have free action.\n");
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+	if ((k = troll_hydra_regen(p_ptr))) {
+		if (p_ptr->mode & MODE_PVP) fprintf(fff, "You regenerate quickly.\n");
+		else switch (k) {
+		case 1:
+			fprintf(fff, "You regenerate very quickly.\n");
+			break;
+		case 2:
+			fprintf(fff, "You regenerate extremely quickly.\n");
+			break;
+		}
+	} else
+#endif
 	if (p_ptr->regenerate) fprintf(fff, "You regenerate quickly.\n");
 	if (p_ptr->resist_time) fprintf(fff, "You are resistant to time.\n");
 	if (p_ptr->resist_mana) fprintf(fff, "You are resistant to magical energy.\n");
