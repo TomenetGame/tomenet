@@ -7868,8 +7868,14 @@ void cmd_message(void) {
 			    buf[i + 1] == '\\' &&
 			    ((buf[i + 2] >= 'a' && buf[i + 2] < 'a' + INVEN_PACK) || /* paste inventory item */
 			    (buf[i + 2] >= 'A' && buf[i + 2] < 'A' + (INVEN_TOTAL - INVEN_WIELD)) || /* paste equipment item */
-			    buf[i + 2] == '_')) { /* paste floor item, or rather: what's under your feet */
-				if (buf[i + 2] == '_') strcpy(item, whats_under_your_feet);
+			    buf[i + 2] == '_' || /* paste floor item, or rather: what's under your feet */
+			    buf[i + 2] == '+' /* paste item_newest */
+			    )) {
+				if (buf[i + 2] == '+') {
+					if (item_newest == -1) item[0] = 0;
+					else strcpy(item, inventory_name[item_newest]);
+				}
+				else if (buf[i + 2] == '_') strcpy(item, whats_under_your_feet);
 				else if (buf[i + 2] >= 'a') strcpy(item, inventory_name[buf[i + 2] - 'a']);
 				else strcpy(item, inventory_name[(buf[i + 2] - 'A') + INVEN_WIELD]);
 
