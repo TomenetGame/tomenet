@@ -302,7 +302,7 @@ void x_set_pixel_color(XImage *image, int x, int y, unsigned long pixel_color) {
     }
 }
 
-int save_ximage_as_bmp(XImage *image, const char *filename)
+int save_ximage_as_bmp(XImage *image, const char *filename)  // TODO remove
  {
     FILE *fp;
 
