@@ -508,7 +508,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 			i = j; /* Identity translation (too lazy to change copy-pasted code to remove this =p WOW!) */
 
 			o_ptr = &subinventory[using_subinven][i];
-			if (o_ptr->tval) break;
+			if (!o_ptr->tval) break;
 			if (!item_tester_okay(o_ptr)) continue;
  #if 0
 			if (!my_strcasestr(subinventory_name[using_subinven][i], buf)) continue;
