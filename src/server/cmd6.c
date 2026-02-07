@@ -9473,7 +9473,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 			/* Actual 'normal' poison? */
 			msg_format(Ind, "You apply the %s to your %s!", o_ptr->tval == TV_POTION ? "potion" : "essence", k == -1 ? "weapons" : (k == 2 ? "first weapon" : "second weapon"));
 			if ((o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_POISON) ||
-			    (o_ptr->tval == TV_FOOD && (o_ptr->sval == SV_FOOD_POISON || o_ptr->sval == SV_FOOD_UNHEALTH))) {
+			    (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_POISON)) {
 				set_melee_brand(Ind, 60 + randint(10), TBRAND_POIS, k == -1 ? TBRAND_F_DUAL : (k == 2 ? TBRAND_F_MAINHAND : TBRAND_F_OFFHAND), TRUE, TRUE);
 				s_printf("TECHNIQUE_MELEE: %s - apply poison to %d: %s\n", p_ptr->name, k, k_name + k_info[k_idx].name);
 			}

@@ -25873,9 +25873,9 @@ The techniques are as follows:
         This is a temporary weapon brand that will run out after some time.
         The potion or mushroom will be used up in the process. Items that
         are inscribed '!k' will always be skipped.
-        If it's a potion of poison or mushroom of poison or of unhealth, the
-        weapons will receive a poison brand that deals increased damage to
-        enemies who don't resist poison.
+        If it's a potion of poison or mushroom of poison, the weapons will
+        receive a poison brand that deals increased damage to enemies who don't
+        resist poison.
         For any other types of potions or mushrooms, the brand effect may vary,
         some might have no effect at all.
         This technique does not work without a weapon. If you take off a weapon
