@@ -679,7 +679,7 @@ errr fd_lock(int fd, int what) {
 	/* Un-Lock */
 	if (what == F_UNLCK) {
 		/* Unlock it, Ignore errors */
-		(void)lockf(fd, F_ULOCK, 0);
+		lockf(fd, F_ULOCK, 0);
 	}
 	/* Lock */
 	else {
