@@ -3544,7 +3544,8 @@ void msg_print_near2(int Ind, cptr msg, cptr msg_u) {
 }
 
 /*
- * Same as msg_print_near but describes an initiator<->target interaction for those two and everyone nearby
+ * Same as msg_print_near but describes an initiator<->target interaction for those two and everyone nearby.
+ * Weakness: Bystanders don't handle Ind/Ind2 visibility to them, ie 'It' instead of player names.
  */
 void msg_print_interact_nearby(int Ind, int Ind2, cptr strInd, cptr strInd2, cptr strNearby) {
 	player_type *p_ptr = Players[Ind], *p2_ptr = Players[Ind2];
