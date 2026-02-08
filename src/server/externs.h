@@ -2160,6 +2160,7 @@ extern void msg_admins(int Ind, cptr msg);
 extern void msg_format(int Ind, cptr fmt, ...);
 extern void msg_print_near(int Ind, cptr msg);
 extern void msg_print_near2(int Ind, cptr msg, cptr msg_u);
+extern void msg_print_interact_nearby(int Ind, int Int2, cptr strInd, cptr strInd2, cptr strNearby);
 extern void msg_print_verynear(int Ind, cptr msg);
 extern void msg_print_verynear2(int Ind, cptr msg, cptr msg_u);
 extern void msg_print_near_monvar(int Ind, int m_idx, cptr msg, cptr msg_garbled, cptr msg_unseen);

@@ -3509,6 +3509,7 @@ void msg_print_near(int Ind, cptr msg) {
 		}
 	}
 }
+/* Like msg_print_near() but has two alternative strings depending on censor settings */
 void msg_print_near2(int Ind, cptr msg, cptr msg_u) {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i;
@@ -3538,6 +3539,48 @@ void msg_print_near2(int Ind, cptr msg, cptr msg_u) {
 		if (p_ptr->cave_flag[y][x] & CAVE_VIEW) {
 			/* Send the message */
 			msg_print(i, p_ptr->censor_swearing ? msg : msg_u);
+		}
+	}
+}
+
+/*
+ * Same as msg_print_near but describes an initiator<->target interaction for those two and everyone nearby
+ */
+void msg_print_interact_nearby(int Ind, int Ind2, cptr strInd, cptr strInd2, cptr strNearby) {
+	player_type *p_ptr = Players[Ind], *p2_ptr = Players[Ind2];
+	int y, x, y2, x2, i;
+	struct worldpos *wpos;
+
+	wpos = &p_ptr->wpos;
+	if (!inarea(&p2_ptr->wpos, wpos)) return; //paranoia
+
+	//if (p_ptr->admin_dm) return;
+
+	y = p_ptr->py;
+	x = p_ptr->px;
+	y2 = p2_ptr->py;
+	x2 = p2_ptr->px;
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Can he see both players? */
+		if (!((p_ptr->cave_flag[y][x] & CAVE_VIEW) && (p_ptr->cave_flag[y2][x2] & CAVE_VIEW))) continue;
+
+		/* Don't send the message to the player who caused it */
+		if (i == Ind) msg_print(i, strInd);
+		else if (i == Ind2) {
+			if (!check_ignore(Ind, i)) msg_print(i, strInd2);
+		} else {
+			if (!check_ignore(Ind, i)) msg_print(i, strNearby);
 		}
 	}
 }
@@ -3575,6 +3618,7 @@ void msg_print_verynear(int Ind, cptr msg) {
 		}
 	}
 }
+/* Like msg_print_verynear() but has two alternative strings depending on censor settings */
 void msg_print_verynear2(int Ind, cptr msg, cptr msg_u) {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i;
@@ -3667,6 +3711,7 @@ void msg_format_near(int Ind, cptr fmt, ...) {
 	/* Display */
 	msg_print_near(Ind, buf);
 }
+
 
 /* for whispering */
 void msg_format_verynear(int Ind, cptr fmt, ...) {
