@@ -16,7 +16,7 @@
 # RLTiles - http://rltiles.sourceforge.net
 #
 # LICENCE:
-# 'Tangar's tileset' project is in public domain; you are free to use it however you like; but it would be 
+# 'Tangar's tileset' project is in public domain; you are free to use it however you like; but it would be
 # very nice if you would give a credit to TomeNET and put a link to http://tomenet.eu :) Thank you!
 #
 # Please feel free to post any comments or ideas at TomeNET forums - http://tomenet.eu/phpBB3
@@ -208,7 +208,7 @@ F:164:/132 # Altar of darkness
 
 F:105:/137 # Unstable void jumpgate
 
-F:96:/133 # Tree 
+F:96:/133 # Tree
 F:219:/134 # Bush
 
 F:92:/135 # Dead tree
@@ -439,7 +439,7 @@ R:1063:/162 # Level=70 NAME='Zeus, the Omnipotent' Comments=// GIANT joke
 R:159:/191 # Level=12 NAME='The wounded bear' Comments=BEAR
 R:467:/191 # Level=28 NAME='Beorn, the Shape-Changer' Comments=BEAR
 R:629:/192 # Level=40 NAME='Shadowfax, steed of Gandalf' Comments=HORSE
-R:681:/192 # Level=44 NAME='Chaugnar Faugn, Horror from the Hills' Comments=HORSE actually a horse 
+R:681:/192 # Level=44 NAME='Chaugnar Faugn, Horror from the Hills' Comments=HORSE actually a horse
 R:859:/192 # Level=75 NAME='The Unicorn of Order' Comments=HORSE
 R:572:/193 # Level=36 NAME='The Greater hell magic mushroom were-quylthulg' Comments=// Q joke
 R:822:/193 # Level=79 NAME='Qlzqqlzuup, the Lord of Flesh' Comments=Q
@@ -688,7 +688,7 @@ R:347:/ # Level=20 NAME='Werewolf' Comments=
 R:363:/ # Level=26 NAME='Wolf chieftain' Comments=
 R:374:/ # Level=30 NAME='Fleshhound of Khorne' Comments=
 R:613:/ # Level=35 NAME='Hellhound' Comments=
-R:829:/154 # Level=78 NAME='Black Dog' Comments=DOGGY 
+R:829:/154 # Level=78 NAME='Black Dog' Comments=DOGGY
 R:163:/ # Level=9 NAME='Baby blue dragon' Comments=
 R:164:/ # Level=9 NAME='Baby white dragon' Comments=
 R:165:/ # Level=9 NAME='Baby green dragon' Comments=
