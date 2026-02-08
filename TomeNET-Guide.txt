@@ -23309,8 +23309,8 @@ these limitations will be lifted.
                     up with 4 hit dice, also same as the runemaster class.
                     Example 3:
                     The Ranger class, which has 7 hit dice, will not gain any
-                    hit dice bonus as 7 never less than the maximum attainable
-                    minimum limit of 4 hit dice at skill 50.000.
+                    hit dice bonus as 7 is already more than the maximum
+                    attainable amount of 4 hit dice at skill 50.000.
 
                     Regeneration (faster hit point regeneration, same as from
                     items that provide regeneration, so doesn't stack with
