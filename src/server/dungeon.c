@@ -5251,6 +5251,7 @@ static bool process_player_end_aux(int Ind) {
 			take_hit(Ind, k, "poison", p_ptr->poisoned_attacker);
 		}
 	}
+	else if (p_ptr->slow_poison < 0) p_ptr->slow_poison++; //slow-poison-hack
 	/* Suffer from disease - basically same amount of damage and duration as poison except it cannot be cured as easily */
 	if (p_ptr->diseased) {
 		k = p_ptr->mhp / POISON_DIV;

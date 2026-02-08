@@ -12278,7 +12278,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->food >= PY_FOOD_MAX) set_food(Ind, PY_FOOD_MAX - 1);
 		}
 		if (dam & 0x4) { /* Neutralise Poison */
+			k = p_ptr->poisoned;
 			(void)set_poisoned(Ind, 0, 0);
+			if (k) p_ptr->slow_poison = -5; //slow-poison-hack
 			(void)set_diseased(Ind, 0, 0); //mh
 		}
 		if (dam & 0x8) /* Close cuts */

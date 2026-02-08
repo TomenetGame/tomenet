@@ -350,10 +350,14 @@ HCURING_II = add_spell {
 	["blind"] = 	FALSE,
 	--["confusion"] =	FALSE,
 	["spell"] = 	function()
+			local k
+
 			if (player.food >= PY_FOOD_MAX) then
 				set_food(Ind, PY_FOOD_MAX - 1)
 			end
+			k = player.poisoned
 			set_poisoned(Ind, 0, 0)
+			if k ~= 0 then player.slow_poison = -5 end --slow-poison-hack
 			set_cut(Ind, player.cut - 200, 0, FALSE)
 			set_blind(Ind, 0)
 			set_confused(Ind, 0)
@@ -382,10 +386,14 @@ HCURING_III = add_spell {
 	["blind"] = 	FALSE,
 	["confusion"] =	FALSE,
 	["spell"] = 	function()
+			local k
+
 			if (player.food >= PY_FOOD_MAX) then
 				set_food(Ind, PY_FOOD_MAX - 1)
 			end
+			k = player.poisoned
 			set_poisoned(Ind, 0, 0)
+			if k ~= 0 then player.slow_poison = -5 end --slow-poison-hack
 			set_diseased(Ind, 0, 0)
 			set_cut(Ind, -300, 0, FALSE)
 			set_blind(Ind, 0)

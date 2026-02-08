@@ -1991,6 +1991,12 @@ bool set_poisoned(int Ind, int v, int attacker) { /* bad status effect */
 
 	/* Open */
 	if (v) {
+#if 1 /* slow-poison-hack enabled */
+		if (p_ptr->slow_poison < 0) p_ptr->slow_poison = 1;
+#else /* slow-poison-hack disabled */
+		if (p_ptr->slow_poison < 0) p_ptr->slow_poison = 0;
+#endif
+
 		if (!p_ptr->poisoned) {
 			msg_print(Ind, "You are poisoned!");
 			notice = TRUE;

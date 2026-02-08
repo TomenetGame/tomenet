@@ -23674,10 +23674,16 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
                     Tier II: Level 11.                         (auto-project)
                     Also neutralizes poison, cures blindness, cuts, confusion.
+                    If this spell does neutralize poison on you or a friendly
+                    target, for a short while afterwards any new poison effect
+                    will automatically get slowed down (slow-poison effect).
                     This spell can be used even while blind.
 
                     Tier III: Level 21.                        (auto-project)
                     Also cures diseases, stun and hallucinations.
+                    If this spell does neutralize poison on you or a friendly
+                    target, for a short while afterwards any new poison effect
+                    will automatically get slowed down (slow-poison effect).
                     This spell can be used even while blind or confused.
 
     Cure Wounds     Heals a fixed amount of hit points of a friendly target,
