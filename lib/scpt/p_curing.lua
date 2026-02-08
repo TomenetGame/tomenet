@@ -369,6 +369,7 @@ HCURING_II = add_spell {
 	["desc"] = 	{
 			"Treats stomach ache, neutralizes poison, heals cuts",
 			"and cures blindness and confusion.",
+			"If poison is cured: For a short while new poison effects will be auto-slowed.",
 			"***Automatically projecting***",
 	}
 }
@@ -408,6 +409,7 @@ HCURING_III = add_spell {
 	["desc"] = 	{
 			"Treats stomach ache, neutralizes poison, cures diseases, heals",
 			"cuts and cures blindness, confusion, stun and hallucinations.",
+			"If poison is cured: For a short while new poison effects will be auto-slowed.",
 			"***Automatically projecting***",
 	}
 }
