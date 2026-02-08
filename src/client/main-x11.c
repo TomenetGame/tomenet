@@ -2289,7 +2289,7 @@ XImage * prepareTile(XImage *tiles, XImage *fgmask, s16b font_width, s16b font_h
 				tilePixelColorRGB.green += maskedObjectColorRGB.green;
 			}
 
-			unsigned long tilePixelColorHex = rgbToHex(tilePixelColorRGB.red, tilePixelColorRGB.green, tilePixelColorRGB.blue);
+			unsigned long tilePixelColorHex = rgbToHex(tilePixelColorRGB);
 			XPutPixel(preparedTile, tileX, tileY, tilePixelColorHex);
 		}
 	}
@@ -2332,7 +2332,7 @@ void combineFrontTileWithBackTile(XImage **prepared_front_tile, XImage *front_bg
 			// If the color of the mask pixel matches the color of the mask, then replace the pixel in the fron tile with the pixel from the bottom tile
 			if (isRGBColorsEqual(maskPixel, transparancyColor))
 			{
-				XPutPixel(*prepared_front_tile, i, j, rgbToHex(backPixel.red, backPixel.green, backPixel.blue));
+				XPutPixel(*prepared_front_tile, i, j, rgbToHex(backPixel));
 			}
 		}
 	}
@@ -3018,7 +3018,7 @@ Pixell xInterpolationBilinear(XImage *originalImage, float originalX, float orig
 	bottomRightPixelColor = color_filter_function(bottomRightPixelColor);
 
 	color_rgb newPixelRGB = pixelBilinearInterpolation(fractionOfX, fractionOfY, topLeftPixelColor, topRightPixelColor, bottomLeftPixelColor, bottomRightPixelColor);
-	new_pixel = rgbToHex(newPixelRGB.red, newPixelRGB.green, newPixelRGB.blue);
+	new_pixel = rgbToHex(newPixelRGB);
 
 	return new_pixel;
 }
@@ -3082,7 +3082,7 @@ Pixell xInterpolationLanczos(XImage *originalImage, float originalX, float origi
 	newPixelRgb.green = (int)fmin(sum_green / weight_sum, 255);
 	newPixelRgb.blue = (int)fmin (sum_blue / weight_sum, 255);
 
-	new_pixel = rgbToHex(newPixelRgb.red, newPixelRgb.green, newPixelRgb.blue);
+	new_pixel = rgbToHex(newPixelRgb);
 	return new_pixel;
 }
 
@@ -3143,11 +3143,11 @@ Pixell xInterpolationQuadratic(XImage *originalImage, float originalX, float ori
 	int new_green = (int) quadraticInterpolation(dist_y, colors[0].green, colors[1].green, colors[2].green);
 	int new_blue = (int) quadraticInterpolation(dist_y, colors[0].blue, colors[1].blue, colors[2].blue);
 
-	new_red =  (int) fmin(new_red, 255);
-	new_green = (int) fmin(new_green, 255);
-	new_blue = (int) fmin(new_blue, 255);
+	newPixelRgb.red =  (int) fmin(new_red, 255);
+	newPixelRgb.green = (int) fmin(new_green, 255);
+	newPixelRgb.blue = (int) fmin(new_blue, 255);
 
-	new_pixel = rgbToHex(new_red, new_green, new_blue);
+	new_pixel = rgbToHex(newPixelRgb);
 
 	return new_pixel;
 }
@@ -3164,7 +3164,7 @@ Pixell xInterpolationNear(XImage *originalImage, float originalX, float original
 	coordinates pixel_coordinates_near = confineCoordinatesToRectangle(originalLoopX, originalLoopY, tile_boundaries);
 	newPixelRgb = xGetPixelRgb(originalImage, pixel_coordinates_near.x, pixel_coordinates_near.y);
 	newPixelRgb = color_filter_function(newPixelRgb);
-	new_pixel = rgbToHex(newPixelRgb.red, newPixelRgb.green, newPixelRgb.blue);
+	new_pixel = rgbToHex(newPixelRgb);
 
 	return new_pixel;
 }
