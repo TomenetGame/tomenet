@@ -230,6 +230,7 @@
 #define	GF_RIFT			171
 #define GF_RESTORING		172
 #define GF_UNHEALTH		173
+#define GF_DISEASE		174
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200
