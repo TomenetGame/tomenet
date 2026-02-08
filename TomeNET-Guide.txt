@@ -28466,6 +28466,10 @@ Solution:   This can have several reasons. On disconnection a message box will
             At the time of writing, these provide free trial periods.
             (A ping improvement of 70ms was reported by one player from NZ.)
 
+            If you want free VPN (not just free trial periods) you could
+            consider ProtonVPN, as they have a medium-speed permanently free
+            plan option. However, don't expect free VPN to reach paid quality.
+
             To check how your ISP routes your network traffic, you can use the
             'traceroute' command on your PC (eg 'traceroute europe.tomenet.eu')
             and then visualize it by using a website that provides (free)
