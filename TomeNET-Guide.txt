@@ -23299,6 +23299,11 @@ these limitations will be lifted.
                     minimum class hit dice of your Nature skill divided by 12.5
                     ie 4 hd at 50.000. (Race hit dice are unaffected.)
 
+                    This hit die bonus is applied fine-grainedly in steps of
+                    1/10 hit dice, so every skill point helps a bit, although
+                    at very low character levels due to rounding the HP change
+                    for every point invested might not be noticable yet.
+
                     Example 1:
                     The Istar class, which has 0 hit dice, will gain 4 hit dice
                     at 50.000 Nature (difference between 4 and 0) and thereby
