@@ -5314,7 +5314,7 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 		msg_format(Ind, "You notice %s lying on the ground!", o_name);
    #endif
   #else /* Monetary reward */
-		reward = dam_roll(4000, 50);
+		reward = damroll(4000, 50);
    #ifndef DUNFOUND_REWARDS_MONEY_DROP /* Auto-pick it up? */
 		msg_format(Ind, "The Mathom House sends %d gold pieces to support your exploration efforts!", reward);
 		s_printf("DUNFOUND_REWARD(3): %s gains %d Au.\n", p_ptr->name, reward);
