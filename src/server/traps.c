@@ -5379,7 +5379,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_POTION_RUINATION:	/* ??? */
 			typ = GF_RUINATION;
-			dam = 1; /*dummmy*/
+			dam = damroll(20, 10);
 			fixed = TRUE;
 			break;
 		case SV_POTION_EXPERIENCE:

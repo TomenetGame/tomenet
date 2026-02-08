@@ -331,7 +331,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		dt = GF_RUINATION;
 		ident = TRUE;
 		angry = TRUE;
-		dam = 1; /* dummy */
+		dam = damroll(10, 10);
 		break;
 	case SV_POTION_DETONATIONS:
 		radius = 3;
@@ -439,20 +439,20 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 		o_tsval -= 1000;
 
 		switch (o_tsval) {
-		case SV_FOOD_POISON: /* Note: This one is actually handled outside of this function so we should never arrive here */
+		case SV_FOOD_POISON: /* Note: This one is actually handled outside of this function so we should never arrive here, it's setting TBRAND_POIS instead. */
 			dt = GF_POIS;
-			dam = 7;
+			dam = FLAT_BRAND_BONUS_POISON;
 			ident = TRUE;
 			break;
 
 		case SV_FOOD_UNHEALTH:
 			dt = GF_UNHEALTH;
-			dam = 7;
+			dam = FLAT_BRAND_BONUS_POISON;
 			ident = TRUE;
 			break;
 		case SV_FOOD_DISEASE:
 			dt = GF_DISEASE;
-			dam = 7;
+			dam = (FLAT_BRAND_BONUS_POISON * 2 + 2) / 3; /* FOOD_DISEASE damages ~2/3 as much as FOOD_UNHEALTH */
 			ident = TRUE;
 			break;
 
@@ -667,7 +667,7 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 		case SV_POTION_RUINATION:
 			dt = GF_RUINATION;
 			ident = TRUE;
-			dam = 1; /* dummy */
+			dam = FLAT_BRAND_BONUS_POISON;
 			break;
 		case SV_POTION_DETONATIONS:
 			return(FALSE);
@@ -6726,9 +6726,9 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	return(obvious);
 }
 
-/* 'disease': Also deal damage if monster isn't undead/nonliving.
+/* 'disease': Also deal damage potentially.
    'who' should be -Ind. */
-bool monster_dec_str(int who, int m_idx, bool disease) {
+bool monster_dec_str(int who, int m_idx, int disease) {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 
@@ -6771,8 +6771,8 @@ bool monster_dec_str(int who, int m_idx, bool disease) {
 	}
 
 	/* also take damage? */
-	if (disease && IS_PVP && !(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD))) {
-		int dam = (FLAT_BRAND_BONUS_POISON * 2 + 2) / 3; /* FOOD_DISEASE damages ~2/3 as much as FOOD_UNHEALTH */
+	if (disease && IS_PVP && !(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON))) {
+		int dam = disease;
 
 		if (dam > 0) {
 			bool fear = FALSE;
@@ -6801,9 +6801,9 @@ bool monster_dec_dex(monster_type *m_ptr) {
 
 	return(m_ptr->ac != k);
 }
-/* 'unhealth': Also deal damage if monster isn't undead/nonliving.
+/* 'unhealth': Also deal damage potentially.
    'who' should be -Ind. */
-bool monster_dec_con(int who, int m_idx, bool unhealth) {
+bool monster_dec_con(int who, int m_idx, int unhealth) {
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
 
@@ -6823,8 +6823,8 @@ bool monster_dec_con(int who, int m_idx, bool unhealth) {
 	}
 
 	/* also take damage? */
-	if (unhealth && IS_PVP && !(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD))) {
-		int dam = FLAT_BRAND_BONUS_POISON - kc;
+	if (unhealth && IS_PVP && !(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON))) {
+		int dam = unhealth - kc;
 
 		/* damage potential only exists if HP weren't already reduced too much above, as a result of maxhp reduction */
 		if (dam > 0) {
@@ -15346,6 +15346,28 @@ int approx_damage(int m_idx, int dam, int typ) {
 			dam >>= 1;
 		break;
 
+	case GF_UNHEALTH:
+		if (m_ptr->r_idx == RI_MIRROR ||
+		    ((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)))
+			dam = 0;
+		break;
+	case GF_DISEASE:
+		if (m_ptr->r_idx == RI_MIRROR ||
+		    ((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)))
+			dam = 0;
+		break;
+	case GF_RUINATION:
+		if (m_ptr->r_idx == RI_MIRROR ||
+		    ((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD |  RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)))
+			dam = 0;
+		break;
+
 	case GF_HOLD:
 	case GF_DOMINATE:
 	case GF_TELE_TO:
@@ -15363,7 +15385,6 @@ int approx_damage(int m_idx, int dam, int typ) {
 	case GF_INC_DEX:
 	case GF_INC_CON:
 	case GF_AUGMENTATION:
-	case GF_RUINATION:
 	default:
 		/* No damage */
 		dam = 0;
