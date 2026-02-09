@@ -2748,7 +2748,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 	Term_save();
 
-	inkey_interact_macros = TRUE; /* Advantage: Non-command macros on Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off - unless ALLOW_NAVI_KEYS_IN_PROMPT is enabled! */
+	//inkey_interact_macros = TRUE; /* Advantage: Non-command macros on Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off - unless ALLOW_NAVI_KEYS_IN_PROMPT is enabled! */
 
 	while (TRUE) {
 		/* We just wanted to do a chapter search which resulted a hard-coded substitution that isn't a real chapter but instead falls back to normal search? */
@@ -4660,7 +4660,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "?:Help");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Those keys can be used to navigate the guide. Here's a detailed explanation:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " Space,'n' / 'p': Move down / up by one page (ENTER/BACKSPACE move by one line).");
-			Term_putstr( 0, i++, -1, TERM_WHITE, " 's'            : Search for a text string (use all uppercase for strict mode).");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 's' / '/'      : Search for a text string (use all uppercase for strict mode).");
 #ifdef REGEX_SEARCH
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'r' / 'R'      : Search for a regular expression ('R' = case-sensitive).");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'd'            : ..after 's/r/R', this jumps to the next match.");
