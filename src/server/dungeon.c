@@ -11216,7 +11216,7 @@ void dungeon(void) {
 			goto ai_response_okay;
 
 			ai_response_emptied:
-			exec_lua(0, "eight_ball(\"Auxiliary brain malfunction. Skipping a response.\")");
+			exec_lua(0, "eight_ball(\"[Auxiliary brain malfunction. Skipping a response.]\")");
 			goto ai_response_done;
 
 			ai_response_okay:
