@@ -20379,7 +20379,8 @@ create a character!):
     Vampires start with a mummy wrapping, because it can protect them from the
     sunlight. If they are moving on the world surface (meaning not in a dungeon
     or tower) while it's day, the sun will burn them if they don't resist light
-    or wear a protective wrapping.
+    or wear a protective wrapping or stand next to a tree, which grants them
+    protective shade.
     They don't actually need a light source, since they are able to determine
     their close surroundings even in complete darkness thanks to an intrinsic
     trait of the vampire race: Darkvision.
