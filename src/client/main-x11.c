@@ -3427,7 +3427,9 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	int win_cols, win_lines, wid_outer, hgt_outer;
 	cptr n;
 	int topx, topy; /* 0, 0 default */
+#ifdef USE_GRAPHICS
 	int i;
+#endif
 
 
 	/* Use values from .tomenetrc;
