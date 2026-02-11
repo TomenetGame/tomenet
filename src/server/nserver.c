@@ -14308,6 +14308,7 @@ int toggle_rest(int Ind, int turns) {
 		/* No more warnings about resting once we rested, for this session */
 		if (!p_ptr->warning_rest) p_ptr->warning_rest = 1;
 #endif
+		p_ptr->warning_rest_cooldown = 0;
 
 		/* Make sure we aren't running */
 		p_ptr->running = FALSE;
