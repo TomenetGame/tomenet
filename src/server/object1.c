@@ -7751,10 +7751,10 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 			if (i_ptr->xtra1) {
 				tv = TV_STAFF;
 				sv = i_ptr->xtra1 - 1;
-			} else if (o_ptr->xtra2) {
+			} else if (i_ptr->xtra2) {
 				tv = TV_WAND;
 				sv = i_ptr->xtra2 - 1;
-			} else if (o_ptr->xtra3) {
+			} else if (i_ptr->xtra3) {
 				tv = TV_ROD;
 				sv = i_ptr->xtra3 - 1;
 			} else {
