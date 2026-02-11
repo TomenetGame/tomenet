@@ -1734,8 +1734,29 @@ void do_cmd_drink_fountain(int Ind) {
 			ident = quaff_potion(Ind, tval, sval, -1 - pval);
 		}
 	else ident = quaff_potion(Ind, tval, sval, -1 - pval);
-	if (ident) cs_ptr->sc.fountain.known = TRUE;
-	else if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "You feel less thirsty.");
+	if (ident) {
+		/* Object level */
+		int klev = k_info[k_idx].level;
+		bool flipped;
+
+		cs_ptr->sc.fountain.known = TRUE;
+
+		/* Also gain xp and learn the potion flavour: */
+		if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
+
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+		if (!p_ptr->obj_aware[k_idx]) {
+			flipped = object_aware_k_idx(Ind, k_idx);
+			//object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		}
+		/* The item has been tried */
+		object_tried_k_idx(Ind, k_idx, flipped);
+	} else if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "You feel less thirsty.");
 	else msg_print(Ind, "You drink some.");
 
 	if (p_ptr->prace == RACE_VAMPIRE) ;

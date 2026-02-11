@@ -1498,6 +1498,7 @@ void object_known(object_type *o_ptr) {
 bool object_aware(int Ind, object_type *o_ptr) {
 	int i;
 
+	/* Was already aware? */
 	if (object_aware_p(Ind, o_ptr)) return(FALSE);
 
 	/* Fully aware of the effects */
@@ -1509,6 +1510,22 @@ bool object_aware(int Ind, object_type *o_ptr) {
 			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
 	return(TRUE);
 }
+bool object_aware_k_idx(int Ind, int k_idx) {
+	int i;
+
+	/* Was already aware? */
+	if (Players[Ind]->obj_aware[k_idx]) return(FALSE);
+
+	/* Fully aware of the effects */
+	Players[Ind]->obj_aware[k_idx] = TRUE;
+
+	/* Make it refresh, although the object mem structure didn't change */
+	for (i = 0; i < INVEN_TOTAL; i++)
+		if (Players[Ind]->inventory[i].k_idx == k_idx)
+			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
+	return(TRUE);
+}
+
 
 
 
@@ -1518,6 +1535,7 @@ bool object_aware(int Ind, object_type *o_ptr) {
 void object_tried(int Ind, object_type *o_ptr, bool flipped) {
 	int i;
 
+	/* We already tried? */
 	if (object_tried_p(Ind, o_ptr)) return;
 
 	/* Mark it as tried (even if "aware") */
@@ -1527,6 +1545,23 @@ void object_tried(int Ind, object_type *o_ptr, bool flipped) {
 	if (flipped) return; /* already changed by object_aware()? don't cancel out! */
 	for (i = 0; i < INVEN_TOTAL; i++)
 		if (Players[Ind]->inventory[i].k_idx == o_ptr->k_idx)
+			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
+
+	return;
+}
+void object_tried_k_idx(int Ind, int k_idx, bool flipped) {
+	int i;
+
+	/* We already tried? */
+	if (Players[Ind]->obj_tried[k_idx]) return;
+
+	/* Mark it as tried (even if "aware") */
+	Players[Ind]->obj_tried[k_idx] = TRUE;
+
+	/* Make it refresh, although the object mem structure didn't change */
+	if (flipped) return; /* already changed by object_aware()? don't cancel out! */
+	for (i = 0; i < INVEN_TOTAL; i++)
+		if (Players[Ind]->inventory[i].k_idx == k_idx)
 			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
 
 	return;
