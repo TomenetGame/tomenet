@@ -3713,6 +3713,10 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->max_lev = p_ptr->max_plv = p_ptr->lev;
 	p_ptr->max_exp = p_ptr->exp;
 
+	/* for "warning_pvp";
+	   also putting this before player_setup() as a hack to suppress grid_sunlit -> vampire burn+instant respite message combo for newly created characters (inside the inn) */
+	p_ptr->newly_created = TRUE;
+
 	/* Set his location, panel, etc. */
 	player_setup(Ind, TRUE);
 
@@ -3874,9 +3878,6 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		s_printf("Reserved name cleared.\n");
 		break;
 	}
-
-	/* for "warning_pvp" */
-	p_ptr->newly_created = TRUE;
 
 	/* Success */
 	return(TRUE);
