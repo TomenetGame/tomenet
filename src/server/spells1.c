@@ -7501,7 +7501,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			no_dam = TRUE;
 			quiet = TRUE;
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-		} else if (monster_dec_con(who, c_ptr->m_idx, TRUE)) note = "appears less healthy"; //msg_print_near_monster(c_ptr->m_idx, "appears less healthy");
+		} else if (monster_dec_con(who, c_ptr->m_idx, TRUE)) note = " appears less healthy"; //msg_print_near_monster(c_ptr->m_idx, "appears less healthy");
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 		break;
 	case GF_DISEASE: /* mini GF_RUINATION */
@@ -7515,7 +7515,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			no_dam = TRUE;
 			quiet = TRUE;
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-		} else if (monster_dec_str(who, c_ptr->m_idx, TRUE)) note = "appears weaker";
+		} else if (monster_dec_str(who, c_ptr->m_idx, TRUE)) note = " appears weaker";
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 		break;
 
@@ -9475,10 +9475,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		    (m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else if (monster_dec_str(who, c_ptr->m_idx, FALSE))
-			note = "appears weaker.";
+			note = " appears weaker.";
 			//msg_print_near_monster(c_ptr->m_idx, "appears weaker.");
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		break;
@@ -9498,10 +9498,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		    (m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 		} else if (monster_dec_dex(m_ptr))
-			note = "appears clumsy.";
+			note = " appears clumsy.";
 			//msg_print_near_monster(c_ptr->m_idx, "appears clumsy.");
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		break;
@@ -9521,10 +9521,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		    (m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 		} else if (monster_dec_con(who, c_ptr->m_idx, FALSE))
-			note = "appears less healthy.";
+			note = " appears less healthy.";
 			// msg_print_near_monster(c_ptr->m_idx, "appears less healthy.");
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 		break;
@@ -9590,21 +9590,21 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				if (m_ptr->blow[0].effect == RBE_LOSE_INT || m_ptr->blow[1].effect == RBE_LOSE_INT || m_ptr->blow[2].effect == RBE_LOSE_INT || m_ptr->blow[3].effect == RBE_LOSE_INT) break;
 				if (mclass == 2) break;
 				m_ptr->statsIWH_drain++;
-				note = "appears stupid.";
+				note = " appears stupid.";
 				quiet = FALSE;
 				break;
 			case GF_DEC_WIS:
 				if (m_ptr->blow[0].effect == RBE_LOSE_WIS || m_ptr->blow[1].effect == RBE_LOSE_WIS || m_ptr->blow[2].effect == RBE_LOSE_WIS || m_ptr->blow[3].effect == RBE_LOSE_WIS) break;
 				if (mclass == 1 || mclass == 3) break;
 				m_ptr->statsIWH_drain++;
-				note = "appears naive.";
+				note = " appears naive.";
 				quiet = FALSE;
 				break;
 			case GF_DEC_CHR:
 				if (m_ptr->blow[0].effect == RBE_LOSE_CHR || m_ptr->blow[1].effect == RBE_LOSE_CHR || m_ptr->blow[2].effect == RBE_LOSE_CHR || m_ptr->blow[3].effect == RBE_LOSE_CHR) break;
 				if (mclass != 3) break;
 				m_ptr->statsIWH_drain++;
-				note = "appears ugly.";
+				note = " appears ugly.";
 				quiet = FALSE;
 				break;
 			}
@@ -9626,7 +9626,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam = 1;
 			}
 		}
-		if (dam) note = "appears less weak.";
+		if (dam) note = " appears less weak.";
 		else quiet = TRUE;
 		//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak.");
 		no_dam = TRUE;
@@ -9638,7 +9638,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			m_ptr->ac = r_ptr->ac;*/
 		if (m_ptr->ac < m_ptr->org_ac) {
 			m_ptr->ac = m_ptr->org_ac;
-			note = "appears less clumsy.";
+			note = " appears less clumsy.";
 			//msg_print_near_monster(c_ptr->m_idx, "appears less clumsy.");
 		} else quiet = TRUE;
 		no_dam = TRUE;
@@ -9651,7 +9651,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		if (m_ptr->maxhp < m_ptr->org_maxhp) {
 			m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
 			m_ptr->maxhp = m_ptr->org_maxhp;
-			note = "appears less sick.";
+			note = " appears less sick.";
 			//msg_print_near_monster(c_ptr->m_idx, "appears less sick.");
 		} else quiet = TRUE;
 		no_dam = TRUE;
@@ -9704,17 +9704,17 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		switch (typ) {
 		case GF_RES_INT:
 			if (mclass == 2) break;
-			note = "appears less stupid.";
+			note = " appears less stupid.";
 			quiet = FALSE;
 			break;
 		case GF_RES_WIS:
 			if (mclass == 1 || mclass == 3) break;
-			note = "appears less naive.";
+			note = " appears less naive.";
 			quiet = FALSE;
 			break;
 		case GF_RES_CHR:
 			if (mclass != 3) break;
-			note = "appears less ugly.";
+			note = " appears less ugly.";
 			quiet = FALSE;
 			break;
 		}
@@ -9807,52 +9807,52 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		if (k) switch(k) {
-			case 0x1: note = "appears less weak."; break;
-			case 0x2: note = "appears less clumsy."; break;
-			case 0x3: note = "appears less weak and clumsy."; break;
-			case 0x4: note = "appears less sick."; break;
-			case 0x5: note = "appears less weak and sick."; break;
-			case 0x6: note = "appears less clumsy and sick."; break;
-			case 0x7: note = "appears less weak, clumsy and sick."; break;
+			case 0x1: note = " appears less weak."; break;
+			case 0x2: note = " appears less clumsy."; break;
+			case 0x3: note = " appears less weak and clumsy."; break;
+			case 0x4: note = " appears less sick."; break;
+			case 0x5: note = " appears less weak and sick."; break;
+			case 0x6: note = " appears less clumsy and sick."; break;
+			case 0x7: note = " appears less weak, clumsy and sick."; break;
 
-			case 0x8: note = "appears less stupid."; break;
-			case 0x9: note = "appears less weak and stupid."; break;
-			case 0xa: note = "appears less clumsy and stupid."; break;
-			case 0xb: note = "appears less weak, clumsy and stupid."; break;
-			case 0xc: note = "appears less sick and stupid."; break;
-			case 0xd: note = "appears less weak, sick and stupid."; break;
-			case 0xe: note = "appears less clumsy, sick and stupid."; break;
-			case 0xf: note = "appears less weak, clumsy, sick and stupid."; break;
+			case 0x8: note = " appears less stupid."; break;
+			case 0x9: note = " appears less weak and stupid."; break;
+			case 0xa: note = " appears less clumsy and stupid."; break;
+			case 0xb: note = " appears less weak, clumsy and stupid."; break;
+			case 0xc: note = " appears less sick and stupid."; break;
+			case 0xd: note = " appears less weak, sick and stupid."; break;
+			case 0xe: note = " appears less clumsy, sick and stupid."; break;
+			case 0xf: note = " appears less weak, clumsy, sick and stupid."; break;
 
-			case 0x10: note = "appears less naive."; break;
-			case 0x11: note = "appears less weak and naive."; break;
-			case 0x12: note = "appears less clumsy and naive."; break;
-			case 0x13: note = "appears less weak, clumsy and naive."; break;
-			case 0x14: note = "appears less sick and naive."; break;
-			case 0x15: note = "appears less weak, sick and naive."; break;
-			case 0x16: note = "appears less clumsy, sick and naive."; break;
-			case 0x17: note = "appears less weak, clumsy, sick and naive."; break;
+			case 0x10: note = " appears less naive."; break;
+			case 0x11: note = " appears less weak and naive."; break;
+			case 0x12: note = " appears less clumsy and naive."; break;
+			case 0x13: note = " appears less weak, clumsy and naive."; break;
+			case 0x14: note = " appears less sick and naive."; break;
+			case 0x15: note = " appears less weak, sick and naive."; break;
+			case 0x16: note = " appears less clumsy, sick and naive."; break;
+			case 0x17: note = " appears less weak, clumsy, sick and naive."; break;
 
-			case 0x20: note = "appears less vain."; break; //or 'more convincing again'
-			case 0x21: note = "appears less weak and vain."; break;
-			case 0x22: note = "appears less clumsy and vain."; break;
-			case 0x23: note = "appears less weak, clumsy and vain."; break;
-			case 0x24: note = "appears less sick and vain."; break;
-			case 0x25: note = "appears less weak, sick and vain."; break;
-			case 0x26: note = "appears less clumsy, sick and vain."; break;
-			case 0x27: note = "appears less weak, clumsy ,sick and vain."; break;
+			case 0x20: note = " appears less vain."; break; //or 'more convincing again'
+			case 0x21: note = " appears less weak and vain."; break;
+			case 0x22: note = " appears less clumsy and vain."; break;
+			case 0x23: note = " appears less weak, clumsy and vain."; break;
+			case 0x24: note = " appears less sick and vain."; break;
+			case 0x25: note = " appears less weak, sick and vain."; break;
+			case 0x26: note = " appears less clumsy, sick and vain."; break;
+			case 0x27: note = " appears less weak, clumsy ,sick and vain."; break;
 
-			case 0x40: note = "appears less silly."; break;
-			case 0x41: note = "appears less weak and silly."; break;
-			case 0x42: note = "appears less clumsy and silly."; break;
-			case 0x43: note = "appears less weak, clumsy and silly."; break;
-			case 0x44: note = "appears less sick and silly."; break;
-			case 0x45: note = "appears less weak, sick and silly."; break;
-			case 0x46: note = "appears less clumsy, sick and silly."; break;
-			case 0x47: note = "appears less weak, clumsy, sick and silly."; break;
+			case 0x40: note = " appears less silly."; break;
+			case 0x41: note = " appears less weak and silly."; break;
+			case 0x42: note = " appears less clumsy and silly."; break;
+			case 0x43: note = " appears less weak, clumsy and silly."; break;
+			case 0x44: note = " appears less sick and silly."; break;
+			case 0x45: note = " appears less weak, sick and silly."; break;
+			case 0x46: note = " appears less clumsy, sick and silly."; break;
+			case 0x47: note = " appears less weak, clumsy, sick and silly."; break;
 
 			/* rest is too much, spam and this silyl string op */
-			default: note = "is restored to full ability."; break;
+			default: note = " is restored to full ability."; break;
 		} else quiet = TRUE;
 
 		no_dam = TRUE;
@@ -9862,7 +9862,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_INC_STR:
 		if ((r_ptr->flags7 & RF7_NO_DEATH) ||  (m_ptr->status & M_STATUS_FRIENDLY)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			/* hack */
@@ -9886,7 +9886,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					dam = 1;
 				}
 			}
-			if (dam) note = "appears stronger!";
+			if (dam) note = " appears stronger!";
 			else quiet = TRUE;
 			//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears stronger!");
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
@@ -9898,13 +9898,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_INC_DEX:
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac; /* include restore dex */
 			if (m_ptr->ac < m_ptr->org_ac + 50) {
 				m_ptr->ac += 5;
-				note = "appears more dextrous!";
+				note = " appears more dextrous!";
 				//msg_print_near_monster(c_ptr->m_idx, "appears more dextrous!");
 			} else quiet = TRUE;
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
@@ -9916,7 +9916,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_INC_CON:
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			if (m_ptr->maxhp < m_ptr->org_maxhp) { /* include a restore con here */
@@ -9927,7 +9927,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (m_ptr->maxhp < (m_ptr->org_maxhp * 3) / 2) {
 				m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
 				m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
-				note = "appears healthier!";
+				note = " appears healthier!";
 				//msg_print_near_monster(c_ptr->m_idx, "appears healthier!");
 			} else quiet = TRUE;
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
@@ -9990,19 +9990,19 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			case GF_INC_INT:
 				if (mclass == 2) break;
 				m_ptr->statsIWH_drain--;
-				note = "appears smarter.";
+				note = " appears smarter.";
 				quiet = FALSE;
 				break;
 			case GF_INC_WIS:
 				if (mclass == 1 || mclass == 3) break;
 				m_ptr->statsIWH_drain--;
-				note = "appears wiser.";
+				note = " appears wiser.";
 				quiet = FALSE;
 				break;
 			case GF_INC_CHR:
 				if (mclass != 3) break;
 				m_ptr->statsIWH_drain--;
-				note = "appears more convincing."; //radiant?
+				note = " appears more convincing."; //radiant?
 				quiet = FALSE;
 				break;
 			}
@@ -10014,7 +10014,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_AUGMENTATION:
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			/* hack */
@@ -10105,28 +10105,28 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					case GF_INC_INT:
 						if (mclass == 2) break;
 						m_ptr->statsIWH_drain--;
-						note = "appears smarter.";
+						note = " appears smarter.";
 						dam = 1;
 						break;
 					case GF_INC_WIS:
 						if (mclass == 1 || mclass == 3) break;
 						m_ptr->statsIWH_drain--;
-						note = "appears wiser.";
+						note = " appears wiser.";
 						dam = 1;
 						break;
 					case GF_INC_CHR:
 						if (mclass != 3) break;
 						m_ptr->statsIWH_drain--;
-						note = "appears more convincing."; //radiant?
+						note = " appears more convincing."; //radiant?
 						dam = 1;
 						break;
 					}
 				}
 			}
 
-			if (dam) note = "appears more powerful!";
+			if (dam) note = " appears more powerful!";
 			else quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears more powerful!");
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		}
@@ -10228,9 +10228,9 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				}
 			}
 
-			if (k) note = "appears less powerful";
+			if (k) note = " appears less powerful";
 			else quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less powerful");
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 
@@ -10244,10 +10244,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_EXP:
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || m_ptr->level >= MONSTER_LEVEL_MAX) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
-			note = "appears more experienced!";
+			note = " appears more experienced!";
 			//msg_print_near_monster(c_ptr->m_idx, "appears more experienced!");
 			if (dam < 1) dam = 1;
 			m_ptr->exp = MONSTER_EXP(m_ptr->level + dam);
@@ -10299,7 +10299,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears cured.");
-		if (dam) note = "appears cured.";
+		if (dam) note = " appears cured.";
 		else quiet = TRUE;
 		break;
 
