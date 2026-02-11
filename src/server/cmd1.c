@@ -2340,7 +2340,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		    && p_ptr->id == o_ptr->owner && !p_ptr->ghost;
 		int pick_some = FALSE, limitG = -1;
 #ifdef ENABLE_SUBINVEN
-		bool stowed = FALSE;
+		int stowed = FALSE;
 #endif
 
 		/* Hack -- disturb */
@@ -2962,7 +2962,12 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			stowed = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
 			break;
 		}
-		if (stowed) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+		if (stowed) {
+			try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+
+			if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) /* was just object_known_p */
+				apply_XID(Ind, o_ptr, stowed);
+		}
 
 		/* If the item contains a !G or !g inscription and was already auto-stowed at least partially, and we're not using pick_all, do not pick up any more of it! */
 		if (o_ptr->number != num_org && (check_guard_inscription(o_ptr->note, 'g') || check_guard_inscription(o_ptr->note, 'G'))) try_pickup = FALSE;

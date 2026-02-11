@@ -4321,13 +4321,16 @@ bool ident_spell_aux(int Ind, int item) {
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Describe */
-	if (item >= INVEN_WIELD) {
+#ifdef ENABLE_SUBINVEN
+	if (item >= SUBINVEN_INVEN_MUL)
+		msg_format(Ind, "In your pack: %s (%c)(%c).", o_name, index_to_label(item / SUBINVEN_INVEN_MUL - 1), index_to_label(item));
+#endif
+	else if (item >= INVEN_WIELD)
 		msg_format(Ind, "%^s: %s (%c).", describe_use(Ind, item), o_name, index_to_label(item));
-	} else if (item >= 0) {
+	else if (item >= 0)
 		msg_format(Ind, "In your pack: %s (%c).", o_name, index_to_label(item));
-	} else {
+	else
 		msg_format(Ind, "On the ground: %s.", o_name);
-	}
 
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
@@ -4464,7 +4467,11 @@ bool identify_fully_item(int Ind, int item) {
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Describe */
-	if (item >= INVEN_WIELD)
+#ifdef ENABLE_SUBINVEN
+	if (item >= SUBINVEN_INVEN_MUL)
+		msg_format(Ind, "In your pack: %s (%c)(%c).", o_name, index_to_label(item / SUBINVEN_INVEN_MUL - 1), index_to_label(item));
+#endif
+	else if (item >= INVEN_WIELD)
 		msg_format(Ind, "%^s: %s (%c).", describe_use(Ind, item), o_name, index_to_label(item));
 	else if (item >= 0)
 		msg_format(Ind, "In your pack: %s (%c).", o_name, index_to_label(item));
