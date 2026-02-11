@@ -1737,7 +1737,7 @@ void do_cmd_drink_fountain(int Ind) {
 	if (ident) {
 		/* Object level */
 		int klev = k_info[k_idx].level;
-		bool flipped;
+		bool flipped = FALSE;
 
 		cs_ptr->sc.fountain.known = TRUE;
 
