@@ -387,6 +387,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			dam = damroll(5, 2);
 			msg_format(Ind, "A surge of cleansing disrupts your body for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, "lembas", 0);
+			ident = TRUE;
 		}
 		ident = TRUE;
 		break;
@@ -3065,6 +3066,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Light" : "a flash of light", 0);
 				//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind)
+				ident = TRUE;
 			}
 			if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind)
 				(void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
@@ -3109,6 +3111,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				dam = damroll(5, 3);
 				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Blessing" : "a blessing", 0);
+				ident = TRUE;
 			} else if (p_ptr->blessed_power <= 6) {
 				p_ptr->blessed_power = 6;
 				if (set_blessed(Ind, randint(12) + 6, FALSE)) ident = TRUE; /* removed stacking */
@@ -3119,8 +3122,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			if (p_ptr->suscep_good || p_ptr->suscep_life) {
 			//if (p_ptr->prace == RACE_VAMPIRE) {
 				dam = damroll(10, 3);
-				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by a strong blessing for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Chant" : "a chant", 0);
+				ident = TRUE;
 			} else if (p_ptr->blessed_power <= 10) {
 				p_ptr->blessed_power = 10;
 				if (set_blessed(Ind, randint(24) + 12, FALSE)) ident = TRUE; /* removed stacking */
@@ -3131,8 +3135,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			if (p_ptr->suscep_good || p_ptr->suscep_life) {
 			//if (p_ptr->prace == RACE_VAMPIRE) {
 				dam = damroll(30, 3);
-				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by a mighty blessing for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Prayer" : "a holy prayer", 0);
+				ident = TRUE;
 			} else if (p_ptr->blessed_power <= 16) {
 				p_ptr->blessed_power = 16;
 				if (set_blessed(Ind, randint(48) + 24, FALSE)) ident = TRUE; /* removed stacking */
@@ -3158,6 +3163,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				dam = damroll(10, 3);
 				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Protection from Evil" : "evil-repelling magic", 0);
+				ident = TRUE;
 			} else {
 				if (set_protevil(Ind, randint(15) + 30, FALSE)) ident = TRUE; /* removed stacking */
 			}
@@ -3185,6 +3191,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				dam = damroll(30, 3);
 				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Dispel Undead" : "undead-dispelling magic", 0);
+				ident = TRUE;
 			}
 			break;
 
@@ -3800,8 +3807,10 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 			dam = damroll(20, 3);
 			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, msg ? "a staff of Light" : "light", 0);
+			ident = TRUE;
 		}
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind)
+			ident |= set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		break;
 
 	case SV_STAFF_MAPPING:
@@ -4895,8 +4904,9 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 			dam = damroll(10, 3);
 			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, "a rod of illumination", 0);
+			ident = TRUE;
 		}
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) ident |= set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		//if (o_ptr) o_ptr->pval += 30;
 		/* up to a 50% faster with maxed MD - the_sandman */
 		//if (o_ptr) o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
@@ -5706,8 +5716,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 			dam = damroll(10, 3);
 			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, "a rod of illumination", 0);
+			ident = TRUE;
 		}
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) ident |= set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		/* up to a 50% faster with maxed MD - the_sandman */
 		//o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 		break;
