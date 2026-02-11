@@ -47,6 +47,7 @@ I:100:& Hard Biscuit~
 I:90:& Strip~ of Venison
 I:70:& Pint~ of Fine Wine
 I:80:& Pint~ of Fine Ale
+T:60:71:1
 I:60:& Shovel~
 I:50:& Pick~
 I:100:& Iron Spike~
@@ -1202,6 +1203,7 @@ I:100:& Hard Biscuit~
 I:90:& Strip~ of Venison
 I:70:& Pint~ of Fine Wine
 I:80:& Pint~ of Fine Ale
+T:60:71:1
 I:60:& Shovel~
 I:50:& Pick~
 I:100:& Iron Spike~
