@@ -105,7 +105,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	23
+#define SF_VERSION_PATCH	24
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -5778,6 +5778,16 @@
 #define GF_RESTORING		172
 #define GF_UNHEALTH		173
 #define GF_DISEASE		174
+
+#define GF_DEC_INT		175
+#define GF_DEC_WIS		176
+#define GF_DEC_CHR		177
+#define GF_RES_INT		178
+#define GF_RES_WIS		179
+#define GF_RES_CHR		180
+#define GF_INC_INT		181
+#define GF_INC_WIS		182
+#define GF_INC_CHR		183
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200

@@ -5317,9 +5317,15 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_DEC_INT:
-			//m_ptr->aaf--;
+			typ = GF_DEC_INT;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_DEC_WIS:
-			return(FALSE);
+			typ = GF_DEC_WIS;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_DEC_DEX:
 			typ = GF_DEC_DEX;
 			dam = 1; /*dummmy*/
@@ -5331,15 +5337,25 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_DEC_CHR:
-			return(FALSE);
+			typ = GF_DEC_CHR;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_RES_STR:
 			typ = GF_RES_STR;
 			dam = 1; /*dummmy*/
 			fixed = TRUE;
 			break;
 		case SV_POTION_RES_INT:
+			typ = GF_RES_INT;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_RES_WIS:
-			return(FALSE);
+			typ = GF_RES_WIS;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_RES_DEX:
 			typ = GF_RES_DEX;
 			dam = 1; /*dummmy*/
@@ -5351,15 +5367,25 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_RES_CHR:
-			return(FALSE);
+			typ = GF_RES_CHR;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_INC_STR:
 			typ = GF_INC_STR;
 			dam = 1; /*dummmy*/
 			fixed = TRUE;
 			break;
 		case SV_POTION_INC_INT:
+			typ = GF_INC_INT;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_INC_WIS:
-			return(FALSE);
+			typ = GF_INC_WIS;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_INC_DEX:
 			typ = GF_INC_DEX;
 			dam = 1; /*dummmy*/
@@ -5371,7 +5397,10 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_INC_CHR:
-			return(FALSE);
+			typ = GF_INC_CHR;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_AUGMENTATION:
 			typ = GF_AUGMENTATION;
 			dam = 1; /*dummmy*/

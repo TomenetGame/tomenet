@@ -351,6 +351,7 @@ static void wr_monster_race(monster_race *r_ptr) {
  */
 static void wr_monster(monster_type *m_ptr) {
 	int i;
+
 	wr_byte(m_ptr->pet);
 	wr_byte(m_ptr->special);
 	wr_byte(m_ptr->questor);
@@ -370,6 +371,7 @@ static void wr_monster(monster_type *m_ptr) {
 	wr_s16b(m_ptr->wpos.wz);
 
 	wr_s16b(m_ptr->ac);
+	wr_s16b(m_ptr->org_ac);
 	wr_byte(m_ptr->speed);
 	wr_s32b(m_ptr->exp);
 	wr_s16b(m_ptr->level);
@@ -378,6 +380,8 @@ static void wr_monster(monster_type *m_ptr) {
 		wr_byte(m_ptr->blow[i].effect);
 		wr_byte(m_ptr->blow[i].d_dice);
 		wr_byte(m_ptr->blow[i].d_side);
+		wr_byte(m_ptr->blow[i].org_d_dice);
+		wr_byte(m_ptr->blow[i].org_d_side);
 	}
 	wr_s32b(m_ptr->hp);
 	wr_s32b(m_ptr->maxhp);
@@ -413,7 +417,7 @@ static void wr_monster(monster_type *m_ptr) {
 	wr_s16b(m_ptr->possessor);
 	wr_s16b(m_ptr->destx);
 	wr_s16b(m_ptr->desty);
-	wr_s16b(m_ptr->determination);
+	wr_s16b(m_ptr->statsIWH_drain);
 	wr_s16b(m_ptr->limit_hp);
 
 	wr_s16b(m_ptr->custom_lua_death);
