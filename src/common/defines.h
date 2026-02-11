@@ -10127,6 +10127,7 @@ extern int PlayerUID;
 #define netherrealm_bottom(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz == netherrealm_end_wz)
 
 #define in_hallsofmandos(wpos) ((wpos)->wx == hallsofmandos_wpos_x && (wpos)->wy == hallsofmandos_wpos_y && (wpos)->wz * hallsofmandos_wpos_z > 0)
+#define on_hallsofmandos(wpos) ((wpos)->wx == hallsofmandos_wpos_x && (wpos)->wy == hallsofmandos_wpos_y && !(wpos)->wz)
 #define in_mtdoom(wpos) ((wpos)->wx == mtdoom_wpos_x && (wpos)->wy == mtdoom_wpos_y && (wpos)->wz * mtdoom_wpos_z > 0)
 
 /* Restrict escape from final Nether Realm level to WoR + ghost floating? (no stairs+no probtrav!) */

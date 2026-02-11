@@ -10508,7 +10508,7 @@ s16b mix_chemicals(int Ind, int item) {
 			q_ptr->tval = TV_CHARGE;
 			msg_format(Ind, "\377WYou assemble a blast charge...");
 			if (!p_ptr->warning_blastcharge) {
-				msg_print(Ind, "Hint: Inscribe charges \377y!Fn\377w with n from 1 to 15 to set the fuse time in seconds!");
+				msg_print(Ind, "\374\374wHint: Inscribe charges \377y!Fn\377w with n from 1 to 15 to set the fuse time in seconds!");
 				p_ptr->warning_blastcharge = 1;
 				s_printf("warning_blastcharge: %s\n", p_ptr->name);
 			}

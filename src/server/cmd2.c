@@ -643,6 +643,9 @@ void do_cmd_go_up(int Ind) {
 			}
 #endif
 		}
+
+		if (on_irondeepdive(wpos) || on_hallsofmandos(wpos)) msg_print(Ind, "\374\377yHint: You may use the \377o/xo\377y command in here to obtain extermination orders.");
+
 		p_ptr->new_level_method = LEVEL_UP;
 #ifdef USE_SOUND_2010
 		staircase_sfx(Ind);
@@ -1615,6 +1618,9 @@ void do_cmd_go_down(int Ind) {
 			}
 #endif
 		}
+
+		if (on_irondeepdive(wpos) || on_hallsofmandos(wpos)) msg_print(Ind, "\374\377yHint: You may use the \377o/xo\377y command in here to obtain extermination orders.");
+
 		p_ptr->new_level_method = LEVEL_DOWN;
 #ifdef USE_SOUND_2010
 		staircase_sfx(Ind);
