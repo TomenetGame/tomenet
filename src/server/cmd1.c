@@ -1610,8 +1610,9 @@ void whats_under_your_feet(int Ind, bool force) {
 
 #ifdef ENABLE_SUBINVEN
 /* For shop-purchase/steal and home-'purchase': Check if we can directly stow an item into any bag we might carry, for when the normal inventory is full.
-   Note: While auto_stow() just takes a specific subinven as parameter, auto_stow_okay() actually scans all exsiting subinvens in the player's inventory. */
-bool auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
+   Note: While auto_stow() just takes a specific subinven as parameter, auto_stow_okay() actually scans all exsiting subinvens in the player's inventory.
+   Returns 0 or inven slot+1 index into which bag to stow. */
+s16b auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
 	int i;
 	object_type *s_ptr;
 	player_type *p_ptr = Players[Ind];
@@ -1646,7 +1647,7 @@ bool auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
  #endif
 		}
 
-		return(TRUE);
+		return(i + 1);
 	}
 
 	return(FALSE);
@@ -2938,7 +2939,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #ifdef ENABLE_SUBINVEN
 		num_org = o_ptr->number; /* For !g/!G inscription on the target item, to keep track whether we actually auto-stowed any of it. */
 
-		/* Try to put into a specialized bag automatically -- note that this currently means that apply_XID() isn't called (which cannot handle subinventory items atm anyway) */
+		/* Try to put into a specialized bag automatically */
 		switch (o_ptr->tval) {
 		case TV_CHEMICAL: /* DEMOLITIONIST stuff */
 			stowed = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
