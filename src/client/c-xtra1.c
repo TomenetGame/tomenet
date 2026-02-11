@@ -2427,6 +2427,11 @@ void show_inven(void) {
 		/* Be sure to account for the weight */
 		l += 9;
 
+#ifdef ENABLE_SUBINVEN
+		/* Also account for the bags' '[n/m]' used/total slots indicator */
+		if (o_ptr->tval == TV_SUBINVEN) l += 6;
+#endif
+
 		/* Maintain the maximum length */
 		if (l > len) len = l;
 
