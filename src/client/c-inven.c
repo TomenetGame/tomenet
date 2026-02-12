@@ -27,7 +27,7 @@
 bool verified_item = FALSE;
 bool abort_prompt = FALSE;
 
-#ifdef ENABLE_SUBINVEN
+#ifdef ENABLE_SUBINVEN /* todo: implement this fix, so liquid food in food bag no longer causes glitch with potion belt when issuing quaff command. */
 //static int get_tag(int *cp, int *cp_si, char tag, bool inven, bool equip, int mode);
 static int get_tag(int *cp, char tag, bool inven, bool equip, int mode);
 #else
@@ -174,7 +174,7 @@ static s16b c_label_to_equip(int c) {
 
 /* Helper function for get_tag().
   'i' can be inventory or subinventory index. */
-#ifdef ENABLE_SUBINVEN
+#ifdef ENABLE_SUBINVEN /* todo: implement this fix, so liquid food in food bag no longer causes glitch with potion belt when issuing quaff command. */
 //static int get_tag_aux(int i, int *cp, int *cp_si, char tag, int mode) {
 static int get_tag_aux(int i, int *cp, char tag, int mode) {
 #else
@@ -399,7 +399,7 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
  *       c_get_item() with 'inven | subinven' for its 'inven' parameter in order to
  *       access tags in bags while 'inven' is actually FALSE in c_get_item() when it calls get_tag().
  */
-#ifdef ENABLE_SUBINVEN
+#ifdef ENABLE_SUBINVEN /* todo: implement this fix, so liquid food in food bag no longer causes glitch with potion belt when issuing quaff command. */
 //static int get_tag(int *cp, int *cp_si, char tag, bool inven, bool equip, int mode) {
 static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
 #else
@@ -498,7 +498,7 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
  * This is modified code from ToME. - mikaelh
  */
 cptr get_item_hook_find_obj_what;
-#ifdef ENABLE_SUBINVEN
+#ifdef ENABLE_SUBINVEN /* todo: implement this fix, so liquid food in food bag no longer causes glitch with potion belt when issuing quaff command. */
 //bool get_item_hook_find_obj(int *item, int *item_si, int mode) {
 bool get_item_hook_find_obj(int *item, int mode) {
 #else

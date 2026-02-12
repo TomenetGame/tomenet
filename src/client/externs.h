@@ -647,7 +647,7 @@ extern void ask_for_graphics_generic(void);
 extern s16b index_to_label(int i);
 extern bool item_tester_okay(object_type *o_ptr);
 extern cptr get_item_hook_find_obj_what;
-#ifdef ENABLE_SUBINVEN
+#ifdef ENABLE_SUBINVEN /* todo: implement this fix, so liquid food in food bag no longer causes glitch with potion belt when issuing quaff command. */
 //extern bool get_item_hook_find_obj(int *item, int *item_si, int mode);
 extern bool get_item_hook_find_obj(int *item, int mode);
 #else
