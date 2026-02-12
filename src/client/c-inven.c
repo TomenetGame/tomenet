@@ -27,7 +27,12 @@
 bool verified_item = FALSE;
 bool abort_prompt = FALSE;
 
+#ifdef ENABLE_SUBINVEN
+//static int get_tag(int *cp, int *cp_si, char tag, bool inven, bool equip, int mode);
 static int get_tag(int *cp, char tag, bool inven, bool equip, int mode);
+#else
+static int get_tag(int *cp, char tag, bool inven, bool equip, int mode);
+#endif
 
 
 
@@ -169,7 +174,12 @@ static s16b c_label_to_equip(int c) {
 
 /* Helper function for get_tag().
   'i' can be inventory or subinventory index. */
+#ifdef ENABLE_SUBINVEN
+//static int get_tag_aux(int i, int *cp, int *cp_si, char tag, int mode) {
 static int get_tag_aux(int i, int *cp, char tag, int mode) {
+#else
+static int get_tag_aux(int i, int *cp, char tag, int mode) {
+#endif
 	char *buf;
 	cptr s;
 	bool charged = (mode & CHECK_CHARGED) != 0, charged_ready = (mode & CHECK_CHARGED_READY) != 0;
@@ -389,7 +399,12 @@ static int get_tag_aux(int i, int *cp, char tag, int mode) {
  *       c_get_item() with 'inven | subinven' for its 'inven' parameter in order to
  *       access tags in bags while 'inven' is actually FALSE in c_get_item() when it calls get_tag().
  */
+#ifdef ENABLE_SUBINVEN
+//static int get_tag(int *cp, int *cp_si, char tag, bool inven, bool equip, int mode) {
 static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
+#else
+static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
+#endif
 	int i, j, si;
 	int start, stop, step;
 	bool inven_first = (mode & INVEN_FIRST) != 0;
@@ -483,7 +498,12 @@ static int get_tag(int *cp, char tag, bool inven, bool equip, int mode) {
  * This is modified code from ToME. - mikaelh
  */
 cptr get_item_hook_find_obj_what;
+#ifdef ENABLE_SUBINVEN
+//bool get_item_hook_find_obj(int *item, int *item_si, int mode) {
 bool get_item_hook_find_obj(int *item, int mode) {
+#else
+bool get_item_hook_find_obj(int *item, int mode) {
+#endif
 	bool inven_first = (mode & INVEN_FIRST) != 0;
 	int i, j, start = inven_first ? 0 : INVEN_TOTAL, stop = inven_first ? INVEN_TOTAL : 0, step = inven_first ? 1 : -1;
 	char buf[ONAME_LEN];
@@ -1062,6 +1082,11 @@ bool get_item_hook_find_obj(int *item, int mode) {
 	return(FALSE);
 }
 
+/*  Automatically lists all bags right in the beginning, instead of showing the normal inventory: Extra QoL on top of the into-bag-autoswitching?
+    If no item exists in normal inventory, switch to '!' bag list right away so we don't have to press '!'.
+    However, this implies that there are items eligible that can be in different bags. Right now there are no such items though except for the case
+    of normal 'chest' items, which are not exactly very efficient, so this code probably doesn't make too much sense/doesn't really help much. */
+//#define AUTO_LIST_BAGS
 bool (*get_item_extra_hook)(int *cp, int mode);
 /* (pmt = prompt, for measuring total prompt length and possibly shorten some things to find into the line) */
 bool c_get_item(int *cp, cptr pmt, int mode) {
@@ -1071,6 +1096,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	int k, i1, i2, e1, e2, ver;
 	bool done, spammy = FALSE, alt;
 	byte item;
+#ifdef AUTO_LIST_BAGS
+	bool list_bags = FALSE;
+#endif
+	bool re_show_list = FALSE;
 
 	char tmp_val[160];
 	char out_val[160];
@@ -1419,6 +1448,49 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			break;
 		}
 
+#ifdef AUTO_LIST_BAGS
+		if (c_cfg.autoswitch_inven
+		    && autoswitch_subinven == -1) {
+			/* ...buuut, if inventory is empty and we do have bags, auto-press '!' already for us */
+			if (command_wrk) { /* we start out in equipment */
+				if (e1 > e2) { /* no eligible item in the equipment? */
+					if (i1 > i2) { /* no eligible item in the inventory either? */
+						list_bags = TRUE;
+					} else {
+						/* start out with inventory */
+						command_wrk = FALSE; /* don't start in the equipment anymore */
+					}
+				}
+			} else { /* we start out in inventory (standard) */
+				if (i1 > i2) { /* no eligible item in the inventory? */
+					if (e1 > e2) { /* no eligible item in the equipment either? */
+						list_bags = TRUE;
+					} else {
+						/* start out in the equipment screen */
+						command_wrk = TRUE;
+					}
+				}
+			}
+		}
+#endif
+
+		/* After exiting a bag's content list or after exiting the bag list, and returning to normal inventory,
+		   'always_show_lists' behaviour actually needs to be restored-fixed this way, or the inventory won't be displayed */
+		if (re_show_list && c_cfg.always_show_lists && !command_see) {
+			re_show_list = FALSE;
+			if (0) {
+				Term_load();
+				command_see = FALSE;
+
+				/* Flush any events */
+				Flush_queue();
+			}
+			{
+				Term_save();
+				command_see = TRUE;
+			}
+		}
+
 		if (!command_wrk) {
 			/* Extract the legal requests */
 			//n1 = I2A(i1);
@@ -1545,6 +1617,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		if (autoswitch_subinven != -1) which = '!';
 		else
 #endif
+#ifdef AUTO_LIST_BAGS
+		if (list_bags) which = '!'; /* (no followup key here though, unlike after autoswitch_subinven above) */
+		else
+#endif
 		/* Get a key */
 		which = inkey();
 
@@ -1594,6 +1670,12 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 					item_tester_max_weight = old_max_weight;
 					item_tester_hook = old_tester_hook;
 
+#ifdef AUTO_LIST_BAGS
+					/* Even exit item prompt completely? */
+					if (list_bags) done = TRUE;
+#endif
+
+					re_show_list = TRUE;
 					break;
 				}
 
@@ -1623,6 +1705,8 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 					get_item_extra_hook = old_extra_hook;
 					item_tester_max_weight = old_max_weight;
 					item_tester_hook = old_tester_hook;
+
+					re_show_list = TRUE;
 				}
 
 				/* Leave subinventory again and return to our main inventory */
