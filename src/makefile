@@ -452,8 +452,8 @@ CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 TOLUA = server/tolua
 
 # tolua is just a command-line tool, no need for SDL/X11
-CFLAGSTOLUA = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-macro-redefined
-LIBSTOLUA = -L/usr/pkg/lib -lncurses -lm
+LUACFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-macro-redefined
+LUALIBS = -L/usr/pkg/lib -lncurses -lm
 
 all: tomenet.server tomenet accedit
 	@echo Now you need to move the binaries from the src directory up one level, or run \"make install\".
@@ -525,7 +525,7 @@ tomenet.console: $(CONS_OBJS)
 
 
 $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
-	$(CC) $(CFLAGSTOLUA) $(LDFLAGS) -o $@ $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c $(LIBSTOLUA)
+	$(CC) $(LUACFLAGS) $(LDFLAGS) -o $@ $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c $(LUALIBS)
 
 #
 # Rule for making a '.o'
