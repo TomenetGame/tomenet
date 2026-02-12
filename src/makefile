@@ -451,6 +451,10 @@ CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
 
+# tolua is just a command-line tool, no need for SDL/X11
+CFLAGSTOLUA = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-macro-redefined
+LIBSTOLUA = -L/usr/pkg/lib -lncurses -lm
+
 all: tomenet.server tomenet accedit
 	@echo Now you need to move the binaries from the src directory up one level, or run \"make install\".
 
@@ -521,7 +525,7 @@ tomenet.console: $(CONS_OBJS)
 
 
 $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
-	$(CC) $(CFLAGS) $(LDFLAGS) -o $@ $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c $(LIBS)
+	$(CC) $(CFLAGSTOLUA) $(LDFLAGS) -o $@ $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c $(LIBSTOLUA)
 
 #
 # Rule for making a '.o'
@@ -536,7 +540,7 @@ $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
 
 clean:
 	cd server/lua; rm -f *.o
-	cd server; rm -f *.o w_play.c w_util.c w_spells.c *.pkg
+	cd server; rm -f *.o w_play.c w_util.c w_spells.c *.pkg; mv tolua tolua.bak || true
 	cd client; rm -f *.o w_play.c w_util.c w_spells.c *.pkg
 	cd common; rm -f *.o w_z_pack.c
 	cd console; rm -f *.o
