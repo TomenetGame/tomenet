@@ -5583,8 +5583,8 @@ static void player_talk_aux(int Ind, char *message) {
  #else /* temporary */
   #define MUTEDTURN_TIME 300
 				p_ptr->mutedtemp = MUTEDTURN_TIME;
-				if (MUTEDTURN_TIME < 120) msg_format(Ind, "\377rYou have been muted for %s seconds.", MUTEDTURN_TIME);
-				else msg_format(Ind, "\377rYou have been muted for %s minutes.", MUTEDTURN_TIME / 60);
+				if (MUTEDTURN_TIME < 120) msg_format(Ind, "\377rYou have been muted for %d seconds.", MUTEDTURN_TIME);
+				else msg_format(Ind, "\377rYou have been muted for %d minutes.", MUTEDTURN_TIME / 60);
  #endif
 				s_printf("SPAM_MUTE_TEMP: '%s' (%s) was muted for chat spam for %d seconds.\n", p_ptr->name, p_ptr->accountname, MUTEDTURN_TIME);
 				break;
