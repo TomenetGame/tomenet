@@ -2259,6 +2259,7 @@ color_rgb xGetPixelRgb(XImage *image, int x, int y) {
 /* Combine non-mask tile pixels with foreground mask, considering that fgmask is resized and "blurry" from interpolation */
 XImage * prepareTile(XImage *tiles, XImage *fgmask, s16b font_width, s16b font_height, char32_t c)
 {
+	int tileX, tileY;
 	int topLeftX = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * font_width;
 	int topLeftY = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * font_height;
 
@@ -2269,9 +2270,9 @@ XImage * prepareTile(XImage *tiles, XImage *fgmask, s16b font_width, s16b font_h
 
 	color_rgb objectColorRGB = hexToRgb(Infoclr->fg);
 
-	for (int tileX = 0; tileX < font_width; tileX++)
+	for (tileX = 0; tileX < font_width; tileX++)
 	{
-		for (int tileY = 0; tileY < font_height; tileY++)
+		for (tileY = 0; tileY < font_height; tileY++)
 		{
 			color_rgb tilePixelColorRGB = xGetPixelRgb(tiles, topLeftX + tileX, topLeftY + tileY);
 
@@ -2482,12 +2483,11 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	return(Term_pict_x11(x, y, a, c));
 #else
 	term_data *td;
-	Pixmap tilePreparation, tilePreparation2;
+	Pixmap tilePreparation2;
 #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i, j, hole = -1;
 #endif
-	int x1, y1;
 	XImage *tiles, *fgmask, *bgmask;
 	XImage *back_tiles, *back_fgmask, *back_bgmask;
 
@@ -2578,7 +2578,6 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 			if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
 		}
 
-		tilePreparation = entry->tilePreparation; //in 2mask-mode actually not used, as only tilePreparation2 is interesting as it holds the final result
 		tilePreparation2 = entry->tilePreparation2;
 		entry->c = c;
 		entry->a = a;
@@ -2592,11 +2591,9 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	entry->bg = Infoclr->bg;
 #endif
 	} else {
-		tilePreparation = td->tilePreparation;
 		tilePreparation2 = td->tilePreparation2;
 	}
 #else /* (TILE_CACHE_SIZE) No caching: */
-	tilePreparation = td->tilePreparation;
 	tilePreparation2 = td->tilePreparation2;
 #endif
 
@@ -2644,7 +2641,9 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	XImage *preparedBackTile;
 
 	/* Prepare background tile to preparation pixmap. +chopchop+ */
-	if (c_back == 32 || !back_tiles || !back_fgmask) {
+    if (c_back == 32
+        || c_back <= MAX_FONT_CHAR /* Paranoia: Ensure to catch any other, invalid values of c_back */
+    ) {
 		/* hack: SPACE aka ASCII 32 means empty background ie fill in a_back colour */
 		preparedBackTile = preapreBlackTile(back_tiles, td->fnt->wid, td->fnt->hgt);
 	} else {
