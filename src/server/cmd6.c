@@ -650,8 +650,12 @@ void do_cmd_eat_food(int Ind, int item) {
 				break;
 			}
 		}
-	} else if (o_ptr->tval == TV_GAME) msg_print(Ind, "Brrrrr.."); //snowball
-	else if (o_ptr->tval == TV_SPECIAL) { /* Edible custom object? */
+	} else if (o_ptr->tval == TV_GAME) {
+		msg_print(Ind, "Brrrrr.."); //snowball
+		if ((p_ptr->ptrait == TRAIT_RED || p_ptr->ptrait == TRAIT_GOLD)
+		    && !p_ptr->resist_cold && !p_ptr->oppose_cold && !p_ptr->immune_cold)
+			take_hit(Ind, 1, "one too many snowballs eaten", 0);
+	} else if (o_ptr->tval == TV_SPECIAL) { /* Edible custom object? */
 		msg_print(Ind, "*chomp*..."); //munch?..
 		exec_lua(0, format("custom_object(%d,%d,0)", Ind, item));
 	}
