@@ -5764,6 +5764,9 @@ bool item_matches_subinven(int Ind, int subinven_group_type, object_type *o_ptr)
 		return(TRUE);
 	case SV_SI_FOOD_BAG:
 		if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE) return(FALSE);
+		if (o_ptr->tval == TV_FOOD &&
+		    (o_ptr->sval == SV_FOOD_PINT_OF_ALE || o_ptr->sval == SV_FOOD_PINT_OF_WINE || o_ptr->sval == SV_FOOD_KHAZAD))
+			return(FALSE); /* see comment in cmd1.c:carry() auto_stow() */
 		return(TRUE);
 	}
 
@@ -5893,6 +5896,9 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 			break;
 		case SV_SI_FOOD_BAG:
 			if (i_ptr->tval != TV_FOOD && i_ptr->tval != TV_FIRESTONE) continue;
+			if (i_ptr->tval == TV_FOOD &&
+			    (i_ptr->sval == SV_FOOD_PINT_OF_ALE || i_ptr->sval == SV_FOOD_PINT_OF_WINE || i_ptr->sval == SV_FOOD_KHAZAD))
+				continue; /* see comment in cmd1.c:carry() auto_stow() */
 			eligible_bag = TRUE;
 			break;
 		default:
@@ -6038,6 +6044,9 @@ bool do_cmd_subinven_fill(int Ind, int slot, bool quiet) {
 			break;
 		case SV_SI_FOOD_BAG:
 			if (i_ptr->tval != TV_FOOD && i_ptr->tval != TV_FIRESTONE) continue;
+			if (i_ptr->tval == TV_FOOD &&
+			    (i_ptr->sval == SV_FOOD_PINT_OF_ALE || i_ptr->sval == SV_FOOD_PINT_OF_WINE || i_ptr->sval == SV_FOOD_KHAZAD))
+				continue; /* see comment in cmd1.c:carry() auto_stow() */
 			eligible_item = TRUE;
 			break;
 		default:

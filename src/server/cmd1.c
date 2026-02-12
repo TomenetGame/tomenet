@@ -2958,6 +2958,15 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			stowed = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
 			break;
 		case TV_FOOD:
+			/* Exempt these, as they are not 'dry food'.
+			   Also this works around a client-side glitch for now:
+			   These two as they are 'quaffable' would currently cause conflict with potion belt if 'c_cfg.autoswitch_inven' is on,
+			   as it woul auto-open the food bag whenever we want to quaff, and currently the client will then
+			   mix up command-tags and by-name potion calls with the actual food bag contents! Needs client-side fixing in c-inven.c
+			   as in, get_tag() and get_item_hook_find_obj()->get_item_extra_hook both need to report back the subinventory too, not just the item slot,
+			   to c_get_item() so c_get_item() won't be attempting to use a potion in the correct potion belt slot subindex but actually FROM THE FOOD BAG instead. +_+ - C. Blue */
+			if (o_ptr->sval == SV_FOOD_PINT_OF_ALE || o_ptr->sval == SV_FOOD_PINT_OF_WINE || o_ptr->sval == SV_FOOD_KHAZAD) break;
+			/* fall through */
 		case TV_FIRESTONE:
 			stowed = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
 			break;
