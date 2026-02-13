@@ -336,7 +336,7 @@ $(TOLUA): $(TOLUAOBJS) server/lua/tolua.c server/lua/tolualua.c
 
 clean:
 	cd server/lua; rm -f *.o
-	cd server; rm -f *.o w_play.c w_util.c w_spells.c *.pkg; mv tolua tolua.bak || true
+	cd server; rm -f *.o w_play.c w_util.c w_spells.c *.pkg
 	cd client; rm -f *.o w_play.c w_util.c w_spells.c *.pkg
 	cd common; rm -f *.o w_z_pack.c
 	cd console; rm -f *.o

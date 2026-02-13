@@ -341,7 +341,7 @@ preproc/preproc.exe: preproc/preproc-win.o
 
 clean:
 	cd server/lua; rm -f *.o
-	cd server; rm -f *.o w_play.c w_util.c w_spells.c *.pkg; mv tolua.exe tolua.exe.bak || true
+	cd server; rm -f *.o w_play.c w_util.c w_spells.c *.pkg
 	cd client; rm -f *.o w_play.c w_util.c w_spells.c *.pkg
 	cd common; rm -f *.o w_z_pack.c
 	cd console; rm -f *.o
