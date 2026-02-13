@@ -1624,7 +1624,7 @@ s16b auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
 	if (true_artifact_p(o_ptr)) return(FALSE);
 
 	/* Don't auto-stow unidentified items */
-	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
+	//if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
 
 	/* Don't auto-stow if player cannot access stowed items due to outdated client */
 	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
