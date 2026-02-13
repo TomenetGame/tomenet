@@ -1610,7 +1610,6 @@ void whats_under_your_feet(int Ind, bool force) {
 
 #ifdef ENABLE_SUBINVEN
 /* For shop-purchase/steal and home-'purchase': Check if we can directly stow an item into any bag we might carry, for when the normal inventory is full.
-   Note: While auto_stow() just takes a specific subinven as parameter, auto_stow_okay() actually scans all exsiting subinvens in the player's inventory.
    Returns 0 or inven slot+1 index into which bag to stow. */
 s16b auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
 	int i;
@@ -1660,7 +1659,7 @@ s16b auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
     If item was partially stowed, return -subinvenslot if any of the six @<A|O|S><0|1> inscriptions is on the bag, otherwise FALSE.
     If item was not stowed at all, returns FALSE. (Eg we have to set try_pickup = FALSE in carry() in that case).
     If o_stowed_ptr isn't NULL its reference will be set to the resulting stowed object. */
-s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, u32b cave_info) {
+s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, u32b cave_info) {
 	int i, num, slot, globalslot;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
@@ -1708,7 +1707,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 		if (s_ptr->tval != TV_SUBINVEN) break;
 
 		/* Must fit the object type */
-		if (s_ptr->sval != sub_sval) continue;
+		if (!item_matches_subinven(Ind, get_subinven_group(s_ptr->sval), o_ptr)) continue;
 
 		/* Player doesn't want to auto-stow unidentified items?
 		   (Note that unidentified rods can never be auto-stowed anyway, as they might be directional.) */
@@ -1718,13 +1717,6 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 			return(FALSE);
  #else
 			continue;
- #endif
-
-		/* Don't auto-stow if player cannot access stowed items due to outdated client */
-		if (s_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) continue;
-
- #ifdef SI_WRAPPING_SKILL
-		if (s_ptr->sval == SV_SI_MDEVP_WRAPPING && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) continue;
  #endif
 
 		/* Player disabled auto-stow via bag inscription? */
@@ -2939,38 +2931,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #ifdef ENABLE_SUBINVEN
 		num_org = o_ptr->number; /* For !g/!G inscription on the target item, to keep track whether we actually auto-stowed any of it. */
 
-		/* Try to put into a specialized bag automatically */
-		switch (o_ptr->tval) {
-		case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-			stowed = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
-			break;
-		case TV_TRAPKIT:
-			stowed = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
-			break;
-		case TV_ROD:
-			/* Note that this returns FALSE too if rod is of a flavour yet unknown to the player, covering that case on the fly! :) */
-			if (rod_requires_direction(Ind, o_ptr)) break;
-			/* Fall through */
-		case TV_STAFF:
-			stowed = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
-			break;
-		case TV_POTION: case TV_POTION2: case TV_BOTTLE:
-			stowed = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
-			break;
-		case TV_FOOD:
-			/* Exempt these, as they are not 'dry food'.
-			   Also this works around a client-side glitch for now:
-			   These two as they are 'quaffable' would currently cause conflict with potion belt if 'c_cfg.autoswitch_inven' is on,
-			   as it woul auto-open the food bag whenever we want to quaff, and currently the client will then
-			   mix up command-tags and by-name potion calls with the actual food bag contents! Needs client-side fixing in c-inven.c
-			   as in, get_tag() and get_item_hook_find_obj()->get_item_extra_hook both need to report back the subinventory too, not just the item slot,
-			   to c_get_item() so c_get_item() won't be attempting to use a potion in the correct potion belt slot subindex but actually FROM THE FOOD BAG instead. +_+ - C. Blue */
-			if (o_ptr->sval == SV_FOOD_PINT_OF_ALE || o_ptr->sval == SV_FOOD_PINT_OF_WINE || o_ptr->sval == SV_FOOD_KHAZAD) break;
-			/* fall through */
-		case TV_FIRESTONE:
-			stowed = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
-			break;
-		}
+		stowed = auto_stow(Ind, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
 		if (stowed) {
 			try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 

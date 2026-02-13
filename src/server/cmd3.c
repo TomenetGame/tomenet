@@ -4096,7 +4096,7 @@ static void do_cmd_refill_lamp(int Ind, int item) {
 		/* If we have no space, drop it to the ground instead of overflowing inventory */
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
 #ifdef ENABLE_SUBINVEN
-			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE, 0x0)) return;
+			if (auto_stow(Ind, o_ptr, -1, FALSE, FALSE, FALSE, 0x0)) return;
 #endif
 			item = inven_carry(Ind, o_ptr);
 			if (!p_ptr->warning_limitbottles && p_ptr->inventory[item].number > 25) {
@@ -5739,7 +5739,7 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 bool item_matches_subinven(int Ind, int subinven_group_type, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
-	switch (subinven_group_type) {
+	switch (subinven_group_type) { /* Keep consistent with do_cmd_subinven_move() */
 	/* Check item to move against valid tvals to be put into specific container (subinventory) types */
 	case SV_SI_GROUP_CHEST_MIN: return(TRUE);
 	case SV_SI_SATCHEL:
@@ -5764,9 +5764,16 @@ bool item_matches_subinven(int Ind, int subinven_group_type, object_type *o_ptr)
 		return(TRUE);
 	case SV_SI_FOOD_BAG:
 		if (o_ptr->tval != TV_FOOD && o_ptr->tval != TV_FIRESTONE) return(FALSE);
+		/* Exempt these, as they are not 'dry food'.
+		   Also this works around a client-side glitch for now:
+		   These two as they are 'quaffable' would currently cause conflict with potion belt if 'c_cfg.autoswitch_inven' is on,
+		   as it woul auto-open the food bag whenever we want to quaff, and currently the client will then
+		   mix up command-tags and by-name potion calls with the actual food bag contents! Needs client-side fixing in c-inven.c
+		   as in, get_tag() and get_item_hook_find_obj()->get_item_extra_hook both need to report back the subinventory too, not just the item slot,
+		   to c_get_item() so c_get_item() won't be attempting to use a potion in the correct potion belt slot subindex but actually FROM THE FOOD BAG instead. +_+ - C. Blue */
 		if (o_ptr->tval == TV_FOOD &&
 		    (o_ptr->sval == SV_FOOD_PINT_OF_ALE || o_ptr->sval == SV_FOOD_PINT_OF_WINE || o_ptr->sval == SV_FOOD_KHAZAD))
-			return(FALSE); /* see comment in cmd1.c:carry() auto_stow() */
+			return(FALSE);
 		return(TRUE);
 	}
 

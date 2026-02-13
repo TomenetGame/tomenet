@@ -3469,25 +3469,8 @@ int autostow_or_carry(int Ind, object_type *o_ptr, bool quiet) {
 			msg_format(Ind, "\377yYou need %d in 'Magic Device' or 'Trapping' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
  #endif
 		break;
-	case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-		item_new = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
-		break;
-	case TV_TRAPKIT:
-		item_new = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
-		break;
-	case TV_ROD:
-		/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
-		if (rod_requires_direction(Ind, o_ptr)) break;
-		/* fall through */
-	case TV_STAFF:
-		item_new = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
-		break;
-	case TV_POTION: case TV_POTION2:
-		item_new = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
-		break;
-	case TV_FOOD:
-		item_new = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
-		break;
+	default:
+		item_new = auto_stow(Ind, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
 	}
 
 	/* Translate return value for partial stowing under specific bag inscriptions */
@@ -7093,27 +7076,7 @@ void home_purchase(int Ind, int item, int amt) {
 	o_ptr = &sell_obj;
 
 	/* Try to put into a specialized bag automatically */
-	switch (o_ptr->tval) {
-	case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-		(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
-		break;
-	case TV_TRAPKIT:
-		(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
-		break;
-	case TV_ROD:
-		/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
-		if (rod_requires_direction(Ind, o_ptr)) break;
-		/* fall through */
-	case TV_STAFF:
-		(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
-		break;
-	case TV_POTION: case TV_POTION2:
-		(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
-		break;
-	case TV_FOOD:
-		(void)auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
-		break;
-	}
+	(void)auto_stow(Ind, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
 
 	/* If we couldn't stow everything, pick up the rest normally */
 	if (o_ptr->number) {
