@@ -3432,7 +3432,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		}
 		/* Try to cast it, deduct proper energy in any of the different outcome cases */
 		if (cast_rune_spell(Ind, (u16b)(u & 0xFFFF), (u16b)((u & 0xFFFF0000) >> 16), 5)) return(TRUE); //success
-		return(TRUE); //failure
+		return(TRUE); //failure (still return TRUE though, so auto-retaliator won't try an additional, other method if runecast failed; same as cast_school_spell() is handled above basically)
 	}
 
 	/* Neither /arm nor /arr was set, aka no 'command-retaliation' (note: /ar doesn't count for this) */
