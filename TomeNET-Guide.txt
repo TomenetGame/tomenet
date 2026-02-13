@@ -29335,4 +29335,9 @@ PROBLEM 79: On Windows OS using graphical tileset mode results in slow screen
 Solution:   If Windows' "Aero" is enabled, turn it off, as it can greatly slow
             down operations of apps used for graphics drawing (BitBlt).
 
+PROBLEM 80: Client compiles fine but crashes on startup with a message:
+            "Failed loading SDL3 library."
+Solution:   If your client uses SDL2, make sure you have the "normal" sdl2
+            packages installed and NOT the 'sdl2-compat' ones.
+
 ===============================================================================
