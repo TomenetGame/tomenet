@@ -274,7 +274,7 @@ FIREWALL_I = add_spell {
 	["fail"] = 	-20,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_wall(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 89), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
+		fire_wall_wide(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 89), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
 	end,
 	["info"] = 	function()
 		return "dam "..(20 + get_level(Ind, FIREWALL_I, 89)).." dur "..(6 + get_level(Ind, FIREWALL_I, 4)).." len 18" --MAX_RANGE
@@ -291,7 +291,7 @@ FIREWALL_II = add_spell {
 	["fail"] = 	-70,
 	["direction"] = TRUE,
 	["spell"] = 	function(args)
-		fire_wall(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 252), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
+		fire_wall_wide(Ind, GF_FIRE, args.dir, 20 + get_level(Ind, FIREWALL_I, 252), 6 + get_level(Ind, FIREWALL_I, 4), 8, " summons a firewall for")
 	end,
 	["info"] = 	function()
 		return "dam "..(20 + get_level(Ind, FIREWALL_I, 252)).." dur "..(6 + get_level(Ind, FIREWALL_I, 4)) --MAX_RANGE

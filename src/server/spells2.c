@@ -6941,7 +6941,7 @@ void open_rift(int Ind, int dir, int intensity) {
 	int flg = PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO | PROJECT_NODF;
 	int dx, dy, sx, sy;
 
-	/* Differences to wide fire_wall():
+	/* Differences to fire_wall_wide():
 	    tmpx,tmpy: Move only 1 step into the target direction, then cast, ie create the rift directly adjacent to us always;
 	    i: make the rift potentialylonger than just 3 grids. */
 	int tmpx, tmpy, i, xorg = p_ptr->px, yorg = p_ptr->py;
@@ -8348,14 +8348,10 @@ bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
  * Affect grids, objects, and monsters.
  * (Return value is currently not used.)
  */
-#define FIRE_WALL_WIDE /* creates a 3-line wide firewall instead of 1-line, to ensure corridors are filled */
 bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_NODF | PROJECT_NODO;
-#ifdef FIRE_WALL_WIDE
-	int dx, dy, sx, sy;
-#endif
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
@@ -8377,7 +8373,36 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-#ifdef FIRE_WALL_WIDE
+	/* Analyze the "dir" and the "target", do NOT explode */
+	return(project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+}
+/* Like fire_wall() but creates a 3-line wide firewall instead of 1-line, to ensure corridors are filled */
+bool fire_wall_wide(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker) {
+	player_type *p_ptr = Players[Ind];
+	int tx, ty;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_NODF | PROJECT_NODO;
+	int dx, dy, sx, sy;
+
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
+
+	/* Use the given direction */
+	tx = p_ptr->px + ddx[dir];
+	ty = p_ptr->py + ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind)) {
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+	project_time_effect = EFF_WALL;
+	project_interval = interval;
+	project_time = time;
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 	dx = ABS(tx - p_ptr->px);
 	dy = ABS(ty - p_ptr->py);
 	sx = SGN(tx - p_ptr->px);
@@ -8432,7 +8457,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 		project_interval = interval;
 		project_time = time;
 	}
-#endif
+
 	/* Analyze the "dir" and the "target", do NOT explode */
 	return(project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
