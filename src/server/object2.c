@@ -39,6 +39,13 @@
 #define NO_BROKEN_EGO_RANDART
 
 
+/* Debug/test some drops? */
+//#define DEBUG_DROPS_FREQ
+#ifdef DEBUG_DROPS_FREQ
+static int debug_item_sval[256] = { 0 };
+#endif
+
+
 //#if FORCED_DROPS == 1  --now also required for tc_bias
 static int which_theme(int tval);
 //#endif
@@ -63,6 +70,19 @@ static int tc_biasr_tools = 100;
 static int tc_biasr_junk = 100;
 
 
+
+void print_debug_drops_freq(int Ind) {
+#ifdef DEBUG_DROPS_FREQ
+	int i;
+
+	for (i = 0; i < 256; i++) {
+		if (!debug_item_sval[i]) continue;
+		msg_format(Ind, "sval %3d:  %5d", i, debug_item_sval[i]);
+	}
+#else
+	msg_print(Ind, "DEBUG_DROPS_FREQ not defined");
+#endif
+}
 
 /*
  * Excise a dungeon object from any stacks
@@ -8598,6 +8618,12 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 		object_desc(0, o_name, &forge, TRUE, 3);
 		s_printf("LOG_DROP: %s\n", o_name);
 	}
+
+#ifdef DEBUG_DROPS_FREQ
+	/* Debug/test specific drops if desired */
+	if (forge.tval == TV_FOOD && forge.sval <= SV_FOOD_MUSHROOMS_MAX)
+		debug_item_sval[forge.sval]++;
+#endif
 }
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */

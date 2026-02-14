@@ -1569,6 +1569,7 @@ extern void init_treasure_classes(void);
 extern int check_for_wand_of_wonder(int sval, struct worldpos *wpos);
 extern void ammo_add_explosion(s16b *pval);
 extern int raw_spell_cost(object_type *o_ptr);
+extern void print_debug_drops_freq(int Ind);
 
 /* party.c */
 extern void account_check(int Ind);
