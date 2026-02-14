@@ -161,7 +161,7 @@ Contents
     (5.12)  Curses
     (5.13)  Vampirism
     (5.14)  Invisibility
-    (5.15)  How abilities, resistances and boni stack
+    (5.15)  How abilities, resistances and bonuses stack
     (5.16)  Experience-draining items
     (5.17)  Digging
     (5.17a) Digging - exact calculation
@@ -208,7 +208,7 @@ Contents
     (7.12)  Fighting/shooting techniques
     (7.13)  PvP mode
     (7.14)  Miscellaneous character properties
-    (7.15)  Character sheet boni page
+    (7.15)  Character sheet bonuses page
     (7.16)  Food consumption
     (7.16a) Nutrition details
 (8) Tactics & strategy
@@ -219,7 +219,7 @@ Contents
     (8.4)   Spoiler files
     (8.5)   Monster tactics
     (8.6)   Town/dungeon related tips
-(9) Miscellanous
+(9) Miscellaneous
     (9.1)   'The Art Not To Die'
     (9.1a)  The worst kind of help
     (9.2)   Character dumps
@@ -576,7 +576,7 @@ Warrior, Mimic, Druid, Archer, to some extent Rogue and Ranger (if you don't
 pick spells or only a few spells to manage).
 
 The reason is that these require less different macros/keys to press and/or at
-lower frequency than other classs, to manage and coordinate gameplay.
+lower frequency than other classes, to manage and coordinate gameplay.
 In general, the more magic spells and abilities a class possesses, the more
 key presses in terms of both number and frequency are required.
 
@@ -685,7 +685,7 @@ W       W       wear/wield an item, same as 'w', but tries to use the second
                 weapon slot and another one in the tool slot, the better one of
                 the two will be used automatically.
 
-                You won't get weapon-skill specific boni applied in combat
+                You won't get weapon-skill specific bonuses applied in combat
                 though, as digging tools count as neither of any of the four
                 weapon classes.
 
@@ -2437,7 +2437,7 @@ A very useful inscription for (heavily) cursed items:
                 prevent wielding an item!
 
 Useful for characters who wield a boomerang not for throwing it, but rather
-because it provides magical boni:
+because it provides magical bonuses:
     !f          Prevent firing an item (ie your equipped ranged weapon).
 
 Other ! inscriptions:
@@ -2986,7 +2986,7 @@ BpR/SpR     Blows per round, shots per round. The number of attacks you get
             stats) have no effect on BpR or SpR respectively.
 
 bpval       Base pval, aka item enchantment stemming from the base item type,
-            independant of any ego or artifact powers, granting stat boni.
+            independent of any ego or artifact powers, granting stat bonuses.
             Also see 'pval' and for details (6.3).
 
 Cheeze      Questionable action, not quite cheating but close to it.
@@ -3275,7 +3275,7 @@ Pseudo-ID   If a player keeps an unidentified item for a longer time he might
             See (5.7) for more information about identification.
 
 pval        Item enchantment stemming from either ego powers or artifact
-            powers granting stat boni. Also see 'bpval' and for details (6.3).
+            powers granting stat bonuses. Also see 'bpval' and for details (6.3).
 
 PvE         Player vs environment. This is the main game style of TomeNET:
             You fight against the computer-controlled environment, usually not
@@ -3759,7 +3759,7 @@ decide the damage you deal, in that case.
 For weapons which damage dice and to-dam bonus will not be counted (ie non-
 SLAY/KILL EVIL/UNDEAD or Morgul weapons) you'll see the message:
 "The Ringwraith is IMPERVIOUS to the mundane weapon."
-The same is true for Martial Arts, which style boni will be nullified if you
+The same is true for Martial Arts, which style bonuses will be nullified if you
 don't have one of the slay-undead/slay-evil flags.
 
 Note: For weapon attacks, having those slay/kill mods on gloves (or other
@@ -5013,8 +5013,8 @@ self-explaining or that are especially important are listed in detail here:
 
         view_lite_extra (lights up a few additional wall/floor types)
 
-    Display overview resistance/boni page at startup (overview_startup)
-        Makes your character sheet start out showing the resistances/boni table
+    Display overview resistance/bonuses page at startup (overview_startup)
+        Makes your character sheet start out showing the resistances/bonuses table
         instead of the your basic stats and abilities.
         (Press C and then tap h to cycle through it, as usual.)
 
@@ -5126,7 +5126,7 @@ self-explaining or that are especially important are listed in detail here:
         Will provide a predefined (on server-side) set of item-inscriptions
         that will be applied automatically to some selected items,
         which are Word of Recall items, various scrolls and a few potions.
-        (These inscriptions are applied independantly of the custom auto
+        (These inscriptions are applied independently of the custom auto
         inscription feature you can access with '&' key.)
         The server-side auto-inscriptions are currently:
             Scrolls of Phase Door:      @r1
@@ -5347,7 +5347,7 @@ In the Windows client newer than version 4.9.2, the fonts menu (=f) also offers
 another choice: Logfont. This can be enabled/disabled via 'L key in the fonts
 menu and (at the time of writing) requires a client restart to apply.
 The logfont feature uses a windows-internal, freely scalable font, making the
-game independant of the .FON font files, which are no longer used while logfont
+game independent of the .FON font files, which are no longer used while logfont
 is active. While logfont is enabled, you can scale width and height freely in
 the fonts menu using the -/+ (height) and ,/. (width) keys.
 The advantage of logfont is that you no longer depend on .FON files of your
@@ -5906,7 +5906,7 @@ help you out of a dire situation..
 Hellish (extra hard no-ghost)
 -----------------------------
 These are unworldly characters with extra penalties:
--1 point malus on each of the 6 character attributes
+-1 point penalty on each of the 6 character attributes
 -healing is reduced by 25%
 -AC is reduced by 50%
 -ESP only works within radius of 20 squares
@@ -6679,8 +6679,8 @@ a Chain Mail {+,0} (-2) [14,+0]
     The {..} part is already known, it's the same as for the ration described
     above. What's new is the [..] part, which all types of armour have:
 
-    The (-2) part is a to-hit malus. This armour reduces your to-hit value by
-    2, because of its bulkiness. Lighter armour has -1 or no to-hit malus,
+    The (-2) part is a to-hit penalty. This armour reduces your to-hit value by
+    2, because of its bulkiness. Lighter armour has -1 or no to-hit penalty,
     heavier armour may have even more than -2.
 
     Rectangular brackets [..] describe 'Armour Class' or short AC. AC is a
@@ -6805,7 +6805,7 @@ a Pick of Digging {+,9} (+5,+9) (+1) (+3)
 
 While you can (via Shift+w) equip a digging tool in your weapon slot and then
 use it as both, a weapon and a digging tool, you won't get mastery-specific
-boni applied as digging tools count as neither of any of the weapon classes.
+bonuses applied as digging tools count as neither of any of the weapon classes.
 
 Asides from basic items with simple enchantments as shown above, you will also
 find items with "ego powers" (such as the aforementioned Pick of Digging).
@@ -7798,7 +7798,7 @@ Example:
                 done automatically.
 *I recommend to have all macros start with the '\e)' sequence.*
 
-Miscellanous escape sequences:
+Miscellaneous escape sequences:
 \x??            Convert the hex code into an ASCII character. For example
                 \x41 (hex 41, dec 65) will become the 65th character of the
                 ASCII charset which is a capital 'A'.
@@ -8663,7 +8663,7 @@ looks like this:
 e) a Long Sword {+,6} (2d5) (+1,+5)
 
 Now we know all about it. It's a magical Long Sword (magical because its
-magical to-hit and to-dam boni are not 0,0 but 1,5. That means it's an
+magical to-hit and to-dam bonuses are not 0,0 but 1,5. That means it's an
 enchanted Long Sword that magically adds +1 to your hit chance and +5 to
 the damage, doing (2d5)+5 damage per hit) that requires its wielder to be
 at least level 6 in order to use it.
@@ -9869,7 +9869,7 @@ There may or may not be further special/exotic dungeons that are not part of
 the "normal" game or gameplay.
 See (4.3) under "Dungeon Types" -> "Experimental dungeons" for more details.
 
-(*) The Ironman Deep Dive Challenge or short IDDC is a special, independant
+(*) The Ironman Deep Dive Challenge or short IDDC is a special, independent
 ironman dungeon, that has a special ruleset and is distinct from the rest of
 the game. For more information, see (4.13), Ironman Challenge.
 
@@ -9890,10 +9890,10 @@ the game. For more information, see (4.13), Ironman Challenge.
   acquired by beating Morgoth, Lord of Darkness.
  -Each floor in the Nether Realm gives a +2% bonus to experience from monster
   kills. So hunting at -350ft in there will give a +14% exp bonus. (This bonus
-  is actually multiplied by the usual floor boni, instead of added. So you will
+  is actually multiplied by the usual floor bonuses, instead of added. So you will
   get even much more exp when hunting on a floor with a lot of 'bad' special
   flags.)
-  To any floor experience boni that might occur, an additional 5% bonus is
+  To any floor experience bonuses that might occur, an additional 5% bonus is
   added because the whole dungeon is flagged NO_RECALL_INTO, meaning it cannot
   be entered via Word of Recall (you may recall out of it though).
  -Note that the amount of experience is already very high even without this
@@ -10303,7 +10303,7 @@ Complicated     - Trap gets an extra AC bonus, making it harder to disarm.
                   This AC bonus is given in [+AC] brackets as usual.
 
 Obvious         - Curses the trap and makes it practically useless.
-                  It has the STEALTH flag but a negative (-pval) malus.
+                  It has the STEALTH flag but a negative (-pval) penalty.
 
 Suffices:
 ---------
@@ -10441,7 +10441,7 @@ experience bonus by one of these dungeon feelings, displayed in light umber:
 
   "This place has not been explored in ages.":         +20% experience gain.
 
-These boni stack with boni from 'bad' (orange) floor feelings explained below.
+These bonuses stack with bonuses from 'bad' (orange) floor feelings explained below.
 
 
 Floor feelings:
@@ -11039,7 +11039,7 @@ Black Breath is a deadly spiritual malady, making your character flicker dark
 
   You can lose levels this way and if you drop below zero XP you will die.
 
-  The amount of XP lost is independant of your race/class experience factors
+  The amount of XP lost is independent of your race/class experience factors
   so high-penalty characters (eg Maia race) suffer the most as they have a
   harder time (re)gaining experience.
 
@@ -12501,10 +12501,10 @@ weapons need 2 hands. Using a shield together with those is not possible.
 Some larger weapons that should be used two-handed can also be used
 single-handed, but you will receive penalties to to-hit and to-dam bonus if
 you use it that way. Look at your character screen ('C') to compare the
-to-hit/to-dam boni and see if it's worth it. You'll see a warning message
+to-hit/to-dam bonuses and see if it's worth it. You'll see a warning message
 "Using this large weapon together with a shield makes fighting harder."
 
-Medium weapons which 'may' be used two-handed won't give malus if used
+Medium weapons which 'may' be used two-handed won't give penalty if used
 single-handed, but you might get more blows per round if you wield them with
 both hands! Again check your character screen ('C') to spot any difference.
 You'll see "Without shield, your weapon feels especially easy to swing.".
@@ -12531,7 +12531,7 @@ That means
 - chance to block attacks will be cut down to 1/3.
 - you won't get get any 'reflection' ability (REFLECT flag) from it, if it
   provides this. (All other abilities you gain from it are not affected though
-  (eg resistances or stat boni), you will benefit from these just fine.)
+  (eg resistances or stat bonuses), you will benefit from these just fine.)
 - you will not be able to bash anything with it.
 
 Your character might have a chance to parry attacks with his weapon and block
@@ -13006,7 +13006,7 @@ dual-wielding - both weapons always have a 50% chance each blow.
 These mods on other items, like gloves or rings, will affect all weapons,
 even ranged ones, and also martial arts!
 Exceptions:
- - +to-dam boni will not be applied to ranged weapons, only to melee attacks.
+ - +to-dam bonuses will not be applied to ranged weapons, only to melee attacks.
  - Extra attacks are not applied to ranged weapons, only to melee attacks.
  - Vampirism effect will be weaker (compare table at the end of (5.13)).
 
@@ -13091,10 +13091,10 @@ on head (helmet), body, hands, feet, and your cloak. Note that the weight of
 a possibly equipped shield does not matter here (experimental).
 
 
-Armour weight (concerning sneakiness/to-hit boni)
+Armour weight (concerning sneakiness/to-hit bonuses)
 -------------------------------------------------
 Wearing armour which is too heavy for you will reduce speed bonus from
-'Sneakiness' skill and your to-hit boni received from your dexterity and weapon
+'Sneakiness' skill and your to-hit bonuses received from your dexterity and weapon
 class' mastery skill (eg Sword-mastery).
 You will receieve a warning message, telling you:
 "The weight of your armour encumbers your movement."
@@ -13108,7 +13108,7 @@ find your str_hold). So the top weight limit is
 encumbers "your movement" accordingly.)
 
 
-Armour weight (concerning flexibility boni and abilities)
+Armour weight (concerning flexibility bonuses and abilities)
 ---------------------------------------------------------
 Some special abilities depend on armour weight (including shield) too.
 Those are...
@@ -13134,7 +13134,7 @@ This 'rogueish weight limit' (the skills are mostly used by rogues) is:
 
 IMPORTANT: If you get the above flexibility warning message, that means your
            secondary weapon is NOT APPLIED AT ALL!
-           So you won't receive any boni/resistances/whatever from it, it's
+           So you won't receive any bonuses/resistances/whatever from it, it's
            basically as if you don't have it equipped at all.
 
 
@@ -13431,12 +13431,12 @@ Nexus           Nexus attacks can have extremely nasty side-effects if you
                  for a 'good' scramble result eventually.
                  If you have maximized your stats with stat potions, the stat
                  swapping will not affect you anymore, since it does not swap
-                 the race/class boni, but just your base stats. So while very
+                 the race/class bonuses, but just your base stats. So while very
                  inconvenient at first, in the long run (ie as soon as you
                  maxed all stats to 'bronze' via potions) the scrambling will
                  have no negative effect on your character's stats at all
                  anymore as they internally will all end up at <18/100> (before
-                 then being modified by race/class/item boni and mali).
+                 then being modified by race/class/item bonuses and penalties).
                  If you want to get re-scrambled by another player's nexus
                  attacks instead of a monster, you must not be in a special
                  event location and your character mode must not be 'PvP'.
@@ -13860,7 +13860,7 @@ Item has been pseudo-identified -> shops won't buy items that have a bad
                                    their basic value too so you better
                                    identify them to get more money for them!
 
-Item has been identified -> the shop will pay you fully for all those boni
+Item has been identified -> the shop will pay you fully for all those bonuses
                             that are either very obvious (like +STRength or
                             Extra Attacks or Life/Mana) or which are always
                             granted to this kind of ego item (for example
@@ -13901,7 +13901,7 @@ Item has been identified and is a randart -> Shops will usually offer between
 Item has been identified and is cursed -> the shops never buy cursed items.
                                           That might change if you uncurse
                                           it and if the item hasn't only bad
-                                          (negative) boni on it.
+                                          (negative) bonuses on it.
 
 Shop prices in general may slightly vary depending on the shop owner's race
 and your character's race.
@@ -14088,7 +14088,7 @@ FEATHER ('It makes you fall down gently like a feather.')
 LEVITATE
         ('It allows you to levitate.')
         Levitation implicitely grants Feather Falling too, so you get all of
-        the boni listed above for FEATHER, and additionally...
+        the bonuses listed above for FEATHER, and additionally...
         Allows you to cross over water areas very swiftly and without drowning
         or your inventory or equipment taking damage.
         Lets you cross over rubble.
@@ -14141,7 +14141,7 @@ LIFE ('It affects your hit points.')
         LIFE affects almost your complete hit point pool, including the
         additional HP a character gained from 'Health' skill.
         It does not affect temporary HP boosts from Heroism or Berserk,
-        and it also does not affect the HP boni gained as Corrupted Maia
+        and it also does not affect the HP bonuses gained as Corrupted Maia
         or from training the 'Nature' school.
 
         +LIFE on randarts will (depending on server options, see ~i in-game)
@@ -14439,10 +14439,10 @@ Dark Sword      Dark Swords have a so-called 'anti-magic field', which
                 A Dark Sword (+3,+7) has 30 - (3+7) * 3/5 = 24% chance of
                 interrupting spellcasters.
                 Dark Swords never give more than 30% AM, even if tohit and
-                todam boni added together result in a negative number.
+                todam bonuses added together result in a negative number.
                 They also never give 'negative anti-magic', 0% AM is the
                 minimum, even if tohit+todam are greater than its AM.
-                AC boni/mali on Dark Swords won't affect the anti-magic field.
+                AC bonuses/penalties on Dark Swords won't affect the anti-magic field.
 
                 The radius of the anti-magic field is several fields (chance
                 to interrupt spells, divided by 9), getting smaller if the
@@ -14513,7 +14513,7 @@ Weapons of Morgul
                 up that inventory slot again - except if you are truly of the
                 undead vampire race or a maiar so corrupted that you became a
                 hell knight! In these cases, as all heavily cursed equipment,
-                these weapons will get their mali reversed into boni when you
+                these weapons will get their penalties reversed into bonuses when you
                 equip them, working in your favour! That doesn't mean their
                 curse is broken, though..
 
@@ -14617,7 +14617,7 @@ Multi-hued Dragon Scale Mail
 Royal Armour    Super-heavy armour that can only be worn by (fallen) winners,
                 'winner' meaning queens, kings, empresses and emperors.
                 (These armour pieces usually have a level requirement of 51 or
-                more and can have special boni not found on other armour.)
+                more and can have special bonuses not found on other armour.)
 
                 'Royal armour' is not a base item name itself but just
                 describes various types of adamantite and mithril heavy armour
@@ -14642,7 +14642,7 @@ Augmentation    Raises all your stats.
 
 Berserk Strength
                 Temporary effects: Heals you for 30, increases CHP and MHP by
-                20, become fearless, -10 malus to ac and +10 to strength,
+                20, become fearless, -10 penalty to ac and +10 to strength,
                 compare (4.11c). Does not stack with 'Berserk' technique.
                 ("You feel like a killing machine!")
 
@@ -15003,7 +15003,7 @@ Remove Curse    Breaks lesser curses on items, allowing you to unwear or
 
 *Remove Curse*  Breaks heavy curses. Note that curses (including heavy ones)
                 on weapons or armours can also be broken by enchanting one of
-                their boni some points above +0 manually. (The enchant service
+                their bonuses some points above +0 manually. (The enchant service
                 of shops won't help!)
 
 Rune of Protection
@@ -15140,7 +15140,7 @@ Amulet of Brilliance    increase intelligence and wisdom, provide light.
 
 Amulet of the Moon      Gives infra-vision, the power to see invisible, and it
                         can be activated to sleep monsters nearby.
-                        It also improves your +hit and +dam boni.
+                        It also improves your +hit and +dam bonuses.
 
 Amulet of Terken        Gives the power to see invisible, free action, and
                         improves your searching (usually by quite a lot).
@@ -15264,7 +15264,7 @@ Firestone           These can be eaten by Draconians and players in dragon
                                         Get STR/CON/DEX bonus.
                                         Get to-hit/to-dam bonus.
                                         Sometimes get EA.
-                                        Get AC malus.
+                                        Get AC penalty.
                         - Biofeedback:  Consume more food.
                                         Regenerate HP / heal cuts faster.
                                         Reduce damage from arrows/missiles,
@@ -15272,7 +15272,7 @@ Firestone           These can be eaten by Draconians and players in dragon
                         - ESP:          You can see telepathically.
                         - Physical Instability:     Probability Travel.
                         - Fury:         speed bonus, to-dam bonus, no fear,
-                                        to-hit malus, to-ac malus.
+                                        to-hit penalty, to-ac penalty.
                                         Compare (4.11c).
                         - Speed-up:     Speed bonus.
                         - Heroism:      +10 CHP/MHP, +12 to-hit, resist fear,
@@ -15651,7 +15651,7 @@ can be toggled with the 'equip_set_colour' option in  =3  .
 The randart rings of power dropped by Nazgul are exempt from this and won't
 give any kind of bonus nor contribute to one.
 
-The exact luck boni for those 'artifact sets' starting at two items are:
+The exact luck bonuses for those 'artifact sets' starting at two items are:
 
   Number of artifacts equipped  |  Luck bonus  | Equip slot index colour
   ------------------------------+--------------|------------------------
@@ -15903,7 +15903,7 @@ Mithril/adamantite
 DSM Armour
 
 Also, disenchantment can disenchant your equipment if not resisted, lowering
-either (+hit, +dam) or [+armour class] boni on your equipped items, down to +0.
+either (+hit, +dam) or [+armour class] bonuses on your equipped items, down to +0.
 Even artifacts are not safe! Only if you have disenchantment resistance or the
 item has the IGNORE_DISEN flag (ignore disenchantment) then the item is safe.
 Ethereal ammunition is especially susceptible to disenchantment.
@@ -16080,7 +16080,7 @@ have a special take on heavy curses:
 If an item is heavily cursed and it is NOT the "of nothingness" type (weapons)
 and also not a Nazgul's ring of power, then if a vampire or Hell Knight (true
 one, not mimicked) or a Corrupted Priest in Blood Sacrifice form equips it, its
-negative boni will flip to positive numbers.
+negative bonuses will flip to positive numbers.
 
 Also vampires tend to greatly resist certain bad effects that heavily cursed
 items may exert, making for example Morgul weapons and some heavily cursed
@@ -16294,7 +16294,7 @@ See (0.2) for more information about cloaking.
 
 
 
-(5.15) How abilities, resistances and boni stack
+(5.15) How abilities, resistances and bonuses stack
 ------------------------------------------------
 (Also see (5.6) for basic information about damaage types and resistances.)
 
@@ -17102,7 +17102,7 @@ menu (~3 key).
 
 This means that the more dead uniques you have the more likely each minute one
 of them will revive. On the other hand since one unique is picked randomly each
-time independantly of whether it is actually dead or alive to the player, it is
+time independently of whether it is actually dead or alive to the player, it is
 not possible to cause a particular unique to respawn slower or faster (eg by
 killing or not killing other uniques). The chance PER UNIQUE will always be the
 same over the same amount of time.
@@ -17429,7 +17429,7 @@ they both occur on an item, otherwise just "(+hit)" or "(+dam)".
 The format for to-ac is "[+ac]" or if the item comes with a base AC (eg armour)
 it will be added to it after a comma: "[base ac,+ac].
 
-pval and bpval are stat-increasing boni, for example to Strength or to BpR.
+pval and bpval are stat-increasing bonuses, for example to Strength or to BpR.
 These numbers are in parentheses, eg a "Shovel of Digging (+1) (+3)" has
 a bpval of +1 and a pval of 3.
 The bpval is the 'base pval' which items get from their base type, like a
@@ -17444,9 +17444,9 @@ a Shadow Blade of Extra Attacks (+2) (+3) grants a bpval of +2 to Stealth which
 stems from the base item type 'Shadow Blade' and then a pval of +3 to your BpR
 aka number of melee attacks/round.
 
-For artifacts, all of these stats will be either totally random, independant of
+For artifacts, all of these stats will be either totally random, independent of
 the level where you found the item, or for player-created artifacts the three
-boni to hit, dam and AC might be taken from the base item used in the process
+bonuses to hit, dam and AC might be taken from the base item used in the process
 if it is a jewelry item (meaning ring or amulet, also see (9.4) for more info.)
 
 For all other items besides artifacts however, the hit/dam/ac and pval
@@ -17454,7 +17454,7 @@ enchantments on items are randomized but will be affected by the depth where
 the item was found, meaning that deeper levels have a higher chance to produce
 higher enchantments of these four types.
 The pval (which comes from either ego powers or artifact powers) however is
-generated completely randomly, independant of depth.
+generated completely randomly, independent of depth.
 
 
 (6.3a) Special item drops of monsters
@@ -17513,7 +17513,7 @@ Zu-Aon
     A potion of learning and a scroll of artifact creation.
 
 
-Further, even without any flags and independant of their r_info.txt loot table
+Further, even without any flags and independent of their r_info.txt loot table
 monsters may tend towards item drops that fit their appearance and style.
 This means that you will mostly see swordmasters drop swords, mages drop an
 occasional mage staff, runemasters drop an occasional rune, monsters that are
@@ -17933,7 +17933,7 @@ maxed out attribute will be displayed in light umber.
 An attribute is maxed out at 18/100 +/- racial/class modifiers.
 Examples:
 Human Adventurer has 18/100 + 0 + 0 = 18/100 cap for all stats, see (7.4) for
-race boni and (7.5) for class boni.
+race bonuses and (7.5) for class bonuses.
 Draconian Istar has an intelligence cap of 18/100 + 2 (Draconian) + 3
 (Istar) = 18/150.
 
@@ -17944,7 +17944,7 @@ or '**' if using linear_stats.
 Strength (STR)
     -How heavy may your weapon, bow or shield be? You can't fight with a
      weapon that is too heavy for you.
-    -How heavy may your armour be? You will lose mana, boni or combat abilties
+    -How heavy may your armour be? You will lose mana, bonuses or combat abilties
      if it's too heavy for you.
     -How much damage do you inflict on enemies in melee combat? (to-mdam bonus)
     -Are you able to deliver several blows per round with your weapon?
@@ -18049,7 +18049,7 @@ stated.
                                 Lets you wear heavier armour without losing
                                 dodge chance (gained from the 'Dodging' skill),
                                 or other roguish abilities like
-                                boni from dual-wielding, Critical-strike,
+                                bonuses from dual-wielding, Critical-strike,
                                 area-searching and cloaking.
 
                                 Lets you wear heavier armour without getting
@@ -18173,7 +18173,7 @@ stated.
                                 anything for them (it only helps light swords
                                 and polearms not heavier than 10.0 lb).
 
-                                Crit boni on weapons only apply to the weapon
+                                Crit bonuses on weapons only apply to the weapon
                                 itself, while bonus on other items such as
                                 gloves or rings count for all kind of physical
                                 attacks. (Same goes for slaying/brand mods on
@@ -18260,12 +18260,12 @@ stated.
                                 of three combat stances each, when you reach
                                 a certain character level i.e. skill. The last
                                 rank ('royal rank') is learned by defeating
-                                Morgoth, independant of your level. You can use
+                                Morgoth, independent of your level. You can use
                                 the /ex command to check your current stance.
                                 Each stance has advantages and disadvantages,
                                 those are:
 
-                                Balanced stance  - the default, no boni/mali.
+                                Balanced stance  - the default, no bonuses/penalties.
 
                                 Defensive stance - you will block more,
                                                  - reduce the effect of most
@@ -18339,7 +18339,7 @@ stated.
                                 (The 'top level' is the highest level the
                                 character has ever attained so far.)
                                 And of course your character will gain all
-                                magical boni from both weapons (eg stats,
+                                magical bonuses from both weapons (eg stats,
                                 abilities, resistances).
 
                                 NOTE: If your armour is too heavy (see (5.5))
@@ -18363,10 +18363,10 @@ stated.
                                 dual-wield mode.
                                 While disabled ('Main-Hand mode') you will just
                                 attack with your primary weapon exclusively,
-                                and not receive any dual-wield specific boni;
+                                and not receive any dual-wield specific bonuses;
                                 this can be useful if it deals much more damage
                                 than your secondary weapon.
-                                You still gain all magical boni from both
+                                You still gain all magical bonuses from both
                                 weapons while in main-hand mode, as usual.
                                 While enabled ('Dual-hand mode') you will
                                 attack with both weapons, picked randomly.
@@ -18825,7 +18825,7 @@ stated.
                                 (The 'body modification' doesn't matter, eg
                                 whether in 'normal' body or 'fruit bat' form.)
 
-        .Aura of Fear           Monsters that hit you are stricken by fear.
+        .Aura of Fear           Monsters that hit you are stricken with fear.
          (0.500)                Mindless undead, non-living monsters and those
                                 that resist fear (NO_FEAR) are not affected.
                                 The chance for the aura to trigger depends on
@@ -19479,7 +19479,7 @@ stated.
                                 into its parent skill 'Health'.
 
                                 Note that for the Digging skill to get applied,
-                                which includes any boni it might give such as
+                                which includes any bonuses it might give such as
                                 improving what you can find or uncover (see
                                 above), you must dig manually ie via tunnel
                                 command or by using demolitionist charges (see
@@ -19488,7 +19488,7 @@ stated.
                                 If you instead use any kind of digging magic or
                                 the insta-tunneling ability gained by mimicking
                                 a monster that has KILL_WALL flag, the Digging
-                                skill boni/perks will NOT be applied.
+                                skill bonuses/perks will NOT be applied.
                                 The only thing you can uncover this way are
                                 random occurances of shallow water or lava,
                                 and random buried items except for runes (all
@@ -19517,7 +19517,7 @@ stated.
 
                                 Certain tools such as shovels, picks and
                                 mattocks will also increase your digging speed
-                                greatly (independant of the skill), see (5.9).
+                                greatly (independent of the skill), see (5.9).
                                 Also, when hacking through trees and bushes,
                                 axes will help a lot and swords somewhat, in
                                 case you have no good digging tool at hand.
@@ -19764,7 +19764,7 @@ The clou is that you can actually combine both syntaxes as you wish!
 
 (1) With '@Cn' tags the items must be inscribed with, where the numbers 'n' on
     the tags of the items are given to the /mix command.
-    This is a safe way to craft, as it will be independant on the inventory
+    This is a safe way to craft, as it will be independent on the inventory
     position of the items. You do not need to tediously inscribe the chemicals
     manually, as there is an option 'auto_inscr_server_ch' which is enabled by
     default and will auto-inscribe ingredients you pick up.
@@ -19961,16 +19961,16 @@ Legendary   (golden)        This means, that you have reached the absolute
 Here is a list of detailed information about miscellaneous abilities:
 
 Fighting
-    How well you can fight (hit chance; further boni like skills or +hit from
+    How well you can fight (hit chance; further bonuses like skills or +hit from
     equipment are added to the ability) or how easily you get disarmed
     ("You lose the grip of your weapon(s)!").
     (Note that any +tohit bonus increases the displayed Fighting ability:
-    The displayed value is the sum of your actual ability and your hit boni.)
+    The displayed value is the sum of your actual ability and your hit bonuses.)
 Bows/Throw
     How well you can shoot with slings, bows and crossbows or throw any kind
     of item, including 'firing' boomerangs.
     (Note that any +tohit bonus increases the displayed Bows/Throw ability:
-    The displayed value is the sum of your actual ability and your hit boni.)
+    The displayed value is the sum of your actual ability and your hit bonuses.)
     This ability is internally divided into its 'bows' and its 'throw' part:
     If you don't wield a ranged weapon, it will display the 'throw' part.
     If you do wield a ranged weapon it depends on its type: For slings, bows
@@ -20052,10 +20052,10 @@ weapon enchantments) it depends on changes, depends on your class: The relative
 numerical modifiers are given in the class table in (7.5).
 Here is a list which ability changes depend on which factors:
 (The factors in relation to the values in (7.5) are marked by underscores.
-All other factors listed here are further modifications, independant of (7.5).)
+All other factors listed here are further modifications, independent of (7.5).)
 
- Fighting        _'Combat'_, _'Weaponmastery'_, melee +hit boni
- Bows/Throw      _'Combat'_, _'Archery'_, ranged +hit boni
+ Fighting        _'Combat'_, _'Weaponmastery'_, melee +hit bonuses
+ Bows/Throw      _'Combat'_, _'Archery'_, ranged +hit bonuses
  Saving Throw    Wisdom, _level_, AM-shell
  Stealth         Mimic form weight, stealth items, _'Stealth'_, cloaking,
                 'Martial Arts'
@@ -20111,7 +20111,7 @@ create a character!):
     stealth, bows, and magic, but they are not as good at hand weapons.
     Half-elves resist light intrinsically.
     They get bonus on 'Bow-mastery' and 'Interception', a small bonus on
-    the 'Nature' and 'Spirit' and a small malus on the 'Shadow' school.
+    the 'Nature' and 'Spirit' and a small penalty on the 'Shadow' school.
 
 - Elf
     Elves resist light effects intrinsically and see invisible creatures.
@@ -20122,7 +20122,7 @@ create a character!):
     magic, but they are not as good at hand weapons.
     Elves get bonus on 'Bow-mastery', 'Magic', 'Stealth', 'Dodging',
     'Calmness', 'Sneakiness' and the magic 'Water' and occult 'Spirit' schools,
-    a large bonus on the magic 'Nature' school and a malus on 'Shadow'.
+    a large bonus on the magic 'Nature' school and a penalty on 'Shadow'.
 
 - Hobbit
     Hobbits have their dexterity sustained. Further, they get a dexterity bonus
@@ -20166,7 +20166,7 @@ create a character!):
     voices, arguing with themselves for no good reason, and screaming out
     challenges at nearby foes. In other words, dwarves have a miserable
     stealth. They receive a bonus on 'Axe-mastery', a huge bonus on 'Digging'
-    and 'Climbing' and a large malus on 'Swimming'.
+    and 'Climbing' and a large penalty on 'Swimming'.
 
 - Half-Orc
     Because of their preference to living underground to on the surface,
@@ -20208,10 +20208,10 @@ create a character!):
     their wisdom is sometimes suspect. They do very well in all professions.
     There are few things that they have not seen already, and experience is
     hard for them to gain.
-    High-Elves receive boni on 'Bow-mastery', 'Magic', 'Stealth', 'Dodging'
+    High-Elves receive bonuses on 'Bow-mastery', 'Magic', 'Stealth', 'Dodging'
     and the magic 'Nature' school, a large bonus on 'Calmness' and 'Swimming',
-    a slight bonus on 'Spirit' occultism and a malus on 'Shadow' occultism.
-    High-Elves also recieve boni on 'Light' and 'Mana' runecraft.
+    a slight bonus on 'Spirit' occultism and a penalty on 'Shadow' occultism.
+    High-Elves also recieve bonuses on 'Light' and 'Mana' runecraft.
 
 - Yeek
     Being weak and losing many childhood fights, they have learned the
@@ -20222,7 +20222,7 @@ create a character!):
     Yeeks are the least powerful of all the races. They suffer disadvantages
     in all stats and have attributes similar to humans. However, to
     compensate Yeeks learn, and thus gain levels, extremely quickly.
-    Yeeks don't receive boni or mali on any skills except that they are very
+    Yeeks don't receive bonuses or penalties on any skills except that they are very
     good at 'Swimming'.
 
     Note:
@@ -20236,7 +20236,7 @@ create a character!):
     making them good fighters, rogues, and mimics. Being creatures of the
     night, Goblins have natural resistance to darkness.
     They receive bonus on 'Boomerang-mastery', 'Stealing' and occult 'Shadow'
-    magic and a malus to 'Spirit' and all four holy schools.
+    magic and a penalty to 'Spirit' and all four holy schools.
 
 - Ent
     The Ents are a powerful race dating from the beginning of the world,
@@ -20357,7 +20357,7 @@ create a character!):
     Dark-Elves intrinsically resist darkness, but are susceptible to light.
     At level 20 they learn to see the invisible.
     They get bonus on 'Stealth', 'Dodging', 'Sneakiness', 'Backstabbing', a
-    large bonus on occult 'Shadow' magic and a malus on all four holy schools
+    large bonus on occult 'Shadow' magic and a penalty on all four holy schools
     and the occult 'Spirit' school.
 
 - Vampire
@@ -20389,7 +20389,7 @@ create a character!):
     level 10. At night on the world surface, darkvision increases even more.
     Regarding items, Vampires do not suffer a hit point drain from wielding a
     spectral weapon. They are even able to wear or wield heavily cursed items
-    such as Morgul weapons and benefit from them, turning their negative boni
+    such as Morgul weapons and benefit from them, turning their negative bonuses
     into positive ones! The only exception are weapons of Nothingness, which
     won't do them any good either. Since Vampires are immune to Black Breath,
     using a Morgul weapon will not pose a problem to them. Heavily cursed
@@ -20447,7 +20447,7 @@ create a character!):
     Items that provide 'Slow Digestion' do work for vampires.
     At level 40 they will also start to need less and less food to sustain
     themselves. Vampire royalties will require the least amount of food,
-    independant of their level, enabling them to survive a very long time
+    independent of their level, enabling them to survive a very long time
     without feeding - even an item granting 'Slow Digestion' will not improve
     this any further.
     Vampires hate 'Blunt' weapons, are very bad at 'Swimming', cannot use
@@ -20537,7 +20537,7 @@ create a character!):
     you will already be able to use it.
 
 
-Here is a table showing boni/mali of the different races:
+Here is a table showing bonuses/penalties of the different races:
 
 Race        STR  INT  WIS  DEX  CON  CHR       HP die  Exp%   Infra-Vision
             Di   MD   ST   St   Pe   Sr   Fi   BT             (caps at 200 ft)
@@ -20997,7 +20997,7 @@ create a character!):
     effective (see (7.2)).
     Also, they are somewhat better than paladins at using magic devices.
     Similar to Vampires, Hell Knights can wield some heavily cursed items to
-    great effect, flipping their negative boni to positive ones. (With the same
+    great effect, flipping their negative bonuses to positive ones. (With the same
     exception as for vampires: Weapons "of nothingness" will do them no good
     either, and some randarts may fail to flip.) See the end of (5.12) for
     details on item-flipping.
@@ -21205,7 +21205,7 @@ create a character!):
 
     For more information about runecraft, see '(7.8b) Runes & Runemastery'.
     Note that physical runes are not required to cast runespells, and are
-    instead used only to apply sigils to worn equipment, granting some boni
+    instead used only to apply sigils to worn equipment, granting some bonuses
     depending synergistically on both the rune element and recipient item.
 
     -- Tip: --
@@ -21280,7 +21280,7 @@ From level 60 and upwards there are special titles available every 10 levels.
 You can find a list of all titles in (7.5b) further down.
 
 
-Here is a table showing boni/mali of the different classes:
+Here is a table showing bonuses/penalties of the different classes:
 'Blows/Round' is the maximum base number of melee attacks per round a class
 can get, based solely on strength and dexterity and on the weapon's weight.
 You can further increase your BpR later via mastery skills, items or magic.
@@ -21957,8 +21957,8 @@ I: speed : hit points : vision : armor class : alertness
   speed:
     110 means normal speed. If the monster is faster, the mimic will
     receive a speed bonus of 30% of the monster's speed above 110.
-    If the monster is slower, the mimic will receive a speed malus of
-    20% of the monster's speed malus below 110.
+    If the monster is slower, the mimic will receive a speed penalty of
+    20% of the monster's speed penalty below 110.
     So a monster moving at 130 speed will give the mimic +6 speed.
   hit points:
     The monster's hit dice xdy are multiplied and then somewhat capped against
@@ -22175,7 +22175,7 @@ S: spell list
     The chance to successfully use such a monster power is affected by the
     mimic's intelligence (INT).
     Depending on how frequently the monster is able to cast spells, the player
-    gets boni on mana and on intelligence or wisdom stat!
+    gets bonuses on mana and on intelligence or wisdom stat!
     This only applies if the spells are in fact magic spells, not if the
     monster cannot do anything except firing missiles, shrieking or shooting
     arrows (etc).
@@ -22254,7 +22254,7 @@ All ghosts      See 'All undead creatures' above, but ghosts gain +5
                 Ghosts are susceptible to light.
                 Almost all ghosts can pass solid walls.
                 NOTE: Player ghosts (aka when your character died) get somewhat
-                different boni instead, see (3.11).
+                different bonuses instead, see (3.11).
 All greater undead creatures
                 See 'All undead creatures' above, but greater undead gain +5
                 Infra-vision instead of just +2.
@@ -22342,7 +22342,7 @@ Dwarf:
 Yeek:
     Pass trees.
 Ent:
-    Speed malus (will be reduced), swimming, pass trees.
+    Speed penalty (will be reduced), swimming, pass trees.
     (Note that Ents KEEP racial water resistance and fire susceptibilitiy.)
 Draconian:
     Feather falling, levitation.
@@ -22728,7 +22728,7 @@ Lesser kraken           speedy, smart and very tough aquatic(*) creature;
 Level 45:
 ---------
 Maulotaur               Like Minotaur very speedy and susceptible to 'good',
-(Code 723)              but even tougher; stupid (INT malus);
+(Code 723)              but even tougher; stupid (INT penalty);
                         immune to fire; resists teleportation attacks;
                         can cast plasma bolt and fire ball
 
@@ -22895,8 +22895,8 @@ different effects, in most cases a different type of damage dealt to enemies.
 Especially non-elemental attack spells will often have a different area of
 effect in higher tiers, such as bolt -> ball -> line of sight.
 
-Magic, holy and occult schools give certain permanent boni and abilities to
-the player, when trained to a certain extent. The boni are listed below each
+Magic, holy and occult schools give certain permanent bonuses and abilities to
+the player, when trained to a certain extent. The bonuses are listed below each
 school.
 
 When casting a spell by name (usually via macro) and omitting a tier, it will
@@ -22913,7 +22913,7 @@ will not count as melee weapon, so any melee combat you engage in will work
 exactly as if you were fighting bare-handed (and martial arts skills won't
 be applied).
 
-All spells in that book will receive some boni when you cast them. Usually:
+All spells in that book will receive some bonuses when you cast them. Usually:
  - 20% reduced MP cost (rounded up when browsing the book, but actually has a
                        chance to cost 1 less MP depending on the fraction, so
                        on average it is actually always applied correctly!
@@ -24944,20 +24944,20 @@ markets are also known to trade these rare embodiments of elemental power...
 
 Physical runes may be activated (after achieving skill level 40 with the
 appropriate elements) to emblazon a non-artifact armour, shield or melee weapon
-with an elemental sigil. This sigil confers a generally positive boni effect as
+with an elemental sigil. This sigil confers a generally positive bonuses effect as
 long as the equipment remains wielded. Sigils vanish from equipment when sold,
 dropped, taken off, disarmed, etc. Applying an additional physical rune dispels
 any previous sigil, consuming a new rune to power the new effect (even if the
-resulting boni is identical to that which was previously conferred).
+resulting bonuses is identical to that which was previously conferred).
 
-The process for determining success and which boni is applied depends on both a
-pool of available effects, listed in (7.8c) Runespell Tables, Sigil Boni, and
+The process for determining success and which bonuses is applied depends on both a
+pool of available effects, listed in (7.8c) Runespell Tables, Sigil Bonuses, and
 on rules similar to artifact creation (see (9.4) Artifact creation). Existing
-enchantments may synergize with or couteract some sigil boni (eg. PVAL) and are
+enchantments may synergize with or couteract some sigil bonuses (eg. PVAL) and are
 limited in effect by the same restrictions that constrain artifact creation.
-Duplicate effects are never applied, and boni only increase in potency (eg.
+Duplicate effects are never applied, and bonuses only increase in potency (eg.
 fire resistance will be replaced with immunity, never the other way around).
-Sigil boni may always result in resistance to the element of the physical rune,
+Sigil bonuses may always result in resistance to the element of the physical rune,
 if such a resistance exists (that is, not inertia/gravity/hellfire/force).
 
 Runemasters are limited to one sigil per element, but can maintain 7 in total.
@@ -25062,8 +25062,8 @@ Physical runes can at first seem difficult to acquire, but may be extracted
 from treasure veins with a success rate proportional to runecraft skills.
 This method of rune extraction synergizes well with the digging skill.
 
-Applying sigils to equipment that already has certain boni associated with an
-element will increase your chances to grant the remaining boni from that
+Applying sigils to equipment that already has certain bonuses associated with an
+element will increase your chances to grant the remaining bonuses from that
 elemental pool. That is, sigils will never grant a duplicate or invalid effect.
 For example, applying a sigil of fire to a dwarven helm (which already grants
 fire resistance) will have an increased chance to grant fire immunity.
@@ -25147,18 +25147,18 @@ Flare      |  35 | Briefly engulfs a target for high damage, causes backlash.
 + Nova     |  40 | Channels your mana in a star-shaped cloud, causes backlash.
 
 
-Sigil Boni
+Sigil Bonuses
 ----------
-A table cross referencing boni to element and item TVAL (type value). Boni are
+A table cross referencing bonuses to element and item TVAL (type value). Bonuses are
 restricted as with artifact creation regarding PVAL modifiers. Stat enhancing
-boni have a chance to include a sustain, and boni occuring both generally and
-on the item type specifically are more likely to occur. Some weapon/helm boni
+bonuses have a chance to include a sustain, and bonuses occuring both generally and
+on the item type specifically are more likely to occur. Some weapon/helm bonuses
 are specific to staves, boomerangs, and crowns (see (9.4) Artifact creation).
 
 All elements associated with a specific resistance may confer that resistance.
 
-The 'Any' column indicates boni which are not restricted to a specific type of
-equipment, and can thus appear on any type of item. If a boni is listed both in
+The 'Any' column indicates bonuses which are not restricted to a specific type of
+equipment, and can thus appear on any type of item. If a bonuses is listed both in
 this column and the column for a specific equipment type, it is more likely to
 be conferred to that type of equipment (at twice the probability).
 
@@ -25627,7 +25627,7 @@ equipped device will not count as melee weapon, so any melee combat you engage
 in will work exactly as if you were fighting bare-handed (and martial arts
 skills won't be applied).
 
-The device will receive some boni when you use it. Usually:
+The device will receive some bonuses when you use it. Usually:
  - 20% increased activation chance, flat on top of your usual, final chance.
 
  - 20% chance to actually retain the charge/energy of the device instead of
@@ -25867,7 +25867,7 @@ The techniques are as follows:
         (Spinning around costs a turn of energy.)
     Berserk             10 stamina
         Temporary effects: Heals you for 30 HP, increases CHP and MHP by 20,
-        become fearless, -10 malus to ac and +10 to strength, compare (4.11c).
+        become fearless, -10 penalty to ac and +10 to strength, compare (4.11c).
         (Entering berserk rage does not cost movement energy.)
         Does not stack with a potion of berserk strength.
 
@@ -26142,24 +26142,24 @@ not affect the gameplay in any way.
 
 
 
-(7.15) Character sheet boni page
+(7.15) Character sheet bonuses page
 --------------------------------
-This page of the character overview displays equipment and intrinsic boni.
-The four tables list resistances, miscellaneous flags, numeric boni, and
+This page of the character overview displays equipment and intrinsic bonuses.
+The four tables list resistances, miscellaneous flags, numeric bonuses, and
 slays/brands/esp, complete with a header/footer to identify each column. Each
 worn item has a header based on equipment slot, notated [a-n]. Class/race/form
-boni use the @ header. A representation of any equipment worn and current form
-occupy the footer. The columns between each header/footer pair display boni,
+bonuses use the @ header. A representation of any equipment worn and current form
+occupy the footer. The columns between each header/footer pair display bonuses,
 which correlate to the row title, shown to the left of each table.
 
 A dark grey row title or column header indicates no relevant modifications to
-that particular boni, or an empty equipment slot. An equipped column is
+that particular bonuses, or an empty equipment slot. An equipped column is
 highlighted grey by default, unless the item has hidden properties, in which
-case both the column header and unknown boni will be highlighted yellow. A
+case both the column header and unknown bonuses will be highlighted yellow. A
 column representing a cursed item will have a red header. When a particular
-boni is applied to your character, the row title will highlight white, unless
-the boni is detrimental, in which case the title may appear yellow or red. A
-gold row title indicates an improved boni, such as immunity, sustained stats or
+bonus is applied to your character, the row title will highlight white, unless
+the bonus is detrimental, in which case the title may appear yellow or red. A
+gold row title indicates an improved bonuses, such as immunity, sustained stats or
 lite source, or a maximum value, such as for stealth, luck, or AM Field.
 
 Here is an explanation of the common glyphs which may occupy a row/column grid:
@@ -27203,7 +27203,7 @@ spells - compare (4.12)).
 
 
 
-(9) Miscellanous
+(9) Miscellaneous
 ================
 
 (9.1) 'The Art Not To Die'
@@ -27297,7 +27297,7 @@ The high score is based on the character's experience (XP), its level and its
 expfact (that is the internal name for race/class-dependant experience penalty,
 eg lowest for yeek, highest for maia, and similarly for the classes).
 
-Further boni are applied for being unworldly, hellish or playing a dedicated
+Further bonuses are applied for being unworldly, hellish or playing a dedicated
 IDDC-slot character. These stack, so the highest score bonus is achieved by
 playing a hellish IDDC-exlusive mode character.
 
@@ -27517,7 +27517,7 @@ amulets of telepathy, rings of polymorphing or on rings that are named
 
 HOW IT WORKS ON NON-JEWELRY:
 
--All boni, to-hit/to-dam/to-ac and the pval/bpval (those (+x) bonus) are
+-All bonuses, to-hit/to-dam/to-ac and the pval/bpval (those (+x) bonus) are
 randomly rerolled. So it won't matter what stats the item has, only its
 base type is important.
 
@@ -27562,7 +27562,7 @@ However, there are certain exceptions:
 5) If the item ends up cursed, certain granted base flags can be removed too:
    -Curse removes blessing
    -Experience drain removes hold-life
-   -attribute mali remove the according sustenance (STR/INT/WIS/DEX/CON/CHR)
+   -attribute penalties remove the according sustenance (STR/INT/WIS/DEX/CON/CHR)
 
 -Mods provided by the base item, unless they are removed by these exceptions
 may limit the final randart mods:
@@ -27571,7 +27571,7 @@ their bonus powers to the stealth cap of +5. So in order to gain for example a
 bonus of +10 to critical hits on a Shadow Blade it'd have to roll AGGRAVATE
 in order to remove the stealth bonus.
 There is one notable exception: Witan Boots. These have their fixed -2 stealth
-malus detached from their actual powers and can hence roll for example a speed
+penalty detached from their actual powers and can hence roll for example a speed
 bonus just as high as any other boots.
 
 MULTI-HUED DRAGON SCALE MAIL IMMUNITIES:
@@ -27617,7 +27617,7 @@ Also, the higher level the base type of an armour, the more +AC it can expect
 as a randart, because armour gets baselevel/15 added to its AC.
 Base item types that come with +AC (Mithril Helmet always comes with +10 AC
 pre-enchanted for example, see k_info.txt) get half of that added to their AC
-too. These +AC boni from base item level and base item pre-enchantment do not
+too. These +AC bonuses from base item level and base item pre-enchantment do not
 factor into the artifact's power, ie they do not "count" in the flag cost
 calculation, except when the +AC exceeds +30, which is always costly.
 So basically for armour, you want to use the base item type with the highest
