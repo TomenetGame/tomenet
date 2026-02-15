@@ -5086,7 +5086,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					byte w;
 
 					p_ptr->mode |= MODE_DED_PVP;
-					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
+					msg_print(Ind, "\377yYour character has been converted to a slot-exclusive PvP-character!");
 					w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 					//Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
@@ -5097,7 +5097,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				byte w;
 
 				p_ptr->mode |= MODE_DED_PVP;
-				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
+				msg_print(Ind, "\377yYour character has been converted to a slot-exclusive PvP-character!");
 				w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 				//Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
@@ -5118,7 +5118,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					p_ptr->mode |= MODE_DED_IDDC;
 					p_ptr->mode &= ~MODE_EVERLASTING;
 					p_ptr->mode |= MODE_NO_GHOST;
-					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
+					msg_print(Ind, "\377DYour character has been converted to a slot-exclusive IDDC-character!");
 					w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 //					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
@@ -5140,7 +5140,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				p_ptr->mode |= MODE_NO_GHOST;
 				/* (get rid of his houses -- not needed though since you can't currently buy houses at level 1) */
 
-				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
+				msg_print(Ind, "\377DYour character has been converted to a slot-exclusive IDDC-character!");
 				w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 
