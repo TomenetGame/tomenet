@@ -1047,34 +1047,29 @@ static void place_random_door(struct worldpos *wpos, int y, int x) {
 		/* Create open door */
 		c_ptr->feat = FEAT_OPEN;
 	}
-
 	/* Broken doors (100/1000) */
 	else if (tmp < 400) {
 		/* Create broken door */
 		c_ptr->feat = FEAT_BROKEN;
 	}
-
 	/* Secret doors (200/1000) */
 	else if (tmp < 600) {
 		/* Create secret door */
 		c_ptr->feat = FEAT_SECRET;
 	}
-
 	/* Closed doors (300/1000) */
 	else if (tmp < 900) {
 		/* Create closed door */
 		c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 	}
-
-	/* Locked doors (99/1000) */
-	else if (tmp < 999) {
-		/* Create locked door */
+	/* Locked doors (90/1000) */
+	else if (tmp < 990) {
+		/* Create locked door - can pick lock or bash (or s2m) */
 		c_ptr->feat = FEAT_DOOR_HEAD + randint(7);
 	}
-
-	/* Stuck doors (1/1000) */
+	/* Stuck doors (10/1000) */
 	else {
-		/* Create jammed door */
+		/* Create jammed door - can only bash (or s2m) */
 		c_ptr->feat = FEAT_DOOR_HEAD + 0x08 + rand_int(8);
 	}
 
