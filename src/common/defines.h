@@ -4350,6 +4350,9 @@
 #define SV_RING_POLYMORPH		60
 #define SV_RING_STEALTH			61
 
+#define SV_RING_DEBUG_DRAIN_HP		97	/* (admin debugging only, no flavour) */
+#define SV_RING_DEBUG_DRAIN_MP		98	/* (admin debugging only, no flavour) */
+#define SV_RING_DEBUG_DRAIN_XP		99	/* (admin debugging only, no flavour) */
 
 /* The "sval" codes for TV_STAFF */
 #define SV_STAFF_DARKNESS		0

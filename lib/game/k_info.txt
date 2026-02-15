@@ -6497,7 +6497,29 @@ A:20/30:40/65
 P:0:1d1:0:0:0
 F:FULL_NAME | EASY_KNOW | IGNORE_FIRE | IGNORE_WATER
 
-# HOLE 767-769
+# Debug ring for HP drain
+N:767:DRAIN_HP
+G:=:d
+I:45:97:0
+W:127:0:2:0
+A:127/0
+F:DRAIN_HP
+
+# Debug ring for MP drain
+N:768:DRAIN_MANA
+G:=:d
+I:45:98:0
+W:127:0:2:0
+A:127/0
+F:DRAIN_MANA
+
+# Debug ring for XP drain
+N:769:DRAIN_EXP
+G:=:d
+I:45:99:0
+W:127:0:2:0
+A:127/0
+F:DRAIN_EXP
 
 # The Ring of Phasing -- see artifact list
 

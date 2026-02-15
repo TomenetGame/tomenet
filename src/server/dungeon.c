@@ -6777,11 +6777,17 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Drain Hitpoints */
 	if (p_ptr->drain_life) {
-		int drain = p_ptr->drain_life * randint(p_ptr->mhp / 100) + debug_drain_hp;
+		/* Note about following line: the 'mhp/18' term balances out 1 drain vs 1 regen source pretty exactly for widely differing;
+		   tested values of mhp :105, 321, 986, at 105 hp the regen visibly outweighs the drain, but still fine. */
+		int drain = p_ptr->drain_life * randint(p_ptr->mhp) + p_ptr->mhp / 18 + debug_drain_hp;
+		int drain1 = drain / 100, drain100 = drain % 100; /* 0.01 HP resolution, via chance */
 
-		p_ptr->no_alert = TRUE;
-		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
-		p_ptr->no_alert = FALSE;
+		drain1 += magik(drain100) ? 1 : 0;
+		if (drain1) {
+			p_ptr->no_alert = TRUE;
+			take_hit(Ind, drain1 < p_ptr->chp ? drain1 : p_ptr->chp, "life draining", 0);
+			p_ptr->no_alert = FALSE;
+		}
 	}
 
 	/* Charm/Possess: Drain Mana */
