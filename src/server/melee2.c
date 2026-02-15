@@ -9928,7 +9928,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep) {
-		u32b pnotice = 0, noise, dist, num = 0, avg_noise = 0;
+		u32b pnotice = 0, pnoise, dist, num = 0, pwake = 0;
 		bool aggravated = FALSE;
 
 		pnotice = rand_int(1024);
@@ -9961,36 +9961,43 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				}
 			}
 
-			/* Remember player with the worst stealth, if close enough */
+			/* Remember player with the worst (lowest) stealth, if close enough */
 			if (skill_stl > q_ptr->skill_stl) skill_stl = q_ptr->skill_stl;
-
-			/* Amount of "waking" - wake up faster near the player: */
-			num++;
-			if (!dist) dist = 1;
-			if (dist > 50) avg_noise += 1 * (31 - q_ptr->skill_stl); //1...30
-			else avg_noise += (100 / dist) * (31 - q_ptr->skill_stl); //2...100 (max stl), 62...3100 (0 stl)
 		}
 		if (!aggravated) {
-			/* Build average noise hitting the monster, depending on the average stealth and average distance of the main unstealthy player positioning */
-			avg_noise /= num;
-			avg_noise /= (31 - skill_stl);
+			/* check everyone on the floor */
+			for (i = 1; i <= NumPlayers; i++) {
+				q_ptr = Players[i];
+				/* Skip disconnected players */
+				if (q_ptr->conn == NOT_CONNECTED) continue;
+				/* Skip players not on this depth */
+				if (!inarea(&q_ptr->wpos, wpos)) continue;
 
-			/* Calculate the "player noise" */
-			noise = (1U << (30 - skill_stl));
+				dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
+
+				/* Amount of "waking" - wake up faster near the player: */
+				num++;
+				if (!dist) dist = 1;
+				if (dist > 50) pwake += 1 * (31 - q_ptr->skill_stl) / (31 - skill_stl);
+				else pwake += (100 / dist) * (31 - q_ptr->skill_stl) / (31 - skill_stl);
+			}
+
+			/* Calculate the "player pnoise" */
+			pnoise = (1U << (30 - skill_stl));
 		}
 
 		/* In general, use the closest player (calculated in process_monsters()) - except for aggravation/noise application below. */
 		p_ptr = Players[m_ptr->closest_player];
 
 		/* See if monster "notices" player */
-		if (aggravated || (pnotice * pnotice * pnotice) <= noise) {
+		if (aggravated || (pnotice * pnotice * pnotice) <= pnoise) {
 			/* Handle aggravation: Instantly wakes up */
-			if (aggravated) avg_noise = m_ptr->csleep;
+			if (aggravated) pwake = m_ptr->csleep;
 
 			/* Still asleep */
-			if (m_ptr->csleep > avg_noise) {
+			if (m_ptr->csleep > pwake) {
 				/* Monster wakes up "a little bit" */
-				m_ptr->csleep -= avg_noise;
+				m_ptr->csleep -= pwake;
 
 #ifdef OLD_MONSTER_LORE
 				/* Notice the "not waking up" */
