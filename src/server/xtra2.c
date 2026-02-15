@@ -5268,7 +5268,7 @@ void check_experience(int Ind) {
 	}
 
 	/* Notify [casters?] about the new auto-retaliator option */
-	if (old_lev < 13 && p_ptr->lev >= 13) {
+	if (old_lev < 13 && p_ptr->lev >= 13 && !p_ptr->new_retaliator) {
 		p_ptr->warning_newautoret = 1;
 		if (is_older_than(&p_ptr->version, 4, 9, 2, 1, 0, 1))
 			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377o/newar\377y command:");
