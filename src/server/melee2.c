@@ -9729,7 +9729,7 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
  */
 /* TODO: revise FEAT_*, or strange intrusions can happen */
 static void process_monster(int Ind, int m_idx, bool force_random_movement) {
-	player_type	*p_ptr = Players[Ind];
+	player_type	*p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type	**zcave;
 
@@ -9737,7 +9737,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	monster_race	*r_ptr = race_inf(m_ptr);
 	monster_race	*base_r_ptr = &r_info[m_ptr->r_idx];
 
-	int		i, d, oy, ox, ny, nx;
+	int		i, d, oy, ox, ny, nx, skill_stl = p_ptr->skill_stl;
 #ifdef ARCADE_SERVER
 	int n;
 #endif
@@ -9928,74 +9928,75 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep) {
-		u32b pnotice = 0, noise;
+		u32b pnotice = 0, noise, dist, num = 0, avg_noise = 0;
 		bool aggravated = FALSE;
 
-		/* Hack -- handle non-aggravation */
-#if 0
-		if (!p_ptr->aggravate) pnotice = rand_int(1024);
-#else
-		/* check everyone on the floor */
 		pnotice = rand_int(1024);
-		for (i = 1; i <= NumPlayers; i++) {
-			player_type *q_ptr = Players[i];
 
+		/* Handle stealth and aggravation of all players around */
+
+		/* check everyone on the floor */
+		for (i = 1; i <= NumPlayers; i++) {
+			q_ptr = Players[i];
 			/* Skip disconnected players */
 			if (q_ptr->conn == NOT_CONNECTED) continue;
-
-			if (!q_ptr->aggravate) continue;
-
 			/* Skip players not on this depth */
 			if (!inarea(&q_ptr->wpos, wpos)) continue;
 
-			/* Compute distance */
-			/* XXX value is same with that in process_monsters */
+			dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
+
+			/* Any aggravating player within aggr-range immediately wakes the monster up */
+			if (q_ptr->aggravate) {
+				/* Compute distance */
+				/* XXX value is same with that in process_monsters */
 #ifndef REDUCED_AGGRAVATION
-			if (distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px) >= 100)
+				if (dist < 100)
 #else
-			/* Aggravation is not 'infecting' other players on the map */
-			if (Ind != i) continue;
-			if (distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px) >= 50)
+				if (dist < 50)
 #endif
-				continue;
+				{
+					pnotice = 0;
+					aggravated = TRUE;
+					break;
+				}
+			}
 
-			pnotice = 0;
-			aggravated = TRUE;
-			break;
+			/* Remember player with the worst stealth, if close enough */
+			if (skill_stl > q_ptr->skill_stl) skill_stl = q_ptr->skill_stl;
+
+			/* Amount of "waking" - wake up faster near the player: */
+			num++;
+			if (!dist) dist = 1;
+			if (dist > 50) avg_noise += 1 * (31 - q_ptr->skill_stl); //1...30
+			else avg_noise += (100 / dist) * (31 - q_ptr->skill_stl); //2...100 (max stl), 62...3100 (0 stl)
 		}
-#endif	// 0
+		if (!aggravated) {
+			/* Build average noise hitting the monster, depending on the average stealth and average distance of the main unstealthy player positioning */
+			avg_noise /= num;
+			avg_noise /= (31 - skill_stl);
 
-		/* Use the closest player (calculated in process_monsters()) */
+			/* Calculate the "player noise" */
+			noise = (1U << (30 - skill_stl));
+		}
+
+		/* In general, use the closest player (calculated in process_monsters()) - except for aggravation/noise application below. */
 		p_ptr = Players[m_ptr->closest_player];
 
-		/* Calculate the "player noise" */
-		noise = (1U << (30 - p_ptr->skill_stl));
-
-		/* Hack -- See if monster "notices" player */
-		if ((pnotice * pnotice * pnotice) <= noise || aggravated) {
-			/* Hack -- amount of "waking" */
-			int d = 1;
-
-			/* Hack -- make sure the distance isn't zero */
-			if (m_ptr->cdis == 0) m_ptr->cdis = 1;
-
-			/* Wake up faster near the player */
-			if (m_ptr->cdis < 50) d = (100 / m_ptr->cdis);
-
-			/* Hack -- handle aggravation */
-			//if (p_ptr->aggravate) d = m_ptr->csleep;
-			if (aggravated) d = m_ptr->csleep;
+		/* See if monster "notices" player */
+		if (aggravated || (pnotice * pnotice * pnotice) <= noise) {
+			/* Handle aggravation: Instantly wakes up */
+			if (aggravated) avg_noise = m_ptr->csleep;
 
 			/* Still asleep */
-			if (m_ptr->csleep > d) {
+			if (m_ptr->csleep > avg_noise) {
 				/* Monster wakes up "a little bit" */
-				m_ptr->csleep -= d;
+				m_ptr->csleep -= avg_noise;
 
 #ifdef OLD_MONSTER_LORE
 				/* Notice the "not waking up" */
 				if (p_ptr->mon_vis[m_idx]) {
 					/* Hack -- Count the ignores */
-					r_ptr->r_ignore++;
+					r_ptr->r_ignore++; //unused
 				}
 #endif
 			}
@@ -10016,10 +10017,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					msg_format(Ind, "%^s wakes up.", m_name);
 
 					/* Hack -- Count the wakings */
-					/* not used at all, seemingly */
-					r_ptr->r_wake++;
+					r_ptr->r_wake++; //unused
 				}
-#endif	// 0
+#endif
 			}
 		}
 
