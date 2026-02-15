@@ -10747,6 +10747,7 @@ int Send_skills(int Ind) {
 	/* Basic abilities */
 	skills[2] = p_ptr->skill_sav;
 	skills[3] = p_ptr->skill_stl;
+	if (p_ptr->aggravate) skills[3] = -1; //was 0, but -1 will actually display "Very Bad" instead of just "Bad" */
 	skills[4] = p_ptr->skill_fos;
 	skills[5] = p_ptr->skill_srh;
 	skills[6] = p_ptr->skill_dis;
