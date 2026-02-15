@@ -9928,15 +9928,15 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep) {
-		u32b notice = 0, noise;
+		u32b pnotice = 0, noise;
 		bool aggravated = FALSE;
 
 		/* Hack -- handle non-aggravation */
 #if 0
-		if (!p_ptr->aggravate) notice = rand_int(1024);
+		if (!p_ptr->aggravate) pnotice = rand_int(1024);
 #else
 		/* check everyone on the floor */
-		notice = rand_int(1024);
+		pnotice = rand_int(1024);
 		for (i = 1; i <= NumPlayers; i++) {
 			player_type *q_ptr = Players[i];
 
@@ -9959,7 +9959,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 #endif
 				continue;
 
-			notice = 0;
+			pnotice = 0;
 			aggravated = TRUE;
 			break;
 		}
@@ -9972,7 +9972,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 		noise = (1U << (30 - p_ptr->skill_stl));
 
 		/* Hack -- See if monster "notices" player */
-		if ((notice * notice * notice) <= noise || aggravated) {
+		if ((pnotice * pnotice * pnotice) <= noise || aggravated) {
 			/* Hack -- amount of "waking" */
 			int d = 1;
 
