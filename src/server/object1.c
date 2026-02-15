@@ -5720,6 +5720,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 	/* Hack for cheques - display special name and info instead */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) {
+		fprintf(fff, "%s\n", o_name);
 		fprintf(fff, "\377sIt's a cheque worth \377y%d\377s gold pieces.\n", ps_get_cheque_value(o_ptr));
  #ifdef KIND_DIZ
 		fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
