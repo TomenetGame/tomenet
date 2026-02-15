@@ -2933,3 +2933,5 @@ extern char custom_lua_timer_parmstr[CUSTOM_LUA_TIMERS][MAX_CHARS_WIDE];
 extern int custom_lua_timer_parm1[CUSTOM_LUA_TIMERS], custom_lua_timer_parm2[CUSTOM_LUA_TIMERS], custom_lua_timer_parm3[CUSTOM_LUA_TIMERS];
 extern u32b hack_sigil_f[7], hack_comboset_f[7]; //same as ego_granted_flags
 extern char recent_deaths[RECENT_DEATHS_ENTRIES][MAX_CHARS_WIDE];
+
+extern int debug_drain_hp, debug_drain_mp;

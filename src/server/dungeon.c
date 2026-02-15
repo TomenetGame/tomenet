@@ -6763,21 +6763,21 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Drain Mana */
 	if (p_ptr->drain_mana && p_ptr->cmp) {
-		p_ptr->cmp -= p_ptr->drain_mana;
-		if (magik(30)) p_ptr->cmp -= p_ptr->drain_mana;
+		int drain = p_ptr->drain_mana + debug_drain_mp;
 
+		p_ptr->cmp -= drain;
+		if (magik(30)) p_ptr->cmp -= drain;
 		if (p_ptr->cmp < 0) p_ptr->cmp = 0;
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_MANA);
-
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
 	}
 
 	/* Drain Hitpoints */
 	if (p_ptr->drain_life) {
-		int drain = p_ptr->drain_life * randint(p_ptr->mhp / 100);
+		int drain = p_ptr->drain_life * randint(p_ptr->mhp / 100) + debug_drain_hp;
 
 		p_ptr->no_alert = TRUE;
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
