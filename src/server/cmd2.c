@@ -5948,10 +5948,8 @@ void do_cmd_bash(int Ind, int dir) {
 
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-
 			/* Message */
 			msg_print(Ind, "You smash into the door!");
 
@@ -5959,31 +5957,21 @@ void do_cmd_bash(int Ind, int dir) {
 			/* (Ranges from 3 to 20 to 100 to 200, +10 on avg. from +1 STR.
 			    Also, it's 40...70 at STR 18/20...18/50 as a common value for fighter chars) */
 			bash = adj_str_blow[p_ptr->stat_ind[A_STR]];
-
 			/* Extract door power (0...7, for both, locked doors and jammed doors each) */
 			temp = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
-
-			/* Compare bash power to door power XXX XXX XXX */
-			temp = (bash - (temp * 10));
-
-			/* Hack -- always have a chance */
-			if (temp < 1) temp = 1;
-
+			temp = 20 + temp * 60; // adjust
 			/* Hack -- attempt to bash down the door */
-			if (rand_int(100) < temp && c_ptr->feat != FEAT_HOME) {
+			if (c_ptr->feat != FEAT_HOME && rand_int(bash) > rand_int(temp)) {
 				/* Message */
 				msg_print(Ind, "The door crashes open!");
-
 #ifdef USE_SOUND_2010
 				sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
-
 				/* reduce sleep of nearby monsters */
 				wakeup_monsters_somewhat(Ind, -1);
 
 				/* Set off trap */
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
-
 				/* Break down the door */
 				if (magik(DOOR_BASH_BREAKAGE)) cave_force_feat_live(wpos, y, x, FEAT_BROKEN);
 				/* Open the door */
@@ -5991,13 +5979,11 @@ void do_cmd_bash(int Ind, int dir) {
 
 				/* Notice */
 				note_spot_depth(wpos, y, x);
-
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
 
 				/* Hack -- Fall through the door */
 				move_player(Ind, dir, FALSE, NULL);
-
 				/* Update some things */
 				p_ptr->update |= (PU_VIEW | PU_LITE);
 				p_ptr->update |= (PU_DISTANCE);
