@@ -5940,6 +5940,8 @@ void do_cmd_bash(int Ind, int dir) {
 
 		/* Bash a closed door */
 		else {
+			int rbash, rtemp;
+
 			if ((p_ptr->fruit_bat && !p_ptr->body_monster) ||
 			    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR))) {
 				msg_print(Ind, "You cannot bash doors!");
@@ -5960,8 +5962,12 @@ void do_cmd_bash(int Ind, int dir) {
 			/* Extract door power (0...7, for both, locked doors and jammed doors each) */
 			temp = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
 			temp = 20 + temp * 60; // adjust
+
 			/* Hack -- attempt to bash down the door */
-			if (c_ptr->feat != FEAT_HOME && rand_int(bash) > rand_int(temp)) {
+			rbash = rand_int(bash);
+			rtemp = rand_int(temp) + rand_int(temp / 2);
+			//msg_format(Ind,"b=%d,t=%d : rb=%d, rt=%d",bash,temp,rbash,rtemp); //testing
+			if (c_ptr->feat != FEAT_HOME && rbash > rtemp) {
 				/* Message */
 				msg_print(Ind, "The door crashes open!");
 #ifdef USE_SOUND_2010
