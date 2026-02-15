@@ -934,7 +934,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			/* On writing a default .tomenetrc, also default to 16x24sv tileset */
 			if (!graphic_tiles[0]) {
 				strcpy(graphic_tiles, "16x24sv");
-				for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = TRUE;
+				for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = FALSE;
 			}
 			fputs(format("graphic_tiles\t\t%s\n", graphic_tiles), config2);
 			for (i = 0; i < MAX_SUBFONTS; i++)
@@ -1131,7 +1131,7 @@ static void default_set(void) {
 #endif
 
 #ifdef USE_GRAPHICS
-	for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = TRUE;
+	for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = FALSE;
 #endif
 }
 

@@ -2066,7 +2066,7 @@ static void load_prefs(void) {
 	for (int i =0; i < 256; i++)
 		graphic_tiles[i] = tolower(graphic_tiles[i]);
 	for (i = 0; i < MAX_SUBFONTS; i++)
-		graphic_subtiles[i] = (GetPrivateProfileInt("Base", format("GraphicSubTiles%d", i), 1, ini_file) != 0);
+		graphic_subtiles[i] = (GetPrivateProfileInt("Base", format("GraphicSubTiles%d", i), 0, ini_file) != 0);
 #endif
 
 #ifdef USE_SOUND
