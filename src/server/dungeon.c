@@ -6777,7 +6777,15 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Drain Hitpoints */
 	if (p_ptr->drain_life) {
-		int drain = p_ptr->drain_life * randint(p_ptr->mhp / 100);
+		int drain = (((p_ptr->drain_life * randint(p_ptr->mhp / 100))
+#ifdef ENABLE_HELLKNIGHT
+		    / (p_ptr->pclass == CLASS_HELLKNIGHT ? 2 : 1)
+#endif
+		    )
+#ifdef ENABLE_CPRIEST
+		    / ((p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) ? 2 : 1)
+#endif
+		    );
 
 		p_ptr->no_alert = TRUE;
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);

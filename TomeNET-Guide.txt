@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 7. Febuary 2026 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 15. Febuary 2026 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -14518,7 +14518,8 @@ Weapons of Morgul
                 curse is broken, though..
 
                 Wielding a weapon of Morgul will allow you to see the invisible
-                but also infect you with Black Breath, drain your experience
+                but also infect you with Black Breath (Vampire class characters
+                are immune), drain your experience (Vampires again less prone)
                 and aggravate nearby monsters.
                 Note that the black breath cannot be cured as long as you are
                 still wielding the Morgul weapon!
@@ -20389,7 +20390,7 @@ create a character!):
     level 10. At night on the world surface, darkvision increases even more.
     Regarding items, Vampires do not suffer a hit point drain from wielding a
     spectral weapon. They are even able to wear or wield heavily cursed items
-    such as Morgul weapons and benefit from them, turning their negative boni
+    such as Morgul weapons and benefit from them, flipping their negative boni
     into positive ones! The only exception are weapons of Nothingness, which
     won't do them any good either. Since Vampires are immune to Black Breath,
     using a Morgul weapon will not pose a problem to them. Heavily cursed
@@ -20780,6 +20781,8 @@ create a character!):
     just 't'ake them off while still in Bloodthirster form, as due to its
     demonic might it can just do that without need for *Remove Curse*.
     See the end of (5.12) for details on item-flipping.
+    Also while in demon form they will (like Hell Knights) only suffer half as
+    much from HP drain effects as other characters.
 
 - Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
@@ -21009,6 +21012,8 @@ create a character!):
     Any such item that is adverse to demons will burn them, draining their hit
     points, or draining their mana if worn on head or hands. Exceptions are
     cursed items, chaotic items and the "Stone of Lore", these are always safe.
+    Due to their demonic nature, Hell Knights in general suffer half as much
+    from HP draining effects as other characters.
     Hell Knights have a very high chance to resist the adverse effects of
     encountering an eldritch horror (see (7.3) under 'Saving Throw' for details
     on those).
