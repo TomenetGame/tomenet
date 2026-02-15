@@ -7572,6 +7572,8 @@ void calc_boni(int Ind) {
 
 	/* Don't kill warnings by inspecting weapons/armour in stores! */
 	if (!suppress_message && !p_ptr->ghost) {
+		bool duplicate_warning = FALSE;
+
 		/* warning messages, mostly for newbies */
 		if (p_ptr->warning_bpr == 0 && /* limit, so it won't annoy priests anymore who use zeal spell */
 		    p_ptr->num_blow == 1 && old_num_blow > 1 &&
@@ -7584,15 +7586,18 @@ void calc_boni(int Ind) {
 			msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
 			msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
 			s_printf("warning_bpr: %s\n", p_ptr->name);
+			duplicate_warning = TRUE;
 		}
 		if (p_ptr->warning_bpr3 == 2 &&
 		    p_ptr->num_blow == 1 && old_num_blow == 1 &&
 		    /* and don't spam Martial Arts users or mage-staff wielders ;) */
 		    p_ptr->inventory[INVEN_WIELD].k_idx && is_melee_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 			p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
-			msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
-			msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
-			msg_print(Ind, "\374\377y    Possible reasons: Weapon is too heavy or your strength is too low.");
+			if (!duplicate_warning) { /* avoid some redundant message spam... */
+				msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
+				msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
+				msg_print(Ind, "\374\377y    Possible reasons: Weapon is too heavy or your strength is too low.");
+			}
 			if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
 				if (p_ptr->rogue_like_commands)
 					msg_print(Ind, "\374\377y    Try taking off your shield ('\377oSHIFT+t\377y') and see if that helps.");
