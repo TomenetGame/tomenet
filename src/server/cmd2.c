@@ -5956,10 +5956,11 @@ void do_cmd_bash(int Ind, int dir) {
 			msg_print(Ind, "You smash into the door!");
 
 			/* Hack -- Bash power based on strength */
-			/* (Ranges from 3 to 20 to 100 to 200, +10 on avg. from +1 STR) */
+			/* (Ranges from 3 to 20 to 100 to 200, +10 on avg. from +1 STR.
+			    Also, it's 40...70 at STR 18/20...18/50 as a common value for fighter chars) */
 			bash = adj_str_blow[p_ptr->stat_ind[A_STR]];
 
-			/* Extract door power */
+			/* Extract door power (0...7, for both, locked doors and jammed doors each) */
 			temp = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
 
 			/* Compare bash power to door power XXX XXX XXX */

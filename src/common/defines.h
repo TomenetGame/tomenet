@@ -2848,7 +2848,7 @@
 #define FEAT_FLOOR_SPAL		0x1F
 
 /* Doors */
-#define FEAT_DOOR_HEAD		0x20
+#define FEAT_DOOR_HEAD		0x20	/* 8x locked door (32...39) + 8x jammed door (40...47) */
 #define FEAT_DOOR_TAIL		0x2F
 
 /* Extra */
