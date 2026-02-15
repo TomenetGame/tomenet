@@ -6675,7 +6675,7 @@ static bool process_player_end_aux(int Ind) {
 	   to allow characters who lack a *remove curse* spell to make more use of the rings. */
 	if (p_ptr->drain_exp
 	    && magik((p_ptr->wpos.wz != 0 ? (dungeontown ? 0 : 50) :
-	     (townarea ? 0 : 25)) / (p_ptr->prace == RACE_VAMPIRE ? 2 : 1))
+	     (townarea ? 0 : 25)) / ((p_ptr->prace == RACE_VAMPIRE || p_ptr->ptrait == TRAIT_ENLIGHTENED || p_ptr->ptrait == TRAIT_CORRUPTED) ? 2 : 1))
 	    && magik(100 - p_ptr->antimagic / 2)
 	    && magik(30 - (60 / (p_ptr->drain_exp + 2))) /* 10%/15%/18%/20% probability per dungeon tick (5/6 player's dungeon turn) to lose XP (for 1/2/3/4 drain sources) */
 	    ) {
@@ -6777,15 +6777,7 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Drain Hitpoints */
 	if (p_ptr->drain_life) {
-		int drain = (((p_ptr->drain_life * randint(p_ptr->mhp / 100))
-#ifdef ENABLE_HELLKNIGHT
-		    / (p_ptr->pclass == CLASS_HELLKNIGHT ? 2 : 1)
-#endif
-		    )
-#ifdef ENABLE_CPRIEST
-		    / ((p_ptr->pclass == CLASS_CPRIEST && p_ptr->body_monster == RI_BLOODTHIRSTER) ? 2 : 1)
-#endif
-		    );
+		int drain = p_ptr->drain_life * randint(p_ptr->mhp / 100);
 
 		p_ptr->no_alert = TRUE;
 		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);

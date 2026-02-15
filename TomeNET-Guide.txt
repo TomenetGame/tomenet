@@ -11140,14 +11140,21 @@ Experience drain ('Drains your life force')
     to equip two rings of power.
     The higher the experience gain ratio of a character is (depending on its
     race/class combination) the worse it will be hit by experience drain from
-    items, with Maiar being the class that has the most trouble compensating.
-    Vampire race characters suffer half as much from exp drain as anyone else.
+    items, so Yeeks have it easiest, with uninitiated Maiar being the class
+    that has the most trouble compensating.
+
+    In general, vampire race characters and initiated Maiar only suffer half
+    as much from experience drain effects as other characters.
 
 Mana drain ('Drains your magic')
     Drains your mana pool over time while you have this item equipped.
     Can be countered if your MP regeneration happens to be faster than the
-    drain. Multiple items draining mana will stack linearly.
-    Warriors and archers are not affected as they don't have any MP.
+    drain. Warriors and archers are not affected as they don't have any MP.
+
+    MP drain stacks linearly and is given by:
+     -Items that just drain your MP.
+     -Headgear or gloves that have strong good powers and you use them as
+      a Vampire or Hell Knight or as Corrupted Priest while in demon form.
 
 Hit point drain ('Drains your hit points')
     Drains your hit points down to zero, then stops. This means that this
@@ -11156,8 +11163,10 @@ Hit point drain ('Drains your hit points')
     finish you off. Well, going AFK in an unsafe place can kill you anyway.
 
     HP drain stacks linearly and is given by:
-     -Items that just drain your HP
-     -Items that have strong good powers and you use them as a Vampire
+     -Items that just drain your HP.
+     -Items (except for headgear and gloves) that have strong good powers and
+      you use them as a Vampire or Hell Knight or as Corrupted Priest while
+      in demon form.
      -The sun, when it's day and you're a Vampire and out in the open without
       a protective wrapping, such as a Mummy Wrapping, or something granting
       resistance to light.
@@ -14519,8 +14528,8 @@ Weapons of Morgul
 
                 Wielding a weapon of Morgul will allow you to see the invisible
                 but also infect you with Black Breath (Vampire class characters
-                are immune), drain your experience (Vampires again less prone)
-                and aggravate nearby monsters.
+                are immune), drain your experience (Vampires again less prone,
+                and so are initiated Maiar) and aggravate nearby monsters.
                 Note that the black breath cannot be cured as long as you are
                 still wielding the Morgul weapon!
 
@@ -19662,7 +19671,9 @@ Enlightened:
     - +1 bonus AC for every 2 levels above 20, up to level 50.
     - At level 50 they will be able to levitate, become resistant to poison,
       electricity, cold and be enveloped in an aura of frost and lightning;
-    - also, their melee attacks will slay evil opponents intrinsically.
+    - Also, their melee attacks will slay evil opponents intrinsically.
+    - Only suffer half as much from experience draining effects on items
+      as other characters.
 
     - Blood Magic/Occultism: Necromancy, Traumaturgy, Aura of Death, Shadow,
       and Unlife and Hereticism become disabled but you will keep them at their
@@ -19684,6 +19695,8 @@ Corrupted:
       for each level above 50.
     - At level 50 they will become resistant to poison, immune to fire, and
       be enveloped in a fiery aura.
+    - Only suffer half as much from experience draining effects on items
+      as other characters.
 
     - All four prayer schools and Spirit (Occultism) become disabled (cannot
       be trained further, but you keep their current status),
@@ -20781,8 +20794,8 @@ create a character!):
     just 't'ake them off while still in Bloodthirster form, as due to its
     demonic might it can just do that without need for *Remove Curse*.
     See the end of (5.12) for details on item-flipping.
-    Also while in demon form they will (like Hell Knights) only suffer half as
-    much from HP drain effects as other characters.
+    Also like all initiated Maiar they will only suffer half as much from
+    item effects that drain experience as other characters.
 
 - Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
@@ -21012,8 +21025,8 @@ create a character!):
     Any such item that is adverse to demons will burn them, draining their hit
     points, or draining their mana if worn on head or hands. Exceptions are
     cursed items, chaotic items and the "Stone of Lore", these are always safe.
-    Due to their demonic nature, Hell Knights in general suffer half as much
-    from HP draining effects as other characters.
+    Like all initiated Maiar, Hell Knights will only suffer half as much from
+    item effects that drain experience as other characters.
     Hell Knights have a very high chance to resist the adverse effects of
     encountering an eldritch horror (see (7.3) under 'Saving Throw' for details
     on those).
