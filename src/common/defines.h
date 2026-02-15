@@ -6429,6 +6429,9 @@
 #define ETR1_AC_M5		0x00008000U	/* Item has +(up to 5) to AC */
 #define ETR1_NO_DOUBLE_EGO	0x00010000U	/* Item may not have two ego powers */
 #define ETR1_R_HIGH_IMMUNITY	0x00020000U	/* Item has a random high resistance or base immunity */
+#define ETR1_PVAL_STRICT	0x00040000U	/* If 'C' field pval spec is positive, always create item with positive pval (this happens anyway); if it's negative, always create item with negative pval (cursed items could otherwise spawn with positive pval sometimes). */
+#define ETR1_PVAL_FLIPFULLY	0x00080000U	/* Specialty for corrupted weapons: Allow 2h to retain +2 LIFE on flipping, to be equivalent to weapons 'of Life' in that regard: Item retains full pval on heavy-curse-flipping */
+#define ETR1_PVAL_NEG1H2H	0x00100000U	/* Limit negative boni for TR1_LIFE weapons as if they were positive, regarding weapon handedness. */
 //HOLE
 #define ETR1_R_ESP		0x01000000U	/* Item has a random ESP */
 #define ETR1_NO_SEED		0x02000000U	/* Item doesn't have random seed */

@@ -1025,10 +1025,10 @@ static cptr ego_flags1[] = {
 
 	"NO_DOUBLE_EGO",
 	"R_HIGH_IMMUNITY",
-	"XXX3",
-	"XXXH1",
+	"PVAL_STRICT",
+	"PVAL_FLIPFULLY",
 
-	"XXXH2",
+	"PVAL_NEG1H2H",
 	"XXXH3",
 	"XXXH5",
 	"XXXD3",

@@ -2744,8 +2744,18 @@ try_an_other_ego:
 		    /* Limit +LIFE on armour (including shields) to +1 (in case of shields balancing dual/2h wield) */
 		    || is_armour(o_ptr->tval)) {
 			if (a_ptr->pval > 1) a_ptr->pval = 1;
+			if (a_ptr->pval < -1 && (e_ptr->fego1[0] & ETR1_PVAL_NEG1H2H)) a_ptr->pval = -1;
 		/* 2-/1.5-handed weapons may get +2 LIFE */
-		} else if (a_ptr->pval > 2) a_ptr->pval = 2;
+		} else {
+			if (a_ptr->pval > 2) a_ptr->pval = 2;
+			if (a_ptr->pval < -2 && (e_ptr->fego1[0] & ETR1_PVAL_NEG1H2H)) a_ptr->pval = -2;
+		}
+	}
+
+	if (!o_ptr->pval2 && /* <- Item is not currently heavy-curse-'flipped'? */
+	    (e_ptr->fego1[0] & ETR1_PVAL_STRICT)) {
+		if (e_ptr->max_pval > 0 && o_ptr->pval < 0) o_ptr->pval = -o_ptr->pval;
+		else if (e_ptr->max_pval < 0 && o_ptr->pval > 0) o_ptr->pval = -o_ptr->pval;
 	}
 
 	/* Restore RNG */

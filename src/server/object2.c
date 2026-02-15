@@ -14388,27 +14388,34 @@ void inverse_cursed(object_type *o_ptr) {
 	if ((f1 & TR1_PVAL_MASK) == (f1 & TR1_ATTR_MASK) && !(f5 & TR5_PVAL_MASK)) {
 		if (o_ptr->pval < 0) {
 			o_ptr->pval_org = o_ptr->pval;
-			o_ptr->pval = FLIP_ATTR(o_ptr->pval);
+			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->pval = -o_ptr->pval;
+			else o_ptr->pval = FLIP_ATTR(o_ptr->pval);
 			if (o_ptr->pval > 5) o_ptr->pval = 5;
 		}
 		if (o_ptr->bpval < 0) {
 			o_ptr->bpval_org = o_ptr->bpval;
-			o_ptr->bpval = FLIP_ATTR(o_ptr->bpval);
+			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->bpval = -o_ptr->bpval;
+			else o_ptr->bpval = FLIP_ATTR(o_ptr->bpval);
 			if (o_ptr->bpval > 5) o_ptr->bpval = 5;
 		}
 	} else {
 		// note: could also consider (-o_ptr->pval + 2) / 3 for 
 		if (o_ptr->pval < 0) {
 			o_ptr->pval_org = o_ptr->pval;
-			o_ptr->pval = FLIP_PVAL(o_ptr->pval);
+			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->pval = -o_ptr->pval;
+			else o_ptr->pval = FLIP_PVAL(o_ptr->pval);
 			if (o_ptr->pval > 3) o_ptr->pval = 3; //thinking EA/Life, but just paranoia really..
 		}
 		if (o_ptr->bpval < 0) {
 			o_ptr->bpval_org = o_ptr->bpval;
-			o_ptr->bpval = FLIP_PVAL(o_ptr->bpval);
+			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->bpval = -o_ptr->bpval;
+			else o_ptr->bpval = FLIP_PVAL(o_ptr->bpval);
 			if (o_ptr->bpval > 3) o_ptr->bpval = 3; //thinking EA/Life, but just paranoia really..
 		}
 	}
+
+	/* Mark as 'flipped' */
+	o_ptr->pval2 = 1;
 }
 /* Reverse the boni back to negative when a vampire/HK et al takes off a heavily cursed item (or its curse gets broken while equipped),
    counterpart function to inverse_cursed(). */
@@ -14521,6 +14528,9 @@ void reverse_cursed(object_type *o_ptr) {
 	/* body armour hack: we can ignore possible to-hit disenchantment here, since on body armour it's always negative (bulkiness) */
 	if (o_ptr->tval == TV_DRAG_ARMOR || o_ptr->tval == TV_HARD_ARMOR || o_ptr->tval == TV_SOFT_ARMOR)
 		o_ptr->to_h = o_ptr->to_h_org;
+
+	/* Unmark as 'flipped' */
+	o_ptr->pval2 = 0;
 }
 #endif /* VAMPIRES_INV_CURSED */
 
