@@ -50,7 +50,7 @@
  * OPTION: Compile on a SYS V version of UNIX (not Solaris)
  */
 #ifndef SYS_V
-#define SYS_V
+/* #define SYS_V */
 #endif
 
 /*
