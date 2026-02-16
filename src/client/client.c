@@ -15,7 +15,7 @@ char mangrc_filename[100] = "";
 bool convert_rc = FALSE;
 
 /* linux clients: load subwindow prefs from .tomenetrc - C. Blue */
-static void read_mangrc_aux(int t, cptr sec_name) {
+static void read_mangrc_aux(int t, char *sec_name) {
 	char *val, *val2;
 
 	/* strip leading tabs and leading spaces */

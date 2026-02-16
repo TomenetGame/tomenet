@@ -1018,7 +1018,7 @@ extern int Send_si_remove(int item, int amt);
 extern int Send_version(void);
 extern int Send_plistw_notify(bool on);
 extern int Send_unknownpacket(int type, int prev_type);
-extern int scan_auto_inscriptions_for_limit(cptr iname);
+extern int scan_auto_inscriptions_for_limit(char *iname);
 
 /* skills.c */
 extern s16b get_skill(int skill);

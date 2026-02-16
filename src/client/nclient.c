@@ -6565,7 +6565,7 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 #endif
 	int start, stop;
-	cptr iname;
+	char *iname;
 	int iinsc, iilen;
 #ifdef ENABLE_SUBINVEN
 	int sslot = -1;
@@ -6703,7 +6703,7 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 
 			/* prepare */
 			strcpy(ex_buf, match);
-			ex2 = (char*)iname;
+			ex2 = iname;
 			found = FALSE;
 
 			do {
@@ -6778,7 +6778,7 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
    So we can still check for '!G' occurance easily, but we cannot know for certain, if a house item does contain an #-inscription or no inscription at all,
    so we will treat the specific case of <house items containing only an '#'-inscription and no !/@/bracers> as 'no inscription'.
    (The !, @, { are just arbitrarily the easiest to check things to find out that the item name must contain some sort of inscription.) */
-int scan_auto_inscriptions_for_limit(cptr iname) {
+int scan_auto_inscriptions_for_limit(char *iname) {
 	int i, g;
 	char *ex, ex_buf[ONAME_LEN];
 	char *ex2, ex_buf2[ONAME_LEN];
@@ -6854,7 +6854,7 @@ int scan_auto_inscriptions_for_limit(cptr iname) {
 			/* found a matching inscription? */
 			/* prepare */
 			strcpy(ex_buf, match);
-			ex2 = (char*)iname;
+			ex2 = iname;
 			found = FALSE;
 
 			do {
