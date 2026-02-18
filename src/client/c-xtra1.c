@@ -2085,7 +2085,7 @@ static void display_subinven(void) {
 		//if (!z) Term_putstr(0, last_k++, -1, (i_ptr->attr == TERM_L_DARK) ? TERM_L_DARK : TERM_L_WHITE,
 		if (!z) Term_putstr(0, last_k++, -1, TERM_L_DARK,
 		    (i_ptr->attr == TERM_L_DARK) ? /* Use colour sent by server as indicator for SUBINVEN_LIMIT_GROUP */
-		    "     (This container is of duplicate type and therefore unusable)               " :
+		    "     (This container is unusable)                                               " :
 		    "     (empty)                                                                    ");
 		    //"     (This container is empty)                                                  ");
 
@@ -2715,7 +2715,7 @@ void show_subinven(int islot) {
 		/* Display a line if inventory is actually empty */
 		c_prt((i_ptr->attr == TERM_L_DARK) ? TERM_L_DARK : TERM_L_WHITE,
 		    (i_ptr->attr == TERM_L_DARK) ? /* Use colour sent by server as indicator for SUBINVEN_LIMIT_GROUP */
-		    "(This container is of duplicate type and therefore unusable)" :
+		    "(This container is unusable" :
 		    "(This container is empty)",
 		    1, SCREEN_PAD_LEFT);
 		/* Hack as if k was 1, to protect this 'is empty' text from weather particles etc, geez */
