@@ -11161,7 +11161,6 @@ void erase_subinven(int Ind, int item) {
 
 	verify_subinven_size(Ind, item, FALSE);
 }
- #ifdef SUBINVEN_LIMIT_GROUP
 int get_subinven_group(int sval) {
 	switch (sval) {
 	case SV_SI_SATCHEL:
@@ -11176,7 +11175,6 @@ int get_subinven_group(int sval) {
 	}
 	return(-1);
 }
- #endif
 #endif
 
 /* Returns amount of bytes used in a string by colour codes - C. Blue
