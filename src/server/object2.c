@@ -11511,6 +11511,10 @@ bool inven_item_optimize(int Ind, int item) {
 		for (i = item; i < INVEN_PACK; i++) {
 #ifdef ENABLE_SUBINVEN
 			if (p_ptr->inventory[i].tval == TV_SUBINVEN) {
+				/* If a subinventory gets deleted, make sure to refresh the 'Subinventory' window */
+				//display_subinven(Ind, item);
+				p_ptr->window |= PW_SUBINVEN;
+
 				s = 0;
 				/* If subsequent item is a subinventory too, transfer all contents here, overwriting our contents */
 				if (p_ptr->inventory[i + 1].tval == TV_SUBINVEN) {
