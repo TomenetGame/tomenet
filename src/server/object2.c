@@ -14385,20 +14385,23 @@ void inverse_cursed(object_type *o_ptr) {
   #define FLIP_ATTR(v) (-(v) / 2 + 1)		/* (1->1, 2->2, 4->3, 6->4) */
   #define FLIP_PVAL(v) ((-(v) + 3) / 4)		/* (1->1, 5->2, 9->3, 13->4) */
  #else /* 2 :-p */
-  #define FLIP_ATTR(v) ((-(v) + 1) / 2)		/* stricter rounding (Beruthiel ends up +2 instead of +3) (1->1, 3->2, 5->3, 7->4, can Doom amulet be -9? -> +5) */
-  #define FLIP_PVAL(v) ((-(v) + 2) / 3)		/* somehwat better stats (Angmar ends up +4 instead of +3) (1->1, 4->2, 7->3, 10->4) */
+  #define FLIP_ATTR(v) ((-(v) + 1) / 2)			/* stricter rounding (Beruthiel ends up +2 instead of +3) (1->1, 3->2, 5->3, 7->4, can Doom amulet be -9? -> +5) */
+  #define FLIP_ATTR_NONARMOUR(v) ((v) <= -5 ? 5 : -(v))	/* for more useful Doom amulets: pval can end up higher (but gets capped). */
+  #define FLIP_PVAL(v) ((-(v) + 2) / 3)			/* somehwat better stats (Angmar ends up +4 instead of +3) (1->1, 4->2, 7->3, 10->4) */
  #endif
 	/* Be more lenient for items that only increase attributes (STR/INT/WIS/DEX/CON/CHR) */
 	if ((f1 & TR1_PVAL_MASK) == (f1 & TR1_ATTR_MASK) && !(f5 & TR5_PVAL_MASK)) {
 		if (o_ptr->pval < 0) {
 			o_ptr->pval_org = o_ptr->pval;
 			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->pval = -o_ptr->pval;
+			else if (!is_armour(o_ptr->tval)) o_ptr->pval = FLIP_ATTR_NONARMOUR(o_ptr->pval);
 			else o_ptr->pval = FLIP_ATTR(o_ptr->pval);
 			if (o_ptr->pval > 5) o_ptr->pval = 5;
 		}
 		if (o_ptr->bpval < 0) {
 			o_ptr->bpval_org = o_ptr->bpval;
 			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->bpval = -o_ptr->bpval;
+			else if (!is_armour(o_ptr->tval)) o_ptr->bpval = FLIP_ATTR_NONARMOUR(o_ptr->bpval);
 			else o_ptr->bpval = FLIP_ATTR(o_ptr->bpval);
 			if (o_ptr->bpval > 5) o_ptr->bpval = 5;
 		}
