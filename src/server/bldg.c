@@ -32,24 +32,33 @@ static int building_loc = 0;
 
 
 /*
- * A helper function for is_state
+ * A helper function for is_state.
+ * We assume that state is either STORE_HATED or STORE_LIKED, but never STORE_NORMAL.
  */
 static bool is_state_aux(int Ind, store_type *s_ptr, int state) {
 	player_type *p_ptr = Players[Ind];
 	owner_type *ot_ptr = &ow_info[s_ptr->owner];
+	int neg_state = (state == STORE_HATED ? STORE_LIKED : STORE_HATED);
 
-
-	/* Check race */
-	if (ot_ptr->races[state][p_ptr->prace / 32] & (1U << (p_ptr->prace % 32)))
-		return(TRUE);
-
-	/* Check trait */
-	if (ot_ptr->traits[state][p_ptr->ptrait / 32] & (1U << (p_ptr->ptrait % 32)))
-		return(TRUE);
+	/* Prioritize: Class > Trait > Race */
 
 	/* Check class */
 	if (ot_ptr->classes[state][p_ptr->pclass / 32] & (1U << (p_ptr->pclass % 32)))
 		return(TRUE);
+	if (ot_ptr->classes[neg_state][p_ptr->pclass / 32] & (1U << (p_ptr->pclass % 32)))
+		return(FALSE);
+
+	/* Check trait */
+	if (ot_ptr->traits[state][p_ptr->ptrait / 32] & (1U << (p_ptr->ptrait % 32)))
+		return(TRUE);
+	if (ot_ptr->traits[neg_state][p_ptr->ptrait / 32] & (1U << (p_ptr->ptrait % 32)))
+		return(FALSE);
+
+	/* Check race */
+	if (ot_ptr->races[state][p_ptr->prace / 32] & (1U << (p_ptr->prace % 32)))
+		return(TRUE);
+	if (ot_ptr->races[neg_state][p_ptr->prace / 32] & (1U << (p_ptr->prace % 32)))
+		return(FALSE);
 
 #if 0
 	/* Check realms */
