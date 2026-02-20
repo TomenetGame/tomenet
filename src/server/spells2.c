@@ -10080,6 +10080,10 @@ void mstaff_absorb_aux(int Ind, int item) {
 	/* Use biggest discount? With leeway for starter items */
 	if (o_ptr->discount < o2_ptr->discount && !(o2_ptr->mode & MODE_STARTER_ITEM)) o_ptr->discount = o2_ptr->discount;
 
+	/* Use highest item level, except level 0 */
+	if (!o_ptr->level || !o2_ptr->level) o_ptr->level = 0;
+	else if (o2_ptr->level > o_ptr->level) o_ptr->level = o2_ptr->level;
+
 	/* transcribe (add it)! */
 	switch (o2_ptr->tval) {
 	case TV_STAFF:
