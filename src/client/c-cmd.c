@@ -7873,6 +7873,9 @@ void cmd_message(void) {
 			    )) {
 				if (buf[i + 2] == '+') {
 					if (item_newest == -1) item[0] = 0;
+#ifdef ENABLE_SUBINVEN
+					else if (item_newest >= SUBINVEN_INVEN_MUL) strcpy(item, subinventory_name[item_newest / SUBINVEN_INVEN_MUL - 1][item_newest % SUBINVEN_INVEN_MUL]);
+#endif
 					else strcpy(item, inventory_name[item_newest]);
 				}
 				else if (buf[i + 2] == '_') strcpy(item, whats_under_your_feet);
@@ -8036,7 +8039,13 @@ void cmd_message(void) {
 			return;
 		} else if (!strcasecmp(buf, "/new")) {
 			if (item_newest == -1) c_msg_print("(There was no newest item yet.)");
-			else c_msg_format("(Newest item was %c) %s.)", 'a' + item_newest, inventory_name[item_newest]);
+#ifdef ENABLE_SUBINVEN
+			else if (item_newest >= SUBINVEN_INVEN_MUL)
+				c_msg_format("(Newest item was (%c)(%c) %s.)",
+				    index_to_label(item_newest / SUBINVEN_INVEN_MUL - 1), index_to_label(item_newest % SUBINVEN_INVEN_MUL),
+				    subinventory_name[item_newest / SUBINVEN_INVEN_MUL - 1][item_newest % SUBINVEN_INVEN_MUL]);
+#endif
+			else c_msg_format("(Newest item was (%c) %s.)", 'a' + item_newest, inventory_name[item_newest]);
 			inkey_msg = FALSE;
 			item_tester_hook = NULL;
 			get_item_hook_find_obj_what = "Item name? ";
@@ -8047,9 +8056,15 @@ void cmd_message(void) {
 			c_msg_format("Newest item now: %s", inventory_name[i]);
 			if (c_cfg.show_newest) redraw_newest();
 			return;
-		} else if (prefix(buf, "/new ")) {
+		} else if (prefix(buf, "/new ")) { //todo: support subinven as parm, ie '/new XY'
 			if (item_newest == -1) c_msg_print("(There was no newest item yet.)");
-			else c_msg_format("(Newest item was %c) %s.)", 'a' + item_newest, inventory_name[item_newest]);
+#ifdef ENABLE_SUBINVEN
+			else if (item_newest >= SUBINVEN_INVEN_MUL)
+				c_msg_format("(Newest item was (%c)(%c) %s.)",
+				    index_to_label(item_newest / SUBINVEN_INVEN_MUL - 1), index_to_label(item_newest % SUBINVEN_INVEN_MUL),
+				    subinventory_name[item_newest / SUBINVEN_INVEN_MUL - 1][item_newest % SUBINVEN_INVEN_MUL]);
+#endif
+			else c_msg_format("(Newest item was (%c) %s.)", 'a' + item_newest, inventory_name[item_newest]);
 			inkey_msg = FALSE;
 			if (!buf[5]) {
 				item_tester_hook = NULL;
