@@ -12,7 +12,7 @@
 
 # N:<index>:<name>
 # C:<hated cost>:<normal cost>:<liked cost>
-# I:<action>:<acttion restriction>:<letter>:<flags>
+# I:<action>:<action restriction>:<letter>:<flags>
 
 # Restriction:
 # 0 = No restrictions
