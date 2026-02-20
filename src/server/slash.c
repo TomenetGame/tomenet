@@ -8069,6 +8069,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oExample:  /nwish 1:3 probing");
 					msg_print(Ind, "\377oExample:  /nwish :4 fire");
 					msg_print(Ind, "\377oExample:  /nwish 2 elven\\hard lea\\resis");
+					msg_print(Ind, "\377oExample:  /nwish doom +-9");
 					return;
 				}
 
