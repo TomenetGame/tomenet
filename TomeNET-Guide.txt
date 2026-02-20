@@ -6866,8 +6866,9 @@ Torches, food, scrolls of satisfy hunger.
 They too will get a 100% discount and their level will actually change to 1.
 
 Other items that can always be picked up by anybody:
+-Fireworks scrolls
 -Amulets of the Highlands (used in the Highlander Tournament event)
--Game pieces (eg chess, heavy ball)
+-Game pieces (eg chess pieces, generic stones, heavy ball)
 
 
 Special restrictions
