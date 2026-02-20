@@ -43,6 +43,10 @@ static bool is_state_aux(int Ind, store_type *s_ptr, int state) {
 	if (ot_ptr->races[state][p_ptr->prace / 32] & (1U << (p_ptr->prace % 32)))
 		return(TRUE);
 
+	/* Check trait */
+	if (ot_ptr->traits[state][p_ptr->ptrait / 32] & (1U << (p_ptr->ptrait % 32)))
+		return(TRUE);
+
 	/* Check class */
 	if (ot_ptr->classes[state][p_ptr->pclass / 32] & (1U << (p_ptr->pclass % 32)))
 		return(TRUE);
@@ -145,6 +149,11 @@ void show_building(int Ind, store_type *s_ptr) {
 				{
 					action_color = TERM_WHITE;
 					buff[0] = '\0';
+ #if 0 /* test store hated/liked states */
+					if (is_state(Ind, s_ptr, STORE_LIKED)) action_color = TERM_GREEN;
+					if (is_state(Ind, s_ptr, STORE_HATED)) action_color = TERM_RED;
+					if (is_state(Ind, s_ptr, STORE_NORMAL)) action_color = TERM_YELLOW;
+ #endif
 				} else if (is_state(Ind, s_ptr, STORE_LIKED)) {
 					action_color = TERM_L_GREEN;
 					cost = ba_ptr->costs[STORE_LIKED];

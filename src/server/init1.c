@@ -1778,10 +1778,13 @@ if (!season_newyearseve) {
 	return(invalid); /* only pass if none of our tests proves to be invalid */
 }
 
+/* For grab_one_rtcr_flag() */
+static bool unknown_shut_up = FALSE;
+
 /*
  * Grab one race flag from a textual string
  */
-static bool unknown_shut_up = FALSE;
+
 static errr grab_one_class_flag(s32b *choice, cptr what) {
 	int i;
 	cptr s;
@@ -1801,16 +1804,12 @@ static errr grab_one_class_flag(s32b *choice, cptr what) {
 	/* Failure */
 	return(1);
 }
+
 static errr grab_one_race_allow_flag(s32b *choice, cptr what) {
 	int i;
 	cptr s;
 
-#ifndef ENABLE_MAIA
-	/* Hack, so ow_info.txt works */
-	if (streq(what, "Maia")) return(0);
-#endif
-
-	/* Scan classes flags */
+	/* Scan races flags */
 	//for (i = 0; i < max_rp_idx && (s = race_info[i].title + rp_name); i++)
 	for (i = 0; i < MAX_RACE && (s = race_info[i].title); i++) {
 		if (streq(what, s)) {
@@ -1821,6 +1820,25 @@ static errr grab_one_race_allow_flag(s32b *choice, cptr what) {
 
 	/* Oops */
 	if (!unknown_shut_up) s_printf("(1)Unknown race flag '%s'.\n", what);
+
+	/* Failure */
+	return(1);
+}
+
+static errr grab_one_trait_allow_flag(s32b *choice, cptr what) {
+	int i;
+	cptr s;
+
+	/* Scan traits flags (0 = no trait) */
+	for (i = 1; i < MAX_TRAIT && (s = trait_info[i].title); i++) {
+		if (streq(what, s)) {
+			(choice[i / 32]) |= (1U << i);
+			return(0);
+		}
+	}
+
+	/* Oops */
+	if (!unknown_shut_up) s_printf("(1)Unknown trait flag '%s'.\n", what);
 
 	/* Failure */
 	return(1);
@@ -6665,13 +6683,19 @@ errr init_d_info_txt(FILE *fp, char *buf) {
 /*
  * Grab one race flag from a textual string
  */
-static errr grab_one_race_flag(owner_type *ow_ptr, int state, cptr what) {
+static errr grab_one_rtcr_flag(owner_type *ow_ptr, int state, cptr what) {
 	/* int i;
 	cptr s; */
+	unknown_shut_up = TRUE;
 
 	/* Scan race flags */
-	unknown_shut_up = TRUE;
 	if (!grab_one_race_allow_flag(ow_ptr->races[state], what)) {
+		unknown_shut_up = FALSE;
+		return(0);
+	}
+
+	/* Scan trait flags */
+	if (!grab_one_trait_allow_flag(ow_ptr->traits[state], what)) {
 		unknown_shut_up = FALSE;
 		return(0);
 	}
@@ -6690,7 +6714,7 @@ static errr grab_one_race_flag(owner_type *ow_ptr, int state, cptr what) {
 
 	/* Oops */
 	unknown_shut_up = FALSE;
-	s_printf("Unknown race/class/realm flag '%s'.\n", what);
+	s_printf("Unknown race/trait/class/realm flag '%s'.\n", what);
 
 	/* Failure */
 	return(1);
@@ -7208,7 +7232,7 @@ errr init_ba_info_txt(FILE *fp, char *buf) {
  */
 errr init_ow_info_txt(FILE *fp, char *buf) {
 	int i;
-	char *s, *t;
+	char *s, *t, *u;
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -7370,8 +7394,12 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 					while (*t == ' ' || *t == '|') t++;
 				}
 
+				/* Hack: Since classes/traits can have spaces, allow '_' underscore usage to represent those */
+				u = s;
+				while (*++u) if (*u == '_') *u = ' ';
+
 				/* Parse this entry */
-				if (0 != grab_one_race_flag(ow_ptr, STORE_LIKED, s)) return(5);
+				if (0 != grab_one_rtcr_flag(ow_ptr, STORE_LIKED, s)) return(5);
 
 				/* Start the next entry */
 				s = t;
@@ -7393,8 +7421,12 @@ errr init_ow_info_txt(FILE *fp, char *buf) {
 					while (*t == ' ' || *t == '|') t++;
 				}
 
+				/* Hack: Since classes/traits can have spaces, allow '_' underscore usage to represent those */
+				u = s;
+				while (*++u) if (*u == '_') *u = ' ';
+
 				/* Parse this entry */
-				if (0 != grab_one_race_flag(ow_ptr, STORE_HATED, s)) return(5);
+				if (0 != grab_one_rtcr_flag(ow_ptr, STORE_HATED, s)) return(5);
 
 				/* Start the next entry */
 				s = t;

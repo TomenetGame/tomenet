@@ -2661,6 +2661,7 @@ struct owner_type {
 	byte insult_max;		/* Insult limit */
 
 	s32b races[2][2];		/* Liked/hated races */
+	s32b traits[2][2];		/* Liked/hated races */
 	s32b classes[2][2];		/* Liked/hated classes */
 	s32b realms[2][2];		/* Liked/hated realms */ /* unused */
 
