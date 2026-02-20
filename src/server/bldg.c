@@ -3070,7 +3070,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			break;
 		}
 
-		fee = (object_value_real(0, o_ptr) * o_ptr->number) / 20;
+		/* Polyring: Assume NPC store buying price as its value */
+		if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) fee = (price_poly_ring(Ind, o_ptr, 0) * o_ptr->number) / 20;
+		else fee = (object_value_real(0, o_ptr) * o_ptr->number) / 20;
 		if (fee < 5) fee = 5;
 
 		p_ptr->mail_item = item;
