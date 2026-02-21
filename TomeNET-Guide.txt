@@ -8535,33 +8535,57 @@ If you stand still and an enemy is on an adjacent grid (directly next to you,
 no space between you and the enemy) then your character will automatically
 attack it with the equipped melee weapon.
 
-Starting in 4.9.3 there is an option 'instant_retaliator' that toggles the
-behaviour of auto-retaliation and of fire-till-kill, in Gameplay Options 1:
+Starting in 4.9.3 there is an option 'new_retaliator' that toggles the
+behaviour of auto-retaliation and of fire-till-kill, in Gameplay Options 1.
+The recommended and standard setting is 'on':
 
-- If on, your character will instantly attack anything adjacent (or targetted
-in the case of fire-till-kill) if you have spare energy, up to two turns at
-once if your character was standing around idly before.
-This is how auto-retaliator and FTK have always worked so far.
+- If on, autoretaliation will grant an almost instant manual teleport/walk/run
+  action while auto-retaliating or FTK'ing (fire-till-kill).
+  This allows especially classes who cannot split their turn energy over
+  multiple attacks per turn, ie all spell-casters, to qickly escape dangerous
+  situations.
+  (Technical explanation:
+   If a spell is cast (manually or via FTK or auto-retaliation, doesn't matter)
+   it will use up your turn energy completely, like any other action would.
+   This is nothing new. However, this also means that you have to wait for a
+   full turn until you have enough energy again to perform your next action, eg
+   reading a scroll of teleportation to escape. This too is nothing new.
+   However, currently classes that use multiple melee attacks or multiple shots
+   per round to fight have it easier, because each attack or shot only costs a
+   partial turn of energy! (Eg if you have 6 BpR, each single blow will cost
+   you 1/6 turn energy, so you can actually perform 6 blows per round aka 6
+   attacks per turn.) That means that these characters only have to wait for
+   a fraction of a turn to recover their full energy (in the above example for
+   1/6 of a full turn) and therefore can react to dire situations much faster
+   most of the time. A spell-caster's teleportation macro would only be able to
+   react that quickly if their energy happened to have already recuperated very
+   close to a full turn's worth of energy, ie if the spellcaster hits the tele
+   macro after almost a full turn has already past since the last spell had
+   been cast.
+   This is where this new option, if enabled, comes in:
+   As soon as a character has completed at least one turn of auto-retaliation
+   or of firing-till-kill, it will gain an internal extra turn of energy for
+   free, which is reserved solely for the purpose of performing a movement
+   action, specifically teleport, walk or run.
+   This means that no matter which fraction of a turn has passed after casting
+   a spell, the character will always be able to trigger such an action
+   basically instantly, getting out of trouble as easily or even more easily
+   as multi-attack melee/ranged chars did so far. (This new retaliator works
+   for them too, so they get the same benefit and are not suddenly worse off.))
 
-- If off, your character will make sure to keep 1 turn of energy in reserve.
-If you move next to an enemy this might result in your character waiting for
-one turn to recuperate the movement energy before it starts auto-attacking or
-firing-till-kill. This is the new way, choosable starting in 4.9.3.
+- If off, your character will not gain any special energy modification;
+  this is like it used to be in all game versions before 4.9.3.
+  Leaving it off therefore holds no benefit.
 
-Why you might want to choose the new way ie turn it off:
- The advantage of having this turned off is that the stored up energy can be
- used to break out of auto-retaliation or fire-till-kill almost instantly, for
- example if you hit your teleport macro.
- So it guarantees a fast escape without having to wait for energy recuperation
- and thereby greatly increases survival chances for classes that don't split
- their energy on attacks like melee or archer-type classes do. Istari are for
- example strongly affected by this option.
- Also, if this is on, as your character won't instantly auto-attack if you
- step next to an enemy, this allows you to easily walk past sleeping monsters
- without your character starting to attack them and thereby waking them up.
+There is one novelty in 4.9.3 however:
+It is no longer possible to store two turns of energy by standing around idly,
+except for the purpose of walking, so the 'double-tap jump' walking technique
+that basically lets you cross one hazardous grid almost instantly will still
+work, but for example if a monster walks up next to you you will only get one
+turn of attacks in via auto-retaliation, not a burst of two turns at once.
 
--- More about auto-retaliation: --
-
+More about auto-retaliation:
+----------------------------
 Instead of melee attacks, you can also configure the auto-retaliator to use
 other items. To do so, you use '@O...' (the letter 'O', not the number zero!)
 item inscriptions:
@@ -12703,7 +12727,7 @@ for details about how wearing armour affects your ranged weapon accuracy.
 Your character will fire till kill, ie keep using your current (if eligible)
 ranged attacks until the target dies or is no longer targettable.
 
-This auto-attacking, like auto-retaliation, is affected by 'instant_retaliator'
+This auto-attacking, like auto-retaliation, is affected by 'new_retaliator'
 in "Gameplay Options 1" in the options menu. Please see (4.1a) for details.
 
 Accessible via 'm' key, you can switch 'fire-till-kill' mode on or off.
