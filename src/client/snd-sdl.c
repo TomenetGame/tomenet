@@ -3778,6 +3778,11 @@ errr re_init_sound_sdl(void) {
 	puts("re_init_sound_sdl() completed.");
 #endif
 
+	/* reset all 'disabled' music to be enabled again, as these are currently not pack-specific! */
+	for (i = 0; i < SOUND_MAX_2010; i++)
+		samples[i].disabled = FALSE;
+	for (i = 0; i < MUSIC_MAX; i++)
+		songs[i].disabled = FALSE;
 
 	/* --- refresh active audio --- */
 	Send_redraw(2);
