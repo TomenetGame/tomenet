@@ -14786,7 +14786,7 @@ void audio_pack_selector(void) {
 	int old_cfg_soundpack_subset = cfg_soundpack_subset, old_cfg_musicpack_subset = cfg_musicpack_subset;
 	static int cur_sp = 0, cur_mp = 0, cur_sy = 0, cur_my = 0;
 	static int cur_mp_org = -1, cur_sp_org = -1;
-	bool redraw = TRUE, quit = FALSE;
+	bool redraw = TRUE, quit = FALSE, changed_music = FALSE, changed_sfx = FALSE;
 	char buf[1024], path[1024];
 	char sp_dir[MAX_PACKS][MAX_CHARS], mp_dir[MAX_PACKS][MAX_CHARS];
 	char sp_name[MAX_PACKS][MAX_CHARS], mp_name[MAX_PACKS][MAX_CHARS];
@@ -15138,14 +15138,14 @@ void audio_pack_selector(void) {
 		strcpy(cfg_soundpackfolder, sp_dir[cur_sp]);
 		strcpy(cfg_soundpack_name, sp_name[cur_sp]);
 		strcpy(cfg_soundpack_version, sp_version[cur_sp]);
-		do_cmd_options_sfx(TRUE);
+		changed_sfx = TRUE;
 	}
 	if (strcmp(cfg_musicpackfolder, mp_dir[cur_mp])) {
 		c_message_add(format("Switched music pack to '%s'.", mp_dir[cur_mp]));
 		strcpy(cfg_musicpackfolder, mp_dir[cur_mp]);
 		strcpy(cfg_musicpack_name, mp_name[cur_mp]);
 		strcpy(cfg_musicpack_version, mp_version[cur_mp]);
-		do_cmd_options_mus(TRUE);
+		changed_music = TRUE;
 	}
 
 #ifdef WINDOWS
@@ -15165,6 +15165,8 @@ void audio_pack_selector(void) {
 
 	/* Switch it live! */
 	if (re_init_sound() == 0) c_message_add("Audio packs have been reloaded and audio been reinitialized successfully.");
+	if (changed_sfx) do_cmd_options_sfx(TRUE);
+	if (changed_music) do_cmd_options_mus(TRUE);
 
 	//No longer true (for SDL, our only sound sytem at this point basically):
 	//c_message_add("\377RAfter changing audio packs, a game client restart is required!");
