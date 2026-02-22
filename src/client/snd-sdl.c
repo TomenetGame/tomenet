@@ -4641,6 +4641,8 @@ void do_cmd_options_mus_sdl(bool reset) {
 
 	if (reset) {
 		y = j_sel = 0;
+		jukebox_play_all = jukebox_play_all_done = FALSE; //ENABLE_JUKEBOX
+		jukebox_playing = jukebox_play_all_prev = jukebox_playing_song = jukebox_play_all_prev_song = -1; //ENABLE_JUKEBOX
 		return;
 	}
 
