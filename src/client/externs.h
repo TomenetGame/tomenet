@@ -1215,8 +1215,8 @@ extern int re_init_sound();
  extern errr init_sound_sdl(int argc, char **argv);
  extern errr re_init_sound_sdl(void);
  extern void close_audio_sdl(void);
- extern void do_cmd_options_sfx_sdl(void);
- extern void do_cmd_options_mus_sdl(void);
+ extern void do_cmd_options_sfx_sdl(bool reset);
+ extern void do_cmd_options_mus_sdl(bool reset);
   //#ifdef ENABLE_JUKEBOX
  extern void update_jukebox_timepos(void);
   //#endif

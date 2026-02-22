@@ -3995,7 +3995,7 @@ static Mix_Music* load_song(int idx, int subidx) {
 }
 
 /* Display options page UI that allows to comment out sounds easily */
-void do_cmd_options_sfx_sdl(void) {
+void do_cmd_options_sfx_sdl(bool reset) {
 	int i, i2, j, d, k, vertikal_offset = 4, horiz_offset = 5, list_size = 9;
 	static int y = 0, j_sel = 0;
 	int tmp;
@@ -4011,6 +4011,11 @@ void do_cmd_options_sfx_sdl(void) {
 	static int searchres = -1, searchoffset = 0;
 	static bool searchforfilename = FALSE;
 	cptr path_p;
+
+	if (reset) {
+		y = j_sel = 0;
+		return;
+	}
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {
@@ -4613,7 +4618,7 @@ void intshuffle(int *array, int size) {
 	}
 }
 #endif
-void do_cmd_options_mus_sdl(void) {
+void do_cmd_options_mus_sdl(bool reset) {
 	int i, i2, j, d, k, vertikal_offset = 5, horiz_offset = 1, list_size = 9;
 	static int y = 0, j_sel = 0; // j_sel = -1; for initially jumping to playing song, see further below
 	char ch;
@@ -4633,6 +4638,11 @@ void do_cmd_options_mus_sdl(void) {
 	static char searchstr[MAX_CHARS] = { 0 };
 	static int searchres = -1, searchoffset = 0;
 	static bool searchforfilename = FALSE;
+
+	if (reset) {
+		y = j_sel = 0;
+		return;
+	}
 
 	//ANGBAND_DIR_XTRA_SOUND/MUSIC are NULL in quiet_mode!
 	if (quiet_mode) {

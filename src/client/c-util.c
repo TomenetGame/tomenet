@@ -12118,14 +12118,14 @@ static void do_cmd_options_tilesets(void) {
 #endif /* ENABLE_SUBWINDOW_MENU */
 
 #ifdef USE_SOUND_2010
-static void do_cmd_options_sfx(void) {
+static void do_cmd_options_sfx(bool reset) {
  #if SOUND_SDL
-	do_cmd_options_sfx_sdl();
+	do_cmd_options_sfx_sdl(reset);
  #endif
 }
-static void do_cmd_options_mus(void) {
+static void do_cmd_options_mus(bool reset) {
  #if SOUND_SDL
-	do_cmd_options_mus_sdl();
+	do_cmd_options_mus_sdl(reset);
  #endif
 }
 #endif
@@ -13730,8 +13730,8 @@ void do_cmd_options(void) {
 		else if (k == 'x') interact_audio();
 		else if (k == 'X') audio_pack_selector();
 		/* Toggle single sfx/song from a list of all */
-		else if (k == 'n') do_cmd_options_sfx();
-		else if (k == 'N') do_cmd_options_mus();
+		else if (k == 'n') do_cmd_options_sfx(FALSE);
+		else if (k == 'N') do_cmd_options_mus(FALSE);
 #endif
 		else if (k == 'I') do_cmd_options_install_audio_packs();
 
@@ -15138,12 +15138,14 @@ void audio_pack_selector(void) {
 		strcpy(cfg_soundpackfolder, sp_dir[cur_sp]);
 		strcpy(cfg_soundpack_name, sp_name[cur_sp]);
 		strcpy(cfg_soundpack_version, sp_version[cur_sp]);
+		do_cmd_options_sfx(TRUE);
 	}
 	if (strcmp(cfg_musicpackfolder, mp_dir[cur_mp])) {
 		c_message_add(format("Switched music pack to '%s'.", mp_dir[cur_mp]));
 		strcpy(cfg_musicpackfolder, mp_dir[cur_mp]);
 		strcpy(cfg_musicpack_name, mp_name[cur_mp]);
 		strcpy(cfg_musicpack_version, mp_version[cur_mp]);
+		do_cmd_options_mus(TRUE);
 	}
 
 #ifdef WINDOWS
