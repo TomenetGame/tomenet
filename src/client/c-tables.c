@@ -633,7 +633,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "flash_starvation",		"Flash 'Starved' food status by colour animation." },
 	{ &c_cfg.autoswitch_inven,	TRUE,	6,	0, 183, TRUE,
 	    "autoswitch_inven",		"Empty inven prompts auto-switch to equip or bag." },
-	{ &c_cfg.show_newest,		FALSE,	8,	0, 184, TRUE, //'items' page 8; could also be on page 3 (formatting) or 4 (notifications) perhaps
+	{ &c_cfg.show_newest,		FALSE,	7,	0, 184, TRUE, //'items' page 8; could also be on page 3 (formatting) or 4 (notifications) perhaps
 	    "show_newest",		"Marks the inventory slot of the 'newest' item." },
 	{ &c_cfg.log_music,		FALSE,	9,	0, 185, TRUE,
 	    "log_music",		"Log game-initiated music to 'Messages' window" },
