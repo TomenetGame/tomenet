@@ -1589,8 +1589,8 @@ I:70:38:0
 W:50:0:5:1000
 A:50/2:90/4
 D:Creates a rune on the floor that monsters must break to cross it.
-D:Monsters cannot attack anyone standing on this rune in melee
-D:and they cannot summon on the runed area either.
+D:Monsters can neither attack anyone standing on the rune in melee
+D:nor summon on the runed grid.
 
 N:191:*Remove Curse*
 G:?:d
@@ -3696,10 +3696,10 @@ W:70:0:4:25000
 A:70/4
 P:0:1d1:0:0:0
 F:FOUNTAIN
-D:Permanently increases intelligence and wisdom. Maps and enlightens the whole
-#D:map and detects treasure, objects, secret doors, stairs and traps nearby.
-D:map and detects treasure, secret doors, stairs and traps nearby.
-D:Identifies all your items, tells you about yourself, disperses hallucinations.
+D:Permanently increases intelligence and wisdom. Enlightens all map,
+#D:detects nearby treasure, objects, secret doors, stairs, traps.
+D:detects nearby treasure, secret doors, stairs, traps.
+D:Identifies your items and yourself, clears hallucinations.
 
 #N:423:[Necromantic Incantations]
 #G:?:G
