@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 20. Febuary 2026 - written by C. Blue (c_blue@gmx.net)    |
+| Latest update: 23. Febuary 2026 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -644,30 +644,44 @@ SHIFT+<direction key>
                 to provide a quick guide search instead of its normal function.
 
 i       i       display your inventory. You can then press SHIFT + inventory
-                slot letter to paste that item name into chat.
+                slot letter to paste that item name into chat, or "+" key to
+                paste the 'newest' item you picked up (if any).
+
                 You can also type \\<slot letter> shortcut in chat to paste an
                 item right into some text you are writing, eg "\\a" for the
-                item in your inventory slot 'a)'.
+                item in your inventory slot 'a)'. (Again "\\+" will try to
+                paste the 'newest' item, if any.)
+
                 To paste items from a container (bag) eg a potion belt,
                 use \\\<uppercase bag letter><lowercase bag slot> eg "\\\Ae".
 
+                You can enable a small marker for the item considered the
+                'newest' item in your inventory by enabling the 'show_newest'
+                option in  = 4  menu (User interface options - Notifications).
+
 e       e       display your equipment. You can then press SHIFT + equipment
                 slot letter to paste that item name into chat.
+
                 You can also type \\<capital slot letter> shortcut in chat to
                 paste an item right into some text you are writing, eg "\\A"
                 for the item in your equipment slot 'a)'.
 
 I       I       inspects an item, showing its special abilities in case it
                 has some. To examine an item you must either have bought it
-                from a shop or *identified* it. Mages can learn *ID* spell
-                "Greater Identify", some shops offer *ID* service (see (4.5a)),
-                or you can use a scroll of *identify*. If the item hasn't been
-                *identified* yet, you will only see basic information.
+                from a shop or *identified* it.
+
+                Mages can learn *ID* spell "Greater Identify", some shops
+                offer *ID* service (see (4.5a)), or you can use a scroll
+                of *identify*. If the item hasn't been *identified* yet,
+                you will only see basic information.
+
                 If the item could in theory have powers that will only be clear
                 after *identification* then inspecting the item will tell you:
-                "It may have hidden powers.". In this case you should always go
-                and *identify* it because its selling value will also increase
-                greatly in case it turns out to indeed have hidden powers.
+                "It may have hidden powers."
+                In this case you should always go and *identify* it because its
+                selling value will also increase greatly in case it turns out
+                to indeed have hidden powers.
+
                 See (5.7) for more information about ID, *ID* and shops!
                 If you examine weapons, it always tells you the weapon class
                 (sword/blunt/axe/polearm) as well as if it's 1-, 2- or
