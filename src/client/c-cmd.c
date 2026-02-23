@@ -960,7 +960,6 @@ static void cmd_subinven_remove(int islot) {
 
 void cmd_inven(void) {
 	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
-	int c;
 	char buf[MSG_LEN];
 
 	/* First, erase our current location */
@@ -991,19 +990,36 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 
 		ch = inkey();
 		/* allow pasting item into chat */
-		if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
-			c = ch - 'A';
+		if ((ch >= 'A' && ch < 'A' + INVEN_PACK) || (ch == '+' && item_newest != -1)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+			object_type *o_ptr;
+			char o_name[ONAME_LEN];
 
-			if (inventory[c].tval) {
-				snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[c]);
+			if (ch == '+') {
+#ifdef ENABLE_SUBINVEN
+				if (item_newest >= SUBINVEN_INVEN_MUL) {
+					o_ptr = &subinventory[item_newest / SUBINVEN_INVEN_MUL - 1][item_newest % SUBINVEN_INVEN_MUL];
+					strcpy(o_name, subinventory_name[item_newest / SUBINVEN_INVEN_MUL - 1][item_newest % SUBINVEN_INVEN_MUL]);
+				} else
+#endif
+				{
+					o_ptr = &inventory[item_newest];
+					strcpy(o_name, inventory_name[item_newest]);
+				}
+			} else {
+				o_ptr = &inventory[ch - 'A'];
+				strcpy(o_name, inventory_name[ch - 'A']);
+			}
+
+			if (o_ptr->tval) {
+				snprintf(buf, MSG_LEN - 1, "\377s%s", o_name);
 				buf[MSG_LEN - 1] = 0;
 				/* if item inscriptions contains a colon we might need
 				   another colon to prevent confusing it with a private message */
-				if (strchr(inventory_name[c], ':')) {
-					buf[strchr(inventory_name[c], ':') - inventory_name[c] + strlen(buf) - strlen(inventory_name[c]) + 1] = '\0';
+				if (strchr(o_name, ':')) {
+					buf[strchr(o_name, ':') - o_name + strlen(buf) - strlen(o_name) + 1] = '\0';
 					if (strchr(buf, ':') == &buf[strlen(buf) - 1])
 						strcat(buf, ":");
-					strcat(buf, strchr(inventory_name[c], ':') + 1);
+					strcat(buf, strchr(o_name, ':') + 1);
 				}
 #if defined(KIND_DIZ) && defined(CLIENT_ITEM_PASTE_DIZ)
 				if (sflags1 & SFLG1_CIPD) {
@@ -1011,7 +1027,7 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 
 					/* We don't have the local k_idx, so we have to find it from tval,sval: */
 					for (j = 0; j < kind_list_idx; j++) {
-						if (kind_list_tval[j] != inventory[c].tval || kind_list_sval[j] != inventory[c].sval) continue;
+						if (kind_list_tval[j] != o_ptr->tval || kind_list_sval[j] != o_ptr->sval) continue;
 						if (kind_list_dizline[j][0]) Send_paste_msg(format("%s\377D - %s", buf, kind_list_dizline[j]));
 						else j = kind_list_idx; //hack: no-diz marker
 						break;
@@ -1022,7 +1038,7 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 					}
 				} else
 #elif defined(SERVER_ITEM_PASTE_DIZ)
-				if (sflags1 & SFLG1_SIPD) Send_paste_msg(format("%s\372%d,%d", buf, inventory[c].tval, inventory[c].sval));
+				if (sflags1 & SFLG1_SIPD) Send_paste_msg(format("%s\372%d,%d", buf, o_ptr->tval, o_ptr->sval));
 				else
 #endif
 				Send_paste_msg(buf);
