@@ -8986,28 +8986,26 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/debug-dun")) {
-				struct dungeon_type *d_ptr;
-				worldpos *tpos = &p_ptr->wpos;
-				wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
-				cave_type **zcave, *c_ptr;
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				if (!(zcave = getcave(tpos))) {
-					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
-					return;
-				}
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
-					msg_print(Ind, "Error: Not standing on a staircase grid.");
-					return;
-				}
+				if (!d_ptr) return;
 
-				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
-				else d_ptr = wild->dungeon;
-
-				msg_print(Ind, "Dungeon stats:");
+				msg_format(Ind, "Dungeon stats (%s):", tower ? "tower" : "dungeon");
 				msg_format(Ind, "  type %d, baselevel %d, maxdepth %d (endlevel %d)", d_ptr->type, d_ptr->baselevel, d_ptr->maxdepth, d_ptr->baselevel + d_ptr->maxdepth - 1);
 				msg_format(Ind, "  flags1 %08x, flags2 %08x, flags3 %08x", d_ptr->flags1, d_ptr->flags2, d_ptr->flags3);
+				return;
+			}
+			/* Toggles between listing a dungeon as usual, or adding the unlisted flag to hide it, eg if under development and not public yet or just testing stuff */
+			else if (prefix(messagelc, "/unlistdun")) {
+				bool tower, listed = TRUE;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
+				if (!d_ptr) return;
+				if ((listed = !(d_ptr->flags1 & DF1_UNLISTED))) d_ptr->flags1 |= DF1_UNLISTED;
+				else d_ptr->flags1 &= ~DF1_UNLISTED;
+
+				msg_format(Ind, "Dungeon (%s) was so far %s, is now %s.", tower ? "tower" : "dungeon", listed ? "listed" : "unlisted", listed ? "unlisted" : "listed");
 				return;
 			}
 			else if (prefix(messagelc, "/update-dun")) { /* NOTE: Crashes when the dungeon/tower turns into a tower/dungeon. TODO: Fix! */
@@ -9382,46 +9380,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/forgetdun")) {
-				worldpos *tpos = &p_ptr->wpos;
-				cave_type **zcave, *c_ptr;
-				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-				struct dungeon_type *d_ptr;
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				if (!(zcave = getcave(tpos))) {
-					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
-					return;
-				}
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
-					msg_print(Ind, "Error: Not standing on a staircase grid.");
-					return;
-				}
-
-				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
-				else d_ptr = wild->dungeon;
+				if (!d_ptr) return;
 
 				d_ptr->known = 0x0;
 				msg_print(Ind, "\377rDungeon is know UNKNOWN.");
 				return;
 			}
 			else if (prefix(messagelc, "/knowdun")) { /* (Just for adding IDDC on test server) */
-				worldpos *tpos = &p_ptr->wpos;
-				cave_type **zcave, *c_ptr;
-				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-				struct dungeon_type *d_ptr;
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				if (!(zcave = getcave(tpos))) {
-					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
-					return;
-				}
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
-					msg_print(Ind, "Error: Not standing on a staircase grid.");
-					return;
-				}
-
-				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
-				else d_ptr = wild->dungeon;
+				if (!d_ptr) return;
 
 				d_ptr->known = 0x1 | 0x2 | 0x4 | 0x8; /* Entrance seen, base level known, depth known, boss known */
 				msg_print(Ind, "\377GDungeon is know FULLY KNOWN.");
@@ -13046,55 +13018,25 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/fixjaildun")) {//sets appropriate flags of a dungeon on a jail grid
-				worldpos *tpos = &p_ptr->wpos;
-				cave_type **zcave, *c_ptr;
-				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-				struct dungeon_type *d_ptr;
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				if (!(zcave = getcave(tpos))) {
-					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
-					return;
-				}
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
-					msg_print(Ind, "Error: Not standing on a staircase grid.");
-					return;
-				}
-				if (!(c_ptr->info & CAVE_JAIL)) {
-					msg_print(Ind, "Error: Not standing on a CAVE_JAIL grid.");
-					return;
-				}
-
-				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
-				else d_ptr = wild->dungeon;
+				if (!d_ptr) return;
 
 				apply_jail_flags(&d_ptr->flags1, &d_ptr->flags2, &d_ptr->flags3);
 				msg_print(Ind, "Jail-specific flags set.");
 				return;
 			}
 			else if (prefix(messagelc, "/fixiddc")) {//adds DF3_NO_DUNGEON_BONUS to ironman deep dive challenge dungeon
-				worldpos *tpos = &p_ptr->wpos;
-				cave_type **zcave, *c_ptr;
-				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-				struct dungeon_type *d_ptr;
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				if (!(zcave = getcave(tpos))) {
-					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
-					return;
-				}
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
-					msg_print(Ind, "Error: Not standing on a staircase grid.");
-					return;
-				}
-				if (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y ||
-				    !(c_ptr->feat == FEAT_LESS ? (WPOS_IRONDEEPDIVE_Z > 0) : (WPOS_IRONDEEPDIVE_Z < 0))) {
-					msg_print(Ind, "Error: Not standing on IRONDEEPDIVE staircase.");
-					return;
-				}
+				if (!d_ptr) return;
 
-				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
-				else d_ptr = wild->dungeon;
+				if (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y) {
+					msg_print(Ind, "Error: No IRONDEEPDIVE wpos here.");
+					return;
+				}
 
 				d_ptr->flags3 |= DF3_NO_DUNGEON_BONUS | DF3_EXP_20;
 				msg_print(Ind, "DF3_NO_DUNGEON_BONUS | DF3_EXP_20 added.");
@@ -13125,20 +13067,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			   Use this command twice to remove all (^these 4) experimental flags again.
 			   Suggestion: Use this on the Halls of Mandos :). */
 			else if (prefix(messagelc, "/dunmkexp")) {
-				struct dungeon_type *d_ptr;
-				cave_type **zcave = getcave(&p_ptr->wpos);
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				switch (zcave[p_ptr->py][p_ptr->px].feat) {
-				case FEAT_MORE:
-					d_ptr = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon;
-					break;
-				case FEAT_LESS:
-					d_ptr = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower;
-					break;
-				default:
-					msg_print(Ind, "There is no dungeon here");
-					return;
-				}
+				if (!d_ptr) return;
 
 				/* already has these flags? then remove them again */
 				if (!(d_ptr->flags3 & DF3_NO_TELE)) {

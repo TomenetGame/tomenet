@@ -2257,6 +2257,7 @@ extern int cclen(cptr str);
 extern bool may_address_dm(player_type *p_ptr);
 extern char *custom_lua_timer_parmstr_get(int i);
 extern void custom_lua_timer_parmstr_set(int i, char *str);
+extern struct dungeon_type *admin_dun(int Ind, bool *tower);
 
 /* world.c */
 extern struct list *rpmlist;

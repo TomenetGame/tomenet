@@ -11207,3 +11207,33 @@ void custom_lua_timer_parmstr_set(int i, char *str) {
 	strncpy(custom_lua_timer_parmstr[i], str, MAX_CHARS_WIDE);
 	custom_lua_timer_parmstr[i][MAX_CHARS_WIDE - 1] = 0;
 }
+
+struct dungeon_type *admin_dun(int Ind, bool *tower) {
+	struct dungeon_type *d_ptr;
+	player_type *p_ptr = Players[Ind];
+	worldpos *tpos = &p_ptr->wpos;
+	wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
+	cave_type **zcave, *c_ptr;
+
+	if (!(zcave = getcave(tpos))) {
+		msg_print(Ind, "Fatal: Couldn't acquire zcave!");
+		return(NULL);
+	}
+
+	if (tower) *tower = FALSE;
+	if (!p_ptr->wpos.wz) {
+		c_ptr = &zcave[p_ptr->py][p_ptr->px];
+		if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
+			msg_print(Ind, "Error: Not standing on a staircase grid.");
+			return(NULL);
+		}
+		if (c_ptr->feat == FEAT_LESS) {
+			d_ptr = wild->tower;
+			if (tower) *tower = TRUE;
+		} else d_ptr = wild->dungeon;
+	} else if (p_ptr->wpos.wz > 0) {
+		d_ptr = wild->tower;
+		if (tower) *tower = TRUE;
+	} else d_ptr = wild->dungeon;
+	return(d_ptr);
+}
