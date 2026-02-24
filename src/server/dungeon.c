@@ -10209,15 +10209,28 @@ void process_player_change_wpos(int Ind) {
 	}
 
 	if (!p_ptr->warning_powins) {
-		for (j = 1; j < INVEN_PACK; j++) {
-			if (!p_ptr->inventory[j].tval) break;
-			if (p_ptr->inventory[j].tval != TV_BOOK || !is_custom_tome(p_ptr->inventory[j].sval)) continue;
+		bool books = FALSE;
+		object_type *o_ptr;
 
+		for (j = 1; j < INVEN_PACK; j++) {
+			o_ptr = &p_ptr->inventory[j];
+			if (!o_ptr->tval) break;
+
+			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
+				if (books) break;
+				continue;
+			}
+			books = TRUE;
+			if (o_ptr->note && (strstr(quark_str(o_ptr->note), "@^") || strstr(quark_str(o_ptr->note), "@&"))) {
+				p_ptr->warning_powins = 1;
+				break;
+			}
+		}
+		if (!p_ptr->warning_powins) {
 			msg_print(Ind, "\374\377yHINT: Press \377o{\377- to power-inscribe your custom books, eg a codex.");
 			msg_print(Ind, "\374\377y      When prompted for inscription, just enter: \377y@@@");
 			s_printf("warning_powins: %s\n", p_ptr->name);
 			p_ptr->warning_powins = 1;
-			break;
 		}
 	}
 
