@@ -4814,70 +4814,84 @@ void do_cmd_look(int Ind, int dir) {
 			}
 		}
 
-		/* Hack -- special description for store doors */
-		//if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
-		if (feat == FEAT_SHOP) {
+		switch(feat) {
+		case FEAT_SHOP:
+			/* Hack -- special description for store doors */
+			//if ((feat >= FEAT_SHOP_HEAD) && (feat <= FEAT_SHOP_TAIL))
 			p1 = "The entrance to the ";
 
 			if ((cs_ptr = GetCS(c_ptr, CS_SHOP)))
 				name = st_name + st_info[cs_ptr->sc.omni].name;
+			break;
 
-		}
+		case FEAT_FOUNTAIN:
+			if ((cs_ptr = GetCS(c_ptr, CS_FOUNTAIN)) &&
+			    (cs_ptr->sc.fountain.known || get_skill(p_ptr, SKILL_DIVINATION) == 50)) {
+				object_kind *k_ptr;
+				int tval, sval;
 
-		if ((feat == FEAT_FOUNTAIN) &&
-		    (cs_ptr = GetCS(c_ptr, CS_FOUNTAIN)) &&
-		    (cs_ptr->sc.fountain.known || get_skill(p_ptr, SKILL_DIVINATION) == 50)) {
-			object_kind *k_ptr;
-			int tval, sval;
+				if (cs_ptr->sc.fountain.type <= SV_POTION_LAST) {
+					tval = TV_POTION;
+					sval = cs_ptr->sc.fountain.type;
+				} else {
+					tval = TV_POTION2;
+					sval = cs_ptr->sc.fountain.type - SV_POTION_LAST;
+				}
 
-			if (cs_ptr->sc.fountain.type <= SV_POTION_LAST) {
-				tval = TV_POTION;
-				sval = cs_ptr->sc.fountain.type;
-			} else {
-				tval = TV_POTION2;
-				sval = cs_ptr->sc.fountain.type - SV_POTION_LAST;
+				k_ptr = &k_info[lookup_kind(tval, sval)];
+				info = k_name + k_ptr->name;
 			}
+			break;
 
-			k_ptr = &k_info[lookup_kind(tval, sval)];
-			info = k_name + k_ptr->name;
-		}
-
-		if (feat == FEAT_SIGN) /* give instructions how to actually read it ;) */
+		case FEAT_SIGN: /* give instructions how to actually read it ;) */
 			name = "signpost \377D(bump to read)\377w";
+			break;
 
-		if (feat == FEAT_GRAND_MIRROR)
+		case FEAT_GRAND_MIRROR:
 			name = "grand mirror stands before you. Your reflection seems to stare at you..";
+			break;
 
-		/* Let character 'pseudo-deduce' staircase type from its player-perceived colour? */
-		if (!p_ptr->wpos.wz && (feat == FEAT_MORE || feat == FEAT_LESS || feat == FEAT_WAY_MORE || feat == FEAT_WAY_LESS)) {
-			struct dungeon_type *d_ptr;
-			worldpos tpos = p_ptr->wpos; /* copy */
-			wilderness_type *wild = &wild_info[tpos.wy][tpos.wx];
-			byte ap;
+		case FEAT_MORE: case FEAT_LESS:
+		case FEAT_WAY_MORE: case FEAT_WAY_LESS:
+			/* Let character 'pseudo-deduce' staircase type from its player-perceived colour? */
+			if (!p_ptr->wpos.wz) {
+				struct dungeon_type *d_ptr;
+				worldpos tpos = p_ptr->wpos; /* copy */
+				wilderness_type *wild = &wild_info[tpos.wy][tpos.wx];
+				byte ap;
 
-			if (!tpos.wz) {
-				if ((feat == FEAT_MORE) || (feat == FEAT_WAY_MORE)) d_ptr = wild->dungeon;
+				if (!tpos.wz) {
+					if ((feat == FEAT_MORE) || (feat == FEAT_WAY_MORE)) d_ptr = wild->dungeon;
+					else d_ptr = wild->tower;
+				} else if (tpos.wz < 0) d_ptr = wild->dungeon;
 				else d_ptr = wild->tower;
-			} else if (tpos.wz < 0) d_ptr = wild->dungeon;
-			else d_ptr = wild->tower;
 
-			/* Check for empty staircase without any connected dungeon/tower! */
-			if (!d_ptr) ap = TERM_SLATE;
-			else get_staircase_colour(d_ptr, &ap);
+				/* Check for empty staircase without any connected dungeon/tower! */
+				if (!d_ptr) ap = TERM_SLATE;
+				else get_staircase_colour(d_ptr, &ap);
 
-			switch (ap) {
-			case TERM_L_UMBER: info = "Experimental"; break;
-			case TERM_HOLYORB: info = (d_ptr->type == DI_HALLS_OF_MANDOS ? "One-way" : "Experimental one-way"); break;
-			case TERM_GREEN: info = "No death"; break;
-			case TERM_DARKNESS: info = "***No exit!***"; break;
-			case TERM_L_DARK: info = "Iron"; break;
-			case TERM_FIRE: info = "Hellish"; break;
-			case TERM_L_RED: info = "No recall/stairs back"; break;
-			case TERM_RED: info = "No recall"; break;
-			case TERM_ORANGE: info = "No stairs back"; break;
-			case TERM_YELLOW: info = "No recall-entry"; break;
-			//TERM_L_WHITE is normal
+				switch (ap) {
+				case TERM_L_UMBER: info = "Experimental"; break;
+				case TERM_HOLYORB: info = (d_ptr->type == DI_HALLS_OF_MANDOS ? "One-way" : "Experimental one-way"); break;
+				case TERM_GREEN: info = "No death"; break;
+				case TERM_DARKNESS: info = "***No exit!***"; break;
+				case TERM_L_DARK: info = "Iron"; break;
+				case TERM_FIRE: info = "Hellish"; break;
+				case TERM_L_RED: info = "No recall/stairs back"; break;
+				case TERM_RED: info = "No recall"; break;
+				case TERM_ORANGE: info = "No stairs back"; break;
+				case TERM_YELLOW: info = "No recall-entry"; break;
+				//TERM_L_WHITE is normal
+				}
 			}
+			break;
+
+		case FEAT_HOME:
+		case FEAT_HOME_OPEN:
+			if (!(cs_ptr = GetCS(c_ptr, CS_DNADOOR))) break;
+			sprintf(tmp_val, "House owned by %s", get_house_owner(cs_ptr));
+			info = tmp_val;
+			break;
 		}
 
 		/* Message */
