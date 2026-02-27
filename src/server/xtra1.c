@@ -3805,6 +3805,10 @@ void calc_boni(int Ind) {
 				p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS;
 				p_ptr->immune_fire = TRUE; csheet_boni[14].cb[0] |= CB1_IFIRE;
 				p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE; csheet_boni[14].cb[10] |= CB11_AFIRE;
+				/* 'fiery' light from the sh_fire aura (Hell Knight!): */
+				p_ptr->cur_lite++;
+				csheet_boni[14].lite++;
+				csheet_boni[14].cb[12] |= CB13_XLITE;
 			}
 
 			/* Bonus crit for the bad side */
@@ -5136,6 +5140,17 @@ void calc_boni(int Ind) {
 		p_ptr->sh_elec = TRUE; csheet_boni[14].cb[10] |= CB11_AELEC;
 		p_ptr->immune_elec = TRUE; csheet_boni[14].cb[1] |= CB2_IELEC;
 	}
+
+#if 0 /* Before enabling, need to sort out k/e/a_info.txt for SH_FIRE+LITE and r_info for AURA_FIRE+HAS_LITE; added +lite in Maiar TRAIT_CORRUPTED check instead for now. */
+	/* Bright aura grants light - especially for level 50 Hell Knight */
+	if (p_ptr->sh_fire) {
+		/* 'fiery' light */
+		p_ptr->cur_lite++;
+		csheet_boni[14].lite++;
+		csheet_boni[14].cb[12] |= CB13_XLITE;
+	}
+	/* For now no (white) light for elec aura. (And Enl.Maiar already gain intrinsic light rad anyway.) */
+#endif
 
 	/* Lose anti-cut powers? */
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
