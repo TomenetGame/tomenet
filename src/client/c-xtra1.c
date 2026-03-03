@@ -46,7 +46,7 @@
 #define HP_MP_ST_BARS_ALLOWED
 
 /* (Sub-)Inven/Equip marker icon for 'newest item' if c_cfg.show_newest is on. */
-#define MARKER_NEWEST_ITEM '-'
+#define MARKER_NEWEST_ITEM '+'
 
 
 #ifdef USE_SOUND_2010
