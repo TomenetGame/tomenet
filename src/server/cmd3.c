@@ -5753,6 +5753,16 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 bool item_matches_subinven(int Ind, int subinven_group_type, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
+	/* Not eligible ever */
+	if (o_ptr->tval == TV_SUBINVEN) return(FALSE);
+	if (o_ptr->tval == TV_CHEST) return(FALSE);
+	if (o_ptr->questor) return(FALSE);
+	if (o_ptr->tval == TV_AMULET && (o_ptr->sval == SV_AMULET_HIGHLANDS || o_ptr->sval == SV_AMULET_HIGHLANDS2)) return(FALSE);
+	/* A bit annoying to handle maybe, just forbid for now */
+	if (true_artifact_p(o_ptr)) return(FALSE);
+	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_SNOWBALL) return(FALSE);
+	if (o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_BLOOD) return(FALSE);
+
 	switch (subinven_group_type) { /* Keep consistent with do_cmd_subinven_move() */
 	/* Check item to move against valid tvals to be put into specific container (subinventory) types */
 	case SV_SI_GROUP_CHEST_MIN: return(TRUE);
