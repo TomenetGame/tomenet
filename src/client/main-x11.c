@@ -2208,11 +2208,16 @@ static unsigned long create_pixel(Display *dpy, byte red, byte green, byte blue)
 static cptr ANGBAND_DIR_XTRA_GRAPHICS;
 /* Loaded tiles image and masks. */
 XImage *graphics_image = None;
- #ifdef GRAPHICS_BG_MASK
-char *graphics_bg2mask = NULL;
+XImage *graphics_fgmask = None;
+#ifdef GRAPHICS_BG_MASK
+XImage *graphics_bgmask = None;
  #endif
 
 XImage *graphics_image_sub[MAX_SUBFONTS] = { None };
+XImage *graphics_fgmask_sub[MAX_SUBFONTS] = { None };
+#ifdef GRAPHICS_BG_MASK
+XImage *graphics_bgmask_sub[MAX_SUBFONTS] = { None };
+#endif
 
 /* These variables are computed at image load (in 'init_x11'). */
 int graphics_tile_wid, graphics_tile_hgt;
@@ -2981,7 +2986,53 @@ static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int 
 	return(0);
 }
 
-Pixell xInterpolationBilinear(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+void filterImagePixels(XImage *image, color_rgb (*color_filter_function)(color_rgb))
+{
+	Pixell pixel = 0;
+
+	for (int y = 0; y < image->height; y++)
+	{
+		for (int x = 0; x < image->width; x++)
+		{
+			color_rgb image_pixel;
+
+			image_pixel = xGetPixelRgb(image, x, y);
+
+			pixel = rgbToHex(color_filter_function(image_pixel));
+
+			XPutPixel(image, x, y, pixel);
+		}
+	}
+}
+
+static XImage *createMaskFromImage(Display *display, XImage *image, int width, int height, color_rgb (*color_filter_function)(color_rgb))
+{
+	Pixell mask_pixel = 0;
+
+	char *maskData = (char *)malloc(width * height * image->bits_per_pixel / 8);
+	XImage *mask = XCreateImage(
+		display, DefaultVisual(display, DefaultScreen(display)), image->depth, ZPixmap, 0,
+		maskData, width, height, image->bits_per_pixel, 0);
+
+	// this is almost the same as filterImagePixels, but i need to read from one XImage and put into another
+	for (int y = 0; y < height; y++)
+	{
+		for (int x = 0; x < width; x++)
+		{
+			color_rgb image_pixel;
+
+			image_pixel = xGetPixelRgb(image, x, y);
+
+			mask_pixel = rgbToHex(color_filter_function(image_pixel));
+
+			XPutPixel(mask, x, y, mask_pixel);
+		}
+	}
+
+	return mask;
+}
+
+Pixell xInterpolationBilinear(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries)
 {
 	Pixell new_pixel = 0;
 	int originalLoopX = floor(originalX);
@@ -3006,18 +3057,13 @@ Pixell xInterpolationBilinear(XImage *originalImage, float originalX, float orig
 	bottomRightPixelCoordinates = confineCoordinatesToRectangle(ceil(originalX), ceil(originalY), tile_boundaries);
 	color_rgb bottomRightPixelColor = xGetPixelRgb(originalImage, bottomRightPixelCoordinates.x, bottomRightPixelCoordinates.y);
 
-	topLeftPixelColor = color_filter_function(topLeftPixelColor);
-	topRightPixelColor = color_filter_function(topRightPixelColor);
-	bottomLeftPixelColor = color_filter_function(bottomLeftPixelColor);
-	bottomRightPixelColor = color_filter_function(bottomRightPixelColor);
-
 	color_rgb newPixelRGB = pixelBilinearInterpolation(fractionOfX, fractionOfY, topLeftPixelColor, topRightPixelColor, bottomLeftPixelColor, bottomRightPixelColor);
 	new_pixel = rgbToHex(newPixelRGB);
 
 	return new_pixel;
 }
 
-Pixell xInterpolationLanczos(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+Pixell xInterpolationLanczos(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries)
 {
 	Pixell new_pixel = 0;
 	int originalLoopX = round(originalX);
@@ -3036,7 +3082,6 @@ Pixell xInterpolationLanczos(XImage *originalImage, float originalX, float origi
 		{
 			coordinates sample_pixel_coordinates = confineCoordinatesToRectangle(x, y, tile_boundaries);
 			color_rgb sample_pixel_color = xGetPixelRgb(originalImage, sample_pixel_coordinates.x, sample_pixel_coordinates.y);
-			sample_pixel_color = color_filter_function(sample_pixel_color);
 
 			double dist_x = originalX - x;
 			double dist_y = originalY - y;
@@ -3059,7 +3104,7 @@ Pixell xInterpolationLanczos(XImage *originalImage, float originalX, float origi
 	return new_pixel;
 }
 
-Pixell xInterpolationNear(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb))
+Pixell xInterpolationNear(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries)
 {
 	Pixell new_pixel = 0;
 
@@ -3070,100 +3115,39 @@ Pixell xInterpolationNear(XImage *originalImage, float originalX, float original
 
 	coordinates pixel_coordinates_near = confineCoordinatesToRectangle(originalLoopX, originalLoopY, tile_boundaries);
 	newPixelRgb = xGetPixelRgb(originalImage, pixel_coordinates_near.x, pixel_coordinates_near.y);
-	newPixelRgb = color_filter_function(newPixelRgb);
 	new_pixel = rgbToHex(newPixelRgb);
 
 	return new_pixel;
 }
 
-Pixell XPixelInterpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, color_rgb (*color_filter_function)(color_rgb), int interpolation_type)
+Pixell XPixelInterpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, int interpolation_type)
 {
 	Pixell new_pixel = 0;
 
 	switch (interpolation_type)
 	{
 		case INTERPOLATION_LINEAR:
-			new_pixel = xInterpolationBilinear(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			new_pixel = xInterpolationBilinear(originalImage, originalX, originalY, tile_boundaries);
 			break;
 		case INTERPOLATION_LANCZOS:
-			new_pixel = xInterpolationLanczos(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			new_pixel = xInterpolationLanczos(originalImage, originalX, originalY, tile_boundaries);
 			break;
 		case INTERPOLATION_NEAR:
 		default:
-			new_pixel = xInterpolationNear(originalImage, originalX, originalY, tile_boundaries, color_filter_function);
+			new_pixel = xInterpolationNear(originalImage, originalX, originalY, tile_boundaries);
 			break;
 	}
 
 	return new_pixel;
 }
 
-/*
- * Resize an image. XXX XXX XXX
- *
- * Added bg/fg masks resizing.
- * It's your responsibility to free returned XImage after usage.
- * Function will not free memory if already allocated in fgmask_return input variable.
- */
- #ifndef GRAPHICS_BG_MASK
-static XImage *ResizeImage(Display *display, XImage *originalImage,
-    int tileWidth, int tileHeight, int fontWidth, int fontHeight,
-    XImage **fgmask_return,
-    term_data *td, int sub_tileset_index) {
-	int originalImageWidth, originalImageHeight, resizedWidth, resizedHeight;
+void rescaleRawpict(XImage *originalImage, int tileWidth, int tileHeight, int fontWidth, int fontHeight, term_data *td, int sub_tileset_index)
+{
+	int originalImageWidth = originalImage->width;
+	int originalImageHeight = originalImage->height;
+	int resizedWidth = fontWidth * originalImageWidth / tileWidth;
+	int resizedHeight = fontHeight * originalImageHeight / tileHeight;
 
-	XImage *resizedImage;
-	char *resizedImageData;
-
-	originalImageWidth = originalImage->width;
-	originalImageHeight = originalImage->height;
-
-	resizedWidth = fontWidth * originalImageWidth / tileWidth;
-	resizedHeight = fontHeight * originalImageHeight / tileHeight;
-
-	resizedImageData = (char *)malloc(resizedWidth * resizedHeight * originalImage->bits_per_pixel / 8);
-
-	resizedImage = XCreateImage(
-			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
-			resizedImageData, resizedWidth, resizedHeight, originalImage->bits_per_pixel, 0);
-
-	char *fgmaskImageData = (char *)malloc(resizedWidth * resizedHeight * originalImage->bits_per_pixel / 8);
-	*fgmask_return = XCreateImage(
-			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
-			fgmaskImageData, resizedWidth, resizedHeight, originalImage->bits_per_pixel, 0);
-
-	for (int targetLoopY = 0; targetLoopY < resizedHeight; targetLoopY++) {
-		float originalY = targetLoopY * originalImageHeight / resizedHeight;
-
-		int tileYCount = targetLoopY / fontHeight;
-
-		for (int targetLoopX = 0; targetLoopX < resizedWidth; targetLoopX++) {
-			float originalX = targetLoopX * originalImageWidth / resizedWidth;
-
-			int tileXCount = targetLoopX / fontWidth;
-
-			int originalTileStartY = tileYCount * tileHeight;
-			int originalTileEndY = (tileYCount + 1) * tileHeight - 1;
-
-			int originalTileStartX = tileXCount * tileWidth;
-			int originalTileEndX = (tileXCount + 1) * tileWidth - 1;
-
-			rectangle tile_boundaries;
-			tile_boundaries.top_left.x = originalTileStartX;
-			tile_boundaries.top_left.y = originalTileStartY;
-			tile_boundaries.bottom_right.x = originalTileEndX;
-			tile_boundaries.bottom_right.y = originalTileEndY;
-
-			// fixed colors
-			unsigned long newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, get_not_mask_pixel_color, INTERPOLATION_LINEAR);
-			XPutPixel(resizedImagegetLoopX, targetLoopY, newPixelHex);
-
-			// fg mask
-			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, get_fg_mask_pixel_color, INTERPOLATION_LINEAR);
-			XPutPixel(*fgmask_return, targetLoopX, targetLoopY, newPixelHex);
-		}
-	}
-
-	/* Also rescale rawpict image dimensions/coordinates according to new dimensions */
 	if (sub_tileset_index == -1) {
 		int i;
 
@@ -3198,14 +3182,14 @@ static XImage *ResizeImage(Display *display, XImage *originalImage,
 		}
 	}
 
-	return(resizedImage);
 }
- #else
 
-
-static XImage *ResizeImage_2mask(Display *display, XImage *originalImage,
-	int tileWidth, int tileHeight, int fontWidth, int fontHeight,
-	XImage **resized_fgmask_return, XImage **resized_bgmask_return, term_data *td, int sub_tileset_index)
+/*
+ * Resize an image. XXX XXX XXX
+ *
+ * It's your responsibility to free returned XImage after usage.
+ */
+static XImage *ResizeImage(Display *display, XImage *originalImage,	int tileWidth, int tileHeight, int fontWidth, int fontHeight)
 {
 	int originalImageWidth, originalImageHeight, resizedWidth, resizedHeight;
 
@@ -3223,16 +3207,6 @@ static XImage *ResizeImage_2mask(Display *display, XImage *originalImage,
 	resizedImage = XCreateImage(
 			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
 			resizedImageData, resizedWidth, resizedHeight, originalImage->bits_per_pixel, 0);
-
-	char *fgmaskImageData = (char *)malloc(resizedWidth * resizedHeight * originalImage->bits_per_pixel / 8);
-	*resized_fgmask_return = XCreateImage(
-			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
-			fgmaskImageData, resizedWidth, resizedHeight, originalImage->bits_per_pixel, 0);
-
-	char *bgmaskImageData = (char *)malloc(resizedWidth * resizedHeight * originalImage->bits_per_pixel / 8);
-	*resized_bgmask_return = XCreateImage(
-			display, DefaultVisual(display, DefaultScreen(display)), originalImage->depth, ZPixmap, 0,
-			bgmaskImageData, resizedWidth, resizedHeight, originalImage->bits_per_pixel, 0);
 
 	float widthRatio = ((float)originalImageWidth) / ((float)resizedWidth);
 	float heightRatio = ((float)originalImageHeight) / ((float)resizedHeight);
@@ -3262,62 +3236,13 @@ static XImage *ResizeImage_2mask(Display *display, XImage *originalImage,
 			int interpolation = 1; // TODO - get from client setting
 
 			// tiles fixed colors
-			unsigned long newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, getNotMaskPixelColor, interpolation);
+			unsigned long newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, interpolation);
 			XPutPixel(resizedImage, targetLoopX, targetLoopY, newPixelHex);
-
-			// fgmask
-			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, getFgmaskPixelColor, interpolation);
-			XPutPixel(*resized_fgmask_return, targetLoopX, targetLoopY, newPixelHex);
-
-			// bgmask
-			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, getBgmaskPixelColor, interpolation);
-			XPutPixel(*resized_bgmask_return, targetLoopX, targetLoopY, newPixelHex);
-		}
-	}
-
-	// TODO - This is a test code, remove it before making PR
-	// save_ximage_as_bmp(resizedImage, "resizedImage.bmp");
-	// save_ximage_as_bmp(*resized_fgmask_return, "resized_fgmask_return.bmp");
-	// save_ximage_as_bmp(*resized_bgmask_return, "resized_bgmask_return.bmp");
-
-	/* Also rescale rawpict image dimensions/coordinates according to new dimensions */
-	if (sub_tileset_index == -1) {
-		int i;
-
-		td->rawpict_scale_wid_org = originalImageWidth;
-		td->rawpict_scale_hgt_org = originalImageHeight;
-		td->rawpict_scale_wid_use = resizedWidth;
-		td->rawpict_scale_hgt_use = resizedHeight;
-
-		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
-			if (!tiles_rawpict_org[i].defined) continue;
-			if (!originalImageWidth || !originalImageHeight) continue;
-			td->tiles_rawpict[i].x = (tiles_rawpict_org[i].x * resizedWidth) / originalImageWidth;
-			td->tiles_rawpict[i].w = (tiles_rawpict_org[i].w * resizedWidth) / originalImageWidth;
-			td->tiles_rawpict[i].y = (tiles_rawpict_org[i].y * resizedHeight) / originalImageHeight;
-			td->tiles_rawpict[i].h = (tiles_rawpict_org[i].h * resizedHeight) / originalImageHeight;
-		}
-	} else {
-		int i;
-
-		td->rawpict_scale_wid_org_sub[sub_tileset_index] = originalImageWidth;
-		td->rawpict_scale_hgt_org_sub[sub_tileset_index] = originalImageHeight;
-		td->rawpict_scale_wid_use_sub[sub_tileset_index] = resizedWidth;
-		td->rawpict_scale_hgt_use_sub[sub_tileset_index] = resizedHeight;
-
-		for (i = 1; i <= MAX_TILES_RAWPICT; i++) {
-			if (!tiles_rawpict_org_sub[sub_tileset_index][i].defined) continue;
-			if (!originalImageWidth || !originalImageHeight) continue;
-			td->tiles_rawpict_sub[sub_tileset_index][i].x = (tiles_rawpict_org_sub[sub_tileset_index][i].x * resizedWidth) / originalImageWidth;
-			td->tiles_rawpict_sub[sub_tileset_index][i].w = (tiles_rawpict_org_sub[sub_tileset_index][i].w * resizedWidth) / originalImageWidth;
-			td->tiles_rawpict_sub[sub_tileset_index][i].y = (tiles_rawpict_org_sub[sub_tileset_index][i].y * resizedHeight) / originalImageHeight;
-			td->tiles_rawpict_sub[sub_tileset_index][i].h = (tiles_rawpict_org_sub[sub_tileset_index][i].h * resizedHeight) / originalImageHeight;
 		}
 	}
 
 	return(resizedImage);
 }
- #endif
 
 /* Rescale rawpict image dimensions/coordinates according to new dimensions */
 void tiles_rawpict_scale(void) {
@@ -3569,32 +3494,22 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 		logprint(format("Termdata graphics init (%d): fwid %d, fhgt %d.\n", index, td->fnt->wid, td->fnt->hgt));
 
 		/* Use resized tiles & masks. */
+		td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+		td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
 #ifdef GRAPHICS_BG_MASK
-		td->tiles = ResizeImage_2mask(Metadpy->dpy, graphics_image,
-		    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-		    &(td->fgmask), &(td->bgmask), td,-1);
-
-		for (i = 0; i < MAX_SUBFONTS; i++) {
-			if (graphics_image_sub[i] == None) continue;
-			td->tiles_sub[i] = ResizeImage_2mask(Metadpy->dpy, graphics_image_sub[i],
-			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-			    &(td->fgmask_sub[i]), &(td->bgmask_sub[i]), td, i);
-		}
-#else
-		td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
-		    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-		    &(td->fgmask),
-		    td, -1);
-
-		for (i = 0; i < MAX_SUBFONTS; i++) {
-			if (graphics_image_sub[i] == None) continue;
-
-			td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i],
-			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-			    &(td->fgmask_sub[i]),
-			    td, i);
-		}
+		td->bgmask = ResizeImage(Metadpy->dpy, graphics_bgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
 #endif
+		rescaleRawpict(graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, -1);
+
+		for (i = 0; i < MAX_SUBFONTS; i++) {
+			if (graphics_image_sub[i] == None) continue;
+			td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+			td->fgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_fgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+#ifdef GRAPHICS_BG_MASK
+			td->bgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_bgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+#endif
+			rescaleRawpict(graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, i);
+		}
 
 		/* Initialize preparation pixmap. */
 		td->tilePreparation = XCreatePixmap(
@@ -3986,8 +3901,6 @@ int init_graphics_x11(void) {
  #endif
 	}
 
-	/* Create masks from loaded data (removed, maybe return to here from resize code) */
-
 	/* Store loaded image data in XImage format */
 	depth = DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
 	visual = DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
@@ -4008,6 +3921,27 @@ int init_graphics_x11(void) {
 		}
 	}
 
+	/* Create masks from loaded image */
+	graphics_fgmask = createMaskFromImage(Metadpy->dpy, graphics_image, width, height, getFgmaskPixelColor);
+#ifdef GRAPHICS_BG_MASK
+	graphics_bgmask = createMaskFromImage(Metadpy->dpy, graphics_image, width, height, getBgmaskPixelColor);
+#endif
+
+	filterImagePixels(graphics_image, getNotMaskPixelColor);
+
+	// for (y = 0; y < height; y++) {
+	// 	for (x = 0; x < width; x++) {
+	// 		Pixell pixel = 0;
+	//
+	// 		color_rgb image_pixel;
+	//
+	// 		image_pixel = xGetPixelRgb(graphics_image, x, y);
+	//
+	// 		pixel = rgbToHex(getNotMaskPixelColor(image_pixel));
+	//
+	// 		XPutPixel(graphics_image, x, y, pixel);
+	// 	}
+	// }
 
 	/* --- Load the (partial) sub-tilesets --- */
 
@@ -4077,6 +4011,13 @@ int init_graphics_x11(void) {
 			}
 		}
 	}
+    	/* Create masks from loaded image */
+	graphics_fgmask_sub[i] = createMaskFromImage(Metadpy->dpy, graphics_image_sub[i], width, height, getFgmaskPixelColor);
+#ifdef GRAPHICS_BG_MASK
+	graphics_bgmask_sub[i] = createMaskFromImage(Metadpy->dpy, graphics_image_sub[i], width, height, getBgmaskPixelColor);
+#endif
+	filterImagePixels(graphics_image_sub[i], getNotMaskPixelColor);
+
     }
 
 
@@ -4353,31 +4294,23 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 			free_graphics(td);
 
 			/* If window was resized, grapics tiles need to be resized too. */
- #ifdef GRAPHICS_BG_MASK
-			td->tiles = ResizeImage_2mask(Metadpy->dpy, graphics_image,
-			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-			     &(td->fgmask), &(td->bgmask), td,-1);
+			td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+			td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+#ifdef GRAPHICS_BG_MASK
+			td->bgmask = ResizeImage(Metadpy->dpy, graphics_bgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+#endif
+			rescaleRawpict(graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, -1);
 
 			for (i = 0; i < MAX_SUBFONTS; i++) {
 				if (graphics_image_sub[i] == None) continue;
+				td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+				td->fgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_fgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+#ifdef GRAPHICS_BG_MASK
+				td->bgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_bgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+#endif
+				rescaleRawpict(graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, i);
+			}
 
-				td->tiles_sub[i] = ResizeImage_2mask(Metadpy->dpy, graphics_image_sub[i],
-				    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-				     &(td->fgmask_sub[i]), &(td->bgmask_sub[i]), td, i);
-			}
- #else
-			td->tiles = ResizeImage(Metadpy->dpy, graphics_image,
-			    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-			    &(td->fgmask),
-			    td, -1);
-			for (i = 0; i < MAX_SUBFONTS; i++) {
-				if (graphics_image_sub[i] == None) continue;
-				td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i],
-				    graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt,
-				    &(td->fgmask_sub[i]),
-				    td, i);
-			}
- #endif
 
 			/* Reinitialize preparation pixmap with new size. */
 			td->tilePreparation = XCreatePixmap(

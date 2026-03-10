@@ -1,9 +1,6 @@
 #ifndef SRC_GRAPHICS_COMMON_H
 #define SRC_GRAPHICS_COMMON_H
 
-#include <X11/Xlib.h>
-#include <X11/Xutil.h>
-
 #define INTERPOLATION_NEAR 0
 #define INTERPOLATION_LINEAR 1
 #define INTERPOLATION_LANCZOS 2
@@ -41,11 +38,6 @@ typedef struct
     linear_sample bottom;
 } bilinear_sample;
 
-typedef struct
-{
-    double data[LANCZOS_SAMPLE_LENGTH][LANCZOS_SAMPLE_LENGTH];
-} lanczos_sample_2d;
-
 extern color_rgb blackColor;
 extern color_rgb transparancyColor;
 extern color_rgb bgColor;
@@ -75,34 +67,5 @@ typedef struct {
     unsigned short reserved2;    // 0
     unsigned int offset_data;    // Смещение данных пикселей
 } BMPFileHeader;
-
-// Заголовок информации (40 байт, BITMAPINFOHEADER)
-typedef struct {
-    unsigned int header_size;    // Размер этого заголовка (40)
-    int width;
-    int height;
-    unsigned short planes;       // 1
-    unsigned short bits_per_pixel; // 24 для True Color
-    unsigned int compression;    // 0 (BI_RGB, без сжатия)
-    unsigned int image_size;     // Размер данных пикселей
-    int x_pixels_per_meter;      // 0
-    int y_pixels_per_meter;      // 0
-    unsigned int colors_used;    // 0
-    unsigned int important_colors; // 0
-} BMPInfoHeader;
-#pragma pack(pop) // Восстанавливаем стандартное выравнивание
-
-/**
- * @brief Сохраняет XImage в файл формата BMP.
- *
- * Этот пример оптимизирован для 24-битных (True Color) изображений.
- * Если XImage имеет другую глубину (например, 8-битную),
- * требуется сложная логика для преобразования цветов (палитры).
- *
- * @param image Указатель на XImage.
- * @param filename Имя файла BMP для сохранения.
- * @return 0 при успехе, -1 при ошибке.
- */
-int save_ximage_as_bmp(XImage *image, const char *filename);  // TODO remove
 
 #endif //SRC_GRAPHICS_COMMON_H
