@@ -110,7 +110,11 @@ graphic_tiles9		0
 ##   Set to '0' to keep the the cache enabled, 1 to disable the cache.
 disableGfxCache		0
 
-
+## - What algorithm to use for resizing tileset to font size
+##   0 - nearest
+##   1 - linear (default)
+##   2 - lanczos
+graphic_resize_type 0
 
 ## Audio settings
 

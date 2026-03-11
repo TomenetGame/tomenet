@@ -1220,6 +1220,10 @@ struct tile_cache_entry {
  #endif
 };
 #endif
+#ifdef USE_GRAPHICS
+extern int gfx_resize_type;
+int gfx_resize_type = 1;
+#endif
 
 
 /*
@@ -3120,11 +3124,11 @@ Pixell xInterpolationNear(XImage *originalImage, float originalX, float original
 	return new_pixel;
 }
 
-Pixell XPixelInterpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries, int interpolation_type)
+Pixell XPixelInterpolation(XImage *originalImage, float originalX, float originalY, rectangle tile_boundaries)
 {
 	Pixell new_pixel = 0;
 
-	switch (interpolation_type)
+	switch (gfx_resize_type)
 	{
 		case INTERPOLATION_LINEAR:
 			new_pixel = xInterpolationBilinear(originalImage, originalX, originalY, tile_boundaries);
@@ -3233,10 +3237,8 @@ static XImage *ResizeImage(Display *display, XImage *originalImage,	int tileWidt
 			tile_boundaries.bottom_right.x = originalTileEndX;
 			tile_boundaries.bottom_right.y = originalTileEndY;
 
-			int interpolation = 1; // TODO - get from client setting
-
 			// tiles fixed colors
-			unsigned long newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries, interpolation);
+			unsigned long newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries);
 			XPutPixel(resizedImage, targetLoopX, targetLoopY, newPixelHex);
 		}
 	}
