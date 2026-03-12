@@ -4236,6 +4236,71 @@ void change_font(int s) {
 		break;
 	}
 }
+
+static void resize_term_gfx(int term_idx)
+{
+	term_data *td = term_idx_to_term_data(term_idx);
+	int i;
+
+	if (! use_graphics)
+	{
+		return;
+	}
+
+	/* Free old tiles & masks */
+	free_graphics(td);
+
+	/* If window was resized, grapics tiles need to be resized too. */
+	td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+	td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+#ifdef GRAPHICS_BG_MASK
+	td->bgmask = ResizeImage(Metadpy->dpy, graphics_bgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+#endif
+	rescaleRawpict(graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, -1);
+
+	for (i = 0; i < MAX_SUBFONTS; i++) {
+		if (graphics_image_sub[i] == None) continue;
+		td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+		td->fgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_fgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+#ifdef GRAPHICS_BG_MASK
+		td->bgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_bgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+#endif
+		rescaleRawpict(graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, i);
+	}
+
+	/* Reinitialize preparation pixmap with new size. */
+	td->tilePreparation = XCreatePixmap(
+			Metadpy->dpy, Metadpy->root,
+			td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+#ifdef GRAPHICS_BG_MASK
+	td->tilePreparation2 = XCreatePixmap(
+			Metadpy->dpy, Metadpy->root,
+			td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+#endif
+
+#ifdef TILE_CACHE_SIZE
+	if (!disable_tile_cache)
+	for (i = 0; i < TILE_CACHE_SIZE; i++) {
+		td->tile_cache[i].tilePreparation = XCreatePixmap(
+			Metadpy->dpy, Metadpy->root,
+			td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+#ifdef GRAPHICS_BG_MASK
+		td->tile_cache[i].tilePreparation2 = XCreatePixmap(
+			Metadpy->dpy, Metadpy->root,
+			td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+#endif
+	}
+#endif
+
+	if (td->tiles == NULL || td->tilePreparation == None
+#ifdef GRAPHICS_BG_MASK
+	    || td->tilePreparation2 == None
+#endif
+	    ) {
+		quit_fmt("Couldn't prepare images after font resize in terminal %d\n", term_idx);
+	}
+}
+
 static void term_force_font(int term_idx, cptr fnt_name) {
 	term_data *td = term_idx_to_term_data(term_idx);
 	int cols, rows, wid_outer, hgt_outer;
@@ -4289,63 +4354,7 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 
 #ifdef USE_GRAPHICS
 		/* Resize graphic tiles if needed too. */
-		if (use_graphics) {
-			int i;
-
-			/* Free old tiles & masks */
-			free_graphics(td);
-
-			/* If window was resized, grapics tiles need to be resized too. */
-			td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-			td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-#ifdef GRAPHICS_BG_MASK
-			td->bgmask = ResizeImage(Metadpy->dpy, graphics_bgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-#endif
-			rescaleRawpict(graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, -1);
-
-			for (i = 0; i < MAX_SUBFONTS; i++) {
-				if (graphics_image_sub[i] == None) continue;
-				td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-				td->fgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_fgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-#ifdef GRAPHICS_BG_MASK
-				td->bgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_bgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-#endif
-				rescaleRawpict(graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, i);
-			}
-
-
-			/* Reinitialize preparation pixmap with new size. */
-			td->tilePreparation = XCreatePixmap(
-					Metadpy->dpy, Metadpy->root,
-					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
- #ifdef GRAPHICS_BG_MASK
-			td->tilePreparation2 = XCreatePixmap(
-					Metadpy->dpy, Metadpy->root,
-					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
- #endif
-
- #ifdef TILE_CACHE_SIZE
-			if (!disable_tile_cache)
-			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
-				td->tile_cache[i].tilePreparation = XCreatePixmap(
-					Metadpy->dpy, Metadpy->root,
-					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
-  #ifdef GRAPHICS_BG_MASK
-				td->tile_cache[i].tilePreparation2 = XCreatePixmap(
-					Metadpy->dpy, Metadpy->root,
-					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
-  #endif
-			}
- #endif
-
-			if (td->tiles == NULL || td->tilePreparation == None
- #ifdef GRAPHICS_BG_MASK
-			    || td->tilePreparation2 == None
- #endif
-			    ) {
-				quit_fmt("Couldn't prepare images after font resize in terminal %d\n", term_idx);
-			}
-		}
+		resize_term_gfx(term_idx);
 #endif
 	}
 	XFlush(Metadpy->dpy);

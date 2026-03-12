@@ -8,6 +8,12 @@ color_rgb bgColor = {62, 61, 0};
 color_rgb fgColor = {252, 0, 251};
 // color_rgb fgColor = {251, 0, 252}; // hm...
 
+interpolation_description interpolation_list[INTERPOLATION_TYPES_COUNT] = {
+    {"Nearest", "Best perfomance, worst look"},
+    {"Linear", "Medium perfomance, better look"},
+    {"Lanczos", "Medium perfomance, better look"},
+};
+
 float linear_interpolation(float ratio, linear_sample sample);
 float bilinear_interpolation(float ratio_x, float ratio_y, bilinear_sample bilinear_sample);
 bilinear_sample make_bilinear_sample(float topLeft, float topRight, float bottomLeft, float bottomRight);

@@ -1,6 +1,8 @@
 #ifndef SRC_GRAPHICS_COMMON_H
 #define SRC_GRAPHICS_COMMON_H
 
+#define INTERPOLATION_TYPES_COUNT 3
+
 #define INTERPOLATION_NEAR 0
 #define INTERPOLATION_LINEAR 1
 #define INTERPOLATION_LANCZOS 2
@@ -37,6 +39,13 @@ typedef struct
     linear_sample top;
     linear_sample bottom;
 } bilinear_sample;
+
+typedef struct {
+    char *name;
+    char *description;
+} interpolation_description;
+
+extern interpolation_description interpolation_list[INTERPOLATION_TYPES_COUNT];
 
 extern color_rgb blackColor;
 extern color_rgb transparancyColor;
