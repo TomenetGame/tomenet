@@ -66,15 +66,4 @@ color_rgb pixelBilinearInterpolation(float fractionOfX, float fractionOfY, color
 
 double lanczosKernel(double x, int lanczos_a);
 
-// --- Структуры для заголовков BMP-файла ---
-// Заголовок файла (14 байт)
-#pragma pack(push, 1) // Устанавливаем выравнивание в 1 байт
-typedef struct {
-    unsigned short file_type;    // 'BM' (0x4D42)
-    unsigned int file_size;      // Размер всего файла
-    unsigned short reserved1;    // 0
-    unsigned short reserved2;    // 0
-    unsigned int offset_data;    // Смещение данных пикселей
-} BMPFileHeader;
-
 #endif //SRC_GRAPHICS_COMMON_H
