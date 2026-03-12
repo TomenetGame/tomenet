@@ -3931,20 +3931,6 @@ int init_graphics_x11(void) {
 
 	filterImagePixels(graphics_image, getNotMaskPixelColor);
 
-	// for (y = 0; y < height; y++) {
-	// 	for (x = 0; x < width; x++) {
-	// 		Pixell pixel = 0;
-	//
-	// 		color_rgb image_pixel;
-	//
-	// 		image_pixel = xGetPixelRgb(graphics_image, x, y);
-	//
-	// 		pixel = rgbToHex(getNotMaskPixelColor(image_pixel));
-	//
-	// 		XPutPixel(graphics_image, x, y, pixel);
-	// 	}
-	// }
-
 	/* --- Load the (partial) sub-tilesets --- */
 
     for (i = 0; i < MAX_SUBFONTS; i++) {
@@ -3992,8 +3978,6 @@ int init_graphics_x11(void) {
 		continue;
 	}
 
-    /* Create masks from loaded data (removed, maybe return to here from resize code) */
-
 	/* Store loaded image data in XImage format */
 	depth = DefaultDepth(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
 	visual = DefaultVisual(Metadpy->dpy, DefaultScreen(Metadpy->dpy));
@@ -4013,7 +3997,7 @@ int init_graphics_x11(void) {
 			}
 		}
 	}
-    	/* Create masks from loaded image */
+	/* Create masks from loaded image */
 	graphics_fgmask_sub[i] = createMaskFromImage(Metadpy->dpy, graphics_image_sub[i], width, height, getFgmaskPixelColor);
 #ifdef GRAPHICS_BG_MASK
 	graphics_bgmask_sub[i] = createMaskFromImage(Metadpy->dpy, graphics_image_sub[i], width, height, getBgmaskPixelColor);

@@ -114,7 +114,7 @@ disableGfxCache		0
 ##   0 - nearest
 ##   1 - linear (default)
 ##   2 - lanczos
-graphic_resize_type 0
+graphic_resize_type 1
 
 ## Audio settings
 
