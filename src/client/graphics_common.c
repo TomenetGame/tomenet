@@ -8,6 +8,18 @@ color_rgb bgColor = {62, 61, 0};
 color_rgb fgColor = {252, 0, 251};
 // color_rgb fgColor = {251, 0, 252}; // hm...
 
+typedef struct
+{
+    float left;
+    float right;
+} linear_sample;
+
+typedef struct
+{
+    linear_sample top;
+    linear_sample bottom;
+} bilinear_sample;
+
 interpolation_description interpolation_list[INTERPOLATION_TYPES_COUNT] = {
     {"Nearest", "Best perfomance, worst look"},
     {"Linear", "Medium perfomance, better look"},
@@ -82,7 +94,6 @@ color_rgb getBgmaskPixelColor(color_rgb pixel_color)
     return blackColor;
 }
 
-
 color_rgb pixelBilinearInterpolation(float fractionOfX, float fractionOfY, color_rgb p11, color_rgb p12, color_rgb p21, color_rgb p22)
 {
     color_rgb new_color;
@@ -97,18 +108,6 @@ color_rgb pixelBilinearInterpolation(float fractionOfX, float fractionOfY, color
     new_color.red = (int) bilinear_interpolation(fractionOfX, fractionOfY, red_sample);
 
     return new_color;
-}
-
-double lanczosKernel(double x, int lanczos_a) {
-    x = fabs(x);
-    if (x == 0.0) {
-        return 1.0;
-    } else if (fabs(x) < lanczos_a) {
-        double pi_x = M_PI * x;
-        return lanczos_a * sin(pi_x) * sin(pi_x / lanczos_a) / (pi_x * pi_x);
-    } else {
-        return 0.0;
-    }
 }
 
 float linear_interpolation(float ratio, linear_sample sample)
@@ -141,4 +140,16 @@ bilinear_sample make_bilinear_sample(float topLeft, float topRight, float bottom
     sample.bottom = bottom_sample;
 
     return sample;
+}
+
+double lanczosKernel(double x, int lanczos_a) {
+    x = fabs(x);
+    if (x == 0.0) {
+        return 1.0;
+    } else if (fabs(x) < lanczos_a) {
+        double pi_x = M_PI * x;
+        return lanczos_a * sin(pi_x) * sin(pi_x / lanczos_a) / (pi_x * pi_x);
+    } else {
+        return 0.0;
+    }
 }
