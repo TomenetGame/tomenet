@@ -2266,7 +2266,7 @@ color_rgb xGetPixelRgb(XImage *image, int x, int y) {
 }
 
 /* Combine non-mask tile pixels with foreground mask, considering that fgmask is resized and "blurry" from interpolation */
-XImage * prepareTile(XImage *tiles, XImage *fgmask, s16b font_width, s16b font_height, char32_t c)
+XImage *prepareTile(XImage *tiles, XImage *fgmask, s16b font_width, s16b font_height, char32_t c)
 {
 	int tileX, tileY;
 	int topLeftX = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * font_width;
@@ -2328,16 +2328,16 @@ XImage *preapreBlackTile(XImage *tiles, s16b font_width, s16b font_height)
 void combineFrontTileWithBackTile(XImage **prepared_front_tile, XImage *front_bgmask, XImage *prepared_back_tile, s16b font_width, s16b font_height, char32_t c)
 {
 	int i, j;
-	int x1 = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * font_width;
-	int y1 = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * font_height;
+	int tile_top_left_x = ((c - MAX_FONT_CHAR - 1) % graphics_image_tpr) * font_width;
+	int tile_top_left_y = ((c - MAX_FONT_CHAR - 1) / graphics_image_tpr) * font_height;
 
 	for (i = 0; i < font_width; i++)
 	{
 		for (j = 0; j < font_height; j++)
 		{
 			color_rgb backPixel = xGetPixelRgb(prepared_back_tile, i, j);
-			// color_rgb frontPixel = x_get_pixel_rgb(*prepared_front_tile, i, j); // dont needed right now as we working with front tile
-			color_rgb maskPixel = xGetPixelRgb(front_bgmask, x1 + i, y1 + j);
+			// color_rgb frontPixel = xGetPixelRgb(*prepared_front_tile, i, j); // dont needed right now as we working with front tile
+			color_rgb maskPixel = xGetPixelRgb(front_bgmask, tile_top_left_x + i, tile_top_left_y + j);
 
 			// If the color of the mask pixel matches the color of the mask, then replace the pixel in the fron tile with the pixel from the bottom tile
 			if (isRGBColorsEqual(maskPixel, transparancyColor))
@@ -2486,14 +2486,14 @@ static errr Term_pict_x11(int x, int y, byte a, char32_t c) {
 	/* Success */
 	return(0);
 }
-
+ #ifdef GRAPHICS_BG_MASK
 static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, char32_t c_back) {
-#if 0 /* use fallback hook until 2mask routines are complete? */
+  #if 0 /* use fallback hook until 2mask routines are complete? */
 	return(Term_pict_x11(x, y, a, c));
-#else
+  #else
 	term_data *td;
 	Pixmap tilePreparation2;
-#ifdef TILE_CACHE_SIZE
+   #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
 	int i, j, hole = -1;
 #endif
@@ -2503,11 +2503,11 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	/* Avoid visual glitches while not in 2mask mode */
 	if (use_graphics != UG_2MASK) {
 		a_back = TERM_DARK;
-#if 0
+   #if 0
 		c_back = 32; //space! NOT zero!
-#else
+   #else
 		c_back = Client_setup.f_char[FEAT_SOLID]; //'graphical space' for erasure
-#endif
+   #endif
 	}
 
 	/* SPACE = erase background, aka black background. This is for places where we have no bg-info, such as client-lore in knowledge menu. */
@@ -2524,19 +2524,19 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	a_back = term2attr(a_back);
 
 	/* Draw the tile in Xor. */
-#ifndef EXTENDED_COLOURS_PALANIM
-#ifndef EXTENDED_BG_COLOURS
+   #ifndef EXTENDED_COLOURS_PALANIM
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
-#else
+    #else
 	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
-#endif
-#else
-#ifndef EXTENDED_BG_COLOURS
+    #endif
+   #else
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
-#else
+    #else
 	Infoclr_set(clr[a & 0x3F]);
-#endif
-#endif
+    #endif
+   #endif
 
 	if (Infoclr->fg == Infoclr->bg) {
 		/* Foreground color is the same as background color. If this was text, the tile would be rendered as solid block of color.
@@ -2549,62 +2549,62 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	x *= Infofnt->wid;
 	y *= Infofnt->hgt;
 
-#ifdef TILE_CACHE_SIZE
-	if (!disable_tile_cache) {
-		entry = NULL;
-		for (i = 0; i < TILE_CACHE_SIZE; i++) {
-			entry = &td->tile_cache[i];
-			if (!entry->is_valid) hole = i;
-			else if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back
-#ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
+   #ifdef TILE_CACHE_SIZE
+    if (!disable_tile_cache) {
+	entry = NULL;
+	for (i = 0; i < TILE_CACHE_SIZE; i++) {
+		entry = &td->tile_cache[i];
+		if (!entry->is_valid) hole = i;
+		else if (entry->c == c && entry->a == a && entry->c_back == c_back && entry->a_back == a_back
+    #ifdef TILE_CACHE_FGBG /* Instead of this, invalidate_graphics_cache_...() will specifically invalidate affected entries */
 		    /* Extra: Verify that palette is identical - allows palette_animation to work w/o invalidating the whole cache each time: */
 		    && Infoclr->fg == entry->fg && Infoclr->bg == entry->bg
-#endif
-			) {
-				/* Copy cached tile to window. */
-				XCopyArea(Metadpy->dpy, entry->tilePreparation2, td->inner->win, Infoclr->gc, // NOTE that tilePreparation2 holds the final tile, NOT tilePreparation!
-				          0, 0,
-				          td->fnt->wid, td->fnt->hgt,
-				          x, y);
+    #endif
+		    ) {
+			/* Copy cached tile to window. */
+			XCopyArea(Metadpy->dpy, entry->tilePreparation2, td->inner->win, Infoclr->gc, // NOTE that tilePreparation2 holds the final tile, NOT tilePreparation!
+				0, 0,
+				td->fnt->wid, td->fnt->hgt,
+				x, y);
 
-				/* Success */
-				return(0);
-			}
+			/* Success */
+			return(0);
 		}
+	}
 
-		// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
-		if (hole != -1) {
-#ifdef TILE_CACHE_LOG
+	// Replace invalid cache entries right away in-place, so we don't kick other still valid entries out via FIFO'ing
+	if (hole != -1) {
+    #ifdef TILE_CACHE_LOG
 		c_msg_format("Tile cache pos (hole): %d / %d", hole, TILE_CACHE_SIZE);
-#endif
-			entry = &td->tile_cache[hole];
-		} else {
-#ifdef TILE_CACHE_LOG
+    #endif
+		entry = &td->tile_cache[hole];
+	} else {
+    #ifdef TILE_CACHE_LOG
 		c_msg_format("Tile cache pos (FIFO): %d / %d", td->cache_position, TILE_CACHE_SIZE);
-#endif
-			// Replace valid cache entries in FIFO order
-			entry = &td->tile_cache[td->cache_position++];
-			if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
-		}
+    #endif
+		// Replace valid cache entries in FIFO order
+		entry = &td->tile_cache[td->cache_position++];
+		if (td->cache_position >= TILE_CACHE_SIZE) td->cache_position = 0;
+	}
 
-		tilePreparation2 = entry->tilePreparation2;
-		entry->c = c;
-		entry->a = a;
-#ifdef GRAPHICS_BG_MASK
-		entry->c_back = c_back;
-		entry->a_back = a_back;
-#endif
-		entry->is_valid = TRUE;
-#ifdef TILE_CACHE_FGBG
+	tilePreparation2 = entry->tilePreparation2;
+	entry->c = c;
+	entry->a = a;
+    #ifdef GRAPHICS_BG_MASK
+	entry->c_back = c_back;
+	entry->a_back = a_back;
+    #endif
+	entry->is_valid = TRUE;
+    #ifdef TILE_CACHE_FGBG
 	entry->fg = Infoclr->fg;
 	entry->bg = Infoclr->bg;
-#endif
-	} else {
-		tilePreparation2 = td->tilePreparation2;
-	}
-#else /* (TILE_CACHE_SIZE) No caching: */
+    #endif
+    } else {
 	tilePreparation2 = td->tilePreparation2;
-#endif
+    }
+   #else /* (TILE_CACHE_SIZE) No caching: */
+	tilePreparation2 = td->tilePreparation2;
+   #endif
 
 	/* Start with background tile to preparation pixmap,
 	   so the background mask can be reverse AND'ed (draw bg where there's 0x000000 in the foreground)
@@ -2612,19 +2612,19 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	   After that, the foreground can be OR'd onto the image. - C. Blue */
 
 	/* Switch fgmask'ing colour to background-tile colour */
-#ifndef EXTENDED_COLOURS_PALANIM
-#ifndef EXTENDED_BG_COLOURS
+   #ifndef EXTENDED_COLOURS_PALANIM
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a_back & 0x0F]);
-#else
+    #else
 	Infoclr_set(clr[a_back & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
-#endif
-#else
-#ifndef EXTENDED_BG_COLOURS
+    #endif
+   #else
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a_back & 0x1F]);
-#else
+    #else
 	Infoclr_set(clr[a_back & 0x3F]);
-#endif
-#endif
+    #endif
+   #endif
 
 	/* Choose between main tileset or a (partial) subset */
 	if (c_subtileset[c] == -1) {
@@ -2660,19 +2660,19 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	}
 
 	/* Revert fgmask'ing colour to foreground-tile colour */
-#ifndef EXTENDED_COLOURS_PALANIM
-#ifndef EXTENDED_BG_COLOURS
+   #ifndef EXTENDED_COLOURS_PALANIM
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x0F]);
-#else
+    #else
 	Infoclr_set(clr[a & 0x1F]); //undefined case actually, we don't want to have a hole in the colour array (0..15 and then 32..32+x) -_-
-#endif
-#else
-#ifndef EXTENDED_BG_COLOURS
+    #endif
+   #else
+    #ifndef EXTENDED_BG_COLOURS
 	Infoclr_set(clr[a & 0x1F]);
-#else
+    #else
 	Infoclr_set(clr[a & 0x3F]);
-#endif
-#endif
+    #endif
+   #endif
 
 	/* Prepare foreground tile to preparation pixmap. */
 	XImage *preparedFrontTile = prepareTile(tiles, fgmask, td->fnt->wid, td->fnt->hgt, c);
@@ -2690,16 +2690,15 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 
 	/* Copy prepared combo-tile to window. */
 	XCopyArea(Metadpy->dpy, tilePreparation2, td->inner->win, Infoclr->gc,
-	          0, 0,
-	          td->fnt->wid, td->fnt->hgt,
-	          x, y);
+		  0, 0,
+		  td->fnt->wid, td->fnt->hgt,
+		  x, y);
 
 	/* Success */
 	return(0);
-#endif
+  #endif
 }
-#ifdef GRAPHICS_BG_MASK
-#endif /* GRAPHICS_BG_MASK */
+ #endif /* GRAPHICS_BG_MASK */
  #ifdef TILE_CACHE_SIZE
 /* c_idx: -1 = invalidate all; otherwise only tiles that use this colour are invalidated. */
 static void invalidate_graphics_cache_x11(term_data *td, int c_idx) {
@@ -4221,10 +4220,12 @@ void change_font(int s) {
 	}
 }
 
-static void resize_term_gfx(int term_idx)
+void resize_term_gfx(int term_idx)
 {
 	term_data *td = term_idx_to_term_data(term_idx);
 	int i;
+
+	if (!term_get_visibility(term_idx)) return;
 
 	if (! use_graphics)
 	{
