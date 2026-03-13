@@ -403,9 +403,6 @@ struct tile_cache_entry {
 };
 #endif
 
-#ifdef USE_GRAPHICS
-int gfx_resize_type = 0; //right now unused in Win, just added because it's external in generic code
-#endif
 
 /*
  * Forward declare

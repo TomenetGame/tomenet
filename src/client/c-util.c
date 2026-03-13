@@ -3,7 +3,10 @@
 /* Client-side utility stuff */
 
 #include "angband.h"
+
+#ifdef USE_X11
 #include "graphics_common.h" // is it OK here?
+#endif
 
 #include <sys/time.h>
 #ifndef WINDOWS
@@ -11997,8 +12000,10 @@ static void do_cmd_options_tilesets(void) {
    #endif
 		l++;
 
+#ifdef USE_X11
 		Term_putstr(1, l++, -1, TERM_WHITE, format("Resize type is: '\377y%s\377w' (%s) ('\377yr\377w' to cycle)" , interpolation_list[gfx_resize_type].name, interpolation_list[gfx_resize_type].description));
 		l++;
+#endif
 
 		/* Tilesets are atm a global setting, not depending on terminal window */
 		l2 = l;
@@ -12113,6 +12118,7 @@ static void do_cmd_options_tilesets(void) {
    #endif
 			} else c_msg_print("\377yGraphical tileset usage \377sdisabled\377-. Requires client restart (use CTRL+Q).");
 			break;
+#ifdef USE_X11
 		case 'r':
 			gfx_resize_type = (gfx_resize_type + 1) % INTERPOLATION_TYPES_COUNT;
 
@@ -12121,6 +12127,7 @@ static void do_cmd_options_tilesets(void) {
 			}
 
 			break;
+#endif
 		case '=':
 		case '+':
 			/* find out which of the tilesets in lib/xtra/graphics we're currently using */

@@ -366,7 +366,9 @@ extern bool disable_numlock;
 extern bool use_logfont, use_logfont_ini;
 #endif
 extern byte use_graphics, use_graphics_new, use_graphics_err;
+#ifdef USE_X11
 extern int gfx_resize_type;
+#endif
 extern int override_graphics;
 extern char use_graphics_errstr[MAX_CHARS_WIDE];
 #ifdef USE_GRAPHICS
@@ -378,7 +380,9 @@ extern byte kidx_po_rain_attr, kidx_po_rain_e1_attr, kidx_po_rain_e2_attr, kidx_
 extern rawpict_tile tiles_rawpict_org[MAX_TILES_RAWPICT + 1];
 extern rawpict_tile tiles_rawpict_org_sub[MAX_SUBFONTS][MAX_TILES_RAWPICT + 1];
 extern signed char tiles_rawpict_subtileset[MAX_TILES_RAWPICT + 1];
+#ifdef USE_X11
 extern void resize_term_gfx(int term_idx);
+#endif
 #endif
 extern bool use_sound, use_sound_org;
 extern bool quiet_mode;

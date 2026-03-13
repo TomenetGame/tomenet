@@ -10,7 +10,9 @@
 
 #include "angband.h"
 extern bool disable_tile_cache;
+#ifdef USE_X11
 extern int gfx_resize_type;
+#endif
 
 char mangrc_filename[100] = "";
 bool convert_rc = FALSE;
@@ -269,6 +271,7 @@ retry_mangrc:
 				if (p) use_graphics_new = use_graphics = (atoi(p) != 0);
  #endif
 			}
+#ifdef USE_X11
 			if (!strncmp(buf, "graphic_resize_type", 19)) {
 				char *p;
 
@@ -276,7 +279,7 @@ retry_mangrc:
 				p = strtok(NULL, "\t\n");
 				if (p) gfx_resize_type = atoi(p);
 			}
-
+#endif
 			if (!strncmp(buf, "graphic_tiles", 13) && !(buf[13] >= '0' && buf[13] <= '9')) {
 				char *p;
 
@@ -754,10 +757,12 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 								/* Specialty: Write all sub-tilesets lines right after this one (and ignore/discard the existing ones) */
 								for (i = 0; i < MAX_SUBFONTS; i++)
 									fputs(format("graphic_tiles%d\t\t%d\n", i, graphic_subtiles[i] ? 1 : 0), config2);
+#ifdef USE_X11
 							} else if (!strncmp(buf, "graphic_resize_type", 19))
 							{
 								strcpy(buf, "graphic_resize_type\t");
 								strcat(buf, format("%d\n", gfx_resize_type));
+#endif
 							} else if (!strncmp(buf, "graphic_tiles", 13)) continue; //graphic_subtiles[] -> ignore/discard
  #endif
 						}
@@ -953,7 +958,9 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			for (i = 0; i < MAX_SUBFONTS; i++)
 				fputs(format("graphic_tiles%d\t\t%d\n", i, graphic_subtiles[i] ? 1 : 0), config2);
 			fputs("disableGfxCache\t\t0\n", config2);
+#ifdef USE_X11
 			fputs(format("graphic_resize_type\t%d\n", gfx_resize_type), config2);
+#endif
 #endif
 			fputs("\n", config2);
 //#ifdef USE_SOUND
@@ -1215,7 +1222,9 @@ int main(int argc, char **argv) {
 			cfg_game_port = 18348;
 			cfg_client_fps = 100;
 			use_graphics_new = use_graphics = disable_numlock = 0;
+#ifdef USE_X11
 			gfx_resize_type = 0;
+#endif
 			lighterdarkblue = FALSE;
 			for (j = 0; j < BASE_PALETTE_SIZE; j++) client_color_map[j] = client_color_map_org[j];
 			use_sound = TRUE;
