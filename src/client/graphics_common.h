@@ -8,7 +8,6 @@
 #define INTERPOLATION_LANCZOS 2
 
 #define LANCZOS_A 1
-#define LANCZOS_SAMPLE_LENGTH (LANCZOS_A * 2 + 1)
 
 typedef struct coordinates coordinates;
 struct coordinates {
@@ -27,18 +26,6 @@ typedef struct
     coordinates top_left;
     coordinates bottom_right;
 } rectangle;
-
-typedef struct
-{
-    float left;
-    float right;
-} linear_sample;
-
-typedef struct
-{
-    linear_sample top;
-    linear_sample bottom;
-} bilinear_sample;
 
 typedef struct {
     char *name;
