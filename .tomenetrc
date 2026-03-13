@@ -105,6 +105,7 @@ GraphicSubTiles9	1
 disableGfxCache 0
 
 ## - What algorithm to use for resizing tileset to font size
+## - Only for X11 right now
 ##   0 - nearest
 ##   1 - linear (default)
 ##   2 - lanczos
