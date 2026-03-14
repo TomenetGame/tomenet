@@ -3622,10 +3622,18 @@ bool twall(int Ind, struct worldpos *wpos, int y, int x, u16b feat) {
 /* Just terraform a feat and potentially produce treasure.
  * Ind: Can be 0.
  * quiet_full: No messages/sound effects, for detonation-based excavation!
+ * quiet_borer: Player uses RF2_KILL_WALL form which destroys ANY kind of non-permanent obstacle (aka wall).
  * */
 void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, int wood_power, int fibre_power, bool quiet_borer, bool quiet_full, bool *no_quake, bool *more, bool *door) {
 	player_type *p_ptr = Ind ? Players[Ind] : NULL;
-	object_type *o_ptr = &p_ptr->inventory[INVEN_TOOL];
+
+	/* just for warning_tunnel4, not for actual object processing ^^ */
+	object_type *o_ptr =
+#ifdef EQUIPPABLE_DIGGERS
+	    (p_ptr->inventory[INVEN_WIELD].tval == TV_DIGGING) ? &p_ptr->inventory[INVEN_WIELD] :
+#endif
+	    ((p_ptr->inventory[INVEN_TOOL].tval == TV_DIGGING) ? &p_ptr->inventory[INVEN_TOOL] : NULL);
+
 #ifdef ENABLE_DEMOLITIONIST
  #ifdef DEMOLITIONIST_IDDC_ONLY
 	bool in_iddc = in_irondeepdive(wpos);
@@ -3636,7 +3644,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 	int cfeat;
 	u32b cinfo, cinfo2;
 	int skill_dig = (!Ind || quiet_borer) ? 0 : get_skill(p_ptr, SKILL_DIG), mining = skill_dig;
-	int dual_power = wood_power > fibre_power ? wood_power : fibre_power;
+	int dual_power = wood_power > fibre_power ? wood_power : fibre_power; //for FEAT_BUSH specifically
 	int dug_feat = FEAT_NONE, tval = 0, sval = 0, special_k_idx = 0; //chest / golem base material / rune
 	struct dun_level *l_ptr = getfloor(wpos);
 
@@ -3860,6 +3868,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		*no_quake = TRUE;
 
 		/* mow down the vegetation */
+		if (o_ptr) power >>= 2;
 		if (((power > wood_power ? power : wood_power) > rand_int(400)) && twall(Ind, wpos, y, x, FEAT_GRASS)) { /* 400 */
 			/* Message */
 			if (Ind && !quiet_full && !quiet_borer) {
@@ -3943,6 +3952,10 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		*no_quake = TRUE;
 
 		/* mow down the vegetation */
+		if (o_ptr) {
+			if (o_ptr->sval == SV_SHOVEL || o_ptr->sval == SV_MATTOCK) power >>= 1;
+			else power >>= 2;
+		}
 		if (((power > dual_power ? power : dual_power) > rand_int(300)) && twall(Ind, wpos, y, x, FEAT_GRASS)) { /* 400 */
 			/* Message */
 			if (Ind && !quiet_full && !quiet_borer) {
@@ -4003,6 +4016,10 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		*no_quake = TRUE;
 
 		/* mow down the vegetation */
+		if (o_ptr) {
+			if (o_ptr->sval == SV_SHOVEL || o_ptr->sval == SV_MATTOCK) power >>= 2;
+			else power >>= 3;
+		}
 		if (((power > fibre_power ? power : fibre_power) > rand_int(200)) && twall(Ind, wpos, y, x, FEAT_GRASS)) { /* 400 */
 			/* Message */
 			if (Ind && !quiet_full && !quiet_borer) {
@@ -4031,6 +4048,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		*no_quake = TRUE;
 
 		/* mow down the vegetation */
+		if (o_ptr) power >>= 1; //splinters more easily perhaps :/ */
 		if (((power > wood_power ? power : wood_power) > rand_int(300)) && twall(Ind, wpos, y, x, FEAT_GRASS)) { /* 600 */
 			/* Message */
 			if (Ind && !quiet_full && !quiet_borer) {
@@ -4184,7 +4202,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		/* Success */
 		if (okay && twall(Ind, wpos, y, x, soft ? FEAT_SAND : FEAT_FLOOR)) {
 			if (Ind && !quiet_full && !quiet_borer) {
-				if (!p_ptr->warning_tunnel4 && o_ptr->k_idx && o_ptr->tval == TV_DIGGING) {
+				if (!p_ptr->warning_tunnel4 && o_ptr) {
 					/* Don't display hint if digging tool is already so highly enchanted that it was probably done manually -> player seems to know */
 					if (o_ptr->to_h < 8 || o_ptr->to_d < 8) msg_print(Ind, "\374\377yHINT: Further strengthen your digging tool by enchanting it to-hit and to-dam!");
 					s_printf("warning_tunnel4: %s\n", p_ptr->name);
@@ -4604,6 +4622,10 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		*no_quake = TRUE;
 
 		/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
+		if (o_ptr) {
+			if (o_ptr->sval == SV_SHOVEL || o_ptr->sval == SV_MATTOCK) power >>= 2;
+			else power >>= 3;
+		}
 		if ((((power > fibre_power) ? power : fibre_power) > rand_int(100)) && twall(Ind, wpos, y, x, FEAT_DIRT)) {
 			if (Ind && !quiet_full && !quiet_borer) {
 				msg_print(Ind, "You have cleared the spider web.");
