@@ -16491,6 +16491,15 @@ If your resulting final digging power is zero, then it is set to 1, so you
 always have at least a tiny chance of digging through the weaker materials
 that have a +0 difficulty (see table below).
 
+Against plants or webs, digging tools are (much) less effective:
+Tool        |  Shovels   |   Picks    |  Mattocks
+------------+------------+------------+------------
+Dead tree   |     -      |     -      |     -
+Spider web  |     -      |     --     |     -
+Bush        |     -      |     --     |     -
+Tree        |     --     |     --     |     --
+Ivy         |     --     |     ---    |     --
+
 For weapons
 -----------
 The calculation is simpler than for diggin tools, as it doesn't take your
