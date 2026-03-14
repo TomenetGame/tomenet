@@ -5640,7 +5640,7 @@
 #define GF_NEXUS		33
 #define GF_TIME			34
 #define GF_GRAVITY		35
-#define GF_KILL_WALL		40
+#define GF_KILL_WALL		40	/* DnD: Soften stone and sand, destroying doors by assuming they were held in a stone frame! */
 #define GF_KILL_DOOR		41
 #define GF_KILL_TRAP		42
 #define GF_KILL_TRAP_DOOR	43

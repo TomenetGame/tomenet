@@ -5627,7 +5627,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		break; }
 
-	/* Destroy walls (and doors, and traps on the doors) */
+	/* Destroy walls (and doors, and traps on the doors - according to DnD it works on (even wooden/metal) doors because it targets the stony frame, not the actual door!) */
 	case GF_KILL_WALL: {
 		u16b feat = twall_erosion(wpos, y, x, FEAT_FLOOR), mult = 10; /* NOTE: For cmd_tunnel() mult is actually at least 30. */
 		bool door = FALSE;
