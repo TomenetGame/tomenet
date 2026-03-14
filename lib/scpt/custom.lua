@@ -274,8 +274,6 @@ end
 function custom_spawned(wx, wy, wz, x, y, index)
 end
 
-end
-
 -- Custom objects:
 -- Ind can be negative if the item is carried/dropped by a monster instead of a player.
 -- o_idx is 0 if it's now not an item on the floor (but in player/monster inventory) - ie when the item was picked up.
