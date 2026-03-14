@@ -1141,7 +1141,7 @@ errr get_mon_num_prep(int dun_type, char *reject_monsters) {
 		if (reject_monsters && reject_monsters[entry->index]) continue;
 
 #ifdef BLOODLETTER_SUMMON_NERF
-		if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) continue;
+		if (r_idx == RI_BLOODLETTER && !level_generation_time && summon_override_checks != SO_ALL) continue;
 #endif
 
 		/* Accept monsters which pass the restriction, if any */
@@ -1201,7 +1201,7 @@ errr get_mon_num_prep_wild(int town_distance, char *reject_monsters) {
 		if (reject_monsters && reject_monsters[entry->index]) continue;
 
 #ifdef BLOODLETTER_SUMMON_NERF
-		if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) continue;
+		if (r_idx == RI_BLOODLETTER && !level_generation_time && summon_override_checks != SO_ALL) continue;
 #endif
 
 		/* Accept monsters which pass the restriction, if any */
@@ -3145,25 +3145,25 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 0\n");
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 1\n");
 #endif
-	/* No live spawn inside IDDC -- except for breeder clones/summons */
-	if (!(summon_override_checks & SO_IDDC) &&
-	    !level_generation_time &&
-	    (in_irondeepdive(wpos) || in_hallsofmandos(wpos)) /* Both IDDC and HoM use character-'stale'ness, so they should both prevent live spawns accordingly. */
-	    && !clo && !clone_summoning)
+	/* No live spawn inside IDDC/Mandos -- except for breeder clones/summons */
+	if (!level_generation_time &&
+	    (((in_irondeepdive(wpos) || in_hallsofmandos(wpos)) && !(summon_override_checks & SO_IDDC)) || /* Both IDDC and HoM use character-'stale'ness, so they should both prevent live spawns accordingly. */
+	    (l_ptr && (l_ptr->flags2 & LF2_NO_SUMMON) && !(summon_override_checks & SO_NO_SUMMON)))
+	    && !clo && !clone_summoning && !(r_ptr->flags7 & RF7_MULTIPLY)) /* Allow breeders only, not eg Warriors of the Dawn */
 		return(6);
 
 	/* new: no Darkling/Candlebearer live spawns (not needed because of granted spawn on level generation;
 		and no dungeon boss live spawn either (experimental)?
 		and no unmakers, hm! */
-	if (!level_generation_time && !(summon_override_checks & SO_BOSS_MONSTERS) &&
+	if (!level_generation_time && summon_override_checks != SO_ALL &&
 	    (r_idx == RI_DARKLING || r_idx == RI_CANDLEBEARER
-	    || (r_ptr->flags8 & RF8_FINAL_GUARDIAN)
+	    || ((r_ptr->flags8 & RF8_FINAL_GUARDIAN) && !(summon_override_checks & SO_BOSS_MONSTERS))
 	    || (r_idx == RI_UNMAKER && !clo && !clone_summoning)
 	    )) return(50);
 
 #ifdef IDDC_MANDOS_NO_UNMAKERS
 	/* No unmakers at all in IDDC/Mandos? (At all, as live-spawning is prohibited for them anyway, so only need to check at generation time here) */
-	if (level_generation_time && r_idx == RI_UNMAKER && !(summon_override_checks & SO_BOSS_MONSTERS)
+	if (level_generation_time && r_idx == RI_UNMAKER && summon_override_checks != SO_ALL
 	    && (in_irondeepdive(wpos) || in_hallsofmandos(wpos)))
 		return(58);
 #endif
@@ -4109,7 +4109,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 		if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return(-3);
 	}
 #ifdef BLOODLETTER_SUMMON_NERF
-	if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) return(0);
+	if (r_idx == RI_BLOODLETTER && !level_generation_time && summon_override_checks != SO_ALL) return(0);
 #endif
 
 	/* Place one monster, or fail */
@@ -4125,7 +4125,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 	/* Require the "group" flag */
 	if (!grp) return(0);
 #ifdef BLOODLETTER_SUMMON_GROUP_NERF
-	if (r_idx == RI_BLOODLETTER && !level_generation_time && !(summon_override_checks & SO_ALL)) return(0);
+	if (r_idx == RI_BLOODLETTER && !level_generation_time && summon_override_checks != SO_ALL) return(0);
 #endif
 
 	/* Friend for certain monsters */
@@ -4236,8 +4236,8 @@ int place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool s
 	return(0);
 }
 
-int custom_place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning,
-    s16b custom_lua_death, s16b custom_lua_deletion, s16b custom_lua_awoke, s16b custom_lua_sighted) {
+int custom_place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning, s32b custom_xp,
+    s16b custom_lua_death, s16b custom_lua_deletion, s16b custom_lua_awoke, s16b custom_lua_sighted, s16b custom_lua_spawned) {
 	monster_type *m_ptr;
 	int res;
 
@@ -4245,13 +4245,19 @@ int custom_place_monster_ego(worldpos *wpos, int y, int x, int r_idx, int e_idx,
 	if (!res) {
 		struct cave_type **zcave = getcave(wpos);
 
-		/* Success */
-		m_ptr = &m_list[zcave[y][x].m_idx];
+		if (zcave) {
+			/* Success */
+			m_ptr = &m_list[zcave[y][x].m_idx];
 
-		m_ptr->custom_lua_death = custom_lua_death;
-		m_ptr->custom_lua_deletion = custom_lua_deletion;
-		m_ptr->custom_lua_awoke = custom_lua_awoke;
-		m_ptr->custom_lua_sighted = custom_lua_sighted;
+			m_ptr->custom_lua_death = custom_lua_death;
+			m_ptr->custom_lua_deletion = custom_lua_deletion;
+			m_ptr->custom_lua_awoke = custom_lua_awoke;
+			m_ptr->custom_lua_sighted = custom_lua_sighted;
+
+			/* Note that this parm is not saved to m_ptr, as it's not required anymore */
+			if (custom_lua_spawned) exec_lua(0, format("custom_monster_spawned(%d,%d)", zcave[y][x].m_idx, custom_lua_spawned));
+			m_ptr->custom_xp = custom_xp;
+		}
 	}
 
 	return(res);
@@ -7396,4 +7402,33 @@ void py2mon_update_abilities(monster_type *m_ptr, player_type *p_ptr) {
 	//monster_race *r_ptr = &r_info[RI_MIRROR];
 #ifdef SIMPLE_RI_MIRROR
 #endif
+}
+
+void mon_fear_note(int Ind, int m_idx, bool nearby) {
+	monster_type *m_ptr = &m_list[m_idx];
+
+	if (m_ptr->csleep || m_ptr->stunned > 100) return;
+
+	if (nearby || Ind <= 0) {
+		if (m_ptr->r_idx != RI_MORGOTH) msg_print_near_monster(m_idx, "flees in terror!");
+		else {
+#ifdef USE_SOUND_2010
+#else
+			sound(Ind, SOUND_FLEE);
+#endif
+			msg_print_near_monster(m_idx, "retreats!");
+		}
+	} else {
+		char m_name[MNAME_LEN];
+
+#ifdef USE_SOUND_2010
+#else
+		sound(Ind, SOUND_FLEE);
+#endif
+		/* Get the monster name (or "it") */
+		monster_desc(Ind, m_name, m_idx, 0);
+
+		if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
+		else msg_format(Ind, "%^s retreats!", m_name);
+	}
 }

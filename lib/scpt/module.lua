@@ -108,6 +108,9 @@ function module_load(wx,wy,wz,name,light)
     for y = 0, MAX_HGT do
       f = read("*n")
       cave_set_feat(wpos,y,x,f)
+      --custom_cave_set_feat(wpos, y, x, feat,
+      --                     custom_lua_tunnel_hand, custom_lua_tunnel, custom_lua_search, custom_lua_search_diff_minus, custom_lua_search_diff_chance,
+      --                     custom_lua_newlivefeat, custom_lua_way, custom_lua_spawned)
       r,e = 0,0
       r = read("*n")
       e = read("*n")
@@ -116,13 +119,17 @@ function module_load(wx,wy,wz,name,light)
           r_death = r / 2000
           r = imod(r, 2000)
         else r_death = 0 end
-        custom_place_monster_ego(wpos,y,x,r,e,1,0,0,0,r_death,0,0,0) -- sleep 1
+        custom_place_monster_ego(wpos,y,x,r,e,1,0,0,0,0,r_death,0,0,0,0) -- sleep 1
+        --custom_place_monster_ego(wpos, y, x, r_idx, e_idx, slp, grp, clo, clone_summoning, custom_xp,
+        --                         custom_lua_death, custom_lua_deletion, custom_lua_awoke, custom_lua_sighted, custom_lua_spawned)
       end
       t,s = 0,0
       t = read("*n")
       s = read("*n")
       if t ~= 0 then
         place_item_module(wpos,y,x,t,s)
+        --custom_place_item_module(worldpos *wpos, int y, int x, int tval, int sval,
+        --                         custom_lua_carrystate, s16b custom_lua_equipstate, s16b custom_lua_destruction, s16b custom_lua_usage, s16b custom_lua_spawned)
       end
     end
   end

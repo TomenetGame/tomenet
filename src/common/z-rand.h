@@ -54,6 +54,11 @@
 #define randint(M) \
 	(rand_int(M) + 1)
 
+/*
+ * Generate a random long integer X where 0<=X<=M
+ */
+#define randint0(M) \
+	(rand_int(M + 1))
 
 /*
  * Evaluate to TRUE "P" percent of the time

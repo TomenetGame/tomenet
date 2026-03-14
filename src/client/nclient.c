@@ -333,7 +333,9 @@ static void Receive_init(void) {
 
 	receive_tbl[PKT_RELIABLE]	= NULL; /* Server shouldn't be sending this */
 	receive_tbl[PKT_QUIT]		= Receive_quit;
+#ifdef SERVER_PORTALS
 	receive_tbl[PKT_RELOGIN]	= Receive_relogin;
+#endif
 	receive_tbl[PKT_START]		= NULL; /* Server shouldn't be sending this */
 	receive_tbl[PKT_END]		= Receive_end;
 	receive_tbl[PKT_LOGIN]		= NULL; /* Should not be called like this */
@@ -1604,16 +1606,18 @@ unsigned char Net_login() {
 #endif
 		quit(&rbuf.ptr[1]);
 	}
+#ifdef SERVER_PORTALS
 	/* Same/similar (WiP) for SERVER_PORTALS - C. Blue */
 	if (rbuf.len > 1 && rbuf.ptr[0] == (char)PKT_RELOGIN) {
-#ifdef RETRY_LOGIN
+ #ifdef RETRY_LOGIN
 		rl_connection_destroyed = TRUE;
 		/* should be illegal character name this time.. */
 		plog(&rbuf.ptr[1]);
 		return(E_RETRY_LOGIN);
-#endif
+ #endif
 		quit(&rbuf.ptr[1]);
 	}
+#endif
 #ifdef RETRY_LOGIN
 	/* back to normal - can quit() anytime */
 	rl_connection_destructible = 0;
@@ -2010,6 +2014,8 @@ int Receive_quit(void) {
 	}
 	return(-1);
 }
+
+#ifdef SERVER_PORTALS
 /* Quit like Receive_quit(), but relogin to an IP specified to us by the server - for SERVER_PORTALS. */
 int Receive_relogin(void) {
 	unsigned char pkt;
@@ -2027,19 +2033,20 @@ int Receive_relogin(void) {
 		return(-1);
 	}
 
-#ifdef RETRY_LOGIN
+ #ifdef RETRY_LOGIN
 	rl_connection_destructible = TRUE;
 	rl_connection_state = 2;
-#endif
+ #endif
 
 	quit(format("Relog to %s\n(%s)", relogin_host, reason));
-#ifdef WINDOWS
+ #ifdef WINDOWS
 	Sleep(delay * 100); //ms
-#else
+ #else
 	usleep(delay * 100000); //us
-#endif
+ #endif
 	return(-1);
 }
+#endif
 
 int Receive_sanity(void) {
 #ifdef SHOW_SANITY
@@ -6558,7 +6565,7 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 	regmatch_t pmatch[REGEX_ARRAY_SIZE + 1];
 #endif
 	int start, stop;
-	cptr iname;
+	char *iname;
 	int iinsc, iilen;
 #ifdef ENABLE_SUBINVEN
 	int sslot = -1;
@@ -6696,7 +6703,7 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
 
 			/* prepare */
 			strcpy(ex_buf, match);
-			ex2 = (char*)iname;
+			ex2 = iname;
 			found = FALSE;
 
 			do {
@@ -6771,7 +6778,7 @@ bool apply_auto_inscriptions_aux(int slot, int insc_idx, bool force) {
    So we can still check for '!G' occurance easily, but we cannot know for certain, if a house item does contain an #-inscription or no inscription at all,
    so we will treat the specific case of <house items containing only an '#'-inscription and no !/@/bracers> as 'no inscription'.
    (The !, @, { are just arbitrarily the easiest to check things to find out that the item name must contain some sort of inscription.) */
-int scan_auto_inscriptions_for_limit(cptr iname) {
+int scan_auto_inscriptions_for_limit(char *iname) {
 	int i, g;
 	char *ex, ex_buf[ONAME_LEN];
 	char *ex2, ex_buf2[ONAME_LEN];
@@ -6847,7 +6854,7 @@ int scan_auto_inscriptions_for_limit(cptr iname) {
 			/* found a matching inscription? */
 			/* prepare */
 			strcpy(ex_buf, match);
-			ex2 = (char*)iname;
+			ex2 = iname;
 			found = FALSE;
 
 			do {
@@ -8464,8 +8471,13 @@ static void do_meta_pings(void) {
 			    &si[i],	// Pointer to STARTUPINFO structure
 			    &pi[i]);	// Pointer to PROCESS_INFORMATION structure
   #endif
+ #elif defined(OSX)
+			/* Note that OSX doen't have '-w' option, but that doesn't really matter */
+			r = system(format("ping -c 1 -W 1 %s > %s &", meta_pings_server_name[i], path));
+			(void)r; //slay compiler warning;
  #else /* assume POSIX */
-			r = system(format("ping -c 1 -w 1 %s > %s &", meta_pings_server_name[i], path));
+			//r = system(format("ping -c 1 -w 1 %s > %s &", meta_pings_server_name[i], path));
+			r = system(format("ping -c 1 -W 1 %s > %s &", meta_pings_server_name[i], path));
   #ifdef DEBUG_PING
 printf("SENT  i=%d : <ping -c 1 -w 1 %s > %s &>\n", i, meta_pings_server_name[i], path);
   #endif

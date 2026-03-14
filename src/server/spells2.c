@@ -266,8 +266,8 @@ void grow_trees(int Ind, int rad) {
 	if (!zcave || !allow_terraforming(&p_ptr->wpos, FEAT_TREE)) return;
 
 	for (a = 0; a < rad * rad + 11; a++) {
-		i = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
-		j = (rand_int((rad * 2) + 1) - rad + rand_int((rad * 2) + 1) - rad) / 2;
+		i = (randint0(rad * 2) - rad + randint0(rad * 2) - rad) / 2;
+		j = (randint0(rad * 2) - rad + randint0(rad * 2) - rad) / 2;
 
 		if (!in_bounds(p_ptr->py + j, p_ptr->px + i)) continue;
 		if (distance(p_ptr->py, p_ptr->px, p_ptr->py + j, p_ptr->px + i) > rad) continue;
@@ -1511,6 +1511,19 @@ void self_knowledge(int Ind) {
 	if (p_ptr->can_swim) fprintf(fff, "You can swim easily.\n");
 #endif
 	if (p_ptr->free_act) fprintf(fff, "You have free action.\n");
+#if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
+	if ((k = troll_hydra_regen(p_ptr))) {
+		if (p_ptr->mode & MODE_PVP) fprintf(fff, "You regenerate quickly.\n");
+		else switch (k) {
+		case 1:
+			fprintf(fff, "You regenerate very quickly.\n");
+			break;
+		case 2:
+			fprintf(fff, "You regenerate extremely quickly.\n");
+			break;
+		}
+	} else
+#endif
 	if (p_ptr->regenerate) fprintf(fff, "You regenerate quickly.\n");
 	if (p_ptr->resist_time) fprintf(fff, "You are resistant to time.\n");
 	if (p_ptr->resist_mana) fprintf(fff, "You are resistant to magical energy.\n");
@@ -3093,7 +3106,7 @@ void detect_bounty(int Ind) {
 				/* Clear mimic feature */
 				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 				/* Find the door XXX XXX XXX */
-				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+				cave_force_feat_live(wpos, i, j, FEAT_DOOR_HEAD + 0x00);
 
 				/* Memorize the door */
 				*w_ptr |= CAVE_MARK;
@@ -3573,7 +3586,7 @@ bool detect_sdoor(int Ind, int rad) {
 					cs_erase(c_ptr, cs_ptr);
 
 				/* Find the door XXX XXX XXX */
-				c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+				cave_force_feat_live(wpos, i, j, FEAT_DOOR_HEAD + 0x00);
 
 				/* Memorize the door */
 				*w_ptr |= CAVE_MARK;
@@ -3649,23 +3662,16 @@ void stair_creation(int Ind) {
 	delete_object(wpos, p_ptr->py, p_ptr->px, TRUE, TRUE);
 
 	/* Create a staircase */
-	if (!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)) {
-		/* special..? */
-	} else if (can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1)) {
-		c_ptr->feat = FEAT_MORE;
-	} else if (can_go_up(wpos, 0x1) && !can_go_down(wpos, 0x1)) {
-		c_ptr->feat = FEAT_LESS;
-	} else if (rand_int(100) < 50) {
-		c_ptr->feat = FEAT_MORE;
-	} else {
-		c_ptr->feat = FEAT_LESS;
-	}
-
-	/* Notice */
-	note_spot(Ind, p_ptr->py, p_ptr->px);
-
-	/* Redraw */
-	everyone_lite_spot(wpos, p_ptr->py, p_ptr->px);
+	if (!can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1))
+		; /* special..? */
+	else if (can_go_down(wpos, 0x1) && !can_go_up(wpos, 0x1))
+		cave_force_feat_live(wpos, p_ptr->py, p_ptr->px, FEAT_MORE);
+	else if (can_go_up(wpos, 0x1) && !can_go_down(wpos, 0x1))
+		cave_force_feat_live(wpos, p_ptr->py, p_ptr->px, FEAT_LESS);
+	else if (rand_int(100) < 50)
+		cave_force_feat_live(wpos, p_ptr->py, p_ptr->px, FEAT_MORE);
+	else
+		cave_force_feat_live(wpos, p_ptr->py, p_ptr->px, FEAT_LESS);
 }
 
 
@@ -4315,13 +4321,16 @@ bool ident_spell_aux(int Ind, int item) {
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Describe */
-	if (item >= INVEN_WIELD) {
+#ifdef ENABLE_SUBINVEN
+	if (item >= SUBINVEN_INVEN_MUL)
+		msg_format(Ind, "In your pack: %s (%c)(%c).", o_name, index_to_label(item / SUBINVEN_INVEN_MUL - 1), index_to_label(item));
+#endif
+	else if (item >= INVEN_WIELD)
 		msg_format(Ind, "%^s: %s (%c).", describe_use(Ind, item), o_name, index_to_label(item));
-	} else if (item >= 0) {
+	else if (item >= 0)
 		msg_format(Ind, "In your pack: %s (%c).", o_name, index_to_label(item));
-	} else {
+	else
 		msg_format(Ind, "On the ground: %s.", o_name);
-	}
 
 	/* Recalculate boni */
 	p_ptr->update |= (PU_BONUS);
@@ -4458,7 +4467,11 @@ bool identify_fully_item(int Ind, int item) {
 	object_desc(Ind, o_name, o_ptr, TRUE, 3);
 
 	/* Describe */
-	if (item >= INVEN_WIELD)
+#ifdef ENABLE_SUBINVEN
+	if (item >= SUBINVEN_INVEN_MUL)
+		msg_format(Ind, "In your pack: %s (%c)(%c).", o_name, index_to_label(item / SUBINVEN_INVEN_MUL - 1), index_to_label(item));
+#endif
+	else if (item >= INVEN_WIELD)
 		msg_format(Ind, "%^s: %s (%c).", describe_use(Ind, item), o_name, index_to_label(item));
 	else if (item >= 0)
 		msg_format(Ind, "In your pack: %s (%c).", o_name, index_to_label(item));
@@ -5162,6 +5175,8 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 
 	/* Affect all (nearby) non-partied players */
 	for (i = 1; i <= NumPlayers; i++) {
+		if (is_admin(Players[i]) && !is_admin(p_ptr)) continue;
+
 		/* If he's not playing, skip him */
 		if (Players[i]->conn == NOT_CONNECTED)
 			continue;
@@ -5185,9 +5200,79 @@ bool project_los(int Ind, int typ, int dam, char *attacker) {
 		if (!player_has_los_bold(Ind, y, x)) continue;
 
 		/* Jump directly to the target player */
-		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg, pattacker)) obvious = TRUE;
+		if (project(0 - Ind, 0, wpos, y, x, dam, typ, flg | PROJECT_GRID, pattacker)) obvious = TRUE; //grid-flag added for GF_VINE_SLOW :)
 	}
 #endif
+
+	/* Result */
+	return(obvious);
+}
+
+/*
+ * Apply a FRIENDLY "project()" directly to all viewable players
+ */
+bool project_los_players(int Ind, int typ, int pow, char *attacker) {
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	struct worldpos *wpos = &p_ptr->wpos;
+	int		i, x, y;
+	//note: PROJECT_KILL is needed for project() to invoke project_p(), even for friendly effects!
+	int		flg = PROJECT_NORF | PROJECT_JUMP | PROJECT_PLAY | PROJECT_KILL | PROJECT_HIDE;
+	bool		obvious = FALSE;
+	char		pattacker[80];
+
+	if (Ind) snprintf(pattacker, 80, "%s%s", Players[Ind]->name, attacker);
+	else snprintf(pattacker, 80, "Something%s", attacker);
+
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) pow = divide_spell_damage(pow, 2, typ);
+#ifdef MARTYR_CUT_DISP
+	/* hack for Martyrdom, to avoid easy deep pit sweeping */
+	else if (p_ptr->martyr)
+		switch (typ) {
+		case GF_DISP_UNDEAD:
+		case GF_DISP_DEMON:
+		case GF_DISP_EVIL:
+		case GF_DISP_ALL:
+		case GF_DISP_UNDEAD_DEMON:
+			pow /= 2;
+			break;
+		}
+#endif
+
+	/* Affect all (nearby) players */
+	for (i = 1; i <= NumPlayers; i++) {
+		if (Ind == i) continue;
+
+		q_ptr = Players[i];
+
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+		if (is_admin(q_ptr) && !is_admin(p_ptr)) continue;
+
+		/* if we aren't in the same party, don't affect target player */
+		//if (!q_ptr->party || (!player_in_party(p_ptr->party, i))) continue;
+
+		/* Skip players not on this depth */
+		if (!inarea(wpos, &q_ptr->wpos)) continue;
+
+		/* Ignore players we are hostile to */
+		if (check_hostile(Ind, i)) continue;
+
+		/* Location */
+		y = q_ptr->py;
+		x = q_ptr->px;
+
+		/* Require line of sight */
+		if (!player_has_los_bold(Ind, y, x)) continue;
+
+		/* Don't exceed max range (which may be < sight range)! */
+		if (distance(p_ptr->py, p_ptr->px, y, x) > MAX_RANGE) continue;
+		/* Maybe also check for BLOCK_LOS/BLOCK_CONTACT grids? (glass walls..) */
+		if (!projectable_wall(wpos, p_ptr->py, p_ptr->px, y, x, MAX_RANGE)) continue;
+
+		/* Jump directly to the target player */
+		if (project(0 - Ind, 0, wpos, y, x, pow, typ, flg | PROJECT_GRID, pattacker)) obvious = TRUE; //grid-flag added for GF_VINE_SLOW :)
+	}
 
 	/* Result */
 	return(obvious);
@@ -6856,7 +6941,7 @@ void open_rift(int Ind, int dir, int intensity) {
 	int flg = PROJECT_NORF | PROJECT_KILL | PROJECT_JUMP | PROJECT_GRID | PROJECT_ITEM | PROJECT_NODO | PROJECT_NODF;
 	int dx, dy, sx, sy;
 
-	/* Differences to wide fire_wall():
+	/* Differences to fire_wall_wide():
 	    tmpx,tmpy: Move only 1 step into the target direction, then cast, ie create the rift directly adjacent to us always;
 	    i: make the rift potentialylonger than just 3 grids. */
 	int tmpx, tmpy, i, xorg = p_ptr->px, yorg = p_ptr->py;
@@ -8263,14 +8348,10 @@ bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker) {
  * Affect grids, objects, and monsters.
  * (Return value is currently not used.)
  */
-#define FIRE_WALL_WIDE /* creates a 3-line wide firewall instead of 1-line, to ensure corridors are filled */
 bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker) {
 	player_type *p_ptr = Players[Ind];
 	int tx, ty;
 	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_NODF | PROJECT_NODO;
-#ifdef FIRE_WALL_WIDE
-	int dx, dy, sx, sy;
-#endif
 
 	/* WRAITHFORM reduces damage/effect! */
 	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
@@ -8292,7 +8373,36 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
 
-#ifdef FIRE_WALL_WIDE
+	/* Analyze the "dir" and the "target", do NOT explode */
+	return(project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
+}
+/* Like fire_wall() but creates a 3-line wide firewall instead of 1-line, to ensure corridors are filled */
+bool fire_wall_wide(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker) {
+	player_type *p_ptr = Players[Ind];
+	int tx, ty;
+	int flg = PROJECT_NORF | PROJECT_BEAM | PROJECT_GRID | PROJECT_ITEM | PROJECT_KILL | PROJECT_STAY | PROJECT_THRU | PROJECT_NODF | PROJECT_NODO;
+	int dx, dy, sx, sy;
+
+	/* WRAITHFORM reduces damage/effect! */
+	if (p_ptr->tim_wraith) dam = divide_spell_damage(dam, 2, typ);
+
+	/* Use the given direction */
+	tx = p_ptr->px + ddx[dir];
+	ty = p_ptr->py + ddy[dir];
+
+	/* Hack -- Use an actual "target" */
+	if ((dir == 5) && target_okay(Ind)) {
+		tx = p_ptr->target_col;
+		ty = p_ptr->target_row;
+	}
+	project_time_effect = EFF_WALL;
+	project_interval = interval;
+	project_time = time;
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "cast_wall", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 	dx = ABS(tx - p_ptr->px);
 	dy = ABS(ty - p_ptr->py);
 	sx = SGN(tx - p_ptr->px);
@@ -8347,7 +8457,7 @@ bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char 
 		project_interval = interval;
 		project_time = time;
 	}
-#endif
+
 	/* Analyze the "dir" and the "target", do NOT explode */
 	return(project(0 - Ind, 0, &p_ptr->wpos, ty, tx, dam, typ, flg, attacker));
 }
@@ -9970,6 +10080,10 @@ void mstaff_absorb_aux(int Ind, int item) {
 	/* Use biggest discount? With leeway for starter items */
 	if (o_ptr->discount < o2_ptr->discount && !(o2_ptr->mode & MODE_STARTER_ITEM)) o_ptr->discount = o2_ptr->discount;
 
+	/* Use highest item level, except level 0 */
+	if (!o_ptr->level || !o2_ptr->level) o_ptr->level = 0;
+	else if (o2_ptr->level > o_ptr->level) o_ptr->level = o2_ptr->level;
+
 	/* transcribe (add it)! */
 	switch (o2_ptr->tval) {
 	case TV_STAFF:
@@ -10423,7 +10537,7 @@ s16b mix_chemicals(int Ind, int item) {
 			q_ptr->tval = TV_CHARGE;
 			msg_format(Ind, "\377WYou assemble a blast charge...");
 			if (!p_ptr->warning_blastcharge) {
-				msg_print(Ind, "Hint: Inscribe charges \377y!Fn\377w with n from 1 to 15 to set the fuse time in seconds!");
+				msg_print(Ind, "\374\374wHint: Inscribe charges \377y!Fn\377w with n from 1 to 15 to set the fuse time in seconds!");
 				p_ptr->warning_blastcharge = 1;
 				s_printf("warning_blastcharge: %s\n", p_ptr->name);
 			}
@@ -10849,7 +10963,7 @@ static void grind_chemicals_aux(int Ind, int amt, object_type *q_ptr, object_typ
 #if 0
 	/* Give us the result */
  #ifdef ENABLE_SUBINVEN
-	if (auto_stow(Ind, SV_SI_SATCHEL, q_ptr, -1, FALSE, FALSE, FALSE, 0x0)) return;
+	if (auto_stow(Ind, q_ptr, -1, FALSE, FALSE, FALSE, 0x0)) return;
  #endif
 	slot = inven_carry(Ind, q_ptr);
 	if (slot != -1) {

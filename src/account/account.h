@@ -21,8 +21,10 @@
  #define ACC_EMN_CX	0x00010000U	/* (to avoid duplicate notifications) Account has been notified about one or more characters being about to expire */
  #define ACC_EMN_AX	0x00020000U	/* (to avoid duplicate notifications) Account has been notified about it being about to expire */
 //#endif
-#define ACC_LOCKED	0x08000000U	/* Account is locked because it far-travelled to another server temporarily via SERVER_PORTALS */
-#define ACC_REMOTE	0x10000000U	/* Temporary account generated here, traveled to from a remote server via SERVER_PORTALS */
+//#ifdef SERVER_PORTALS
+ #define ACC_LOCKED	0x08000000U	/* Account is locked because it far-travelled to another server temporarily via SERVER_PORTALS */
+ #define ACC_REMOTE	0x10000000U	/* Temporary account generated here, traveled to from a remote server via SERVER_PORTALS */
+//#endif
 #define ACC_GUILD_ADDER	0x20000000U	/* Character who died last was a guild adder (for auto-re-add) */
 #define ACC_WARN_SALE	0x40000000U	/* 'Warn' that he has sold items in a player store */
 #define ACC_WARN_REST	0x80000000U	/* Received a one-time warning about resting */

@@ -1502,13 +1502,9 @@ void search(int Ind) {
 				/* Message */
 				msg_print(Ind, "You have found a secret door.");
 				/* Pick a door XXX XXX XXX */
-				c_ptr->feat = FEAT_DOOR_HEAD + 0x00; // add random 'lockage'? ' + (!rand_int(4) ? rand_int(8) : 0) ' -- not just here but whereever secret doors are un-secreted
+				cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00); // add random 'lockage'? ' + (!rand_int(4) ? rand_int(8) : 0) ' -- not just here but whereever secret doors are un-secreted
 				/* Clear mimic feature */
 				if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
-				/* Notice */
-				note_spot_depth(wpos, y, x);
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
 				/* Disturb */
 				disturb(Ind, 0, 0);
 #ifdef NO_COMBO_FINDINGS
@@ -1614,8 +1610,8 @@ void whats_under_your_feet(int Ind, bool force) {
 
 #ifdef ENABLE_SUBINVEN
 /* For shop-purchase/steal and home-'purchase': Check if we can directly stow an item into any bag we might carry, for when the normal inventory is full.
-   Note: While auto_stow() just takes a specific subinven as parameter, auto_stow_okay() actually scans all exsiting subinvens in the player's inventory. */
-bool auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
+   Returns 0 or inven slot+1 index into which bag to stow. */
+s16b auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
 	int i;
 	object_type *s_ptr;
 	player_type *p_ptr = Players[Ind];
@@ -1628,7 +1624,7 @@ bool auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
 	if (true_artifact_p(o_ptr)) return(FALSE);
 
 	/* Don't auto-stow unidentified items */
-	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
+	//if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
 
 	/* Don't auto-stow if player cannot access stowed items due to outdated client */
 	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
@@ -1642,7 +1638,7 @@ bool auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
 		if (!item_matches_subinven(Ind, get_subinven_group(s_ptr->sval), o_ptr)) continue;
 
 		/* Player disabled auto-stow via bag inscription? */
-		if (!subinven_can_stack(Ind, o_ptr, i, store_bought)) {
+		if (!subinven_can_accept(Ind, o_ptr, i, store_bought)) {
  #ifdef SUBINVEN_LIMIT_GROUP
 			break;
  #else
@@ -1650,7 +1646,7 @@ bool auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
  #endif
 		}
 
-		return(TRUE);
+		return(i + 1);
 	}
 
 	return(FALSE);
@@ -1663,7 +1659,7 @@ bool auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
     If item was partially stowed, return -subinvenslot if any of the six @<A|O|S><0|1> inscriptions is on the bag, otherwise FALSE.
     If item was not stowed at all, returns FALSE. (Eg we have to set try_pickup = FALSE in carry() in that case).
     If o_stowed_ptr isn't NULL its reference will be set to the resulting stowed object. */
-s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, u32b cave_info) {
+s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, u32b cave_info) {
 	int i, num, slot, globalslot;
 	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
 	player_type *p_ptr = Players[Ind];
@@ -1684,8 +1680,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 	   exception for true-art trapkits is possible, but would need to add subinvens to art-location and -erasure code first. */
 	if (true_artifact_p(o_ptr)) return(FALSE);
 
-	/* Don't auto-stow unidentified items */
-	if (!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr)) return(FALSE);
+	/* Wrapping isn't eligible for unid'ed rods is handled further down via subinven_can_accept(). */
 
 	/* Don't auto-stow if player cannot access stowed items due to outdated client */
 	if (is_older_than(&p_ptr->version, 4, 8, 0, 0, 0, 0)) return(FALSE);
@@ -1707,21 +1702,25 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 	for (i = 0; i < INVEN_PACK; i++) {
 		s_ptr = &p_ptr->inventory[i];
+
 		/* Subinvens are at the top of the inventory */
 		if (s_ptr->tval != TV_SUBINVEN) break;
 
 		/* Must fit the object type */
-		if (s_ptr->sval != sub_sval) continue;
+		if (!item_matches_subinven(Ind, get_subinven_group(s_ptr->sval), o_ptr)) continue;
 
-		/* Don't auto-stow if player cannot access stowed items due to outdated client */
-		if (s_ptr->sval == SV_SI_POTION_BELT && !is_newer_than(&p_ptr->version, 4, 9, 1, 0, 0, 0)) continue;
-
- #ifdef SI_WRAPPING_SKILL
-		if (s_ptr->sval == SV_SI_MDEVP_WRAPPING && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) continue;
+		/* Player doesn't want to auto-stow unidentified items?
+		   (Note that unidentified rods can never be auto-stowed anyway, as they might be directional.) */
+		if ((!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr))
+		    && check_guard_inscription(s_ptr->note, 'I'))
+ #ifdef SUBINVEN_LIMIT_GROUP
+			return(FALSE);
+ #else
+			continue;
  #endif
 
 		/* Player disabled auto-stow via bag inscription? */
-		if (!subinven_can_stack(Ind, o_ptr, i, store_bought)) {
+		if (!subinven_can_accept(Ind, o_ptr, i, store_bought)) {
  #ifdef SUBINVEN_LIMIT_GROUP
 			break;
  #else
@@ -1733,7 +1732,7 @@ s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_o
 
 		/* Eligible subinventory found, try to move as much as possible */
 		slot = subinven_stow_aux(Ind, o_ptr, i, quiet, pick_all);
-		if (slot) { /* Paranoia. Will always be TRUE as we already checked subinven_can_stack() just above. */
+		if (slot) { /* Paranoia. Will always be TRUE as we already checked subinven_can_accept() just above. */
 			stowed_some = TRUE;
 			globalslot = (i + 1) * SUBINVEN_INVEN_MUL + ABS(slot) - 1;
 			Send_item_newest(Ind, globalslot);
@@ -1991,6 +1990,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	cave_type **zcave;
 
 	bool forbidden = FALSE; /* for leaderless guild halls */
+	bool shareable_discount = FALSE;
 
 #ifdef USE_SOUND_2010
 	bool inven_carried = FALSE; /* avoid duplicate sfx */
@@ -2332,7 +2332,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		    && p_ptr->id == o_ptr->owner && !p_ptr->ghost;
 		int pick_some = FALSE, limitG = -1;
 #ifdef ENABLE_SUBINVEN
-		bool stowed = FALSE;
+		int stowed = FALSE;
 #endif
 
 		/* Hack -- disturb */
@@ -2409,6 +2409,10 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			}
 		}
 #ifdef IDDC_IRON_COOP
+ #if 0 /* hrm... */
+		if (exceptionally_shareable_item(o_ptr)) shareable_discount = TRUE;
+		else
+ #endif
 		if (in_irondeepdive(wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id
 		    //&& (!p_ptr->party || lookup_player_party(o_ptr->owner) != p_ptr->party)) {
 		    && o_ptr->iron_trade != p_ptr->iron_trade) {
@@ -2427,7 +2431,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #ifdef IDDC_RESTRICTED_TRADING
 		if (in_irondeepdive(&p_ptr->wpos) && o_ptr->owner && o_ptr->owner != p_ptr->id) {
  #if 1
-			if (exceptionally_shareable_item(o_ptr)) o_ptr->discount = 100;
+			if (exceptionally_shareable_item(o_ptr)) shareable_discount = TRUE;
 			else
  #endif
 			if (p_ptr->IDDC_logscum) {//todo: DED_IDDC_MANDOS
@@ -2636,6 +2640,9 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 			}
 		}
 #endif
+
+		/* Paranoia: Too early? */
+		if (shareable_discount) o_ptr->discount = 100;
 
 		/* Even if it's not guaranteed yet that we can pick up this item, just clear the newloot flag already anyway, it did enough... */
 		o_ptr->mode &= ~MODE_NEWLOOT_ITEM;
@@ -2924,30 +2931,13 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #ifdef ENABLE_SUBINVEN
 		num_org = o_ptr->number; /* For !g/!G inscription on the target item, to keep track whether we actually auto-stowed any of it. */
 
-		/* Try to put into a specialized bag automatically -- note that this currently means that apply_XID() isn't called (which cannot handle subinventory items atm anyway) */
-		switch (o_ptr->tval) {
-		case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-			stowed = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
-			break;
-		case TV_TRAPKIT:
-			stowed = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
-			break;
-		case TV_ROD:
-			/* Note that this returns FALSE too if rod is of a flavour yet unknown to the player, covering that case on the fly! :) */
-			if (rod_requires_direction(Ind, o_ptr)) break;
-			/* Fall through */
-		case TV_STAFF:
-			stowed = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
-			break;
-		case TV_POTION: case TV_POTION2: case TV_BOTTLE:
-			stowed = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
-			break;
-		case TV_FOOD:
-		case TV_FIRESTONE:
-			stowed = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
-			break;
+		stowed = auto_stow(Ind, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
+		if (stowed) {
+			try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+
+			if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) /* was just object_known_p */
+				apply_XID(Ind, o_ptr, stowed);
 		}
-		if (stowed) try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
 
 		/* If the item contains a !G or !g inscription and was already auto-stowed at least partially, and we're not using pick_all, do not pick up any more of it! */
 		if (o_ptr->number != num_org && (check_guard_inscription(o_ptr->note, 'g') || check_guard_inscription(o_ptr->note, 'G'))) try_pickup = FALSE;
@@ -5963,18 +5953,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 	}
 
 	/* Hack -- delay fear messages */
-	if (fear && p_ptr->mon_vis[c_ptr->m_idx] && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-#ifdef USE_SOUND_2010
-#else
-		sound(Ind, SOUND_FLEE);
-#endif
-
-		/* Message */
-		if (m_ptr->r_idx != RI_MORGOTH)
-			msg_format(Ind, "%^s flees in terror!", m_name);
-		else
-			msg_format(Ind, "%^s retreats!", m_name);
-	}
+	if (fear && p_ptr->mon_vis[c_ptr->m_idx]) mon_fear_note(Ind, c_ptr->m_idx, FALSE);
 
 	/* Mega-Hack -- apply earthquake brand */
 	if (do_quake && !p_ptr->quaked && magik(QUAKE_CHANCE)) {
@@ -6373,18 +6352,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 	}
 
 	/* Hack -- delay fear messages */
-	if (fear && p_ptr->mon_vis[c_ptr->m_idx] && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-#ifdef USE_SOUND_2010
-#else
-		sound(Ind, SOUND_FLEE);
-#endif
-
-		/* Message */
-		if (m_ptr->r_idx != RI_MORGOTH)
-			msg_format(Ind, "%^s flees in terror!", m_name);
-		else
-			msg_format(Ind, "%^s retreats!", m_name);
-	}
+	if (fear && p_ptr->mon_vis[c_ptr->m_idx]) mon_fear_note(Ind, c_ptr->m_idx, FALSE);
 
 	suppress_message = FALSE;
 }

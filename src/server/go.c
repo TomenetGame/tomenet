@@ -1670,8 +1670,8 @@ static void go_engine_move_CPU() {
 		while (tries != 0) {
 			tries--;
 			/* Don't play on the first line! That's TOO bad.. */
-			x = rand_int(9 - 2) + 1;
-			y = rand_int(9 - 2) + 1;
+			x = randint(9 - 2);
+			y = randint(9 - 2);
 			if (board_line[y][x] != '.') continue;
 
 			/* Let's go lazy:

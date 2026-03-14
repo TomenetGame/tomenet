@@ -2192,7 +2192,7 @@ struct monster_type {
 	s16b target;			/* Monster target */
 	s16b possessor;			/* Is it under the control of a possessor ? */
 	s16b destx, desty;		/* Monster target grid to walk to. Added for questors (quest_info). */
-	s16b determination;		/* unused, maybe useful in the future for determining what it takes to stop the monster from doing something */
+	s16b statsIWH_drain;		/* Attribute modifications (used for pseudo 'Int', 'Wis', or 'Chr' changes due to potion effects, STR/CON/DEX are already implemented via melee damage/HP/AC changes.) */
 	s16b limit_hp;			/* for questors - revert hostility when <= this (makes lookup easier than referring through lots of pointers..) */
 
 	u16b ai_state;			/* What special behaviour this monster takes now? */
@@ -2262,7 +2262,7 @@ struct monster_type {
 	s16b custom_lua_sighted;	/* Runs custom lua script on LoS to player (only the 1st time) */
 	//add status effects too, eg slept/feared/...?
 
-	s32b temp;			/* Misc/temp stuff -- unused */
+	s32b custom_xp;			/* Force specific XP reward (0 = disabled ie grant standard XP; use -1 to give 0 XP) */
 };
 
 typedef struct monster_ego monster_ego;
@@ -2661,6 +2661,7 @@ struct owner_type {
 	byte insult_max;		/* Insult limit */
 
 	s32b races[2][2];		/* Liked/hated races */
+	s32b traits[2][2];		/* Liked/hated races */
 	s32b classes[2][2];		/* Liked/hated classes */
 	s32b realms[2][2];		/* Liked/hated realms */ /* unused */
 

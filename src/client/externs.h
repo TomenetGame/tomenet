@@ -653,7 +653,12 @@ extern void ask_for_graphics_generic(void);
 extern s16b index_to_label(int i);
 extern bool item_tester_okay(object_type *o_ptr);
 extern cptr get_item_hook_find_obj_what;
+#ifdef ENABLE_SUBINVEN /* todo: implement this fix, so liquid food in food bag no longer causes glitch with potion belt when issuing quaff command. */
+//extern bool get_item_hook_find_obj(int *item, int *item_si, int mode);
 extern bool get_item_hook_find_obj(int *item, int mode);
+#else
+extern bool get_item_hook_find_obj(int *item, int mode);
+#endif
 extern bool (*get_item_extra_hook)(int *cp, int mode);
 extern bool c_get_item(int *cp, cptr pmt, int mode);
 extern bool verified_item;
@@ -1019,7 +1024,7 @@ extern int Send_si_remove(int item, int amt);
 extern int Send_version(void);
 extern int Send_plistw_notify(bool on);
 extern int Send_unknownpacket(int type, int prev_type);
-extern int scan_auto_inscriptions_for_limit(cptr iname);
+extern int scan_auto_inscriptions_for_limit(char *iname);
 
 /* skills.c */
 extern s16b get_skill(int skill);
@@ -1216,8 +1221,8 @@ extern int re_init_sound();
  extern errr init_sound_sdl(int argc, char **argv);
  extern errr re_init_sound_sdl(void);
  extern void close_audio_sdl(void);
- extern void do_cmd_options_sfx_sdl(void);
- extern void do_cmd_options_mus_sdl(void);
+ extern void do_cmd_options_sfx_sdl(bool reset);
+ extern void do_cmd_options_mus_sdl(bool reset);
   //#ifdef ENABLE_JUKEBOX
  extern void update_jukebox_timepos(void);
   //#endif

@@ -1825,6 +1825,7 @@ bool Destroy_connection(int ind, char *reason_orig) {
 	return(TRUE);
 }
 
+#ifdef SERVER_PORTALS
 bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char *relogin_accpass, char *relogin_charname, char *reason_orig) {
 	connection_t	*connp = Conn[ind];
 	int		id = -1, len, sock;
@@ -2009,6 +2010,7 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 
 	return(TRUE);
 }
+#endif
 
 int Check_connection(char *real, char *nick, char *addr) {
 	int i;
@@ -2959,7 +2961,7 @@ static void sync_options(int Ind, bool *options) {
 		p_ptr->add_kind_diz = options[163];
 		p_ptr->hide_lore_paste = options[164];
 		p_ptr->new_retaliator = options[165];
-		if (p_ptr->new_retaliator) p_ptr->warning_newautoret = 1;
+		if (p_ptr->new_retaliator) p_ptr->warning_newautoret = 1; //kinda wrong, as the option is 'on' by default for clients who still show 'instant_retaliator' aka have the opposite intent, lol
 		p_ptr->sunburn_msg = options[166];
 		p_ptr->wide_scroll_margin = options[167];
 		p_ptr->basic_players_col = options[67];
@@ -4054,7 +4056,7 @@ static int Handle_login(int ind) {
 	/* Handle the cfg_secret_dungeon_master option: Only tell other admins. */
 	if (p_ptr->admin_dm && (cfg.secret_dungeon_master)) {
 		/* Tell other secret dungeon masters about our new player */
-		for (i = 1; i < NumPlayers; i++) {
+		for (i = 1; i < NumPlayers; i++) { //skip ourself (Ind is NumPlayers)
 			if (Players[i]->conn == NOT_CONNECTED) continue;
 			if (!is_admin(Players[i])) continue;
 
@@ -4079,7 +4081,7 @@ static int Handle_login(int ind) {
 #endif
 
 	/* Tell everyone about our new player */
-	for (i = 1; i < NumPlayers; i++) {
+	for (i = 1; i < NumPlayers; i++) { //skip ourself (Ind is NumPlayers)
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (newly_created_msg) {
 			if (p_ptr->fruit_bat)
@@ -10314,6 +10316,10 @@ int Send_encumberment(int Ind, byte cumber_armor, byte awkward_armor, byte cumbe
 			Ind, connp->state, connp->id));
 		return(0);
 	}
+
+	/* If we're the target, we won't see our own boni */
+	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		if (!is_newer_than(&connp2->version, 4, 4, 2, 0, 0, 0)) {
@@ -10741,6 +10747,7 @@ int Send_skills(int Ind) {
 	/* Basic abilities */
 	skills[2] = p_ptr->skill_sav;
 	skills[3] = p_ptr->skill_stl;
+	if (p_ptr->aggravate) skills[3] = -1; //was 0, but -1 will actually display "Very Bad" instead of just "Bad" */
 	skills[4] = p_ptr->skill_fos;
 	skills[5] = p_ptr->skill_srh;
 	skills[6] = p_ptr->skill_dis;
@@ -14302,6 +14309,7 @@ int toggle_rest(int Ind, int turns) {
 		/* No more warnings about resting once we rested, for this session */
 		if (!p_ptr->warning_rest) p_ptr->warning_rest = 1;
 #endif
+		p_ptr->warning_rest_cooldown = 0;
 
 		/* Make sure we aren't running */
 		p_ptr->running = FALSE;

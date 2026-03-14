@@ -730,11 +730,13 @@ s64b price_item_player_store(int Ind, object_type *o_ptr) {
 #endif
 
 /*
- * Special "mass production" computation
+ * Special "mass production" computation for store items.
+ * Unlike damroll() this returns <num * (0...max)> eg range 0...num*max.
  */
 static int mass_roll(int num, int max) {
 	int i, t = 0;
 
+	max++; /* ie randint0(), for efficiency */
 	for (i = 0; i < num; i++) t += rand_int(max);
 	return(t);
 }
@@ -744,7 +746,7 @@ static int mass_roll(int num, int max) {
  * Certain "cheap" objects should be created in "piles"
  * Some objects can be sold at a "discount" (in small piles)
  */
-static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
+static void store_mass_produce(object_type *o_ptr, store_type *st_ptr) {
 	int size = 1;
 	int discount = 0;
 
@@ -757,24 +759,24 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 	case TV_FLASK:
 	case TV_LITE:
 	case TV_PARCHMENT:
-		if (cost <= 5L) size += mass_roll(3, 5);
-		if (cost <= 20L) size += mass_roll(3, 5);
+		if (cost <= 5L) size += mass_roll(3, 4);
+		if (cost <= 20L) size += mass_roll(3, 4);
 		break;
 
 	case TV_POTION:
 	case TV_SCROLL:
-		if (cost <= 60L) size += mass_roll(3, 5);
-		if (cost <= 240L) size += mass_roll(1, 5);
+		if (cost <= 60L) size += mass_roll(3, 4);
+		if (cost <= 240L) size += mass_roll(1, 4);
 		if (st_ptr->st_idx == STORE_BTSUPPLY &&
 		    (o_ptr->sval == SV_POTION_STAR_HEALING ||
 		    o_ptr->sval == SV_POTION_RESTORE_MANA /* for mages - mikaelh */
 		    ))
-			size += mass_roll(3, 5);
+			size += mass_roll(3, 4);
 		break;
 
 	case TV_BOOK:
-		if (cost <= 50L) size += mass_roll(2, 3);
-		if (cost <= 500L) size += mass_roll(1, 3);
+		if (cost <= 50L) size += mass_roll(2, 2);
+		if (cost <= 500L) size += mass_roll(1, 2);
 		break;
 
 	case TV_SOFT_ARMOR:
@@ -799,8 +801,8 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 		/* No ego-stacks */
 		if (o_ptr->name2) break;
 
-		if (cost <= 10L) size += mass_roll(3, 5);
-		if (cost <= 100L) size += mass_roll(3, 5);
+		if (cost <= 10L) size += mass_roll(3, 4);
+		if (cost <= 100L) size += mass_roll(3, 4);
 		break;
 	case TV_DRAG_ARMOR:
 		/* Only single items of these */
@@ -817,6 +819,10 @@ static void mass_produce(object_type *o_ptr, store_type *st_ptr) {
 
 	case TV_JUNK:
 		if (o_ptr->sval == SV_BANDAGE) size += damroll(10, 3);
+		break;
+
+	case TV_SUBINVEN:
+		if (o_ptr->sval == SV_SI_FOOD_BAG) size += mass_roll(2, 1);
 		break;
 	}
 
@@ -1066,6 +1072,12 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 #ifdef MANDOS_BUYALL_EATALL
 	/* DF2_MISC_STORES/basic dungeon shops in Halls of Mandos will buy anything (but not display it) */
 	if (in_hallsofmandos(&p_ptr->wpos)) {
+		/* XXX XXX XXX Ignore "worthless" items */
+		if (object_value(Ind, o_ptr) <= 0) return(1);
+
+		/* XXX Never OK to sell keys */
+		if (o_ptr->tval == TV_KEY) return(4);
+
 		switch (p_ptr->store_num) {
 		case STORE_HERBALIST:
 		case STORE_HIDDENLIBRARY:
@@ -1183,6 +1195,7 @@ static char store_will_buy_aux(int Ind, object_type *o_ptr) {
 		case TV_BLUNT:
 			break;
 		default:
+			/* Buy non-blunt weapons only if they are blessed */
 			if (is_melee_weapon(o_ptr->tval)) {
 				u32b dummy, f3;
 
@@ -1995,10 +2008,10 @@ static void store_delete(store_type *st_ptr) {
 	num = o_ptr->number;
 
 	/* Hack -- sometimes, only destroy half the items */
-	if (rand_int(100) < 50) num = (num + 1) / 2;
+	if (magik(50)) num = (num + 1) / 2;
 
 	/* Hack -- sometimes, only destroy a single item */
-	if (rand_int(100) < 50) num = 1;
+	if (magik(50)) num = 1;
 
 	/* Hack -- preserve artifacts */
 	if (true_artifact_p(o_ptr)) {
@@ -2644,7 +2657,7 @@ static void store_create(store_type *st_ptr) {
 		}
 
 		/* Mass produce and/or Apply discount */
-		mass_produce(o_ptr, st_ptr);
+		store_mass_produce(o_ptr, st_ptr);
 
 		if (st_info[st_ptr->st_idx].flags1 & SF1_NO_DISCOUNT)
 		    /* Reduce discount */
@@ -2712,7 +2725,7 @@ static void store_create(store_type *st_ptr) {
 
 		if (force_num && !is_ammo(o_ptr->tval)) o_ptr->number = force_num;
 
-		/* If wands, update the # of charges. stack size can be set by force_num or mass_produce (occurance 1 of 2, keep in sync) */
+		/* If wands, update the # of charges. stack size can be set by force_num or store_mass_produce (occurance 1 of 2, keep in sync) */
 		if ((o_ptr->tval == TV_WAND
 #ifdef NEW_MDEV_STACKING
 		    || o_ptr->tval == TV_STAFF
@@ -3456,25 +3469,8 @@ int autostow_or_carry(int Ind, object_type *o_ptr, bool quiet) {
 			msg_format(Ind, "\377yYou need %d in 'Magic Device' or 'Trapping' skill to use antistatic wrappings!", SI_WRAPPING_SKILL);
  #endif
 		break;
-	case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-		item_new = auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
-		break;
-	case TV_TRAPKIT:
-		item_new = auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
-		break;
-	case TV_ROD:
-		/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
-		if (rod_requires_direction(Ind, o_ptr)) break;
-		/* fall through */
-	case TV_STAFF:
-		item_new = auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
-		break;
-	case TV_POTION: case TV_POTION2:
-		item_new = auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
-		break;
-	case TV_FOOD:
-		item_new = auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
-		break;
+	default:
+		item_new = auto_stow(Ind, o_ptr, -1, FALSE, TRUE, quiet, 0x0);
 	}
 
 	/* Translate return value for partial stowing under specific bag inscriptions */
@@ -4949,7 +4945,7 @@ void store_confirm(int Ind) {
 
 		/* Actually this warning is rather specifically a warning about selling unid'ed but already aware-of magic devices with charges! */
 		if (!p_ptr->warning_sellunid && object_aware_p(Ind, o_ptr) && (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF)) {
-			msg_print(Ind, "\374\377yHint: Identify wands and staves before selling even if you already know what");
+			msg_print(Ind, "\374\377yHINT: Identify wands and staves before selling even if you already know what");
 			msg_print(Ind, "\374\377y      they do, because if their number of charges is known it will further");
 			msg_print(Ind, "\374\377y      increase their value!");
 			p_ptr->warning_sellunid = 1;
@@ -5265,7 +5261,7 @@ void do_cmd_store(int Ind) {
 	}
 
 	/* Set the timer */
-	p_ptr->tim_store = STORE_TURNOUT;
+	p_ptr->tim_store = (p_ptr->wpos.wz ? STORE_TURNOUT_DUN : STORE_TURNOUT);
 
 	/* Calculate the number of store maintainances since the last visit */
 	maintain_num = (turn - st_ptr->last_visit) / (10L *
@@ -7080,27 +7076,7 @@ void home_purchase(int Ind, int item, int amt) {
 	o_ptr = &sell_obj;
 
 	/* Try to put into a specialized bag automatically */
-	switch (o_ptr->tval) {
-	case TV_CHEMICAL: /* DEMOLITIONIST stuff */
-		(void)auto_stow(Ind, SV_SI_SATCHEL, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
-		break;
-	case TV_TRAPKIT:
-		(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
-		break;
-	case TV_ROD:
-		/* Unknown rods cannot be stowed as we don't want to reveal whether they need an activation or not */
-		if (rod_requires_direction(Ind, o_ptr)) break;
-		/* fall through */
-	case TV_STAFF:
-		(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
-		break;
-	case TV_POTION: case TV_POTION2:
-		(void)auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
-		break;
-	case TV_FOOD:
-		(void)auto_stow(Ind, SV_SI_FOOD_BAG, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
-		break;
-	}
+	(void)auto_stow(Ind, o_ptr, -1, FALSE, TRUE, FALSE, 0x0);
 
 	/* If we couldn't stow everything, pick up the rest normally */
 	if (o_ptr->number) {
@@ -8309,7 +8285,7 @@ bool do_cmd_player_store(int Ind, int x, int y) {
 	fake_store_visited[fsidx] = Ind;
 
 	/* Set the timer (30000 used for homes aka "don't" kick out) */
-	p_ptr->tim_store = STORE_TURNOUT * 2; /* extra long duration for player stores */
+	p_ptr->tim_store = (p_ptr->wpos.wz ? STORE_TURNOUT_DUN : STORE_TURNOUT) * 2; /* extra long duration for player stores */
 
 	/* Hack: display house colour when pasting items to chat */
 	if (h_ptr->colour >= 100 && !(p_ptr->mode & MODE_EVERLASTING)) p_ptr->tmp_x = 0;

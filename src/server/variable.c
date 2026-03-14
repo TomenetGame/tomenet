@@ -662,7 +662,7 @@ bool xorder_aux_extra;
 int (*get_obj_num_hook)(int k_idx, u64b resf);
 
 /* the dungeon master movement hook, is called whenever he moves
- * (to make building large buildings / summoning hoards of mosnters
+ * (to make building large buildings / summoning hoards of monsters
  * easier)
  */
 //bool (*master_move_hook)(int Ind, char * args) = master_acquire;
@@ -1115,3 +1115,5 @@ char custom_lua_timer_parmstr[CUSTOM_LUA_TIMERS][MAX_CHARS_WIDE] = { 0 };
 int custom_lua_timer_parm1[CUSTOM_LUA_TIMERS] = { 0 }, custom_lua_timer_parm2[CUSTOM_LUA_TIMERS] = { 0 }, custom_lua_timer_parm3[CUSTOM_LUA_TIMERS] = { 0 };
 u32b hack_sigil_f[7] = { 0 }, hack_comboset_f[7] = { 0 }; //same as ego_granted_flags
 char recent_deaths[RECENT_DEATHS_ENTRIES][MAX_CHARS_WIDE] = { 0 };
+
+int debug_drain_hp, debug_drain_mp;

@@ -1043,3 +1043,4 @@ extern s32b player_id;
 extern u32b account_id;
 extern void disturb(int Ind, int stop_search, int keep_resting);
 extern object_type lua_get_subinven_item(int Ind, int inven, int subinven);
+extern void gain_exp_to_level(int Ind, int level);

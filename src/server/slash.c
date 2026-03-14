@@ -4180,16 +4180,38 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/ftkon")) {
-			msg_print(Ind, "\377wFire-till-kill mode now on.");
-			p_ptr->shoot_till_kill = TRUE;
-			s_printf("SHOOT_TILL_KILL: Player %s sets true.\n", p_ptr->name);
-			p_ptr->redraw |= PR_STATE;
+			if (p_ptr->shoot_till_kill) {
+				msg_print(Ind, "\377wFire-till-kill mode already on.");
+				return;
+			}
+			toggle_shoot_till_kill(Ind);
 			return;
 		} else if (prefix(messagelc, "/ftkoff")) {
-			msg_print(Ind, "\377wFire-till-kill mode now off.");
-			p_ptr->shoot_till_kill = p_ptr->shooting_till_kill = FALSE;
-			s_printf("SHOOT_TILL_KILL: Player %s sets false.\n", p_ptr->name);
-			p_ptr->redraw |= PR_STATE;
+			if (!p_ptr->shoot_till_kill) {
+				msg_print(Ind, "\377wFire-till-kill mode already off.");
+				return;
+			}
+			toggle_shoot_till_kill(Ind);
+			return;
+		} else if (prefix(messagelc, "/ftk")) {
+			toggle_shoot_till_kill(Ind);
+			return;
+		} else if (prefix(messagelc, "/dwon")) {
+			if (p_ptr->dual_mode) {
+				msg_print(Ind, "\377wDual-wield mode: Dual-hand already set.");
+				return;
+			}
+			toggle_dual_mode(Ind);
+			return;
+		} else if (prefix(messagelc, "/dwoff")) {
+			if (!p_ptr->dual_mode) {
+				msg_print(Ind, "\377wDual-wield mode: Main-hand already set.");
+				return;
+			}
+			toggle_dual_mode(Ind);
+			return;
+		} else if (prefix(messagelc, "/dw")) {
+			toggle_dual_mode(Ind);
 			return;
 		}
 #ifdef PLAYER_STORES
@@ -4343,13 +4365,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #ifdef USE_SOUND_2010
 			sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "slap", "", SFX_TYPE_COMMAND, TRUE);
 #endif
-			if (Ind != j) {
-				msg_format(Ind, "\377yYou slap %s.", Players[j]->name);
-				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s slaps you!", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
-				msg_format_near(j, "\377y%s slaps %s!", p_ptr->name, Players[j]->name);
-			} else {
-				msg_print(j, "\377oYou slap yourself.");
-				msg_format_near(j, "\377y%s slaps %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
+			if (Ind != j)
+				msg_print_interact_nearby(Ind, j,
+				    format("\377yYou slap %s.", Players[j]->name),
+				    format("\377y%s slaps you!", Players[j]->play_vis[Ind] ? p_ptr->name : "It"),
+				    format("\377y%s slaps %s!", p_ptr->name, Players[j]->name));
+			else {
+				msg_print(Ind, "\377oYou slap yourself.");
+				msg_format_near(Ind, "\377y%s slaps %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
 			}
 
 			//unsnow
@@ -4410,13 +4433,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (Ind != j) {
-				msg_format(Ind, "\377yYou pat %s.", Players[j]->name);
-				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s pats you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
-				msg_format_near(j, "\377y%s pats %s.", p_ptr->name, Players[j]->name);
-			} else {
-				msg_print(j, "\377oYou pat yourself.");
-				msg_format_near(j, "\377y%s pats %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
+			if (Ind != j)
+				msg_print_interact_nearby(Ind, j,
+				    format("\377yYou pat %s.", Players[j]->name),
+				    format("\377y%s pats you!", Players[j]->play_vis[Ind] ? p_ptr->name : "It"),
+				    format("\377y%s pats %s!", p_ptr->name, Players[j]->name));
+			else {
+				msg_print(Ind, "\377oYou pat yourself.");
+				msg_format_near(Ind, "\377y%s pats %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
 			}
 			return;
 		}
@@ -4449,13 +4473,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (Ind != j) {
-				msg_format(Ind, "\377yYou hug %s.", Players[j]->name);
-				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s hugs you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
-				msg_format_near(j, "\377y%s hugs %s.", p_ptr->name, Players[j]->name);
-			} else {
-				msg_print(j, "\377oYou hug yourself.");
-				msg_format_near(j, "\377y%s hugs %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
+			if (Ind != j)
+				msg_print_interact_nearby(Ind, j,
+				    format("\377yYou hug %s.", Players[j]->name),
+				    format("\377y%s hugs you!", Players[j]->play_vis[Ind] ? p_ptr->name : "It"),
+				    format("\377y%s hugs %s!", p_ptr->name, Players[j]->name));
+			else {
+				msg_print(Ind, "\377oYou hug yourself.");
+				msg_format_near(Ind, "\377y%s hugs %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
 			}
 			return;
 		}
@@ -4488,13 +4513,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (Ind != j) {
-				msg_format(Ind, "\377yYou poke %s.", Players[j]->name);
-				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s pokes you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
-				msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, Players[j]->name);
-			} else {
-				msg_print(j, "\377oYou poke yourself.");
-				msg_format_near(j, "\377y%s pokes %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
+			if (Ind != j)
+				msg_print_interact_nearby(Ind, j,
+				    format("\377yYou poke %s.", Players[j]->name),
+				    format("\377y%s pokes you!", Players[j]->play_vis[Ind] ? p_ptr->name : "It"),
+				    format("\377y%s pokes %s!", p_ptr->name, Players[j]->name));
+			else {
+				msg_print(Ind, "\377oYou poke yourself.");
+				msg_format_near(Ind, "\377y%s pokes %s.", p_ptr->name, p_ptr->male ? "himself" : "herself");
 			}
 			return;
 		}
@@ -4514,9 +4540,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				msg_format(Ind, "\377yYou applaud %s.", Players[j]->name);
-				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s applauds you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
-				msg_format_near(j, "\377y%s applauds %s.", p_ptr->name, Players[j]->name);
+				if (Ind != j)
+					msg_print_interact_nearby(Ind, j,
+					    format("\377yYou applaud %s.", Players[j]->name),
+					    format("\377y%s applauds you!", Players[j]->play_vis[Ind] ? p_ptr->name : "It"),
+					    format("\377y%s applauds %s!", p_ptr->name, Players[j]->name));
+				else {
+					msg_print(Ind, "\377yYou applaud.");
+					msg_format_near(Ind, "\377y%s applauds.", p_ptr->name);
+				}
 #ifdef USE_SOUND_2010
 				sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "applaud", "", SFX_TYPE_COMMAND, TRUE);
 #endif
@@ -4545,9 +4577,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 
-				msg_format(Ind, "\377yYou wave at %s.", Players[j]->name);
-				if (!check_ignore(Ind, j)) msg_format(j, "\377o%s waves at you.", Players[j]->play_vis[Ind] ? p_ptr->name : "It");
-				msg_format_near(j, "\377y%s waves at %s.", p_ptr->name, Players[j]->name);
+				if (Ind != j)
+					msg_print_interact_nearby(Ind, j,
+					    format("\377yYou wave at %s.", Players[j]->name),
+					    format("\377y%s waves at you!", Players[j]->play_vis[Ind] ? p_ptr->name : "It"),
+					    format("\377y%s waves at %s!", p_ptr->name, Players[j]->name));
+				else {
+					msg_print(Ind, "\377yYou wave.");
+					msg_format_near(Ind, "\377y%s waves.", p_ptr->name);
+				}
 #ifdef USE_SOUND_2010
 				//sound_near_site(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "applaud", "", SFX_TYPE_COMMAND, TRUE);
 #endif
@@ -5048,7 +5086,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					byte w;
 
 					p_ptr->mode |= MODE_DED_PVP;
-					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
+					msg_print(Ind, "\377yYour character has been converted to a slot-exclusive PvP-character!");
 					w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 					//Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
@@ -5059,7 +5097,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				byte w;
 
 				p_ptr->mode |= MODE_DED_PVP;
-				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive PvP-character!");
+				msg_print(Ind, "\377yYour character has been converted to a slot-exclusive PvP-character!");
 				w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 				//Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
@@ -5080,7 +5118,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					p_ptr->mode |= MODE_DED_IDDC;
 					p_ptr->mode &= ~MODE_EVERLASTING;
 					p_ptr->mode |= MODE_NO_GHOST;
-					msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
+					msg_print(Ind, "\377DYour character has been converted to a slot-exclusive IDDC-character!");
 					w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 					verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 //					Destroy_connection(Players[Ind]->conn, "Success -- You need to login again to complete the process!");
@@ -5102,7 +5140,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				p_ptr->mode |= MODE_NO_GHOST;
 				/* (get rid of his houses -- not needed though since you can't currently buy houses at level 1) */
 
-				msg_print(Ind, "\377BYour character has been converted to a slot-exclusive IDDC-character!");
+				msg_print(Ind, "\377DYour character has been converted to a slot-exclusive IDDC-character!");
 				w = (p_ptr->total_winner ? 1 : 0) + (p_ptr->once_winner ? 2 : 0) + (p_ptr->iron_winner ? 4 : 0) + (p_ptr->iron_winner_ded ? 8 : 0);
 				verify_player(p_ptr->name, p_ptr->id, p_ptr->account, p_ptr->prace, p_ptr->pclass, p_ptr->mode, p_ptr->lev, 0, 0, 0, 0, 0, 0, p_ptr->wpos, p_ptr->houses_owned, w, 100);//assume NO ADMIN!
 
@@ -8031,6 +8069,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377oExample:  /nwish 1:3 probing");
 					msg_print(Ind, "\377oExample:  /nwish :4 fire");
 					msg_print(Ind, "\377oExample:  /nwish 2 elven\\hard lea\\resis");
+					msg_print(Ind, "\377oExample:  /nwish doom +-9");
 					return;
 				}
 
@@ -8947,28 +8986,26 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/debug-dun")) {
-				struct dungeon_type *d_ptr;
-				worldpos *tpos = &p_ptr->wpos;
-				wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
-				cave_type **zcave, *c_ptr;
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				if (!(zcave = getcave(tpos))) {
-					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
-					return;
-				}
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
-					msg_print(Ind, "Error: Not standing on a staircase grid.");
-					return;
-				}
+				if (!d_ptr) return;
 
-				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
-				else d_ptr = wild->dungeon;
-
-				msg_print(Ind, "Dungeon stats:");
+				msg_format(Ind, "Dungeon stats (%s):", tower ? "tower" : "dungeon");
 				msg_format(Ind, "  type %d, baselevel %d, maxdepth %d (endlevel %d)", d_ptr->type, d_ptr->baselevel, d_ptr->maxdepth, d_ptr->baselevel + d_ptr->maxdepth - 1);
 				msg_format(Ind, "  flags1 %08x, flags2 %08x, flags3 %08x", d_ptr->flags1, d_ptr->flags2, d_ptr->flags3);
+				return;
+			}
+			/* Toggles between listing a dungeon as usual, or adding the unlisted flag to hide it, eg if under development and not public yet or just testing stuff */
+			else if (prefix(messagelc, "/unlistdun")) {
+				bool tower, listed = TRUE;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
+				if (!d_ptr) return;
+				if ((listed = !(d_ptr->flags1 & DF1_UNLISTED))) d_ptr->flags1 |= DF1_UNLISTED;
+				else d_ptr->flags1 &= ~DF1_UNLISTED;
+
+				msg_format(Ind, "Dungeon (%s) was so far %s, is now %s.", tower ? "tower" : "dungeon", listed ? "listed" : "unlisted", listed ? "unlisted" : "listed");
 				return;
 			}
 			else if (prefix(messagelc, "/update-dun")) { /* NOTE: Crashes when the dungeon/tower turns into a tower/dungeon. TODO: Fix! */
@@ -9343,46 +9380,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/forgetdun")) {
-				worldpos *tpos = &p_ptr->wpos;
-				cave_type **zcave, *c_ptr;
-				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-				struct dungeon_type *d_ptr;
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				if (!(zcave = getcave(tpos))) {
-					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
-					return;
-				}
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
-					msg_print(Ind, "Error: Not standing on a staircase grid.");
-					return;
-				}
-
-				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
-				else d_ptr = wild->dungeon;
+				if (!d_ptr) return;
 
 				d_ptr->known = 0x0;
 				msg_print(Ind, "\377rDungeon is know UNKNOWN.");
 				return;
 			}
 			else if (prefix(messagelc, "/knowdun")) { /* (Just for adding IDDC on test server) */
-				worldpos *tpos = &p_ptr->wpos;
-				cave_type **zcave, *c_ptr;
-				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-				struct dungeon_type *d_ptr;
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				if (!(zcave = getcave(tpos))) {
-					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
-					return;
-				}
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
-					msg_print(Ind, "Error: Not standing on a staircase grid.");
-					return;
-				}
-
-				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
-				else d_ptr = wild->dungeon;
+				if (!d_ptr) return;
 
 				d_ptr->known = 0x1 | 0x2 | 0x4 | 0x8; /* Entrance seen, base level known, depth known, boss known */
 				msg_print(Ind, "\377GDungeon is know FULLY KNOWN.");
@@ -11214,6 +11225,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif  // MONSTER_INVENTORY
 				return;
 			}
+			else if (prefix(messagelc, "/mcustomxp")) { /* make the monster currently looked at (NOT the one targetted) grant custom_xp */
+				s16b m_idx;
+				monster_type *m_ptr;
+
+				if (p_ptr->health_who <= 0) {//target_who
+					msg_print(Ind, "No monster looked at.");
+					return; /* no monster targetted */
+				}
+				m_idx = p_ptr->health_who;
+				m_ptr = &m_list[m_idx];
+				m_ptr->custom_xp = atoi(message3);
+				msg_format(Ind, "set custom_xp = %d", m_ptr->custom_xp);
+				return;
+			}
 			else if (prefix(messagelc, "/unown") && !prefix(messagelc, "/unownhou")) { /* clear owner of an item - C. Blue */
 				object_type *o_ptr;
 				if (!tk) {
@@ -13007,55 +13032,25 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/fixjaildun")) {//sets appropriate flags of a dungeon on a jail grid
-				worldpos *tpos = &p_ptr->wpos;
-				cave_type **zcave, *c_ptr;
-				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-				struct dungeon_type *d_ptr;
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				if (!(zcave = getcave(tpos))) {
-					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
-					return;
-				}
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
-					msg_print(Ind, "Error: Not standing on a staircase grid.");
-					return;
-				}
-				if (!(c_ptr->info & CAVE_JAIL)) {
-					msg_print(Ind, "Error: Not standing on a CAVE_JAIL grid.");
-					return;
-				}
-
-				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
-				else d_ptr = wild->dungeon;
+				if (!d_ptr) return;
 
 				apply_jail_flags(&d_ptr->flags1, &d_ptr->flags2, &d_ptr->flags3);
 				msg_print(Ind, "Jail-specific flags set.");
 				return;
 			}
 			else if (prefix(messagelc, "/fixiddc")) {//adds DF3_NO_DUNGEON_BONUS to ironman deep dive challenge dungeon
-				worldpos *tpos = &p_ptr->wpos;
-				cave_type **zcave, *c_ptr;
-				wilderness_type *wild = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
-				struct dungeon_type *d_ptr;
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				if (!(zcave = getcave(tpos))) {
-					msg_print(Ind, "Fatal: Couldn't acquire zcave!");
-					return;
-				}
-				c_ptr = &zcave[p_ptr->py][p_ptr->px];
-				if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
-					msg_print(Ind, "Error: Not standing on a staircase grid.");
-					return;
-				}
-				if (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y ||
-				    !(c_ptr->feat == FEAT_LESS ? (WPOS_IRONDEEPDIVE_Z > 0) : (WPOS_IRONDEEPDIVE_Z < 0))) {
-					msg_print(Ind, "Error: Not standing on IRONDEEPDIVE staircase.");
-					return;
-				}
+				if (!d_ptr) return;
 
-				if (c_ptr->feat == FEAT_LESS) d_ptr = wild->tower;
-				else d_ptr = wild->dungeon;
+				if (p_ptr->wpos.wx != WPOS_IRONDEEPDIVE_X || p_ptr->wpos.wy != WPOS_IRONDEEPDIVE_Y) {
+					msg_print(Ind, "Error: No IRONDEEPDIVE wpos here.");
+					return;
+				}
 
 				d_ptr->flags3 |= DF3_NO_DUNGEON_BONUS | DF3_EXP_20;
 				msg_print(Ind, "DF3_NO_DUNGEON_BONUS | DF3_EXP_20 added.");
@@ -13086,20 +13081,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			   Use this command twice to remove all (^these 4) experimental flags again.
 			   Suggestion: Use this on the Halls of Mandos :). */
 			else if (prefix(messagelc, "/dunmkexp")) {
-				struct dungeon_type *d_ptr;
-				cave_type **zcave = getcave(&p_ptr->wpos);
+				bool tower;
+				struct dungeon_type *d_ptr = admin_dun(Ind, &tower);
 
-				switch (zcave[p_ptr->py][p_ptr->px].feat) {
-				case FEAT_MORE:
-					d_ptr = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon;
-					break;
-				case FEAT_LESS:
-					d_ptr = wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower;
-					break;
-				default:
-					msg_print(Ind, "There is no dungeon here");
-					return;
-				}
+				if (!d_ptr) return;
 
 				/* already has these flags? then remove them again */
 				if (!(d_ptr->flags3 & DF3_NO_TELE)) {
@@ -15149,7 +15134,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
-#ifdef TRUE //SERVER_PORTALS
+#ifdef SERVER_PORTALS
 			else if (prefix(messagelc, "/relog")) { /* debugging/testing: Send PKT_RELOGIN request to our client */
 				if (!message3[0]) {
 					msg_print(Ind, "Usage: /relog <hostname/ip>");
@@ -15341,6 +15326,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					    (extract_energy[i]
 					    - (extract_energy[i] / 100) * 100) / 10);
 				}
+				return;
+			}
+			else if (prefix(messagelc, "/debug-drops-freq")) {
+				print_debug_drops_freq(Ind);
 				return;
 			}
 		}

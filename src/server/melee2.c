@@ -2452,7 +2452,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		if (m_ptr->r_idx == RI_MIRROR) factor /= 5;
 
 		/* Fail chance */
-		if (!admin && (magik(25 - (rlev + 3) / 4) || magik(factor))) {
+		if (!admin && (magik(25 - (rlev + 3) / 4 + m_ptr->statsIWH_drain * 5) || magik(factor))) {
 			if (direct) msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
 			return(TRUE);
 		}
@@ -4746,7 +4746,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		if (m_ptr->stunned > 50) factor += 25;
 		if (m_ptr->stunned) factor += 15;
 
-		if (magik(25 - (rlev + 3) / 4) || magik(factor)) {
+		if (magik(25 - (rlev + 3) / 4 + m_ptr->statsIWH_drain * 5) || magik(factor)) {
 			if (direct) msg_format(Ind, "%^s tries to cast a spell, but fails.", m_name);
 			return(TRUE);
 		}
@@ -9729,7 +9729,7 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
  */
 /* TODO: revise FEAT_*, or strange intrusions can happen */
 static void process_monster(int Ind, int m_idx, bool force_random_movement) {
-	player_type	*p_ptr = Players[Ind];
+	player_type	*p_ptr = Players[Ind], *q_ptr;
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type	**zcave;
 
@@ -9737,7 +9737,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	monster_race	*r_ptr = race_inf(m_ptr);
 	monster_race	*base_r_ptr = &r_info[m_ptr->r_idx];
 
-	int		i, d, oy, ox, ny, nx;
+	int		i, d, oy, ox, ny, nx, skill_stl = p_ptr->skill_stl;
 #ifdef ARCADE_SERVER
 	int n;
 #endif
@@ -9928,74 +9928,82 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep) {
-		u32b notice = 0, noise;
+		u32b pnotice = 0, pnoise, dist, num = 0, pwake = 0;
 		bool aggravated = FALSE;
 
-		/* Hack -- handle non-aggravation */
-#if 0
-		if (!p_ptr->aggravate) notice = rand_int(1024);
-#else
-		/* check everyone on the floor */
-		notice = rand_int(1024);
-		for (i = 1; i <= NumPlayers; i++) {
-			player_type *q_ptr = Players[i];
+		pnotice = rand_int(1024);
 
+		/* Handle stealth and aggravation of all players around */
+
+		/* check everyone on the floor */
+		for (i = 1; i <= NumPlayers; i++) {
+			q_ptr = Players[i];
 			/* Skip disconnected players */
 			if (q_ptr->conn == NOT_CONNECTED) continue;
-
-			if (!q_ptr->aggravate) continue;
-
 			/* Skip players not on this depth */
 			if (!inarea(&q_ptr->wpos, wpos)) continue;
 
-			/* Compute distance */
-			/* XXX value is same with that in process_monsters */
+			dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
+
+			/* Any aggravating player within aggr-range immediately wakes the monster up */
+			if (q_ptr->aggravate) {
+				/* Compute distance */
+				/* XXX value is same with that in process_monsters */
 #ifndef REDUCED_AGGRAVATION
-			if (distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px) >= 100)
+				if (dist < 100)
 #else
-			/* Aggravation is not 'infecting' other players on the map */
-			if (Ind != i) continue;
-			if (distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px) >= 50)
+				if (dist < 50)
 #endif
-				continue;
+				{
+					pnotice = 0;
+					aggravated = TRUE;
+					break;
+				}
+			}
 
-			notice = 0;
-			aggravated = TRUE;
-			break;
+			/* Remember player with the worst (lowest) stealth, if close enough */
+			if (skill_stl > q_ptr->skill_stl) skill_stl = q_ptr->skill_stl;
 		}
-#endif	// 0
+		if (!aggravated) {
+			/* check everyone on the floor */
+			for (i = 1; i <= NumPlayers; i++) {
+				q_ptr = Players[i];
+				/* Skip disconnected players */
+				if (q_ptr->conn == NOT_CONNECTED) continue;
+				/* Skip players not on this depth */
+				if (!inarea(&q_ptr->wpos, wpos)) continue;
 
-		/* Use the closest player (calculated in process_monsters()) */
+				dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
+
+				/* Amount of "waking" - wake up faster near the player: */
+				num++;
+				if (!dist) dist = 1;
+				if (dist > 50) pwake += 1 * (31 - q_ptr->skill_stl) / (31 - skill_stl);
+				else pwake += (100 / dist) * (31 - q_ptr->skill_stl) / (31 - skill_stl);
+			}
+
+			/* Calculate the "player pnoise" */
+			pnoise = (1U << (30 - skill_stl));
+		}
+
+		/* In general, use the closest player (calculated in process_monsters()) - except for aggravation/noise application below. */
 		p_ptr = Players[m_ptr->closest_player];
 
-		/* Calculate the "player noise" */
-		noise = (1U << (30 - p_ptr->skill_stl));
-
-		/* Hack -- See if monster "notices" player */
-		if ((notice * notice * notice) <= noise || aggravated) {
-			/* Hack -- amount of "waking" */
-			int d = 1;
-
-			/* Hack -- make sure the distance isn't zero */
-			if (m_ptr->cdis == 0) m_ptr->cdis = 1;
-
-			/* Wake up faster near the player */
-			if (m_ptr->cdis < 50) d = (100 / m_ptr->cdis);
-
-			/* Hack -- handle aggravation */
-			//if (p_ptr->aggravate) d = m_ptr->csleep;
-			if (aggravated) d = m_ptr->csleep;
+		/* See if monster "notices" player */
+		if (aggravated || (pnotice * pnotice * pnotice) <= pnoise) {
+			/* Handle aggravation: Instantly wakes up */
+			if (aggravated) pwake = m_ptr->csleep;
 
 			/* Still asleep */
-			if (m_ptr->csleep > d) {
+			if (m_ptr->csleep > pwake) {
 				/* Monster wakes up "a little bit" */
-				m_ptr->csleep -= d;
+				m_ptr->csleep -= pwake;
 
 #ifdef OLD_MONSTER_LORE
 				/* Notice the "not waking up" */
 				if (p_ptr->mon_vis[m_idx]) {
 					/* Hack -- Count the ignores */
-					r_ptr->r_ignore++;
+					r_ptr->r_ignore++; //unused
 				}
 #endif
 			}
@@ -10016,10 +10024,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 					msg_format(Ind, "%^s wakes up.", m_name);
 
 					/* Hack -- Count the wakings */
-					/* not used at all, seemingly */
-					r_ptr->r_wake++;
+					r_ptr->r_wake++; //unused
 				}
-#endif	// 0
+#endif
 			}
 		}
 
@@ -10761,19 +10768,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 				/* Break down the door */
 				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
-					c_ptr->feat = FEAT_BROKEN;
+					cave_force_feat_live(wpos, ny, nx, FEAT_BROKEN);
 				/* Open the door */
 				else
-					c_ptr->feat = FEAT_OPEN;
-
-				/* Notice */
-				note_spot_depth(wpos, ny, nx);
-
-				/* Redraw */
-				everyone_lite_spot(wpos, ny, nx);
-
-				/* Handle viewable doors */
-				if (player_has_los_bold(Ind, ny, nx)) do_view = TRUE;
+					cave_force_feat_live(wpos, ny, nx, FEAT_OPEN);
 			}
 
 			/* Note: Since do_melee isn't false'd if rand(opening/bashing) fails, monsters could still attack
@@ -11647,6 +11645,10 @@ static void process_monster_pet(int Ind, int m_idx) {
 					/* The door is open */
 					did_open_door = TRUE;
 
+#ifdef USE_SOUND_2010
+					sound_near_site(ny, nx, wpos, 0, "open_door", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 					/* Do not bash the door */
 					may_bash = FALSE;
 				}
@@ -11665,10 +11667,13 @@ static void process_monster_pet(int Ind, int m_idx) {
 #endif
 
 					/* Try to unlock it XXX XXX XXX */
-					if (rand_int(m_ptr->hp / 10) > k)
-					{
+					if (rand_int(m_ptr->hp / 10) > k) {
 						/* Unlock the door */
 						c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+
+#ifdef USE_SOUND_2010
+						sound_near_site(ny, nx, wpos, 0, "open_pick", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 						/* Do not bash the door */
 						may_bash = FALSE;
@@ -11694,6 +11699,13 @@ static void process_monster_pet(int Ind, int m_idx) {
 					/* The door was bashed open */
 					did_bash_door = TRUE;
 
+#ifdef USE_SOUND_2010
+					if (rand_int(3)) /* some variety, although not entirely correct :) */
+						sound_near_site(ny, nx, wpos, 0, "bash_door_break", NULL, SFX_TYPE_COMMAND, FALSE);
+					else
+						sound_near_site(ny, nx, wpos, 0, "bash_door_hold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 					/* Hack -- fall into doorway */
 					do_move = TRUE;
 				}
@@ -11712,10 +11724,10 @@ static void process_monster_pet(int Ind, int m_idx) {
 
 				/* Break down the door */
 				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
-					c_ptr->feat = FEAT_BROKEN;
+					cave_force_feat_live(wpos, ny, nx, FEAT_BROKEN);
 				/* Open the door */
 				else
-					c_ptr->feat = FEAT_OPEN;
+					cave_force_feat_live(wpos, ny, nx, FEAT_OPEN);
 
 				/* notice */
 				note_spot_depth(wpos, ny, nx);
@@ -12091,6 +12103,10 @@ static void process_monster_golem(int Ind, int m_idx) {
 					/* The door is open */
 					did_open_door = TRUE;
 
+#ifdef USE_SOUND_2010
+					sound_near_site(ny, nx, wpos, 0, "open_door", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 					/* Do not bash the door */
 					may_bash = FALSE;
 				}
@@ -12111,6 +12127,10 @@ static void process_monster_golem(int Ind, int m_idx) {
 					if (rand_int(m_ptr->hp / 10) > k) {
 						/* Unlock the door */
 						c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+
+#ifdef USE_SOUND_2010
+						sound_near_site(ny, nx, wpos, 0, "open_pick", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
 
 						/* Do not bash the door */
 						may_bash = FALSE;
@@ -12136,6 +12156,13 @@ static void process_monster_golem(int Ind, int m_idx) {
 					/* The door was bashed open */
 					did_bash_door = TRUE;
 
+#ifdef USE_SOUND_2010
+					if (rand_int(3)) /* some variety, although not entirely correct :) */
+						sound_near_site(ny, nx, wpos, 0, "bash_door_break", NULL, SFX_TYPE_COMMAND, FALSE);
+					else
+						sound_near_site(ny, nx, wpos, 0, "bash_door_hold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
 					/* Hack -- fall into doorway */
 					do_move = TRUE;
 				}
@@ -12155,10 +12182,10 @@ static void process_monster_golem(int Ind, int m_idx) {
 
 				/* Break down the door */
 				if (did_bash_door && magik(DOOR_BASH_BREAKAGE))
-					c_ptr->feat = FEAT_BROKEN;
+					cave_force_feat_live(wpos, ny, nx, FEAT_BROKEN);
 				/* Open the door */
 				else
-					c_ptr->feat = FEAT_OPEN;
+					cave_force_feat_live(wpos, ny, nx, FEAT_OPEN);
 
 				/* Notice */
 				note_spot_depth(wpos, ny, nx);

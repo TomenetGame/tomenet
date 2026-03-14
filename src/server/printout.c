@@ -122,6 +122,9 @@ extern int x_printf(const char *str, ...) {
 	va_end(va);
 	fflush(fpx);
 
+	/* For debugging/testing: Create a backup file as the original is going to get eaten by the process. */
+	(void)system(format("sh -c 'cp %s %s.bak'", path, path));
+
 	return(TRUE);
 }
 

@@ -2066,7 +2066,7 @@ static void load_prefs(void) {
 	for (int i =0; i < 256; i++)
 		graphic_tiles[i] = tolower(graphic_tiles[i]);
 	for (i = 0; i < MAX_SUBFONTS; i++)
-		graphic_subtiles[i] = (GetPrivateProfileInt("Base", format("GraphicSubTiles%d", i), 1, ini_file) != 0);
+		graphic_subtiles[i] = (GetPrivateProfileInt("Base", format("GraphicSubTiles%d", i), 0, ini_file) != 0);
 #endif
 
 #ifdef USE_SOUND
@@ -2124,8 +2124,9 @@ static void load_prefs(void) {
 	/* Pull nick/pass */
 	GetPrivateProfileString("Online", "nick", "", nick, 70, ini_file);
 	GetPrivateProfileString("Online", "pass", "", pass, 19, ini_file); //default was 'passwd', but players should really be forced to make up different passwords
+	//GetPrivateProfileString("Online", "server", "", svname, 70, ini_file); //unused oO
 	cfg_game_port = GetPrivateProfileInt("Online", "port", 18348, ini_file);
-	cfg_client_fps = GetPrivateProfileInt("Online", "fps", 100, ini_file);
+	cfg_client_fps = GetPrivateProfileInt("Base", "fps", 100, ini_file);
 
 	/* XXX Default real name */
 	strcpy(real_name, "PLAYER");
@@ -5861,7 +5862,7 @@ void init_stuff(void) {
 	argv0 = strdup(path); //save for execv() call
 	strcpy(path + strlen(path) - 4, ".ini");
 
-	/* If tomenet.ini file doesn't exist yet, check for tomenet.ini.default
+	/* If TomeNET.ini file doesn't exist yet, check for TomeNET.ini.default
 	   and copy it over. This way a full client update won't kill our config. */
 	fp0 = fopen(path, "r");
 	if (!fp0) {
@@ -6651,9 +6652,9 @@ void store_crecedentials(void) {
 }
 void store_audiopackfolders(void) {
 	WritePrivateProfileString("Base", "SoundpackFolder", cfg_soundpackfolder, ini_file);
-	WritePrivateProfileString("Base", "SoundpackSubset", format("%s", cfg_soundpack_subset), ini_file);
+	WritePrivateProfileString("Base", "SoundpackSubset", format("%d", cfg_soundpack_subset), ini_file);
 	WritePrivateProfileString("Base", "MusicpackFolder", cfg_musicpackfolder, ini_file);
-	WritePrivateProfileString("Base", "MusicpackSubset", format("%s", cfg_musicpack_subset), ini_file);
+	WritePrivateProfileString("Base", "MusicpackSubset", format("%d", cfg_musicpack_subset), ini_file);
 }
 void get_term_main_font_name(char *buf) {
 	if (data[0].font_file) strcpy(buf, data[0].font_file);

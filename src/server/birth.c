@@ -1951,12 +1951,12 @@ static void player_outfit(int Ind) {
 		case TV_WAND:
 			j = charge_wand_fix[sv] + (charge_wand_rnd[sv] + 1) / 2;
 			if (charge_wand_rnd[sv] <= j / 4) o_ptr->pval = charge_wand_fix[sv] + randint(charge_wand_rnd[sv]);
-			else o_ptr->pval = j + rand_int(j / 4 + 1) - j / 8;
+			else o_ptr->pval = j + randint0(j / 4) - j / 8;
 			break;
 		case TV_STAFF:
 			j = charge_staff_fix[sv] + (charge_staff_rnd[sv] + 1) / 2;
 			if (charge_staff_rnd[sv] <= j / 4) o_ptr->pval = charge_staff_fix[sv] + randint(charge_staff_rnd[sv]);
-			else o_ptr->pval = j + rand_int(j / 4 + 1) - j / 8;
+			else o_ptr->pval = j + randint0(j / 4) - j / 8;
 			break;
 		}
 
@@ -2081,7 +2081,7 @@ static void player_outfit(int Ind) {
 			do_player_outfit();
 
 			invcopy(o_ptr, lookup_kind(TV_FLASK, SV_FLASK_OIL));
-			o_ptr->number = rand_range(4, 6);
+			o_ptr->number = 1; //rand_range(4, 6);
 			do_player_outfit();
 		}
 		/* Give the player some torches */
@@ -3713,6 +3713,10 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->max_lev = p_ptr->max_plv = p_ptr->lev;
 	p_ptr->max_exp = p_ptr->exp;
 
+	/* for "warning_pvp";
+	   also putting this before player_setup() as a hack to suppress grid_sunlit -> vampire burn+instant respite message combo for newly created characters (inside the inn) */
+	p_ptr->newly_created = TRUE;
+
 	/* Set his location, panel, etc. */
 	player_setup(Ind, TRUE);
 
@@ -3874,9 +3878,6 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		s_printf("Reserved name cleared.\n");
 		break;
 	}
-
-	/* for "warning_pvp" */
-	p_ptr->newly_created = TRUE;
 
 	/* Success */
 	return(TRUE);

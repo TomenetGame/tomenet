@@ -3432,7 +3432,7 @@ static bool retaliate_cmd(int Ind, bool fallback) {
 		}
 		/* Try to cast it, deduct proper energy in any of the different outcome cases */
 		if (cast_rune_spell(Ind, (u16b)(u & 0xFFFF), (u16b)((u & 0xFFFF0000) >> 16), 5)) return(TRUE); //success
-		return(TRUE); //failure
+		return(TRUE); //failure (still return TRUE though, so auto-retaliator won't try an additional, other method if runecast failed; same as cast_school_spell() is handled above basically)
 	}
 
 	/* Neither /arm nor /arr was set, aka no 'command-retaliation' (note: /ar doesn't count for this) */
@@ -4589,11 +4589,11 @@ void recall_player(int Ind, char *message) {
 
 			/* reduce his accumulated mimicry form knowledge somewhat
 			   (keep some of the benefits of IDDC hunting) */
- #ifdef IDDC_MIMICRY_BOOST
-			if (IDDC_MIMICRY_BOOST <= 2) j = 5;
-			else if (IDDC_MIMICRY_BOOST == 3) j = 6;
-			else if (IDDC_MIMICRY_BOOST == 4) j = 7;
-			else if (IDDC_MIMICRY_BOOST <= 6) j = 10;
+ #ifdef IDDC_MANDOS_MIMICRY_BOOST
+			if (IDDC_MANDOS_MIMICRY_BOOST <= 2) j = 5;
+			else if (IDDC_MANDOS_MIMICRY_BOOST == 3) j = 6;
+			else if (IDDC_MANDOS_MIMICRY_BOOST == 4) j = 7;
+			else if (IDDC_MANDOS_MIMICRY_BOOST <= 6) j = 10;
 			else j = 13;
 			for (i = 1; i < max_r_idx; i++) {
 				if ((r_info[i].flags1 & RF1_UNIQUE)) continue;
@@ -5251,6 +5251,7 @@ static bool process_player_end_aux(int Ind) {
 			take_hit(Ind, k, "poison", p_ptr->poisoned_attacker);
 		}
 	}
+	else if (p_ptr->slow_poison < 0) p_ptr->slow_poison++; //slow-poison-hack
 	/* Suffer from disease - basically same amount of damage and duration as poison except it cannot be cured as easily */
 	if (p_ptr->diseased) {
 		k = p_ptr->mhp / POISON_DIV;
@@ -6242,13 +6243,13 @@ static bool process_player_end_aux(int Ind) {
 					int i;
 
 					//look for its owner to see if he's hostile or not
-					for (i = 1; i < NumPlayers; i++)
+					for (i = 1; i <= NumPlayers; i++)
 						if (Players[i]->id == m_ptr->owner) {
 							if (!check_hostile(Ind, i)) continue;
 							break;
 						}
 					//if his owner is not online, assume friendly(!)
-					if (i == NumPlayers) continue;
+					if (i == NumPlayers + 1) continue;
 				}
 				//if (m_ptr->pet) continue;
 			}
@@ -6674,7 +6675,7 @@ static bool process_player_end_aux(int Ind) {
 	   to allow characters who lack a *remove curse* spell to make more use of the rings. */
 	if (p_ptr->drain_exp
 	    && magik((p_ptr->wpos.wz != 0 ? (dungeontown ? 0 : 50) :
-	     (townarea ? 0 : 25)) / (p_ptr->prace == RACE_VAMPIRE ? 2 : 1))
+	     (townarea ? 0 : 25)) / ((p_ptr->prace == RACE_VAMPIRE || p_ptr->ptrait == TRAIT_ENLIGHTENED || p_ptr->ptrait == TRAIT_CORRUPTED) ? 2 : 1))
 	    && magik(100 - p_ptr->antimagic / 2)
 	    && magik(30 - (60 / (p_ptr->drain_exp + 2))) /* 10%/15%/18%/20% probability per dungeon tick (5/6 player's dungeon turn) to lose XP (for 1/2/3/4 drain sources) */
 	    ) {
@@ -6762,25 +6763,31 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Drain Mana */
 	if (p_ptr->drain_mana && p_ptr->cmp) {
-		p_ptr->cmp -= p_ptr->drain_mana;
-		if (magik(30)) p_ptr->cmp -= p_ptr->drain_mana;
+		int drain = p_ptr->drain_mana + debug_drain_mp;
 
+		p_ptr->cmp -= drain;
+		if (magik(30)) p_ptr->cmp -= drain;
 		if (p_ptr->cmp < 0) p_ptr->cmp = 0;
 
 		/* Redraw */
 		p_ptr->redraw |= (PR_MANA);
-
 		/* Window stuff */
 		p_ptr->window |= (PW_PLAYER);
 	}
 
 	/* Drain Hitpoints */
 	if (p_ptr->drain_life) {
-		int drain = (p_ptr->drain_life) * (rand_int(p_ptr->mhp / 100) + 1);
+		/* Note about following line: the 'mhp/18' term balances out 1 drain vs 1 regen source pretty exactly for widely differing;
+		   tested values of mhp :105, 321, 986, at 105 hp the regen visibly outweighs the drain, but still fine. */
+		int drain = p_ptr->drain_life * randint(p_ptr->mhp) + p_ptr->mhp / 18 + debug_drain_hp;
+		int drain1 = drain / 100, drain100 = drain % 100; /* 0.01 HP resolution, via chance */
 
-		p_ptr->no_alert = TRUE;
-		take_hit(Ind, drain < p_ptr->chp ? drain : p_ptr->chp, "life draining", 0);
-		p_ptr->no_alert = FALSE;
+		drain1 += magik(drain100) ? 1 : 0;
+		if (drain1) {
+			p_ptr->no_alert = TRUE;
+			take_hit(Ind, drain1 < p_ptr->chp ? drain1 : p_ptr->chp, "life draining", 0);
+			p_ptr->no_alert = FALSE;
+		}
 	}
 
 	/* Charm/Possess: Drain Mana */
@@ -7088,14 +7095,14 @@ static bool process_player_end_aux(int Ind) {
 					if (q_ptr->afk) continue;
 
 					/* new: other players must wait in line, or at least closely nearby, to kick you out */
-					if (ABS(q_ptr->py - p_ptr->py) >= 4 || ABS(q_ptr->px - p_ptr->px) >= 4) continue;
+					if (ABS(q_ptr->py - p_ptr->py) >= 2 || ABS(q_ptr->px - p_ptr->px) >= 2) continue;
 
 					bye = TRUE;
 					break;
 				}
 
 				if (bye) store_kick(Ind, TRUE);
-				else p_ptr->tim_store = STORE_TURNOUT;
+				else p_ptr->tim_store = (p_ptr->wpos.wz ? STORE_TURNOUT_DUN : STORE_TURNOUT);
 			}
 		}
 	}
@@ -8521,7 +8528,7 @@ static void process_various(void) {
 			if (c_ptr->o_idx) continue;
 
 			/* Grow a tree here */
-			c_ptr->feat = get_seasonal_tree();
+			cave_force_feat_live(&p_ptr->wpos, y, x, get_seasonal_tree());
 
 			/* Show it */
 			everyone_lite_spot(0, y, x);
@@ -9718,8 +9725,8 @@ void process_player_change_wpos(int Ind) {
 			tries = 1000;
 			do {
 				if (!(--tries)) break;
-				starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT) - 3) + 1;
-				startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID) - 3) + 1;
+				starty = randint((l_ptr ? l_ptr->hgt : MAX_HGT) - 2);
+				startx = randint((l_ptr ? l_ptr->wid : MAX_WID) - 2);
 			} while (zcave[starty][startx].feat == FEAT_SICKBAY_AREA); /* don't recall him into sickbay areas */
 			if (!tries) { /* just this one time */
 				starty = p_ptr->py;
@@ -9747,8 +9754,8 @@ void process_player_change_wpos(int Ind) {
 		/* make sure we aren't in an "icky" location */
 		emergency_x = 0; emergency_y = 0; tries = 0;
 		do {
-			starty = rand_int((l_ptr ? l_ptr->hgt : MAX_HGT) - 3) + 1;
-			startx = rand_int((l_ptr ? l_ptr->wid : MAX_WID) - 3) + 1;
+			starty = randint((l_ptr ? l_ptr->hgt : MAX_HGT) - 2);
+			startx = randint((l_ptr ? l_ptr->wid : MAX_WID) - 2);
 			if (cave_floor_bold(zcave, starty, startx)) {
 				emergency_x = startx;
 				emergency_y = starty;
@@ -9772,8 +9779,8 @@ void process_player_change_wpos(int Ind) {
 	case LEVEL_OUTSIDE_CENTER: /* Special admin debugging, not for player transport */
 		tries = 0;
 		do {
-			startx = (l_ptr ? l_ptr->wid : MAX_WID) / 2 + (rand_int(tries * 2 + 1) - tries) / 4;
-			starty = (l_ptr ? l_ptr->hgt : MAX_HGT) / 2 + (rand_int(tries * 2 + 1) - tries) / 4;
+			startx = (l_ptr ? l_ptr->wid : MAX_WID) / 2 + (randint0(tries * 2) - tries) / 4;
+			starty = (l_ptr ? l_ptr->hgt : MAX_HGT) / 2 + (randint0(tries * 2) - tries) / 4;
 		} while (!cave_floor_bold(zcave, starty, startx) && (++tries < 100));
 		if (tries == 100) {
 			startx = 1;
@@ -9839,8 +9846,8 @@ void process_player_change_wpos(int Ind) {
 		/* make sure we aren't in an "icky" location */
 		emergency_x = 0; emergency_y = 0; tries = 0;
 		do {
-			starty = rand_int(l_ptr->hgt - 3) + 1;
-			startx = rand_int(l_ptr->wid - 3) + 1;
+			starty = randint(l_ptr->hgt - 2);
+			startx = randint(l_ptr->wid - 2);
 			if (cave_floor_bold(zcave, starty, startx)
 			    && !(zcave[starty][startx].info & CAVE_STCK)) {
 				emergency_x = startx;
@@ -10202,15 +10209,28 @@ void process_player_change_wpos(int Ind) {
 	}
 
 	if (!p_ptr->warning_powins) {
-		for (j = 1; j < INVEN_PACK; j++) {
-			if (!p_ptr->inventory[j].tval) break;
-			if (p_ptr->inventory[j].tval != TV_BOOK || !is_custom_tome(p_ptr->inventory[j].sval)) continue;
+		bool books = FALSE;
+		object_type *o_ptr;
 
+		for (j = 1; j < INVEN_PACK; j++) {
+			o_ptr = &p_ptr->inventory[j];
+			if (!o_ptr->tval) break;
+
+			if (o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) {
+				if (books) break;
+				continue;
+			}
+			books = TRUE;
+			if (o_ptr->note && (strstr(quark_str(o_ptr->note), "@^") || strstr(quark_str(o_ptr->note), "@&"))) {
+				p_ptr->warning_powins = 1;
+				break;
+			}
+		}
+		if (!p_ptr->warning_powins) {
 			msg_print(Ind, "\374\377yHINT: Press \377o{\377- to power-inscribe your custom books, eg a codex.");
 			msg_print(Ind, "\374\377y      When prompted for inscription, just enter: \377y@@@");
 			s_printf("warning_powins: %s\n", p_ptr->name);
 			p_ptr->warning_powins = 1;
-			break;
 		}
 	}
 
@@ -10764,8 +10784,8 @@ void dungeon(void) {
 				if (!t && available < 2 && !rand_int(6)) { //on average once per 60 minutes
 					t = 200;
 					while (--t) {
-						x = rand_int(MAX_WID - 2) + 1;
-						y = rand_int(MAX_HGT - 2) + 1;
+						x = randint(MAX_WID - 2);
+						y = randint(MAX_HGT - 2);
 						if (drop_near(FALSE, 0, &forge, 0, &wpos, y, x) > 0) break;
 					}
 				}
@@ -11012,159 +11032,223 @@ void dungeon(void) {
 			}
 		}
 
+
 		/* EXPERIMENTAL: Poll for AI responses, output them through 8ball. - C. Blue */
-#define AI_MAXLEN 4096 /* Maximum length of AI's response string to read */
-#define AI_MULTILINE 2 /* Allow AI responses to be multiple [2] chat lines long */
+/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length, and -6 for world-broadcast server prefix eg '\377g[1] '
+   and note that this maxlen is the real content length, not a null-terminated string length (5 := strlen("8ball")): */
+#define AI_LINE_MAXLEN		(MSG_LEN - 1 - (3 + 3 + 5) - 6)
+#define AI_MULTILINE		3 /* Allow AI responses to be multiple [2] chat lines long */
+#if AI_MULTILINE > 0
+ #define AI_MAXLEN		(AI_LINE_MAXLEN * AI_MULTILINE) /* Maximum length of AI's response string to read */
+#else
+ #define AI_MAXLEN		(AI_LINE_MAXLEN) /* Maximum length of AI's response string to read */
+#endif
+#define AI_BUFSIZE		(AI_MAXLEN + 4096)
+#define is_punct_end(c)		((c) == '.' || (c) == '?' || (c) == '!' || (c) == ';')		/* Punctuation that wraps up a sentence and doesn't really requires continuation. */
+#define is_punct(c)		(is_punct_end(c) || (c) == ':' || (c) == ',')			/* Any punctuation */
+#define is_punct_hard(c)	((c) == '!' || (c) == '?' || (c) == '.')			/* Not: komma, semi-colon, colon (or any non-punctuation symbol/number/character) */
+#define	is_linebreak(c)		((c) == '\n' || (c) == '\r')
 		path_build(buf, 1024, ANGBAND_DIR_DATA, "external-response.log");
 		if ((fp = fopen(buf, "r")) != NULL) {
-			if (!feof(fp)) {
-				char strbase[AI_MAXLEN], *str, *c, strtmp[1024], *open_parenthesis, *o, *p;
-				bool within_parentheses = FALSE;
-				/* Cut message of at MSG_LEN minus "\374\377y[8ball] " chat prefix length, and -6 for world-broadcast server prefix eg '\377g[1] ': */
-				int maxlen = MSG_LEN - 1 - 11 - 6; /* and note that this maxlen is the real content length, not a null-terminated string length */
+			char strbase[AI_BUFSIZE] = { 0 }, *str, *c, strtmp[AI_BUFSIZE], *open_parenthesis, *o, *p, *strx;
 #if AI_MULTILINE > 0
-				char strm[AI_MULTILINE][MSG_LEN], c1;
-				int m_max = 0;
+			char strm[AI_MULTILINE][MSG_LEN], c1;
+			int m_max = 0;
+
+			//for (i = 0; i < AI_MULTILINE; i++) strm[i][0] = 0;
 #endif
 
-				if (fgets(strbase, AI_MAXLEN, fp) != NULL) {
-					strbase[AI_MAXLEN - 1] = 0;
-					str = strbase;
-					/* Trim leading spaces */
-					while (*str == ' ') str++;
-
-					/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
-					c = str - 1;
-					while(*(++c)) if (*c == '"') *c = '\'';
-					/* Remove all linebreaks or LUA will break */
-					c = str - 1;
-					while(*(++c)) if (*c == '\n' || *c == '\r') *c = ' ';
-
-					/* If str actually isn't empty (buffer overflow then on accessing strlen-1), trim trailing spaces */
-					if (*c) while (c[strlen(c) - 1] == ' ') c[strlen(c) - 1] = 0;
-#if AI_MULTILINE > 0
-					/* Dissect -possibly very long- response string into multiple chat messages if required;
-					   only treat the last one with shortening/cutting procedures. */
-					while (strlen(str) > maxlen && m_max < AI_MULTILINE - 1) {
-						/* Fill a chat line, cutting off the rest */
-						strncpy(strm[m_max], str, maxlen);
-						strm[m_max][maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
-						/* Try not to cut off the line within a word */
-						do {
-							c = strm[m_max] + strlen(strm[m_max]) - 1;
-							c1 = tolower(*c);
-							if (c1 < 'a' || c1 > 'z') break;
-							*c = 0;
-						} while (TRUE);
-
-						/* Prepare to fill another chat line if needed */
-						str = str + strlen(strm[m_max]);
-						m_max++;
-
-						/* Trim trailing spaces of the strm[] we just finished now (so we actually discard spaces completely, instead of them going into the next strm[]) */
-						while (strm[m_max - 1][strlen(strm[m_max - 1]) - 1] == ' ') strm[m_max - 1][strlen(strm[m_max - 1]) - 1] = 0;
-					}
-#endif
-
-					open_parenthesis = strchr(str, '(');
-
-					/* If response exceeds our maximum message length, get rid of parentheses-structs first */
-					while (strlen(str) > maxlen && open_parenthesis) {
-						p = NULL;
-						o = open_parenthesis;
-
-						while (!p) {
-							p = strchr(o, ')');
-							if (!p) break;
-
-							/* Skip smileys within parentheses.. */
-							if (p == str || *(p - 1) != '-') break;
-							o = p;
-							p = NULL;
-						}
-
-						/* Crop out the parentheses struct */
-						if (p) {
-							strcpy(strtmp, str);
-							if (*(p + 1) == ' ') p++; /* Skip a space after the closing parenthesis */
-							strcpy(o, strtmp + (p - str) + 1);
-
-							open_parenthesis = strchr(str, '(');
-						} else break;
-					}
-
-					/* Truncate so we don't exceed our maximum message length! (Panic save ensues) */
-					str[maxlen] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
-
-					/* Anything left to process? Or we will get buffer overflows from accessing strlen-1 positions */
-					if (*str) {
-						/* Special maintenance/status response given by control scripts? */
-						if (!((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']'))) {
-							/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
-							   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
-							c = str + strlen(str) - 1;
-							while(c > str && ((*c != '.' && *c != '?'  && *c != '!' && *c != ';') || within_parentheses)) {
-								if (open_parenthesis) {
-									if (*c == ')' && *(c - 1) != '-') within_parentheses = TRUE;
-									if (*c == '(') within_parentheses = FALSE;
-								}
-								c--;
-							}
-							/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
-							if (c == str) {
-								c = str + strlen(str) - 1;
-								while(c > str && *c != ',') c--;
-								/* Avoid sillily short results */
-								if (c < str + 10) c = str;
-							}
-							/* ..and some crazy ones don't even have a comma :/ ..*/
-							if (c == str) {
-								char *c1, *c2, *c3, *c4, *c5;
-
-								c = str + strlen(str) - 1;
-								/* Beeeest effort at "language" gogo.. */
-								c1 = my_strcasestr(str, "that");
-								c2 = my_strcasestr(str, "what");
-								c3 = my_strcasestr(str, "which");
-								c4 = my_strcasestr(str, "who");
-								c5 = my_strcasestr(str, "where");
-								if (c2 > c1) c1 = c2;
-								if (c3 > c1) c1 = c3;
-								if (c4 > c1) c1 = c4;
-								if (c5 > c1) c1 = c5;
-								c = c1;
-								/* Also strip the space before this word */
-								if (c > str) c--;
-								/* Avoid sillily short results */
-								if (c < str + 10) c = NULL;
-							}
-
-							/* Found any valid way to somehow truncate the line? =_= */
-							if (c) {
-								if (*c != '?' && *c != '!') *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
-								*(c + 1) = 0;
-							}
-
-							/* A new weirdness has popped up: It started generating [more and more] trailing dot-triplets, separated with spaces, at the end of each answer */
-							if (*str && *(str + 1)) // paranoia? ensure there is some string left, so strlen-2 doesn't buffer-overflow */
-								while (str[strlen(str) - 1] == ' ' || (str[strlen(str) - 1] == '.' && (str[strlen(str) - 2] == '.'
-								    || str[strlen(str) - 2] == ' ' || str[strlen(str) - 2] == '?' || str[strlen(str) - 2] == '!')))
-									str[strlen(str) - 1] = 0;
-						}
-					}
-#if AI_MULTILINE > 0
-					/* Add the treated 'str' to our multiline array too, just to make it look orderly ^^ */
-					strcpy(strm[m_max], str);
-					m_max++;
-					/* ..and output all lines */
-					for (c1 = 0; c1 < m_max; c1++)
-						exec_lua(0, format("eight_ball(\"%s\")", strm[(int)c1])); //don't cry, compiler -_- @(int)
-#else
-					exec_lua(0, format("eight_ball(\"%s\")", str));
-#endif
-				}
+			while (!feof(fp) && fgets(strtmp, AI_BUFSIZE, fp)) {
+				if (strlen(strbase) + strlen(strtmp) > AI_BUFSIZE - 1) {
+					strncat(strbase, strtmp, AI_BUFSIZE - 1 - strlen(strbase));
+					//discarding any further reads as they would exceed AI_MAXLEN
+				} else strcat(strbase, strtmp);
 			}
 			fclose(fp);
+
+			str = strbase;
+
+			/* Remove all linebreaks or LUA will break */
+			c = str - 1;
+			while(*(++c)) if (is_linebreak(*c)) *c = ' ';
+
+			/* Qwen3-Next-80B-A3B-Instruct-UD-Q5_K_XL creates annoying text emphasis chars: ** ## -- .
+			   Trim ** and ## completely and change -- to - : */
+			while ((c = strstr(str, "**"))) {
+				strcpy(strtmp, c + 2);
+				strcpy(c, strtmp);
+			}
+			while ((c = strstr(str, "##"))) {
+				strcpy(strtmp, c + 2);
+				strcpy(c, strtmp);
+			}
+			while ((c = strstr(str, "--"))) {
+				strcpy(strtmp, c + 1);
+				strcpy(c, strtmp);
+			}
+
+			/* Skip leading and trim trailing spaces */
+			trimskip_spaces(str);
+
+			/* Semi-paranoia: String not empty? (So prompting '8ball, tell us...nothing!' won't work though :-p) */
+			if (!*str) goto ai_response_emptied;
+
+			/* Translate to or add a '_' before every ASCII > 127 character, as these won't be displayed correctly.
+			   However, some translations work well, for example a superscript 8 will become a normal 8. */
+			// ---todo
+
+			/* Change all " into ' to avoid conflict with lua eight_ball("..") command syntax. */
+			c = str - 1;
+			while(*(++c)) if (*c == '"') *c = '\'';
+
+			/* If response exceeds our maximum message length, get rid of parentheses-structs first */
+			open_parenthesis = strchr(str, '(');
+			while (strlen(str) > AI_MAXLEN && open_parenthesis) {
+				/* skip smileys */
+				if (open_parenthesis != str && *(open_parenthesis - 1) == '-') {
+					open_parenthesis = strchr(open_parenthesis + 1, '(');
+					continue;
+				}
+
+				p = NULL;
+				o = open_parenthesis;
+				while (!p) {
+					p = strchr(o, ')');
+					if (!p) break;
+
+					/* Skip smileys within parentheses.. */
+					if (p == str || *(p - 1) != '-') break;
+					o = p;
+					p = NULL;
+				}
+
+				/* Crop out the parentheses struct */
+				if (p) {
+					strcpy(strtmp, str);
+					if (*(p + 1) == ' ') p++; /* Skip a space after the closing parenthesis */
+					strcpy(o, strtmp + (p - str) + 1);
+
+					open_parenthesis = strchr(str, '(');
+				} else {
+					*o = 0;
+					break;
+				}
+			}
+
+			trim_trailing_spaces(str);
+			if (!*str) goto ai_response_emptied;
+
+			/* Special one-liner maintenance/status response given by control scripts are always ok */
+			if (strlen(str) < AI_LINE_MAXLEN &&
+			    ((*str == '<' && str[strlen(str) - 1] == '>') || (*str == '[' && str[strlen(str) - 1] == ']'))) {
+#if AI_MULTILINE > 0
+				strcpy(strm[m_max], str);
+				strx = strm[m_max];
+#else
+				strx = str;
+#endif
+				goto ai_response_okay;
+			}
+
+#if AI_MULTILINE > 0
+			/* Dissect -possibly very long- response string into multiple chat messages if required;
+			   only treat the last one with shortening/cutting procedures. */
+			while (*str && m_max < AI_MULTILINE) {
+				/* Fill a chat line, cutting off the rest */
+				strncpy(strm[m_max], str, AI_LINE_MAXLEN);
+				strm[m_max][AI_LINE_MAXLEN] = 0; /* remember note: content length, no null-termination needed (so no '-1') */
+				/* Try not to cut off the line within a word */
+				do {
+					c = strm[m_max] + strlen(strm[m_max]) - 1;
+					if (!isalpha(*c) && *c != '-') break;
+					*c = 0;
+				} while (TRUE);
+
+				/* Prepare to fill another chat line if needed */
+				str = str + strlen(strm[m_max]);
+
+				/* Trim trailing spaces of the strm[] we just finished now (so we actually discard spaces completely, instead of them going into the next strm[]) */
+				trim_trailing_spaces(strm[m_max]);
+
+				m_max++;
+			}
+
+			/* Get the (final) line */
+			try_reducing:
+			m_max--;
+			strx = strm[m_max];
+#else
+			strx = str;
+#endif
+
+			/* _Final_ line is not too long? We're done then (a bit clumsy that this static check is actually repeated for try_reducing, pft) */
+			if (strlen(strbase) <= AI_LINE_MAXLEN) goto ai_response_okay;
+
+			/* Cut off trailing remains of a sentence -_- (even required for AI response, as it also gets cut off often).
+			   Try to make sure we catch at least one whole sentence, denotedly limited by according punctuation marks. */
+			c = strx + strlen(strx) - 1;
+			while (c > strx && !is_punct_end(*c)) c--;
+			/* ..however, some responses have so long sentences that there is maybe only a comma, none of the above marks.. */
+			if (c == strx) {
+				c = strx + strlen(strx) - 1;
+				while(c > strx && *c != ',') c--;
+				/* Avoid sillily short results */
+				if (c < strx + 10) c = strx;
+			}
+			/* ..and some crazy ones don't even have a comma :/ ..*/
+			if (c == strx) {
+				char *c1, *c2, *c3, *c4, *c5;
+				c = strx + strlen(strx) - 1;
+				/* Beeeest effort at "language" gogo.. */
+				c1 = my_strcasestr(strx, "that");
+				c2 = my_strcasestr(strx, "what");
+				c3 = my_strcasestr(strx, "which");
+				c4 = my_strcasestr(strx, "who");
+				c5 = my_strcasestr(strx, "where");
+				if (c2 > c1) c1 = c2;
+				if (c3 > c1) c1 = c3;
+				if (c4 > c1) c1 = c4;
+				if (c5 > c1) c1 = c5;
+				c = c1;
+				/* Also strip the space before this word */
+				if (c > strx) c--;
+				/* Avoid sillily short results */
+				if (c < strx + 10) c = NULL;
+			}
+
+			/* Found any valid way to somehow truncate the line? =_= (++++) */
+			if (c) {
+				if (!is_punct_hard(*c)) *c = '.'; /* At the end of the text, replace a comma or semicolon or space, but not an exclamation mark. */
+				*(c + 1) = 0;
+			}
+
+			/* Oups, nothing left of the line? */
+			if (!*strx) {
+#if AI_MULTILINE > 0
+				if (!m_max) goto ai_response_emptied;
+				goto try_reducing;
+#else
+				goto ai_response_emptied;
+#endif
+			}
+
+			goto ai_response_okay;
+
+			ai_response_emptied:
+			exec_lua(0, "eight_ball(\"[Auxiliary brain malfunction. Skipping a response.]\")");
+			goto ai_response_done;
+
+			ai_response_okay:
+#if AI_MULTILINE > 0
+			/* output all lines */
+			for (c1 = 0; c1 <= m_max; c1++)
+				exec_lua(0, format("eight_ball(\"%s\")", strm[(int)c1])); //don't cry, compiler -_- @(int)
+#else
+			/* output line */
+			exec_lua(0, format("eight_ball(\"%s\")", strx));
+#endif
+
+			ai_response_done:
 
 			/* Clear response file after having processed the response (through 8ball), as it's no longer pending but has been processed now. */
 			/* Create a backup just for debugging/checking: */
@@ -11172,6 +11256,7 @@ void dungeon(void) {
 			rename(buf, format("%s.bak", buf));
 		}
 	}
+
 
 #ifdef DUNGEON_VISIT_BONUS
 	/* Keep track of frequented dungeons, every minute */
@@ -11863,8 +11948,7 @@ void process_timers() {
 					for (i = 1; i <= 6; i++) {
 						y = 2;
 						x = (i * 10) - 3;
-						zcave[y][x].feat = FEAT_SEALED_DOOR;
-						everyone_lite_spot(&wpos, y, x);
+						cave_force_feat_live(&wpos, y, x, FEAT_SEALED_DOOR);
 					}
 				}
 
@@ -11934,8 +12018,7 @@ void process_timers() {
 					/* open current door to release monster */
 					y = 2;
 					x = (timer_pvparena2 * 10) - 3;
-					zcave[y][x].feat = FEAT_UNSEALED_DOOR;
-					everyone_lite_spot(&wpos, y, x);
+					cave_force_feat_live(&wpos, y, x, FEAT_UNSEALED_DOOR);
 
 					/* after 6th monster, take a break and switch wave cycle */
 					if (timer_pvparena2 == 6) {
@@ -12014,8 +12097,8 @@ void process_timers() {
 		wpos.wy = WPOS_DF_Y;
 		wpos.wz = -WPOS_DF_Z * 2;
 		if ((zcave = getcave(&wpos))) {
-			x = rand_int(65 - 20) + 1 + 15;
-			y = rand_int(7 - 1) + 1;
+			x = randint(65 - 20) + 15;
+			y = randint(7 - 1);
 			i = 7 + rand_int(22);
 			cast_falling_star(&wpos, x, y, i);
 		}
@@ -12379,7 +12462,7 @@ static void process_weather_effect_creation() {
 
 			/* Create snowflakes in Bree */
 			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
-			cast_snowflake(&wpos, rand_int(MAX_WID - 2) + 1, 8);
+			cast_snowflake(&wpos, randint(MAX_WID - 2), 8);
 		}
 	/* spring, summer or autumn? it rains: */
 	} else {
@@ -12388,8 +12471,8 @@ static void process_weather_effect_creation() {
 
 			/* Create raindrops in Bree */
 			wpos.wx = 32; wpos.wy = 32; wpos.wz = 0;
-			cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
-			cast_raindrop(&wpos, rand_int(MAX_WID - 2) + 1);
+			cast_raindrop(&wpos, randint(MAX_WID - 2));
+			cast_raindrop(&wpos, randint(MAX_WID - 2));
 		}
 	}
 }

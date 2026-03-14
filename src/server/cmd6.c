@@ -387,6 +387,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 			dam = damroll(5, 2);
 			msg_format(Ind, "A surge of cleansing disrupts your body for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, "lembas", 0);
+			ident = TRUE;
 		}
 		ident = TRUE;
 		break;
@@ -649,8 +650,12 @@ void do_cmd_eat_food(int Ind, int item) {
 				break;
 			}
 		}
-	} else if (o_ptr->tval == TV_GAME) msg_print(Ind, "Brrrrr.."); //snowball
-	else if (o_ptr->tval == TV_SPECIAL) { /* Edible custom object? */
+	} else if (o_ptr->tval == TV_GAME) {
+		msg_print(Ind, "Brrrrr.."); //snowball
+		if ((p_ptr->ptrait == TRAIT_RED || p_ptr->ptrait == TRAIT_GOLD)
+		    && !p_ptr->resist_cold && !p_ptr->oppose_cold && !p_ptr->immune_cold)
+			take_hit(Ind, 1, "one too many snowballs eaten", 0);
+	} else if (o_ptr->tval == TV_SPECIAL) { /* Edible custom object? */
 		msg_print(Ind, "*chomp*..."); //munch?..
 		exec_lua(0, format("custom_object(%d,%d,0)", Ind, item));
 	}
@@ -1460,7 +1465,7 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		/* If we have no space, drop it to the ground instead of overflowing inventory */
 		if (inven_carry_okay(Ind, o_ptr, 0x0)) {
 #ifdef ENABLE_SUBINVEN
-			if (auto_stow(Ind, SV_SI_POTION_BELT, o_ptr, -1, FALSE, FALSE, FALSE, 0x0)) return;
+			if (auto_stow(Ind, o_ptr, -1, FALSE, FALSE, FALSE, 0x0)) return;
 #endif
 			if (keep_newest_potion) o_ptr->mode |= MODE_NOT_NEWEST_ITEM;
 			item = inven_carry(Ind, o_ptr);
@@ -1734,8 +1739,29 @@ void do_cmd_drink_fountain(int Ind) {
 			ident = quaff_potion(Ind, tval, sval, -1 - pval);
 		}
 	else ident = quaff_potion(Ind, tval, sval, -1 - pval);
-	if (ident) cs_ptr->sc.fountain.known = TRUE;
-	else if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "You feel less thirsty.");
+	if (ident) {
+		/* Object level */
+		int klev = k_info[k_idx].level;
+		bool flipped = FALSE;
+
+		cs_ptr->sc.fountain.known = TRUE;
+
+		/* Also gain xp and learn the potion flavour: */
+		if (klev == 127) klev = 0; /* non-findable flavour items shouldn't give excessive XP (level 127 -> clev1->5). Actuall give 0, so fireworks can be used in town by IDDC chars for example. */
+
+		/* Combine / Reorder the pack (later) */
+		p_ptr->notice |= (PN_COMBINE | PN_REORDER);
+		/* Window stuff */
+		p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
+
+		if (!p_ptr->obj_aware[k_idx]) {
+			flipped = object_aware_k_idx(Ind, k_idx);
+			//object_known(o_ptr);//only for object1.c artifact potion description... maybe obsolete
+			if (!(p_ptr->mode & MODE_PVP)) gain_exp(Ind, (klev + (p_ptr->lev >> 1)) / p_ptr->lev);
+		}
+		/* The item has been tried */
+		object_tried_k_idx(Ind, k_idx, flipped);
+	} else if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "You feel less thirsty.");
 	else msg_print(Ind, "You drink some.");
 
 	if (p_ptr->prace == RACE_VAMPIRE) ;
@@ -2113,7 +2139,7 @@ void do_cmd_empty_potion(int Ind, int slot) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 #ifdef ENABLE_SUBINVEN
-	if (auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE, FALSE, FALSE, 0x0)) {
+	if (auto_stow(Ind, q_ptr, -1, FALSE, FALSE, FALSE, 0x0)) {
 		/* QoL hack: Empty bottles won't really processed in meaningful ways with item-accessing command keys, instead just with /fill, because don't intend to drop/kill the bottle right after we empty'd it. */
 		Send_item_newest(Ind, in_slot);
 
@@ -3044,6 +3070,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Light" : "a flash of light", 0);
 				//if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind)
+				ident = TRUE;
 			}
 			if (p_ptr->prace == RACE_VAMPIRE && !p_ptr->resist_lite && !p_ptr->resist_blind)
 				(void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
@@ -3088,6 +3115,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				dam = damroll(5, 3);
 				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Blessing" : "a blessing", 0);
+				ident = TRUE;
 			} else if (p_ptr->blessed_power <= 6) {
 				p_ptr->blessed_power = 6;
 				if (set_blessed(Ind, randint(12) + 6, FALSE)) ident = TRUE; /* removed stacking */
@@ -3098,8 +3126,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			if (p_ptr->suscep_good || p_ptr->suscep_life) {
 			//if (p_ptr->prace == RACE_VAMPIRE) {
 				dam = damroll(10, 3);
-				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by a strong blessing for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Chant" : "a chant", 0);
+				ident = TRUE;
 			} else if (p_ptr->blessed_power <= 10) {
 				p_ptr->blessed_power = 10;
 				if (set_blessed(Ind, randint(24) + 12, FALSE)) ident = TRUE; /* removed stacking */
@@ -3110,8 +3139,9 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 			if (p_ptr->suscep_good || p_ptr->suscep_life) {
 			//if (p_ptr->prace == RACE_VAMPIRE) {
 				dam = damroll(30, 3);
-				msg_format(Ind, "You are hit by a blessing for \377o%d \377wdamage!", dam);
+				msg_format(Ind, "You are hit by a mighty blessing for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Holy Prayer" : "a holy prayer", 0);
+				ident = TRUE;
 			} else if (p_ptr->blessed_power <= 16) {
 				p_ptr->blessed_power = 16;
 				if (set_blessed(Ind, randint(48) + 24, FALSE)) ident = TRUE; /* removed stacking */
@@ -3137,6 +3167,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				dam = damroll(10, 3);
 				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Protection from Evil" : "evil-repelling magic", 0);
+				ident = TRUE;
 			} else {
 				if (set_protevil(Ind, randint(15) + 30, FALSE)) ident = TRUE; /* removed stacking */
 			}
@@ -3164,6 +3195,7 @@ bool read_scroll(int Ind, int tval, int sval, object_type *o_ptr, int item, bool
 				dam = damroll(30, 3);
 				msg_format(Ind, "You are hit by dispelling powers for \377o%d \377wdamage!", dam);
 				take_hit(Ind, dam, o_ptr ? "a Scroll of Dispel Undead" : "undead-dispelling magic", 0);
+				ident = TRUE;
 			}
 			break;
 
@@ -3779,8 +3811,10 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 			dam = damroll(20, 3);
 			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, msg ? "a staff of Light" : "light", 0);
+			ident = TRUE;
 		}
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind)
+			ident |= set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		break;
 
 	case SV_STAFF_MAPPING:
@@ -3818,7 +3852,11 @@ bool use_staff(int Ind, int sval, int rad, bool msg, bool *use_charge) {
 		if (set_blind(Ind, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, HEAL_CUT(p_ptr, 50), p_ptr->cut_attacker, FALSE)) ident = TRUE;
-		if (hp_player(Ind, damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8), FALSE, FALSE)) ident = TRUE;
+		k = damroll(6 + get_skill_scale(p_ptr, SKILL_DEVICE, 9), 8);
+		if (hp_player(Ind, k, FALSE, FALSE)) ident = TRUE;
+#if 1 /* Experimental: Try AoE heal on everyone friendly in LoS! */
+		project_los_players(Ind, GF_HEAL_PLAYER, ((k * 2) + 2) / 3, " uses a staff of healing"); //Note: GF_OLD_HEAL would heal monsters too ;)
+#endif
 		break;
 
 	case SV_STAFF_CURING:
@@ -4870,8 +4908,9 @@ bool zap_rod(int Ind, int sval, int rad, object_type *o_ptr, bool *use_charge) {
 			dam = damroll(10, 3);
 			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, "a rod of illumination", 0);
+			ident = TRUE;
 		}
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) ident |= set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		//if (o_ptr) o_ptr->pval += 30;
 		/* up to a 50% faster with maxed MD - the_sandman */
 		//if (o_ptr) o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
@@ -5681,8 +5720,9 @@ void do_cmd_zap_rod_dir(int Ind, int dir) {
 			dam = damroll(10, 3);
 			msg_format(Ind, "You are hit by bright light for \377o%d \377wdamage!", dam);
 			take_hit(Ind, dam, "a rod of illumination", 0);
+			ident = TRUE;
 		}
-		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) (void)set_blind(Ind, p_ptr->blind + 5 + randint(10));
+		if (p_ptr->suscep_lite && !p_ptr->resist_lite && !p_ptr->resist_blind) ident |= set_blind(Ind, p_ptr->blind + 5 + randint(10));
 		/* up to a 50% faster with maxed MD - the_sandman */
 		//o_ptr->pval += 30 - get_skill_scale(p_ptr, SKILL_DEVICE, 15);
 		break;
@@ -9469,7 +9509,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 			/* Actual 'normal' poison? */
 			msg_format(Ind, "You apply the %s to your %s!", o_ptr->tval == TV_POTION ? "potion" : "essence", k == -1 ? "weapons" : (k == 2 ? "first weapon" : "second weapon"));
 			if ((o_ptr->tval == TV_POTION && o_ptr->sval == SV_POTION_POISON) ||
-			    (o_ptr->tval == TV_FOOD && (o_ptr->sval == SV_FOOD_POISON || o_ptr->sval == SV_FOOD_UNHEALTH))) {
+			    (o_ptr->tval == TV_FOOD && o_ptr->sval == SV_FOOD_POISON)) {
 				set_melee_brand(Ind, 60 + randint(10), TBRAND_POIS, k == -1 ? TBRAND_F_DUAL : (k == 2 ? TBRAND_F_MAINHAND : TBRAND_F_OFFHAND), TRUE, TRUE);
 				s_printf("TECHNIQUE_MELEE: %s - apply poison to %d: %s\n", p_ptr->name, k, k_name + k_info[k_idx].name);
 			}

@@ -960,7 +960,6 @@ static void cmd_subinven_remove(int islot) {
 
 void cmd_inven(void) {
 	char ch; /* props to 'potato' and the korean team from sarang.net for the idea - C. Blue */
-	int c;
 	char buf[MSG_LEN];
 
 	/* First, erase our current location */
@@ -991,19 +990,36 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 
 		ch = inkey();
 		/* allow pasting item into chat */
-		if (ch >= 'A' && ch < 'A' + INVEN_PACK) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
-			c = ch - 'A';
+		if ((ch >= 'A' && ch < 'A' + INVEN_PACK) || (ch == '+' && item_newest != -1)) { /* using capital letters to force SHIFT key usage, less accidental spam that way probably */
+			object_type *o_ptr;
+			char o_name[ONAME_LEN];
 
-			if (inventory[c].tval) {
-				snprintf(buf, MSG_LEN - 1, "\377s%s", inventory_name[c]);
+			if (ch == '+') {
+#ifdef ENABLE_SUBINVEN
+				if (item_newest >= SUBINVEN_INVEN_MUL) {
+					o_ptr = &subinventory[item_newest / SUBINVEN_INVEN_MUL - 1][item_newest % SUBINVEN_INVEN_MUL];
+					strcpy(o_name, subinventory_name[item_newest / SUBINVEN_INVEN_MUL - 1][item_newest % SUBINVEN_INVEN_MUL]);
+				} else
+#endif
+				{
+					o_ptr = &inventory[item_newest];
+					strcpy(o_name, inventory_name[item_newest]);
+				}
+			} else {
+				o_ptr = &inventory[ch - 'A'];
+				strcpy(o_name, inventory_name[ch - 'A']);
+			}
+
+			if (o_ptr->tval) {
+				snprintf(buf, MSG_LEN - 1, "\377s%s", o_name);
 				buf[MSG_LEN - 1] = 0;
 				/* if item inscriptions contains a colon we might need
 				   another colon to prevent confusing it with a private message */
-				if (strchr(inventory_name[c], ':')) {
-					buf[strchr(inventory_name[c], ':') - inventory_name[c] + strlen(buf) - strlen(inventory_name[c]) + 1] = '\0';
+				if (strchr(o_name, ':')) {
+					buf[strchr(o_name, ':') - o_name + strlen(buf) - strlen(o_name) + 1] = '\0';
 					if (strchr(buf, ':') == &buf[strlen(buf) - 1])
 						strcat(buf, ":");
-					strcat(buf, strchr(inventory_name[c], ':') + 1);
+					strcat(buf, strchr(o_name, ':') + 1);
 				}
 #if defined(KIND_DIZ) && defined(CLIENT_ITEM_PASTE_DIZ)
 				if (sflags1 & SFLG1_CIPD) {
@@ -1011,7 +1027,7 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 
 					/* We don't have the local k_idx, so we have to find it from tval,sval: */
 					for (j = 0; j < kind_list_idx; j++) {
-						if (kind_list_tval[j] != inventory[c].tval || kind_list_sval[j] != inventory[c].sval) continue;
+						if (kind_list_tval[j] != o_ptr->tval || kind_list_sval[j] != o_ptr->sval) continue;
 						if (kind_list_dizline[j][0]) Send_paste_msg(format("%s\377D - %s", buf, kind_list_dizline[j]));
 						else j = kind_list_idx; //hack: no-diz marker
 						break;
@@ -1022,7 +1038,7 @@ topline_icky = TRUE; /* Needed AGAIN. A failed 'stow' command causes topline to 
 					}
 				} else
 #elif defined(SERVER_ITEM_PASTE_DIZ)
-				if (sflags1 & SFLG1_SIPD) Send_paste_msg(format("%s\372%d,%d", buf, inventory[c].tval, inventory[c].sval));
+				if (sflags1 & SFLG1_SIPD) Send_paste_msg(format("%s\372%d,%d", buf, o_ptr->tval, o_ptr->sval));
 				else
 #endif
 				Send_paste_msg(buf);
@@ -2748,7 +2764,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 
 	Term_save();
 
-	inkey_interact_macros = TRUE; /* Advantage: Non-command macros on Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off - unless ALLOW_NAVI_KEYS_IN_PROMPT is enabled! */
+	//inkey_interact_macros = TRUE; /* Advantage: Non-command macros on Backspace etc won't interfere; Drawback: Cannot use up/down while numlock is off - unless ALLOW_NAVI_KEYS_IN_PROMPT is enabled! */
 
 	while (TRUE) {
 		/* We just wanted to do a chapter search which resulted a hard-coded substitution that isn't a real chapter but instead falls back to normal search? */
@@ -4660,7 +4676,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			Term_putstr( 0, i++, -1, TERM_YELLOW, "?:Help");
 			Term_putstr( 0, i++, -1, TERM_WHITE, "Those keys can be used to navigate the guide. Here's a detailed explanation:");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " Space,'n' / 'p': Move down / up by one page (ENTER/BACKSPACE move by one line).");
-			Term_putstr( 0, i++, -1, TERM_WHITE, " 's'            : Search for a text string (use all uppercase for strict mode).");
+			Term_putstr( 0, i++, -1, TERM_WHITE, " 's' / '/'      : Search for a text string (use all uppercase for strict mode).");
 #ifdef REGEX_SEARCH
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'r' / 'R'      : Search for a regular expression ('R' = case-sensitive).");
 			Term_putstr( 0, i++, -1, TERM_WHITE, " 'd'            : ..after 's/r/R', this jumps to the next match.");
@@ -7868,8 +7884,17 @@ void cmd_message(void) {
 			    buf[i + 1] == '\\' &&
 			    ((buf[i + 2] >= 'a' && buf[i + 2] < 'a' + INVEN_PACK) || /* paste inventory item */
 			    (buf[i + 2] >= 'A' && buf[i + 2] < 'A' + (INVEN_TOTAL - INVEN_WIELD)) || /* paste equipment item */
-			    buf[i + 2] == '_')) { /* paste floor item, or rather: what's under your feet */
-				if (buf[i + 2] == '_') strcpy(item, whats_under_your_feet);
+			    buf[i + 2] == '_' || /* paste floor item, or rather: what's under your feet */
+			    buf[i + 2] == '+' /* paste item_newest */
+			    )) {
+				if (buf[i + 2] == '+') {
+					if (item_newest == -1) item[0] = 0;
+#ifdef ENABLE_SUBINVEN
+					else if (item_newest >= SUBINVEN_INVEN_MUL) strcpy(item, subinventory_name[item_newest / SUBINVEN_INVEN_MUL - 1][item_newest % SUBINVEN_INVEN_MUL]);
+#endif
+					else strcpy(item, inventory_name[item_newest]);
+				}
+				else if (buf[i + 2] == '_') strcpy(item, whats_under_your_feet);
 				else if (buf[i + 2] >= 'a') strcpy(item, inventory_name[buf[i + 2] - 'a']);
 				else strcpy(item, inventory_name[(buf[i + 2] - 'A') + INVEN_WIELD]);
 
@@ -8030,7 +8055,13 @@ void cmd_message(void) {
 			return;
 		} else if (!strcasecmp(buf, "/new")) {
 			if (item_newest == -1) c_msg_print("(There was no newest item yet.)");
-			else c_msg_format("(Newest item was %c) %s.)", 'a' + item_newest, inventory_name[item_newest]);
+#ifdef ENABLE_SUBINVEN
+			else if (item_newest >= SUBINVEN_INVEN_MUL)
+				c_msg_format("(Newest item was (%c)(%c) %s.)",
+				    index_to_label(item_newest / SUBINVEN_INVEN_MUL - 1), index_to_label(item_newest % SUBINVEN_INVEN_MUL),
+				    subinventory_name[item_newest / SUBINVEN_INVEN_MUL - 1][item_newest % SUBINVEN_INVEN_MUL]);
+#endif
+			else c_msg_format("(Newest item was (%c) %s.)", 'a' + item_newest, inventory_name[item_newest]);
 			inkey_msg = FALSE;
 			item_tester_hook = NULL;
 			get_item_hook_find_obj_what = "Item name? ";
@@ -8041,9 +8072,15 @@ void cmd_message(void) {
 			c_msg_format("Newest item now: %s", inventory_name[i]);
 			if (c_cfg.show_newest) redraw_newest();
 			return;
-		} else if (prefix(buf, "/new ")) {
+		} else if (prefix(buf, "/new ")) { //todo: support subinven as parm, ie '/new XY'
 			if (item_newest == -1) c_msg_print("(There was no newest item yet.)");
-			else c_msg_format("(Newest item was %c) %s.)", 'a' + item_newest, inventory_name[item_newest]);
+#ifdef ENABLE_SUBINVEN
+			else if (item_newest >= SUBINVEN_INVEN_MUL)
+				c_msg_format("(Newest item was (%c)(%c) %s.)",
+				    index_to_label(item_newest / SUBINVEN_INVEN_MUL - 1), index_to_label(item_newest % SUBINVEN_INVEN_MUL),
+				    subinventory_name[item_newest / SUBINVEN_INVEN_MUL - 1][item_newest % SUBINVEN_INVEN_MUL]);
+#endif
+			else c_msg_format("(Newest item was (%c) %s.)", 'a' + item_newest, inventory_name[item_newest]);
 			inkey_msg = FALSE;
 			if (!buf[5]) {
 				item_tester_hook = NULL;

@@ -2411,6 +2411,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		case RI_DARK_ELVEN_WARRIOR:	case RI_DARK_ELVEN_PRIEST:
 		case RI_DRIDER:			case RI_DARK_ELVEN_LORD:	case RI_DARK_ELVEN_WARLOCK:
 		case RI_NIGHTBLADE:		case RI_DARK_ELVEN_SORCEROR:
+			//side note: all of these dark elves also have HURT_LITE except for Drider
 			p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK;
 			break;
 		case RI_ELVEN_ARCHER: // PET flag -> doesn't exist
@@ -3804,6 +3805,10 @@ void calc_boni(int Ind) {
 				p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS;
 				p_ptr->immune_fire = TRUE; csheet_boni[14].cb[0] |= CB1_IFIRE;
 				p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE; csheet_boni[14].cb[10] |= CB11_AFIRE;
+				/* 'fiery' light from the sh_fire aura (Hell Knight!): */
+				p_ptr->cur_lite++;
+				csheet_boni[14].lite++;
+				csheet_boni[14].cb[12] |= CB13_XLITE;
 			}
 
 			/* Bonus crit for the bad side */
@@ -5135,6 +5140,17 @@ void calc_boni(int Ind) {
 		p_ptr->sh_elec = TRUE; csheet_boni[14].cb[10] |= CB11_AELEC;
 		p_ptr->immune_elec = TRUE; csheet_boni[14].cb[1] |= CB2_IELEC;
 	}
+
+#if 0 /* Before enabling, need to sort out k/e/a_info.txt for SH_FIRE+LITE and r_info for AURA_FIRE+HAS_LITE; added +lite in Maiar TRAIT_CORRUPTED check instead for now. */
+	/* Bright aura grants light - especially for level 50 Hell Knight */
+	if (p_ptr->sh_fire) {
+		/* 'fiery' light */
+		p_ptr->cur_lite++;
+		csheet_boni[14].lite++;
+		csheet_boni[14].cb[12] |= CB13_XLITE;
+	}
+	/* For now no (white) light for elec aura. (And Enl.Maiar already gain intrinsic light rad anyway.) */
+#endif
 
 	/* Lose anti-cut powers? */
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
@@ -7125,7 +7141,6 @@ void calc_boni(int Ind) {
 	/* Limit Skill -- stealth from 0 to 30 */
 	if (p_ptr->skill_stl > 30) p_ptr->skill_stl = 30;
 	if (p_ptr->skill_stl < 0) p_ptr->skill_stl = 0;
-	if (p_ptr->aggravate) p_ptr->skill_stl = -1; //was 0, but -1 will actually display "Very Bad" instead of just "Bad", without causing any problems (only thing affected is actually [pvp-]stealing a little bit) :)
 
 	/* Limit Skill -- digging from 1 up */
 	if (p_ptr->skill_dig < 1) p_ptr->skill_dig = 1;
@@ -7572,6 +7587,8 @@ void calc_boni(int Ind) {
 
 	/* Don't kill warnings by inspecting weapons/armour in stores! */
 	if (!suppress_message && !p_ptr->ghost) {
+		bool duplicate_warning = FALSE;
+
 		/* warning messages, mostly for newbies */
 		if (p_ptr->warning_bpr == 0 && /* limit, so it won't annoy priests anymore who use zeal spell */
 		    p_ptr->num_blow == 1 && old_num_blow > 1 &&
@@ -7584,15 +7601,18 @@ void calc_boni(int Ind) {
 			msg_print(Ind, "\374\377y    just equipped too heavy armour or a shield - depending on your class.");
 			msg_print(Ind, "\374\377y    Also, some classes can dual-wield to get an extra blow/round.");
 			s_printf("warning_bpr: %s\n", p_ptr->name);
+			duplicate_warning = TRUE;
 		}
 		if (p_ptr->warning_bpr3 == 2 &&
 		    p_ptr->num_blow == 1 && old_num_blow == 1 &&
 		    /* and don't spam Martial Arts users or mage-staff wielders ;) */
 		    p_ptr->inventory[INVEN_WIELD].k_idx && is_melee_weapon(p_ptr->inventory[INVEN_WIELD].tval)) {
 			p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
-			msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
-			msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
-			msg_print(Ind, "\374\377y    Possible reasons: Weapon is too heavy or your strength is too low.");
+			if (!duplicate_warning) { /* avoid some redundant message spam... */
+				msg_print(Ind, "\374\377yWARNING! You can currently perform only ONE 'blow per round' (attack).");
+				msg_print(Ind, "\374\377y    If you rely on close combat, you should get at least 2 BpR!");
+				msg_print(Ind, "\374\377y    Possible reasons: Weapon is too heavy or your strength is too low.");
+			}
 			if (p_ptr->inventory[INVEN_ARM].tval == TV_SHIELD) {
 				if (p_ptr->rogue_like_commands)
 					msg_print(Ind, "\374\377y    Try taking off your shield ('\377oSHIFT+t\377y') and see if that helps.");
@@ -9502,8 +9522,8 @@ static void process_global_event(int ge_id) {
 
 					/* place staircase on an empty accessible grid */
 					do {
-						y = rand_int((MAX_HGT) - 3) + 1;
-						x = rand_int((MAX_WID) - 3) + 1;
+						y = randint(MAX_HGT - 2);
+						x = randint(MAX_WID - 2);
 					} while (!cave_floor_bold(zcave, y, x)
 					    && (++tries < 1000));
 					zcave[y][x].feat = FEAT_MORE;
@@ -10156,8 +10176,8 @@ static void process_global_event(int ge_id) {
 			for (i = 0; i < 6; i++) {
 				n = 1000;
 				while (--n) {
-					x = rand_int(MAX_WID - 1) + 1;
-					y = rand_int(MAX_HGT - 1) + 1;
+					x = randint(MAX_WID - 1);
+					y = randint(MAX_HGT - 1);
 					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
 					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
 						break;
@@ -10176,8 +10196,8 @@ static void process_global_event(int ge_id) {
 				n = 10000;
 				while (--n) {
 #if 0 /* place them anywhere in a chamber */
-					x = rand_int(MAX_WID - 1) + 1;
-					y = rand_int(MAX_HGT - 1) + 1;
+					x = randint(MAX_WID - 1);
+					y = randint(MAX_HGT - 1);
 #else /* place them in the center of a chamber */
 					x = rand_int(MAX_WID / 4) * 4 + 2;
 					y = rand_int(MAX_HGT / 4) * 4 + 2;
@@ -10200,8 +10220,8 @@ static void process_global_event(int ge_id) {
 			/* place Horned Reaper :D */
 			n = 10000;
 			while (--n) {
-				x = rand_int(MAX_WID - 1) + 1;
-				y = rand_int(MAX_HGT - 1) + 1;
+				x = randint(MAX_WID - 1);
+				y = randint(MAX_HGT - 1);
 				if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
 				    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
 					break;
@@ -10318,8 +10338,8 @@ static void process_global_event(int ge_id) {
 			for (i = 0; i < 50 + n * 5; i++) {
 				j = 100;
 				while (--j) {
-					x = rand_int(MAX_WID - 1) + 1;
-					y = rand_int(MAX_HGT - 1) + 1;
+					x = randint(MAX_WID - 1);
+					y = randint(MAX_HGT - 1);
 					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
 					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR) &&
 					    zcave[y][x].feat != FEAT_BETWEEN &&
@@ -11112,7 +11132,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 			}
 		}
 
-		/* If wands, update the # of charges. stack size can be set by force_num or mass_produce (occurance 2 of 2, keep in sync) */
+		/* If wands, update the # of charges. stack size can be set by force_num or store_mass_produce (occurance 2 of 2, keep in sync) */
 		if ((forge.tval == TV_WAND
 #ifdef NEW_MDEV_STACKING
 		    || forge.tval == TV_STAFF

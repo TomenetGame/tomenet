@@ -46,7 +46,7 @@
 #define HP_MP_ST_BARS_ALLOWED
 
 /* (Sub-)Inven/Equip marker icon for 'newest item' if c_cfg.show_newest is on. */
-#define MARKER_NEWEST_ITEM '-'
+#define MARKER_NEWEST_ITEM '+'
 
 
 #ifdef USE_SOUND_2010
@@ -2085,7 +2085,7 @@ static void display_subinven(void) {
 		//if (!z) Term_putstr(0, last_k++, -1, (i_ptr->attr == TERM_L_DARK) ? TERM_L_DARK : TERM_L_WHITE,
 		if (!z) Term_putstr(0, last_k++, -1, TERM_L_DARK,
 		    (i_ptr->attr == TERM_L_DARK) ? /* Use colour sent by server as indicator for SUBINVEN_LIMIT_GROUP */
-		    "     (This container is of duplicate type and therefore unusable)               " :
+		    "     (This container is unusable)                                               " :
 		    "     (empty)                                                                    ");
 		    //"     (This container is empty)                                                  ");
 
@@ -2427,6 +2427,11 @@ void show_inven(void) {
 		/* Be sure to account for the weight */
 		l += 9;
 
+#ifdef ENABLE_SUBINVEN
+		/* Also account for the bags' '[n/m]' used/total slots indicator */
+		if (o_ptr->tval == TV_SUBINVEN) l += 6;
+#endif
+
 		/* Maintain the maximum length */
 		if (l > len) len = l;
 
@@ -2710,7 +2715,7 @@ void show_subinven(int islot) {
 		/* Display a line if inventory is actually empty */
 		c_prt((i_ptr->attr == TERM_L_DARK) ? TERM_L_DARK : TERM_L_WHITE,
 		    (i_ptr->attr == TERM_L_DARK) ? /* Use colour sent by server as indicator for SUBINVEN_LIMIT_GROUP */
-		    "(This container is of duplicate type and therefore unusable)" :
+		    "(This container is unusable" :
 		    "(This container is empty)",
 		    1, SCREEN_PAD_LEFT);
 		/* Hack as if k was 1, to protect this 'is empty' text from weather particles etc, geez */
@@ -5639,7 +5644,7 @@ void do_weather(bool no_weather) {
 			for (i = 0; i < intensity; i++) {
 				/* NOTE: Basically same code in c-xtra1.c:do_weather(), dungeon.c:cloud_move(), wild.c:pos_in_weather() */
 				/* generate random starting pos */
-				x = rand_int(MAX_WID - 2) + 1;
+				x = randint(MAX_WID - 2);
 				y = rand_int(MAX_HGT - 1 + SKY_ALTITUDE) - SKY_ALTITUDE;
 
 				/* test pos for validity in regards to cloud */

@@ -255,6 +255,9 @@ function custom_monster_awoke(Ind, m_idx, index)
 end
 function custom_monster_sighted(Ind, m_idx, index)
 end
+-- Monster was just spawned
+function custom_monster_spawned(m_idx, index)
+end
 
 -- Custom grids:
 function custom_tunnel_hand(Ind, index)
@@ -266,6 +269,11 @@ end
 function custom_newlivefeat(old_feat, new_feat, index)
 end
 function custom_way(Ind, index)
+end
+-- Some feat was just placed on the dungeon level
+function custom_spawned(wx, wy, wz, x, y, index)
+end
+
 end
 
 -- Custom objects:
@@ -287,6 +295,9 @@ end
 -- slot is 0 if the item wasn't in player inventory (but on the floor)
 -- Usage: 0 = activate, 1 = read, 2 = quaff, 3 = eat, 4 = aim, 5 = use, 6 = zap, 7 = disarm-attempt, 8 = disarm-failed, 9 = disarmed, 10 = opened, 11 = bashed
 function custom_object_usage(Ind, o_idx, slot, usage, index)
+end
+-- Item was just created on the floor
+function custom_object_spawned(o_idx, index)
 end
 
 -- Set custom timer: Will trigger in <timeout> seconds.

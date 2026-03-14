@@ -18,7 +18,7 @@ char mangrc_filename[100] = "";
 bool convert_rc = FALSE;
 
 /* linux clients: load subwindow prefs from .tomenetrc - C. Blue */
-static void read_mangrc_aux(int t, cptr sec_name) {
+static void read_mangrc_aux(int t, char *sec_name) {
 	char *val, *val2;
 
 	/* strip leading tabs and leading spaces */
@@ -178,7 +178,7 @@ retry_mangrc:
 				if (p) strcpy(meta_address, p);
 			}
 
-			/* game server line (note: should be named 'host' for consistency with tomenet.ini) */
+			/* game server line */
 			if (!strncmp(buf, "server", 6)) {
 				char *p;
 
@@ -952,7 +952,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 			/* On writing a default .tomenetrc, also default to 16x24sv tileset */
 			if (!graphic_tiles[0]) {
 				strcpy(graphic_tiles, "16x24sv");
-				for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = TRUE;
+				for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = FALSE;
 			}
 			fputs(format("graphic_tiles\t\t%s\n", graphic_tiles), config2);
 			for (i = 0; i < MAX_SUBFONTS; i++)
@@ -1152,7 +1152,7 @@ static void default_set(void) {
 #endif
 
 #ifdef USE_GRAPHICS
-	for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = TRUE;
+	for (i = 0; i < MAX_SUBFONTS; i++) graphic_subtiles[i] = FALSE;
 #endif
 }
 

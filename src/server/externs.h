@@ -553,10 +553,15 @@ extern dun_level *getfloor(struct worldpos *wpos);
 extern int cave_set_feat(worldpos *wpos, int y, int x, int feat);
 extern bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat);
 extern bool cave_set_feat_live_ok(worldpos *wpos, int y, int x, int feat);
+#ifdef DM_MODULES
 extern void custom_cave_set_feat(worldpos *wpos, int y, int x, int feat,
-    s16b custom_lua_tunnel_hand, s16b custom_lua_tunnel, s16b custom_lua_search, byte custom_lua_search_diff_minus, byte custom_lua_search_diff_chance, s16b custom_lua_newlivefeat, s16b custom_lua_way);
+    s16b custom_lua_tunnel_hand, s16b custom_lua_tunnel, s16b custom_lua_search, byte custom_lua_search_diff_minus, byte custom_lua_search_diff_chance,
+    s16b custom_lua_newlivefeat, s16b custom_lua_way, s16b custom_lua_spawned);
 extern bool custom_cave_set_feat_live(worldpos *wpos, int y, int x, int feat,
-    s16b custom_lua_tunnel_hand, s16b custom_lua_tunnel, s16b custom_lua_search, byte custom_lua_search_diff_minus, byte custom_lua_search_diff_chance, s16b custom_lua_newlivefeat, s16b custom_lua_way);
+    s16b custom_lua_tunnel_hand, s16b custom_lua_tunnel, s16b custom_lua_search, byte custom_lua_search_diff_minus, byte custom_lua_search_diff_chance,
+    s16b custom_lua_newlivefeat, s16b custom_lua_way, s16b custom_lua_spawned);
+#endif
+extern bool cave_force_feat_live(worldpos *wpos, int y, int x, int feat);
 #if defined(ARCADE_SERVER) || defined(DM_MODULES)
 extern int check_feat(worldpos *wpos, int y, int x);
 #endif
@@ -568,7 +573,7 @@ extern int check_monster_ego(worldpos *wpos, int y, int x);
 extern int check_item_tval(worldpos *wpos, int y, int x);
 extern int check_item_sval(worldpos *wpos, int y, int x);
 extern int custom_place_item_module(worldpos *wpos, int y, int x, int tval, int sval,
-        s16b custom_lua_carrystate, s16b custom_lua_equipstate, s16b custom_lua_destruction, s16b custom_lua_usage);
+        s16b custom_lua_carrystate, s16b custom_lua_equipstate, s16b custom_lua_destruction, s16b custom_lua_usage, s16b custom_lua_spawned);
 extern int place_item_module(worldpos *wpos, int y, int x, int tval, int sval);
 #endif
 extern struct dungeon_type *getdungeon(struct worldpos *wpos);
@@ -699,8 +704,8 @@ extern void py_bash(int Ind, int y, int x);
 extern void py_bash_mon(int Ind, int y, int x);
 extern void py_bash_py(int Ind, int y, int x);
 #ifdef ENABLE_SUBINVEN
-extern bool auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought);
-extern s16b auto_stow(int Ind, int sub_sval, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, u32b cave_info);
+extern s16b auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought);
+extern s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, u32b cave_info);
 #endif
 extern int search_chance(player_type *p_ptr);
 extern void handle_pickup_item(int Ind, object_type *o_ptr, u32b cave_info);
@@ -780,7 +785,7 @@ extern void power_inscribe(object_type *o_ptr, bool redux, char *powins);
 extern bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name, cptr inscription);
 #ifdef ENABLE_SUBINVEN
 extern s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool pick_all);
-extern bool subinven_can_stack(int Ind, object_type *i_ptr, int sslot, bool store_bought);
+extern bool subinven_can_accept(int Ind, object_type *i_ptr, int sslot, bool store_bought);
 extern bool item_matches_subinven(int Ind, int subinven_group_type, object_type *o_ptr);
 extern void do_cmd_subinven_move(int Ind, int islot, int amt_spec);
 extern s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet);
@@ -1186,8 +1191,8 @@ extern int place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int
 extern bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp);
 #ifdef DM_MODULES
 extern int place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning);
-extern int custom_place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning,
-        s16b custom_lua_death, s16b custom_lua_deletion, s16b custom_lua_awoke, s16b custom_lua_sighted);
+extern int custom_place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning, s32b custom_xp,
+    s16b custom_lua_death, s16b custom_lua_deletion, s16b custom_lua_awoke, s16b custom_lua_sighted, s16b custom_lua_spawned);
 #endif
 #ifdef RPG_SERVER
 extern bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx);
@@ -1226,6 +1231,7 @@ extern void py2mon_update_abilities(monster_type *m_ptr, player_type *p_ptr);
 #ifdef FINAL_GUARDIAN_DIFFBOOST
 extern void final_guardian_diffboost(int m_idx);
 #endif
+extern void mon_fear_note(int Ind, int m_idx, bool nearby);
 
 /* netserver.c (nserver.c) */
 /* XXX those entries are duplicated with those in netserver.h
@@ -1385,7 +1391,9 @@ extern void Start_evilmeta(void);
 extern void Check_evilmeta(void);
 extern int Setup_net_server(void);
 extern bool Destroy_connection(int Ind, char *reason);
+#ifdef SERVER_PORTALS
 extern bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char *relogin_accpass, char *relogin_charname, char *reason_orig); //SERVER_PORTALS/PKT_RELOGIN
+#endif
 
 extern sockbuf_t *get_conn_q(int Ind);
 extern char *compacttime(void);
@@ -1497,7 +1505,9 @@ extern errr get_obj_num_prep_tval(int tval, u64b resf); /* was written for creat
 extern s16b get_obj_num(int max_level, u64b resf);
 extern void object_known(object_type *o_ptr);
 extern bool object_aware(int Ind, object_type *o_ptr);
+extern bool object_aware_k_idx(int Ind, int k_idx);
 extern void object_tried(int Ind, object_type *o_ptr, bool flipped);
+extern void object_tried_k_idx(int Ind, int k_idx, bool flipped);
 extern s64b object_value(int Ind, object_type *o_ptr);
 extern int object_similar(int Ind, object_type *o_ptr, object_type *j_ptr, s16b tolerance);
 extern void object_absorb(int Ind, object_type *o_ptr, object_type *j_ptr);
@@ -1563,6 +1573,7 @@ extern void init_treasure_classes(void);
 extern int check_for_wand_of_wonder(int sval, struct worldpos *wpos);
 extern void ammo_add_explosion(s16b *pval);
 extern int raw_spell_cost(object_type *o_ptr);
+extern void print_debug_drops_freq(int Ind);
 
 /* party.c */
 extern void account_check(int Ind);
@@ -1872,6 +1883,7 @@ extern bool obliteration(int who);
 extern bool probing(int Ind);
 extern bool project_los_wall(int Ind, int typ, int dam, int time, int interval, char *attacker);
 extern bool project_los(int Ind, int typ, int dam, char *attacker);
+extern bool project_los_players(int Ind, int typ, int dam, char *attacker);
 extern bool away_evil(int Ind, int dist);
 extern bool dispel_evil(int Ind, int dam);
 extern bool dispel_undead(int Ind, int dam);
@@ -1893,6 +1905,7 @@ extern bool fire_burst(int Ind, int typ, int dir, int dam, int rad, char *attack
 extern bool fire_swarm(int Ind, int typ, int dir, int dam, int num, char *attacker);
 extern bool fire_cone(int Ind, int typ, int dir, int dam, int rad, char *attacker);
 extern bool fire_wall(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
+extern bool fire_wall_wide(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
 extern bool fire_nova(int Ind, int typ, int dir, int dam, int time, int interval, char *attacker);
 extern bool fire_shot(int Ind, int typ, int dir, int dx, int dy, int rad, int num, char *attacker);
 extern bool fire_cloud(int Ind, int typ, int dir, int dam, int rad, int time, int interval, char *attacker);
@@ -2155,6 +2168,7 @@ extern void msg_admins(int Ind, cptr msg);
 extern void msg_format(int Ind, cptr fmt, ...);
 extern void msg_print_near(int Ind, cptr msg);
 extern void msg_print_near2(int Ind, cptr msg, cptr msg_u);
+extern void msg_print_interact_nearby(int Ind, int Int2, cptr strInd, cptr strInd2, cptr strNearby);
 extern void msg_print_verynear(int Ind, cptr msg);
 extern void msg_print_verynear2(int Ind, cptr msg, cptr msg_u);
 extern void msg_print_near_monvar(int Ind, int m_idx, cptr msg, cptr msg_garbled, cptr msg_unseen);
@@ -2247,6 +2261,7 @@ extern int cclen(cptr str);
 extern bool may_address_dm(player_type *p_ptr);
 extern char *custom_lua_timer_parmstr_get(int i);
 extern void custom_lua_timer_parmstr_set(int i, char *str);
+extern struct dungeon_type *admin_dun(int Ind, bool *tower);
 
 /* world.c */
 extern struct list *rpmlist;
@@ -2923,3 +2938,5 @@ extern char custom_lua_timer_parmstr[CUSTOM_LUA_TIMERS][MAX_CHARS_WIDE];
 extern int custom_lua_timer_parm1[CUSTOM_LUA_TIMERS], custom_lua_timer_parm2[CUSTOM_LUA_TIMERS], custom_lua_timer_parm3[CUSTOM_LUA_TIMERS];
 extern u32b hack_sigil_f[7], hack_comboset_f[7]; //same as ego_granted_flags
 extern char recent_deaths[RECENT_DEATHS_ENTRIES][MAX_CHARS_WIDE];
+
+extern int debug_drain_hp, debug_drain_mp;

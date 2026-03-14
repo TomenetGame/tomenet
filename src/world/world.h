@@ -46,7 +46,9 @@
 #define WPF_SINFO	0x00001000
 #define WPF_IRCCHAT	0x00002000	/* chat message from IRC relay - S */
 //hole: WP_MSG_TO_IRC has no corresponding transmit-flag here
-#define WPF_PORTAL	0x00008000	/* SERVER_PORTALS */
+//#ifdef SERVER_PORTALS
+ #define WPF_PORTAL	0x00008000
+//#endif
 #define WPF_UPLAYER	0x00010000
 
 /* World message flags */

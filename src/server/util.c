@@ -3509,6 +3509,7 @@ void msg_print_near(int Ind, cptr msg) {
 		}
 	}
 }
+/* Like msg_print_near() but has two alternative strings depending on censor settings */
 void msg_print_near2(int Ind, cptr msg, cptr msg_u) {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i;
@@ -3538,6 +3539,49 @@ void msg_print_near2(int Ind, cptr msg, cptr msg_u) {
 		if (p_ptr->cave_flag[y][x] & CAVE_VIEW) {
 			/* Send the message */
 			msg_print(i, p_ptr->censor_swearing ? msg : msg_u);
+		}
+	}
+}
+
+/*
+ * Same as msg_print_near but describes an initiator<->target interaction for those two and everyone nearby.
+ * Weakness: Bystanders don't handle Ind/Ind2 visibility to them, ie 'It' instead of player names.
+ */
+void msg_print_interact_nearby(int Ind, int Ind2, cptr strInd, cptr strInd2, cptr strNearby) {
+	player_type *p_ptr = Players[Ind], *p2_ptr = Players[Ind2];
+	int y, x, y2, x2, i;
+	struct worldpos *wpos;
+
+	wpos = &p_ptr->wpos;
+	if (!inarea(&p2_ptr->wpos, wpos)) return; //paranoia
+
+	//if (p_ptr->admin_dm) return;
+
+	y = p_ptr->py;
+	x = p_ptr->px;
+	y2 = p2_ptr->py;
+	x2 = p2_ptr->px;
+
+	/* Check each player */
+	for (i = 1; i <= NumPlayers; i++) {
+		/* Check this player */
+		p_ptr = Players[i];
+
+		/* Make sure this player is in the game */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+
+		/* Make sure this player is at this depth */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* Can he see both players? */
+		if (!((p_ptr->cave_flag[y][x] & CAVE_VIEW) && (p_ptr->cave_flag[y2][x2] & CAVE_VIEW))) continue;
+
+		/* Don't send the message to the player who caused it */
+		if (i == Ind) msg_print(i, strInd);
+		else if (i == Ind2) {
+			if (!check_ignore(Ind, i)) msg_print(i, strInd2);
+		} else {
+			if (!check_ignore(Ind, i)) msg_print(i, strNearby);
 		}
 	}
 }
@@ -3575,6 +3619,7 @@ void msg_print_verynear(int Ind, cptr msg) {
 		}
 	}
 }
+/* Like msg_print_verynear() but has two alternative strings depending on censor settings */
 void msg_print_verynear2(int Ind, cptr msg, cptr msg_u) {
 	player_type *p_ptr = Players[Ind];
 	int y, x, i;
@@ -3667,6 +3712,7 @@ void msg_format_near(int Ind, cptr fmt, ...) {
 	/* Display */
 	msg_print_near(Ind, buf);
 }
+
 
 /* for whispering */
 void msg_format_verynear(int Ind, cptr fmt, ...) {
@@ -4029,14 +4075,11 @@ void check_parryblock(int Ind) {
 
 void toggle_shoot_till_kill(int Ind) {
 	player_type *p_ptr = Players[Ind];
-	if (p_ptr->shoot_till_kill) {
-		msg_print(Ind, "\377wFire-till-kill mode now off.");
-		p_ptr->shooting_till_kill = FALSE;
-	} else {
-		msg_print(Ind, "\377wFire-till-kill mode now on!");
-	}
+
+	if (p_ptr->shoot_till_kill) msg_print(Ind, "\377wFire-till-kill mode now off.");
+	else msg_print(Ind, "\377wFire-till-kill mode now on!");
 	p_ptr->shoot_till_kill = !p_ptr->shoot_till_kill;
-s_printf("SHOOT_TILL_KILL: Player %s toggles %s.\n", p_ptr->name, p_ptr->shoot_till_kill ? "true" : "false");
+	s_printf("SHOOT_TILL_KILL: Player %s toggles %s.\n", p_ptr->name, p_ptr->shoot_till_kill ? "true" : "false");
 	p_ptr->redraw |= PR_STATE;
 	return;
 }
@@ -4058,7 +4101,7 @@ void toggle_dual_mode(int Ind) {
 	} else msg_print(Ind, "\377wDual-wield mode: Dual-hand.");
 
 	p_ptr->dual_mode = !p_ptr->dual_mode;
-s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "true" : "false");
+	s_printf("DUAL_MODE: Player %s toggles %s.\n", p_ptr->name, p_ptr->dual_mode ? "true" : "false");
 	p_ptr->redraw |= PR_STATE | PR_PLUSSES;
 	calc_boni(Ind);
 	return;
@@ -5540,8 +5583,8 @@ static void player_talk_aux(int Ind, char *message) {
  #else /* temporary */
   #define MUTEDTURN_TIME 300
 				p_ptr->mutedtemp = MUTEDTURN_TIME;
-				if (MUTEDTURN_TIME < 120) msg_format(Ind, "\377rYou have been muted for %s seconds.", MUTEDTURN_TIME);
-				else msg_format(Ind, "\377rYou have been muted for %s minutes.", MUTEDTURN_TIME / 60);
+				if (MUTEDTURN_TIME < 120) msg_format(Ind, "\377rYou have been muted for %d seconds.", MUTEDTURN_TIME);
+				else msg_format(Ind, "\377rYou have been muted for %d minutes.", MUTEDTURN_TIME / 60);
  #endif
 				s_printf("SPAM_MUTE_TEMP: '%s' (%s) was muted for chat spam for %d seconds.\n", p_ptr->name, p_ptr->accountname, MUTEDTURN_TIME);
 				break;
@@ -7007,6 +7050,9 @@ bool show_floor_feeling(int Ind, bool dungeon_feeling) {
 	if (l_ptr->flags1 & DF1_NO_RECALL)
 		msg_print(Ind, "\377oThere is strong magic enclosing this dungeon.");
 #endif
+
+	if (p_ptr->IDDC_logscum) msg_print(Ind, "\377RThis floor has become stale, take a staircase to move on!");
+
 	/* Can leave IRONMAN? */
 	if (((l_ptr->flags1 & LF1_IRON_RECALL) || ((d_ptr->flags1 & DF1_FORCE_DOWN) && d_ptr->maxdepth == ABS(p_ptr->wpos.wz)))
 	    && !(d_ptr->flags2 & DF2_NO_EXIT_WOR))
@@ -8181,7 +8227,7 @@ void intshuffle(int *array, int size) {
 	int i, j, tmp;
 
 	for (i = size - 1; i > 0; i--) {
-		j = rand_int(i + 1);
+		j = randint0(i);
 		tmp = array[i];
 		array[i] = array[j];
 		array[j] = tmp;
@@ -10183,7 +10229,9 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	    !(p_ptr->global_event_temp & PEVF_INDOORS_00) && /* 'A "personal" outdoor_affects()' ie player-specific, not wpos-specific. Maybe improve this somehow. */
 	    !inside_house(&p_ptr->wpos, x, y) && // || p_ptr->store_num != -1) &&  --not safe "inside" pstores, as we're still standing outside...
 	    !(f_info[c_ptr->feat].flags2 & FF2_COVER) && //special: feat-protected, trees, walls, npc shops, doors offer cover
-	    !(c_ptr->info & CAVE_PROT)) {
+	    !(c_ptr->info & CAVE_PROT)
+	    && !p_ptr->newly_created //hack to workaround login silliness of showing sunburn+respite messages instantly for newly created characters inside the inn
+	    ){
 		if (!p_ptr->grid_sunlit) {
 			p_ptr->grid_sunlit = TRUE;
 			calc_boni(Ind);
@@ -10325,9 +10373,11 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	p_ptr->melee_timeout_crit_dual = 0;
 }
 
-/* Items that can be shared even between incompatible character modes or if level 0! */
+/* Items that can be shared even between incompatible character modes or if level 0!
+   Contains all items from shareable_starter_item() below and adds some. */
 bool exceptionally_shareable_item(object_type *o_ptr) {
 	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return(FALSE);
+	if (o_ptr->questor) return(FALSE);
 
 	if ((o_ptr->tval == TV_SCROLL && (
 	    o_ptr->sval == SV_SCROLL_WORD_OF_RECALL ||
@@ -10342,9 +10392,10 @@ bool exceptionally_shareable_item(object_type *o_ptr) {
 		return(TRUE);
 	return(FALSE);
 }
-/* Starter items that can be shared despite being level 0! */
+/* Starter items that can be shared despite being level 0! (Smaller subset of the items in exceptionally_shareable_item().) */
 bool shareable_starter_item(object_type *o_ptr) {
 	if (o_ptr->name1 || ((o_ptr->name2 || o_ptr->name2b) && o_ptr->tval != TV_FOOD)) return(FALSE);
+	if (o_ptr->questor) return(FALSE);
 
 	if ((o_ptr->tval == TV_LITE && o_ptr->sval == SV_LITE_TORCH) ||
 	    (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_SATISFY_HUNGER) ||
@@ -10881,14 +10932,38 @@ void verify_expfact(int Ind, int p) {
 bool verify_inven_item(int Ind, int item) {
 #ifdef ENABLE_SUBINVEN
 	if (item >= SUBINVEN_INVEN_MUL) {
+		player_type *p_ptr = Players[Ind];
+		object_type *o_ptr = &p_ptr->inventory[item / SUBINVEN_INVEN_MUL - 1];
+
+		/* Paranoia - location indicates we must be within a container item */
+		if (o_ptr->tval != TV_SUBINVEN) return(FALSE);
+
 		/* Verify container location, must be inside inventory */
 		if (item / SUBINVEN_INVEN_MUL - 1 < 0) return(FALSE);
 		if (item / SUBINVEN_INVEN_MUL - 1 >= INVEN_PACK) return(FALSE);
-		if (Players[Ind]->inventory[item / SUBINVEN_INVEN_MUL - 1].tval != TV_SUBINVEN) return(FALSE);
+		if (o_ptr->tval != TV_SUBINVEN) return(FALSE);
 
 		/* Verify item location inside container */
 		if (item % SUBINVEN_INVEN_MUL < 0) return(FALSE); //is this even... compiler specs please
-		if ((item % SUBINVEN_INVEN_MUL) >= Players[Ind]->inventory[item / SUBINVEN_INVEN_MUL - 1].bpval) return(FALSE);
+		if ((item % SUBINVEN_INVEN_MUL) >= o_ptr->bpval) return(FALSE);
+
+		/* Not allowed to operate on any items inside a disabled (because duplicate) subinventory.
+		   (Only way for the player to clear the situation is to drop the (now-)ineligible bag to empty it.)
+		   This can happen eg if 'Trapping' skill was reset, making an anti-static wrapping ineligible, which had items in it. */
+ #ifdef SUBINVEN_LIMIT_GROUP
+		/* Paranoia - cannot use items inside a duplicate bag type (if we're not in the first bag of this type) */
+		if (subinven_group_player(Ind, get_subinven_group(o_ptr->sval), item / SUBINVEN_INVEN_MUL - 1)) {
+			msg_print(Ind, "You cannot handle items inside a duplicate bag type. Drop the bag to empty it.");
+			Send_beep(Ind);
+			return(FALSE);
+		}
+		/* Not paranoia (due to Lose Memories skill reset -> Trapping skill at least) - cannot use items inside (now-)ineligible container */
+		if (o_ptr->sval == SV_SI_MDEVP_WRAPPING && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) {
+			msg_print(Ind, "You are not skillful enough to handle this bag type. Drop the bag to empty it.");
+			Send_beep(Ind);
+			return(FALSE);
+		}
+ #endif
 
 		return(TRUE);
 	}
@@ -11086,7 +11161,6 @@ void erase_subinven(int Ind, int item) {
 
 	verify_subinven_size(Ind, item, FALSE);
 }
- #ifdef SUBINVEN_LIMIT_GROUP
 int get_subinven_group(int sval) {
 	switch (sval) {
 	case SV_SI_SATCHEL:
@@ -11101,7 +11175,6 @@ int get_subinven_group(int sval) {
 	}
 	return(-1);
 }
- #endif
 #endif
 
 /* Returns amount of bytes used in a string by colour codes - C. Blue
@@ -11133,4 +11206,34 @@ void custom_lua_timer_parmstr_set(int i, char *str) {
 	if (i < 1 || i >= CUSTOM_LUA_TIMERS) return;
 	strncpy(custom_lua_timer_parmstr[i], str, MAX_CHARS_WIDE);
 	custom_lua_timer_parmstr[i][MAX_CHARS_WIDE - 1] = 0;
+}
+
+struct dungeon_type *admin_dun(int Ind, bool *tower) {
+	struct dungeon_type *d_ptr;
+	player_type *p_ptr = Players[Ind];
+	worldpos *tpos = &p_ptr->wpos;
+	wilderness_type *wild = &wild_info[tpos->wy][tpos->wx];
+	cave_type **zcave, *c_ptr;
+
+	if (!(zcave = getcave(tpos))) {
+		msg_print(Ind, "Fatal: Couldn't acquire zcave!");
+		return(NULL);
+	}
+
+	if (tower) *tower = FALSE;
+	if (!p_ptr->wpos.wz) {
+		c_ptr = &zcave[p_ptr->py][p_ptr->px];
+		if (c_ptr->feat != FEAT_LESS && c_ptr->feat != FEAT_MORE) {
+			msg_print(Ind, "Error: Not standing on a staircase grid.");
+			return(NULL);
+		}
+		if (c_ptr->feat == FEAT_LESS) {
+			d_ptr = wild->tower;
+			if (tower) *tower = TRUE;
+		} else d_ptr = wild->dungeon;
+	} else if (p_ptr->wpos.wz > 0) {
+		d_ptr = wild->tower;
+		if (tower) *tower = TRUE;
+	} else d_ptr = wild->dungeon;
+	return(d_ptr);
 }

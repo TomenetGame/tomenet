@@ -1355,6 +1355,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 					if (zcave[cy][cx].info & CAVE_ICKY) continue;
 					if (zcave[cy][cx].info & CAVE_NEST_PIT) continue;
 
+					...use cave_set_feat_live() instead, to properly update views...
+
 					tmpf = zcave[cy][cx].feat;
 					tmps = zcave[cy][cx].info;
 					tmpx = zcave[cy][cx].mimic;
@@ -4282,21 +4284,9 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 			} else {
 				/* Try to just place it into the inventory, or drop it to the floor if full */
 #ifdef ENABLE_SUBINVEN
-				if (q_ptr->tval == TV_TRAPKIT) {
-					(void)auto_stow(Ind, SV_SI_TRAPKIT_BAG, q_ptr, -1, FALSE, FALSE, FALSE, 0x0);
-					/* If we could stow it, we're done with this item */
-					if (!q_ptr->number) continue;
-				}
-				else if (q_ptr->tval == TV_STAFF || (q_ptr->tval == TV_ROD && !rod_requires_direction(Ind, o_ptr))) {
-					(void)auto_stow(Ind, SV_SI_MDEVP_WRAPPING, q_ptr, -1, FALSE, FALSE, FALSE, 0x0);
-					/* If we could stow it, we're done with this item */
-					if (!q_ptr->number) continue;
-				}
-				else if (q_ptr->tval == TV_POTION || q_ptr->tval == TV_POTION2) {
-					(void)auto_stow(Ind, SV_SI_POTION_BELT, q_ptr, -1, FALSE, FALSE, FALSE, 0x0);
-					/* If we could stow it, we're done with this item */
-					if (!q_ptr->number) continue;
-				}
+				auto_stow(Ind, q_ptr, -1, FALSE, FALSE, FALSE, 0x0);
+				/* If we could stow it, we're done with this item */
+				if (!q_ptr->number) continue;
 #endif
 				object_desc(Ind, o_name, q_ptr, TRUE, 3);
 				slot = inven_carry(Ind, q_ptr);
@@ -5315,9 +5305,15 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_DEC_INT:
-			//m_ptr->aaf--;
+			typ = GF_DEC_INT;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_DEC_WIS:
-			return(FALSE);
+			typ = GF_DEC_WIS;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_DEC_DEX:
 			typ = GF_DEC_DEX;
 			dam = 1; /*dummmy*/
@@ -5329,15 +5325,25 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_DEC_CHR:
-			return(FALSE);
+			typ = GF_DEC_CHR;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_RES_STR:
 			typ = GF_RES_STR;
 			dam = 1; /*dummmy*/
 			fixed = TRUE;
 			break;
 		case SV_POTION_RES_INT:
+			typ = GF_RES_INT;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_RES_WIS:
-			return(FALSE);
+			typ = GF_RES_WIS;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_RES_DEX:
 			typ = GF_RES_DEX;
 			dam = 1; /*dummmy*/
@@ -5349,15 +5355,25 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_RES_CHR:
-			return(FALSE);
+			typ = GF_RES_CHR;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_INC_STR:
 			typ = GF_INC_STR;
 			dam = 1; /*dummmy*/
 			fixed = TRUE;
 			break;
 		case SV_POTION_INC_INT:
+			typ = GF_INC_INT;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_INC_WIS:
-			return(FALSE);
+			typ = GF_INC_WIS;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_INC_DEX:
 			typ = GF_INC_DEX;
 			dam = 1; /*dummmy*/
@@ -5369,7 +5385,10 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			fixed = TRUE;
 			break;
 		case SV_POTION_INC_CHR:
-			return(FALSE);
+			typ = GF_INC_CHR;
+			dam = 1; /*dummmy*/
+			fixed = TRUE;
+			break;
 		case SV_POTION_AUGMENTATION:
 			typ = GF_AUGMENTATION;
 			dam = 1; /*dummmy*/
@@ -5377,7 +5396,7 @@ static bool mon_hit_trap_aux_potion(int who, int m_idx, object_type *o_ptr) {
 			break;
 		case SV_POTION_RUINATION:	/* ??? */
 			typ = GF_RUINATION;
-			dam = 1; /*dummmy*/
+			dam = damroll(20, 10);
 			fixed = TRUE;
 			break;
 		case SV_POTION_EXPERIENCE:
@@ -5874,7 +5893,7 @@ bool mon_hit_trap(int m_idx) {
 						/* Redraw (later) if needed */
 						update_health(c_ptr->m_idx);
 
-						/* Some mosnters are immune to death */
+						/* Some monsters are immune to death */
 						if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
 						if (m_ptr->status & M_STATUS_FRIENDLY) dam = 0;
 
@@ -5902,14 +5921,7 @@ bool mon_hit_trap(int m_idx) {
 						if (who > 0 && p_ptr->mon_vis[m_idx]) {
 							msg_format(who, "%^s sets off a missile trap.", m_name);
 							message_pain(who, m_idx, dam);
-
-							/* Take note */
-							if (fear && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-								if (m_ptr->r_idx != RI_MORGOTH)
-									msg_print_near_monster(m_idx, "flees in terror!");
-								else
-									msg_print_near_monster(m_idx, "retreats!");
-							}
+							if (fear) mon_fear_note(who, m_idx, FALSE);
 						}
 					}
 

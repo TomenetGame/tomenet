@@ -4118,7 +4118,7 @@ void init_firework_dungeon(void) {
 	}
  #endif
 	d_ok[0] = 0; //wilderness dungeons are always ok, even if they get visited frequently? hmm
-	firework_dungeon = d_ok[rand_int(d_ok_num + 1)]; //note: 0 = all 'Wilderness' dungeons! (usually ironman) So those are ALWAYS eligible!
+	firework_dungeon = d_ok[randint0(d_ok_num)]; //note: 0 = all 'Wilderness' dungeons! (usually ironman) So those are ALWAYS eligible!
 	if (!firework_dungeon) firework_dungeon_chance = 2000; //especially rare in 'wilderness' dungeons
 	else firework_dungeon_chance = 1000;
 	s_printf("firework_dungeon: %d (%s)%s\n", firework_dungeon, d_name + d_info[firework_dungeon].name, d_ok_num ? "" : " [exclusively]"); //(currently cannot be exclusive)

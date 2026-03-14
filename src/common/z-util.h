@@ -69,6 +69,11 @@ extern bool prefix(cptr s, cptr t);
 extern bool suffix(cptr s, cptr t);
 extern bool prefix_case(cptr s, cptr t);
 extern bool suffix_case(cptr s, cptr t);
+extern void trimskip_spaces(char *s);
+extern void trimskip_leading_spaces(char *s);
+extern void trim_trailing_spaces(char *s);
+extern void trim_spaces(char *s);
+extern void trim_leading_spaces(char *s);
 
 #ifdef ultrix
 extern char *strdup(cptr s);

@@ -216,8 +216,7 @@ void do_cmd_go_up(int Ind) {
 		int dir = 5, tries = 10;
 
 		/* Prevent walking nowhere */
-		while (dir == 5 && --tries)
-			dir = rand_int(9) + 1;
+		while (dir == 5 && --tries) dir = randint(9);
 
 		do_cmd_walk(Ind, dir, FALSE);
 		return;
@@ -644,6 +643,9 @@ void do_cmd_go_up(int Ind) {
 			}
 #endif
 		}
+
+		if (on_irondeepdive(wpos) || on_hallsofmandos(wpos)) msg_print(Ind, "\374\377yHint: You may use the \377o/xo\377y command in here to obtain extermination orders.");
+
 		p_ptr->new_level_method = LEVEL_UP;
 #ifdef USE_SOUND_2010
 		staircase_sfx(Ind);
@@ -1049,8 +1051,7 @@ void do_cmd_go_down(int Ind) {
 		int dir = 5, tries = 10;
 
 		/* Prevent walking nowhere */
-		while (dir == 5 && --tries)
-			dir = rand_int(9) + 1;
+		while (dir == 5 && --tries) dir = randint(9);
 
 		do_cmd_walk(Ind, dir, FALSE);
 		return;
@@ -1617,6 +1618,9 @@ void do_cmd_go_down(int Ind) {
 			}
 #endif
 		}
+
+		if (on_irondeepdive(wpos) || on_hallsofmandos(wpos)) msg_print(Ind, "\374\377yHint: You may use the \377o/xo\377y command in here to obtain extermination orders.");
+
 		p_ptr->new_level_method = LEVEL_DOWN;
 #ifdef USE_SOUND_2010
 		staircase_sfx(Ind);
@@ -3132,13 +3136,7 @@ void do_cmd_open(int Ind, int dir) {
 				}
 
 				/* Open the door */
-				c_ptr->feat = FEAT_OPEN;
-				/* Notice */
-				note_spot_depth(wpos, y, x);
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-				/* Update some things */
-				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+				cave_force_feat_live(wpos, y, x, FEAT_OPEN);
 			}
 
 			/* Failure */
@@ -3162,7 +3160,7 @@ void do_cmd_open(int Ind, int dir) {
 				if (access_door(Ind, cs_ptr->sc.ptr, TRUE) || is_admin(p_ptr)) {
 #if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
 					/* Open the door */
-					c_ptr->feat = FEAT_HOME_OPEN;
+					cave_force_feat_live(wpos, y, x, FEAT_HOME_OPEN);
  #ifdef USE_SOUND_2010
 					sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
  #endif
@@ -3178,12 +3176,6 @@ void do_cmd_open(int Ind, int dir) {
 
 					/* Take half a turn */
 					p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-					/* Notice */
-					note_spot_depth(wpos, y, x);
-					/* Redraw */
-					everyone_lite_spot(wpos, y, x);
-					/* Update some things */
-					p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 
 				/* We cannot access this house. Special hack: Never get stuck inside a house that we don't have access to!
 				   Make sure we ignore drawbridge and moat, since these are outside of the house yet cave-icky.
@@ -3224,7 +3216,7 @@ void do_cmd_open(int Ind, int dir) {
 				for (j = 0; j < INVEN_PACK; j++) {
 					object_type *o_ptr = &p_ptr->inventory[j];
 					if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
-						c_ptr->feat = FEAT_HOME_OPEN;
+						cave_force_feat_live(wpos, y, x, FEAT_HOME_OPEN);
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
 						break_cloaking(Ind, 3);
@@ -3232,16 +3224,13 @@ void do_cmd_open(int Ind, int dir) {
 						stop_precision(Ind);
 						stop_shooting_till_kill(Ind);
 						p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-						note_spot_depth(wpos, y, x);
-						everyone_lite_spot(wpos, y, x);
-						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe key fits in the lock. %d:%d",key->id, o_ptr->pval);
 #ifdef USE_SOUND_2010
 						sound(Ind, "open_pick", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
 						return;
 					} else if (is_admin(p_ptr)) {
-						c_ptr->feat = FEAT_HOME_OPEN;
+						cave_force_feat_live(wpos, y, x, FEAT_HOME_OPEN);
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
 						break_cloaking(Ind, 3);
@@ -3249,9 +3238,6 @@ void do_cmd_open(int Ind, int dir) {
 						stop_precision(Ind);
 						stop_shooting_till_kill(Ind);
 						p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
-						note_spot_depth(wpos, y, x);
-						everyone_lite_spot(wpos, y, x);
-						p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 						msg_format(Ind, "\377gThe door crashes open. %d",key->id);
 #ifdef USE_SOUND_2010
 						sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND, TRUE);
@@ -3285,16 +3271,10 @@ void do_cmd_open(int Ind, int dir) {
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
 
 				/* Open the door */
-				c_ptr->feat = FEAT_OPEN;
+				cave_force_feat_live(wpos, y, x, FEAT_OPEN);
 #ifdef USE_SOUND_2010
 				sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
-				/* Notice */
-				note_spot_depth(wpos, y, x);
-				/* Redraw */
-				everyone_lite_spot(wpos, y, x);
-				/* Update some things */
-				p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 			} else {
 				/* Message */
 				msg_print(Ind, "You fumble..");
@@ -3459,6 +3439,7 @@ void do_cmd_close(int Ind, int dir) {
 			/* fun exception: open door mimic players */
 			int i;
 
+			/* Note that door-mimics currently don't block LoS like a real door would =-p */
 			if ((i = -c_ptr->m_idx) > 0) {
 				player_type *q_ptr = Players[i];
 				if (q_ptr->body_monster == RI_DOOR_MIMIC && (q_ptr->temp_misc_1 & 0x01)) {
@@ -3524,19 +3505,10 @@ void do_cmd_close(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* Close the door */
-			c_ptr->feat = FEAT_HOME;
+			cave_force_feat_live(wpos, y, x, FEAT_HOME);
 #ifdef USE_SOUND_2010
 			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
-
-			/* Notice */
-			note_spot_depth(wpos, y, x);
-
-			/* Redraw */
-			everyone_lite_spot(wpos, y, x);
-
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
 		}
 
 		/* Close the door */
@@ -3559,16 +3531,7 @@ void do_cmd_close(int Ind, int dir) {
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
 
 			/* Close the door */
-			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
-
-			/* Notice */
-			note_spot_depth(wpos, y, x);
-
-			/* Redraw */
-			everyone_lite_spot(wpos, y, x);
-
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
+			cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 		}
 	}
 
@@ -4526,12 +4489,10 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 
 			if (Ind && !quiet_full) msg_print(Ind, "You have found a secret door!");
 			/* un-hide the true feat (a door!) */
-			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+			cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 			/* Clear mimic feature */
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
 
-			note_spot_depth(wpos, y, x);
-			everyone_lite_spot(wpos, y, x);
 			*door = TRUE;
 			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d)", Ind, c_ptr->custom_lua_search))) return;
 		} else {
@@ -4560,14 +4521,9 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			/* Message */
 			if (Ind && !quiet_full) msg_print(Ind, "You have found a secret door.");
 			/* Pick a door XXX XXX XXX */
-			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+			cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 			/* Clear mimic feature */
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
-
-			/* Notice */
-			note_spot_depth(wpos, y, x);
-			/* Redraw */
-			everyone_lite_spot(wpos, y, x);
 #endif
 			if (c_ptr->custom_lua_search > 0 && exec_lua(0, format("custom_search(%d,%d)", Ind, c_ptr->custom_lua_search))) return;
 		}
@@ -5661,7 +5617,6 @@ void do_cmd_disarm(int Ind, int dir) {
 
 				/* Remove the trap */
 				cs_erase(c_ptr, cs_ptr);
-				//c_ptr->feat = FEAT_FLOOR;
 
 				/* Forget the "field mark" */
 				everyone_forget_spot(wpos, y, x);
@@ -5985,6 +5940,8 @@ void do_cmd_bash(int Ind, int dir) {
 
 		/* Bash a closed door */
 		else {
+			int rbash, rtemp;
+
 			if ((p_ptr->fruit_bat && !p_ptr->body_monster) ||
 			    (p_ptr->body_monster && !(r_ptr->flags2 & RF2_BASH_DOOR))) {
 				msg_print(Ind, "You cannot bash doors!");
@@ -5993,55 +5950,46 @@ void do_cmd_bash(int Ind, int dir) {
 
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
-
 			/* Take a turn */
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
-
 			/* Message */
 			msg_print(Ind, "You smash into the door!");
 
 			/* Hack -- Bash power based on strength */
-			/* (Ranges from 3 to 20 to 100 to 200, +10 on avg. from +1 STR) */
+			/* (Ranges from 3 to 20 to 100 to 200, +10 on avg. from +1 STR.
+			    Also, it's 40...70 at STR 18/20...18/50 as a common value for fighter chars) */
 			bash = adj_str_blow[p_ptr->stat_ind[A_STR]];
-
-			/* Extract door power */
+			/* Extract door power (0...7, for both, locked doors and jammed doors each) */
 			temp = ((c_ptr->feat - FEAT_DOOR_HEAD) & 0x07);
-
-			/* Compare bash power to door power XXX XXX XXX */
-			temp = (bash - (temp * 10));
-
-			/* Hack -- always have a chance */
-			if (temp < 1) temp = 1;
+			temp = 20 + temp * 60; // adjust
 
 			/* Hack -- attempt to bash down the door */
-			if (rand_int(100) < temp && c_ptr->feat != FEAT_HOME) {
+			rbash = rand_int(bash);
+			rtemp = rand_int(temp) + rand_int(temp / 2);
+			//msg_format(Ind,"b=%d,t=%d : rb=%d, rt=%d",bash,temp,rbash,rtemp); //testing
+			if (c_ptr->feat != FEAT_HOME && rbash > rtemp) {
 				/* Message */
 				msg_print(Ind, "The door crashes open!");
-
 #ifdef USE_SOUND_2010
 				sound(Ind, "bash_door_break", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
-
 				/* reduce sleep of nearby monsters */
 				wakeup_monsters_somewhat(Ind, -1);
 
 				/* Set off trap */
 				if (GetCS(c_ptr, CS_TRAPS)) player_activate_door_trap(Ind, y, x);
-
 				/* Break down the door */
-				if (magik(DOOR_BASH_BREAKAGE)) c_ptr->feat = FEAT_BROKEN;
+				if (magik(DOOR_BASH_BREAKAGE)) cave_force_feat_live(wpos, y, x, FEAT_BROKEN);
 				/* Open the door */
-				else c_ptr->feat = FEAT_OPEN;
+				else cave_force_feat_live(wpos, y, x, FEAT_OPEN);
 
 				/* Notice */
 				note_spot_depth(wpos, y, x);
-
 				/* Redraw */
 				everyone_lite_spot(wpos, y, x);
 
 				/* Hack -- Fall through the door */
 				move_player(Ind, dir, FALSE, NULL);
-
 				/* Update some things */
 				p_ptr->update |= (PU_VIEW | PU_LITE);
 				p_ptr->update |= (PU_DISTANCE);
@@ -6268,8 +6216,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 			dir = 5;
 
 			/* Prevent walking nowhere */
-			while (dir == 5 && --tries)
-				dir = rand_int(9) + 1;
+			while (dir == 5 && --tries) dir = randint(9);
 		}
 
 		if (p_ptr->steamblast && dir != 5) {
@@ -8168,21 +8115,7 @@ void do_cmd_fire(int Ind, int dir) {
 						}
 
 						/* Take note */
-						if (fear && visible && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-							char m_name[MNAME_LEN];
-#ifdef USE_SOUND_2010
-#else
-							sound(Ind, SOUND_FLEE);
-#endif
-							/* Get the monster name (or "it") */
-							monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-							/* Message */
-							if (m_ptr->r_idx != RI_MORGOTH)
-								msg_format(Ind, "%^s flees in terror!", m_name);
-							else
-								msg_format(Ind, "%^s retreats!", m_name);
-						}
+						if (fear && visible) mon_fear_note(Ind, c_ptr->m_idx, FALSE);
 					}
 
 					if (!boomerang && p_ptr->ammo_brand_t)
@@ -9609,25 +9542,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				else {
 					/* Message */
 					message_pain(Ind, c_ptr->m_idx, tdam);
-
 					/* Take note */
-					if (fear && visible) {
-						char m_name[MNAME_LEN];
-
-#ifdef USE_SOUND_2010
-#else
-						sound(Ind, SOUND_FLEE);
-#endif
-
-						/* Get the monster name (or "it") */
-						monster_desc(Ind, m_name, c_ptr->m_idx, 0);
-
-						/* Message */
-						if (m_ptr->r_idx != RI_MORGOTH)
-							msg_format(Ind, "%^s flees in terror!", m_name);
-						else
-							msg_format(Ind, "%^s retreats!", m_name);
-					}
+					if (fear && visible) mon_fear_note(Ind, c_ptr->m_idx, FALSE);
 				}
 				/* Unhack */
 				p_ptr->instakills = old_instakills;
@@ -10083,8 +9999,7 @@ void do_cmd_purchase_house(int Ind, int dir) {
 				kill_house_contents(h_idx);
 
 				/* take note of door colour change */
-				c_ptr->feat = FEAT_HOME; /* make sure door is closed, in case it was open when we sold it */
-				everyone_lite_spot(wpos, y, x);
+				cave_force_feat_live(wpos, y, x, FEAT_HOME); /* make sure door is closed, in case it was open when we sold it */
 				return;
 			}
 			msg_print(Ind, "That house does not belong to you!");

@@ -1991,6 +1991,12 @@ bool set_poisoned(int Ind, int v, int attacker) { /* bad status effect */
 
 	/* Open */
 	if (v) {
+#if 1 /* slow-poison-hack enabled */
+		if (p_ptr->slow_poison < 0) p_ptr->slow_poison = 1;
+#else /* slow-poison-hack disabled */
+		if (p_ptr->slow_poison < 0) p_ptr->slow_poison = 0;
+#endif
+
 		if (!p_ptr->poisoned) {
 			msg_print(Ind, "You are poisoned!");
 			notice = TRUE;
@@ -5262,7 +5268,7 @@ void check_experience(int Ind) {
 	}
 
 	/* Notify [casters?] about the new auto-retaliator option */
-	if (old_lev < 13 && p_ptr->lev >= 13) {
+	if (old_lev < 13 && p_ptr->lev >= 13 && !p_ptr->new_retaliator) {
 		p_ptr->warning_newautoret = 1;
 		if (is_older_than(&p_ptr->version, 4, 9, 2, 1, 0, 1))
 			msg_print(Ind, "\374\377yHINT: You can change auto-attacking with the \377o/newar\377y command:");
@@ -6367,7 +6373,7 @@ bool monster_death(int Ind, int m_idx) {
 
 	bool henc_cheezed = FALSE, pvp = ((p_ptr->mode & MODE_PVP) != 0);
 	u64b resf_drops = make_resf(p_ptr), resf_chosen = resf_drops;
-	bool in_iddc;
+	bool in_iddc, in_mandos;
 
 
 	/* Avoid getting projected on by smash effect of our own dropped potions */
@@ -6438,6 +6444,7 @@ bool monster_death(int Ind, int m_idx) {
 	x = m_ptr->fx;
 	wpos = &m_ptr->wpos;
 	in_iddc = in_irondeepdive(wpos);
+	in_mandos = in_hallsofmandos(wpos);
 	if (!(zcave = getcave(wpos))) return(FALSE);
 
 	if (ge_special_sector && /* training tower event running? and we are there? */
@@ -6714,7 +6721,7 @@ bool monster_death(int Ind, int m_idx) {
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_iddc
 #ifdef DED_IDDC_MANDOS
-	    && !in_hallsofmandos(&p_ptr->wpos)
+	    && !in_mandos
 #endif
 	    && r_ptr->mexp) /* Allow normal townie kills in Bree */
 		return(FALSE);
@@ -7229,11 +7236,19 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 
 	/* Rogues can harvest poison for their Apply Poison technique */
-	if ((p_ptr->melee_techniques & MT_POISON) && (r_ptr->flags4 & RF4_BR_POIS) && !p_ptr->IDDC_logscum
-	    && (r_ptr->weight >= 4000 /* Dragon-league basically, but also Aklash (exactly 4000)! */
-	     || (r_ptr->weight >= 400 &&
-	      ((r_ptr->d_char != 'w' && r_ptr->d_char != 'I' && r_ptr->d_char != 'Z') || (!(r_ptr->flags7 & RF7_MULTIPLY) && !(r_ptr->flags1 & RF1_FRIENDS)))))
-	    ) {
+	for (i = 0; i < 4; i++)
+		if (r_ptr->blow[i].effect == RBE_POISON && RBM_INTRINSIC_BRAND(r_ptr->blow[i].method)) {
+			i = -1;
+			break;
+		}
+	if ((p_ptr->melee_techniques & MT_POISON) && !p_ptr->IDDC_logscum &&
+	    (i == -1 || (r_ptr->flags4 & RF4_BR_POIS)) && /* Either intrinsically-poisonous melee attacks or poison breath */
+	    (r_ptr->weight >= 4000 || /* Dragon-league basically, but also Aklash (exactly 4000)! */
+	    (r_ptr->weight >= 400 && /* Mid-size creatures also ok, with some races and mass-creatures filtered out */
+	      ((r_ptr->d_char != 'w' && r_ptr->d_char != 'I' && r_ptr->d_char != 'Z') || (!(r_ptr->flags7 & RF7_MULTIPLY) && !(r_ptr->flags1 & RF1_FRIENDS)))) ||
+	    /* Smallest animals at reduced chances [hounds 600, insects 10-20 (Mi-Go 800), worm masses 25-45, snakes 7-170 wide spread, argh] */
+	    ((r_ptr->d_char == 'I' && !rand_int(10)) || (r_ptr->d_char == 'J' && !rand_int(2)) || (r_ptr->d_char == 'w' && !rand_int(10)) || (r_ptr->d_char == 'Z' && !rand_int(5)))
+	    )) {
 		/* Actually require weapons though so martial arts rogues don't get potion spammed for nothing */
 		if ((p_ptr->inventory[INVEN_WIELD].k_idx || (p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)) &&
 		    !p_ptr->suppress_ingredients && rand_int(7) < 3 * r_ptr->weight / 1000) {
@@ -7373,13 +7388,18 @@ bool monster_death(int Ind, int m_idx) {
 
 			/* get bonus credit in Ironman Deep Dive Challenge */
 			if (in_iddc) {
-#ifndef IDDC_MIMICRY_BOOST
+#ifndef IDDC_MANDOS_MIMICRY_BOOST
 				if (!bonus) bonus = 1;
 #else /* give a possibly greater boost than just +1 */
-				if (bonus < IDDC_MIMICRY_BOOST) bonus = IDDC_MIMICRY_BOOST;
+				if (bonus < IDDC_MANDOS_MIMICRY_BOOST) bonus = IDDC_MANDOS_MIMICRY_BOOST;
+#endif
+			} else if (in_mandos) {
+#ifndef IDDC_MANDOS_MIMICRY_BOOST
+				if (!bonus) bonus = 1;
+#else /* give a possibly greater boost than just +1 */
+				if (bonus < IDDC_MANDOS_MIMICRY_BOOST) bonus = IDDC_MANDOS_MIMICRY_BOOST;
 #endif
 			}
-
 			/* Apply the highest bonus source, overriding other boni (ie they don't stack) */
 			p_ptr->r_mimicry[credit_idx] += bonus;
 
@@ -7731,10 +7751,8 @@ bool monster_death(int Ind, int m_idx) {
 	}
 #endif
 
-	if (r_idx == RI_BLUE) { /* just for now, testing */
-		zcave[2][55].feat = FEAT_UNSEALED_DOOR;
-		everyone_lite_spot(wpos, 2, 55);
-	}
+	if (r_idx == RI_BLUE) /* just for now, testing */
+		cave_force_feat_live(wpos, 2, 55, FEAT_UNSEALED_DOOR);
 
 	/* Dungeon bosses often drop a dungeon-set true artifact (for now 1 in 3 chance) */
 	if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN)) {
@@ -8941,20 +8959,7 @@ bool monster_death(int Ind, int m_idx) {
 		/* Explain the stairway */
 		msg_print(Ind, "A magical stairway appears...");
 
-		/* Access the grid */
-		c_ptr = &zcave[y][x];
-
-		/* Create stairs down */
-		c_ptr->feat = FEAT_MORE;
-
-		/* Note the spot */
-		note_spot_depth(wpos, y, x);
-
-		/* Draw the spot */
-		everyone_lite_spot(wpos, y, x);
-
-		/* Remember to update everything */
-		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW | PU_MONSTERS);
+		cave_force_feat_live(wpos, y, x, FEAT_MORE);
 	}
 
 	FREE(m_ptr->r_ptr, monster_race);
@@ -12254,7 +12259,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	monster_race *r_ptr = race_inf(m_ptr);
 
 	s64b new_exp, new_exp_frac;
-	s64b tmp_exp;
+	s64b tmp_exp, rmexp = r_ptr->mexp;
 	int skill_trauma = (p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC)) ? 0 : get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 100);
 	bool old_tacit = suppress_message;
 	int apply_exp_Ind[MAX_PLAYERS] = { 0 }, i;
@@ -12532,9 +12537,16 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		if ((r_ptr->flags1 & RF1_UNIQUE) && p_ptr->r_killed[m_ptr->r_idx] == 1)
 			m_ptr->clone = 90; /* still allow some experience to be gained */
 
+		/* monster grants custom XP? */
+		switch (m_ptr->custom_xp) {
+		case 0: break; /* no, go with standard XP */
+		case -1: rmexp = 0; break; /* give NO XP */
+		default: rmexp = m_ptr->custom_xp; break; /* give custom XP */
+		}
+
 		/* prepare for experience calculation further down */
-		if (m_ptr->level == 0) tmp_exp = r_ptr->mexp;
-		else tmp_exp = r_ptr->mexp * m_ptr->level;
+		if (m_ptr->level == 0) tmp_exp = rmexp;
+		else tmp_exp = rmexp * m_ptr->level;
 
 		/* quest giver died? */
 		if (m_ptr->questor) {
@@ -12543,7 +12555,6 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 					tmp_exp = q_info[m_ptr->quest].questor[m_ptr->questor_idx].exp * m_ptr->level;
 			} else s_printf("QUESTOR DEPRECATED (monster_dead2)\n");
 		}
-
 
 		/* for obtaining statistical IDDC information: */
 		if (l_ptr) l_ptr->monsters_killed++;
@@ -12646,8 +12657,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 				/* Never get too much exp off a monster
 				   due to high level difference,
 				   make exception for low exp boosts like "holy jackal" */
-				if (new_exp > r_ptr->mexp * 4 && new_exp > 200) {
-					new_exp = r_ptr->mexp * 4;
+				if (new_exp > rmexp * 4 && new_exp > 200) {
+					new_exp = rmexp * 4;
 					new_exp_frac = 0;
 				}
 
@@ -12681,7 +12692,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			   Otherwise Nether Realm parties are punished.. */
 			//if (!player_is_king(Ind)) party_gain_exp(Ind, p_ptr->party, tmp_exp);
 			//add 2 extra digits to r_ptr->mexp too by multiplying by 100, to match tmp_exp shift
-			if (!(p_ptr->mode & MODE_PVP)) party_gain_exp(Ind, p_ptr->party, tmp_exp, r_ptr->mexp * 100, m_ptr->henc, m_ptr->henc_top, apply_exp_Ind);
+			if (!(p_ptr->mode & MODE_PVP)) party_gain_exp(Ind, p_ptr->party, tmp_exp, rmexp * 100, m_ptr->henc, m_ptr->henc_top, apply_exp_Ind);
 		}
 
 		monster_death_message(Ind, m_idx, dam, note, lore, p_ptr->gain_exp);
@@ -12694,7 +12705,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		if (monster_death(Ind, m_idx) &&
 		/* note: only our own killing blows count, not party exp! */
 		    p_ptr->solo_reking) {
-			int raw_exp = r_ptr->mexp * (100 - m_ptr->clone) / 100;
+			int raw_exp = rmexp * (100 - m_ptr->clone) / 100;
 
 			/* appropriate depth still factors in! */
 			raw_exp = det_exp_level(raw_exp, p_ptr->lev, getlevel(&p_ptr->wpos));
@@ -14786,13 +14797,13 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 					int i;
 
 					//look for its owner to see if he's hostile or not
-					for (i = 1; i < NumPlayers; i++)
+					for (i = 1; i <= NumPlayers; i++)
 						if (Players[i]->id == m_ptr->owner) {
 							if (!check_hostile(Ind, i)) continue;
 							break;
 						}
 					//if his owner is not online, assume friendly(!)
-					if (i == NumPlayers) continue;
+					if (i == NumPlayers + 1) continue;
 				}
 			}
 
@@ -14869,13 +14880,13 @@ bool get_outward_target(int Ind, int *x, int *y, int maxdist, int avoid_dir, boo
 				int i;
 
 				//look for its owner to see if he's hostile or not
-				for (i = 1; i < NumPlayers; i++)
+				for (i = 1; i <= NumPlayers; i++)
 					if (Players[i]->id == m_ptr->owner) {
 						if (!check_hostile(Ind, i)) continue;
 						break;
 					}
 				//if his owner is not online, assume friendly(!)
-				if (i == NumPlayers) continue;
+				if (i == NumPlayers + 1) continue;
 			}
 		}
 
@@ -16156,11 +16167,14 @@ bool master_build(int Ind, char * parms) {
 
 	if (set_new_feat) {
 		/* Never destroy real house doors! Work on this later */
-		if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) return(FALSE);
+		if ((cs_ptr = GetCS(c_ptr, CS_DNADOOR))) {
+			if (!is_admin(p_ptr)) return(FALSE);
+			cs_erase(c_ptr, cs_ptr);
+		}
 
 		if (new_feat == FEAT_TREE || new_feat == FEAT_BUSH) new_feat = magik(80) ? FEAT_TREE : FEAT_BUSH;
 		/* This part to be rewritten for stacked CS */
-		cave_set_feat(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
+		cave_force_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
 		// cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, new_feat);
 
 		/* These feats cannot be used in build-mode (aka feat painting mode): */

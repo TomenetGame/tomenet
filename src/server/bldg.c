@@ -32,20 +32,33 @@ static int building_loc = 0;
 
 
 /*
- * A helper function for is_state
+ * A helper function for is_state.
+ * We assume that state is either STORE_HATED or STORE_LIKED, but never STORE_NORMAL.
  */
 static bool is_state_aux(int Ind, store_type *s_ptr, int state) {
 	player_type *p_ptr = Players[Ind];
 	owner_type *ot_ptr = &ow_info[s_ptr->owner];
+	int neg_state = (state == STORE_HATED ? STORE_LIKED : STORE_HATED);
 
-
-	/* Check race */
-	if (ot_ptr->races[state][p_ptr->prace / 32] & (1U << (p_ptr->prace % 32)))
-		return(TRUE);
+	/* Prioritize: Class > Trait > Race */
 
 	/* Check class */
 	if (ot_ptr->classes[state][p_ptr->pclass / 32] & (1U << (p_ptr->pclass % 32)))
 		return(TRUE);
+	if (ot_ptr->classes[neg_state][p_ptr->pclass / 32] & (1U << (p_ptr->pclass % 32)))
+		return(FALSE);
+
+	/* Check trait */
+	if (ot_ptr->traits[state][p_ptr->ptrait / 32] & (1U << (p_ptr->ptrait % 32)))
+		return(TRUE);
+	if (ot_ptr->traits[neg_state][p_ptr->ptrait / 32] & (1U << (p_ptr->ptrait % 32)))
+		return(FALSE);
+
+	/* Check race */
+	if (ot_ptr->races[state][p_ptr->prace / 32] & (1U << (p_ptr->prace % 32)))
+		return(TRUE);
+	if (ot_ptr->races[neg_state][p_ptr->prace / 32] & (1U << (p_ptr->prace % 32)))
+		return(FALSE);
 
 #if 0
 	/* Check realms */
@@ -145,6 +158,11 @@ void show_building(int Ind, store_type *s_ptr) {
 				{
 					action_color = TERM_WHITE;
 					buff[0] = '\0';
+ #if 0 /* test store hated/liked states */
+					if (is_state(Ind, s_ptr, STORE_LIKED)) action_color = TERM_GREEN;
+					if (is_state(Ind, s_ptr, STORE_HATED)) action_color = TERM_RED;
+					if (is_state(Ind, s_ptr, STORE_NORMAL)) action_color = TERM_YELLOW;
+ #endif
 				} else if (is_state(Ind, s_ptr, STORE_LIKED)) {
 					action_color = TERM_L_GREEN;
 					cost = ba_ptr->costs[STORE_LIKED];
@@ -290,7 +308,7 @@ static void arena_comm(int cmd) {
 			prt("               Arena Victor!", 5, 0);
 			prt("Congratulations!  You have defeated all before you.", 7, 0);
 			prt("For that, receive the prize: 10,000 gold pieces", 8, 0);
-			prt("",10,0);
+			prt("", 10, 0);
 			prt("", 11, 0);
 
 			gain_au(Ind, 10000, FALSE, FALSE);
@@ -3070,7 +3088,9 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 			break;
 		}
 
-		fee = (object_value_real(0, o_ptr) * o_ptr->number) / 20;
+		/* Polyring: Assume NPC store buying price as its value */
+		if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH) fee = (price_poly_ring(Ind, o_ptr, 0) * o_ptr->number) / 20;
+		else fee = (object_value_real(0, o_ptr) * o_ptr->number) / 20;
 		if (fee < 5) fee = 5;
 
 		p_ptr->mail_item = item;
@@ -3254,7 +3274,7 @@ void do_cmd_bldg(void) {
 
 	while (!leave_bldg) {
 		validcmd = FALSE;
-		prt("",1,0);
+		prt("", 1, 0);
 		command = inkey();
 
 		if (command == ESCAPE) {

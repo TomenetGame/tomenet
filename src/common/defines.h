@@ -105,7 +105,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	23
+#define SF_VERSION_PATCH	24
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -1177,8 +1177,8 @@
    NOTE: Alternatively the PA_IRONTEAM_CLOSED flag can simply be used. */
 //#define IRON_TEAM_LEVEL9
 
-/* Give a crazy form learning boost inside Ironman Deep Dive Challenge? [9] */
-#define IDDC_MIMICRY_BOOST 9
+/* Give a crazy form learning boost inside Ironman Deep Dive Challenge/Halls of Mandos? [9] */
+#define IDDC_MANDOS_MIMICRY_BOOST 9
 
 /* Make true artifacts pass their rarity roll more easily in IDDC? */
 #define IDDC_EASY_TRUE_ARTIFACTS
@@ -1912,7 +1912,7 @@
 
 /* Summoning/spawning override flags for checks in monster placement routines */
 #define SO_NONE			0x0000	/* apply all checks (default) */
-#define SO_ALL			0xFFFF	/* ignore ALL checks (admin summmoning) */
+#define SO_ALL			0xFFFF	/* ignore ALL checks (also treated as special flag combination to allow unrestricted admin summmoning) */
 
 #define SO_PROTECTED		0x0001	/* ignore PROTECTED grids (Inn) */
 #define SO_HOUSE		0x0002	/* ignore CAVE_ICKY grids on surface around towns (houses) */
@@ -1931,6 +1931,7 @@
 
 #define SO_IDDC			0x1000	/* legalize uncheezable summoning in ironman deep dive challenge. Note: clone/clone_summoning imply this flag! */
 #define SO_PLAYER_SUMMON	0x2000	/* player deliberately summoned -> do not reduce monster starting energy helpfully */
+#define SO_NO_SUMMON		0x4000	/* allow monster live placement even on DF3_NO_SUMMON / LF2_NO_SUMMON floors. */
 
 
 /*
@@ -2026,6 +2027,7 @@
 #define STORE_TURNOVER_DIV	3		/* Normal shop turnover, per day (stock_size / this = randint(amount of items to turnover)) */
 #define STORE_SHUFFLE		20		/* 1/Chance (per day) of an owner changing */
 #define STORE_TURNOUT		60		/* Max turns a player may stay in a store if crowded */
+#define STORE_TURNOUT_DUN	240		/* Max turns a player may stay in a store if crowded */
 
 #define STORE_PURSE_BOOST	10	/* Multiplier for max_cost (15) */
 
@@ -2846,7 +2848,7 @@
 #define FEAT_FLOOR_SPAL		0x1F
 
 /* Doors */
-#define FEAT_DOOR_HEAD		0x20
+#define FEAT_DOOR_HEAD		0x20	/* 8x locked door (32...39) + 8x jammed door (40...47) */
 #define FEAT_DOOR_TAIL		0x2F
 
 /* Extra */
@@ -4348,6 +4350,9 @@
 #define SV_RING_POLYMORPH		60
 #define SV_RING_STEALTH			61
 
+#define SV_RING_DEBUG_DRAIN_HP		97	/* (admin debugging only, no flavour) */
+#define SV_RING_DEBUG_DRAIN_MP		98	/* (admin debugging only, no flavour) */
+#define SV_RING_DEBUG_DRAIN_XP		99	/* (admin debugging only, no flavour) */
 
 /* The "sval" codes for TV_STAFF */
 #define SV_STAFF_DARKNESS		0
@@ -5426,8 +5431,8 @@
 #define PU_VIEW		0x00100000U	/* Update view */
 #define PU_LITE		0x00200000U	/* Update lite */
 /* xxx */
-#define PU_MONSTERS	0x01000000U	/* Update monsters */
-#define PU_DISTANCE	0x02000000U	/* Update distances */
+#define PU_MONSTERS	0x01000000U	/* Update monsters (without updating their distances to player, except on LF2_LIMIT_ESP floors; also updates players) */
+#define PU_DISTANCE	0x02000000U	/* Update distances (updates monsters (and their distances to player) and players) */
 /* xxx */
 #define PU_FLOW		0x10000000U	/* Update flow */
 #define PU_MUSIC	0x40000000U	/* Update music */
@@ -5775,6 +5780,17 @@
 #define GF_RIFT			171
 #define GF_RESTORING		172
 #define GF_UNHEALTH		173
+#define GF_DISEASE		174
+
+#define GF_DEC_INT		175
+#define GF_DEC_WIS		176
+#define GF_DEC_CHR		177
+#define GF_RES_INT		178
+#define GF_RES_WIS		179
+#define GF_RES_CHR		180
+#define GF_INC_INT		181
+#define GF_INC_WIS		182
+#define GF_INC_CHR		183
 
 /* For snowflakes on WINTER_SEASON. Could use 0 for type, but let's complete it. -C. Blue */
 #define GF_SNOWFLAKE		200
@@ -6416,6 +6432,9 @@
 #define ETR1_AC_M5		0x00008000U	/* Item has +(up to 5) to AC */
 #define ETR1_NO_DOUBLE_EGO	0x00010000U	/* Item may not have two ego powers */
 #define ETR1_R_HIGH_IMMUNITY	0x00020000U	/* Item has a random high resistance or base immunity */
+#define ETR1_PVAL_STRICT	0x00040000U	/* If 'C' field pval spec is positive, always create item with positive pval (this happens anyway); if it's negative, always create item with negative pval (cursed items could otherwise spawn with positive pval sometimes). */
+#define ETR1_PVAL_FLIPFULLY	0x00080000U	/* Specialty for corrupted weapons: Allow 2h to retain +2 LIFE on flipping, to be equivalent to weapons 'of Life' in that regard: Item retains full pval on heavy-curse-flipping */
+#define ETR1_PVAL_NEG1H2H	0x00100000U	/* Limit negative boni for TR1_LIFE weapons as if they were positive, regarding weapon handedness. */
 //HOLE
 #define ETR1_R_ESP		0x01000000U	/* Item has a random ESP */
 #define ETR1_NO_SEED		0x02000000U	/* Item doesn't have random seed */
@@ -6466,37 +6485,35 @@
  * New monster blow methods
  */
 #define RBM_NONE	0
+/* From here on assuming non-intrinsic elemental brand, if any: Used for poison-essence dropping for Apply Poison. */
 #define RBM_HIT		1
-#define RBM_TOUCH	2
-#define RBM_PUNCH	3
-#define RBM_KICK	4
-#define RBM_CLAW	5
-#define RBM_BITE	6
-#define RBM_STING	7
-#define RBM_XXX1	8
+#define RBM_PUNCH	2
+#define RBM_KICK	3
+#define RBM_CHARGE	4
+/* From here on assuming intrinsic elemental brand, if any: Used for poison-essence dropping for Apply Poison. */
+#define RBM_TOUCH	5
+#define RBM_CLAW	6
+#define RBM_BITE	7
+#define RBM_STING	8
 #define RBM_BUTT	9
 #define RBM_CRUSH	10
 #define RBM_ENGULF	11
-/*#define RBM_XXX2	12 */
-#define RBM_CRAWL	13
-#define RBM_DROOL	14
-#define RBM_SPIT	15
-/*#define RBM_XXX3	16 */
-#define RBM_GAZE	17
-#define RBM_WAIL	18
-#define RBM_SPORE	19
-#define RBM_XXX4	20
-#define RBM_BEG		21
-#define RBM_INSULT	22
-#define RBM_MOAN	23
-/*#define RBM_XXX5	24 */
+#define RBM_CRAWL	12
+#define RBM_DROOL	13
+#define RBM_SPIT	14
+#define RBM_EXPLODE	15
+#define RBM_GAZE	16
+#define RBM_WAIL	17
+#define RBM_SPORE	18
+/* From here on assuming non-intrinsic elemental brand, if any: Used for poison-essence dropping for Apply Poison. */
+#define RBM_BEG		19
+#define RBM_INSULT	20
+#define RBM_MOAN	21
+#define RBM_SHOW	22
+#define RBM_WHISPER	23
 
-#define RBM_ANY		0
-#define RBM_CHARGE	12
-#define RBM_EXPLODE	16
-#define RBM_SHOW	24
-
-#define RBM_WHISPER	25
+/* Assume intrinsic elemental brand, if any: Used for poison-essence dropping for Apply Poison: */
+#define RBM_INTRINSIC_BRAND(RBM) ((RBM) >= 5 && (RBM <= 18))
 
 /*
  * New monster blow effects
@@ -7532,7 +7549,7 @@
 
 #define DF3_NO_TELE		0x01000000U	/* Disallow any teleportation (to go with NO_SUMMON -- for new experimental dungeoneering). Implies LF1_NO_MAGIC! */
 #define DF3_NO_ESP		0x02000000U	/* Disallow any ESP */
-#define DF3_NO_SUMMON		0x04000000U	/* Disallow any summoning (to go with NO_TELE -- for new experimental dungeoneering) */
+#define DF3_NO_SUMMON		0x04000000U	/* Disallow any summoning (to go with NO_TELE -- for new experimental dungeoneering) : imprints LF2_NO_SUMMON on all floors inside. */
 #define DF3_LIMIT_ESP		0x08000000U	/* All ESP gets its range limited */
 
 #define DF3_DARK		0x10000000U	/* All unlit levels */
@@ -8671,9 +8688,9 @@ extern int PlayerUID;
 #define MODE_STARTER_ITEM	0x00001000U	/* Items only: Mark as 'starter item', making it potentially unsalable, depending on server settings. */
 #define MODE_NEWLOOT_ITEM	0x00002000U	/* Items only: Mark as 'new loot', to be used if item is pre-owned, so ownership cannot be used to check whether it's new loot or not. */
 #define MODE_NOT_NEWEST_ITEM	0x00004000U	/* Items only, temporary flag, specifically for inven_carry(): This item is not to become the 'newest_item'. */
-
-#define MODE_REMOTE		0x00008000U	/* SERVER_PORTALS: Player is a guest from a remote server who traveled here temporarily and is therefore restricted in some ways */
-
+#ifdef SERVER_PORTALS
+ #define MODE_REMOTE		0x00008000U	/* SERVER_PORTALS: Player is a guest from a remote server who traveled here temporarily and is therefore restricted in some ways */
+#endif
 #define MODE_ADMIN_WIZ		0x00010000U
 #define MODE_ADMIN_DM		0x00020000U
 #define MODE_PRIVILEGED		0x00040000U	/* privileged == 1 */
@@ -9789,6 +9806,9 @@ extern int PlayerUID;
 #define PEVF_INDOORS_00		0x00000080U /* the 0,0 event is classified as indoors, so vampires don't get sun burn */
 #define PEVF_ICKY_OK		0x00000100U /* allow wpos changes onto CAVE_ICKY grid */
 #define PEVF_STCK_OK		0x00000200U /* allow wpos changes onto CAVE_STCK grid */
+/* Maybe reserve range		0x00001000U ... (ie 20 flags range)
+				0x80000000U for potential usage within custom lua functions for event/adventure module processing,
+				eg to track down some progress, eg quaffing only once per player from pseudo "level-up fountains" or stuff like that */
 
 /* for achievements (top PvP mode rank) - C. Blue */
 #define ACHV_NONE		0
@@ -10056,8 +10076,10 @@ extern int PlayerUID;
  #define ACC_EMN_CX	0x00010000U	/* (to avoid duplicate notifications) Account has been notified about one or more characters being about to expire */
  #define ACC_EMN_AX	0x00020000U	/* (to avoid duplicate notifications) Account has been notified about it being about to expire */
 #endif
-#define ACC_LOCKED	0x08000000U	/* Account is locked because it far-travelled to another server temporarily via SERVER_PORTALS */
-#define ACC_REMOTE	0x10000000U	/* Temporary account generated here, traveled to from a remote server via SERVER_PORTALS */
+#ifdef SERVER_PORTALS
+ #define ACC_LOCKED	0x08000000U	/* Account is locked because it far-travelled to another server temporarily via SERVER_PORTALS */
+ #define ACC_REMOTE	0x10000000U	/* Temporary account generated here, traveled to from a remote server via SERVER_PORTALS */
+#endif
 #define ACC_GUILD_ADDER	0x20000000U	/* Character who died last was a guild adder (for auto-re-add) */
 #define ACC_WARN_SALE	0x40000000U	/* 'Warn' that he has sold items in a player store */
 #define ACC_WARN_REST	0x80000000U	/* Received a one-time warning about resting */
@@ -10114,6 +10136,7 @@ extern int PlayerUID;
 #define netherrealm_bottom(wpos) ((wpos)->wx == netherrealm_wpos_x && (wpos)->wy == netherrealm_wpos_y && (wpos)->wz == netherrealm_end_wz)
 
 #define in_hallsofmandos(wpos) ((wpos)->wx == hallsofmandos_wpos_x && (wpos)->wy == hallsofmandos_wpos_y && (wpos)->wz * hallsofmandos_wpos_z > 0)
+#define on_hallsofmandos(wpos) ((wpos)->wx == hallsofmandos_wpos_x && (wpos)->wy == hallsofmandos_wpos_y && !(wpos)->wz)
 #define in_mtdoom(wpos) ((wpos)->wx == mtdoom_wpos_x && (wpos)->wy == mtdoom_wpos_y && (wpos)->wz * mtdoom_wpos_z > 0)
 
 /* Restrict escape from final Nether Realm level to WoR + ghost floating? (no stairs+no probtrav!) */
@@ -10286,7 +10309,7 @@ extern int PlayerUID;
 /* Format of the new info part (added 2025-10-06) of remote players in the players list - C. Blue */
 #ifdef TOMENET_WORLDS
  #ifdef ENABLE_SUBCLASS_TITLE
-  #define WORLD_INFO(p_ptr)	(format("%2d %s%s%s%s", (p_ptr)->lev, get_prace2(p_ptr), get_ptitle((p_ptr), FALSE), ((p_ptr)->sclass) ? " " : "", get_ptitle2(p_ptr)))
+  #define WORLD_INFO(p_ptr)	(format("%2d %s%s%s%s", (p_ptr)->lev, get_prace2(p_ptr), get_ptitle((p_ptr), FALSE), ((p_ptr)->sclass) ? " " : "", get_ptitle2(p_ptr, FALSE)))
  #else
   #define WORLD_INFO(p_ptr)	(format("%2d %s%s", (p_ptr)->lev, get_prace2(p_ptr), get_ptitle((p_ptr), FALSE)))
  #endif

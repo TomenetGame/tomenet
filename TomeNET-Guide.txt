@@ -1,8 +1,8 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 21. January 2026 - written by C. Blue (c_blue@gmx.net)    |
-| for TomeNET version v4.9.3a - official websites are:                     :
+| Latest update: 23. Febuary 2026 - written by C. Blue (c_blue@gmx.net)    |
+| for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
 | Runes & Runemastery sections by Kurzel (kurzel.tomenet@gmail.com)
@@ -644,30 +644,44 @@ SHIFT+<direction key>
                 to provide a quick guide search instead of its normal function.
 
 i       i       display your inventory. You can then press SHIFT + inventory
-                slot letter to paste that item name into chat.
+                slot letter to paste that item name into chat, or "+" key to
+                paste the 'newest' item you picked up (if any).
+
                 You can also type \\<slot letter> shortcut in chat to paste an
                 item right into some text you are writing, eg "\\a" for the
-                item in your inventory slot 'a)'.
+                item in your inventory slot 'a)'. (Again "\\+" will try to
+                paste the 'newest' item, if any.)
+
                 To paste items from a container (bag) eg a potion belt,
                 use \\\<uppercase bag letter><lowercase bag slot> eg "\\\Ae".
 
+                You can enable a small marker for the item considered the
+                'newest' item in your inventory by enabling the 'show_newest'
+                option in  = 4  menu (User interface options - Notifications).
+
 e       e       display your equipment. You can then press SHIFT + equipment
                 slot letter to paste that item name into chat.
+
                 You can also type \\<capital slot letter> shortcut in chat to
                 paste an item right into some text you are writing, eg "\\A"
                 for the item in your equipment slot 'a)'.
 
 I       I       inspects an item, showing its special abilities in case it
                 has some. To examine an item you must either have bought it
-                from a shop or *identified* it. Mages can learn *ID* spell
-                "Greater Identify", some shops offer *ID* service (see (4.5a)),
-                or you can use a scroll of *identify*. If the item hasn't been
-                *identified* yet, you will only see basic information.
+                from a shop or *identified* it.
+
+                Mages can learn *ID* spell "Greater Identify", some shops
+                offer *ID* service (see (4.5a)), or you can use a scroll
+                of *identify*. If the item hasn't been *identified* yet,
+                you will only see basic information.
+
                 If the item could in theory have powers that will only be clear
                 after *identification* then inspecting the item will tell you:
-                "It may have hidden powers.". In this case you should always go
-                and *identify* it because its selling value will also increase
-                greatly in case it turns out to indeed have hidden powers.
+                "It may have hidden powers."
+                In this case you should always go and *identify* it because its
+                selling value will also increase greatly in case it turns out
+                to indeed have hidden powers.
+
                 See (5.7) for more information about ID, *ID* and shops!
                 If you examine weapons, it always tells you the weapon class
                 (sword/blunt/axe/polearm) as well as if it's 1-, 2- or
@@ -1562,6 +1576,11 @@ They all start with a slash '/' hence they're called slash commands:
 
 /dun        Displays the name of the dungeon you're currently in.
 
+/dw         Toggles, or...
+/dwon       Enables, and respectively..
+/dwoff      Disables dual-wield mode (see (7.2)).
+            Alternatively, you can toggle it in 'm' menu.
+
 /edmt       This toggles the client option 'easy_disarm_montraps' manually.
             (Note that this will not change the option in =9 if you enter that
             menu, the option state will be reset to what it is in there.)
@@ -1671,6 +1690,7 @@ They all start with a slash '/' hence they're called slash commands:
             A minimum monster level can be specified optionally.
             (This is a convenient shortcut for pressing  ~ 2 @ ESC  .)
 
+/ftk        Toggles, or...
 /ftkon      Enables, and respectively..
 /ftkoff     Disables fire-till-kill mode (see (5.2a)).
             Alternatively, you can toggle it in 'm' menu.
@@ -2136,7 +2156,7 @@ They all start with a slash '/' hence they're called slash commands:
             /t * !*   inscribes all uninscribed inventory items '!*'
             /t c !*   inscribes uninscribed inventory item in slot c) '!*'
 
-            The /tag command Will not affect equipped items.
+            The /tag command will not affect equipped items.
             Inscriptions can also be undone again with the /ut command.
 
             A specialty is specifying '@@' or '@@@' in the inscription. This
@@ -2309,6 +2329,7 @@ incorporated into any text you type in chat:
 \\_         Will paste the item that is 'under your feet', which is the item on
             the floor where you are standing right now. (You can press '_' key
             to enforce checking what's under your feet.)
+\\+         Will paste the 'newest item' you picked up.
 
 
 Elevated commands / privileged accounts
@@ -2392,6 +2413,8 @@ The ! inscriptions:
                 once inscribing an item '!*' will do ALL of these checks:
         !d      Prevent dropping an item.
                 If on a bag this will also prevent storing it in a list house.
+                This inscription will actually also prevent spilling an item to
+                the ground randomly if a backpack overflow happens.
         !k      Prevent killing (destroying) an item. (Note that '!k' on a
                 torch also prevents using that torch to refuel another one.)
         !s      Prevent selling an item to shop (!s).
@@ -2597,6 +2620,9 @@ Bags (subinventory):
     !S[0|1]     !S  : Only auto-stow items in this bag when buying from store.
                 !S0 : And only if they stack with existing items.
                 !S1 : And only if they are similar(*) to existing items.
+
+    !I          Prevents auto-stowing unknown or unidentified items into this
+                bag.
 
     (*) 'Similar' just means they can stack with the item, but there might not
         be enough space to get fully absorbed into the existing stack.
@@ -4573,7 +4599,15 @@ pack or sound pack), read on:
 
 All you have to do is download a sound and/or music pack and then install it.
 For downloading the official packs, go to www.tomenet.eu and then click on
-'Downloads'. Other players might offer their own audio packs on the forums.
+'Downloads'. Other players might offer their own audio packs on the forums,
+here are two forum threads:
+- Official audio packs:
+  https://www.tomenet.eu/phpBB3/viewtopic.php?t=120
+- List of alternative audio packs made by various people:
+  https://tomenet.eu/phpBB3/viewtopic.php?p=7934#p7934
+(Note that if you downloaded the 'multi-music' client, that one should already
+contains all alternative audio packs! And the official ones of course.)
+
 Read on for instructions how to install those packs once you downloaded them.
 There are two ways, automatically (client does it for you) and manually (you
 unzip them to the correct location yourself):
@@ -6533,7 +6567,7 @@ A few generic commands are always available from within subinventory:
     The xhtml files take up extremely little space and can be viewed in any
     web browser. The screenshots are saved to the lib/user folder on POSIX
     clients (Linux/OSX) and to the tomenet-user folder on Windows clients.
-  - Inspect item (x).
+  - Inspect (aka examine) an item (x).
   - Drop an item (d).
   - Destroy (kill) an item (k or CTRL+D).
   - Inscribe or uninscribe an item ({ or }).
@@ -6555,6 +6589,8 @@ There are also inscriptions that can be put onto these bags (don't mix them):
   !S  Only auto-stow items into this bag when buying from a store.
   !S0 ..and only if this item can stack with already existing items in the bag.
   !S1 ..and only if they are at least similar(*) to existing items.
+
+  !I  Prevents auto-stowing unknown or unidentified items into this bag.
 
   (*) 'Similar' just means they can stack with the item, but there might not
       be enough space to get fully absorbed into the existing stack.
@@ -6844,8 +6880,9 @@ Torches, food, scrolls of satisfy hunger.
 They too will get a 100% discount and their level will actually change to 1.
 
 Other items that can always be picked up by anybody:
+-Fireworks scrolls
 -Amulets of the Highlands (used in the Highlander Tournament event)
--Game pieces (eg chess, heavy ball)
+-Game pieces (eg chess pieces, generic stones, heavy ball)
 
 
 Special restrictions
@@ -8512,33 +8549,57 @@ If you stand still and an enemy is on an adjacent grid (directly next to you,
 no space between you and the enemy) then your character will automatically
 attack it with the equipped melee weapon.
 
-Starting in 4.9.3 there is an option 'instant_retaliator' that toggles the
-behaviour of auto-retaliation and of fire-till-kill, in Gameplay Options 1:
+Starting in 4.9.3 there is an option 'new_retaliator' that toggles the
+behaviour of auto-retaliation and of fire-till-kill, in Gameplay Options 1.
+The recommended and standard setting is 'on':
 
-- If on, your character will instantly attack anything adjacent (or targetted
-in the case of fire-till-kill) if you have spare energy, up to two turns at
-once if your character was standing around idly before.
-This is how auto-retaliator and FTK have always worked so far.
+- If on, autoretaliation will grant an almost instant manual teleport/walk/run
+  action while auto-retaliating or FTK'ing (fire-till-kill).
+  This allows especially classes who cannot split their turn energy over
+  multiple attacks per turn, ie all spell-casters, to qickly escape dangerous
+  situations.
+  (Technical explanation:
+   If a spell is cast (manually or via FTK or auto-retaliation, doesn't matter)
+   it will use up your turn energy completely, like any other action would.
+   This is nothing new. However, this also means that you have to wait for a
+   full turn until you have enough energy again to perform your next action, eg
+   reading a scroll of teleportation to escape. This too is nothing new.
+   However, currently classes that use multiple melee attacks or multiple shots
+   per round to fight have it easier, because each attack or shot only costs a
+   partial turn of energy! (Eg if you have 6 BpR, each single blow will cost
+   you 1/6 turn energy, so you can actually perform 6 blows per round aka 6
+   attacks per turn.) That means that these characters only have to wait for
+   a fraction of a turn to recover their full energy (in the above example for
+   1/6 of a full turn) and therefore can react to dire situations much faster
+   most of the time. A spell-caster's teleportation macro would only be able to
+   react that quickly if their energy happened to have already recuperated very
+   close to a full turn's worth of energy, ie if the spellcaster hits the tele
+   macro after almost a full turn has already past since the last spell had
+   been cast.
+   This is where this new option, if enabled, comes in:
+   As soon as a character has completed at least one turn of auto-retaliation
+   or of firing-till-kill, it will gain an internal extra turn of energy for
+   free, which is reserved solely for the purpose of performing a movement
+   action, specifically teleport, walk or run.
+   This means that no matter which fraction of a turn has passed after casting
+   a spell, the character will always be able to trigger such an action
+   basically instantly, getting out of trouble as easily or even more easily
+   as multi-attack melee/ranged chars did so far. (This new retaliator works
+   for them too, so they get the same benefit and are not suddenly worse off.))
 
-- If off, your character will make sure to keep 1 turn of energy in reserve.
-If you move next to an enemy this might result in your character waiting for
-one turn to recuperate the movement energy before it starts auto-attacking or
-firing-till-kill. This is the new way, choosable starting in 4.9.3.
+- If off, your character will not gain any special energy modification;
+  this is like it used to be in all game versions before 4.9.3.
+  Leaving it off therefore holds no benefit.
 
-Why you might want to choose the new way ie turn it off:
- The advantage of having this turned off is that the stored up energy can be
- used to break out of auto-retaliation or fire-till-kill almost instantly, for
- example if you hit your teleport macro.
- So it guarantees a fast escape without having to wait for energy recuperation
- and thereby greatly increases survival chances for classes that don't split
- their energy on attacks like melee or archer-type classes do. Istari are for
- example strongly affected by this option.
- Also, if this is on, as your character won't instantly auto-attack if you
- step next to an enemy, this allows you to easily walk past sleeping monsters
- without your character starting to attack them and thereby waking them up.
+There is one novelty in 4.9.3 however:
+It is no longer possible to store two turns of energy by standing around idly,
+except for the purpose of walking, so the 'double-tap jump' walking technique
+that basically lets you cross one hazardous grid almost instantly will still
+work, but for example if a monster walks up next to you you will only get one
+turn of attacks in via auto-retaliation, not a burst of two turns at once.
 
--- More about auto-retaliation: --
-
+More about auto-retaliation:
+----------------------------
 Instead of melee attacks, you can also configure the auto-retaliator to use
 other items. To do so, you use '@O...' (the letter 'O', not the number zero!)
 item inscriptions:
@@ -9891,12 +9952,16 @@ the game. For more information, see (4.13), Ironman Challenge.
   level.
  -There are various shops similar to those found in normal towns, appearing
   randomly in the dungeon. Some might offer certain goods cheaper than usual.
+  Shops will buy all types of items, but will offer less money for items the
+  less they match their specific theme (eg selling a weapon to a potion store).
+  Items sold to stores cannot be bought back!
  -Similar to IDDC, minimum floor depth vs character level regarding experience
   gain is not enforced: Normal experience is gained on any depth regardless of
   your character's level. But unlike in IDDC this is only true for characters
   up to level 49. Characters of level 50+ will receive depth-restricted XP.
  -Same as in the IDDC there are no live-spawns and floors become stale after
   relogging to the same depth but a newly generated floor.
+ -Mimics learn forms at the same boosted rate as in IDDC (+9 bonus per kill).
  -The Halls of Mandos are barred to any unique monsters and to Unmakers!
  -Various more or less basic stores, including a library, will spawn in
   addition to the usual dungeon stores. Also (like in the IDDC) a deep supply
@@ -11114,14 +11179,21 @@ Experience drain ('Drains your life force')
     to equip two rings of power.
     The higher the experience gain ratio of a character is (depending on its
     race/class combination) the worse it will be hit by experience drain from
-    items, with Maiar being the class that has the most trouble compensating.
-    Vampire race characters suffer half as much from exp drain as anyone else.
+    items, so Yeeks have it easiest, with uninitiated Maiar being the class
+    that has the most trouble compensating.
+
+    In general, vampire race characters and initiated Maiar only suffer half
+    as much from experience drain effects as other characters.
 
 Mana drain ('Drains your magic')
     Drains your mana pool over time while you have this item equipped.
     Can be countered if your MP regeneration happens to be faster than the
-    drain. Multiple items draining mana will stack linearly.
-    Warriors and archers are not affected as they don't have any MP.
+    drain. Warriors and archers are not affected as they don't have any MP.
+
+    MP drain stacks linearly and is given by:
+     -Items that just drain your MP.
+     -Headgear or gloves that have strong good powers and you use them as
+      a Vampire or Hell Knight or as Corrupted Priest while in demon form.
 
 Hit point drain ('Drains your hit points')
     Drains your hit points down to zero, then stops. This means that this
@@ -11130,8 +11202,10 @@ Hit point drain ('Drains your hit points')
     finish you off. Well, going AFK in an unsafe place can kill you anyway.
 
     HP drain stacks linearly and is given by:
-     -Items that just drain your HP
-     -Items that have strong good powers and you use them as a Vampire
+     -Items that just drain your HP.
+     -Items (except for headgear and gloves) that have strong good powers and
+      you use them as a Vampire or Hell Knight or as Corrupted Priest while
+      in demon form.
      -The sun, when it's day and you're a Vampire and out in the open without
       a protective wrapping, such as a Mummy Wrapping, or something granting
       resistance to light.
@@ -12667,7 +12741,7 @@ for details about how wearing armour affects your ranged weapon accuracy.
 Your character will fire till kill, ie keep using your current (if eligible)
 ranged attacks until the target dies or is no longer targettable.
 
-This auto-attacking, like auto-retaliation, is affected by 'instant_retaliator'
+This auto-attacking, like auto-retaliation, is affected by 'new_retaliator'
 in "Gameplay Options 1" in the options menu. Please see (4.1a) for details.
 
 Accessible via 'm' key, you can switch 'fire-till-kill' mode on or off.
@@ -13575,7 +13649,7 @@ Disintegration  This is an irresistible attack of raw destruction.
                 Damage (breath only) is monster HP/3, capping at 300.
 
 Annihilation    Deals a percentage of your current hit points as damage points,
-                caping at 400 damage, but after applying the cap is always
+                capping at 400 damage, but after applying the cap is always
                 randomly reduced further down to 6/7...6/12.
 
 
@@ -14087,7 +14161,7 @@ XTRA_MIGHT
         Note that the multiplier may also affect the maximum shooting range.
 
 MANA ('It affects your mana capacity.')
-        For istari and runemasters, this Will increase your total mana points
+        For istari and runemasters, this will increase your total mana points
         by +x0%. Example: Gloves of the magi (+3) increase your mana by 30%.
         For other classes, the increase will be a bit smaller.
 
@@ -14492,8 +14566,9 @@ Weapons of Morgul
                 curse is broken, though..
 
                 Wielding a weapon of Morgul will allow you to see the invisible
-                but also infect you with Black Breath, drain your experience
-                and aggravate nearby monsters.
+                but also infect you with Black Breath (Vampire class characters
+                are immune), drain your experience (Vampires again less prone,
+                and so are initiated Maiar) and aggravate nearby monsters.
                 Note that the black breath cannot be cured as long as you are
                 still wielding the Morgul weapon!
 
@@ -18799,7 +18874,7 @@ stated.
                                 (The 'body modification' doesn't matter, eg
                                 whether in 'normal' body or 'fruit bat' form.)
 
-        .Aura of Fear           Monsters that hit you are stroke by fear.
+        .Aura of Fear           Monsters that hit you are stricken by fear.
          (0.500)                Mindless undead, non-living monsters and those
                                 that resist fear (NO_FEAR) are not affected.
                                 The chance for the aura to trigger depends on
@@ -19027,7 +19102,7 @@ stated.
                                 You need to be at least level 5 to steal
                                 and at least level 10 to steal anything of
                                 somewhat higher value.
-                                This skill Will have no effect if your armour
+                                This skill will have no effect if your armour
                                 is too heavy so that you get a 'flexibility'
                                 warning, compare (5.5).
 
@@ -19635,7 +19710,9 @@ Enlightened:
     - +1 bonus AC for every 2 levels above 20, up to level 50.
     - At level 50 they will be able to levitate, become resistant to poison,
       electricity, cold and be enveloped in an aura of frost and lightning;
-    - also, their melee attacks will slay evil opponents intrinsically.
+    - Also, their melee attacks will slay evil opponents intrinsically.
+    - Only suffer half as much from experience draining effects on items
+      as other characters.
 
     - Blood Magic/Occultism: Necromancy, Traumaturgy, Aura of Death, Shadow,
       and Unlife and Hereticism become disabled but you will keep them at their
@@ -19657,6 +19734,8 @@ Corrupted:
       for each level above 50.
     - At level 50 they will become resistant to poison, immune to fire, and
       be enveloped in a fiery aura.
+    - Only suffer half as much from experience draining effects on items
+      as other characters.
 
     - All four prayer schools and Spirit (Occultism) become disabled (cannot
       be trained further, but you keep their current status),
@@ -19973,6 +20052,10 @@ Saving Throw
 Stealth
     Determines if monsters will immediately wake up if you're nearby or if
     you are able to sneak past sleeping monsters without waking them.
+    If there are multiple players on a dungeon level, the worst stealth of all
+    these players counts and overrides the others. The more players of
+    significantly similarly bad stealth are closer to the monster, the even
+    faster it will wake up.
 Perception
     This is your 'spontaneous' searching frequency that has a chance to trigger
     one turn of 'searching' each time you move, without actually actively
@@ -20353,7 +20436,8 @@ create a character!):
     Vampires start with a mummy wrapping, because it can protect them from the
     sunlight. If they are moving on the world surface (meaning not in a dungeon
     or tower) while it's day, the sun will burn them if they don't resist light
-    or wear a protective wrapping.
+    or wear a protective wrapping or stand next to a tree, which grants them
+    protective shade.
     They don't actually need a light source, since they are able to determine
     their close surroundings even in complete darkness thanks to an intrinsic
     trait of the vampire race: Darkvision.
@@ -20362,7 +20446,7 @@ create a character!):
     level 10. At night on the world surface, darkvision increases even more.
     Regarding items, Vampires do not suffer a hit point drain from wielding a
     spectral weapon. They are even able to wear or wield heavily cursed items
-    such as Morgul weapons and benefit from them, turning their negative boni
+    such as Morgul weapons and benefit from them, flipping their negative boni
     into positive ones! The only exception are weapons of Nothingness, which
     won't do them any good either. Since Vampires are immune to Black Breath,
     using a Morgul weapon will not pose a problem to them. Heavily cursed
@@ -20459,8 +20543,8 @@ create a character!):
     list with ~ 2 or by using the '/ex' chat command, which will give you one
     of these status messages if you are a Maia:
     - no harbinger killed yet: "Your destiny in the realm is still undecided."
-    - killed a darkling: "Your are treading on the path to enlightenment."
-    - killed a candlebearer: "Your are treading on the path to corruption."
+    - killed a darkling: "You are treading on the path to enlightenment."
+    - killed a candlebearer: "You are treading on the path to corruption."
     - killed both types, oops!: "Your presence in the realm is forfeit."
 
     After they underwent initiation at level 20, they may just kill all of them
@@ -20695,7 +20779,7 @@ create a character!):
     recommended for beginners.
 
     You can create macros by pressing % for macro menu, then z to invoke the
-    wizard, then d for prayers that don't use a target or e for spells that
+    wizard, then d for spells that don't use a target or e for spells that
     use a target.
 
 - Priest
@@ -20753,6 +20837,8 @@ create a character!):
     just 't'ake them off while still in Bloodthirster form, as due to its
     demonic might it can just do that without need for *Remove Curse*.
     See the end of (5.12) for details on item-flipping.
+    Also like all initiated Maiar they will only suffer half as much from
+    item effects that drain experience as other characters.
 
 - Rogue
     A Rogue is a character that prefers to live by cunning, but is capable of
@@ -20961,7 +21047,8 @@ create a character!):
     an astral spirit on its way of becoming a paladin forsakes enlightenment
     and turns into a demonic traitor instead.
     Imbued by the powers of chaos and hellflame, these warriors represent
-    absolute treason without remorse.
+    absolute treason without remorse. While other Maiar might be corrupted too,
+    the Hell Knight is the only one which is considered intrinsically demonic.
     They have the same abilities as paladins in all regards but they are not
     able to utilize any kind of prayers and are susceptible to holy effects,
     instead they command blood magic and heretic magic of flame and chaos.
@@ -20982,6 +21069,8 @@ create a character!):
     Any such item that is adverse to demons will burn them, draining their hit
     points, or draining their mana if worn on head or hands. Exceptions are
     cursed items, chaotic items and the "Stone of Lore", these are always safe.
+    Like all initiated Maiar, Hell Knights will only suffer half as much from
+    item effects that drain experience as other characters.
     Hell Knights have a very high chance to resist the adverse effects of
     encountering an eldritch horror (see (7.3) under 'Saving Throw' for details
     on those).
@@ -23273,6 +23362,11 @@ these limitations will be lifted.
                     minimum class hit dice of your Nature skill divided by 12.5
                     ie 4 hd at 50.000. (Race hit dice are unaffected.)
 
+                    This hit die bonus is applied fine-grainedly in steps of
+                    1/10 hit dice, so every skill point helps a bit, although
+                    at very low character levels due to rounding the HP change
+                    for every point invested might not be noticable yet.
+
                     Example 1:
                     The Istar class, which has 0 hit dice, will gain 4 hit dice
                     at 50.000 Nature (difference between 4 and 0) and thereby
@@ -23283,8 +23377,8 @@ these limitations will be lifted.
                     up with 4 hit dice, also same as the runemaster class.
                     Example 3:
                     The Ranger class, which has 7 hit dice, will not gain any
-                    hit dice bonus as 7 never less than the maximum attainable
-                    minimum limit of 4 hit dice at skill 50.000.
+                    hit dice bonus as 7 is already more than the maximum
+                    attainable amount of 4 hit dice at skill 50.000.
 
                     Regeneration (faster hit point regeneration, same as from
                     items that provide regeneration, so doesn't stack with
@@ -23643,10 +23737,16 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
 
                     Tier II: Level 11.                         (auto-project)
                     Also neutralizes poison, cures blindness, cuts, confusion.
+                    If this spell does neutralize poison on you or a friendly
+                    target, for a short while afterwards any new poison effect
+                    will automatically get slowed down (slow-poison effect).
                     This spell can be used even while blind.
 
                     Tier III: Level 21.                        (auto-project)
                     Also cures diseases, stun and hallucinations.
+                    If this spell does neutralize poison on you or a friendly
+                    target, for a short while afterwards any new poison effect
+                    will automatically get slowed down (slow-poison effect).
                     This spell can be used even while blind or confused.
 
     Cure Wounds     Heals a fixed amount of hit points of a friendly target,
@@ -25847,9 +25947,9 @@ The techniques are as follows:
         This is a temporary weapon brand that will run out after some time.
         The potion or mushroom will be used up in the process. Items that
         are inscribed '!k' will always be skipped.
-        If it's a potion of poison or mushroom of poison or of unhealth, the
-        weapons will receive a poison brand that deals increased damage to
-        enemies who don't resist poison.
+        If it's a potion of poison or mushroom of poison, the weapons will
+        receive a poison brand that deals increased damage to enemies who don't
+        resist poison.
         For any other types of potions or mushrooms, the brand effect may vary,
         some might have no effect at all.
         This technique does not work without a weapon. If you take off a weapon
@@ -25857,8 +25957,8 @@ The techniques are as follows:
         Since the brand is only temporary it is a good idea to apply it right
         before engaging in a fight.
         Learning this technique also causes you to occasionally harvest potions
-        of poison from larger poison breathing monsters, as long as you wield
-        a weapon when killing them.
+        of poison from poisonous monsters, as long as you wield a weapon when
+        killing them.
         If you do not wish to find these extra potions you can toggle it with
         the "/ing" slash command ("/ingredients").
     Perceive Noise      1 stamina
@@ -28435,6 +28535,10 @@ Solution:   This can have several reasons. On disconnection a message box will
             At the time of writing, these provide free trial periods.
             (A ping improvement of 70ms was reported by one player from NZ.)
 
+            If you want free VPN (not just free trial periods) you could
+            consider ProtonVPN, as they have a medium-speed permanently free
+            plan option. However, don't expect free VPN to reach paid quality.
+
             To check how your ISP routes your network traffic, you can use the
             'traceroute' command on your PC (eg 'traceroute europe.tomenet.eu')
             and then visualize it by using a website that provides (free)
@@ -29292,5 +29396,10 @@ PROBLEM 79: On Windows OS using graphical tileset mode results in slow screen
             drawing.
 Solution:   If Windows' "Aero" is enabled, turn it off, as it can greatly slow
             down operations of apps used for graphics drawing (BitBlt).
+
+PROBLEM 80: Client compiles fine but crashes on startup with a message:
+            "Failed loading SDL3 library."
+Solution:   If your client uses SDL2, make sure you have the "normal" sdl2
+            packages installed and NOT the 'sdl2-compat' ones.
 
 ===============================================================================

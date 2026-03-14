@@ -139,9 +139,11 @@ void loadservers() {
 			case 'e':
 				slist[i].mflags |= WMF_EVENTS;
 				break;
+//#ifdef SERVER_PORTALS
 			case 'p': /* SERVER_PORTALS */
 				slist[i].rflags |= WPF_PORTAL;
 				break;
+//#edif
 			//hole: WP_UPLAYER has no customizable flag but is implied by 'N' above.
 			}
 		}

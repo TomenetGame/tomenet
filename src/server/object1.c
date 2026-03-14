@@ -5720,6 +5720,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 
 	/* Hack for cheques - display special name and info instead */
 	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) {
+		fprintf(fff, "%s\n", o_name);
 		fprintf(fff, "\377sIt's a cheque worth \377y%d\377s gold pieces.\n", ps_get_cheque_value(o_ptr));
  #ifdef KIND_DIZ
 		fprintf(fff, "%s", k_text + k_info[o_ptr->k_idx].text);
@@ -7060,6 +7061,9 @@ void display_inven(int Ind) {
 #ifdef SUBINVEN_LIMIT_GROUP
 		if (o_ptr->tval == TV_SUBINVEN && subinven_group_player(Ind, get_subinven_group(o_ptr->sval), i)) attr = TERM_L_DARK;
 #endif
+#ifdef USE_SUBINVEN
+		if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval == SV_SI_MDEVP_WRAPPING && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) attr = TERM_L_DARK;
+#endif
 
 		/* Hack -- fake monochrome */
 		if (!use_color) attr = TERM_WHITE;
@@ -7275,6 +7279,11 @@ void display_invenequip(int Ind) {
 
 #ifdef SUBINVEN_LIMIT_GROUP
 		if (o_ptr->tval == TV_SUBINVEN && subinven_group_player(Ind, get_subinven_group(o_ptr->sval), i)) attr = TERM_L_DARK;
+#endif
+#ifdef USE_SUBINVEN
+		if (o_ptr->tval == TV_SUBINVEN && o_ptr->sval == SV_SI_MDEVP_WRAPPING && get_skill(p_ptr, SKILL_DEVICE) < SI_WRAPPING_SKILL && get_skill(p_ptr, SKILL_TRAPPING) < SI_WRAPPING_SKILL) {
+			attr = TERM_L_DARK;
+		}
 #endif
 
 		/* Hack -- fake monochrome */
@@ -7743,10 +7752,10 @@ void apply_XID(int Ind, object_type *o_ptr, int slot) {
 			if (i_ptr->xtra1) {
 				tv = TV_STAFF;
 				sv = i_ptr->xtra1 - 1;
-			} else if (o_ptr->xtra2) {
+			} else if (i_ptr->xtra2) {
 				tv = TV_WAND;
 				sv = i_ptr->xtra2 - 1;
-			} else if (o_ptr->xtra3) {
+			} else if (i_ptr->xtra3) {
 				tv = TV_ROD;
 				sv = i_ptr->xtra3 - 1;
 			} else {

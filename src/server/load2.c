@@ -1107,6 +1107,7 @@ static void rd_monster(monster_type *m_ptr) {
 	rd_s16b(&m_ptr->wpos.wz);
 
 	rd_s16b(&m_ptr->ac);
+	if (!older_than(4, 9, 24)) rd_s16b(&m_ptr->org_ac);
 	rd_byte(&m_ptr->speed);
 	rd_s32b(&m_ptr->exp);
 	rd_s16b(&m_ptr->level);
@@ -1115,6 +1116,10 @@ static void rd_monster(monster_type *m_ptr) {
 		rd_byte(&(m_ptr->blow[i].effect));
 		rd_byte(&(m_ptr->blow[i].d_dice));
 		rd_byte(&(m_ptr->blow[i].d_side));
+		if (!older_than(4, 9, 24)) {
+			rd_byte(&(m_ptr->blow[i].org_d_dice));
+			rd_byte(&(m_ptr->blow[i].org_d_side));
+		}
 	}
 	rd_s32b(&m_ptr->hp);
 	rd_s32b(&m_ptr->maxhp);
@@ -1159,7 +1164,7 @@ static void rd_monster(monster_type *m_ptr) {
 		rd_s16b(&m_ptr->possessor);
 		rd_s16b(&m_ptr->destx);
 		rd_s16b(&m_ptr->desty);
-		rd_s16b(&m_ptr->determination);
+		rd_s16b(&m_ptr->statsIWH_drain);
 		rd_s16b(&m_ptr->limit_hp);
 	}
 	if (!s_older_than(4, 9, 8)) {
@@ -1172,7 +1177,7 @@ static void rd_monster(monster_type *m_ptr) {
 	if (!s_older_than(4, 9, 17)) {
 		rd_s32b(&m_ptr->related);
 		rd_byte(&m_ptr->related_type);
-		rd_s32b(&m_ptr->temp);
+		rd_s32b(&m_ptr->custom_xp);
 	}
 }
 
@@ -2031,7 +2036,7 @@ static bool rd_extra(int Ind) {
 	//these are zero if read from old save file < 4,9,0 :
 	rd_u16b(&p_ptr->event_participated_flags);
 	rd_u16b(&p_ptr->event_won_flags);
-	rd_byte(&p_ptr->lifetime_flags);
+	rd_byte(&p_ptr->lifetime_flags); //unused -> HOLE
 
 	rd_byte(&p_ptr->autoret_base); //0 means 'on' (default) - so there is no conversion needed for old chars since these bytes were 0 anyway
 

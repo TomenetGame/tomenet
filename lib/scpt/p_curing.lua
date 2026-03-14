@@ -323,6 +323,7 @@ HCURING_I = add_spell {
 			end
 			if (player.poisoned ~= 0 and player.slow_poison == 0) then
 				player.slow_poison = 1
+				player.redraw = bor(player.redraw, 524288) --PR_POISONED
 			end
 			set_cut(Ind, player.cut - 100, 0, FALSE)
 			fire_ball(Ind, GF_CURE_PLAYER, 0, 1 + 2 + 512, 1, " concentrates on your maladies.")
@@ -349,10 +350,14 @@ HCURING_II = add_spell {
 	["blind"] = 	FALSE,
 	--["confusion"] =	FALSE,
 	["spell"] = 	function()
+			local k
+
 			if (player.food >= PY_FOOD_MAX) then
 				set_food(Ind, PY_FOOD_MAX - 1)
 			end
+			k = player.poisoned
 			set_poisoned(Ind, 0, 0)
+			if k ~= 0 then player.slow_poison = -5 end --slow-poison-hack
 			set_cut(Ind, player.cut - 200, 0, FALSE)
 			set_blind(Ind, 0)
 			set_confused(Ind, 0)
@@ -364,6 +369,7 @@ HCURING_II = add_spell {
 	["desc"] = 	{
 			"Treats stomach ache, neutralizes poison, heals cuts",
 			"and cures blindness and confusion.",
+			"If poison is cured: For a short while new poison effects will be auto-slowed.",
 			"***Automatically projecting***",
 	}
 }
@@ -381,10 +387,14 @@ HCURING_III = add_spell {
 	["blind"] = 	FALSE,
 	["confusion"] =	FALSE,
 	["spell"] = 	function()
+			local k
+
 			if (player.food >= PY_FOOD_MAX) then
 				set_food(Ind, PY_FOOD_MAX - 1)
 			end
+			k = player.poisoned
 			set_poisoned(Ind, 0, 0)
+			if k ~= 0 then player.slow_poison = -5 end --slow-poison-hack
 			set_diseased(Ind, 0, 0)
 			set_cut(Ind, -300, 0, FALSE)
 			set_blind(Ind, 0)
@@ -399,6 +409,7 @@ HCURING_III = add_spell {
 	["desc"] = 	{
 			"Treats stomach ache, neutralizes poison, cures diseases, heals",
 			"cuts and cures blindness, confusion, stun and hallucinations.",
+			"If poison is cured: For a short while new poison effects will be auto-slowed.",
 			"***Automatically projecting***",
 	}
 }

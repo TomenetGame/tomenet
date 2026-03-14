@@ -39,6 +39,13 @@
 #define NO_BROKEN_EGO_RANDART
 
 
+/* Debug/test some drops? */
+//#define DEBUG_DROPS_FREQ
+#ifdef DEBUG_DROPS_FREQ
+static int debug_item_sval[256] = { 0 };
+#endif
+
+
 //#if FORCED_DROPS == 1  --now also required for tc_bias
 static int which_theme(int tval);
 //#endif
@@ -63,6 +70,19 @@ static int tc_biasr_tools = 100;
 static int tc_biasr_junk = 100;
 
 
+
+void print_debug_drops_freq(int Ind) {
+#ifdef DEBUG_DROPS_FREQ
+	int i;
+
+	for (i = 0; i < 256; i++) {
+		if (!debug_item_sval[i]) continue;
+		msg_format(Ind, "sval %3d:  %5d", i, debug_item_sval[i]);
+	}
+#else
+	msg_print(Ind, "DEBUG_DROPS_FREQ not defined");
+#endif
+}
 
 /*
  * Excise a dungeon object from any stacks
@@ -1498,6 +1518,7 @@ void object_known(object_type *o_ptr) {
 bool object_aware(int Ind, object_type *o_ptr) {
 	int i;
 
+	/* Was already aware? */
 	if (object_aware_p(Ind, o_ptr)) return(FALSE);
 
 	/* Fully aware of the effects */
@@ -1509,6 +1530,22 @@ bool object_aware(int Ind, object_type *o_ptr) {
 			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
 	return(TRUE);
 }
+bool object_aware_k_idx(int Ind, int k_idx) {
+	int i;
+
+	/* Was already aware? */
+	if (Players[Ind]->obj_aware[k_idx]) return(FALSE);
+
+	/* Fully aware of the effects */
+	Players[Ind]->obj_aware[k_idx] = TRUE;
+
+	/* Make it refresh, although the object mem structure didn't change */
+	for (i = 0; i < INVEN_TOTAL; i++)
+		if (Players[Ind]->inventory[i].k_idx == k_idx)
+			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
+	return(TRUE);
+}
+
 
 
 
@@ -1518,6 +1555,7 @@ bool object_aware(int Ind, object_type *o_ptr) {
 void object_tried(int Ind, object_type *o_ptr, bool flipped) {
 	int i;
 
+	/* We already tried? */
 	if (object_tried_p(Ind, o_ptr)) return;
 
 	/* Mark it as tried (even if "aware") */
@@ -1527,6 +1565,23 @@ void object_tried(int Ind, object_type *o_ptr, bool flipped) {
 	if (flipped) return; /* already changed by object_aware()? don't cancel out! */
 	for (i = 0; i < INVEN_TOTAL; i++)
 		if (Players[Ind]->inventory[i].k_idx == o_ptr->k_idx)
+			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
+
+	return;
+}
+void object_tried_k_idx(int Ind, int k_idx, bool flipped) {
+	int i;
+
+	/* We already tried? */
+	if (Players[Ind]->obj_tried[k_idx]) return;
+
+	/* Mark it as tried (even if "aware") */
+	Players[Ind]->obj_tried[k_idx] = TRUE;
+
+	/* Make it refresh, although the object mem structure didn't change */
+	if (flipped) return; /* already changed by object_aware()? don't cancel out! */
+	for (i = 0; i < INVEN_TOTAL; i++)
+		if (Players[Ind]->inventory[i].k_idx == k_idx)
 			Players[Ind]->inventory[i].changed = !Players[Ind]->inventory[i].changed;
 
 	return;
@@ -3994,7 +4049,7 @@ bool object_similar_tval(int Ind, object_type *o_ptr, object_type *j_ptr, s16b t
  * +0x80 - hack for subinventory stuff (work in progress) some items can be stacked in stores but not in inventory.
  * +0x100- ignore stack sizes, so a 99 stack + another 99 stack can still be 'similar' even though they couldn't really stack.
  *         This mustn't be used without +0x20 at the same time!
- * +0x200- store_bought marker, for passing it through to subinven_can_stack() in inven_carry_okay().
+ * +0x200- store_bought marker, for passing it through to subinven_can_accept() in inven_carry_okay().
  *
  * Returns 0 if not similar, -1 if whole stack can be merged (similar, normal case), or...
  * a number how many items are acceptable, specifically for !Gn inscription.
@@ -8520,7 +8575,7 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 		forge.number2 = forge.number;
 		forge.number = 1; // one gift may contain a stack of items, but in turn, gifts aren't stackable of course
 		forge.tval = TV_SPECIAL;
-		forge.sval = SV_GIFT_WRAPPING_START + rand_int(SV_GIFT_WRAPPING_END - SV_GIFT_WRAPPING_START + 1);
+		forge.sval = SV_GIFT_WRAPPING_START + randint0(SV_GIFT_WRAPPING_END - SV_GIFT_WRAPPING_START);
 		forge.k_idx = lookup_kind(TV_SPECIAL, forge.sval);
 		forge.weight += 1; /* Gift wrapping paper is added */
 	}
@@ -8563,6 +8618,12 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 		object_desc(0, o_name, &forge, TRUE, 3);
 		s_printf("LOG_DROP: %s\n", o_name);
 	}
+
+#ifdef DEBUG_DROPS_FREQ
+	/* Debug/test specific drops if desired */
+	if (forge.tval == TV_FOOD && forge.sval <= SV_FOOD_MUSHROOMS_MAX)
+		debug_item_sval[forge.sval]++;
+#endif
 }
 
 /* Like place_object(), but doesn't actually drop the object to the floor -  C. Blue */
@@ -11450,6 +11511,10 @@ bool inven_item_optimize(int Ind, int item) {
 		for (i = item; i < INVEN_PACK; i++) {
 #ifdef ENABLE_SUBINVEN
 			if (p_ptr->inventory[i].tval == TV_SUBINVEN) {
+				/* If a subinventory gets deleted, make sure to refresh the 'Subinventory' window */
+				//display_subinven(Ind, item);
+				p_ptr->window |= PW_SUBINVEN;
+
 				s = 0;
 				/* If subsequent item is a subinventory too, transfer all contents here, overwriting our contents */
 				if (p_ptr->inventory[i + 1].tval == TV_SUBINVEN) {
@@ -11808,7 +11873,7 @@ int inven_carry_okay(int Ind, object_type *o_ptr, s16b tolerance) {
 			for (j = 0; j < j_ptr->bpval; j++) {
 				k_ptr = &p_ptr->subinventory[i][j];
 				if (!k_ptr->tval) break;
-				if (!subinven_can_stack(Ind, o_ptr, i, tolerance & 0x200)) continue;
+				if (!subinven_can_accept(Ind, o_ptr, i, tolerance & 0x200)) continue;
 
 				/* Check if the two items can be combined - here we can also check for !Gn inscription via 0x20 tolerance.
 				   We do not check the actual bag type, as we can assume that if a similar-enough item exists in that bag, we must be compatible with the bag type too. */
@@ -14320,34 +14385,44 @@ void inverse_cursed(object_type *o_ptr) {
   #define FLIP_ATTR(v) (-(v) / 2 + 1)		/* (1->1, 2->2, 4->3, 6->4) */
   #define FLIP_PVAL(v) ((-(v) + 3) / 4)		/* (1->1, 5->2, 9->3, 13->4) */
  #else /* 2 :-p */
-  #define FLIP_ATTR(v) ((-(v) + 1) / 2)		/* stricter rounding (Beruthiel ends up +2 instead of +3) (1->1, 3->2, 5->3, 7->4, can Doom amulet be -9? -> +5) */
-  #define FLIP_PVAL(v) ((-(v) + 2) / 3)		/* somehwat better stats (Angmar ends up +4 instead of +3) (1->1, 4->2, 7->3, 10->4) */
+  #define FLIP_ATTR(v) ((-(v) + 1) / 2)			/* stricter rounding (Beruthiel ends up +2 instead of +3) (1->1, 3->2, 5->3, 7->4, can Doom amulet be -9? -> +5) */
+  #define FLIP_ATTR_NONARMOUR(v) ((v) <= -5 ? 5 : -(v))	/* for more useful Doom amulets: pval can end up higher (but gets capped). */
+  #define FLIP_PVAL(v) ((-(v) + 2) / 3)			/* somehwat better stats (Angmar ends up +4 instead of +3) (1->1, 4->2, 7->3, 10->4) */
  #endif
 	/* Be more lenient for items that only increase attributes (STR/INT/WIS/DEX/CON/CHR) */
 	if ((f1 & TR1_PVAL_MASK) == (f1 & TR1_ATTR_MASK) && !(f5 & TR5_PVAL_MASK)) {
 		if (o_ptr->pval < 0) {
 			o_ptr->pval_org = o_ptr->pval;
-			o_ptr->pval = FLIP_ATTR(o_ptr->pval);
+			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->pval = -o_ptr->pval;
+			else if (!is_armour(o_ptr->tval)) o_ptr->pval = FLIP_ATTR_NONARMOUR(o_ptr->pval);
+			else o_ptr->pval = FLIP_ATTR(o_ptr->pval);
 			if (o_ptr->pval > 5) o_ptr->pval = 5;
 		}
 		if (o_ptr->bpval < 0) {
 			o_ptr->bpval_org = o_ptr->bpval;
-			o_ptr->bpval = FLIP_ATTR(o_ptr->bpval);
+			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->bpval = -o_ptr->bpval;
+			else if (!is_armour(o_ptr->tval)) o_ptr->bpval = FLIP_ATTR_NONARMOUR(o_ptr->bpval);
+			else o_ptr->bpval = FLIP_ATTR(o_ptr->bpval);
 			if (o_ptr->bpval > 5) o_ptr->bpval = 5;
 		}
 	} else {
 		// note: could also consider (-o_ptr->pval + 2) / 3 for 
 		if (o_ptr->pval < 0) {
 			o_ptr->pval_org = o_ptr->pval;
-			o_ptr->pval = FLIP_PVAL(o_ptr->pval);
+			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->pval = -o_ptr->pval;
+			else o_ptr->pval = FLIP_PVAL(o_ptr->pval);
 			if (o_ptr->pval > 3) o_ptr->pval = 3; //thinking EA/Life, but just paranoia really..
 		}
 		if (o_ptr->bpval < 0) {
 			o_ptr->bpval_org = o_ptr->bpval;
-			o_ptr->bpval = FLIP_PVAL(o_ptr->bpval);
+			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->bpval = -o_ptr->bpval;
+			else o_ptr->bpval = FLIP_PVAL(o_ptr->bpval);
 			if (o_ptr->bpval > 3) o_ptr->bpval = 3; //thinking EA/Life, but just paranoia really..
 		}
 	}
+
+	/* Mark as 'flipped' */
+	o_ptr->pval2 = 1;
 }
 /* Reverse the boni back to negative when a vampire/HK et al takes off a heavily cursed item (or its curse gets broken while equipped),
    counterpart function to inverse_cursed(). */
@@ -14460,6 +14535,9 @@ void reverse_cursed(object_type *o_ptr) {
 	/* body armour hack: we can ignore possible to-hit disenchantment here, since on body armour it's always negative (bulkiness) */
 	if (o_ptr->tval == TV_DRAG_ARMOR || o_ptr->tval == TV_HARD_ARMOR || o_ptr->tval == TV_SOFT_ARMOR)
 		o_ptr->to_h = o_ptr->to_h_org;
+
+	/* Unmark as 'flipped' */
+	o_ptr->pval2 = 0;
 }
 #endif /* VAMPIRES_INV_CURSED */
 

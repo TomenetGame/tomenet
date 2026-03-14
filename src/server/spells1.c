@@ -213,9 +213,17 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		angry = TRUE;
 		break;
 	case SV_POTION_DEC_INT:
+		radius = 1;
+		dt = GF_DEC_INT;
+		dam = 1; /* dummy */
+		ident = TRUE;
 		angry = TRUE;
 		break;
 	case SV_POTION_DEC_WIS:
+		radius = 1;
+		dt = GF_DEC_WIS;
+		dam = 1; /* dummy */
+		ident = TRUE;
 		angry = TRUE;
 		break;
 	case SV_POTION_DEC_DEX:
@@ -233,6 +241,10 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		angry = TRUE;
 		break;
 	case SV_POTION_DEC_CHR:
+		radius = 1;
+		dt = GF_DEC_CHR;
+		dam = 1; /* dummy */
+		ident = TRUE;
 		angry = TRUE;
 		break;
 	case SV_POTION_RES_STR:
@@ -241,8 +253,14 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		dam = 1; /* dummy */
 		break;
 	case SV_POTION_RES_INT:
+		radius = 1;
+		dt = GF_RES_INT;
+		dam = 1; /* dummy */
 		break;
 	case SV_POTION_RES_WIS:
+		radius = 1;
+		dt = GF_RES_WIS;
+		dam = 1; /* dummy */
 		break;
 	case SV_POTION_RES_DEX:
 		radius = 1;
@@ -255,6 +273,9 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		dam = 1; /* dummy */
 		break;
 	case SV_POTION_RES_CHR:
+		radius = 1;
+		dt = GF_RES_CHR;
+		dam = 1; /* dummy */
 		break;
 	case SV_POTION_INC_STR:
 		radius = 1;
@@ -263,8 +284,16 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		ident = TRUE;
 		break;
 	case SV_POTION_INC_INT:
+		radius = 1;
+		dt = GF_INC_INT;
+		dam = 1; /* dummy */
+		ident = TRUE;
 		break;
 	case SV_POTION_INC_WIS:
+		radius = 1;
+		dt = GF_INC_WIS;
+		dam = 1; /* dummy */
+		ident = TRUE;
 		break;
 	case SV_POTION_INC_DEX:
 		radius = 1;
@@ -279,6 +308,10 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		ident = TRUE;
 		break;
 	case SV_POTION_INC_CHR:
+		radius = 1;
+		dt = GF_INC_CHR;
+		dam = 1; /* dummy */
+		ident = TRUE;
 		break;
 	case SV_POTION_AUGMENTATION:
 		radius = 1;
@@ -331,7 +364,7 @@ bool potion_smash_effect(int who, worldpos *wpos, int y, int x, int o_sval) {
 		dt = GF_RUINATION;
 		ident = TRUE;
 		angry = TRUE;
-		dam = 1; /* dummy */
+		dam = damroll(10, 10);
 		break;
 	case SV_POTION_DETONATIONS:
 		radius = 3;
@@ -439,20 +472,20 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 		o_tsval -= 1000;
 
 		switch (o_tsval) {
-		/* Note: These three are actually handled outside of this function so we should never arrive here */
-		case SV_FOOD_DISEASE:
+		case SV_FOOD_POISON: /* Note: This one is actually handled outside of this function so we should never arrive here, it's setting TBRAND_POIS instead. */
 			dt = GF_POIS;
-			dam = 15;
+			dam = FLAT_BRAND_BONUS_POISON;
 			ident = TRUE;
 			break;
-		case SV_FOOD_POISON:
-			dt = GF_POIS;
-			dam = 7;
-			ident = TRUE;
-			break;
+
 		case SV_FOOD_UNHEALTH:
 			dt = GF_UNHEALTH;
-			dam = 7;
+			dam = FLAT_BRAND_BONUS_POISON;
+			ident = TRUE;
+			break;
+		case SV_FOOD_DISEASE:
+			dt = GF_DISEASE;
+			dam = (FLAT_BRAND_BONUS_POISON * 2 + 2) / 3; /* FOOD_DISEASE damages ~2/3 as much as FOOD_UNHEALTH */
 			ident = TRUE;
 			break;
 
@@ -567,7 +600,7 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			//ident = TRUE;
 			dam = 1; /* dummy */
 			break;
-		case SV_POTION_SALT_WATER:
+		case SV_POTION_SALT_WATER: /* thx for free infusion? >,>' */
 			return(FALSE);
 		case SV_POTION_LOSE_MEMORIES: // <- make more powerful?
 			dt = GF_OLD_CONF;
@@ -590,9 +623,20 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			ident = TRUE;
 			break;
 		case SV_POTION_DEC_INT:
+			dt = GF_DEC_INT;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
 		case SV_POTION_DEC_WIS:
+			dt = GF_DEC_WIS;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
 		case SV_POTION_DEC_CHR:
-			return(FALSE);
+			dt = GF_DEC_CHR;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
 		case SV_POTION_RES_STR:
 			dt = GF_RES_STR;
 			dam = 1; /* dummy */
@@ -606,9 +650,17 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			dam = 1; /* dummy */
 			break;
 		case SV_POTION_RES_INT:
+			dt = GF_RES_INT;
+			dam = 1; /* dummy */
+			break;
 		case SV_POTION_RES_WIS:
+			dt = GF_RES_WIS;
+			dam = 1; /* dummy */
+			break;
 		case SV_POTION_RES_CHR:
-			return(FALSE);
+			dt = GF_RES_CHR;
+			dam = 1; /* dummy */
+			break;
 		case SV_POTION_INC_STR:
 			dt = GF_INC_STR;
 			dam = 1; /* dummy */
@@ -625,9 +677,20 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 			ident = TRUE;
 			break;
 		case SV_POTION_INC_INT:
+			dt = GF_INC_INT;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
 		case SV_POTION_INC_WIS:
+			dt = GF_INC_WIS;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
 		case SV_POTION_INC_CHR:
-			return(FALSE);
+			dt = GF_INC_CHR;
+			dam = 1; /* dummy */
+			ident = TRUE;
+			break;
 		case SV_POTION_AUGMENTATION:
 			dt = GF_AUGMENTATION;
 			dam = 1; /* dummy */
@@ -667,7 +730,7 @@ bool potion_mushroom_branding(int Ind, int tx, int ty, int o_tsval, bool verify)
 		case SV_POTION_RUINATION:
 			dt = GF_RUINATION;
 			ident = TRUE;
-			dam = 1; /* dummy */
+			dam = FLAT_BRAND_BONUS_POISON;
 			break;
 		case SV_POTION_DETONATIONS:
 			return(FALSE);
@@ -5196,7 +5259,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (feat == FEAT_MON_TRAP) {
 			(void)erase_mon_trap(wpos, y, x, 0);
 			/* erasing the monster trap will reset feature to previous type, so have to overwrite it again with the new wall */
-			c_ptr->feat = FEAT_WALL_EXTRA;
+			cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA);
 		}
 
 		if (feat != FEAT_WALL_EXTRA) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
@@ -5246,7 +5309,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (feat == FEAT_MON_TRAP) {
 			(void)erase_mon_trap(wpos, y, x, 0);
 			/* erasing the monster trap will reset feature to previous type, so have to overwrite it again with the new wall */
-			c_ptr->feat = FEAT_WALL_EXTRA;
+			cave_set_feat_live(wpos, y, x, FEAT_WALL_EXTRA);
 		}
 
 		if (feat != FEAT_RIFT) c_ptr->info &= ~CAVE_NEST_PIT; /* clear teleport protection for nest grid if changed */
@@ -5409,7 +5472,6 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			}
 
 			/* Destroy the trap */
-			//c_ptr->feat = FEAT_FLOOR;
 			cs_erase(c_ptr, cs_ptr);
 
 			if (!quiet) note = TRUE;
@@ -5429,8 +5491,9 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 				obvious = TRUE;
 			}
 
-			/* Unlock the door */
-			c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+			/* Unlock the door -- really correct like this? oO */
+			if (quiet) c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
+			else cave_force_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 
 			/* Clear mimic feature */
 			if ((cs_ptr = GetCS(c_ptr, CS_MIMIC))) cs_erase(c_ptr, cs_ptr);
@@ -5721,9 +5784,7 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (door) {
 			if ((cs_ptr = GetCS(c_ptr, CS_TRAPS)))
 				cs_erase(c_ptr, cs_ptr);
-
 		}
-
 		/* Non s2m'able features */
 		else break;
 
@@ -5750,19 +5811,12 @@ static bool project_f(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Require a "naked" floor grid */
 		if (!cave_naked_bold(zcave, y, x)) break;
 
-		/* Create a closed door */
-		c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
-
+		/* Create a closed door -- really correct like this? oO */
 		if (!quiet) {
-			/* Notice */
-			note_spot(Ind, y, x);
-			/* Redraw */
-			everyone_lite_spot(wpos, y, x);
+			cave_set_feat_live(wpos, y, x, FEAT_DOOR_HEAD + 0x00);
 			/* Observe */
 			if (*w_ptr & CAVE_MARK) obvious = TRUE;
-			/* Update some things */
-			p_ptr->update |= (PU_VIEW | PU_LITE | PU_MONSTERS);
-		}
+		} else c_ptr->feat = FEAT_DOOR_HEAD + 0x00;
 		break;
 
 	/* Make traps */
@@ -6735,7 +6789,13 @@ static bool project_i(int Ind, int who, int r, struct worldpos *wpos, int y, int
 	return(obvious);
 }
 
-bool monster_dec_str(monster_type *m_ptr) {
+/* 'disease': Also deal damage potentially.
+   'who' should be -Ind. */
+bool monster_dec_str(int who, int m_idx, int disease) {
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
+
+	/* to verify whether we really reduced the damage or the reduction got eaten up by rounding/limits */
 	int i, k;
 	bool effect = FALSE;
 
@@ -6773,13 +6833,25 @@ bool monster_dec_str(monster_type *m_ptr) {
 		}
 	}
 
-	return(effect);
+	/* also take damage? */
+	if (disease && IS_PVP && !(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON))) {
+		int dam = disease;
+
+		if (dam > 0) {
+			bool fear = FALSE;
+
+			mon_take_hit(-who, m_idx, dam, &fear, NULL);
+			if (fear) mon_fear_note(-who, m_idx, FALSE);
+		}
+	}
+
+	return(effect); /* 'dam' is not of interest here, only the stat change */
 }
 bool monster_dec_dex(monster_type *m_ptr) {
 	int k;
 
 	/* already reduced too much? */
-	if (m_ptr->org_ac - m_ptr->ac >= m_ptr->org_ac / 2) return(FALSE);
+	if (m_ptr->ac <= m_ptr->org_ac / 2) return(FALSE);
 
 	/* to verify whether we really reduced the AC or the reduction got eaten up by rounding/limits */
 	k = m_ptr->ac;
@@ -6792,23 +6864,41 @@ bool monster_dec_dex(monster_type *m_ptr) {
 
 	return(m_ptr->ac != k);
 }
-bool monster_dec_con(monster_type *m_ptr) {
-	int k;
+/* 'unhealth': Also deal damage potentially.
+   'who' should be -Ind. */
+bool monster_dec_con(int who, int m_idx, int unhealth) {
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
 
-	/* already reduced too much? */
-	if (m_ptr->org_maxhp - m_ptr->maxhp >= m_ptr->org_maxhp / 2) return(FALSE);
+	/* to verify whether we really reduced the HP or the reduction got eaten up by rounding/limits */
+	int k = m_ptr->maxhp, kc = m_ptr->hp;
 
-	/* to verify whether we really reduced the AC or the reduction got eaten up by rounding/limits */
-	k = m_ptr->maxhp;
-
-	if (m_ptr->maxhp > 3) {
-		m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
-		if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
-		else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
-		if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
+	/* not already reduced too much? */
+	if (m_ptr->maxhp > m_ptr->org_maxhp / 2) {
+		if (m_ptr->maxhp > 3) {
+			m_ptr->maxhp = (m_ptr->maxhp * 7) / 8;
+			if (m_ptr->maxhp > 10) m_ptr->maxhp -= 2;
+			else if (m_ptr->maxhp > 5) m_ptr->maxhp -= 1;
+			if (m_ptr->maxhp < m_ptr->hp) m_ptr->hp = m_ptr->maxhp;
+		}
+		k -= m_ptr->maxhp;
+		kc -= m_ptr->hp;
 	}
 
-	return(m_ptr->maxhp != k);
+	/* also take damage? */
+	if (unhealth && IS_PVP && !(r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_DEMON))) {
+		int dam = unhealth - kc;
+
+		/* damage potential only exists if HP weren't already reduced too much above, as a result of maxhp reduction */
+		if (dam > 0) {
+			bool fear = FALSE;
+
+			mon_take_hit(-who, m_idx, dam, &fear, NULL);
+			if (fear) mon_fear_note(-who, m_idx, FALSE);
+		}
+	}
+
+	return(k); /* 'dam' is not of interest here, only the stat change */
 }
 
 #if 0 /* commented out in project_m */
@@ -7006,13 +7096,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	//if (IS_PVP)
 	if (m_ptr->owner && who < 0 && who > PROJECTOR_UNUSUAL) {
 		//look for its owner to see if he's hostile or not
-		for (i = 1; i < NumPlayers; i++)
+		for (i = 1; i <= NumPlayers; i++)
 			if (Players[i]->id == m_ptr->owner) {
 				if (!check_hostile(0 - who, i)) return(FALSE);
 				break;
 			}
 		//if his owner is not online, assume friendly(!)
-		if (i == NumPlayers) return(FALSE);
+		if (i == NumPlayers + 1) return(FALSE);
 	}
 
 
@@ -7404,14 +7494,28 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		if (m_ptr->r_idx == RI_MIRROR ||
 		    // apparently we don't have any western/dunadan monsters (SUST_CON)
 		    ((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
-		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_NONLIVING)) ||
 		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
 		    (m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			no_dam = TRUE;
 			quiet = TRUE;
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-		} else if (monster_dec_con(m_ptr)) note = "appears less healthy"; //msg_print_near_monster(c_ptr->m_idx, "appears less healthy");
+		} else if (monster_dec_con(who, c_ptr->m_idx, TRUE)) note = " appears less healthy"; //msg_print_near_monster(c_ptr->m_idx, "appears less healthy");
+		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
+		break;
+	case GF_DISEASE: /* mini GF_RUINATION */
+		if (m_ptr->r_idx == RI_MIRROR ||
+		    // apparently we don't have any western/dunadan monsters (SUST_CON)
+		    ((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
+		    (m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
+		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
+			no_dam = TRUE;
+			quiet = TRUE;
+			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
+		} else if (monster_dec_str(who, c_ptr->m_idx, TRUE)) note = " appears weaker";
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 		break;
 
@@ -9366,15 +9470,15 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
-		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING | RF3_TROLL | RF3_GIANT)) ||
-		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING | RF3_TROLL | RF3_GIANT)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHpPtToOknJ", r_ptr->d_char)) ||
 		    (m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
-		} else if (monster_dec_str(m_ptr))
-			note = "appears weaker.";
+		} else if (monster_dec_str(who, c_ptr->m_idx, FALSE))
+			note = " appears weaker.";
 			//msg_print_near_monster(c_ptr->m_idx, "appears weaker.");
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		break;
@@ -9388,16 +9492,16 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
-		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
-		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHpPtToOknJ", r_ptr->d_char)) ||
 		    (m_ptr->r_idx == RI_SMEAGOL || m_ptr->r_idx == RI_SLHOBBIT || m_ptr->r_idx == RI_HALFLING_SLINGER) ||
 		    (m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
 		} else if (monster_dec_dex(m_ptr))
-			note = "appears clumsy.";
+			note = " appears clumsy.";
 			//msg_print_near_monster(c_ptr->m_idx, "appears clumsy.");
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		break;
@@ -9412,17 +9516,99 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 
 		// apparently we don't have any western/dunadan monsters (SUST_CON)
 		if (((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
-		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
-		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHpPtToOknJ", r_ptr->d_char)) ||
 		    (m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
 		    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected");
-		} else if (monster_dec_con(m_ptr))
-			note = "appears less healthy.";
+		} else if (monster_dec_con(who, c_ptr->m_idx, FALSE))
+			note = " appears less healthy.";
 			// msg_print_near_monster(c_ptr->m_idx, "appears less healthy.");
 		//else msg_print_near_monster(c_ptr->m_idx, "is unaffected");
+		break;
+
+	/* Decrease intelligence, wisdom, charisma (all cast chance for now, depending on monster type, no effect if type mismatch) */
+	case GF_DEC_INT:
+	case GF_DEC_WIS:
+	case GF_DEC_CHR:
+		no_dam = TRUE;
+		if (m_ptr->r_idx == RI_MIRROR) {
+			note = " is unaffected";
+			break;
+		}
+		quiet = TRUE;
+
+		/* max allowed stat drain? */
+		if (m_ptr->statsIWH_drain == 3) return(FALSE);
+
+		if ((r_ptr->freq_innate || r_ptr->freq_spell) && !(
+		    (r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON | RF3_DRAGON | RF3_DRAGONRIDER)) ||
+		    (r_ptr->flags2 & (RF2_STUPID | RF2_EMPTY_MIND | RF2_ELDRITCH_HORROR)) ||
+		    (r_ptr->flags1 & RF1_UNIQUE) ||
+		     m_ptr->r_idx == RI_MIRROR ||
+		    ((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
+		     m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL
+		    ) && strchr("pPhHoOtTknJ", r_ptr->d_char)) { //note: animals, dragons, demons are all unaffected for now
+			int mclass; //1 = mage/rogue (int), 2 = priest/druid (wis), 3 = mindcrafter (int/chr), 4 = shaman/mystic (int/wis)
+
+			if (m_ptr->r_idx == RI_DARK_ELVEN_WARLOCK) mclass = 1;
+			else if (r_ptr->d_char == 'n') mclass = 4;
+			else switch (m_ptr->ego ? re_info[m_ptr->ego].d_attr : r_ptr->d_attr) { /* note that r_ptr stems from race_inf() and hence respects re_ptr for ego type */
+			case TERM_RED:
+			case TERM_L_UMBER:
+			case TERM_BLUE: // and Drider, fits though
+				mclass = 1;
+				break;
+			case TERM_GREEN:
+			case TERM_L_GREEN:
+			case TERM_YELLOW:
+			case TERM_VIOLET:
+				mclass = 2;
+				break;
+			case TERM_L_WHITE:
+				mclass = 3;
+				break;
+			case TERM_ORANGE:
+			case TERM_L_RED:
+			case TERM_L_BLUE: //or 2
+				mclass = 4;
+				break;
+			case TERM_SLATE:
+			case TERM_L_DARK:
+				if (r_ptr->d_char == 'h') mclass = 1; //dark-elves
+				else mclass = 2; //death knights
+				break;
+			default:
+				mclass = 1;
+				break;
+			}
+
+			switch (typ) {
+			case GF_DEC_INT:
+				if (m_ptr->blow[0].effect == RBE_LOSE_INT || m_ptr->blow[1].effect == RBE_LOSE_INT || m_ptr->blow[2].effect == RBE_LOSE_INT || m_ptr->blow[3].effect == RBE_LOSE_INT) break;
+				if (mclass == 2) break;
+				m_ptr->statsIWH_drain++;
+				note = " appears stupid.";
+				quiet = FALSE;
+				break;
+			case GF_DEC_WIS:
+				if (m_ptr->blow[0].effect == RBE_LOSE_WIS || m_ptr->blow[1].effect == RBE_LOSE_WIS || m_ptr->blow[2].effect == RBE_LOSE_WIS || m_ptr->blow[3].effect == RBE_LOSE_WIS) break;
+				if (mclass == 1 || mclass == 3) break;
+				m_ptr->statsIWH_drain++;
+				note = " appears naive.";
+				quiet = FALSE;
+				break;
+			case GF_DEC_CHR:
+				if (m_ptr->blow[0].effect == RBE_LOSE_CHR || m_ptr->blow[1].effect == RBE_LOSE_CHR || m_ptr->blow[2].effect == RBE_LOSE_CHR || m_ptr->blow[3].effect == RBE_LOSE_CHR) break;
+				if (mclass != 3) break;
+				m_ptr->statsIWH_drain++;
+				note = " appears ugly.";
+				quiet = FALSE;
+				break;
+			}
+		}
 		break;
 
 	/* Restore strength */
@@ -9440,7 +9626,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam = 1;
 			}
 		}
-		if (dam) note = "appears less weak.";
+		if (dam) note = " appears less weak.";
 		else quiet = TRUE;
 		//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less weak.");
 		no_dam = TRUE;
@@ -9452,7 +9638,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			m_ptr->ac = r_ptr->ac;*/
 		if (m_ptr->ac < m_ptr->org_ac) {
 			m_ptr->ac = m_ptr->org_ac;
-			note = "appears less clumsy.";
+			note = " appears less clumsy.";
 			//msg_print_near_monster(c_ptr->m_idx, "appears less clumsy.");
 		} else quiet = TRUE;
 		no_dam = TRUE;
@@ -9465,11 +9651,76 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		if (m_ptr->maxhp < m_ptr->org_maxhp) {
 			m_ptr->hp += m_ptr->org_maxhp - m_ptr->maxhp;
 			m_ptr->maxhp = m_ptr->org_maxhp;
-			note = "appears less sick.";
+			note = " appears less sick.";
 			//msg_print_near_monster(c_ptr->m_idx, "appears less sick.");
 		} else quiet = TRUE;
 		no_dam = TRUE;
 		break;
+
+	/* Restore intelligence, wisdom, charisma (all cast chance for now, depending on monster type, no effect if type mismatch) */
+	case GF_RES_INT:
+	case GF_RES_WIS:
+	case GF_RES_CHR: {
+		quiet = TRUE;
+		no_dam = TRUE;
+
+		/* no stat drain? */
+		if (!m_ptr->statsIWH_drain) return(FALSE);
+
+		int mclass; //1 = mage/rogue (int), 2 = priest/druid (wis), 3 = mindcrafter (int/chr), 4 = shaman/mystic (int/wis)
+
+		if (m_ptr->r_idx == RI_DARK_ELVEN_WARLOCK) mclass = 1;
+		else if (r_ptr->d_char == 'n') mclass = 4;
+		else switch (m_ptr->ego ? re_info[m_ptr->ego].d_attr : r_ptr->d_attr) { /* note that r_ptr stems from race_inf() and hence respects re_ptr for ego type */
+		case TERM_RED:
+		case TERM_L_UMBER:
+		case TERM_BLUE: // and Drider, fits though
+			mclass = 1;
+			break;
+		case TERM_GREEN:
+		case TERM_L_GREEN:
+		case TERM_YELLOW:
+		case TERM_VIOLET:
+			mclass = 2;
+			break;
+		case TERM_L_WHITE:
+			mclass = 3;
+			break;
+		case TERM_ORANGE:
+		case TERM_L_RED:
+		case TERM_L_BLUE: //or 2
+			mclass = 4;
+			break;
+		case TERM_SLATE:
+		case TERM_L_DARK:
+			if (r_ptr->d_char == 'h') mclass = 1; //dark-elves
+			else mclass = 2; //death knights
+			break;
+		default:
+			mclass = 1;
+			break;
+		}
+
+		switch (typ) {
+		case GF_RES_INT:
+			if (mclass == 2) break;
+			note = " appears less stupid.";
+			quiet = FALSE;
+			break;
+		case GF_RES_WIS:
+			if (mclass == 1 || mclass == 3) break;
+			note = " appears less naive.";
+			quiet = FALSE;
+			break;
+		case GF_RES_CHR:
+			if (mclass != 3) break;
+			note = " appears less ugly.";
+			quiet = FALSE;
+			break;
+		}
+
+		m_ptr->statsIWH_drain = 0;
+		break; }
 
 	/* Restore all (STR,DEX,CON) */
 	case GF_RESTORING:
@@ -9511,14 +9762,97 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			k |= 0x4;
 		}
 
+		/* stat drain? */
+		if (m_ptr->statsIWH_drain) {
+			int mclass; //1 = mage/rogue (int), 2 = priest/druid (wis), 3 = mindcrafter (int/chr), 4 = shaman/mystic (int/wis)
+
+			if (m_ptr->r_idx == RI_DARK_ELVEN_WARLOCK) mclass = 1;
+			else if (r_ptr->d_char == 'n') mclass = 4;
+			else switch (m_ptr->ego ? re_info[m_ptr->ego].d_attr : r_ptr->d_attr) { /* note that r_ptr stems from race_inf() and hence respects re_ptr for ego type */
+			case TERM_RED:
+			case TERM_L_UMBER:
+			case TERM_BLUE: // and Drider, fits though
+				mclass = 1;
+				break;
+			case TERM_GREEN:
+			case TERM_L_GREEN:
+			case TERM_YELLOW:
+			case TERM_VIOLET:
+				mclass = 2;
+				break;
+			case TERM_L_WHITE:
+				mclass = 3;
+				break;
+			case TERM_ORANGE:
+			case TERM_L_RED:
+			case TERM_L_BLUE: //or 2
+				mclass = 4;
+				break;
+			case TERM_SLATE:
+			case TERM_L_DARK:
+				if (r_ptr->d_char == 'h') mclass = 1; //dark-elves
+				else mclass = 2; //death knights
+				break;
+			default:
+				mclass = 1;
+				break;
+			}
+
+			if (mclass == 1) k |= 0x8;
+			else if (mclass == 2) k |= 0x10;
+			else if (mclass == 3) k |= 0x20;
+			else k |= 0x40; //mclass == 4
+
+			m_ptr->statsIWH_drain = 0;
+		}
+
 		if (k) switch(k) {
-			case 0x1: note = "appears less weak."; break;
-			case 0x2: note = "appears less clumsy."; break;
-			case 0x3: note = "appears less weak and clumsy."; break;
-			case 0x4: note = "appears less sick."; break;
-			case 0x5: note = "appears less weak and sick."; break;
-			case 0x6: note = "appears less clumsy and sick."; break;
-			case 0x7: note = "appears less weak, clumsy and sick."; break;
+			case 0x1: note = " appears less weak."; break;
+			case 0x2: note = " appears less clumsy."; break;
+			case 0x3: note = " appears less weak and clumsy."; break;
+			case 0x4: note = " appears less sick."; break;
+			case 0x5: note = " appears less weak and sick."; break;
+			case 0x6: note = " appears less clumsy and sick."; break;
+			case 0x7: note = " appears less weak, clumsy and sick."; break;
+
+			case 0x8: note = " appears less stupid."; break;
+			case 0x9: note = " appears less weak and stupid."; break;
+			case 0xa: note = " appears less clumsy and stupid."; break;
+			case 0xb: note = " appears less weak, clumsy and stupid."; break;
+			case 0xc: note = " appears less sick and stupid."; break;
+			case 0xd: note = " appears less weak, sick and stupid."; break;
+			case 0xe: note = " appears less clumsy, sick and stupid."; break;
+			case 0xf: note = " appears less weak, clumsy, sick and stupid."; break;
+
+			case 0x10: note = " appears less naive."; break;
+			case 0x11: note = " appears less weak and naive."; break;
+			case 0x12: note = " appears less clumsy and naive."; break;
+			case 0x13: note = " appears less weak, clumsy and naive."; break;
+			case 0x14: note = " appears less sick and naive."; break;
+			case 0x15: note = " appears less weak, sick and naive."; break;
+			case 0x16: note = " appears less clumsy, sick and naive."; break;
+			case 0x17: note = " appears less weak, clumsy, sick and naive."; break;
+
+			case 0x20: note = " appears less vain."; break; //or 'more convincing again'
+			case 0x21: note = " appears less weak and vain."; break;
+			case 0x22: note = " appears less clumsy and vain."; break;
+			case 0x23: note = " appears less weak, clumsy and vain."; break;
+			case 0x24: note = " appears less sick and vain."; break;
+			case 0x25: note = " appears less weak, sick and vain."; break;
+			case 0x26: note = " appears less clumsy, sick and vain."; break;
+			case 0x27: note = " appears less weak, clumsy ,sick and vain."; break;
+
+			case 0x40: note = " appears less silly."; break;
+			case 0x41: note = " appears less weak and silly."; break;
+			case 0x42: note = " appears less clumsy and silly."; break;
+			case 0x43: note = " appears less weak, clumsy and silly."; break;
+			case 0x44: note = " appears less sick and silly."; break;
+			case 0x45: note = " appears less weak, sick and silly."; break;
+			case 0x46: note = " appears less clumsy, sick and silly."; break;
+			case 0x47: note = " appears less weak, clumsy, sick and silly."; break;
+
+			/* rest is too much, spam and this silyl string op */
+			default: note = " is restored to full ability."; break;
 		} else quiet = TRUE;
 
 		no_dam = TRUE;
@@ -9528,7 +9862,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_INC_STR:
 		if ((r_ptr->flags7 & RF7_NO_DEATH) ||  (m_ptr->status & M_STATUS_FRIENDLY)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			/* hack */
@@ -9552,7 +9886,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 					dam = 1;
 				}
 			}
-			if (dam) note = "appears stronger!";
+			if (dam) note = " appears stronger!";
 			else quiet = TRUE;
 			//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears stronger!");
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
@@ -9564,13 +9898,13 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_INC_DEX:
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			if (m_ptr->ac < m_ptr->org_ac) m_ptr->ac = m_ptr->org_ac; /* include restore dex */
 			if (m_ptr->ac < m_ptr->org_ac + 50) {
 				m_ptr->ac += 5;
-				note = "appears more dextrous!";
+				note = " appears more dextrous!";
 				//msg_print_near_monster(c_ptr->m_idx, "appears more dextrous!");
 			} else quiet = TRUE;
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
@@ -9582,7 +9916,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_INC_CON:
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			if (m_ptr->maxhp < m_ptr->org_maxhp) { /* include a restore con here */
@@ -9593,7 +9927,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			if (m_ptr->maxhp < (m_ptr->org_maxhp * 3) / 2) {
 				m_ptr->hp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
 				m_ptr->maxhp += ((r_ptr->hside * r_ptr->hdice) / 10) + 2;
-				note = "appears healthier!";
+				note = " appears healthier!";
 				//msg_print_near_monster(c_ptr->m_idx, "appears healthier!");
 			} else quiet = TRUE;
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
@@ -9601,11 +9935,86 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		no_dam = TRUE;
 		break;
 
+	/* Increase intelligence, wisdom, charisma (all cast chance for now, depending on monster type, no effect if type mismatch) */
+	case GF_INC_INT:
+	case GF_INC_WIS:
+	case GF_INC_CHR:
+		no_dam = TRUE;
+		quiet = TRUE;
+
+		/* max allowed stat gain? */
+		if (m_ptr->statsIWH_drain == -3) return(FALSE);
+
+		if ((r_ptr->freq_innate || r_ptr->freq_spell) && !(
+		    (r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON | RF3_DRAGON | RF3_DRAGONRIDER)) ||
+		    (r_ptr->flags2 & (RF2_STUPID | RF2_EMPTY_MIND | RF2_ELDRITCH_HORROR)) ||
+		    (r_ptr->flags1 & RF1_UNIQUE) ||
+		     m_ptr->r_idx == RI_MIRROR ||
+		    (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY)
+		    ) && strchr("pPhHoOtTknJ", r_ptr->d_char)) { //note: animals, dragons, demons are all unaffected for now
+			int mclass; //1 = mage/rogue (int), 2 = priest/druid (wis), 3 = mindcrafter (int/chr), 4 = shaman/mystic (int/wis)
+
+			if (m_ptr->r_idx == RI_DARK_ELVEN_WARLOCK) mclass = 1;
+			else if (r_ptr->d_char == 'n') mclass = 4;
+			else switch (m_ptr->ego ? re_info[m_ptr->ego].d_attr : r_ptr->d_attr) { /* note that r_ptr stems from race_inf() and hence respects re_ptr for ego type */
+			case TERM_RED:
+			case TERM_L_UMBER:
+			case TERM_BLUE: // and Drider, fits though
+				mclass = 1;
+				break;
+			case TERM_GREEN:
+			case TERM_L_GREEN:
+			case TERM_YELLOW:
+			case TERM_VIOLET:
+				mclass = 2;
+				break;
+			case TERM_L_WHITE:
+				mclass = 3;
+				break;
+			case TERM_ORANGE:
+			case TERM_L_RED:
+			case TERM_L_BLUE: //or 2
+				mclass = 4;
+				break;
+			case TERM_SLATE:
+			case TERM_L_DARK:
+				if (r_ptr->d_char == 'h') mclass = 1; //dark-elves
+				else mclass = 2; //death knights
+				break;
+			default:
+				mclass = 1;
+				break;
+			}
+
+			switch (typ) {
+			case GF_INC_INT:
+				if (mclass == 2) break;
+				m_ptr->statsIWH_drain--;
+				note = " appears smarter.";
+				quiet = FALSE;
+				break;
+			case GF_INC_WIS:
+				if (mclass == 1 || mclass == 3) break;
+				m_ptr->statsIWH_drain--;
+				note = " appears wiser.";
+				quiet = FALSE;
+				break;
+			case GF_INC_CHR:
+				if (mclass != 3) break;
+				m_ptr->statsIWH_drain--;
+				note = " appears more convincing."; //radiant?
+				quiet = FALSE;
+				break;
+			}
+		}
+
+		break;
+
 	/* Augmentation! (who'd do such a thing, silyl..) */
 	case GF_AUGMENTATION:
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY)) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			/* hack */
@@ -9650,9 +10059,74 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				dam = 1;
 			}
 
-			if (dam) note = "appears more powerful!";
+			/* not yet max allowed stat gain? */
+			if (m_ptr->statsIWH_drain > -3) {
+				if ((r_ptr->freq_innate || r_ptr->freq_spell) && !(
+				    (r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON | RF3_DRAGON | RF3_DRAGONRIDER)) ||
+				    (r_ptr->flags2 & (RF2_STUPID | RF2_EMPTY_MIND | RF2_ELDRITCH_HORROR)) ||
+				    (r_ptr->flags1 & RF1_UNIQUE) ||
+				     m_ptr->r_idx == RI_MIRROR
+				    ) && strchr("pPhHoOtTknJ", r_ptr->d_char)) { //note: animals, dragons, demons are all unaffected for now
+					int mclass; //1 = mage/rogue (int), 2 = priest/druid (wis), 3 = mindcrafter (int/chr), 4 = shaman/mystic (int/wis)
+
+					if (m_ptr->r_idx == RI_DARK_ELVEN_WARLOCK) mclass = 1;
+					else if (r_ptr->d_char == 'n') mclass = 4;
+					else switch (m_ptr->ego ? re_info[m_ptr->ego].d_attr : r_ptr->d_attr) { /* note that r_ptr stems from race_inf() and hence respects re_ptr for ego type */
+					case TERM_RED:
+					case TERM_L_UMBER:
+					case TERM_BLUE: // and Drider, fits though
+						mclass = 1;
+						break;
+					case TERM_GREEN:
+					case TERM_L_GREEN:
+					case TERM_YELLOW:
+					case TERM_VIOLET:
+						mclass = 2;
+						break;
+					case TERM_L_WHITE:
+						mclass = 3;
+						break;
+					case TERM_ORANGE:
+					case TERM_L_RED:
+					case TERM_L_BLUE: //or 2
+						mclass = 4;
+						break;
+					case TERM_SLATE:
+					case TERM_L_DARK:
+						if (r_ptr->d_char == 'h') mclass = 1; //dark-elves
+						else mclass = 2; //death knights
+						break;
+					default:
+						mclass = 1;
+						break;
+					}
+
+					switch (typ) {
+					case GF_INC_INT:
+						if (mclass == 2) break;
+						m_ptr->statsIWH_drain--;
+						note = " appears smarter.";
+						dam = 1;
+						break;
+					case GF_INC_WIS:
+						if (mclass == 1 || mclass == 3) break;
+						m_ptr->statsIWH_drain--;
+						note = " appears wiser.";
+						dam = 1;
+						break;
+					case GF_INC_CHR:
+						if (mclass != 3) break;
+						m_ptr->statsIWH_drain--;
+						note = " appears more convincing."; //radiant?
+						dam = 1;
+						break;
+					}
+				}
+			}
+
+			if (dam) note = " appears more powerful!";
 			else quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears more powerful!");
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		}
@@ -9663,38 +10137,106 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_RUINATION:
 		if (m_ptr->r_idx == RI_MIRROR ||
 		    ((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
-		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_DRAGON |  RF3_NONLIVING)) ||
-		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char))) {
+		    (r_ptr->flags3 & (RF3_UNDEAD |  RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHpPtToOknJ", r_ptr->d_char))) {
 			no_dam = TRUE;
 			quiet = TRUE;
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
 			/* to verify whether we really reduced anything */
-			dam = 0;
+			k = 0;
 
-			/* -STR */
-			if (!(r_ptr->flags3 & (RF3_TROLL | RF3_GIANT)) &&
-			    !(m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR
-			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL))
-				dam |= monster_dec_str(m_ptr);
+			if (!(m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL)) {
+				/* -STR */
+				if (!(r_ptr->flags3 & (RF3_TROLL | RF3_GIANT)) &&
+				    !(m_ptr->blow[0].effect == RBE_LOSE_STR || m_ptr->blow[1].effect == RBE_LOSE_STR || m_ptr->blow[2].effect == RBE_LOSE_STR || m_ptr->blow[3].effect == RBE_LOSE_STR))
+					k |= monster_dec_str(who, c_ptr->m_idx, FALSE);
 
-			/* -DEX */
-			if (!(m_ptr->r_idx == RI_SMEAGOL || m_ptr->r_idx == RI_SLHOBBIT || m_ptr->r_idx == RI_HALFLING_SLINGER) &&
-			    !(m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX
-			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL))
-				dam |= monster_dec_dex(m_ptr);
+				/* -DEX */
+				if (!(m_ptr->r_idx == RI_SMEAGOL || m_ptr->r_idx == RI_SLHOBBIT || m_ptr->r_idx == RI_HALFLING_SLINGER) &&
+				    !(m_ptr->blow[0].effect == RBE_LOSE_DEX || m_ptr->blow[1].effect == RBE_LOSE_DEX || m_ptr->blow[2].effect == RBE_LOSE_DEX || m_ptr->blow[3].effect == RBE_LOSE_DEX))
+					k |= monster_dec_dex(m_ptr);
 
-			/* -CON */
-			// apparently we don't have any western/dunadan monsters (SUST_CON)
-			if (!(m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON
-			    || m_ptr->blow[0].effect == RBE_LOSE_ALL || m_ptr->blow[1].effect == RBE_LOSE_ALL || m_ptr->blow[2].effect == RBE_LOSE_ALL || m_ptr->blow[3].effect == RBE_LOSE_ALL))
-				dam |= monster_dec_con(m_ptr);
+				/* -CON */
+				// apparently we don't have any western/dunadan monsters (SUST_CON)
+				if (!(m_ptr->blow[0].effect == RBE_LOSE_CON || m_ptr->blow[1].effect == RBE_LOSE_CON || m_ptr->blow[2].effect == RBE_LOSE_CON || m_ptr->blow[3].effect == RBE_LOSE_CON))
+					k |= monster_dec_con(who, c_ptr->m_idx, FALSE);
 
-			if (dam) note = "appears less powerful";
+				/* max allowed int/wis/chr stat drain? */
+				if (m_ptr->statsIWH_drain < 3) {
+					if ((r_ptr->freq_innate || r_ptr->freq_spell) && !(
+					    (r_ptr->flags3 & (RF3_NONLIVING | RF3_UNDEAD | RF3_ANIMAL | RF3_DEMON | RF3_DRAGON | RF3_DRAGONRIDER)) ||
+					    (r_ptr->flags2 & (RF2_STUPID | RF2_EMPTY_MIND | RF2_ELDRITCH_HORROR)) ||
+					    (r_ptr->flags1 & RF1_UNIQUE) ||
+					     m_ptr->r_idx == RI_MIRROR
+					    ) && strchr("pPhHoOtTknJ", r_ptr->d_char)) { //note: animals, dragons, demons are all unaffected for now
+						int mclass; //1 = mage/rogue (int), 2 = priest/druid (wis), 3 = mindcrafter (int/chr), 4 = shaman/mystic (int/wis)
+
+						if (m_ptr->r_idx == RI_DARK_ELVEN_WARLOCK) mclass = 1;
+						else if (r_ptr->d_char == 'n') mclass = 4;
+						else switch (m_ptr->ego ? re_info[m_ptr->ego].d_attr : r_ptr->d_attr) { /* note that r_ptr stems from race_inf() and hence respects re_ptr for ego type */
+						case TERM_RED:
+						case TERM_L_UMBER:
+						case TERM_BLUE: // and Drider, fits though
+							mclass = 1;
+							break;
+						case TERM_GREEN:
+						case TERM_L_GREEN:
+						case TERM_YELLOW:
+						case TERM_VIOLET:
+							mclass = 2;
+							break;
+						case TERM_L_WHITE:
+							mclass = 3;
+							break;
+						case TERM_ORANGE:
+						case TERM_L_RED:
+						case TERM_L_BLUE: //or 2
+							mclass = 4;
+							break;
+						case TERM_SLATE:
+						case TERM_L_DARK:
+							if (r_ptr->d_char == 'h') mclass = 1; //dark-elves
+							else mclass = 2; //death knights
+							break;
+						default:
+							mclass = 1;
+							break;
+						}
+
+						switch (typ) {
+						case GF_DEC_INT:
+							if (m_ptr->blow[0].effect == RBE_LOSE_INT || m_ptr->blow[1].effect == RBE_LOSE_INT || m_ptr->blow[2].effect == RBE_LOSE_INT || m_ptr->blow[3].effect == RBE_LOSE_INT) break;
+							if (mclass == 2) break;
+							m_ptr->statsIWH_drain++;
+							k = 1;
+							break;
+						case GF_DEC_WIS:
+							if (m_ptr->blow[0].effect == RBE_LOSE_WIS || m_ptr->blow[1].effect == RBE_LOSE_WIS || m_ptr->blow[2].effect == RBE_LOSE_WIS || m_ptr->blow[3].effect == RBE_LOSE_WIS) break;
+							if (mclass == 1 || mclass == 3) break;
+							m_ptr->statsIWH_drain++;
+							k = 1;
+							break;
+						case GF_DEC_CHR:
+							if (m_ptr->blow[0].effect == RBE_LOSE_CHR || m_ptr->blow[1].effect == RBE_LOSE_CHR || m_ptr->blow[2].effect == RBE_LOSE_CHR || m_ptr->blow[3].effect == RBE_LOSE_CHR) break;
+							if (mclass != 3) break;
+							m_ptr->statsIWH_drain++;
+							k = 1;
+							break;
+						}
+					}
+				}
+			}
+
+			if (k) note = " appears less powerful";
 			else quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears less powerful");
 			//else msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
+
+			/* Also deal damage */
+			/* Obvious */
+			if (seen) obvious = TRUE;
 		}
 		break;
 
@@ -9702,10 +10244,10 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	case GF_EXP:
 		if ((r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || m_ptr->level >= MONSTER_LEVEL_MAX) {
 			quiet = TRUE;
-			//note = "is unaffected";
+			//note = " is unaffected";
 			//msg_print_near_monster(c_ptr->m_idx, "is unaffected.");
 		} else {
-			note = "appears more experienced!";
+			note = " appears more experienced!";
 			//msg_print_near_monster(c_ptr->m_idx, "appears more experienced!");
 			if (dam < 1) dam = 1;
 			m_ptr->exp = MONSTER_EXP(m_ptr->level + dam);
@@ -9757,7 +10299,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		}
 
 		//if (dam) msg_print_near_monster(c_ptr->m_idx, "appears cured.");
-		if (dam) note = "appears cured.";
+		if (dam) note = " appears cured.";
 		else quiet = TRUE;
 		break;
 
@@ -9814,7 +10356,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	}
 	/* Check for death */
 	if ((dam > m_ptr->hp) &&
-	    /* Some mosnters are immune to death */
+	    /* Some monsters are immune to death */
 	    !(r_ptr->flags7 & RF7_NO_DEATH)
 	    && !(m_ptr->status & M_STATUS_FRIENDLY)) {
 		/* Extract method of death */
@@ -10017,7 +10559,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Redraw (later) if needed */
 		update_health(c_ptr->m_idx);
 		if (!no_dam) {
-			/* Some mosnters are immune to death */
+			/* Some monsters are immune to death */
 			if (r_ptr->flags7 & RF7_NO_DEATH) dam = 0;
 			if (m_ptr->status & M_STATUS_FRIENDLY) dam = 0;
 			/* Wake the monster up */
@@ -10114,14 +10656,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				else if (seen && note) msg_format(Ind, "%^s%s.", m_name, note);
 
 				/* Take note */
-				if ((fear || do_fear) && seen && !(m_ptr->csleep || m_ptr->stunned > 100)) {
-#ifdef USE_SOUND_2010
-#else
-					sound(Ind, SOUND_FLEE);
-#endif
-					if (m_ptr->r_idx != RI_MORGOTH) msg_format(Ind, "%^s flees in terror!", m_name);
-					else msg_format(Ind, "%^s retreats!", m_name);
-				}
+				if ((fear || do_fear) && seen) mon_fear_note(Ind, c_ptr->m_idx, FALSE);
 			}
 
 #ifdef ANTI_SEVEN_EXPLOIT /* code part: 'monster gets hit by a projection' */
@@ -10324,7 +10859,6 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	int dark_spell = FALSE;
 	cave_type **zcave, *c_ptr;
-
 
 	/* Bad player number */
 	if (Ind <= 0) return(FALSE);
@@ -12241,7 +12775,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (p_ptr->food >= PY_FOOD_MAX) set_food(Ind, PY_FOOD_MAX - 1);
 		}
 		if (dam & 0x4) { /* Neutralise Poison */
+			k = p_ptr->poisoned;
 			(void)set_poisoned(Ind, 0, 0);
+			if (k) p_ptr->slow_poison = -5; //slow-poison-hack
 			(void)set_diseased(Ind, 0, 0); //mh
 		}
 		if (dam & 0x8) /* Close cuts */
@@ -13411,8 +13947,8 @@ bool project(int who, int rad, struct worldpos *wpos_tmp, int y, int x, int dam,
 		   If the flag is missing, we assume that we just shoot into a random direction! */
 		if (who == PROJECTOR_TRAP) {
 			//lulstodo: use angle and sin/cos to get actually fair direction selection =-p
-			x = x - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);
-			y = y - MAX_RANGE + rand_int(MAX_RANGE * 2 + 1);
+			x = x - MAX_RANGE + randint0(MAX_RANGE * 2);
+			y = y - MAX_RANGE + randint0(MAX_RANGE * 2);
 			set_in_bounds_array(y, x); /* And this again skews the angle, the stronger the closer a direction (x/y) gets cut off to a boundary */
 		}
 	}
@@ -15309,6 +15845,28 @@ int approx_damage(int m_idx, int dam, int typ) {
 			dam >>= 1;
 		break;
 
+	case GF_UNHEALTH:
+		if (m_ptr->r_idx == RI_MIRROR ||
+		    ((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)))
+			dam = 0;
+		break;
+	case GF_DISEASE:
+		if (m_ptr->r_idx == RI_MIRROR ||
+		    ((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON | RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)))
+			dam = 0;
+		break;
+	case GF_RUINATION:
+		if (m_ptr->r_idx == RI_MIRROR ||
+		    ((r_ptr->flags1 & RF1_UNIQUE) && r_ptr->level >= 40) || (r_ptr->flags7 & RF7_NO_DEATH) || (m_ptr->status & M_STATUS_FRIENDLY) || (r_ptr->flags9 & RF9_NO_REDUCE) ||
+		    (r_ptr->flags3 & (RF3_UNDEAD |  RF3_NONLIVING)) ||
+		    !((r_ptr->flags3 & RF3_ANIMAL) || strchr("hHJkpPtn", r_ptr->d_char)))
+			dam = 0;
+		break;
+
 	case GF_HOLD:
 	case GF_DOMINATE:
 	case GF_TELE_TO:
@@ -15321,12 +15879,20 @@ int approx_damage(int m_idx, int dam, int typ) {
 	case GF_RES_STR:
 	case GF_RES_DEX:
 	case GF_RES_CON:
-	case GF_RESTORING:
 	case GF_INC_STR:
 	case GF_INC_DEX:
 	case GF_INC_CON:
+	case GF_DEC_INT:
+	case GF_DEC_WIS:
+	case GF_DEC_CHR:
+	case GF_RES_INT:
+	case GF_RES_WIS:
+	case GF_RES_CHR:
+	case GF_INC_INT:
+	case GF_INC_WIS:
+	case GF_INC_CHR:
+	case GF_RESTORING:
 	case GF_AUGMENTATION:
-	case GF_RUINATION:
 	default:
 		/* No damage */
 		dam = 0;
