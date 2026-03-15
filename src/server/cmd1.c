@@ -1784,7 +1784,7 @@ s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store
 			   Reasoning: !An, !On, !Sn are usually used for managing restocking of the bag.
 			              Therefore it is unlikely that the player intends to pick up the
 			              remaining stack into his normal inventory. */
-			return(stowed_some ? -globalslot : FALSE);
+			return(fully_stowed ? globalslot : (stowed_some ? -globalslot : FALSE));
 		}
 		/* There are still items left in the stack, and we didn't try to pick up just one,
 		   so additionally try now to pick up the rest of this pile normally */
@@ -2932,8 +2932,13 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 		num_org = o_ptr->number; /* For !g/!G inscription on the target item, to keep track whether we actually auto-stowed any of it. */
 
 		stowed = auto_stow(Ind, o_ptr, c_ptr->o_idx, pick_one_org, FALSE, FALSE, c_ptr->info);
+		/* Translate return value for partial stowing under specific bag inscriptions */
+		if (stowed < 0) stowed = -stowed;
 		if (stowed) {
 			try_pickup = pick_one = FALSE; //ensure to not trigger the number = 1 hack for pick_one (!)
+
+			/* Get the stowed item */
+			get_inven_item(Ind, stowed, &o_ptr);
 
 			if (!object_aware_p(Ind, o_ptr) || !object_known_p(Ind, o_ptr)) /* was just object_known_p */
 				apply_XID(Ind, o_ptr, stowed);
