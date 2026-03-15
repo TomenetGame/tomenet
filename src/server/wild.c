@@ -3598,13 +3598,16 @@ void wild_add_uhouses(struct worldpos *wpos) {
 /* Light up house? ^^ Suggested by Zeliwin. */
 void uhouse_light_unlight(house_type *h_ptr, bool els) {
 	u32b tmp_seed;
+	bool rand_old;
 	struct worldpos *wpos = &h_ptr->wpos;
 
 	/* For now only rectangular houses for easy center point determination */
 	if (!(h_ptr->flags & HF_RECT)) return;
 
 	/* Keep RNG state, or global_lite_room() could change housing zone layout! (Thanks @ mikaelh) */
+	rand_old = Rand_quick;
 	tmp_seed = Rand_value;
+	Rand_quick = TRUE;
 
 	/* For now only guild halls and castles, plebs has to light manually. Could offer lamps for player houses maybe. Kind of clunky design though. */
 	if (!h_ptr->dna->owner) global_unlite_room(wpos, h_ptr->y + h_ptr->coords.rect.height / 2, h_ptr->x + h_ptr->coords.rect.width / 2, els);
@@ -3623,6 +3626,7 @@ void uhouse_light_unlight(house_type *h_ptr, bool els) {
 
 	/* Restore RNG as if nothing happened~ */
 	Rand_value = tmp_seed;
+	Rand_quick = rand_old;
 }
 
 /* Called by wilderness_gen() - build a wilderness sector from memory */
