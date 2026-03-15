@@ -2105,7 +2105,7 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args) {
 		/* more security needed... */
 	}
 
-	if (dna->a_flags & ACF_PARTY) {
+	if (args[1] & ACF_PARTY) {
 		if (!p_ptr->party) {
 			msg_print(Ind, "You are not in a party.");
 			return(FALSE);
@@ -2115,8 +2115,11 @@ static bool chmod_door(int Ind, struct dna_type *dna, char *args) {
 			return(FALSE);
 		}
 		if (strcmp(parties[p_ptr->party].owner, lookup_player_name(dna->owner))) {
-			//msg_print(Ind, "You must be owner of your party to allow party access.");
 			msg_print(Ind, "Only houses owned by the party owner can be given party access.");
+			return(FALSE);
+		}
+		if (strcmp(parties[p_ptr->party].owner, p_ptr->name)) {
+			msg_print(Ind, "You must be owner of your party to allow party access.");
 			return(FALSE);
 		}
 	}
