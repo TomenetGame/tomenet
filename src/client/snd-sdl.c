@@ -3273,9 +3273,15 @@ static void fadein_next_music(void) {
 	music_next = -1;
 
 	/* Actually don't repeat 'initial' songs */
-	if (!songs[music_cur].initial[music_cur_song]) {
-		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1, 1000); //-1 infinite, 0 once, or n times
-	} else Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : 0, 1000); //even if play_all is off, continue with another song after an 'initial' song was played instead of repeating it
+	if (songs[music_cur].initial[music_cur_song])
+		Mix_FadeInMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : 0, 1000); //even if play_all is off, continue with another song after an 'initial' song was played instead of repeating it
+	else {
+		music_cur_repeat = (c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1);
+		/* If we only have 1 subsong, ie we cannot shuffle/playall among different songs,
+		   set repeat to 'forever' to avoid a new fade-in-sequence each time the song ends and restarts */
+		if (songs[music_cur].num == 1) music_cur_repeat = -1;
+		Mix_FadeInMusic(wave, music_cur_repeat, 1000); //-1 infinite, 0 once, or n times
+	}
 
 #ifdef WILDERNESS_MUSIC_RESUME
 	/* Special: If new music is in category 'wilderness', restore its position to resume it instead of restarting it.
