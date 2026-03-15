@@ -3452,6 +3452,7 @@ static bool store_attest_command(int store, int bact) {
 }
 
 #ifdef ENABLE_SUBINVEN
+/* Returns the (0...n) inventory slot of the item or -1 if failed. */
 int autostow_or_carry(int Ind, object_type *o_ptr, bool quiet) {
 	player_type *p_ptr = Players[Ind];
 	int item_new = -1; /* todo maybe: make auto_stow() set item_new on the used subinven slot correctly */
@@ -3482,7 +3483,7 @@ int autostow_or_carry(int Ind, object_type *o_ptr, bool quiet) {
 	/* If we couldn't stow everything, pick up the rest normally */
 	if (o_ptr->number) {
 		item_new = inven_carry(Ind, o_ptr);
-		if (!quiet) { // && !check_guard_inscription(o_ptr->note, 'Q')
+		if (item_new != -1 && !quiet) { // && !check_guard_inscription(o_ptr->note, 'Q')
 			char o_name[ONAME_LEN];
 
 			object_desc(Ind, o_name, &p_ptr->inventory[item_new], TRUE, 3);
