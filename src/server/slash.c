@@ -4307,7 +4307,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			for (x = p_ptr->px - 1; x <= p_ptr->px + 1; x++) {
 				for (y = p_ptr->py - 1; y <= p_ptr->py + 1; y++) {
 					if (!in_bounds(y, x)) continue;
-					switch (zcave[y][x].feat) {
+					switch (zcave[y][x].feat) { //feat_is_window()
 					case FEAT_WINDOW: case FEAT_WINDOW_SMALL:
 					case FEAT_OPEN_WINDOW: case FEAT_OPEN_WINDOW_SMALL:
 					case FEAT_BARRED_WINDOW: case FEAT_BARRED_WINDOW_SMALL:

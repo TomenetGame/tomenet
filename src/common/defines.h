@@ -3101,6 +3101,7 @@
 /* Note: Just fiery light sources 'dropped to the floor'. These won't even threaten items, for now:
 	FEAT_BURNING_TORCH, FEAT_BURNING_LAMP. */
 
+#define MAX_SECTOR_WINDOWS 150
 #define feat_is_window(F) ((F) == FEAT_WINDOW || (F) == FEAT_WINDOW_SMALL || (F) == FEAT_OPEN_WINDOW || (F) == FEAT_OPEN_WINDOW_SMALL || (F) == FEAT_BARRED_WINDOW || (F) == FEAT_BARRED_WINDOW_SMALL)
 
 

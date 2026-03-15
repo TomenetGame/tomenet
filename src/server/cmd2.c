@@ -9889,7 +9889,7 @@ void house_admin(int Ind, int dir, char *args) {
 				} else msg_print(Ind, "\377oAccess not permitted.");
 			} else msg_print(Ind, "\377yNot a door of a private house.");
 			break;
-		case FEAT_WINDOW:
+		case FEAT_WINDOW:		//feat_is_window()
 		case FEAT_WINDOW_SMALL:
 		case FEAT_OPEN_WINDOW:
 		case FEAT_OPEN_WINDOW_SMALL:

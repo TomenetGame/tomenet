@@ -91,6 +91,8 @@ that holds the dungeon levels.
 
  */
 
+static int sector_window = 0;
+
 int world_index(int world_x, int world_y) {
 	int ring, base, offset, idx;
 
@@ -1403,7 +1405,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 	int	h_x1,h_y1,h_x2,h_y2, p_x1,p_y1,p_x2,p_y2,
 		plot_xlen, plot_ylen, house_xlen, house_ylen,
 		door_x, door_y, drawbridge_x[3], drawbridge_y[3], drawbridge_feat,
-		tmp, type, area, num_door_attempts;
+		tmp, h_idx, type, area, num_door_attempts;
 	int size;
 #ifndef __DISABLE_HOUSEBOOST
 	int xx, yy, door_dir = 0;
@@ -1809,12 +1811,12 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 
 	/* does house already exist (created at server start)
 	   or has it just been created for the first time? */
-	tmp = pick_house(wpos, door_y, door_x);
+	h_idx = pick_house(wpos, door_y, door_x);
 
 	/* is it a 'suspended' guild hall? */
-	if (tmp != -1
-	    && houses[tmp].dna->owner && houses[tmp].dna->owner_type == OT_GUILD
-	    && !guilds[houses[tmp].dna->owner].master)
+	if (h_idx != -1
+	    && houses[h_idx].dna->owner && houses[h_idx].dna->owner_type == OT_GUILD
+	    && !guilds[houses[h_idx].dna->owner].master)
 		floor_info2 |= CAVE2_GUILD_SUS;
 
 	/* TODO: use coloured roof, so that they look cute :) */
@@ -1839,13 +1841,13 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 
 	/* add the door */
 	c_ptr = &zcave[door_y][door_x];
-	if (tmp != -1) door_feature = (houses[tmp].flags & HF_OPEN) ? FEAT_HOME_OPEN : FEAT_HOME;
+	if (h_idx != -1) door_feature = (houses[h_idx].flags & HF_OPEN) ? FEAT_HOME_OPEN : FEAT_HOME;
 	c_ptr->feat = door_feature;
 
 #ifdef HOUSE_PAINTING
 	/* Add colour if house is painted */
-	if (tmp != -1) {
-		house_type *h_ptr = &houses[tmp];
+	if (h_idx != -1) {
+		house_type *h_ptr = &houses[h_idx];
 		cave_type *hc_ptr;
 
 		if (h_ptr->colour) {
@@ -1891,7 +1893,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 
 		/* hack -- only add a house if it is not already in memory;
 		   Means: If it hasn't already been created on server startup. */
-		if (tmp == -1) {
+		if (h_idx == -1) {
 			cs_ptr = AddCS(c_ptr, CS_DNADOOR);	/* XXX this can fail? */
 			//cs_ptr->type = CS_DNADOOR;
 			cs_ptr->sc.ptr = houses[num_houses].dna;
@@ -1921,7 +1923,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 			}
 #endif	// USE_MANG_HOUSE_ONLY
 
-			tmp = num_houses;
+			h_idx = num_houses;
 			num_houses++;
 			if ((house_alloc - num_houses) < 32) {
 				GROW(houses, house_alloc, house_alloc + 512, house_type);
@@ -1932,24 +1934,22 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 			cs_ptr = AddCS(c_ptr, CS_DNADOOR);
 /* evileye temporary fix */
 #if 1
-			houses[tmp].coords.rect.width = houses[num_houses].coords.rect.width;
-			houses[tmp].coords.rect.height = houses[num_houses].coords.rect.height;
+			houses[h_idx].coords.rect.width = houses[num_houses].coords.rect.width;
+			houses[h_idx].coords.rect.height = houses[num_houses].coords.rect.height;
 #endif
 /* end evileye fix */
 			/* malloc madness otherwise */
 			KILL(houses[num_houses].dna, struct dna_type);
 			//cs_ptr->type = CS_DNADOOR;
-			cs_ptr->sc.ptr = houses[tmp].dna;
+			cs_ptr->sc.ptr = houses[h_idx].dna;
 		}
 	}
 
 	/* make the building interesting */
 	wild_furnish_dwelling(wpos, h_x1 + 1, h_y1 + 1, h_x2 - 1, h_y2 - 1, type);
 
-	/* Light up house? ^^ Suggested by Zeliwin. */
-	/* For now only rectangular houses for easy center point determination */
-	if (tmp != -1) /* player-ownable house aka WILD_TOWN_HOME? */
-		uhouse_light_unlight(&houses[tmp], FALSE);
+	if (h_idx != -1) /* player-ownable house aka WILD_TOWN_HOME? */
+		uhouse_light_unlight(&houses[h_idx], FALSE);
 
 #ifdef WILD_HOUSES_WINDOWS
 	/* Add windows? */
@@ -2002,17 +2002,49 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 
 			/* North & south sides */
 			for (x = h_x1 + spacer_x; x <= h_x2 - spacer_x; x += dist_win_x) {
-				if (is_no_door(zcave[h_y1][x].feat) && is_no_door(zcave[h_y1][x - 1].feat) && is_no_door(zcave[h_y1][x + 1].feat))
-					zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
-				if (is_no_door(zcave[h_y2][x].feat) && is_no_door(zcave[h_y2][x - 1].feat) && is_no_door(zcave[h_y2][x + 1].feat))
-					zcave[h_y2][x].feat = FEAT_BARRED_WINDOW;
+				if (is_no_door(zcave[h_y1][x].feat) && is_no_door(zcave[h_y1][x - 1].feat) && is_no_door(zcave[h_y1][x + 1].feat)) {
+					if (sector_window < MAX_SECTOR_WINDOWS) {
+						zcave[h_y1][x].sector_window_idx = sector_window;
+						switch (w_ptr->window_state[sector_window++]) {
+						case 0: zcave[h_y1][x].feat = FEAT_BARRED_WINDOW; break;
+						case 1: zcave[h_y1][x].feat = FEAT_WINDOW; break;
+						case 2: zcave[h_y1][x].feat = FEAT_OPEN_WINDOW; break;
+						}
+					} //else zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
+				}
+				if (is_no_door(zcave[h_y2][x].feat) && is_no_door(zcave[h_y2][x - 1].feat) && is_no_door(zcave[h_y2][x + 1].feat)) {
+					if (sector_window < MAX_SECTOR_WINDOWS) {
+						zcave[h_y2][x].sector_window_idx = sector_window;
+						switch (w_ptr->window_state[sector_window++]) {
+						case 0: zcave[h_y2][x].feat = FEAT_BARRED_WINDOW; break;
+						case 1: zcave[h_y2][x].feat = FEAT_WINDOW; break;
+						case 2: zcave[h_y2][x].feat = FEAT_OPEN_WINDOW; break;
+						}
+					} //else zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
+				}
 			}
 			/* East & west sides */
 			for (y = h_y1 + spacer_y; y <= h_y2 - spacer_y; y += dist_win_y) {
-				if (is_no_door(zcave[y][h_x1].feat) && is_no_door(zcave[y - 1][h_x1].feat) && is_no_door(zcave[y + 1][h_x1].feat))
-					zcave[y][h_x1].feat = FEAT_BARRED_WINDOW_SMALL;
-				if (is_no_door(zcave[y][h_x2].feat) && is_no_door(zcave[y - 1][h_x2].feat) && is_no_door(zcave[y + 1][h_x2].feat))
-					zcave[y][h_x2].feat = FEAT_BARRED_WINDOW_SMALL;
+				if (is_no_door(zcave[y][h_x1].feat) && is_no_door(zcave[y - 1][h_x1].feat) && is_no_door(zcave[y + 1][h_x1].feat)) {
+					if (sector_window < MAX_SECTOR_WINDOWS) {
+						zcave[y][h_x1].sector_window_idx = sector_window;
+						switch (w_ptr->window_state[sector_window++]) {
+						case 0: zcave[y][h_x1].feat = FEAT_BARRED_WINDOW_SMALL; break;
+						case 1: zcave[y][h_x1].feat = FEAT_WINDOW_SMALL; break;
+						case 2: zcave[y][h_x1].feat = FEAT_OPEN_WINDOW_SMALL; break;
+						}
+					} //else zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
+				}
+				if (is_no_door(zcave[y][h_x2].feat) && is_no_door(zcave[y - 1][h_x2].feat) && is_no_door(zcave[y + 1][h_x2].feat)) {
+					if (sector_window < MAX_SECTOR_WINDOWS) {
+						zcave[y][h_x2].sector_window_idx = sector_window;
+						switch (w_ptr->window_state[sector_window++]) {
+						case 0: zcave[y][h_x2].feat = FEAT_BARRED_WINDOW_SMALL; break;
+						case 1: zcave[y][h_x2].feat = FEAT_WINDOW_SMALL; break;
+						case 2: zcave[y][h_x2].feat = FEAT_OPEN_WINDOW_SMALL; break;
+						}
+					} //else zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
+				}
 			}
 		} else { /* Non-castles: Depending on house wall length, 0-3 per side */
 			int windows_left;
@@ -2039,14 +2071,28 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 				if (windows_left != 1 || rand_int(2)) {
 					x = h_x1 + 1 + tmp * dist_win_x + rand_int(dist_win_x);
 					if (is_no_door(zcave[h_y1][x].feat) && is_no_door(zcave[h_y1][x - 1].feat) && is_no_door(zcave[h_y1][x + 1].feat)) {
-						zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
+						if (sector_window < MAX_SECTOR_WINDOWS) {
+							zcave[h_y1][x].sector_window_idx = sector_window;
+							switch (w_ptr->window_state[sector_window++]) {
+							case 0: zcave[h_y1][x].feat = FEAT_BARRED_WINDOW; break;
+							case 1: zcave[h_y1][x].feat = FEAT_WINDOW; break;
+							case 2: zcave[h_y1][x].feat = FEAT_OPEN_WINDOW; break;
+							}
+						} //else zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
 						windows_left--;
 					}
 				}
 				if (windows_left != 1) {
 					x = h_x1 + 1 + tmp * dist_win_x + rand_int(dist_win_x);
 					if (is_no_door(zcave[h_y2][x].feat) && is_no_door(zcave[h_y2][x - 1].feat) && is_no_door(zcave[h_y2][x + 1].feat)) {
-						zcave[h_y2][x].feat = FEAT_BARRED_WINDOW;
+						if (sector_window < MAX_SECTOR_WINDOWS) {
+							zcave[h_y2][x].sector_window_idx = sector_window;
+							switch (w_ptr->window_state[sector_window++]) {
+							case 0: zcave[h_y2][x].feat = FEAT_BARRED_WINDOW; break;
+							case 1: zcave[h_y2][x].feat = FEAT_WINDOW; break;
+							case 2: zcave[h_y2][x].feat = FEAT_OPEN_WINDOW; break;
+							}
+						} //else zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
 						windows_left--;
 					}
 				}
@@ -2061,14 +2107,28 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 				if (windows_left != 1 || rand_int(2)) {
 					y = h_y1 + 1 + tmp * dist_win_y + rand_int(dist_win_y);
 					if (is_no_door(zcave[y][h_x1].feat) && is_no_door(zcave[y - 1][h_x1].feat) && is_no_door(zcave[y + 1][h_x1].feat)) {
-						zcave[y][h_x1].feat = FEAT_BARRED_WINDOW;
+						if (sector_window < MAX_SECTOR_WINDOWS) {
+							zcave[y][h_x1].sector_window_idx = sector_window;
+							switch (w_ptr->window_state[sector_window++]) {
+							case 0: zcave[y][h_x1].feat = FEAT_BARRED_WINDOW; break;
+							case 1: zcave[y][h_x1].feat = FEAT_WINDOW; break;
+							case 2: zcave[y][h_x1].feat = FEAT_OPEN_WINDOW; break;
+							}
+						} //else zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
 						windows_left--;
 					}
 				}
 				if (windows_left != 1) {
 					y = h_y1 + 1 + tmp * dist_win_y + rand_int(dist_win_y);
 					if (is_no_door(zcave[y][h_x2].feat) && is_no_door(zcave[y - 1][h_x2].feat) && is_no_door(zcave[y + 1][h_x2].feat)) {
-						zcave[y][h_x2].feat = FEAT_BARRED_WINDOW;
+						if (sector_window < MAX_SECTOR_WINDOWS) {
+							zcave[y][h_x2].sector_window_idx = sector_window;
+							switch (w_ptr->window_state[sector_window++]) {
+							case 0: zcave[y][h_x2].feat = FEAT_BARRED_WINDOW; break;
+							case 1: zcave[y][h_x2].feat = FEAT_WINDOW; break;
+							case 2: zcave[y][h_x2].feat = FEAT_OPEN_WINDOW; break;
+							}
+						} //else zcave[h_y1][x].feat = FEAT_BARRED_WINDOW;
 						windows_left--;
 					}
 				}
@@ -3572,6 +3632,8 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 	int found_more_water;
 	terrain_type terrain;
 	bool rand_old = Rand_quick;
+
+	sector_window = 0;
 
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 	cave_type **zcave;

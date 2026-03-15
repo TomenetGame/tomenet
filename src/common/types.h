@@ -643,6 +643,8 @@ struct cave_type {
 	byte custom_lua_search_diff_chance;	/* search difficulty, 0..100% multiplied by chance */
 	s16b custom_lua_newlivefeat;		/* when cave's feat is terraformed/changed */
 	s16b custom_lua_way;			/* when taking a staircase, void gate or beacon */
+
+	byte sector_window_idx;	/* this cave's feat is a window, with this we track it's open/closed state */
 };
 
 /* ToME parts, arranged */
@@ -2640,6 +2642,8 @@ struct wilderness_type {
 	u16b bled;	/* type that was bled into this sector (USE_SOUND_2010: ambient sfx) */
 	bool ambient_sfx, ambient_sfx_counteddown, ambient_sfx_dummy; /* for synchronizing ambient sfx (USE_SOUND_2010) */
 	int ambient_sfx_timer;
+
+	byte window_state[MAX_SECTOR_WINDOWS]; /* keep track of all (not just player-owned, hence here instead of in the houses[] array) house windows; assume there won't be more than 150 per sector... */
 };
 
 

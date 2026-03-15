@@ -9089,6 +9089,21 @@ bool cave_set_feat_live(worldpos *wpos, int y, int x, int feat) {
 			set_tim_wraithstep(i, 0);
 	}
 
+	if (feat_is_window(feat)) switch(feat) {
+	case FEAT_BARRED_WINDOW:
+	case FEAT_BARRED_WINDOW_SMALL:
+		wild_info[wpos->wy][wpos->wx].window_state[c_ptr->sector_window_idx] = 0; //shutters closed (default)
+		break;
+	case FEAT_WINDOW:
+	case FEAT_WINDOW_SMALL:
+		wild_info[wpos->wy][wpos->wx].window_state[c_ptr->sector_window_idx] = 1; //glass closed, just shutters opened
+		break;
+	case FEAT_OPEN_WINDOW:
+	case FEAT_OPEN_WINDOW_SMALL:
+		wild_info[wpos->wy][wpos->wx].window_state[c_ptr->sector_window_idx] = 2; //completely open (can act through it)
+		break;
+	}
+
 	if (c_ptr->custom_lua_newlivefeat) exec_lua(0, format("custom_newlivefeat(%d,%d,%d)", old_feat, feat, c_ptr->custom_lua_newlivefeat));
 	return(TRUE);
 }
