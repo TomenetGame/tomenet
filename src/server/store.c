@@ -7532,6 +7532,7 @@ void view_exploration_history(int Ind) {
 
 	fprintf(fff, "\377U  ~ List of all known towns and dungeons discovered by adventurers up to now ~  \n");
 	fprintf(fff, "\377U      To discover a dungeon, somebody has to spot its entrance staircase.       \n");
+	fprintf(fff, "\377U       Names of dungeons you have found are shown in light umber colour.        \n");
 	fprintf(fff, "\377U        Dungeon bosses you have slain are listed in light umber colour.         \n\n");
 
 	/* Towns. This list can never be empty as players start in Bree, the first town, and thereby auto-discover it. */
@@ -7625,7 +7626,8 @@ void view_exploration_history(int Ind) {
 			strcpy(bn, tmp_name);
 		}
 
-		fprintf(fff, " \377u%-31s  (%2d,%2d) %s%s  %s\n",
+		fprintf(fff, " \377%c%-31s\377u  (%2d,%2d) %s%s  %s\n",
+		    (Players[Ind]->wild_map[(dungeon_x[i] + dungeon_y[i] * MAX_WILD_X) / 8] & (1U << ((dungeon_x[i] + dungeon_y[i] * MAX_WILD_X) % 8))) ? 'U': 'u',
 		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
 		    getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, TRUE),
 		    dungeon_x[i], dungeon_y[i],
