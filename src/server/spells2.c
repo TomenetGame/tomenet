@@ -7310,7 +7310,7 @@ void lite_room(int Ind, struct worldpos *wpos, int y1, int x1) {
 	cave_temp_room_lite(Ind);
 }
 
-static void global_cave_temp_room_lite(worldpos *wpos) {
+static void global_cave_temp_room_lite(worldpos *wpos, bool els) {
 	int i, x, y, chance;
 	monster_type *m_ptr;
 	monster_race *r_ptr;
@@ -7328,13 +7328,15 @@ static void global_cave_temp_room_lite(worldpos *wpos) {
 		/* No longer in the array */
 		c_ptr->info &= ~CAVE_TEMP;
 
+		/* House now owned or guild has leader again etc */
+		c_ptr->info |= CAVE_HOUSE_GLOW;
+
 		/* Update only non-CAVE_GLOW grids */
 		/* if (c_ptr->info & CAVE_GLOW) continue; */
 
 		/* Perma-Lite */
 		c_ptr->info |= CAVE_GLOW;
-
-		/* Process affected monsters */
+		/* Process affected monsters (-- even if c_ptr was already CAVE_GLOW btw? hm) */
 		if (c_ptr->m_idx > 0) {
 			chance = 25;
 			m_ptr = &m_list[c_ptr->m_idx];
@@ -7355,12 +7357,56 @@ static void global_cave_temp_room_lite(worldpos *wpos) {
 				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", 0, c_ptr->m_idx, m_ptr->custom_lua_awoke));
 			}
 		}
-
 		/* Note */
 		note_spot_depth(wpos, y, x);
 
 		/* Redraw */
-		everyone_lite_spot(wpos, y, x);
+		if (els) everyone_lite_spot(wpos, y, x);
+	}
+
+	/* None left */
+	global_temp_n = 0;
+}
+
+static void global_cave_temp_room_unlite(worldpos *wpos, bool els) {
+	int i, x, y;
+	cave_type **zcave;
+
+	if (!(zcave = getcave(wpos))) return;
+
+	/* Clear them all */
+	for (i = 0; i < global_temp_n; i++) {
+		y = global_temp_y[i];
+		x = global_temp_x[i];
+
+		cave_type *c_ptr = &zcave[y][x];
+
+		/* No longer in the array */
+		c_ptr->info &= ~CAVE_TEMP;
+
+		/* House now unowned or guild now leaderless etc */
+		c_ptr->info &= ~CAVE_HOUSE_GLOW;
+
+		/* Actually unlike normal room-unlighting, houses are only darkened if it's night outside,
+		   otherwise the daylight will keep them lit (even if they have no windows -_-') */
+		if (night_surface) {
+			/* Darken the grid */
+			if (!(f_info[c_ptr->feat].flags2 & FF2_GLOW)
+			    && !(c_ptr->info & (CAVE_GLOW_HACK | CAVE_GLOW_HACK_LAMP)))
+				c_ptr->info &= ~CAVE_GLOW;
+
+			/* Process affected monsters (-- even if c_ptr was already ~CAVE_GLOW btw? hm) */
+			if (c_ptr->m_idx > 0) {
+				/* Update the monster */
+				update_mon(c_ptr->m_idx, FALSE);
+			}
+
+			/* Note */
+			note_spot_depth(wpos, y, x);
+
+			/* Redraw */
+			if (els) everyone_lite_spot(wpos, y, x);
+		}
 	}
 
 	/* None left */
@@ -7392,7 +7438,9 @@ static void global_cave_temp_room_aux(struct worldpos *wpos, int y, int x) {
 	global_temp_n++;
 }
 
-void global_lite_room(struct worldpos *wpos, int y1, int x1) {
+/* For houses: light them up while owned! (or maybe just the non-plebs ones! :-s)
+   els must be false when called from wild.c or we cause visual glitches for players if sector is unstaticed and they recall back to this sector. */
+void global_lite_room(struct worldpos *wpos, int y1, int x1, bool els) {
 	int i, x, y;
 	cave_type **zcave;
 
@@ -7423,7 +7471,43 @@ void global_lite_room(struct worldpos *wpos, int y1, int x1) {
 	}
 
 	/* Now, lite them all up at once */
-	global_cave_temp_room_lite(wpos);
+	global_cave_temp_room_lite(wpos, els);
+}
+
+/* For houses: unlight them while unowned/leaderless!
+   els must be false when called from wild.c or we cause visual glitches for players if sector is unstaticed and they recall back to this sector. */
+void global_unlite_room(struct worldpos *wpos, int y1, int x1, bool els) {
+	int i, x, y;
+	cave_type **zcave;
+
+	if (!(zcave = getcave(wpos))) return;
+
+	/* Add the initial grid */
+	global_cave_temp_room_aux(wpos, y1, x1);
+
+	/* While grids are in the queue, add their neighbors */
+	for (i = 0; i < global_temp_n; i++) {
+		x = global_temp_x[i];
+		y = global_temp_y[i];
+
+		/* Walls get dark, but stop darkness */
+		if (!cave_floor_bold(zcave, y, x) && zcave[y][x].feat != FEAT_HOME) continue;
+
+		/* Spread adjacent */
+		global_cave_temp_room_aux(wpos, y + 1, x);
+		global_cave_temp_room_aux(wpos, y - 1, x);
+		global_cave_temp_room_aux(wpos, y, x + 1);
+		global_cave_temp_room_aux(wpos, y, x - 1);
+
+		/* Spread diagonal */
+		global_cave_temp_room_aux(wpos, y + 1, x + 1);
+		global_cave_temp_room_aux(wpos, y - 1, x - 1);
+		global_cave_temp_room_aux(wpos, y - 1, x + 1);
+		global_cave_temp_room_aux(wpos, y + 1, x - 1);
+	}
+
+	/* Now, lite them all up at once */
+	global_cave_temp_room_unlite(wpos, els);
 }
 
 

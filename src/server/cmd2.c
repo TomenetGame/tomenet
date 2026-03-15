@@ -3159,8 +3159,11 @@ void do_cmd_open(int Ind, int dir) {
 				/* We can access this house or are an admin */
 				if (access_door(Ind, cs_ptr->sc.ptr, TRUE) || is_admin(p_ptr)) {
 #if USE_MANG_HOUSE_ONLY || TRUE /* let'em open it, so that thevery can take place :) */
+					int h_idx = pick_house(wpos, y, x);
+
 					/* Open the door */
 					cave_force_feat_live(wpos, y, x, FEAT_HOME_OPEN);
+					if (h_idx != -1) houses[h_idx].flags |= HF_OPEN;
  #ifdef USE_SOUND_2010
 					sound(Ind, "open_door", NULL, SFX_TYPE_COMMAND, TRUE);
  #endif
@@ -3215,8 +3218,12 @@ void do_cmd_open(int Ind, int dir) {
 
 				for (j = 0; j < INVEN_PACK; j++) {
 					object_type *o_ptr = &p_ptr->inventory[j];
+
 					if (o_ptr->tval == TV_KEY && o_ptr->sval == SV_HOUSE_KEY && o_ptr->pval == key->id) {
+						int h_idx = pick_house(wpos, y, x);
+
 						cave_force_feat_live(wpos, y, x, FEAT_HOME_OPEN);
+						if (h_idx != -1) houses[h_idx].flags |= HF_OPEN;
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
 						break_cloaking(Ind, 3);
@@ -3230,7 +3237,10 @@ void do_cmd_open(int Ind, int dir) {
 #endif
 						return;
 					} else if (is_admin(p_ptr)) {
+						int h_idx = pick_house(wpos, y, x);
+
 						cave_force_feat_live(wpos, y, x, FEAT_HOME_OPEN);
+						if (h_idx != -1) houses[h_idx].flags |= HF_OPEN;
 						/* S(he) is no longer afk */
 						un_afk_idle(Ind);
 						break_cloaking(Ind, 3);
@@ -3493,6 +3503,8 @@ void do_cmd_close(int Ind, int dir) {
 
 		/* House door, close it */
 		else if (c_ptr->feat == FEAT_HOME_OPEN) {
+			int h_idx = pick_house(wpos, y, x);
+
 			/* S(he) is no longer afk */
 			un_afk_idle(Ind);
 
@@ -3506,6 +3518,7 @@ void do_cmd_close(int Ind, int dir) {
 
 			/* Close the door */
 			cave_force_feat_live(wpos, y, x, FEAT_HOME);
+			if (h_idx != -1) houses[h_idx].flags &= ~HF_OPEN;
 #ifdef USE_SOUND_2010
 			sound(Ind, "close_door", NULL, SFX_TYPE_COMMAND, TRUE);
 #endif
@@ -9985,8 +9998,8 @@ void do_cmd_purchase_house(int Ind, int dir) {
 						clockin(Ind, 8);
 					}
 
-					/* make sure we don't get stuck by selling it while inside - C. Blue */
-					if (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)
+					/* make sure we don't get stuck by selling it while inside, but don't blink if we're just on the drawbridge - C. Blue */
+					if ((zcave[p_ptr->py][p_ptr->px].info & (CAVE_ICKY | CAVE_ROOM)) == (CAVE_ICKY | CAVE_ROOM))
 						teleport_player_force(Ind, 1);
 				} else {
 					if (!is_admin(p_ptr)) {
@@ -10009,6 +10022,8 @@ void do_cmd_purchase_house(int Ind, int dir) {
 
 				/* Erase house contents */
 				kill_house_contents(h_idx);
+
+				uhouse_light_unlight(&houses[h_idx], TRUE);
 
 				/* take note of door colour change */
 				cave_force_feat_live(wpos, y, x, FEAT_HOME); /* make sure door is closed, in case it was open when we sold it */
@@ -10094,6 +10109,8 @@ void do_cmd_purchase_house(int Ind, int dir) {
 
 		/* take note of door colour change */
 		everyone_lite_spot(wpos, y, x);
+
+		uhouse_light_unlight(&houses[h_idx], TRUE);
 	}
 }
 

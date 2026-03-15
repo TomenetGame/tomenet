@@ -1073,6 +1073,7 @@ extern bool pos_in_weather(struct worldpos *wpos, int x, int y);
 #ifdef DUNFOUND_REWARDS_NORMAL
 extern void dunfound_reward(int Ind, dungeon_type *d_ptr);
 #endif
+extern void uhouse_light_unlight(house_type *h_ptr, bool els);
 
 /* init-txt.c */
 extern errr init_v_info_txt(FILE *fp, char *buf);
@@ -1897,7 +1898,8 @@ extern void open_rift(int Ind, int dir, int intensity);
 extern void wipe_spell(struct worldpos *wpos, int cy, int cx, int r);
 extern void lite_room(int Ind, struct worldpos *wpos, int y1, int x1);
 extern void unlite_room(int Ind, struct worldpos *wpos, int y1, int x1);
-extern void global_lite_room(struct worldpos *wpos, int y1, int x1); /* hackz */
+extern void global_lite_room(struct worldpos *wpos, int y1, int x1, bool els); /* hackz */
+extern void global_unlite_room(struct worldpos *wpos, int y1, int x1, bool els); /* hackz */
 extern bool lite_area(int Ind, int dam, int rad);
 extern bool unlite_area(int Ind, bool player, int dam, int rad);
 extern bool fire_ball(int Ind, int typ, int dir, int dam, int rad, char *attacker);

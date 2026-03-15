@@ -1839,6 +1839,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 
 	/* add the door */
 	c_ptr = &zcave[door_y][door_x];
+	if (tmp != -1) door_feature = (houses[tmp].flags & HF_OPEN) ? FEAT_HOME_OPEN : FEAT_HOME;
 	c_ptr->feat = door_feature;
 
 #ifdef HOUSE_PAINTING
@@ -1852,8 +1853,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 			for (y = door_y - 1; y <= door_y + 1; y++) {
 				if (!in_bounds(y, x)) continue;
 				hc_ptr = &zcave[y][x];
-				if (hc_ptr->feat == FEAT_WALL_HOUSE ||
-				    hc_ptr->feat == FEAT_HOME)
+				if (hc_ptr->feat == FEAT_WALL_HOUSE)
 					hc_ptr->colour = h_ptr->colour;
 			}
 		}
@@ -1921,6 +1921,7 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 			}
 #endif	// USE_MANG_HOUSE_ONLY
 
+			tmp = num_houses;
 			num_houses++;
 			if ((house_alloc - num_houses) < 32) {
 				GROW(houses, house_alloc, house_alloc + 512, house_type);
@@ -1947,21 +1948,8 @@ static void wild_add_dwelling(struct worldpos *wpos, int x, int y) {
 
 	/* Light up house? ^^ Suggested by Zeliwin. */
 	/* For now only rectangular houses for easy center point determination */
-	/* global_lite_room() commented out because it can potentially mess up RNG state - 23.4.2023 / mikaelh */
-	if (tmp == -1) tmp = num_houses - 1;
-	if (houses[tmp].flags & HF_RECT) {
-		/* For now only guild halls and castles, plebs has to light manually. Could offer lamps for player houses maybe. Kind of clunky design though. */
-		switch (houses[tmp].dna->owner_type) {
-		case OT_GUILD:
-			if (guilds[houses[tmp].dna->owner].master) /* Guild must not be leaderless (aka suspended) */
-				//global_lite_room(wpos, (h_y1 + h_y2) / 2, (h_x1 + h_x2) / 2);
-			break;
-		case OT_PLAYER:
-			if (houses[tmp].flags & HF_MOAT)
-				//global_lite_room(wpos, (h_y1 + h_y2) / 2, (h_x1 + h_x2) / 2);
-			break;
-		}
-	}
+	if (tmp != -1) /* player-ownable house aka WILD_TOWN_HOME? */
+		uhouse_light_unlight(&houses[tmp], FALSE);
 
 #ifdef WILD_HOUSES_WINDOWS
 	/* Add windows? */
@@ -3530,26 +3518,11 @@ void wild_add_uhouse(house_type *h_ptr) {
 			return;
 		}
 	}
-	c_ptr->feat = FEAT_HOME;
+	c_ptr->feat = (h_ptr->flags & HF_OPEN) ? FEAT_HOME_OPEN : FEAT_HOME;
 
 	cs_ptr->sc.ptr = h_ptr->dna;
 
-	/* Light up house? ^^ Suggested by Zeliwin. */
-	/* For now only rectangular houses for easy center point determination */
-	/* global_lite_room() commented out because it can potentially mess up RNG state - 23.4.2023 / mikaelh */
-	if (h_ptr->flags & HF_RECT) {
-		/* For now only guild halls and castles, plebs has to light manually. Could offer lamps for player houses maybe. Kind of clunky design though. */
-		switch (h_ptr->dna->owner_type) {
-		case OT_GUILD:
-			if (guilds[h_ptr->dna->owner].master) /* Guild must not be leaderless (aka suspended) */
-				//global_lite_room(&h_ptr->wpos, (h_ptr->y + h_ptr->coords.rect.height) / 2, (h_ptr->x + h_ptr->coords.rect.width) / 2);
-			break;
-		case OT_PLAYER:
-			if (h_ptr->flags & HF_MOAT)
-				//global_lite_room(&h_ptr->wpos, (h_ptr->y + h_ptr->coords.rect.height) / 2, (h_ptr->x + h_ptr->coords.rect.width) / 2);
-			break;
-		}
-	}
+	uhouse_light_unlight(h_ptr, FALSE);
 }
 
 void wild_add_uhouses(struct worldpos *wpos) {
@@ -3560,6 +3533,36 @@ void wild_add_uhouses(struct worldpos *wpos) {
 			wild_add_uhouse(&houses[i]);
 	}
 	load_guildhalls(wpos);
+}
+
+/* Light up house? ^^ Suggested by Zeliwin. */
+void uhouse_light_unlight(house_type *h_ptr, bool els) {
+	u32b tmp_seed;
+	struct worldpos *wpos = &h_ptr->wpos;
+
+	/* For now only rectangular houses for easy center point determination */
+	if (!(h_ptr->flags & HF_RECT)) return;
+
+	/* Keep RNG state, or global_lite_room() could change housing zone layout! (Thanks @ mikaelh) */
+	tmp_seed = Rand_value;
+
+	/* For now only guild halls and castles, plebs has to light manually. Could offer lamps for player houses maybe. Kind of clunky design though. */
+	if (!h_ptr->dna->owner) global_unlite_room(wpos, h_ptr->y + h_ptr->coords.rect.height / 2, h_ptr->x + h_ptr->coords.rect.width / 2, els);
+	else switch (h_ptr->dna->owner_type) {
+	case OT_GUILD:
+		if (guilds[h_ptr->dna->owner].master) /* Guild must not be leaderless (aka suspended) */
+			global_lite_room(wpos, h_ptr->y + h_ptr->coords.rect.height / 2, h_ptr->x + h_ptr->coords.rect.width / 2, els);
+		else /* ew! */
+			global_unlite_room(wpos, h_ptr->y + h_ptr->coords.rect.height / 2, h_ptr->x + h_ptr->coords.rect.width / 2, els);
+		break;
+	case OT_PLAYER:
+		if (h_ptr->flags & HF_MOAT)
+			global_lite_room(wpos, h_ptr->y + h_ptr->coords.rect.height / 2, h_ptr->x + h_ptr->coords.rect.width / 2, els);
+		break;
+	}
+
+	/* Restore RNG as if nothing happened~ */
+	Rand_value = tmp_seed;
 }
 
 /* Called by wilderness_gen() - build a wilderness sector from memory */
@@ -4981,9 +4984,7 @@ void paint_house(int Ind, int x, int y, int k) {
 
 		hwc_ptr = &zcave[hwy][hwx];
 		/* Only colour house wall grids */
-		if (hwc_ptr->feat == FEAT_WALL_HOUSE ||
-		    hwc_ptr->feat == FEAT_HOME ||
-		    hwc_ptr->feat == FEAT_HOME_OPEN) {
+		if (hwc_ptr->feat == FEAT_WALL_HOUSE) {
 			hwc_ptr->colour = c;
 
 			/* refresh player's view on the freshly applied paint */

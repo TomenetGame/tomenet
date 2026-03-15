@@ -5251,9 +5251,12 @@
 #define CAVE_GLOW_HACK_LAMP	0x00400000U 	/* bad hack for hard-coded questor lights for now // self-illuminating, in fire-flickering style (TERM_LAMP) */
 #define CAVE_WIDE_LITE		0x00800000U	/* Behaves regarding lighting as if it was always visible to the player (so a light shimmer can be seen from afar w/o LoS) */
 
-#define CAVE_ENCASED		0x01000000U	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
-#define CAVE_NO_TFORM		0x02000000U	/* This grid cannot be terraformed in any way (including destruction/earthquake etc). */
-#define CAVE_STEAMBLAST		0x04000000U	/* Cave has an active steamblast charge planted on it -- unused */
+#define CAVE_ENCASED	0x01000000U	/* For digging (FEAT_QUARTZ/MAGMA_x): Treasure veins that are pretty remotely encased in rock, requiring more effort than hallway/room-adjacent ez veins. */
+#define CAVE_NO_TFORM	0x02000000U	/* This grid cannot be terraformed in any way (including destruction/earthquake etc). */
+#define CAVE_STEAMBLAST	0x04000000U	/* Cave has an active steamblast charge planted on it -- unused */
+#define CAVE_HOUSE_GLOW	0x08000000U	/* Cave has CAVE_GLOW because it's an owned house */
+
+//RESERVED FOR RLE: 	0x80000000	-- we must never generate 0xFFFFFFFF, so best to keep this one unused! */
 
 /*
  * Special cave grid flags2 -- note that they must never all be set (0xFFFFFFFF) as that would collide with RLE!
@@ -5269,6 +5272,8 @@
 #define CAVE2_REFUGE	0x00000080U	/* IDDC refuge grid */
 
 //super hypothetical: maybe add CAVE_LITE_MON in the future, for monster-lit grids.
+
+//RESERVED FOR RLE: 	0x80000000	-- we must never generate 0xFFFFFFFF, so best to keep this one unused! */
 
 
 #if 0	/* for future expansion.. */
@@ -10032,6 +10037,7 @@ extern int PlayerUID;
 #define HF_DELETED	0x0080	/* Ruined house - do not save/reload */
 #define HF_SELFBUILT	0x0100	/* Was constructed by "builders" (aka scroll of house creation) */
 #define HF_GUILD_SUS	0x0200	/* Guild hall of a currently leaderless guild: 'suspended' guild hall */
+#define HF_OPEN		0x0400	/* Door was left open (so it doesn't auto-close on sector deallocation^^) */
 
 #define MAXCOORD 200		/* Maximum vertices on non-rect house */
 
