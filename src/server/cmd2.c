@@ -4686,6 +4686,39 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 	}
 }
 
+static void digging_plantremoval(player_type *p_ptr, object_type *o_ptr, int *fibre_power, int *wood_power) {
+	switch (o_ptr->tval) {
+	case TV_AXE:
+		*fibre_power = 30 + o_ptr->weight / 20 + (o_ptr->to_h + o_ptr->to_d) / 3;
+		*wood_power = 60 + o_ptr->weight / 10 + (o_ptr->to_h + o_ptr->to_d) / 2; break;
+	case TV_SWORD:
+		*fibre_power = 60 + o_ptr->weight / 10 + (o_ptr->to_h + o_ptr->to_d) / 2;
+		*wood_power = 30 + o_ptr->weight / 20 + (o_ptr->to_h + o_ptr->to_d) / 3; break;
+	case TV_POLEARM:
+		switch(o_ptr->sval) {
+		case SV_SCYTHE:
+		case SV_SCYTHE_OF_SLICING:
+		case SV_SICKLE:
+		case SV_RHOMPHAIA:
+			*fibre_power = 60 + o_ptr->weight / 10 + (o_ptr->to_h + o_ptr->to_d) / 2; break;
+		case SV_GLAIVE: //uhh pft
+			*fibre_power = 30 + o_ptr->weight / 20 + (o_ptr->to_h + o_ptr->to_d) / 3; break;
+		//SV_HALBERD: -- note: some form might be ok for fibre, but most aren't, so omitted
+		case SV_GUISARME: // also called "Weeding Iron"!
+			*fibre_power = 60 + o_ptr->weight / 10 + (o_ptr->to_h + o_ptr->to_d) / 2; break;
+		}
+		//note: deeming the shaft too long/axe part too small for effective wood-hacking?
+	}
+
+	*wood_power += adj_con_mhp[p_ptr->stat_ind[A_STR]] - 128 + 5; //+0..+30
+	*fibre_power += adj_con_mhp[p_ptr->stat_ind[A_STR]] - 128 + 5; //+0..+30
+
+	if (p_ptr->awkward_wield) {
+		*wood_power >>= 1;
+		*fibre_power >>= 1;
+	}
+}
+
 /*
  * Tunnels through "walls" (including rubble and closed doors)
  *
@@ -4799,55 +4832,12 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #endif
 
 	/* check if our weapons can help hacking down wood etc */
-	if (o2_ptr->k_idx && !p_ptr->heavy_wield) {
-		switch (o2_ptr->tval) {
-		case TV_AXE:
-			fibre_power = 20 + o2_ptr->weight / 20 + (o2_ptr->to_h + o2_ptr->to_d) / 3;
-			wood_power = 40 + o2_ptr->weight / 10 + (o2_ptr->to_h + o2_ptr->to_d) / 2; break;
-		case TV_SWORD:
-			fibre_power = 40 + o2_ptr->weight / 40 + (o2_ptr->to_h + o2_ptr->to_d) / 2;
-			wood_power = 20 + o2_ptr->weight / 20 + (o2_ptr->to_h + o2_ptr->to_d) / 3; break;
-		case TV_POLEARM:
-			if (o2_ptr->sval == SV_SCYTHE ||
-			    o2_ptr->sval == SV_SCYTHE_OF_SLICING ||
-			    o2_ptr->sval == SV_SICKLE)
-				fibre_power = 40 + o2_ptr->weight / 10 + (o2_ptr->to_h + o2_ptr->to_d) / 2;
-			break;
-		}
-
-		wood_power += adj_con_mhp[p_ptr->stat_ind[A_STR]] - 128 + 5; //+0..+30
-		fibre_power += adj_con_mhp[p_ptr->stat_ind[A_STR]] - 128 + 5; //+0..+30
-
-		if (p_ptr->awkward_wield) {
-			wood_power >>= 1;
-			fibre_power >>= 1;
-		}
-	}
-	if (o3_ptr->k_idx && !p_ptr->heavy_wield) {
+	if (o2_ptr->k_idx && !p_ptr->heavy_wield) //main hand
+		digging_plantremoval(p_ptr, o2_ptr, &fibre_power, &wood_power);
+	if (o3_ptr->k_idx && !p_ptr->heavy_wield) { //offhand
 		int wp = 0, fp = 0;
 
-		switch (o3_ptr->tval) {
-		case TV_AXE:
-			fp = 30 + o3_ptr->weight / 20 + (o3_ptr->to_h + o3_ptr->to_d) / 3;
-			wp = 60 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2; break;
-		case TV_SWORD:
-			fp = 60 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2;
-			wp = 30 + o3_ptr->weight / 20 + (o3_ptr->to_h + o3_ptr->to_d) / 3; break;
-		case TV_POLEARM:
-			if (o3_ptr->sval == SV_SCYTHE ||
-			    o3_ptr->sval == SV_SCYTHE_OF_SLICING ||
-			    o3_ptr->sval == SV_SICKLE)
-				fp = 60 + o3_ptr->weight / 10 + (o3_ptr->to_h + o3_ptr->to_d) / 2;
-			break;
-		}
-
-		wp += adj_con_mhp[p_ptr->stat_ind[A_STR]] - 128 + 5; //+0..+30
-		fp += adj_con_mhp[p_ptr->stat_ind[A_STR]] - 128 + 5; //+0..+30
-
-		if (p_ptr->awkward_wield) {
-			wp >>= 1;
-			fp >>= 1;
-		}
+		digging_plantremoval(p_ptr, o3_ptr, &fp, &wp);
 
 		if (wp > wood_power) wood_power = wp;
 		if (fp > fibre_power) fibre_power = fp;
