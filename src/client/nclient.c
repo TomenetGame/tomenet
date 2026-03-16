@@ -4496,9 +4496,13 @@ int Receive_store(void) {
 	int n, price;
 	char ch, pos, name[ONAME_LEN], powers[MAX_CHARS_WIDE];
 	byte attr, tval, sval;
-	s16b wgt, num, pval;
+	s16b wgt, num;
+	s32b pval;
 
-	if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 9, 3, 0, 0, 3)) { /* for TV_GOLD object in homes */
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%d%s", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval, &powers)) <= 0)
+			return(n);
+	} else if (is_atleast(&server_version, 4, 7, 3, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%hd%s", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval, &powers)) <= 0)
 			return(n);
 	} else if (is_newer_than(&server_version, 4, 4, 7, 0, 0, 0)) {
@@ -4536,11 +4540,16 @@ int Receive_store_wide(void) {
 	int n, price;
 	char ch, pos, name[ONAME_LEN];
 	byte attr, tval, sval;
-	s16b wgt, num, pval;
+	s16b wgt, num;
+	s32b pval;
 	s16b xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9;
 	byte xtra1b, xtra2b, xtra3b, xtra4b, xtra5b, xtra6b, xtra7b, xtra8b, xtra9b;
 
-	if (is_newer_than(&server_version, 4, 7, 0, 0, 0, 0)) {
+	if (is_atleast(&server_version, 4, 9, 3, 0, 0, 3)) { /* for TV_GOLD object in homes */
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%d%hd%hd%hd%hd%hd%hd%hd%hd%hd", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
+		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9)) <= 0)
+			return(n);
+	} else if (is_newer_than(&server_version, 4, 7, 0, 0, 0, 0)) {
 		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%S%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval,
 		    &xtra1, &xtra2, &xtra3, &xtra4, &xtra5, &xtra6, &xtra7, &xtra8, &xtra9)) <= 0)
 			return(n);
@@ -7658,14 +7667,22 @@ int Send_store_examine(int item) {
 int Send_store_purchase(int item, int amt) {
 	int  n;
 
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_PURCHASE, item, amt)) <= 0) return(n);
+	if (is_atleast(&server_version, 4, 9, 3, 0, 0, 3)) { /* for TV_GOLD-into-home-depositing */
+		if ((n = Packet_printf(&wbuf, "%c%hd%d", PKT_PURCHASE, item, amt)) <= 0) return(n);
+	} else {
+		if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_PURCHASE, item, amt)) <= 0) return(n);
+	}
 	return(1);
 }
 
 int Send_store_sell(int item, int amt) {
 	int n;
 
-	if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SELL, item, amt)) <= 0) return(n);
+	if (is_atleast(&server_version, 4, 9, 3, 0, 0, 3)) { /* for TV_GOLD-into-home-depositing */
+		if ((n = Packet_printf(&wbuf, "%c%hd%d", PKT_SELL, item, amt)) <= 0) return(n);
+	} else {
+		if ((n = Packet_printf(&wbuf, "%c%hd%hd", PKT_SELL, item, amt)) <= 0) return(n);
+	}
 	return(1);
 }
 

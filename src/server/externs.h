@@ -1307,8 +1307,8 @@ extern int Send_item_request(int Ind, signed char tester_hook); //paranoia @ 'si
 extern int Send_spell_request(int Ind, int item);
 extern int Send_state(int Ind, s16b paralyzed, bool searching, bool resting);
 extern int Send_flush(int Ind);
-extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, byte tval, byte sval, s16b pval, char *powers);
-extern int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, byte tval, byte sval, s16b pval,
+extern int Send_store(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, byte tval, byte sval, s32b pval, char *powers);
+extern int Send_store_wide(int ind, char pos, byte attr, int wgt, int number, int price, cptr name, byte tval, byte sval, s32b pval,
     s16b xtra1, s16b xtra2, s16b xtra3, s16b xtra4, s16b xtra5, s16b xtra6, s16b xtra7, s16b xtra8, s16b xtra9);
 extern int Send_store_special_str(int ind, char line, char col, byte attr, char *str);
 extern int Send_store_special_char(int ind, char line, char col, byte attr, char c);
