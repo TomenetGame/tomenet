@@ -1033,10 +1033,12 @@ static void store_process_command(int cmd) {
 
 	/* Hack (2026-03-16): Allow dropping gold to listhouse-style homes too */
 	case '$':
-		inkey_letter_all = TRUE;
-		i = c_get_quantity("How much gold ('a' or spacebar for all)? ", 1, -1);
-		Send_store_sell(9999, i); //9999 is hack marker ~.~
-		break;
+		if (store_num == STORE_HOME || store_num == STORE_HOME_DUN) {
+			inkey_letter_all = TRUE;
+			i = c_get_quantity("How much gold ('a' or spacebar for all)? ", 1, -1);
+			Send_store_sell(9999, i); //9999 is hack marker ~.~
+			break;
+		} /* else fall through */
 
 	default:
 		cmd_raw_key(cmd);
