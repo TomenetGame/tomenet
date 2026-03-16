@@ -2864,7 +2864,7 @@ static void display_special_store(int Ind) {
 }
 
 /*
- * Re-displays a single store entry
+ * Re-displays a single store/home entry
  *
  * Actually re-sends a single store entry --KLJ--
  */
@@ -2924,7 +2924,7 @@ static void display_entry(int Ind, int pos) {
 			i = o_ptr->pval;
 			o_ptr->pval = i / o_ptr->number;
 		}
-		object_desc(Ind, o_name, o_ptr, TRUE, 3 + 64);
+		object_desc(Ind, o_name, o_ptr, TRUE, 3 + 64 + 8192);
 		if (o_ptr->tval == TV_WAND
  #ifdef NEW_MDEV_STACKING
 		    || o_ptr->tval == TV_STAFF
@@ -2932,7 +2932,7 @@ static void display_entry(int Ind, int pos) {
 		    )
 			o_ptr->pval = i; /* hack clean-up */
 #else
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		object_desc(Ind, o_name, o_ptr, TRUE, 3 + 8192);
 #endif
 		//o_name[maxwid] = '\0';
 		o_name[ONAME_LEN - 1] = '\0';
@@ -3188,7 +3188,7 @@ static void store_prt_gold(int Ind) {
 
 
 /*
- * Displays store (after clearing screen)		-RAK-
+ * Displays store/home (after clearing screen)		-RAK-
  */
 static void display_store(int Ind) {
 	player_type *p_ptr = Players[Ind];
@@ -4594,6 +4594,16 @@ void store_sell(int Ind, int item, int amt) {
 	object_type	*o_ptr;
 
 	char		o_name[ONAME_LEN];
+
+	/* Hack: drop gold - we create a 'gold' item in the overflow slot to allow normal inventory-handling on it */
+	if (item == 9999) {
+		/* Can only drop gold in player houses, not NPC stores */
+		if (p_ptr->store_num != STORE_HOME && p_ptr->store_num != STORE_HOME_DUN)
+			msg_print(Ind, "You can only drop gold in player houses, not in normal shops.");
+		else
+			home_sell(Ind, item, amt);
+		return;
+	}
 
 	/* Sanity check - mikaelh */
 	if (!verify_inven_item(Ind, item)) return;
@@ -6649,6 +6659,71 @@ void home_sell(int Ind, int item, int amt) {
 	/* You can't sell 0 of something. */
 	if (amt <= 0) return;
 
+	/* Hack: drop gold - we create a 'gold' item in the overflow slot to allow normal inventory-handling on it */
+	if (item == 9999) {
+		item = INVEN_PACK;
+		o_ptr = &p_ptr->inventory[item];
+		/* Paranoia: If there is really an item occupying the overflow slot already, we must abort. */
+		if (o_ptr->tval) {
+			msg_format(Ind, "You need to clear the item from your overflow slot (%c) to drop gold.", 'a' + item);
+			return;
+		}
+
+		/* Create pseudo 'gold' object */
+
+		/* Error checks */
+		if (amt > p_ptr->au) amt = p_ptr->au;
+		if (amt > PY_MAX_GOLD) amt = PY_MAX_GOLD;
+		if (amt <= 0) return;
+
+		/* hack: player-dropped piles are bigger at same value, than normal money drops ;) */
+		invcopy(o_ptr, gold_colour(amt, FALSE, TRUE));
+
+		/* Setup the "worth" */
+		o_ptr->pval = amt;
+		o_ptr->xtra1 = 1; //mark as 'compact' gold pile
+
+		/* Hack -- 'own' the gold */
+		o_ptr->owner = p_ptr->id;
+
+		/* Non-everlasting can't take money from everlasting
+		   and vice versa, depending on server cfg. */
+		o_ptr->mode = p_ptr->mode;
+
+		o_ptr->iron_trade = p_ptr->iron_trade; /* gold cannot be traded in IDDC anyway, so this has no effect.. - and we aren't in the IDDC to begin with */
+		o_ptr->iron_turn = turn;
+
+		/* Subtract from the player's gold */
+		p_ptr->au -= amt;
+
+		/* Message */
+		//msg_format(Ind, "You drop %d pieces of gold.", amt);
+		msg_format(Ind, "You drop %d pieces of gold in %s.", amt, k_name + k_info[o_ptr->k_idx].name);
+
+#ifdef USE_SOUND_2010
+		sound(Ind, "drop_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+		/* Redraw gold */
+		p_ptr->redraw |= (PR_GOLD);
+
+		/* Window stuff */
+		p_ptr->window |= (PW_PLAYER);
+
+		o_ptr->number = 1; //not set in do_cmd_drop_gold() actually :o
+		amt = 1; //hack amt back to something normal (matching the object number)
+
+		item_pos = home_carry(Ind, h_ptr, o_ptr);
+		/* Resend the basic store info */
+		display_trad_house(Ind, h_ptr);
+		/* Re-display if item is now in store */
+		if (item_pos >= 0) display_house_inventory(Ind, h_ptr);
+
+		/* clear the overflow slot */
+		o_ptr->tval = o_ptr->k_idx = 0;
+		return;
+	}
+
 #ifdef ENABLE_SUBINVEN
 	if (item >= SUBINVEN_INVEN_MUL) {
 		/* Get the item (in the pack) */
@@ -6849,7 +6924,7 @@ void home_sell(int Ind, int item, int amt) {
 void home_purchase(int Ind, int item, int amt) {
 	player_type *p_ptr = Players[Ind];
 
-	int i;
+	int i, amt_gold;
 	int item_new;
 	int h_idx;
 
@@ -6894,6 +6969,12 @@ void home_purchase(int Ind, int item, int amt) {
 
 	/* Check that it's a real item - mikaelh */
 	if (!o_ptr->tval) return;
+
+	/* hack for TV_GOLD items */
+	if (o_ptr->tval == TV_GOLD) {
+		amt_gold = amt;
+		amt = 1;
+	}
 
 //#ifdef SUBINVEN_LIMIT_GROUP  -- rely on inven_carry_okay() for now
 //#endif
@@ -6985,6 +7066,39 @@ void home_purchase(int Ind, int item, int amt) {
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END
 	    && o_ptr->owner && o_ptr->owner != p_ptr->id && p_ptr->lev < o_ptr->level) {
 		msg_print(Ind, "Your level must at least be the same as the gift in order to pick it up.");
+		return;
+	}
+
+	/* hack for TV_GOLD items */
+	if (o_ptr->tval == TV_GOLD) {
+		/* Pick up all or just part of the gold pile? */
+		if (amt_gold > o_ptr->pval) amt_gold = o_ptr->pval;
+
+		/* Gain to the player's gold */
+		if (!gain_au(Ind, amt_gold, FALSE, p_ptr->id == o_ptr->owner)) return;
+		/* Message */
+		//msg_format(Ind, "You drop %d pieces of gold.", amt);
+		msg_format(Ind, "You have %d pieces of gold in %s.", amt_gold, k_name + k_info[o_ptr->k_idx].name);
+#ifdef USE_SOUND_2010
+		sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
+#endif
+
+		/* Redraw gold */
+		p_ptr->redraw |= (PR_GOLD);
+		/* Window stuff */
+		p_ptr->window |= (PW_PLAYER);
+
+		o_ptr->pval -= amt_gold;
+		if (!o_ptr->pval) {
+			/* Remove the items from the home */
+			home_item_increase(h_ptr, item, -amt);
+			home_item_optimize(h_ptr, item);
+		}
+		/* Resend the basic store info */
+		display_trad_house(Ind, h_ptr);
+		/* Redraw everything */
+		display_house_inventory(Ind, h_ptr);
+
 		return;
 	}
 
@@ -7266,7 +7380,7 @@ void display_house_entry(int Ind, int pos, house_type *h_ptr) {
 
 
 	/* Describe the object */
-	object_desc(Ind, o_name, o_ptr, TRUE, 3);
+	object_desc(Ind, o_name, o_ptr, TRUE, 3 + 8192);
 	o_name[ONAME_LEN - 1] = '\0';
 
 	attr = get_attr_from_tval(o_ptr);
@@ -7299,9 +7413,7 @@ void display_house_entry(int Ind, int pos, house_type *h_ptr) {
 
 
 /*
- * Displays a store's inventory			-RAK-
- * All prices are listed as "per individual object".  -BEN-
- *
+ * Displays home inventory			-RAK-
  * The inventory is "sent" not "displayed". -KLJ-
  */
 void display_house_inventory(int Ind, house_type *h_ptr) {
@@ -7323,7 +7435,7 @@ void display_house_inventory(int Ind, house_type *h_ptr) {
 }
 
 /*
- * Displays store (after clearing screen)		-RAK-
+ * Displays home (after clearing screen)		-RAK-
  */
 void display_trad_house(int Ind, house_type *h_ptr) {
 	player_type *p_ptr = Players[Ind];
@@ -7992,6 +8104,9 @@ static s64b player_store_inscribed(object_type *o_ptr, u32b price, bool appraise
 
 	/* no item? */
 	if (!o_ptr->k_idx) return(-1);
+
+	/* pseudo 'gold' object? */
+	if (o_ptr->tval == TV_GOLD) return(-1);
 
 	if (!appraise) { //HOME_APPRAISAL
 		/* does it carry an inscription? */

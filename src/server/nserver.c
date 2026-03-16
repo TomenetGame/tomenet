@@ -9506,8 +9506,8 @@ int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cpt
 	/* don't segfault old clients which use STORE_INVEN_MAX = 48 */
 	if (pos >= 48 && is_older_than(&Players[Ind]->version, 4, 4, 9, 0, 0, 0)) return(0);
 
-	/* Hack -- send pval only if it's School book */
-	if (tval != TV_BOOK) pval = 0;
+	/* Hack -- send pval only if it's School book (or new: pseudo 'gold' object) */
+	if (tval != TV_BOOK && tval != TV_GOLD) pval = 0;
 
 #ifdef MINDLINK_STORE
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
@@ -9549,8 +9549,8 @@ int Send_store_wide(int Ind, char pos, byte attr, int wgt, int number, int price
 	/* don't segfault old clients which use STORE_INVEN_MAX = 48 */
 	if (pos >= 48 && is_older_than(&Players[Ind]->version, 4, 4, 9, 0, 0, 0)) return(0);
 
-	/* Hack -- send pval only if it's School book */
-	if (tval != TV_BOOK) pval = 0;
+	/* Hack -- send pval only if it's School book (or new: pseudo 'gold' object) */
+	if (tval != TV_BOOK && tval != TV_GOLD) pval = 0;
 
 #ifdef MINDLINK_STORE
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {

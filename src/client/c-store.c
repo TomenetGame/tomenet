@@ -349,6 +349,12 @@ static void store_purchase(bool one) {
 	/* Assume the player wants just one of them */
 	amt = 1;
 
+	/* Hack for gold pseudo objects */
+	if (o_ptr->tval == TV_GOLD) {
+		sprintf(out_val, "Quantity (1-%d, 'a' or spacebar for all): ", o_ptr->pval);
+		amt = c_get_quantity(out_val, 1, o_ptr->pval);
+	} else
+
 	/* Find out how many the player wants */
 	if (o_ptr->number > 1 && !one) {
 		int limitG = scan_auto_inscriptions_for_limit(store_names[item]);
@@ -1023,6 +1029,13 @@ static void store_process_command(int cmd) {
 	case KTRL('D'):
 		if (!c_cfg.rogue_like_commands || !allow_k) cmd_raw_key(cmd);
 		else cmd_destroy(USE_INVEN | USE_EQUIP);
+		break;
+
+	/* Hack (2026-03-16): Allow dropping gold to listhouse-style homes too */
+	case '$':
+		inkey_letter_all = TRUE;
+		i = c_get_quantity("How much gold ('a' or spacebar for all)? ", 1, -1);
+		Send_store_sell(9999, i); //9999 is hack marker ~.~
 		break;
 
 	default:

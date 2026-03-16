@@ -2169,6 +2169,7 @@ static char *object_desc_lnum(char *t, uint n) {
  *         ONLY works with Ind == 0.
  * +2048 - Do not display anything referring to the base item (for seals and wrapped gifts). Add +32 too when using this.
  * +4096 - Assume item is not "known", even if Ind is 0.
+ * +8192 - For TV_GOLD items add actual amount (for 9999 pseudo 'gold' item hack for listhouse homes)
  *
  * If the strings created with mode 0-3 are too long, this function is called
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
@@ -2464,7 +2465,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 		/* Hack -- Gold/Gems */
 	case TV_GOLD:
-		strcpy(buf, basenm);
+		if (mode & 8192) sprintf(buf, "%d gold piece%s worth of %s", o_ptr->pval, o_ptr->pval == 1 ? "" : "s", basenm);
+		else strcpy(buf, basenm);
 		return;
 
 	case TV_BOOK:
@@ -6110,7 +6112,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
 		if ((inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || p_ptr->store_num == STORE_HOME)
-		    && !(true_artifact_p(o_ptr) && (cfg.anti_arts_hoard || cfg.anti_arts_house)))
+		    && !(true_artifact_p(o_ptr) && (cfg.anti_arts_hoard || cfg.anti_arts_house)) && o_ptr->tval != TV_GOLD)
 			//if (istownarea(&p_ptr->wpos, MAX_TOWNAREA))
 			fprintf(fff, "\377WThis item would be appraised at \377y%ld Au\377W if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
  #endif
@@ -6642,7 +6644,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 #ifdef PLAYER_STORES
  #ifdef HOME_APPRAISAL
 	if ((inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) || p_ptr->store_num == STORE_HOME)
-	    && !(true_artifact_p(o_ptr) && (cfg.anti_arts_hoard || cfg.anti_arts_house)))
+	    && !(true_artifact_p(o_ptr) && (cfg.anti_arts_hoard || cfg.anti_arts_house)) && o_ptr->tval != TV_GOLD)
 		//if (istownarea(&p_ptr->wpos, MAX_TOWNAREA))
 		fprintf(fff, "\377WThis item would be appraised at \377y%ld Au\377W if put up for sale in your store.\n", (long int)price_item_player_store(Ind, o_ptr));
  #endif
