@@ -874,160 +874,160 @@ static void store_process_command(int cmd) {
 	/* Parse the command */
 	i = 0; /* for jumping to page 1/2/3/4 */
 	switch (cmd) {
-		/* Leave */
-		case ESCAPE:
-		case KTRL('Q'):
-			leave_store = TRUE;
-			clear_pstore_visuals();
-			break;
+	/* Leave */
+	case ESCAPE:
+	case KTRL('Q'):
+		leave_store = TRUE;
+		clear_pstore_visuals();
+		break;
 
-		case KTRL('T'):
-			/* Take a screenshot */
-			xhtml_screenshot("screenshot????", FALSE);
-			break;
+	case KTRL('T'):
+		/* Take a screenshot */
+		xhtml_screenshot("screenshot????", FALSE);
+		break;
 
-		/* Browse */
-		case ' ':
-			if (store.stock_num <= entries) {
-				if (store_top) {
-					/*
-					 * Hack - Allowing going back to first page after buying
-					 * last item on the second page. - mikaelh */
-					store_top = 0;
-					display_store_inventory();
-				} else {
-					c_msg_print("Entire inventory is shown.");
-				}
+	/* Browse */
+	case ' ':
+		if (store.stock_num <= entries) {
+			if (store_top) {
+				/*
+				 * Hack - Allowing going back to first page after buying
+				 * last item on the second page. - mikaelh */
+				store_top = 0;
+				display_store_inventory();
 			} else {
-				store_top += entries;
-				if (store_top >= store.stock_num) store_top = 0;
-				display_store_inventory();
+				c_msg_print("Entire inventory is shown.");
 			}
-			break;
+		} else {
+			store_top += entries;
+			if (store_top >= store.stock_num) store_top = 0;
+			display_store_inventory();
+		}
+		break;
 
-		/* Allow to browse backwards via BACKSPACE */
-		case '\b':
-			if (store.stock_num <= entries) {
-				if (store_top) {
-					/* see above - C. Blue */
-					store_top = 0;
-					display_store_inventory();
-				} else {
-					c_msg_print("Entire inventory is shown.");
-				}
+	/* Allow to browse backwards via BACKSPACE */
+	case '\b':
+		if (store.stock_num <= entries) {
+			if (store_top) {
+				/* see above - C. Blue */
+				store_top = 0;
+				display_store_inventory();
 			} else {
-				store_top -= entries;
-				if (store_top < 0) store_top = ((store.stock_num - 1) / entries) * entries;
-				display_store_inventory();
+				c_msg_print("Entire inventory is shown.");
 			}
-			break;
+		} else {
+			store_top -= entries;
+			if (store_top < 0) store_top = ((store.stock_num - 1) / entries) * entries;
+			display_store_inventory();
+		}
+		break;
 
-		/* go to page n */
-		case '0': i++; __attribute__ ((fallthrough));
-		case '9': i++; __attribute__ ((fallthrough));
-		case '8': i++; __attribute__ ((fallthrough));
-		case '7': i++; __attribute__ ((fallthrough));
-		case '6': i++; __attribute__ ((fallthrough));
-		case '5': i++; __attribute__ ((fallthrough));
-		case '4': i++; __attribute__ ((fallthrough));
-		case '3': i++; __attribute__ ((fallthrough));
-		case '2': i++; __attribute__ ((fallthrough));
-		case '1':
-			if (store.stock_num > entries * i) {
-				store_top = entries * i;
-				display_store_inventory();
-			}
+	/* go to page n */
+	case '0': i++; __attribute__ ((fallthrough));
+	case '9': i++; __attribute__ ((fallthrough));
+	case '8': i++; __attribute__ ((fallthrough));
+	case '7': i++; __attribute__ ((fallthrough));
+	case '6': i++; __attribute__ ((fallthrough));
+	case '5': i++; __attribute__ ((fallthrough));
+	case '4': i++; __attribute__ ((fallthrough));
+	case '3': i++; __attribute__ ((fallthrough));
+	case '2': i++; __attribute__ ((fallthrough));
+	case '1':
+		if (store.stock_num > entries * i) {
+			store_top = entries * i;
+			display_store_inventory();
+		}
 #if 0 /* suppress message, in case STORE_INVEN_MAX doesn't actually support all 10 pages. It'd look silyl. */
-			else c_msg_format("Page %d is empty.", i + 1);
+		else c_msg_format("Page %d is empty.", i + 1);
 #endif
-			break;
+		break;
 
-		/* Paste on Chat */
-		case 'c':
-			store_chat();
-			break;
+	/* Paste on Chat */
+	case 'c':
+		store_chat();
+		break;
 
-		/* allow to actually chat from within a store, might be cool for
-		   notifying others of items other than just pasting into chat */
-		case ':':
-			cmd_message();
-			break;
+	/* allow to actually chat from within a store, might be cool for
+	   notifying others of items other than just pasting into chat */
+	case ':':
+		cmd_message();
+		break;
 
-		/* allow inspecting _own_ items while in a store! */
-		case 'I':
-			cmd_observe(USE_INVEN | USE_EQUIP);
-			break;
+	/* allow inspecting _own_ items while in a store! */
+	case 'I':
+		cmd_observe(USE_INVEN | USE_EQUIP);
+		break;
 
-		/* Ignore return */
-		case '\r':
-			break;
+	/* Ignore return */
+	case '\r':
+		break;
 
-		/* Equipment list */
-		case 'e':
-			cmd_equip();
-			break;
+	/* Equipment list */
+	case 'e':
+		cmd_equip();
+		break;
 
-		/* Inventory list */
-		case 'i':
-			cmd_inven();
-			break;
-		/* Added rather for QoL subinventory browsing (instead of having to go 'i' -> '!') than for actual books */
-		case 'b':
-			cmd_browse(-1);
-			break;
+	/* Inventory list */
+	case 'i':
+		cmd_inven();
+		break;
+	/* Added rather for QoL subinventory browsing (instead of having to go 'i' -> '!') than for actual books */
+	case 'b':
+		cmd_browse(-1);
+		break;
 
 #ifdef USE_SOUND_2010
-		case KTRL('C'):
-		case KTRL('X')://rl
-			toggle_music(FALSE);
-			break;
-		case KTRL('N'):
-		case KTRL('V')://rl
-			toggle_master(FALSE);
-			break;
+	case KTRL('C'):
+	case KTRL('X')://rl
+		toggle_music(FALSE);
+		break;
+	case KTRL('N'):
+	case KTRL('V')://rl
+		toggle_master(FALSE);
+		break;
 #endif
 
-		case '{':
-			cmd_inscribe(USE_INVEN | USE_EQUIP);
-			break;
-		case '}':
-			cmd_uninscribe(USE_INVEN | USE_EQUIP);
-			break;
+	case '{':
+		cmd_inscribe(USE_INVEN | USE_EQUIP);
+		break;
+	case '}':
+		cmd_uninscribe(USE_INVEN | USE_EQUIP);
+		break;
 
-		/* special feat for some stores: allow wear/wield and take-off..
-		   'emulating' rogue-like keyset option for now, sigh */
-		case 'w':
-			if (allow_w_t) cmd_wield();
-			else cmd_raw_key(cmd);
-			break;
-		case 'W':
-			if (c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
-			else cmd_wield2();
-			break;
-		case KTRL('W'):
-			if (!c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
-			else cmd_wield2();
-			break;
-		case 't':
-			if (c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
-			else cmd_take_off();
-			break;
-		case 'T':
-			if (!c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
-			else cmd_take_off();
-			break;
-		case 'k':
-			if (c_cfg.rogue_like_commands || !allow_k) cmd_raw_key(cmd);
-			else cmd_destroy(USE_INVEN | USE_EQUIP);
-			break;
-		case KTRL('D'):
-			if (!c_cfg.rogue_like_commands || !allow_k) cmd_raw_key(cmd);
-			else cmd_destroy(USE_INVEN | USE_EQUIP);
-			break;
+	/* special feat for some stores: allow wear/wield and take-off..
+	   'emulating' rogue-like keyset option for now, sigh */
+	case 'w':
+		if (allow_w_t) cmd_wield();
+		else cmd_raw_key(cmd);
+		break;
+	case 'W':
+		if (c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
+		else cmd_wield2();
+		break;
+	case KTRL('W'):
+		if (!c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
+		else cmd_wield2();
+		break;
+	case 't':
+		if (c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
+		else cmd_take_off();
+		break;
+	case 'T':
+		if (!c_cfg.rogue_like_commands || !allow_w_t) cmd_raw_key(cmd);
+		else cmd_take_off();
+		break;
+	case 'k':
+		if (c_cfg.rogue_like_commands || !allow_k) cmd_raw_key(cmd);
+		else cmd_destroy(USE_INVEN | USE_EQUIP);
+		break;
+	case KTRL('D'):
+		if (!c_cfg.rogue_like_commands || !allow_k) cmd_raw_key(cmd);
+		else cmd_destroy(USE_INVEN | USE_EQUIP);
+		break;
 
-		default:
-			cmd_raw_key(cmd);
-			break;
+	default:
+		cmd_raw_key(cmd);
+		break;
 	}
 }
 
