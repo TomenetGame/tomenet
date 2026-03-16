@@ -2366,7 +2366,7 @@
  * Note that "INVEN_PACK" is probably hard-coded by its use in savefiles, and
  * by the fact that the screen can only show 23 items plus a one-line prompt.
  */
-#define INVEN_PACK	23
+#define INVEN_PACK	23	/* amount of normal inventory slots and at the same time the index of the 'overflow' temporary inventory slot */
 
 /*
  * Body parts
