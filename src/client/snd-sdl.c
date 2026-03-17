@@ -651,7 +651,7 @@ void log_fd_usage(void) {
 	cur_files1 = count_open_fds1();
 	cur_files2 = count_open_fds2(max_files);
 
-	logprint(format("max_files = %d, cur_files1/2 = %d/%d -> sdl_files_cur/max = %d\n", max_files, cur_files1, cur_files2, sdl_files_cur, sdl_files_max));
+	logprint(format("max_files = %d, cur_files1/2 = %d/%d -> sdl_files_cur/max = %d/%d\n", max_files, cur_files1, cur_files2, sdl_files_cur, sdl_files_max));
 }
 #endif
 
@@ -685,9 +685,9 @@ static bool sound_sdl_init(bool no_cache) {
 
 	sdl_files_max = max_files - (cur_files1 > cur_files2 ? cur_files1 : cur_files2);
 
-#ifdef DEBUG_SOUND
-	log_fd_usage()
-#endif
+ #ifdef DEBUG_SOUND
+	log_fd_usage();
+ #endif
 #endif
 
 	/* Paranoia? null all the pointers */
@@ -1113,9 +1113,9 @@ static bool sound_sdl_init(bool no_cache) {
 	my_fclose(fff);
 
 #ifndef WINDOWS //assume POSIX
-#ifdef DEBUG_SOUND
+ #ifdef DEBUG_SOUND
 	log_fd_usage();
-#endif
+ #endif
 #endif
 
 
@@ -1553,9 +1553,9 @@ static bool sound_sdl_init(bool no_cache) {
 	musicpack_subsets = sets;
 
 #ifndef WINDOWS //assume POSIX
-#ifdef DEBUG_SOUND
+ #ifdef DEBUG_SOUND
 	log_fd_usage();
-#endif
+ #endif
 #endif
 
 #ifdef DEBUG_SOUND
@@ -1626,9 +1626,9 @@ static bool sound_sdl_init(bool no_cache) {
 	my_fclose(fff);
 
 #ifndef WINDOWS //assume POSIX
-#ifdef DEBUG_SOUND
+ #ifdef DEBUG_SOUND
 	log_fd_usage();
-#endif
+ #endif
 #endif
 
 #ifdef WINDOWS
