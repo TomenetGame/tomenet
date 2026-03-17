@@ -417,6 +417,7 @@ typedef struct {
 					   note that with 4.4.5.4+ this is deprecated - C. Blue */
 	int started_timer_tick;		/* global timer tick on which this sample was started (for efficiency) */
 	bool disabled;			/* disabled by user? */
+	bool force_disabled;		/* disabled by system (because out of fds on posix) - does not get saved to nomusic or ';' config files */
 	bool config;
 	unsigned char volume;		/* volume reduced by user? */
 } sample_list;
@@ -436,6 +437,7 @@ typedef struct {
 	int bak_song, bak_pos;		/* Specifically for 'wilderness' music: Remember song and position of each wilderness-type event. */
 #endif
 	bool disabled;			/* disabled by user? */
+	bool force_disabled;		/* disabled by system (because out of fds on posix) - does not get saved to nomusic or ';' config files */
 	bool config;
 	unsigned char volume;		/* volume reduced by user? */
 } song_list;
@@ -699,6 +701,7 @@ static bool sound_sdl_init(bool no_cache) {
 		samples[i].num = 0;
 		samples[i].config = FALSE;
 		samples[i].disabled = FALSE;
+		samples[i].force_disabled = FALSE;
 	}
 	for (i = 0; i < MUSIC_MAX; i++) {
 		for (j = 0; j < MAX_SONGS; j++) {
@@ -709,6 +712,7 @@ static bool sound_sdl_init(bool no_cache) {
 		songs[i].num = 0;
 		songs[i].config = FALSE;
 		songs[i].disabled = FALSE;
+		songs[i].force_disabled = FALSE;
 #ifdef WILDERNESS_MUSIC_RESUME
 		songs[i].bak_pos = 0;
 #endif
@@ -3663,6 +3667,7 @@ errr re_init_sound_sdl(void) {
 		samples[i].num = 0;
 		samples[i].config = FALSE;
 		samples[i].disabled = FALSE;
+		samples[i].force_disabled = FALSE;
 	}
 	for (i = 0; i < MUSIC_MAX; i++) {
 		for (j = 0; j < MAX_SONGS; j++) { //could also just go to < songs[i].num instead, for efficiency...
@@ -3673,6 +3678,7 @@ errr re_init_sound_sdl(void) {
 		songs[i].num = 0;
 		songs[i].config = FALSE;
 		songs[i].disabled = FALSE;
+		songs[i].force_disabled = FALSE;
 #ifdef WILDERNESS_MUSIC_RESUME
 		songs[i].bak_pos = 0;
 #endif
@@ -3882,7 +3888,7 @@ static Mix_Chunk* load_sample(int idx, int subidx) {
 	if (sdl_files_cur >= sdl_files_max) {
 		logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, filename));
 		// and for now just disable the whole event, to be safe against repeated attempts to load it
-		samples[idx].disabled = TRUE;
+		samples[idx].disabled = samples[idx].force_disabled = TRUE;
 		SDL_UnlockMutex(load_sample_mutex);
 		return(NULL);
 	}
@@ -3974,7 +3980,7 @@ static Mix_Music* load_song(int idx, int subidx) {
 	if (sdl_files_cur >= sdl_files_max) {
 		logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, filename));
 		// and for now just disable the whole event, to be safe against repeated attempts to load it
-		songs[idx].disabled = TRUE;
+		songs[idx].disabled = songs[idx].force_disabled = TRUE;
 		SDL_UnlockMutex(load_sample_mutex);
 		return(NULL);
 	}
@@ -4066,7 +4072,7 @@ void save_custom_sound(void) {
 		}
 
 		/* apply new state */
-		if (samples[j].disabled) {
+		if (samples[j].disabled && !samples[j].force_disabled) {
 #ifndef WINDOWS
 			strcpy(out_val2, ";");
 			strcat(out_val2, p);
@@ -4185,7 +4191,7 @@ void do_cmd_options_sfx_sdl(bool reset) {
 	if (reset) {
 		/* reset all 'disabled' sounds to be enabled again, as these are currently not pack-specific! */
 		for (i = 0; i < SOUND_MAX_2010; i++) {
-			samples[i].disabled = FALSE;
+			if (!samples[i].force_disabled) samples[i].disabled = FALSE;
 			samples[i].volume = 0;
 		}
 		save_custom_sound();
@@ -4704,7 +4710,7 @@ void save_custom_music(void) {
 		}
 
 		/* apply new state */
-		if (songs[j].disabled) {
+		if (songs[j].disabled && !songs[j].force_disabled) {
 #ifndef WINDOWS
 			strcpy(out_val2, ";");
 			strcat(out_val2, p);
@@ -4824,7 +4830,7 @@ void do_cmd_options_mus_sdl(bool reset) {
 	if (reset) {
 		/* reset all 'disabled' music to be enabled again and reset custom volumes, as these are currently not pack-specific! */
 		for (i = 0; i < MUSIC_MAX; i++) {
-			songs[i].disabled = FALSE;
+			if (!songs[i].force_disabled) songs[i].disabled = FALSE;
 			songs[i].volume = 0;
 		}
 		save_custom_music();
@@ -5359,6 +5365,8 @@ void do_cmd_options_mus_sdl(bool reset) {
 					jukebox_update_songlength();
 				}
 			}
+			/* actually advance down the list too */
+			y = (y + 1 + audio_music) % audio_music;
 			break;
 
 		case 'y':
