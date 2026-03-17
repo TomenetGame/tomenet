@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 14. March 2026 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 17. March 2026 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -15594,7 +15594,8 @@ also called 'static artifacts') and 'random artifacts' or short 'randarts':
 True artifacts ('Truearts', also called 'static artifacts')
 -----------------------------------------------------------
 True artifacts, are predefined in the a_info.txt file and will always sell for
-their defined value even if they have not been *identified*.
+their defined value (usually diminishing over time towards the artifact timeout
+as explained further down) even if they have not been *identified*.
 You can search a list of all true artifacts in game, by pressing  ~ 6 .
 
 True Artifacts are unique. If an artifact is owned by a player, noone else can
@@ -15729,6 +15730,24 @@ Artifacts will last for 5 weeks after they have been found (ie dropped by a
 monster/chest/just being generated on the dungeon floor, and picked up by a
 player), after which they will "time out" and disappear. This timer is specific
 for each single true artifact, depending on when it is found (again).
+The artifact's sell value will continually decrease over this period of time
+down to zero at the moment of vanishing when it finally times out.
+
+If an artifact you are carrying times out soon you will see a message:
+ "Your <artifact's name> will vanish soon!"
+and if it finally times out:
+ "<artifact name> bids farewell to you..."
+If you owned an artifact that timed out while you are not online, you will see
+a notification message next time you log in:
+ "One or more true artifacts have bidden you farewell!"
+Finally there are two special notification messages for true artifacts timing
+out while on the way in the merchant's guild item-mailing service:
+ "<artifact name>
+ in a mail package for another character of yours just vanished into thin air."
+ - and -
+"<artifact name> in a mail package for you just vanished into thin air."
+Everyone online on the server will see a message when a true artifact resets:
+ "<artifact name> has been lost once more."
 
 No compensation is given when an artifact times out and disappears, since that
 would encourage hoarding, so sell an artifact to a store in time before it
