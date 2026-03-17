@@ -3424,7 +3424,7 @@ static bool play_music_instantly(int event, bool override_log) {
 	}
 
 	/* Also log songs while 'play/shuffle all' is active */
-	if (!jukebox_screen && c_cfg.log_music && (jukebox_play_all || override_log)) {
+	if ((!jukebox_screen || jukebox_play_all) && c_cfg.log_music && (jukebox_play_all || override_log)) {
 		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c, *lua_name;
 		char out_val[MAX_CHARS];
 
