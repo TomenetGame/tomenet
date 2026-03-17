@@ -4511,7 +4511,7 @@ int Receive_store(void) {
 			return(n);
 		pval = (s32b)pval16b;
 	} else {
-		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s%c%c%hd", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval16)) <= 0)
+		if ((n = Packet_scanf(&rbuf, "%c%c%c%hd%hd%d%s%c%c%hd", &ch, &pos, &attr, &wgt, &num, &price, name, &tval, &sval, &pval16b)) <= 0)
 			return(n);
 		pval = (s32b)pval16b;
 	}
