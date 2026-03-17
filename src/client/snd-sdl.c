@@ -3160,7 +3160,11 @@ static void fadein_next_music(void) {
 
 		/* If music was game-initiated, ie not from the jukebox, log it if desired */
 		if (!jukebox_screen && c_cfg.log_music) {
-			const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
+			const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c, *lua_name;
+			char out_val[MAX_CHARS];
+
+			sprintf(out_val, "return get_music_name(%d)", music_cur);
+			lua_name = string_exec_lua(0, out_val);
 
 #ifdef WINDOWS
 			while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
@@ -3169,10 +3173,8 @@ static void fadein_next_music(void) {
 #endif
 			c++;
 			while (*c2 != '.' && c2 > c) c2--;
-			if (c2 == c) c_msg_format("\377WMusic <%s> started.", c);
-			else c_msg_format("\377WMusic <%.*s> started.", (int)(c2 - c), c);
-			//sprintf(out_val, "return get_music_name(%d)", j);
-			//lua_name = string_exec_lua(0, out_val);
+			if (c2 == c) c_msg_format("\377WMusic <%s> started. (%s)", c, lua_name);
+			else c_msg_format("\377WMusic <%.*s> started. (%s)", (int)(c2 - c), c, lua_name);
 		}
 
 		return;
@@ -3311,7 +3313,11 @@ static void fadein_next_music(void) {
 	/* If music was game-initiated, ie not from the jukebox, log it if desired */
 #ifdef WILDERNESS_MUSIC_RESUME
 	if (!jukebox_screen && c_cfg.log_music) {
-		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
+		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c, *lua_name;
+		char out_val[MAX_CHARS];
+
+		sprintf(out_val, "return get_music_name(%d)", music_cur);
+		lua_name = string_exec_lua(0, out_val);
 
  #ifdef WINDOWS
 		while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
@@ -3320,11 +3326,15 @@ static void fadein_next_music(void) {
  #endif
 		c++;
 		while (*c2 != '.' && c2 > c) c2--;
-		if (c2 == c) c_msg_format("\377WMusic <%s> %s.", c, was_resumed ? "resumed" : "started");
-		else c_msg_format("\377WMusic <%.*s> %s.", (int)(c2 - c), c, was_resumed ? "resumed" : "started");
+		if (c2 == c) c_msg_format("\377WMusic <%s> %s. (%s)", c, was_resumed ? "resumed" : "started", lua_name);
+		else c_msg_format("\377WMusic <%.*s> %s. (%s)", (int)(c2 - c), c, was_resumed ? "resumed" : "started", lua_name);
 #else
 	if (!jukebox_screen && c_cfg.log_music) {
-		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
+		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c, *lua_name;
+		char out_val[MAX_CHARS];
+
+		sprintf(out_val, "return get_music_name(%d)", music_cur);
+		lua_name = string_exec_lua(0, out_val);
 
  #ifdef WINDOWS
 		while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;y
@@ -3333,11 +3343,9 @@ static void fadein_next_music(void) {
  #endif
 		c++;
 		while (*c2 != '.' && c2 > c) c2--;
-		if (c2 == c) c_msg_format("\377WMusic <%s> started.", c);
-		else c_msg_format("\377WMusic <%.*s> started.", (int)(c2 - c), c);
+		if (c2 == c) c_msg_format("\377WMusic <%s> started. (%s)", c, lua_name);
+		else c_msg_format("\377WMusic <%.*s> started. (%s)", (int)(c2 - c), c, lua_name);
 #endif
-		//sprintf(out_val, "return get_music_name(%d)", j);
-		//lua_name = string_exec_lua(0, out_val);
 	}
 }
 
@@ -3417,7 +3425,11 @@ static bool play_music_instantly(int event, bool override_log) {
 
 	/* Also log songs while 'play/shuffle all' is active */
 	if (!jukebox_screen && c_cfg.log_music && (jukebox_play_all || override_log)) {
-		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c;
+		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c, *lua_name;
+		char out_val[MAX_CHARS];
+
+		sprintf(out_val, "return get_music_name(%d)", music_cur);
+		lua_name = string_exec_lua(0, out_val);
 
 #ifdef WINDOWS
 		while (*c != '\\' && c >= songs[music_cur].paths[music_cur_song]) c--;
@@ -3426,10 +3438,8 @@ static bool play_music_instantly(int event, bool override_log) {
 #endif
 		c++;
 		while (*c2 != '.' && c2 > c) c2--;
-		if (c2 == c) c_msg_format("\377WMusic <%s> started.", c);
-		else c_msg_format("\377WMusic <%.*s> started.", (int)(c2 - c), c);
-		//sprintf(out_val, "return get_music_name(%d)", j);
-		//lua_name = string_exec_lua(0, out_val);
+		if (c2 == c) c_msg_format("\377WMusic <%s> started. (%s)", c, lua_name);
+		else c_msg_format("\377WMusic <%.*s> started. (%s)", (int)(c2 - c), c, lua_name);
 	}
 
 	return(TRUE);
