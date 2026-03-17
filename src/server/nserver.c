@@ -13877,7 +13877,7 @@ static int Receive_purchase(int ind) {
 
 	char ch;
 	int n, player = -1, amt;
-	s16b item;
+	s16b item, amt16b;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -13892,10 +13892,11 @@ static int Receive_purchase(int ind) {
 			return(n);
 		}
 	} else {
-		if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0) {
+		if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt16b)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
 			return(n);
 		}
+		amt = (int)amt16b;
 	}
 
 	if (player) {
@@ -13912,7 +13913,7 @@ static int Receive_sell(int ind) {
 
 	char ch;
 	int n, player = -1, amt;
-	s16b item;
+	s16b item, amt16b;
 
 	if (connp->id != -1) {
 		player = GetInd[connp->id];
@@ -13927,10 +13928,11 @@ static int Receive_sell(int ind) {
 			return(n);
 		}
 	} else {
-		if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt)) <= 0) {
+		if ((n = Packet_scanf(&connp->r, "%c%hd%hd", &ch, &item, &amt16b)) <= 0) {
 			if (n == -1) Destroy_connection(ind, "read error");
 			return(n);
 		}
+		amt = (int)amt16b;
 	}
 
 	if (player) store_sell(player, item, amt);
