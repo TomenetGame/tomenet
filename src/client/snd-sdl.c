@@ -1007,9 +1007,9 @@ static bool sound_sdl_init(bool no_cache) {
 					logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, path));
 					goto next_token_snd;
 				}
-#ifdef DEBUG_SOUND
+ #ifdef DEBUG_SOUND
 				logprint(format("s-sdl_files_cur++ = %d/%d (%s)\n", sdl_files_cur, sdl_files_max, path));
-#endif
+ #endif
 #endif
 
 				/* Load the file now */
@@ -1479,9 +1479,9 @@ static bool sound_sdl_init(bool no_cache) {
 					logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, path));
 					goto next_token_mus;
 				}
-#ifdef DEBUG_SOUND
+ #ifdef DEBUG_SOUND
 				logprint(format("m-sdl_files_cur++ = %d/%d (%s)\n", sdl_files_cur, sdl_files_max, path));
-#endif
+ #endif
 #endif
 
 				/* Load the file now */
@@ -3839,9 +3839,9 @@ static int thread_load_audio(void *dummy) {
 	}
 
 #ifndef WINDOWS //assume POSIX
-#ifdef DEBUG_SOUND
+ #ifdef DEBUG_SOUND
 	log_fd_usage();
-#endif
+ #endif
 	logprint(format("Opened %d audio files (of %d max OS fds. Change via 'ulimit -n').\n", sdl_files_cur, sdl_files_max));
 #endif
 
@@ -3880,15 +3880,15 @@ static Mix_Chunk* load_sample(int idx, int subidx) {
 #ifndef WINDOWS //assume POSIX
 	sdl_files_cur++;
 	if (sdl_files_cur >= sdl_files_max) {
-		logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, path));
+		logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, filename));
 		// and for now just disable the whole event, to be safe against repeated attempts to load it
 		samples[idx].disabled = TRUE;
 		SDL_UnlockMutex(load_sample_mutex);
 		return(NULL);
 	}
-#ifdef DEBUG_SOUND
+ #ifdef DEBUG_SOUND
 	logprint(format("LS-sdl_files_cur++ = %d/%d (%s)\n", sdl_files_cur, sdl_files_max, filename));
-#endif
+ #endif
 #endif
 
 	/* Load */
@@ -3972,15 +3972,15 @@ static Mix_Music* load_song(int idx, int subidx) {
 #ifndef WINDOWS //assume POSIX
 	sdl_files_cur++;
 	if (sdl_files_cur >= sdl_files_max) {
-		logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, path));
+		logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, filename));
 		// and for now just disable the whole event, to be safe against repeated attempts to load it
 		songs[idx].disabled = TRUE;
 		SDL_UnlockMutex(load_sample_mutex);
 		return(NULL);
 	}
-#ifdef DEBUG_SOUND
+ #ifdef DEBUG_SOUND
 	logprint(format("LM-sdl_files_cur++ = %d/%d (%s)\n", sdl_files_cur, sdl_files_max, filename));
-#endif
+ #endif
 #endif
 
 	/* Load */
