@@ -477,6 +477,11 @@ static void close_audio(void) {
 		load_audio_thread = NULL;
 	}
 
+	/* Before halting, prevent another fadein_next_music() call which would cause another log_music print call
+	   which would then crash as we have no more screen to message-print to (Term_gotoxy() would crash first). */
+	music_cur = music_next = -1;
+	//jukebox_play_all = jukebox_screen = FALSE; //paranoia, not needed
+
 	Mix_HaltMusic();
 
 	/* Free all the sample data*/
