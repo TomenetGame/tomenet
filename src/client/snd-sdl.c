@@ -3182,8 +3182,8 @@ static void fadein_next_music(void) {
 #endif
 			c++;
 			while (*c2 != '.' && c2 > c) c2--;
-			if (c2 == c) c_msg_format("\377WMusic <%s> started. (%s)", c, lua_name);
-			else c_msg_format("\377WMusic <%.*s> started. (%s)", (int)(c2 - c), c, lua_name);
+			if (c2 == c) c_msg_format_multiline("\377WMusic <%s> started. (%s)", c, lua_name);
+			else c_msg_format_multiline("\377WMusic <%.*s> started. (%s)", (int)(c2 - c), c, lua_name);
 		}
 
 		return;
@@ -3335,8 +3335,8 @@ static void fadein_next_music(void) {
  #endif
 		c++;
 		while (*c2 != '.' && c2 > c) c2--;
-		if (c2 == c) c_msg_format("\377WMusic <%s> %s. (%s)", c, was_resumed ? "resumed" : "started", lua_name);
-		else c_msg_format("\377WMusic <%.*s> %s. (%s)", (int)(c2 - c), c, was_resumed ? "resumed" : "started", lua_name);
+		if (c2 == c) c_msg_format_multiline("\377WMusic <%s> %s. (%s)", c, was_resumed ? "resumed" : "started", lua_name);
+		else c_msg_format_multiline("\377WMusic <%.*s> %s. (%s)", (int)(c2 - c), c, was_resumed ? "resumed" : "started", lua_name);
 #else
 	if (!jukebox_screen && c_cfg.log_music) {
 		const char *c = songs[music_cur].paths[music_cur_song] + strlen(songs[music_cur].paths[music_cur_song]), *c2 = c, *lua_name;
@@ -3352,8 +3352,8 @@ static void fadein_next_music(void) {
  #endif
 		c++;
 		while (*c2 != '.' && c2 > c) c2--;
-		if (c2 == c) c_msg_format("\377WMusic <%s> started. (%s)", c, lua_name);
-		else c_msg_format("\377WMusic <%.*s> started. (%s)", (int)(c2 - c), c, lua_name);
+		if (c2 == c) c_msg_format_multiline("\377WMusic <%s> started. (%s)", c, lua_name);
+		else c_msg_format_multiline("\377WMusic <%.*s> started. (%s)", (int)(c2 - c), c, lua_name);
 #endif
 	}
 }
@@ -3447,8 +3447,8 @@ static bool play_music_instantly(int event, bool override_log) {
 #endif
 		c++;
 		while (*c2 != '.' && c2 > c) c2--;
-		if (c2 == c) c_msg_format("\377WMusic <%s> started. (%s)", c, lua_name);
-		else c_msg_format("\377WMusic <%.*s> started. (%s)", (int)(c2 - c), c, lua_name);
+		if (c2 == c) c_msg_format_multiline("\377WMusic <%s> started. (%s)", c, lua_name);
+		else c_msg_format_multiline("\377WMusic <%.*s> started. (%s)", (int)(c2 - c), c, lua_name);
 	}
 
 	return(TRUE);

@@ -4843,6 +4843,89 @@ void c_msg_format(cptr fmt, ...) {
 	c_msg_print(buf);
 }
 
+#define PWUYF_LEN (MAX_CHARS - 1) /* accomodate for 1 leading space for indentation (see function below) */
+/* Like c_msg_print() but splits up lines longer than MAX_CHARS into multiple lines (like msg_print() does). - C. Blue
+   Simplicity warnings:
+   - Assumes 'line' is never > MAX_CHARS;
+   - Doesn't respect line length increases due to colour codes except for one colour code at the very beginning of 'line'. */
+void c_msg_print_multiline(cptr line) {
+	cptr lptr = line, line_ref = line;
+	char tmp[MSG_LEN], *c;
+	char c_attr = 'w';
+
+	if (*lptr == '\377' && *(lptr + 1) != '\377' && *(lptr + 1)) {
+		c_attr = *(lptr + 1);
+		lptr += 2;
+		line_ref += 2;
+	}
+
+	/* Cut into 1-line chunks */
+	while (strlen(lptr) > PWUYF_LEN) {
+		strcpy(tmp, lptr);
+
+		/* Don't split words/inscription tags if possible.. */
+		c = tmp + PWUYF_LEN - 1;
+		while (c > tmp + PWUYF_LEN - 10 && (
+		    (isalpha(*c) && *(c + 1) >= 'a' && *(c + 1) <= 'z')
+		    || *(c + 1) == '~' || *(c + 1) == '+' || *(c + 1) == '*' || *(c + 1) == '-' || *(c + 1) == '_' || *(c + 1) == '^'
+		    || *c == '{' || *c == '(' || *c == '['
+		    || (*(c + 1) == '!' || *(c + 1) == '.' || *(c + 1) == ',' || *(c + 1) == ';' || *(c + 1) == ':' || *(c + 1) == '?' || *(c + 1)== '}' || *(c + 1) == ')' || *(c + 1) == ']')))
+			c--;
+
+		/* If we'd have to backtrace too far, just ignore the problem and split it anyway at the original line end */
+		if (c == tmp + PWUYF_LEN - 10) c = tmp + PWUYF_LEN - 1;
+		*(c + 1) = 0;
+
+		if (lptr == line_ref) /* Indent subsequent lines with a leading space */
+			c_msg_format("\377%c%s", c_attr, tmp);
+		else
+			c_msg_format("%s \377%c%s", c_cfg.topline_first ? "\377\377" : "", c_attr, tmp);
+
+		lptr += c - tmp + 1;
+
+		/* Find final colour */
+		c = tmp;
+		while (*c) {
+			switch (*c) {
+			case '\377':
+				c++;
+				switch(*c) {
+				default:
+					c_attr = *c;
+					//fall through
+				case '\377':
+					c++;
+					//fall through
+				case 0:
+					continue;
+				}
+			}
+			c++;
+		}
+	}
+	/* Dump only/remaining line */
+	if (lptr == line_ref) /* Indent subsequent lines with a leading space */
+		c_msg_format("\377%c%s", c_attr, lptr);
+	else
+		c_msg_format("%s \377%c%s", c_cfg.topline_first ? "\377\377" : "", c_attr, lptr);
+}
+void c_msg_format_multiline(cptr fmt, ...) {
+	va_list vp;
+	char buf[1024];
+
+	/* Begin the Varargs Stuff */
+	va_start(vp, fmt);
+
+	/* Format the args, save the length */
+	(void)vstrnfmt(buf, 1024, fmt, vp);
+
+	/* End the Varargs Stuff */
+	va_end(vp);
+
+	/* Display */
+	c_msg_print_multiline(buf);
+}
+
 
 /*
  * Request a "quantity" from the user

@@ -707,6 +707,8 @@ extern void c_message_add_msgnochat(cptr msg);
 extern void c_message_add_impscroll(cptr msg);
 extern void c_msg_print(cptr msg);
 extern void c_msg_format(cptr fmt, ...)  __attribute__ ((format (printf, 1, 2)));
+extern void c_msg_print_multiline(cptr line);
+extern void c_msg_format_multiline(cptr fmt, ...)  __attribute__ ((format (printf, 1, 2)));
 extern s32b c_get_quantity(cptr prompt, int predef, int max);
 extern s32b c_get_number(cptr prompt, s32b predef, s32b min, s32b max);
 extern bool askfor_aux(char *buf, int len, char mode);
