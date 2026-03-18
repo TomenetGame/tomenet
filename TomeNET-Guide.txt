@@ -1338,9 +1338,9 @@ They all start with a slash '/' hence they're called slash commands:
             or to disable:   /ar -
             To enable any melee auto-retaliation in general, '+' has to be
             specified. This can be combined with 't' if desired:
-            't': town-only? (optional)
+            't': town area only? (optional)
             Example:         /ar t+
-              This will enable auto-retaliation, but restrict it to town.
+              This will enable auto-retaliation, but restrict it to town areas.
             For more info about auto-retaliation, see (4.1).
 
 /autoretm
@@ -1349,10 +1349,10 @@ They all start with a slash '/' hence they're called slash commands:
               Usage:           /arm [q][t]<power>
             or to disable:   /arm -
             'q': fallback to melee if you cannot cast right now.
-            't': town-only? (optional).
+            't': town area only? (optional).
             Example:         /arm tg
               This will auto-retaliate with mimic power 'g)', but only while in
-              town.
+              town areas.
             For more info about mimic powers see (7.8a).
 
             (Note that you cannot auto-retaliate with
@@ -1368,7 +1368,7 @@ They all start with a slash '/' hence they're called slash commands:
               Usage:           /arr [q][t]<a-f><a-f><a-h><a-f>
             or to disable:   /arr -
             'q': fallback to melee if you cannot cast right now.
-            't': town-only? (optional).
+            't': town area only? (optional).
             and then mandatory: rune, rune, mode, type
             Example:         /arr saabc
               Casts a lengthened ball of light, but only against a target that
@@ -8622,13 +8622,13 @@ Magic devices:
     @O          Auto-retaliate with it. (Wands, staves, rods.)
                 Note that you cannot use self-relocation magic such as teleport
                 or word of recall for auto-retaliation.
-                You can restrict auto-retaliation to town-only by adding a 't'
+                You can restrict auto-retaliation to town areas by adding a 't'
                 after the '@O' like this: '@Ot'.
 
 Spell scrolls, books or crystals:
     @Oc         You will auto-retaliate by casting the spell 'c)' from this
                 book (or any other spell, change the inscription accordingly).
-                You can restrict auto-retaliation to town-only by adding a 't'
+                You can restrict auto-retaliation to town areas by adding a 't'
                 after the '@O' like this: '@Otc'.
                 IMPORTANT: If you cannot cast spells from the book or you
                 inscribe an unsuitable item, auto-retaliation will be disabled
@@ -8657,20 +8657,20 @@ Aside from inscriptions there are also three commands for auto-retaliation:
 Melee:
     /ar [t]+   or   /ar -
                 Turn melee auto-retaliation on or off, see (0.2b) for details.
-                Optionally use 't' for 'in town only'.
+                Optionally use 't' for 'in town areas only'.
     /ar help    Shows details for the /ar command.
 
 Mimic powers:
     /arm [Q][t]<power>   or   /arm -
                 Auto-retaliate with a mimic power, see (0.2b) for details.
-                Optionally use 't' for 'in town only',
+                Optionally use 't' for 'in town areas only',
                 and/or 'Q' for 'fallback to melee if cannot cast'.
     /arm help   Shows details for the /arm command.
 
 Runes:
     /arr [Q][t]<a-f><a-f><a-h><a-f>   or   /arr -
                 Auto-retaliate with a runespell, See (0.2b) for details.
-                Optionally use 't' for 'in town only',
+                Optionally use 't' for 'in town areas only',
                 and/or 'Q' for 'fallback to melee if cannot cast'.
                 The four mandatory parameters: rune, rune, mode, type.
     /arr help   Shows details for the /arr command.
