@@ -3069,7 +3069,7 @@ static void fadein_next_music(void) {
 				   so if we turn off music here, it'll be shown as playing but be silent until user leaves the jukebox. */
 				//cfg_audio_music = FALSE;
 				/* Give message that playlist has finished? */
-				if (!jukebox_screen && c_cfg.log_music) c_msg_format("\377WMusic auto-play finished.");
+				if (c_cfg.log_music /* && !jukebox_screen */) c_msg_format("\377WMusic auto-play finished.");
 
 				set_mixing();
 				d = jukebox_org;
