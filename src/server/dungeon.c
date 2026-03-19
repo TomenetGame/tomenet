@@ -10722,6 +10722,13 @@ void dungeon(void) {
 #else
 					if (p_ptr->paging < 3) p_ptr->paging = 3;
 #endif
+				} else if (p_ptr->custom_timer_notification_interval) {
+					p_ptr->custom_timer_notification_timer--;
+					if (!p_ptr->custom_timer_notification_timer) {
+						if (p_ptr->custom_timer > 0) msg_format(i, "\376Your custom timer reached: \377B%ds\377w.", p_ptr->custom_timer);
+						else msg_format(i, "\376Your custom timer reached: \377B%ds\377w.", -p_ptr->custom_timer - 1);
+						p_ptr->custom_timer_notification_timer = p_ptr->custom_timer_notification_interval;
+					}
 				}
 			}
 

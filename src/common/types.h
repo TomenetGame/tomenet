@@ -4527,7 +4527,7 @@ struct player_type {
 
 	bool notify_notes, notify_sale;
 	bool ts_sleeping;
-	int custom_timer;
+	int custom_timer, custom_timer_notification_interval, custom_timer_notification_timer;
 };
 
 /* For Monk martial arts */
