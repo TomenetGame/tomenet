@@ -6425,7 +6425,11 @@ int Receive_idle(void) {
 		if (!cfg_audio_music && idle_muted_music) toggle_music(TRUE);
 		if (!cfg_audio_weather && idle_muted_weather) toggle_weather();
 	}
+
+	if (idle_muted_music) c_msg_print("Auto-muted music and ambience due to being idle ('mute_when_idle').");
+	else c_msg_print("Auto-muted ambience due to being idle ('mute_when_idle').");
 #endif
+
 	return(1);
 }
 
