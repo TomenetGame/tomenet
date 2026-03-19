@@ -6739,6 +6739,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!p_ptr->custom_timer) msg_format(Ind, "\376Started the custom timer \377vcounting up\377w.", k);
 				else msg_format(Ind, "\376Restarted the custom timer \377vcounting up\377w.", k);
 				p_ptr->custom_timer = -1;
+				p_ptr->custom_timer_notification_interval = p_ptr->custom_timer_notification_timer = notification;
 				return;
 			}
 			if (k < 0 || k > 86400) return;
