@@ -4135,6 +4135,7 @@ void process_pending_commands(int ind) {
 	int num_players_start = NumPlayers; // Hack to see if we have quit in this function
 #ifdef NEW_AUTORET_2_ENERGY
 	s16b total_energy;
+	bool eligible;
 #endif
 
 	// Hack -- take any pending commands from the command que connp->q
@@ -4186,7 +4187,13 @@ void process_pending_commands(int ind) {
 		connp->r.state |= SOCKBUF_LOCK; /* needed for rollbacks to work properly */
 
 #ifdef NEW_AUTORET_2_ENERGY
-		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED) {
+		/* Don't allow reserve_flag/reserve_energy if we're in some kind of disabled state! (para/k.o./suspended) */
+ #if 0 /* generically working, but won't "instantly" work as you need to get at least > 0 energy to start with */
+		eligible = (p_ptr->energy);
+ #else
+		eligible = !(p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended);
+ #endif
+		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED && eligible) {
 			total_energy = p_ptr->energy + p_ptr->reserve_energy;
 
  #ifdef NEW_AUTORET_2_DEEPCHECK /* This is only useful if we actually provide reserve_energy ONLY for teleport/walk/run/etc actions,
@@ -4265,7 +4272,7 @@ void process_pending_commands(int ind) {
 		connp->r.state &= ~SOCKBUF_LOCK;
 
 #ifdef NEW_AUTORET_2_ENERGY
-		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED) {
+		if (p_ptr != NULL && p_ptr->conn != NOT_CONNECTED && eligible) {
  #ifdef NEW_AUTORET_2_DEEPCHECK
 			/* We always assume that a full turn (ie all reserve_energy) was used up for whatever reserve-action (move/tele) we performed */
 			if (p_ptr->reserve_flag && p_ptr->energy != total_energy) p_ptr->reserve_energy = 0;
