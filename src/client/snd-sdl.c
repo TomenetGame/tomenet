@@ -4572,7 +4572,9 @@ void do_cmd_options_sfx_sdl(bool reset) {
 		/* Actually allow accessing the audio mixer from here as shortcut, much qol */
 		case KTRL('U'):
 		case KTRL('F'): /* <- rogue-like keyset. (In this menu, roguelike_commands() doesn't apply, so we need it.) */
+			jukebox_screen = FALSE;
 			interact_audio();
+			jukebox_screen = TRUE;
 			break;
 
 		default:
@@ -5925,7 +5927,9 @@ void do_cmd_options_mus_sdl(bool reset) {
 		/* Actually allow accessing the audio mixer from here as shortcut, much qol */
 		case KTRL('U'):
 		case KTRL('F'): /* <- rogue-like keyset. (In this menu, roguelike_commands() doesn't apply, so we need it.) */
+			jukebox_screen = FALSE;
 			interact_audio();
+			jukebox_screen = TRUE;
 			break;
 
 		default:
