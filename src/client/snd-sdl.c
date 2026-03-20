@@ -58,10 +58,6 @@
  #define TOWN_TAVERN_MUSIC_RESUME_TOO
 #endif
 
-/* Allow user-defined custom volume factor for each sample or song? ([].volume) */
-#define USER_VOLUME_SFX
-#define USER_VOLUME_MUS
-
 #ifdef SOUND_AL_SDL
  // port from SDL to AL? Future stuff, if SDL3 still sux (or we want full 3d head model sfx)
 #elif 0
@@ -1707,10 +1703,8 @@ extern bool sound_bell(void) {
 	s = rand_int(samples[bell_sound_idx].num);
 	wave = samples[bell_sound_idx].wavs[s];
 
-#ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
 	if (samples[bell_sound_idx].volume) vols = samples[bell_sound_idx].volume;
-#endif
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
@@ -1761,10 +1755,8 @@ extern bool sound_page(void) {
 	sound_cur_wav = s; //just for jukebox wav index display
 	sound_cur = page_sound_idx;
 
-#ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
 	if (samples[page_sound_idx].volume) vols = samples[page_sound_idx].volume;
-#endif
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
@@ -1815,10 +1807,8 @@ extern bool sound_warning(void) {
 	sound_cur_wav = s; //just for jukebox wav index display
 	sound_cur = warning_sound_idx;
 
-#ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
 	if (samples[warning_sound_idx].volume) vols = samples[warning_sound_idx].volume;
-#endif
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
@@ -1864,10 +1854,8 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 	if (!cfg_audio_master || !cfg_audio_sound) return(TRUE); /* claim that it 'succeeded' */
 #endif
 
-#ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
 	if (real_event && samples[event].volume) vols = samples[event].volume;
-#endif
 
 	/* hack: */
 	if (type == SFX_TYPE_STOP) {
@@ -2160,10 +2148,8 @@ static void play_sound_weather(int event) {
 	sound_cur_wav = s; //just for jukebox wav index display
 	sound_cur = event;
 
-#ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
 	if (samples[event].volume) vols = samples[event].volume;
-#endif
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
@@ -2331,10 +2317,8 @@ static void play_sound_weather_vol(int event, int vol) {
 		else if (weather_vol_smooth > weather_vol_smooth_anti_oscill)
 				weather_vol_smooth--;
 
-#ifdef USER_VOLUME_SFX
 		/* Apply user-defined custom volume modifier */
 		if (samples[event].volume) vols = samples[event].volume;
-#endif
 
 //c_message_add(format("smooth %d", weather_vol_smooth));
 		Mix_Volume(weather_channel, (CALC_MIX_VOLUME(cfg_audio_weather, weather_vol_smooth, vols) * grid_weather_volume) / 100);
@@ -2355,10 +2339,8 @@ static void play_sound_weather_vol(int event, int vol) {
 	/* Check there are samples for this event */
 	if (!samples[event].num) return;
 
-#ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
 	if (samples[event].volume) vols = samples[event].volume;
-#endif
 
 	/* Choose a random event */
 	s = rand_int(samples[event].num);
@@ -2470,10 +2452,8 @@ void weather_handle_fading(void) {
 		return;
 	}
 
-#ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
 	if (weather_current != -1 && samples[weather_current].volume) vols = samples[weather_current].volume;
-#endif
 
 	if (Mix_FadingChannel(weather_channel) == MIX_NO_FADING) {
 #ifndef WEATHER_VOL_PARTICLES
@@ -2566,10 +2546,8 @@ static void play_sound_ambient(int event) {
 	sound_cur_wav = s; //just for jukebox wav index display
 	sound_cur = event;
 
-#ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
 	if (samples[event].volume) vols = samples[event].volume;
-#endif
 
 	/* Try loading it, if it's not cached */
 	if (!wave) {
@@ -2679,10 +2657,8 @@ void ambient_handle_fading(void) {
 		return;
 	}
 
-#ifdef USER_VOLUME_SFX
 	/* Apply user-defined custom volume modifier */
 	if (ambient_current != -1 && samples[ambient_current].volume) vols = samples[ambient_current].volume;
-#endif
 
 	if (Mix_FadingChannel(ambient_channel) == MIX_NO_FADING) {
 		Mix_Volume(ambient_channel, (CALC_MIX_VOLUME(cfg_audio_sound, cfg_audio_sound_volume, vols) * grid_ambient_volume) / 100);
@@ -2805,10 +2781,8 @@ static bool play_music(int event) {
 	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
 	if (event == 89 && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
 
-#ifdef USER_VOLUME_MUS
 	/* Apply user-defined custom volume modifier */
 	if (songs[event].volume) vols = songs[event].volume;
-#endif
 
 	/* In case the current music was played via play_music_vol() at reduced volume, restore to normal */
 	if (music_vol != 100) {
@@ -2960,10 +2934,8 @@ static bool play_music_vol(int event, char vol) {
 	/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
 	if (event == 89 && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
 
-#ifdef USER_VOLUME_MUS
 	/* Apply user-defined custom volume modifier */
 	if (songs[event].volume) vols = songs[event].volume;
-#endif
 
 	jukebox_org_vol = vol;
 	/* Just change volume if requested */
@@ -3271,10 +3243,8 @@ static void fadein_next_music(void) {
 		return;
 	}
 
-#ifdef USER_VOLUME_MUS
 	/* Apply user-defined custom volume modifier */
 	if (songs[music_next].volume) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, songs[music_next].volume));
-#endif
 
 	/* Actually play the thing */
 //#ifdef DISABLE_MUTED_AUDIO /* now these vars are also used for 'continous' music across music events */
@@ -3416,11 +3386,9 @@ static bool play_music_instantly(int event, bool override_log) {
 		return(FALSE);
 	}
 
-#ifdef USER_VOLUME_MUS
 	/* Apply user-defined custom volume modifier */
 	if (songs[event].volume) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, songs[event].volume));
 	else Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, 100));
-#endif
 
 	if (!jukebox_play_all) {
 		/* Actually play the thing. We loop this specific sub-song infinitely and ignore c_cfg.shuffle_music and c_cfg.play_all (and 'initial' song status) here.
@@ -3475,10 +3443,8 @@ static void reenable_music(void) {
 	/* If audio is still being loaded/cached, we might just have to exit here for now */
 	if (!wave) return;
 
-#ifdef USER_VOLUME_MUS
 	/* Apply user-defined custom volume modifier */
 	if (songs[music_cur].volume) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, songs[music_cur].volume));
-#endif
 
 	/* Take up playing again immediately, no fading in */
 	Mix_PlayMusic(wave, c_cfg.shuffle_music || c_cfg.play_all ? 0 : -1);
@@ -3523,12 +3489,10 @@ static void set_mixing_sdl(void) {
 	   This can happen if for example some ambient sound effect changes/is played and set_mixing() is called in the process house situation changes (quiet_house_sfx),
 	   which would not only mix that specific sfx but also reset music volume here from the temporary 200% boost to its actual real value. */
 	if (jukebox_static200vol) vols = 200;
-#ifdef USER_VOLUME_MUS
 	else {
 		/* Apply user-defined custom volume modifier */
 		if (music_cur != -1 && songs[music_cur].volume) vols = songs[music_cur].volume;
 	}
-#endif
 	//Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume));
 	Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * music_vol) / 100, vols));
 #ifdef DISABLE_MUTED_AUDIO
@@ -4239,19 +4203,13 @@ void do_cmd_options_sfx_sdl(bool reset) {
 	Term_putstr(0, 2, -1, TERM_WHITE, " File:                                                                          ");
 	Term_putstr(7, 2, -1, TERM_L_DARK, "-");
 	while (go) {
-#ifdef USER_VOLUME_SFX
- #ifdef ENABLE_SHIFT_SPECIALKEYS
+#ifdef ENABLE_SHIFT_SPECIALKEYS
 		if (strcmp(ANGBAND_SYS, "gcu"))
 			Term_putstr(0, 0, -1, TERM_WHITE, "  \377ydir\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w volume, \377y[SHIFT+]RETURN\377w [boost+]play");
 		else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
- #endif
+#endif
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w'>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (on/off), \377yv\377w volume, \377yRETURN\377w (play)");
 		Term_putstr(0, 1, -1, TERM_WHITE, format("  \377yCTRL+%c\377w mixer, \377yESC \377wleave and auto-save all changes.                            ", c_cfg.rogue_like_commands ? 'F' : 'U'));
-
-#else
-		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w'>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (on/off), \377yRETURN\377w (play), \377yESC\377w)");
-		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
-#endif
 
 		/* Display the events */
 		for (i = y - list_size ; i <= y + list_size; i++) {
@@ -4295,12 +4253,10 @@ void do_cmd_options_sfx_sdl(bool reset) {
 			} else
 				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + list_size - y, -1, a, (char*)lua_name);
 
-#ifdef USER_VOLUME_SFX
 			if (samples[j].volume && samples[j].volume != 100) {
 				if (samples[j].volume < 100) a = TERM_UMBER; else a = TERM_L_UMBER;
 				Term_putstr(horiz_offset + 1 + 12 + 36 + 1, vertikal_offset + i + list_size - y, -1, a, format("%2d%%", samples[j].volume));
 			}
-#endif
 		}
 
 #ifdef JUKEBOX_SELECTED_FILENAME /* Show currently selected music event's first song's filename */
@@ -4384,7 +4340,6 @@ void do_cmd_options_sfx_sdl(bool reset) {
 			go = FALSE;
 			break;
 
-#ifdef USER_VOLUME_SFX /* needs work @ actual mixing algo */
 		case 'v': {
 			//i = c_get_quantity("Enter volume % (1..100): ", -1, 100);
 			bool inkey_msg_old = inkey_msg;
@@ -4407,7 +4362,6 @@ void do_cmd_options_sfx_sdl(bool reset) {
 			/* Note: Unlike for music we don't adjust an already playing SFX' volume live here, instead the volume is applied the next time it is played. */
 			break;
 			}
-#endif
 
 		case KTRL('T'):
 			/* Take a screenshot */
@@ -4916,11 +4870,7 @@ void do_cmd_options_mus_sdl(bool reset) {
 		9, pgup; 3, pgdn; 1, end; 7, pos1; 8, bksp, up; 2, down */
 	while (go) {
 #ifdef ENABLE_JUKEBOX
- #ifdef USER_VOLUME_MUS
 		Term_putstr(0, 0, -1, TERM_WHITE, format("\377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yc\377w cur, \377yt\377w/\377yy\377w/\377yn\377w toggle, \377yv\377w/\377y+\377w/\377y-\377w vol, \377yCTRL+%c\377w mixer, \377yESC \377wsave", c_cfg.rogue_like_commands ? 'F' : 'U'));
- #else
-		Term_putstr(0, 0, -1, TERM_WHITE, format("\377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yc\377w cur., \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yCTRL+%c\377w mixer, \377yESC \377wsave+quit", c_cfg.rogue_like_commands ? 'F' : 'U'));
- #endif
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		if (strcmp(ANGBAND_SYS, "gcu"))
   #if 0 /* 'f/F' currently not implemented ('shuffle local event's subsongs) */
@@ -4939,11 +4889,7 @@ void do_cmd_options_mus_sdl(bool reset) {
 
 		curmus_y = -1; //assume not visible (outside of visible song list)
 #else
- #ifdef USER_VOLUME_MUS
 		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w, \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yv\377w/\377y+\377w/\377y-\377w volume, \377yESC\377w save");
- #else
-		Term_putstr(0, 0, -1, TERM_WHITE, " \377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w, \377yt\377w toggle, \377yy\377w/\377yn\377w on/off, \377yESC\377w leave+autosave");
- #endif
 #endif
 
 		/* Display the events */
@@ -5003,12 +4949,10 @@ void do_cmd_options_mus_sdl(bool reset) {
 				Term_putstr(horiz_offset + 12 + 8, vertikal_offset + i + list_size - y, -1, a, (char*)lua_name);
 			}
 
-#ifdef USER_VOLUME_MUS
 			if (songs[j].volume && songs[j].volume != 100) {
 				if (songs[j].volume < 100) a = TERM_UMBER; else a = TERM_L_UMBER;
 				Term_putstr(horiz_offset + 1 + 12 + 36 + 1 + 4, vertikal_offset + i + list_size - y, -1, a, format("%2d%%", songs[j].volume)); //-6 to coexist with the new playtime display
 			}
-#endif
 		}
 
 		/* Show currently playing music event's specific song's filename */
@@ -5197,10 +5141,9 @@ void do_cmd_options_mus_sdl(bool reset) {
 						if (jukebox_org_vol != 100) {
 							int vols = 100;
 
- #ifdef USER_VOLUME_MUS
 							/* Apply user-defined custom volume modifier */
 							if (songs[music_cur].volume) vols = songs[music_cur].volume;
- #endif
+
 							music_vol = jukebox_org_vol;
 							Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, (cfg_audio_music_volume * evlt[(int)music_vol]) / MIX_MAX_VOLUME, vols));
 						}
@@ -5245,7 +5188,6 @@ void do_cmd_options_mus_sdl(bool reset) {
 			go = FALSE;
 			break;
 
-#ifdef USER_VOLUME_MUS
 		case 'v': {
 			//i = c_get_quantity("Enter volume % (1..100): ", 50, 100);
 			bool inkey_msg_old = inkey_msg;
@@ -5320,7 +5262,6 @@ void do_cmd_options_mus_sdl(bool reset) {
 			if (!i) i = 100; /* Revert to default volume */
 			if (j_sel == music_cur) Mix_VolumeMusic(CALC_MIX_VOLUME(cfg_audio_music, cfg_audio_music_volume, i));
 			break;
-#endif
 
 		case 'c': /* Jump to currently playing song */
 			i = 0;
