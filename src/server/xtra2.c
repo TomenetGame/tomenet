@@ -5855,6 +5855,8 @@ void apply_exp(int Ind) {
 	//int Ind2 = 0;
 	s64b amount = p_ptr->gain_exp;
 
+	if (!amount) return;
+
 	/* Clear on-hold XP */
 	p_ptr->gain_exp = 0;
 
@@ -12267,7 +12269,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	s64b tmp_exp, rmexp = r_ptr->mexp;
 	int skill_trauma = (p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC)) ? 0 : get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 100);
 	bool old_tacit = suppress_message;
-	int apply_exp_Ind[MAX_PLAYERS] = { 0 }, i;
+	int apply_exp_Ind[MAX_PLAYERS + 1] = { 0 }, i;
 
 	//int dun_level2 = getlevel(&p_ptr->wpos);
 	dungeon_type *dt_ptr2 = getdungeon(&p_ptr->wpos);
@@ -12644,8 +12646,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 					p_ptr->warning_partyexp = 1;
 				}
 #endif
-			} else if (p_ptr->IDDC_logscum) p_ptr->exp_frac = 0;
-			else {
+			} else if (!p_ptr->IDDC_logscum) {
 				/* Higher characters who farm monsters on low levels compared to
 				   their clvl will gain less exp. */
 				if (!in_irondeepdive(&p_ptr->wpos) && (!in_hallsofmandos(&p_ptr->wpos) || p_ptr->lev >= 50))
