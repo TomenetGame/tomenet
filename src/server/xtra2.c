@@ -6718,6 +6718,7 @@ bool monster_death(int Ind, int m_idx) {
 
 	/* Log-scumming in IDDC is like fighting clones */
 	if (p_ptr->IDDC_logscum) return(FALSE);
+
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_iddc
 #ifdef DED_IDDC_MANDOS
@@ -6725,6 +6726,7 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 	    && r_ptr->mexp) /* Allow normal townie kills in Bree */
 		return(FALSE);
+
 	/* clones don't drop treasure or complete quests.. */
 	if (m_ptr->clone) {
 		/* Specialty - even for non-creditable Sauron:
@@ -6739,6 +6741,7 @@ bool monster_death(int Ind, int m_idx) {
 		/* no credit/loot for clones */
 		return(FALSE);
 	}
+
 	/* ..neither do cheezed kills */
 	if (henc_cheezed &&
 	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
@@ -6750,6 +6753,8 @@ bool monster_death(int Ind, int m_idx) {
 #endif
 	    )
 		return(FALSE);
+
+	/* --- Ok, monster may drop l00t --- */
 
 	dlev = getlevel(wpos);
 	rlev = r_ptr->level;
@@ -12629,6 +12634,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 #else /* players may seek higher-level party members to team up with if he's died before? Weird combination so not recommended! */
 			    m_ptr->henc - p_ptr->max_plv > MAX_PARTY_LEVEL_DIFF + 1)
 #endif
+			    {
 				tmp_exp = 0; /* zonk */
 #if 0 /* not really a party thing here, just the monster's henc */
 				if (!p_ptr->warning_partyexp) {
@@ -12638,6 +12644,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 					p_ptr->warning_partyexp = 1;
 				}
 #endif
+			} else if (p_ptr->IDDC_logscum) p_ptr->exp_frac = 0;
 			else {
 				/* Higher characters who farm monsters on low levels compared to
 				   their clvl will gain less exp. */
@@ -12795,7 +12802,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		}
 
 		/* Kill credit for quest */
-		if (!m_ptr->clone) {
+		if (!m_ptr->clone && !p_ptr->IDDC_logscum) {
 			int i, credit_idx = r_ptr->dup_idx ? r_ptr->dup_idx : m_ptr->r_idx;
 
 			for (i = 0; i < MAX_XORDERS; i++) {

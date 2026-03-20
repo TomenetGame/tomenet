@@ -3662,6 +3662,8 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 	if (on_irondeepdive(wpos)) return;
 #endif
 
+	if (p_ptr->IDDC_logscum) return;
+
 	/* Calculate the average level and iron team presence */
 	for (i = 1; i <= NumPlayers; i++) {
 		q_ptr = Players[i];
@@ -3722,6 +3724,8 @@ void party_gain_exp(int Ind, int party_id, s64b amount, s64b base_amount, int he
 		/* players who exceed the restrictions to share exp with us don't get any,
 		   but still take share toll by increasing the divisor in the loop above. */
 		if (q_ptr->ghost || !players_in_level(Ind, Ind2)) continue;
+
+		if (q_ptr->IDDC_logscum) continue;
 
 		/* Calculate this guy's experience gain */
 		new_amount = amount;
