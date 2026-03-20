@@ -14644,7 +14644,7 @@ void interact_audio(void) {
 			redraw = FALSE;
 			break;
 		case KTRL('U'):
-		case KTRL('F'): /* <- rogue-like keyset */
+		case KTRL('F'): /* <- rogue-like keyset. (In this menu, roguelike_commands() doesn't apply, so we need it.) */
 		case ESCAPE:
 			quit = TRUE; /* hack to leave loop */
 			break;
