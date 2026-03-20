@@ -4848,6 +4848,7 @@ void do_cmd_options_mus_sdl(bool reset) {
 		9, pgup; 3, pgdn; 1, end; 7, pos1; 8, bksp, up; 2, down */
 	while (go) {
 		Term_putstr(0, 0, -1, TERM_WHITE, format("\377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yc\377w cur, \377yt\377w/\377yy\377w/\377yn\377w toggle, \377yv\377w/\377y+\377w/\377y-\377w vol, \377yCTRL+%c\377w mixer, \377yESC \377wsave", c_cfg.rogue_like_commands ? 'F' : 'U'));
+
 #ifdef ENABLE_SHIFT_SPECIALKEYS
 		if (strcmp(ANGBAND_SYS, "gcu"))
  #if 0 /* 'f/F' currently not implemented ('shuffle local event's subsongs) */
@@ -4859,9 +4860,12 @@ void do_cmd_options_mus_sdl(bool reset) {
 		else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
 #endif
 			Term_putstr(0, 1, -1, TERM_WHITE, format("\377yRETURN\377w/\377ya\377w/\377yA\377w/\377yu\377w/\377yU\377w play/all/shuffle [at 200%%], \377yLEFT\377w/\377yRIGHT\377w rw/ff %ds, \377yP\377w pause", MUSIC_SKIP));
+
 		Term_putstr(0, 2, -1, TERM_WHITE, "Key: [current/max song] - orange colour indicates 'initial' song.              ");
+
 		if (jukebox_play_all) Term_putstr(66, 2, -1, TERM_WHITE, "\377yq\377B/\377yQ\377B/\377yw\377B/\377yW\377B skip");
 		else if (jukebox_playing != -1) Term_putstr(66, 2, -1, TERM_WHITE, "\377yq\377w/\377yw\377w skip    "); //for new 'jukebox_subonly_play_all'
+
 		Term_putstr(0, 3, -1, TERM_WHITE, "File:                                                                          ");
 
 		curmus_y = -1; //assume not visible (outside of visible song list)
@@ -5040,10 +5044,7 @@ void do_cmd_options_mus_sdl(bool reset) {
 			cfg_audio_music = cfg_audio_music_org;
 			cfg_audio_weather = cfg_audio_weather_org;
 
-#if 0 /* 0'ed: Exception - we leave playall/shuffleall mode active even when leaving the jukebox screen and returning to actual gameplay, so we can play while still listening! */
-			jukebox_play_all = FALSE;
-#else
-			/* Hack: Allow play-all/shuffle-all to continue even outside of the jukebox */
+			/* Hack: Don't set jukebox_play_all to FALSE but allow play-all/shuffle-all to continue even outside of the jukebox */
 			if (jukebox_play_all) {
 				curmus_timepos = -1; //no more song is playing in the jukebox now
 				jukebox_screen = FALSE;
@@ -5052,9 +5053,7 @@ void do_cmd_options_mus_sdl(bool reset) {
 				/* Force mixer to remain enabled in any case */
 				cfg_audio_master = TRUE;
 				cfg_audio_music = TRUE;
-			} else
-#endif
-			{
+			} else {
 				jukebox_static200vol = FALSE;
 				jukebox_playing = -1;
 
