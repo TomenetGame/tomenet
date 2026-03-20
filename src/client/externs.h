@@ -619,8 +619,8 @@ extern void save_birth_file(cptr cname, bool touch);
 extern void load_birth_file(cptr cname);
 extern bool within_cmd_player;
 extern int within_cmd_player_ticks;
-extern bool jukebox_play_all, jukebox_play_all_done; //ENABLE_JUKEBOX
-extern int jukebox_playing, jukebox_play_all_prev, jukebox_playing_song, jukebox_play_all_prev_song; //ENABLE_JUKEBOX
+extern bool jukebox_play_all, jukebox_play_all_done;
+extern int jukebox_playing, jukebox_play_all_prev, jukebox_playing_song, jukebox_play_all_prev_song;
 extern int check_guide_checksums(bool forced);
 #ifdef WINDOWS
 extern void screenshot_result_check(void);
@@ -1219,9 +1219,7 @@ extern int re_init_sound();
  extern void close_audio_sdl(void);
  extern void do_cmd_options_sfx_sdl(bool reset);
  extern void do_cmd_options_mus_sdl(bool reset);
-  //#ifdef ENABLE_JUKEBOX
  extern void update_jukebox_timepos(void);
-  //#endif
  #endif
 
 extern bool skip_received_music;

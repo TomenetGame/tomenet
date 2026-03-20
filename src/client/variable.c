@@ -751,8 +751,8 @@ char musicpack_description[AUDIO_SUBSETS_MAX][MAX_CHARS * 3], musicpack_packname
 
 bool within_cmd_player = FALSE;
 int within_cmd_player_ticks;
-bool jukebox_play_all = FALSE, jukebox_play_all_done = FALSE; //ENABLE_JUKEBOX
-int jukebox_playing = -1, jukebox_play_all_prev = -1, jukebox_playing_song = -1, jukebox_play_all_prev_song = -1; //ENABLE_JUKEBOX
+bool jukebox_play_all = FALSE, jukebox_play_all_done = FALSE;
+int jukebox_playing = -1, jukebox_play_all_prev = -1, jukebox_playing_song = -1, jukebox_play_all_prev_song = -1;
 
 int NumPlayers = 0;
 char playerlist_name[MAX_PLAYERS_LISTED][NAME_LEN], playerlist[MAX_PLAYERS_LISTED][MAX_CHARS_WIDE];
@@ -772,7 +772,7 @@ byte screenshot_height = 0;
 char whats_under_your_feet[ONAME_LEN];
 
 int oldticks = -1; //SOUND_SDL
-bool jukebox_screen = FALSE;//ENABLE_JUKEBOX
+bool jukebox_screen = FALSE;
 int oldticksds = -1;
 
 bool map_town = FALSE;

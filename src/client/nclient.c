@@ -8038,15 +8038,13 @@ void update_ticks(void) {
 	/* Set the new ticks to the old ticks rounded down to the number of seconds. */
 	newticks = ticks - (ticks % 10);
 
-//#ifdef ENABLE_JUKEBOX
- #ifdef SOUND_SDL
+#ifdef SOUND_SDL
 	/* Track jukebox music position in seconds */
 	if (newticks != oldticks) {
 		oldticks = newticks;
 		if (jukebox_screen) update_jukebox_timepos();
 	}
- #endif
-//#endif
+#endif
 
 #ifdef META_PINGS
  #ifdef META_DISPLAYPINGS_LATER
