@@ -4246,7 +4246,8 @@ void do_cmd_options_sfx_sdl(bool reset) {
 		else /* GCU cannot query shiftkey states easily, see macro triggers too (eg cannot distinguish between ENTER and SHIFT+ENTER on GCU..) */
  #endif
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w'>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (on/off), \377yv\377w volume, \377yRETURN\377w (play)");
-		Term_putstr(0, 1, -1, TERM_WHITE, "  \377yESC \377wleave and auto-save all changes.                                          ");
+		Term_putstr(0, 1, -1, TERM_WHITE, format("  \377yCTRL+%c\377w mixer, \377yESC \377wleave and auto-save all changes.                            ", c_cfg.rogue_like_commands ? 'F' : 'U'));
+
 #else
 		Term_putstr(0, 0, -1, TERM_WHITE, "  (<\377ydir\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w'>, \377yt\377w (toggle), \377yy\377w/\377yn\377w (on/off), \377yRETURN\377w (play), \377yESC\377w)");
 		Term_putstr(0, 1, -1, TERM_WHITE, "  (\377wAll changes made here will auto-save as soon as you leave this page)");
@@ -4629,6 +4630,13 @@ void do_cmd_options_sfx_sdl(bool reset) {
 			sound(j_sel, SFX_TYPE_STOP, 100, 0, 0, 0);
 			y = (y - 1 + audio_sfx) % audio_sfx;
 			break;
+
+		/* Actually allow accessing the audio mixer from here as shortcut, much qol */
+		case KTRL('U'):
+		case KTRL('F'): /* <- rogue-like keyset. (In this menu, roguelike_commands() doesn't apply, so we need it.) */
+			interact_audio();
+			break;
+
 		default:
 			bell();
 		}
@@ -4909,9 +4917,9 @@ void do_cmd_options_mus_sdl(bool reset) {
 	while (go) {
 #ifdef ENABLE_JUKEBOX
  #ifdef USER_VOLUME_MUS
-		Term_putstr(0, 0, -1, TERM_WHITE, "\377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yc\377w cur, \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yv\377w/\377y+\377w/\377y-\377w vol, \377yESC \377wsave+quit");
+		Term_putstr(0, 0, -1, TERM_WHITE, format("\377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yc\377w cur, \377yt\377w/\377yy\377w/\377yn\377w toggle, \377yv\377w/\377y+\377w/\377y-\377w vol, \377yCTRL+%c\377w mixer, \377yESC \377wsave", c_cfg.rogue_like_commands ? 'F' : 'U'));
  #else
-		Term_putstr(0, 0, -1, TERM_WHITE, "\377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yc\377w cur., \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yESC \377wsave+quit");
+		Term_putstr(0, 0, -1, TERM_WHITE, format("\377ydir\377w/\377yp\377w/\377ySPC\377w/\377yg\377w/\377yG\377w/\377y#\377w/\377ys\377w/\377yS\377w/'\377y/\377w', \377yc\377w cur., \377yt\377w/\377yy\377w/\377yn\377w toggle/on/off, \377yCTRL+%c\377w mixer, \377yESC \377wsave+quit", c_cfg.rogue_like_commands ? 'F' : 'U'));
  #endif
  #ifdef ENABLE_SHIFT_SPECIALKEYS
 		if (strcmp(ANGBAND_SYS, "gcu"))
@@ -6004,6 +6012,12 @@ void do_cmd_options_mus_sdl(bool reset) {
 			Mix_SetMusicPosition(curmus_timepos);
 			/* Overflow beyond actual song length? SDL2_mixer will then restart from 0, so adjust tracking accordingly */
 			curmus_timepos = (int)Mix_GetMusicPosition(songs[music_cur].wavs[music_cur_song]);
+			break;
+
+		/* Actually allow accessing the audio mixer from here as shortcut, much qol */
+		case KTRL('U'):
+		case KTRL('F'): /* <- rogue-like keyset. (In this menu, roguelike_commands() doesn't apply, so we need it.) */
+			interact_audio();
 			break;
 
 		default:
