@@ -14506,7 +14506,7 @@ void interact_audio(void) {
 			//Term_putstr(7, ++l, -1, TERM_L_UMBER, "Jump to volume slider: SHIFT + according shortcut key given above.");
 			//Term_putstr(6, ++l, -1, TERM_L_UMBER, "Shortcuts: 'a','w','s','c'/'m'. Shift + shortcut to jump to a slider.");
 			//Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U. Sliders: \377ySHIFT+shortcut\377U. Reload packs & re-init: \377yCTRL+R\377U.");
-			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yw\377U,\377ys\377U,\377yc\377U/\377ym\377U   Sliders: \377ySHIFT+a\377U/\377ym\377U/\377ys\377U/\377yw\377U   Reload packs & re-init: \377yCTRL+R\377U ");
+			Term_putstr(1, ++l, -1, TERM_L_UMBER, "Shortcuts: \377ya\377U,\377yc\377U/\377ym\377U,\377ys\377U,\377yw\377U   Sliders: \377ySHIFT+a\377U/\377ym\377U/\377ys\377U/\377yw\377U   Reload packs & re-init: \377yCTRL+R\377U ");
 
 			if (quiet_mode) Term_putstr(12, ++l, -1, TERM_L_RED,                              "  Client is running in 'quiet mode': Audio is disabled.  ");
 			else if (audio_sfx > 3 && audio_music > 0) Term_putstr(12, ++l, -1, TERM_L_GREEN, "     Sound pack and music pack have been detected.      ");
