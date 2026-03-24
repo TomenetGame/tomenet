@@ -13684,7 +13684,7 @@ Thunder         This is a lightning strike and deals:
 
 Radiation
 Nuke
-Toxic Waste     This is a poisonous attack (player suffers pure poison damage)3
+Toxic Waste     This is a poisonous attack (player suffers pure poison damage)
  ('Nuke')       that may have acidic effect on your inventory (inventory may
                 get destroyed as if you were hit by acidic attacks).
                 If you resist poison
