@@ -7395,11 +7395,12 @@ static void process_player_end(int Ind) {
 	/* Mind Fusion/Control disables the char's automatic 'background' behaviour: No auto-retaliation and no running. */
 	if (!(p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ))) {
 		int ls = level_speed(&p_ptr->wpos);
+		bool can_ret = !p_ptr->confused && !p_ptr->resting && !p_ptr->paralyzed && p_ptr->stun <= 100 && !p_ptr->suspended; /* <- MUST check these for NEW_AUTORET_2_ENERGY */
 
 		/* Check for fire-till-kill and auto-retaliation */
 		if (!p_ptr->requires_energy && /* <- new, required for allowing actions here (fire-till-kill)
 						  at <= 100% energy to prevent character lock-up. - C. Blue */
-		    !p_ptr->confused && !p_ptr->resting &&
+		    can_ret &&
 		    (!p_ptr->autooff_retaliator || /* <- these conditions seem buggy/wrong/useless? */
 		     !p_ptr->invuln))//&& !p_ptr->tim_manashield)))
 		    {
@@ -7519,6 +7520,9 @@ static void process_player_end(int Ind) {
 				}
 			} else p_ptr->auto_retaliating = FALSE; /* if no energy left, this is required to turn off the no-run-while-retaliate-hack */
 		}
+#ifdef NEW_AUTORET_2_ENERGY
+		else if (p_ptr->new_retaliator && !can_ret) p_ptr->triggered_auto_attacking = FALSE; /* ensure reserve energy is set to 0 */
+#endif
 
 		/* ('Handle running' from above was originally at this place) */
 		/* Handle running -- 5 times the speed of walking */
