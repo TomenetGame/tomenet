@@ -11802,21 +11802,34 @@ void handle_request_return_key(int Ind, int id, char c) {
 	case RID_CRAPS: {
 		int win = 3;
 		int roll1, roll2, roll3, ycv = p_ptr->casino_progress;
+
+		/* User esc'ed out? Abort (and lose) */
+		if (c == ESCAPE || !c) { /* ESC will always result in 0 instead of 27, just paranoia/in case of future changes */
+#if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
+			ycv++; //looks slightly better?
+#endif
+			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "You forfeit!");
+			s_printf("CASINO: Craps - Player '%s' forfeit %d Au.\n", p_ptr->name, p_ptr->casino_wager);
+			casino_result(Ind, FALSE, TRUE);
+			return;
+		}
+
 #if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
 		if (ycv < 10) ycv += 2; //screen overflow limit >,>
 		else {
 			ycv = 2;
-			Send_store_special_clr(Ind, 8, 19);
+			Send_store_special_clr(Ind, 8, 17); //don't clear the 'Gold Remaining:' line!
 #else
 		if (ycv < 10) ycv++; //screen overflow limit >,>
 		else {
 			ycv = 1;
-			Send_store_special_clr(Ind, 7, 19);
+			Send_store_special_clr(Ind, 7, 17); //don't clear the 'Gold Remaining:' line!
 #endif
 		}
 		p_ptr->casino_progress = ycv;
 
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
+ #define CRAPS_DICE_ATTR TERM_UMBER /* Use different colour than default k_attr (TERM_L_UMBER)? */
 		connection_t *connp;
  #ifndef DICE_HUGE //normal die
 		char32_t c_die[6 + 1];
@@ -11827,7 +11840,6 @@ void handle_request_return_key(int Ind, int id, char c) {
 		bool custom_visuals = FALSE;
 		connp = Conn[p_ptr->conn];
 
-
 		/* Prepare the graphical visuals for this player (6 dice results) */
 		if (connp->use_graphics && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) && !p_ptr->ascii_items) { //client must know PKT_CHAR_DIRECT
 			int k_idx;
@@ -11836,37 +11848,57 @@ void handle_request_return_key(int Ind, int id, char c) {
  #ifndef DICE_HUGE //normal die
 			c_die[1] = p_ptr->k_char[k_idx];
  #endif
+ #ifdef CRAPS_DICE_ATTR
+			a_die[1] = CRAPS_DICE_ATTR;
+ #else
 			a_die[1] = p_ptr->k_attr[k_idx];
-
+ #endif
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_2);
  #ifndef DICE_HUGE //normal die
 			c_die[2] = p_ptr->k_char[k_idx];
  #endif
+ #ifdef CRAPS_DICE_ATTR
+			a_die[2] = CRAPS_DICE_ATTR;
+ #else
 			a_die[2] = p_ptr->k_attr[k_idx];
-
+ #endif
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_3);
  #ifndef DICE_HUGE //normal die
 			c_die[3] = p_ptr->k_char[k_idx];
  #endif
+ #ifdef CRAPS_DICE_ATTR
+			a_die[3] = CRAPS_DICE_ATTR;
+ #else
 			a_die[3] = p_ptr->k_attr[k_idx];
-
+ #endif
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_4);
  #ifndef DICE_HUGE //normal die
 			c_die[4] = p_ptr->k_char[k_idx];
  #endif
+ #ifdef CRAPS_DICE_ATTR
+			a_die[4] = CRAPS_DICE_ATTR;
+ #else
 			a_die[4] = p_ptr->k_attr[k_idx];
-
+ #endif
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_5);
  #ifndef DICE_HUGE //normal die
 			c_die[5] = p_ptr->k_char[k_idx];
  #endif
+ #ifdef CRAPS_DICE_ATTR
+			a_die[5] = CRAPS_DICE_ATTR;
+ #else
 			a_die[5] = p_ptr->k_attr[k_idx];
-
+ #endif
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_6);
  #ifndef DICE_HUGE //normal die
 			c_die[6] = p_ptr->k_char[k_idx];
  #endif
+ #ifdef CRAPS_DICE_ATTR
+			a_die[6] = CRAPS_DICE_ATTR;
+ #else
 			a_die[6] = p_ptr->k_attr[k_idx];
+ #endif
+
  #ifdef DICE_HUGE
 			/* Huge dice (1/4 tiles): */
 			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TL);
@@ -11976,7 +12008,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 #endif
 			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "You lost!");
 		} else {
-			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again -");
+			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again (ESC to forfeit) -");
 			return;
 		}
 
@@ -12028,7 +12060,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 	case RID_GO:
 		if (p_ptr->store_num == -1) return; /* Discard if we left the building */
 		if (!cfr) {
-			Send_store_special_clr(Ind, 5, 19);
+			Send_store_special_clr(Ind, 5, 18);
 			Send_store_special_str(Ind, 8, 8, TERM_ORANGE, "Now you're chickening out huh!");
 			p_ptr->store_action = 0;
 			return;

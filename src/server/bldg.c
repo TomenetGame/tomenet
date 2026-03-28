@@ -586,7 +586,10 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	/* --- Gamble! --- */
 
-	/* Clear store screen aka erase any previous results */
+	/* Clear store screen aka erase any previous results.
+	   Note that lines 3 to 18 are required to clear the Go board,
+	   but our gold is actually shown in line 17,
+	   so for everything else besides Go we should maybe just redraw it after clearing. */
 	Send_store_special_clr(Ind, 3, old_casino ? 20 : 18);
 
 	/* Set maximum bet */
@@ -613,6 +616,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	switch (cmd) {
 	case BACT_IN_BETWEEN: /* Game of In-Between */
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_VIOLET, "=== In Between ===");
 
 		odds = 3;
@@ -713,6 +717,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		break;
 
 	case BACT_CRAPS: /* Game of Craps - requires the good new RNG :) (thanks Mikael for adding the SFMT) */
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 #define CRAPS_1STDICE_ATTR TERM_RED /* Colour of the first pair of dice rolled for better distinguishing of function :). (Second pair is normal colour aka k_info->TERM_L_UMBER.) */
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_ORANGE, "=== Craps ===");
 
@@ -767,16 +772,24 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 		if ((roll3 == 7) || (roll3 == 11)) {
 			win = TRUE;
+#if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
+			Send_store_special_str(Ind, DICE_Y + 2 + 1, DICE_X + 7, TERM_L_GREEN, "You won!"); //looks slightly better?
+#else
 			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_L_GREEN, "You won!");
+#endif
 		} else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12)) {
 			win = FALSE;
+#if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
+			Send_store_special_str(Ind, DICE_Y + 2 + 1, DICE_X + 7, TERM_SLATE, "You lost.");
+#else
 			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_SLATE, "You lost.");
+#endif
 		} else {
 			p_ptr->casino_roll = choice;
 			p_ptr->casino_progress = 0;
 			p_ptr->casino_odds = odds;
 			p_ptr->casino_wager = wager;
-			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again -");
+			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again (ESC to forfeit) -");
 			return(TRUE);
 		}
 
@@ -785,6 +798,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		break;
 
 	case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 		odds = 9;
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Wheel ===");
 		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 15, TERM_RED, "  0  \377w1  2  3  4  5  6  7  8  9");
@@ -815,6 +829,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		return(TRUE);
 
 	case BACT_DICE_SLOTS: /* The Dice Slots */
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 		//have to 'pay upfront' for dice slots! (for easier prob calc) - like you insert a coin^^
 		p_ptr->au -= wager;
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
@@ -886,6 +901,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		break;
 
 	case BACT_BLACKJACK:
+		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 #define CRAPS_1STDICE_ATTR TERM_RED /* Colour of the first pair of dice rolled for better distinguishing of function :). (Second pair is normal colour aka k_info->TERM_L_UMBER.) */
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_L_DARK, "=== Black Jack ===");
 
@@ -2856,7 +2872,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 #ifdef ENABLE_GO_GAME
 			go_challenge(Ind);
 #else
-			Send_store_special_clr(Ind, 3, 19);
+			Send_store_special_clr(Ind, 3, 18); /* Clear the 'Gold Remaining:' line too, as we need all the space for the Goban */
 			Send_store_special_str(Ind, 6, 3, TERM_ORANGE, "Sorry, the Go board, bowls and stones were stolen by some unknown bastard!");
 			Send_store_special_str(Ind, 7, 3, TERM_ORANGE, "Unfortunately I cannot say yet when a replacement will arrive.");
 #endif

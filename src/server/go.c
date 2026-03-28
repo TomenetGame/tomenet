@@ -791,7 +791,7 @@ void go_challenge(int Ind) {
 	char challenge_req[20];
 	int wager;
 
-	Send_store_special_clr(Ind, 3, 19);
+	Send_store_special_clr(Ind, 3, 18);
 
 	/* Avoid both, legends-log spam and money cheeze, if someone
 	   just mass-transports newly made chars to Minas Anor.
@@ -935,7 +935,7 @@ void go_challenge_accept(int Ind, bool new_wager) {
 	player_type *p_ptr = Players[Ind];
 	int wager = 0;
 
-	Send_store_special_clr(Ind, 3, 19);
+	Send_store_special_clr(Ind, 3, 18);
 
 	if (new_wager) {
 		/* Prepare to deduct wager */
@@ -1115,7 +1115,7 @@ void go_challenge_start(int Ind) {
 		set_hidden_stage(FALSE);
 #endif
 
-	Send_store_special_clr(Ind, 3, 19);
+	Send_store_special_clr(Ind, 3, 18);
 	if (go_err(DOWN, DOWN, "go_challenge_start")) return;
 
 	random_move_prob = 0;

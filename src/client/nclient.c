@@ -6939,7 +6939,7 @@ int Receive_request_key(void) {
 
 	request_pending = TRUE;
 	if (get_com(prompt, &buf)) Send_request_key(id, buf);
-	else Send_request_key(id, 0);
+	else Send_request_key(id, 0); //Note: ESC will result in '0' here, not ASCII 27 in the line above, as get_com() exits with false on ESC.
 	request_pending = FALSE;
 	return(1);
 }
