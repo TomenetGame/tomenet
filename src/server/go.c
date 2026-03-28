@@ -3101,6 +3101,9 @@ static void go_challenge_cleanup(bool server_shutdown) {
 
 		/* We're no longer busy */
 		Players[Ind]->store_action = 0;
+
+		/* Redraw gold - on non-bigmap screens the Goban requires so much space hat gold wasn't visible anymore */
+		Send_gold(Ind, Players[Ind]->au, Players[Ind]->balance);
 	}
 
 	if (go_err(DOWN, DOWN, "go_challenge_cleanup")) return;
