@@ -14985,32 +14985,21 @@ void get_item(int Ind, signed char tester_hook) { //paranoia @ 'signed' char =-p
  * a player has ever been.	- Jir -
  */
 void set_recall_depth(player_type * p_ptr, object_type * o_ptr) {
-	//int recall_depth = 0;
-	//worldpos goal;
-
 	unsigned char * inscription = (unsigned char *) quark_str(o_ptr->note);
 
-	/* default to the players maximum depth */
+	/* default to the players maximum depth for a dungeon here, if any */
 	p_ptr->recall_pos.wx = p_ptr->wpos.wx;
 	p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+	if ((wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_DOWN | WILD_F_UP))) {
 #ifdef SEPARATE_RECALL_DEPTHS
-	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
+		p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
 			WILD_F_DOWN) ? 0 - get_recall_depth(&p_ptr->wpos, p_ptr) : get_recall_depth(&p_ptr->wpos, p_ptr);
 #else
-	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
+		p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
 			WILD_F_DOWN) ? 0 - p_ptr->max_dlv : p_ptr->max_dlv;
 #endif
-
-#if 0
-	p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
-			WILD_F_DOWN) ? 0 - p_ptr->max_dlv :
-			((wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_UP) ?
-			 p_ptr->max_dlv : 0);
-
-	goal.wx = p_ptr->wpos.wx;
-	goal.wy = p_ptr->wpos.wy;
-	//goal.wz = 0 - p_ptr->max_dlv;	// hack -- default to 'dungeon'
-#endif	// 0
+	} else p_ptr->recall_pos.wz = 0;
+	/* NOTE: do_recall() will default to town_x/y if wz is 0 and the sector is unknown or we're in the same sector but it has no dungeon/tower */
 
 	/* check for a valid inscription */
 	if (inscription == NULL) return;
@@ -15042,7 +15031,6 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr) {
 			p_ptr->recall_pos.wy = atoi((char*)inscription) % MAX_WILD_Y;
 			p_ptr->recall_pos.wz = 0;
 		}
-#if 1
 		/* @RT for inter-Town travels (not fully implemented yet) */
 		else if (*inscription == 'T') {
 			inscription++;
@@ -15050,7 +15038,6 @@ void set_recall_depth(player_type * p_ptr, object_type * o_ptr) {
 			p_ptr->recall_pos.wy = p_ptr->town_y;
 			p_ptr->recall_pos.wz = 0;
 		}
-#endif
 		else {
 			int tmp = 0;
 
