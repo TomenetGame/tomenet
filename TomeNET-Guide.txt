@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 19. March 2026 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 31. March 2026 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2001,12 +2001,17 @@ They all start with a slash '/' hence they're called slash commands:
             dungeon or across the worldmap.
             See "(0.3) Important Inscriptions, Word of Recall" for more info
             about Word of Recall. Examples:
+ /rec       Without any parameter will default to your last visited town if
+            you are currently at the world surface and the sector is unknown
+            or there is no dungeon, otherwise goes to maximum depth you have
+            visited in this dungeon.
  /rec -550  recalls you to -550ft, provided there is such a dungeon at your
             current worldmap location and you are not already inside.
             To specify depths in feet, the option depth_in_feet must be 'yes'.
  /rec -11   does the same, provided you have option depth_in_feet set to 'no'.
  /rec 32 32 recalls you to Bree (the town at (32,32) world map coordinates),
             provided you are on the world surface and not already in Bree.
+ /rec t     will recall towards your last visited town.
 
 /refresh
 /ref        Redraw the screen (do this if it's messed up for some reason).
@@ -2829,6 +2834,7 @@ town you visited.
     World travel:
     @RW32,32    will teleport you to sector 32,32 on the worldmap (Bree).
                 World map ranges from 0,0 to 63,63.
+    @RT         Go to last visited town.
 
     or even better for any kind of recalling..
     @R          This inscription makes the above versions sort of obsolete.
@@ -2839,6 +2845,16 @@ town you visited.
                 /rec -350         <- when option depth_in_feet is 'yes'.
                 /rec -7           <- when option depth_in_feet is 'no'.
                 /rec 32 32        <- notice: No komma between the coordinates!
+                /rec              <- go to max depth of the dungeon here; if
+                                     there is none, go to last visited town.
+                                     If we're inside a dungeon, recall us out.
+                /rec t            <- go to last visited town.
+
+                If you use an item with pure '@R' inscription without the /rec
+                command, it will default to last visited town if you are at the
+                surface and your sector has no dungeon.
+                If it has a dungeon you will go to your maximum depth.
+                If you are already inside the dungeon you will recall out.
 
     NOTES:
     1) You must've already been at that depth or deeper in order to teleport
