@@ -413,7 +413,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 	/* Oops conflict; took 'never duplicate' principal */
 	else if (prefix(messagelc, "/cough")) {
 	    /// count || prefix(messagelc, "/cou"))
-		if (p_ptr->paralyzed || p_ptr->stun > 100) {
+		if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 			msg_print(Ind, "\377yYou cannot cough while you cannot move.");
 			return;
 		}
@@ -425,7 +425,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		return;
 	}
 	else if (prefix(messagelc, "/shout") || (prefix(messagelc, "/sho") && !prefix(messagelc, "/show")) || prefix(messagelc, "/yell")) {
-		if (p_ptr->paralyzed || p_ptr->stun > 100) {
+		if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 			msg_print(Ind, "\377yYou cannot shout while you cannot move.");
 			return;
 		}
@@ -453,7 +453,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		return;
 	}
 	else if (prefix(messagelc, "/scream") || (prefix(messagelc, "/scr") && !prefix(messagelc, "/screen"))) {
-		if (p_ptr->paralyzed || p_ptr->stun > 100) {
+		if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 			msg_print(Ind, "\377yYou cannot scream while you cannot move.");
 			return;
 		}
@@ -637,7 +637,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int s = 0;
 #endif
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot destroy items while you cannot move.");
 				return;
 			}
@@ -1201,8 +1201,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
-			if (p_ptr->energy <= 0) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot cast while you cannot move.");
 				return;
 			}
@@ -1292,7 +1291,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		/* cast a spell by name, instead of book/position (todo: needs a proper energy+packetrequeue check!) */
 		else if (prefix(messagelc, "/cast")) {
 			/* Paralyzed/k.o.? */
-			if (p_ptr->energy <= 0) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot cast while you cannot move.");
 				return;
 			}
@@ -1311,7 +1310,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			byte start = INVEN_WIELD, end = INVEN_TOTAL;
 			object_type *o_ptr;
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot undress while you cannot move.");
 				return;
 			}
@@ -1355,7 +1354,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int ws, ws_org;
 			s16b slot_weapon = -1, slot_ring = -1;
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot dress while you cannot move.");
 				return;
 			}
@@ -1567,7 +1566,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				/* Don't drain energy far below zero - mikaelh */
 				if (//p_ptr->energy < 0 || /* switched this out with the checks below (para/ko) for the moment - C. Blue */
-				    p_ptr->paralyzed || p_ptr->stun > 100) {
+				    p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 					msg_print(Ind, "\377yYou cannot initiate recall while you cannot move.");
 					return;
 				}
@@ -2274,7 +2273,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/sip")) {
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot drink from a fountain while you cannot move.");
 				return;
 			}
@@ -2283,7 +2282,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		else if (prefix(messagelc, "/fill")) {
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot fill bottles while you cannot move.");
 				return;
 			}
@@ -2302,7 +2301,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				else return;
 			} else if ((k = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE)) == -1) return;
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot empty bottles while you cannot move.");
 				return;
 			}
@@ -2316,7 +2315,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot tear cloth while you cannot move.");
 				return;
 			}
@@ -2346,7 +2345,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot roll dice while you cannot move.");
 				return;
 			}
@@ -2446,7 +2445,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot flip coins while you cannot move.");
 				return;
 			}
@@ -2486,7 +2485,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot summon a pet while you cannot move.");
 				return;
 			}
@@ -2501,7 +2500,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 		else if (prefix(messagelc, "/unpet")) {
 #ifdef RPG_SERVER
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot dismiss your pet while you cannot move.");
 				return;
 			}
@@ -2551,7 +2550,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot shuffle cards while you cannot move.");
 				return;
 			}
@@ -2658,7 +2657,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot hand your cards over while you cannot move.");
 				return;
 			}
@@ -2688,7 +2687,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int value, flower;
 			char* temp;
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot play cards while you cannot move.");
 				return;
 			}
@@ -2751,7 +2750,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 			}
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot play cards while you cannot move.");
 				return;
 			}
@@ -4027,7 +4026,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot refill your light while you cannot move.");
 				return;
 			}
@@ -4219,7 +4218,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			int x, y;
 			cave_type **zcave = getcave(&p_ptr->wpos);
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot enter a store while you cannot move.");
 				return;
 			}
@@ -4245,7 +4244,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			bool found = FALSE;
 			cave_type **zcave = getcave(&p_ptr->wpos);
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot paint your house while you cannot move.");
 				return;
 			}
@@ -4297,7 +4296,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended || p_ptr->energy <= 0) {
 				msg_print(Ind, "\377yYou cannot knock on a door while you cannot move.");
 				return;
 			}
@@ -4341,8 +4340,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* Paralyzed/k.o.? */
-			if (p_ptr->energy <= 0) {
-				msg_print(Ind, "\377yYou cannot move.");
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended || p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot slap someone while you cannot move.");
 				return;
 			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -4393,8 +4392,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* Paralyzed/k.o.? */
-			if (p_ptr->energy <= 0) {
-				msg_print(Ind, "\377yYou cannot move.");
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended || p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot pat someone while you cannot move.");
 				return;
 			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -4452,8 +4451,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* Paralyzed/k.o.? */
-			if (p_ptr->energy <= 0) {
-				msg_print(Ind, "\377yYou cannot move.");
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended || p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot hug someone while you cannot move.");
 				return;
 			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -4492,8 +4491,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* Paralyzed/k.o.? */
-			if (p_ptr->energy <= 0) {
-				msg_print(Ind, "\377yYou cannot move.");
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended || p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot poke someone while you cannot move.");
 				return;
 			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -4526,8 +4525,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/applaud")) {
 			/* Paralyzed/k.o.? */
-			if (p_ptr->energy <= 0) {
-				msg_print(Ind, "\377yYou cannot move.");
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended || p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot applaud someone while you cannot move.");
 				return;
 			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -4563,8 +4562,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/wave")) {
 			/* Paralyzed/k.o.? */
-			if (p_ptr->energy <= 0) {
-				msg_print(Ind, "\377yYou cannot move.");
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended || p_ptr->energy <= 0) {
+				msg_print(Ind, "\377yYou cannot wave while you cannot move.");
 				return;
 			}
 			p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -4620,7 +4619,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended || p_ptr->energy <= 0) {
 				msg_print(Ind, "\377yYou cannot tip while you cannot move.");
 				return;
 			}
@@ -6236,7 +6235,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot split items while you cannot move.");
 				return;
 			}
@@ -6277,7 +6276,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot stow items while you cannot move.");
 				return;
 			}
@@ -6340,7 +6339,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot stow items while you cannot move.");
 				return;
 			}
@@ -6392,7 +6391,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			if (p_ptr->paralyzed || p_ptr->stun > 100) {
+			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot mix chemicals while you cannot move.");
 				return;
 			}
