@@ -13320,6 +13320,7 @@ int recall_depth_idx(struct worldpos *wpos, player_type *p_ptr) {
 }
 int get_recall_depth(struct worldpos *wpos, player_type *p_ptr) {
 	int i = recall_depth_idx(wpos, p_ptr);
+
 	if (i == -1) return(0);
 	return(p_ptr->max_depth[i]);
 }
