@@ -1795,6 +1795,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			p_ptr->energy = 0;
 #endif
 
+			/* @RT for inter-Town travels (not fully implemented yet) */
+			if (tk == 1 && (token[1][0] == 't' || token[1][0] == 'T')) {
+				if (!p_ptr->wpos.wz) { /* Need to be at surface */
+					p_ptr->recall_pos.wx = p_ptr->town_x;
+					p_ptr->recall_pos.wy = p_ptr->town_y;
+				} else { /* If in dungeon, just try to recall out first */
+					p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+					p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+				}
+				p_ptr->recall_pos.wz = 0;
+				return;
+			}
 
 			// here we check to make sure the user didn't enter a depth or a coordinate
 			// we could use isalpha, except we'd like it to be robust against town names
@@ -1879,10 +1891,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (p_ptr->recall_pos.wx < 0) p_ptr->recall_pos.wx = 0;
 				if (p_ptr->recall_pos.wy < 0) p_ptr->recall_pos.wy = 0;
 				break;
-			//default:	/* follow the inscription */
-				/* TODO: support tower */
-				//p_ptr->recall_pos.wz = 0 - p_ptr->max_dlv;
-				//p_ptr->recall_pos.wz = 0;
+			default: /* no parm given - If we're on the surface of a dungeon, don't recall back to our last town, but to our max depth! */
+				/* Dungeon/tower here? */
+
+				/* default to the players maximum depth for a dungeon here, if any */
+				p_ptr->recall_pos.wx = p_ptr->wpos.wx;
+				p_ptr->recall_pos.wy = p_ptr->wpos.wy;
+				if ((wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & (WILD_F_DOWN | WILD_F_UP))) {
+#ifdef SEPARATE_RECALL_DEPTHS
+					p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
+						WILD_F_DOWN) ? 0 - get_recall_depth(&p_ptr->wpos, p_ptr) : get_recall_depth(&p_ptr->wpos, p_ptr);
+#else
+					p_ptr->recall_pos.wz = (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags &
+						WILD_F_DOWN) ? 0 - p_ptr->max_dlv : p_ptr->max_dlv;
+#endif
+				} else p_ptr->recall_pos.wz = 0;
+				/* NOTE: do_recall() will default to town_x/y if wz is 0 and the sector is unknown or we're in the same sector but it has no dungeon/tower */
 			}
 			return;
 		}
