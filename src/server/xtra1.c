@@ -9270,6 +9270,8 @@ static void process_global_event(int ge_id) {
 
 			/* prepare to start the event! */
 			} else {
+				int err;
+
 				/* count participants first, to see if there are enough to start the event */
 				for (i = 0; i < MAX_GE_PARTICIPANTS; i++) {
 					if (!ge->participant[i]) continue;
@@ -9299,8 +9301,8 @@ static void process_global_event(int ge_id) {
 							ge->participant[i] = 0;
 							continue;
 						}
-						if (!can_use_wordofrecall(p_ptr)) {
-							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
+						if ((err = can_use_wordofrecall(p_ptr))) {
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon (%d).\n", p_ptr->name, err);
 							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
 							msg_broadcast_format(j, "\377s%s isn't allowed to leave the dungeon to participate.", p_ptr->name);
 #ifdef USE_SOUND_2010
@@ -9323,8 +9325,8 @@ static void process_global_event(int ge_id) {
 							ge->participant[i] = 0;
 							continue;
 						}
-						if (!can_use_wordofrecall(p_ptr)) {
-							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
+						if ((err = can_use_wordofrecall(p_ptr))) {
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon (%d).\n", p_ptr->name, err);
 							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
 							msg_broadcast_format(j, "\377s%s isn't allowed to leave the dungeon to participate.", p_ptr->name);
 #ifdef USE_SOUND_2010
@@ -9351,8 +9353,8 @@ static void process_global_event(int ge_id) {
 							ge->participant[j] = 0;
 							continue;
 						}
-						if (!can_use_wordofrecall(p_ptr) && !is_admin(p_ptr)) {
-							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon.\n", p_ptr->name);
+						if ((err = can_use_wordofrecall(p_ptr)) && !is_admin(p_ptr)) {
+							s_printf("EVENT_CHECK_PARTICIPANTS: Player '%s' stuck in dungeon (%d).\n", p_ptr->name, err);
 							msg_print(j, "\377oEvent participation failed because your dungeon doesn't allow recalling.");
 							msg_broadcast_format(j, "\377s%s isn't allowed to leave the dungeon to participate.", p_ptr->name);
  #ifdef USE_SOUND_2010
@@ -10006,6 +10008,7 @@ static void process_global_event(int ge_id) {
 		switch (ge->state[0]) {
 		case 0: { /* prepare level, gather everyone, begin */
 			int bx[4], by[4];
+			int dwd, dd, dm, dy, num = 1;
 
 			ge->state[1] = 0;
 			ge->cleanup = 1;
@@ -10218,20 +10221,24 @@ static void process_global_event(int ge_id) {
 			else s_printf("..placed %d/4 exit beacons\n", k);
 
 			/* place Horned Reaper :D */
-			n = 10000;
-			while (--n) {
-				x = randint(MAX_WID - 1);
-				y = randint(MAX_HGT - 1);
-				if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
-				    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
-					break;
-			}
-			if (!n) s_printf("..COULDN'T PLACE Horned Reaper\n");
-			else {
-				summon_override_checks = SO_ALL;
-				place_monster_one(&wpos, y, x, RI_HORNED_REAPER_GE, FALSE, FALSE, FALSE, 0, 0);
-				summon_override_checks = SO_NONE;
-				s_printf("..placed Horned Reaper\n");
+			get_date(&dwd, &dd, &dm, &dy);
+			if (dd == 1 && dm == 4) num = 20;
+			while (num--) {
+				n = 10000;
+				while (--n) {
+					x = randint(MAX_WID - 1);
+					y = randint(MAX_HGT - 1);
+					if ((f_info[zcave[y][x].feat].flags1 & FF1_FLOOR) &&
+					    !(f_info[zcave[y][x].feat].flags1 & FF1_DOOR))
+						break;
+				}
+				if (!n) s_printf("..COULDN'T PLACE Horned Reaper\n");
+				else {
+					summon_override_checks = SO_ALL;
+					place_monster_one(&wpos, y, x, RI_HORNED_REAPER_GE, FALSE, FALSE, FALSE, 0, 0);
+					summon_override_checks = SO_NONE;
+					s_printf("..placed Horned Reaper\n");
+				}
 			}
 
 			/* teleport the players in */

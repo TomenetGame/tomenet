@@ -4668,8 +4668,9 @@ void recall_player(int Ind, char *message) {
 
 
 /* Check if a player is unable to use Word of Recall (or teleportation) at his current location.
-   Important, if sector00 check gets fully if 1'ed: p_ptr->recall_pos.. must be set. */
-bool can_use_wordofrecall(player_type *p_ptr) {
+   Important, if sector00 check gets fully if 1'ed: p_ptr->recall_pos.. must be set.
+   Returns 0 if recall is fine, otherwise an error code != 0. */
+int can_use_wordofrecall(player_type *p_ptr) {
 	dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
 	cave_type **zcave = getcave(&p_ptr->wpos);
 	dun_level *l_ptr = getfloor(&p_ptr->wpos);
@@ -4684,35 +4685,35 @@ bool can_use_wordofrecall(player_type *p_ptr) {
 	    )
 #endif
 	    )
-		return(FALSE);
+		return(1);
 
 	if (d_ptr && !(getfloor(&p_ptr->wpos)->flags1 & LF1_IRON_RECALL) && (
 	    (((d_ptr->flags1 & DF1_FORCE_DOWN) || (d_ptr->flags2 & DF2_IRON)) && d_ptr->maxdepth > ABS(p_ptr->wpos.wz)) ||
 	    ((d_ptr->flags1 & DF1_NO_RECALL) || (d_ptr->flags2 & DF2_NO_EXIT_WOR))
 	    ))
-		return(FALSE);
+		return(2);
 
-	if (p_ptr->anti_tele) return(FALSE);
-	if (zcave && (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) return(FALSE);
-#if 1
+	if (p_ptr->anti_tele) return(3);
+	if (zcave && (zcave[p_ptr->py][p_ptr->px].info & CAVE_STCK)) return(4);
+#if 0 /* not in this function (eg allow waiting inside a house) */
 	/* Prevent teleporting someone onto a vault grid - this was allowed but poses the following problem:
 	   A player entering a level via staircase into a vault can get teleported off the staircase.
 	   Even if the vault isn't no-tele he can still fail to teleport out if the vault occupies the whole map.
 	   Since this seems too harsh, let's just keep teleportation consistent in the way that you cannot tele onto icky grids in general. */
-	if (zcave && (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)) return(FALSE);
+	if (zcave && (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)) return(5);
 #endif
 
-	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return(FALSE);
+	if ((p_ptr->global_event_temp & PEVF_NOTELE_00)) return(6);
 
-	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(FALSE);
-	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_TELE)) return(FALSE);
-	//if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) return(FALSE);
+	if (l_ptr && (l_ptr->flags2 & LF2_NO_TELE)) return(7);
+	if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_TELE)) return(8);
+	//if (l_ptr && (l_ptr->flags1 & LF1_NO_MAGIC)) return(9);
 
 	/* Space/Time Anchor */
-	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(FALSE);
+	if (check_st_anchor(&p_ptr->wpos, p_ptr->py, p_ptr->px)) return(10);
 
 	/* It's okay */
-	return(TRUE);
+	return(0);
 }
 
 /* Handles WoR
