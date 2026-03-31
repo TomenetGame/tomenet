@@ -693,21 +693,22 @@ void monster_lore_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool t
 
 	my_fclose(fff);
 }
-const char mon_flags2highlight[6][12][NAME_LEN] = {
+const char mon_flags2highlight[7][12][NAME_LEN] = {
     { "IM_COLD", "IM_FIRE", "IM_ACID", "IM_ELEC",			"IM_POIS", "IM_WATER", "IM_PSI", "IM_TELE",	"", "", "", "" },
     { "SUSCEP_COLD", "SUSCEP_FIRE", "SUSCEP_ACID", "SUSCEP_ELEC",	"SUSCEP_POIS", "HURT_LITE", "HURT_ROCK", "",	"", "", "", "" },
     //omitting SPIDER; note: DRAGON and DRAGONRIDER occur mutually exclusively, so we don't have to do extra string checks
-    { "ANIMAL", "ORC", "TROLL", "GIANT",					"DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD",	"EVIL", "GOOD", "NONLIVING", "" },
+    { "ANIMAL", "ORC", "TROLL", "GIANT",				"DRAGONRIDER", "DRAGON", "DEMON", "UNDEAD",	"EVIL", "GOOD", "NONLIVING", "" },
     { "UNIQUE", "NAZGUL", "PSEUDO_UNIQUE", "NO_DEATH",			"", "", "", ""					"", "", "", "" }, //no hints about dungeon/game boss status available or used
     { "NEUTRAL", "FRIENDLY", "PET", "QUESTOR",				"", "", "", ""					"", "", "", "" }, //currently unavailable
-    { "AQUATIC", "", "", "",						"", "", "", ""					"", "", "", "" }
+    { "AQUATIC", "", "", "",						"", "", "", ""					"", "", "", "" },
+    { "DROP_GREAT", "DROP_CHOSEN", "", "",				"", "", "", ""					"", "", "", "" },
     };
 static int mon_highlit_flags(char *line) {
 	const char (*f)[NAME_LEN];
 	char *p2;
 	int i = 0, l, mf;
 
-	for (mf = 0; mf < 6; mf++) {
+	for (mf = 0; mf < 7; mf++) {
 		f = mon_flags2highlight[mf];
 		while (*f[0]) {
 			p2 = line;
@@ -736,7 +737,7 @@ static void mon_highlight_flags(char *info) {
 	char info_tmp[MSG_LEN], *p2;
 	int l, mf;
 
-	for (mf = 0; mf < 6; mf++) {
+	for (mf = 0; mf < 7; mf++) {
 		f = mon_flags2highlight[mf];
 		while (*f[0]) {
 			p2 = info;
@@ -755,8 +756,9 @@ static void mon_highlight_flags(char *info) {
 					case 1: sprintf(info_tmp + (p2 - info), "\377y%s\377%c", *f, a_flag); break;
 					case 2: sprintf(info_tmp + (p2 - info), "\377o%s\377%c", *f, a_flag); break;
 					case 3: sprintf(info_tmp + (p2 - info), "\377U%s\377%c", *f, a_flag); break;
-					case 4: sprintf(info_tmp + (p2 - info), "\377G%s\377%c", *f, a_flag); break;
+					case 4: sprintf(info_tmp + (p2 - info), "\377g%s\377%c", *f, a_flag); break;
 					case 5: sprintf(info_tmp + (p2 - info), "\377B%s\377%c", *f, a_flag); break;
+					case 6: sprintf(info_tmp + (p2 - info), "\377G%s\377%c", *f, a_flag); break;
 					}
 					strcat(info_tmp, p2 + strlen(*f));
 					strcpy(info, info_tmp);
