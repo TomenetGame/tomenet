@@ -3737,6 +3737,10 @@ void client_init(char *argv1, bool skip) {
 	rl_connection_destructible = FALSE;
 	if (rl_auto_relogin) skip = TRUE;
 
+	/* Reset grid-based volume modifications */
+	grid_ambient_volume = grid_weather_volume = grid_ambient_volume_goal = grid_weather_volume_goal = 100;
+	set_mixing();
+
 	/* Hack-fix custom font loading once more after this next login */
 	fix_custom_font_after_startup = TRUE;
 #endif
