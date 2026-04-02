@@ -230,7 +230,13 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 				(void)sprintf(tmp, "      ***");
 			else {
 				/* Hack -- display in minus (to avoid confusion chez player) */
-				if (c_cfg.colourize_bignum) colour_bignum((int)(cur - adv), PY_MAX_EXP, tmp, 1, TRUE);
+				if (c_cfg.colourize_bignum) {
+					char *c = tmp + 2; /* chars 0 and 1 are colour code (\377G etc) */
+
+					colour_bignum((int)(adv - cur), PY_MAX_EXP, tmp, 2, TRUE); //wrong way round on purpose, to make it a positive number just for colour_bignum() text processing
+					while (*c == ' ') c++;
+					*(c - 1) = '-'; //add the minus manually =p
+				}
 				else sprintf(tmp, "%9d", (int)(cur - adv));
 			}
 		}
