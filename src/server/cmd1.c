@@ -7723,7 +7723,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	int y, x, oldx, oldy;
 	int i;
 
-	cave_type *c_ptr;
+	cave_type *c_ptr, *c0_ptr;
 	struct c_special *cs_ptr;
 	byte *w_ptr;
 	monster_race *r_ptr = &r_info[p_ptr->body_monster];
@@ -7939,6 +7939,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 	}
 
 	/* Examine the destination */
+	c0_ptr = c_ptr;
 	c_ptr = &zcave[y][x];
 
 	w_ptr = &p_ptr->cave_flag[y][x];
@@ -8015,8 +8016,10 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 		{
 			/* if (!((!wpos->wz) && (p_ptr->tim_wraith || q_ptr->tim_wraith)))*/
 			/* switch places only if BOTH have WRAITHFORM or NONE has it, well or if target is a DM */
-			if ((!(p_ptr->afk || q_ptr->afk) && /* dont move AFK players into trees to kill them */
-			    ((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)))
+			if ((!(p_ptr->afk || q_ptr->afk) && /* dont move AFK players */
+			    ((p_ptr->tim_wraith && q_ptr->tim_wraith) || (!p_ptr->tim_wraith && !q_ptr->tim_wraith)) &&
+			    !(!p_ptr->tim_wraith && (f_info[c_ptr->feat].flags1 & FF1_WALL) && !(f_info[c_ptr->feat].flags1 & (FF1_CAN_LEVITATE | FF1_CAN_CLIMB))) && //todo maybe: don't count wooden tables etc as 'wall' here
+			    !(!q_ptr->tim_wraith && (f_info[c0_ptr->feat].flags1 & FF1_WALL) && !(f_info[c0_ptr->feat].flags1 & (FF1_CAN_LEVITATE | FF1_CAN_CLIMB))))
 			    || q_ptr->admin_dm || blocks_important_feat || (c_ptr->info2 & CAVE2_SWITCH)) {
 				store_exit(Ind);
 				store_exit(Ind2);
