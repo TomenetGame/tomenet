@@ -11866,13 +11866,16 @@ int inven_carry_okay(int Ind, object_type *o_ptr, s16b tolerance) {
 #ifdef ENABLE_SUBINVEN
 		/* Specifically for !Gn inscription inside subinventories:
 		   TODO: Allow an empty and eligible slot in the subinventory to cause inven_carry_okay() and then picking up to succeed, even if normal inventory is full. */
-		if (j_ptr->tval == TV_SUBINVEN) {
+		if (j_ptr->tval == TV_SUBINVEN &&
+		    /* Must fit the object type */
+		    item_matches_subinven(Ind, get_subinven_group(j_ptr->sval), o_ptr)) {
 			int j;
 			object_type *k_ptr;
 
 			for (j = 0; j < j_ptr->bpval; j++) {
 				k_ptr = &p_ptr->subinventory[i][j];
 				if (!k_ptr->tval) break;
+
 				if (!subinven_can_accept(Ind, o_ptr, i, tolerance & 0x200)) continue;
 
 				/* Check if the two items can be combined - here we can also check for !Gn inscription via 0x20 tolerance.

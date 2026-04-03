@@ -5750,6 +5750,9 @@ s16b subinven_move_aux(int Ind, int islot, int sslot, int amt, bool quiet) {
 bool item_matches_subinven(int Ind, int subinven_group_type, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
 
+	/* Not a valid bag */
+	if (subinven_group_type == -1) return(FALSE); /* SV_SI_HACK */
+
 	/* Not eligible ever */
 	if (o_ptr->tval == TV_SUBINVEN) return(FALSE);
 	if (o_ptr->tval == TV_CHEST) return(FALSE);

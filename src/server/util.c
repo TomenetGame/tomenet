@@ -11075,11 +11075,12 @@ void verify_subinven_size(int Ind, int slot, bool check) {
 	}
 }
 /* Empty a subinventory, moving all contents to the player inventory, causing overflow if not enough space.
-   drop: Drop items to the floor instead of unstowing them into the backpack inventory (for case of player death). */
+   drop: Drop items to the floor instead of unstowing them into the backpack inventory (for case of player death).
+   quiet: No message about resulting items being placed into normal inventory. */
 void empty_subinven(int Ind, int item, bool drop, bool quiet) {
 	player_type *p_ptr = Players[Ind];
-	int i, s = p_ptr->inventory[item].bpval, k;
-	object_type *o_ptr;
+	object_type *o_ptr, *s_ptr = &p_ptr->inventory[item];
+	int i, s = s_ptr->bpval, s_sval = s_ptr->sval, k;
 	char o_name[ONAME_LEN];
 	bool overflow_msg = FALSE;
 
@@ -11096,6 +11097,7 @@ void empty_subinven(int Ind, int item, bool drop, bool quiet) {
 	}
 
 	/* Empty everything first, without live-updating the slots (FALSE) */
+	s_ptr->sval = SV_SI_HACK; /* hack: temporarily disable the to-be-emptied bag itself as valid target for the items coming from inside it */
 	for (i = 0; i < s; i++) {
 		o_ptr = &p_ptr->subinventory[item][i];
 		if (!o_ptr->tval) break;
@@ -11119,7 +11121,7 @@ void empty_subinven(int Ind, int item, bool drop, bool quiet) {
 				}
 			} else s_printf("empty_subinven(%d) PARANOIA.\n", Ind);
 		} else {
-			if (!overflow_msg) {
+			if (!overflow_msg) { /* only show this msg once (on first overflowing item) */
 				msg_format(Ind, "\376\377oYour pack overflows!");
 				overflow_msg = TRUE;
 			}
@@ -11133,6 +11135,7 @@ void empty_subinven(int Ind, int item, bool drop, bool quiet) {
 
 		invwipe(&p_ptr->subinventory[item][i]);
 	}
+	s_ptr->sval = s_sval; /* unhack again */
 
 	/* Then, efficiently update it completely at once */
 	display_subinven(Ind, item);
@@ -11163,6 +11166,7 @@ void erase_subinven(int Ind, int item) {
 }
 int get_subinven_group(int sval) {
 	switch (sval) {
+	case SV_SI_HACK: return(-1); /* hack: temporarily disabled bag, for emptying a bag and preventing to recognize itself as valid target again for its own items. */
 	case SV_SI_SATCHEL:
 	case SV_SI_TRAPKIT_BAG:
 	case SV_SI_MDEVP_WRAPPING:
@@ -11173,7 +11177,7 @@ int get_subinven_group(int sval) {
 		//combine multiple choices to a single group, using the first element as its identifier
 		if (sval >= SV_SI_GROUP_CHEST_MIN && sval <= SV_SI_GROUP_CHEST_MAX) return(SV_SI_GROUP_CHEST_MIN);
 	}
-	return(-1);
+	return(-1); /* paranoia - unknown bag type */
 }
 #endif
 

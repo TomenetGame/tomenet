@@ -5052,6 +5052,7 @@
 #define SV_SI_CHEST_LARGE_WOODEN	105
 #define SV_SI_CHEST_LARGE_IRON		106
 #define SV_SI_CHEST_LARGE_STEEL		107
+#define SV_SI_HACK			254	/* for empty_subinven(): hack, to temporarily disable a bag as valid target, ie the one being emptied into normal inventory. */
 
 /* Only allow one subinven from each type group per player?
    (We only define helper markers for those groups that have more than one member,
