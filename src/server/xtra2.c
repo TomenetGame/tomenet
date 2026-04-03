@@ -7262,7 +7262,7 @@ bool monster_death(int Ind, int m_idx) {
 			object_type forge;
 
 			invcopy(&forge, lookup_kind(TV_POTION, SV_POTION_POISON));
-			s_printf("MT_POISON: %s found poison (kill).\n", p_ptr->name);
+			//s_printf("MT_POISON: %s found poison (kill).\n", p_ptr->name); //kinda spammy
 			forge.owner = p_ptr->id;
 			if (!object_aware_p(Ind, &forge)) {
 				object_aware(Ind, &forge);
