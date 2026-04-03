@@ -11868,6 +11868,9 @@ static void do_cmd_options_tilesets(void) {
 
 	DIR *dir;
 	struct dirent *ent;
+#ifdef USE_X11
+	int resize_y;
+#endif
 
 
 	/* Paranoia: 0 tileset allowed? */
@@ -12001,6 +12004,7 @@ static void do_cmd_options_tilesets(void) {
 		l++;
 
 #ifdef USE_X11
+		resize_y = l;
 		Term_putstr(1, l++, -1, TERM_WHITE, format("Resize type is: '\377y%s\377w' (%s) ('\377yr\377w' to cycle)" , interpolation_list[gfx_resize_type].name, interpolation_list[gfx_resize_type].description));
 		l++;
 #endif
@@ -12122,10 +12126,11 @@ static void do_cmd_options_tilesets(void) {
 		case 'r':
 			gfx_resize_type = (gfx_resize_type + 1) % INTERPOLATION_TYPES_COUNT;
 
-			for (j = 0; j < ANGBAND_TERM_MAX; j++) {
-				resize_term_gfx(j);
-			}
+			/* as this may take a while, prevent user from thinking the client had frozen up for good */
+			Term_putstr(1, resize_y, -1, TERM_WHITE, "\377o            Please wait while regenerating graphics...                          ");
+			Term_fresh();
 
+			for (j = 0; j < ANGBAND_TERM_MAX; j++) resize_term_gfx(j);
 			break;
 #endif
 		case '=':
