@@ -1840,6 +1840,9 @@ They all start with a slash '/' hence they're called slash commands:
 /mix <tag numbers 'n' of chemicals inscribed '@Cn'> [<'*' to self-activate>]
             Mixes chemicals and/or self-activate a mixture, which must all be
             inscribed @C<n> where <n> is a numerical tag from 0 to 9.
+            Tip: Since the @C9 tag is unused, you can inscribe oil flasks this
+                 way to include them in your numerical mix command, when you
+                 want to create blast charges via alternative formulas.
             Examples:
             /mix 1233   -> mix chemicals inscribed '@C1', '@C2' and 2x '@C3'.
             /mix 1233*  -> mix those chemicals and self-activate the mixture.
@@ -19879,6 +19882,7 @@ The clou is that you can actually combine both syntaxes as you wish!
 Here are the two syntaxes in detail with examples:
 
 Syntax (1):
+-----------
   /mix <tag numbers 'n' of chemicals inscribed '@Cn'> [<'*' to self-activate>]
 This command mixes chemicals and/or self-activates a mixture, which must all be
 inscribed @C<n> where <n> is a numerical tag from 0 to 9.
@@ -19887,7 +19891,12 @@ Examples:
   /mix 1233*     -> mix those chemicals and self-activate the mixture.
   /mix 0         -> Self-activates a mixture inscribed '@C0'.
 
+Tip: Since the @C9 tag is unused, you can inscribe oil flasks this way to
+     include them in your numerical mix command, when you want to create blast
+     charges via alternative formulas, ie based on ammonia salt and lamp oil.
+
 Syntax (2):
+-----------
   /mix <satchel-lower-case / inven-upper-case slot letters> [<'*' activates>]
 Lower-case for alchemy satchel, upper-case for inventory:
 Example:
@@ -19967,7 +19976,8 @@ any kind of chemicals as long as you have demolitionist unlocked (5.000 skill).
 
 Crafting ingredients from raw materials:
 ----------------------------------------
-- Wood chips can be processed into charcoal (requires fire-based light source).
+- Wood chips can be processed into charcoal (requires fire-based light source;
+  processing is done by pressing 'A' to activate them).
 - Sulfur + saltpetre + water = flask of acid.
 - Vitriol + water or salt water = flask of acid.
 - Reactive metal powder + salt water or ammonia salt = caustic metal ash.
