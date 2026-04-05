@@ -6395,7 +6395,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		/* Mix chemicals inscribed @C<n> easily -
 		   Regarding 'n' number, we have 10 values (0..9):
 		   There are 11 chemicals, but wood chips are only for processing them to charcoal, so it fits.
-		   And usually there are in fact only 8 mixable chemicals as NO_RUST_NO_HYDROXIDE is enabled. */
+		   And usually there are in fact only 8 mixable chemicals as NO_RUST_NO_HYDROXIDE is enabled.
+		   Vitriol is @C8 atm, ie 9th, leaving @C0 for mixtures for qol.
+		   While water, salt water and acid are not directly involved in charge-mixing but only for precursors, and hence not important to have an @C inscription,
+		   lamp oil actually is used, and we have exactly @C9 to spare for it (if NO_RUST_NO_HYDROXIDE).
+		   TODO maybe - we could allow @CA... hex-like inscriptions to include the non-direct ingredients mentioned above (water etc):
+		        @CA water, @CB salt water, @CC acid (and @CD oil if we don't simply want to use @C9).
+		        However, this would currently collide with the inventory letter usage in mixed-syntax commands :/. */
 		else if (prefix(messagelc, "/mix")) {
 			char *tagp, *insc, *tagp_init = message3;
 			object_type *o_ptr;
