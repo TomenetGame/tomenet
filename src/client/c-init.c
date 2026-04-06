@@ -477,7 +477,7 @@ static void init_monster_list() {
 		if (buf[0] == 'F' && strstr(buf, "ATTR_MULTI")) breathhued = TRUE;
 		if (buf[0] == 'F' && strstr(buf, "ATTR_BASE")) basehued = TRUE;
 
-		if (buf[0] == 'N' && strstr(buf, "Test Blob")) discard = TRUE;
+		if (buf[0] == 'N' && strcasestr(buf, "Test Blob")) discard = TRUE;
 
 		/* for c_cfg.ascii_uniques */
 		if (buf[0] == 'F' && strstr(buf, "UNIQUE")) unique = TRUE;
