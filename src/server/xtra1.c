@@ -6648,7 +6648,7 @@ void calc_boni(int Ind) {
 
 	/* - SKILL_MIND also helps to reduce hallucination time in set_image() */
 	if (get_skill(p_ptr, SKILL_MIND) >= 40 && !p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni[14].cb[3] |= CB4_RMIND; }
-	if (get_skill(p_ptr, SKILL_MIND) >= 50) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[4] |= CB5_XMIND; }
+	if (get_skill(p_ptr, SKILL_MIND) >= 50 && p_ptr->reduce_insanity < 2) { p_ptr->reduce_insanity = 2; csheet_boni[14].cb[4] |= CB5_XMIND; }
 	if (get_skill(p_ptr, SKILL_TEMPORAL) >= 50) { p_ptr->resist_time = TRUE; csheet_boni[14].cb[3] |= CB4_RTIME; }
 	if (get_skill(p_ptr, SKILL_UDUN) >= 40) { p_ptr->hold_life = TRUE; csheet_boni[14].cb[5] |= CB6_RLIFE; }
 	if (get_skill(p_ptr, SKILL_META) >= 20) p_ptr->skill_sav += get_skill(p_ptr, SKILL_META) - 20;
