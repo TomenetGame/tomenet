@@ -8103,7 +8103,7 @@ void do_keepalive(void) {
 void do_flicker(void) {
 	static int flticks = 0;
 
-	if (ticks-flticks < FL_SPEED) return;
+	if (ticks - flticks < FL_SPEED) return;
 	flicker();
 	flticks = ticks;
 }
