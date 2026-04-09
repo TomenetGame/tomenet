@@ -1216,12 +1216,14 @@ Q       lets your character commit suicide (use this to permanently delete a
 CTRL+R  redraw the screen (do this if it's messed up for some reason).
  (/refresh, /ref)
 
-CTRL+T  take a screenshot. See /screenshot command below.
+CTRL+T  take a screenshot in xhtml format. See /screenshot command below.
 SHIFT+CTRL+T
         Takes a screenshot in PNG format. To work properly, this requires:
         A) On Linux/OSX clients the package 'imagemagick' to be installed, as
            it utilizes its 'import' command.
         B) On Windows clients the .NET framework to be installed.
+
+        These two keys can be swapped by enabling option 'screenshot_keys'.
 
 TAB or CTRL+I
         displays lag-o-meter.
@@ -1943,8 +1945,7 @@ They all start with a slash '/' hence they're called slash commands:
 
 /cvpng      Client-side command that invokes creation of a PNG screenshot from
             a previously taken xhtml screenshot, same as if the user pressed
-            the '~' key while already inside the knowledge menu ('~' too), ie
-            double-tapping the '~' key.
+            the '#' key inside the knowledge menu ('~').
             This utilizes an installed Firefox or Chrome or Chromium webbrowser
             to render the PNG file from the xhtml file. If you have installed
             none of these then this command will not work.
@@ -2084,7 +2085,7 @@ They all start with a slash '/' hence they're called slash commands:
             You can view those xhtml files in most webbrowsers.
             Also see /cvpng command for how to convert the last taken xhtml
             screenshot to a PNG format image file.
-            Alternatively enter the knowedge menu with ~ and then press #.
+            Alternatively enter the knowedge menu with ~ and then press '#'.
 
 /screenshotpng [<filename>]
 /shotpng
@@ -4084,7 +4085,7 @@ programs you can install on Windows:
   from within the knowledge (~) menu.
 - 7-zip (www.7-zip.org): For installing or updating audio packs.
 - Firefox or Chrome or Chromium: For converting an xhtml screenshot taken to a
-  PNG image file.
+  PNG image file (via ~ #).
 - Dot-net (.NET) framework for utilizing direct PNG screenshot capture via
   the CTRL+SHIFT+T hotkey.
 
@@ -4096,7 +4097,7 @@ packages you can install on Linux:
   the knowledge (~) menu.
 - xclip: For using copy/paste capabilities.
 - coreutils (for readlink) and Firefox or Chrome or Chromium:
-  For converting XHTML to PNG screenshots.
+  For converting XHTML to PNG screenshots (via ~ #).
 - imagemagick for making PNG screenshots directly (via SHIFT+CTRL+T hotkey).
 - 7-zip: 7zG on X11, 7z on GCU. For installing or updating audio packs.
 
@@ -27411,7 +27412,8 @@ it will be named Gandalf-victory.txt accordingly.
 Also, newer clients will automatically take an xhtml screenshot too when a
 char dump is made, of same name but with .xhtml ending. Those can be viewed
 in most webbrowsers. To manually take an xhtml-Screenshot at any time, press
-CTRL+T. To take a PNG screenshot press CTRL+SHIFT+T.
+CTRL+T. To take a PNG screenshot press CTRL+SHIFT+T. You can swap these two
+keys via 'screenshot_keys' option.
 
 
 (9.2a) High Score
