@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. April 2026 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 9. April 2026 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2073,16 +2073,18 @@ They all start with a slash '/' hence they're called slash commands:
             (Same as IRC command ?seen.)
 
 /screenshot [<filename>]
-/shot       Takes a screenshot to a html file. If <filename> is omitted, it
+/shot       Takes a screenshot to an xhtml file. If <filename> is omitted, it
             writes to 'screenshot?????.xhtml' by default, where "?????" are
             either increasing numbers or the current date and time if you have
             the option 'screenshot_format' enabled.
-            You can also press CTRL+T to take a screenshot, which is exactly
-            the same thing as using this slash command.
+            You can also press CTRL+T to (or CTRL+SHIFT+T by enabling option
+            screenshot_keys) take a screenshot, which is exactly the same thing
+            as using this slash command.
 
             You can view those xhtml files in most webbrowsers.
             Also see /cvpng command for how to convert the last taken xhtml
             screenshot to a PNG format image file.
+            Alternatively enter the knowedge menu with ~ and then press #.
 
 /screenshotpng [<filename>]
 /shotpng
@@ -2090,8 +2092,9 @@ They all start with a slash '/' hence they're called slash commands:
             writes to 'screenshot?????.png' by default, where "?????" are
             either increasing numbers or the current date and time if you have
             the option 'screenshot_format' enabled.
-            You can also press CTRL+SHIFT+T to take a screenshot, which is
-            exactly the same thing as using this slash command.
+            You can also press CTRL+SHIFT+T (or CTRL+T by enabling option
+            screenshot_keys) to take a screenshot, which is exactly the same
+            thing as using this slash command.
 
             This requires you to have installed...
              A) for Linux/OSX clients the package 'imagemagick', specifically

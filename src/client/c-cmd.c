@@ -7525,7 +7525,7 @@ void cmd_check_misc(void) {
 			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377UG\377w) Open git repository site");
 			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UL\377w) Open oook.cz ladder site");
 			row += 3;
-			Term_putstr( 5, row, -1, TERM_WHITE, "(\377o~\377w) Convert last screenshot to");
+			Term_putstr( 5, row, -1, TERM_WHITE, "(\377o#\377w) Convert last screenshot to");
 			Term_putstr( 5, row + 1,   -1, TERM_WHITE, "    a PNG and leave this menu:");
 			Term_putstr( 5, row + 2,   -1, TERM_WHITE, format("    %s", screenshot_filename[0] ? screenshot_filename : "- no screenshot taken -"));
 			Term_putstr(40, row, -1, TERM_WHITE, "(\377oC\377w) Edit the current config file:");
@@ -7752,7 +7752,7 @@ void cmd_check_misc(void) {
 #endif
 
 		//case 'I':
-		case '~':
+		case '#':
 			if (png_screenshot()) i = ESCAPE; /* quit knowledge menu on success */
 			break;
 		case 'C':
@@ -8265,7 +8265,7 @@ void cmd_message(void) {
 			cmd_check_misc();
 			inkey_msg = FALSE;
 			return;
-		} else if (!strcasecmp(buf, "/cvpng")) { /* Someone claimed that he doesn't have a '~' key ">_>.. */
+		} else if (!strcasecmp(buf, "/cvpng")) { /* Someone claimed that he doesn't have a '~' key ">_>.. now '#' key though anyway */
 			(void)png_screenshot();
 			inkey_msg = FALSE;
 			return;
