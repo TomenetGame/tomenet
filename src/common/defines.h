@@ -118,18 +118,25 @@
 /* version_os constants, set by gcc flags - C. Blue */
 #define OS_UNKNOWN	0
 #define OS_WIN32	1
-#define OS_GCU		2
-#define OS_X11		3
-#define OS_GCU_X11	4
+#define OS_LINUX	2 /* backward compat: 3 and 4 too */
+#define OS_LINUX2	3 /* backward compat */
+#define OS_LINUX3	4 /* backward compat */
 #define OS_OSX		5
 #define OS_ANDROID	6
 #define OS_IPHONE	7
 #define OS_IPAD		8
+#define OS_BSD		9
+
+#define OS_SUB_GCU	1
+#define OS_SUB_X11	2
+#define OS_SUB_GCU_X11	3
 
 /* Set new VERSION_OS (after 4.4.8.1.0.0) for client - C. Blue */
 #ifdef CLIENT_SIDE
  #ifdef WIN32
   #define VERSION_OS		OS_WIN32
+ #elif defined(LINUX) || defined(LINUX2) || defined(LINUX3)
+  #define VERSION_OS		OS_LINUX
  #elif defined(OSX)
   #define VERSION_OS		OS_OSX
  #elif defined(ANDROID)
@@ -138,14 +145,18 @@
   #define VERSION_OS		OS_IPHONE
  #elif defined(IPAD)
   #define VERSION_OS		OS_IPAD
- #elif defined(USE_X11) && defined(USE_GCU)
-  #define VERSION_OS		OS_GCU_X11
- #elif defined(USE_GCU)
-  #define VERSION_OS		OS_GCU
- #elif defined(USE_X11)
-  #define VERSION_OS		OS_X11
+ #elif defined(BSD)
+  #define VERSION_OS		OS_BSD
  #else
   #define VERSION_OS		OS_UNKNOWN
+ #endif
+
+ #if defined(USE_X11) && defined(USE_GCU)
+  #define VERSION_OS_SUB	OS_SUB_GCU_X11
+ #elif defined(USE_GCU)
+  #define VERSION_OS_SUB	OS_SUB_GCU
+ #elif defined(USE_X11)
+  #define VERSION_OS_SUB	OS_SUB_X11
  #endif
 #endif
 

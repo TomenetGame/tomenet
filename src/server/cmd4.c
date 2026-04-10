@@ -1509,7 +1509,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 	char file_name[MAX_PATH_LENGTH];
 
 	bool admin = is_admin(p_ptr);
-	char flag_str[12], version[5];
+	char flag_str[12], version[6];
 	bool iddc;
 	bool big_map = (p_ptr->screen_hgt != SCREEN_HGT); //BIG_MAP is currently turned on for this player?
 
@@ -1543,16 +1543,21 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 		}
 
 		switch (q_ptr->version.os) {
-		case OS_WIN32: strcpy(version, "W\377-"); break;
-		case OS_GCU: strcpy(version, "G\377-"); break;
-		case OS_X11: strcpy(version, "X\377-"); break;
-		case OS_GCU_X11: strcpy(version, "L\377-"); break;
-		case OS_OSX: strcpy(version, "O\377-"); break;
-		case OS_ANDROID: strcpy(version, "A\377-"); break;
-		case OS_IPHONE: strcpy(version, "I\377-"); break;
-		case OS_IPAD: strcpy(version, "P\377-"); break;
-		default: strcpy(version, "?\377-"); break;
+		case OS_WIN32: strcpy(version, "W"); break;
+		case OS_LINUX: strcpy(version, "L"); break;
+		case OS_OSX: strcpy(version, "O"); break;
+		case OS_ANDROID: strcpy(version, "A"); break;
+		case OS_IPHONE: strcpy(version, "I"); break;
+		case OS_IPAD: strcpy(version, "P"); break;
+		case OS_BSD: strcpy(version, "B"); break;
+		default: strcpy(version, "?"); break;
 		}
+		switch (q_ptr->version.os_sub) {
+		case OS_SUB_GCU: strcat(version, "g"); break;
+		case OS_SUB_X11: strcat(version, "x"); break;
+		case OS_SUB_GCU_X11: strcat(version, "X"); break;
+		}
+		strcat(version, "\377-");
 
 		iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
 

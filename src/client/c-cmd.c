@@ -8035,7 +8035,7 @@ void cmd_message(void) {
 			inkey_msg = FALSE;
 			return;
 		} else if (!strcasecmp(buf, "/cver") || !strcasecmp(buf, "/cversion")) {
-			c_msg_format("Client version: %d.%d.%d.%d.%d.%d%s, OS %d.", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD, CLIENT_VERSION_TAG, VERSION_OS);
+			c_msg_format("Client version: %d.%d.%d.%d.%d.%d%s, OS %d/%d.", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD, CLIENT_VERSION_TAG, VERSION_OS, VERSION_OS_SUB);
 			inkey_msg = FALSE;
 			return;
 		} else if (!strcasecmp(buf, "/apickup")) { //purely client-side, so Client_setup.options[] doesn't need to be changed

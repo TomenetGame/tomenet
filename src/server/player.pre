@@ -141,6 +141,7 @@ struct version_type {	/* Extended version structure */
 	int build;
 
 	int os;
+	int os_sub;
 };
 
 /*

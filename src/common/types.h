@@ -3155,6 +3155,7 @@ struct version_type {		/* Extended version structure */
 	int build;
 
 	int os; /* after 4.4.8.1.0.0 */
+	int os_sub;
 };
 
 typedef struct inventory_change_type inventory_change_type;

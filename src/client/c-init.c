@@ -3982,7 +3982,11 @@ again:
 
 	/* Extended version */
 	if (server_protocol >= 2)
-		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD + (VERSION_OS) * 1000000);
+		/* Note: OS_SUB breaks compat with OS detection for older servers (<4.9.3.0.0.3);
+		   should be fine though since distinguishing between OS_WIN32 and the rest still works and that's the only thing needed, and even just once, for font mapping details.
+		   Other than that, the OS is just for statistics/admin info.
+		   Also, it might be more informative to use ANGBAND_SYS/force_cui for true usage subsystems instead of compilation sub-os info. */
+		Packet_printf(&ibuf, "%d%d%d%d%d%d", VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD + (VERSION_OS + VERSION_OS_SUB * 100) * 1000000);
 
 	/* Connect to server */
 #ifdef UNIX_SOCKETS

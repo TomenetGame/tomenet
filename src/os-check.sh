@@ -5,6 +5,7 @@ elif [ "`uname -s | grep -i iPhone`" != "" ]; then echo "-DIPHONE"
 elif [ "`uname -s | grep -i iPad`" != "" ]; then echo "-DIPAD"
 elif [ "`uname -a |  grep -i Darwin`" != "" ]; then echo "-DOSX" # practically redudant as it is (should be) set in the makefile.osx
 elif [ "`uname -s |  grep -i Linux`" != "" ]; then echo "-DLINUX" # a dummy, as we use X11/GCU for this as specializations anyway
+elif [ "`uname -s |  grep -i BSD`" != "" ]; then echo "-DBSD" # a dummy, as we use X11/GCU for this as specializations anyway
 else echo "-DANY_`uname -s`"
 fi
 # ... and Windows clients should be compiled with WIN32 in the makefile.win / makefile.mingw etc anyway

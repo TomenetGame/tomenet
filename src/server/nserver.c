@@ -1289,6 +1289,26 @@ static void Contact(int fd, int arg) {
 			/* Use millions as of 4.4.9.2 (449b) - mikaelh */
 			version_ext.os = version_ext.build / 1000000;
 			version_ext.build %= 1000000;
+
+			if (is_older_than(&version_ext, 4, 9, 3, 0, 0, 3)) {
+				switch(version_ext.os) {
+				case OS_LINUX:
+					version_ext.os = OS_LINUX;
+					version_ext.os_sub = OS_SUB_GCU;
+					break;
+				case OS_LINUX2:
+					version_ext.os = OS_LINUX;
+					version_ext.os_sub = OS_SUB_X11;
+					break;
+				case OS_LINUX3:
+					version_ext.os = OS_LINUX;
+					version_ext.os_sub = OS_SUB_GCU_X11;
+					break;
+				}
+			} else {
+				version_ext.os_sub = version_ext.os / 100;
+				version_ext.os = version_ext.os % 100;
+			}
 		}
 	} else {
 		version_ext.major = version >> 12;
@@ -3049,7 +3069,7 @@ static void set_player_font_definitions(int ind, int player) {
 		feat_solid = FONT_MAP_SOLID_WIN;
 		feat_vein = FONT_MAP_VEIN_WIN;
 	} else {
-		/* assume OS_X11 -- does this work on OSX/GCU too? -- no, it only works on OSX with XQuartz as X11 replacement actually */
+		/* assume OS_SUB_X11 -- does this work on OSX/GCU too? -- no, it only works on OSX with XQuartz as X11 replacement actually */
 		feat_solid = FONT_MAP_SOLID_X11;
 		feat_vein = FONT_MAP_VEIN_X11;
 	}
@@ -3452,7 +3472,7 @@ static int Handle_login(int ind) {
 #endif
 #if 0
 	/* font_map_solid_walls will cause "^B" glitches in raw GCU client */
-	if (p_ptr->version.os == OS_GCU && p_ptr->font_map_solid_walls) {
+	if (p_ptr->version.os_sub == OS_SUB_GCU && p_ptr->font_map_solid_walls) {
 		msg_print(NumPlayers, "\377yOption 'font_map_solid_walls' is not supported on GCU-only client.");
 		p_ptr->font_map_solid_walls = FALSE;
 	}

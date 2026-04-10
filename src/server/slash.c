@@ -14651,8 +14651,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!k) return;
 				p_ptr = Players[k];
 
-				msg_format(Ind, "\377yClient version of player %s (%d): %d.%d.%d.%d.%d.%d, OS %d.", p_ptr->name, k,
-				    p_ptr->version.major, p_ptr->version.minor, p_ptr->version.patch, p_ptr->version.extra, p_ptr->version.branch, p_ptr->version.build, p_ptr->version.os);
+				msg_format(Ind, "\377yClient version of player %s (%d): %d.%d.%d.%d.%d.%d, OS %d/%d.", p_ptr->name, k,
+				    p_ptr->version.major, p_ptr->version.minor, p_ptr->version.patch, p_ptr->version.extra, p_ptr->version.branch, p_ptr->version.build, p_ptr->version.os, p_ptr->version.os_sub);
 				return;
 			}
 			else if (prefix(messagelc, "/testmisc1")) {
