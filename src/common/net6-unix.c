@@ -698,13 +698,13 @@ int	fd;
      */
     return(0);
 #else
-#ifdef	__hp9000s300
+ #ifdef	__hp9000s300
     long			linger = 1;
     int				lsize  = sizeof(long);
-#else
+ #else
     static struct linger	linger = {1, 300};
     int				lsize  = sizeof(struct linger);
-#endif
+ #endif
 
     return(setsockopt(fd, SOL_SOCKET, SO_LINGER, (void *)&linger, lsize));
 #endif
