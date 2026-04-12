@@ -219,7 +219,7 @@ Contents
     (8.4)   Spoiler files
     (8.5)   Monster tactics
     (8.6)   Town/dungeon related tips
-(9) Miscellanous
+(9) Miscellaneous
     (9.1)   'The Art Not To Die'
     (9.1a)  The worst kind of help
     (9.2)   Character dumps
@@ -576,7 +576,7 @@ Warrior, Mimic, Druid, Archer, to some extent Rogue and Ranger (if you don't
 pick spells or only a few spells to manage).
 
 The reason is that these require less different macros/keys to press and/or at
-lower frequency than other classs, to manage and coordinate gameplay.
+lower frequency than other classes, to manage and coordinate gameplay.
 In general, the more magic spells and abilities a class possesses, the more
 key presses in terms of both number and frequency are required.
 
@@ -5172,7 +5172,7 @@ self-explaining or that are especially important are listed in detail here:
         Will provide a predefined (on server-side) set of item-inscriptions
         that will be applied automatically to some selected items,
         which are Word of Recall items, various scrolls and a few potions.
-        (These inscriptions are applied independantly of the custom auto
+        (These inscriptions are applied independently of the custom auto
         inscription feature you can access with '&' key.)
         The server-side auto-inscriptions are currently:
             Scrolls of Phase Door:      @r1
@@ -5393,7 +5393,7 @@ In the Windows client newer than version 4.9.2, the fonts menu (=f) also offers
 another choice: Logfont. This can be enabled/disabled via 'L key in the fonts
 menu and (at the time of writing) requires a client restart to apply.
 The logfont feature uses a windows-internal, freely scalable font, making the
-game independant of the .FON font files, which are no longer used while logfont
+game independent of the .FON font files, which are no longer used while logfont
 is active. While logfont is enabled, you can scale width and height freely in
 the fonts menu using the -/+ (height) and ,/. (width) keys.
 The advantage of logfont is that you no longer depend on .FON files of your
@@ -7845,7 +7845,7 @@ Example:
                 done automatically.
 *I recommend to have all macros start with the '\e)' sequence.*
 
-Miscellanous escape sequences:
+Miscellaneous escape sequences:
 \x??            Convert the hex code into an ASCII character. For example
                 \x41 (hex 41, dec 65) will become the 65th character of the
                 ASCII charset which is a capital 'A'.
@@ -9940,7 +9940,7 @@ There may or may not be further special/exotic dungeons that are not part of
 the "normal" game or gameplay.
 See (4.3) under "Dungeon Types" -> "Experimental dungeons" for more details.
 
-(*) The Ironman Deep Dive Challenge or short IDDC is a special, independant
+(*) The Ironman Deep Dive Challenge or short IDDC is a special, independent
 ironman dungeon, that has a special ruleset and is distinct from the rest of
 the game. For more information, see (4.13), Ironman Challenge.
 
@@ -11110,7 +11110,7 @@ Black Breath is a deadly spiritual malady, making your character flicker dark
 
   You can lose levels this way and if you drop below zero XP you will die.
 
-  The amount of XP lost is independant of your race/class experience factors
+  The amount of XP lost is independent of your race/class experience factors
   so high-penalty characters (eg Maia race) suffer the most as they have a
   harder time (re)gaining experience.
 
@@ -17211,7 +17211,7 @@ menu (~3 key).
 
 This means that the more dead uniques you have the more likely each minute one
 of them will revive. On the other hand since one unique is picked randomly each
-time independantly of whether it is actually dead or alive to the player, it is
+time independently of whether it is actually dead or alive to the player, it is
 not possible to cause a particular unique to respawn slower or faster (eg by
 killing or not killing other uniques). The chance PER UNIQUE will always be the
 same over the same amount of time.
@@ -17553,7 +17553,7 @@ a Shadow Blade of Extra Attacks (+2) (+3) grants a bpval of +2 to Stealth which
 stems from the base item type 'Shadow Blade' and then a pval of +3 to your BpR
 aka number of melee attacks/round.
 
-For artifacts, all of these stats will be either totally random, independant of
+For artifacts, all of these stats will be either totally random, independent of
 the level where you found the item, or for player-created artifacts the three
 boni to hit, dam and AC might be taken from the base item used in the process
 if it is a jewelry item (meaning ring or amulet, also see (9.4) for more info.)
@@ -17563,7 +17563,7 @@ enchantments on items are randomized but will be affected by the depth where
 the item was found, meaning that deeper levels have a higher chance to produce
 higher enchantments of these four types.
 The pval (which comes from either ego powers or artifact powers) however is
-generated completely randomly, independant of depth.
+generated completely randomly, independent of depth.
 
 
 (6.3a) Special item drops of monsters
@@ -17622,7 +17622,7 @@ Zu-Aon
     A potion of learning and a scroll of artifact creation.
 
 
-Further, even without any flags and independant of their r_info.txt loot table
+Further, even without any flags and independent of their r_info.txt loot table
 monsters may tend towards item drops that fit their appearance and style.
 This means that you will mostly see swordmasters drop swords, mages drop an
 occasional mage staff, runemasters drop an occasional rune, monsters that are
@@ -18369,7 +18369,7 @@ stated.
                                 of three combat stances each, when you reach
                                 a certain character level i.e. skill. The last
                                 rank ('royal rank') is learned by defeating
-                                Morgoth, independant of your level. You can use
+                                Morgoth, independent of your level. You can use
                                 the /ex command to check your current stance.
                                 Each stance has advantages and disadvantages,
                                 those are:
@@ -18934,7 +18934,7 @@ stated.
                                 (The 'body modification' doesn't matter, eg
                                 whether in 'normal' body or 'fruit bat' form.)
 
-        .Aura of Fear           Monsters that hit you are stricken by fear.
+        .Aura of Fear           Monsters that hit you are stricken with fear.
          (0.500)                Mindless undead, non-living monsters and those
                                 that resist fear (NO_FEAR) are not affected.
                                 The chance for the aura to trigger depends on
@@ -19626,7 +19626,7 @@ stated.
 
                                 Certain tools such as shovels, picks and
                                 mattocks will also increase your digging speed
-                                greatly (independant of the skill), see (5.9).
+                                greatly (independent of the skill), see (5.9).
                                 Also, when hacking through trees and bushes,
                                 axes will help a lot and swords somewhat, in
                                 case you have no good digging tool at hand.
@@ -19877,7 +19877,7 @@ The clou is that you can actually combine both syntaxes as you wish!
 
 (1) With '@Cn' tags the items must be inscribed with, where the numbers 'n' on
     the tags of the items are given to the /mix command.
-    This is a safe way to craft, as it will be independant on the inventory
+    This is a safe way to craft, as it will be independent on the inventory
     position of the items. You do not need to tediously inscribe the chemicals
     manually, as there is an option 'auto_inscr_server_ch' which is enabled by
     default and will auto-inscribe ingredients you pick up.
@@ -20176,7 +20176,7 @@ weapon enchantments) it depends on changes, depends on your class: The relative
 numerical modifiers are given in the class table in (7.5).
 Here is a list which ability changes depend on which factors:
 (The factors in relation to the values in (7.5) are marked by underscores.
-All other factors listed here are further modifications, independant of (7.5).)
+All other factors listed here are further modifications, independent of (7.5).)
 
  Fighting        _'Combat'_, _'Weaponmastery'_, melee +hit boni
  Bows/Throw      _'Combat'_, _'Archery'_, ranged +hit boni
@@ -20571,7 +20571,7 @@ create a character!):
     Items that provide 'Slow Digestion' do work for vampires.
     At level 40 they will also start to need less and less food to sustain
     themselves. Vampire royalties will require the least amount of food,
-    independant of their level, enabling them to survive a very long time
+    independent of their level, enabling them to survive a very long time
     without feeding - even an item granting 'Slow Digestion' will not improve
     this any further.
     Vampires hate 'Blunt' weapons, are very bad at 'Swimming', cannot use
@@ -27338,8 +27338,8 @@ spells - compare (4.12)).
 
 
 
-(9) Miscellanous
-================
+(9) Miscellaneous
+=================
 
 (9.1) 'The Art Not To Die'
 --------------------------
