@@ -127,6 +127,7 @@
 #define OS_IPAD		8
 #define OS_BSD		9
 
+#define OS_SUB_NONE	0 /* Windows OS */
 #define OS_SUB_GCU	1
 #define OS_SUB_X11	2
 #define OS_SUB_GCU_X11	3
@@ -157,6 +158,8 @@
   #define VERSION_OS_SUB	OS_SUB_GCU
  #elif defined(USE_X11)
   #define VERSION_OS_SUB	OS_SUB_X11
+ #else /* Windows */
+  #define VERSION_OS_SUB	OS_SUB_NONE
  #endif
 #endif
 
