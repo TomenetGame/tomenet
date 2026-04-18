@@ -6296,7 +6296,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 		wc.style         = CS_CLASSDC | (disable_CS_IME ? 0x0 : (enable_CS_IME ? CS_IME : (suggest_IME ? CS_IME : 0x0)));
 		wc.lpfnWndProc   = AngbandWndProc;
 		wc.cbClsExtra    = 0;
-		wc.cbWndExtra    = 4; /* one long pointer to term_data */
+		wc.cbWndExtra    = sizeof(term_data *); /* one long pointer to term_data */
 		wc.hInstance     = hInst;
 		wc.hIcon         = hIcon = LoadIcon(hInst, AppName);
 		wc.hCursor       = LoadCursor(NULL, IDC_ARROW);
