@@ -144,7 +144,10 @@ CLI_LUAOBJS = \
 #MINGW_TARGET = i586-mingw32msvc
 
 # C. Blue's system (Arch Linux)
+# 32-bit exe:
 MINGW_TARGET = i686-w64-mingw32
+# 64-bit exe:
+#MINGW_TARGET = x86_64-w64-mingw32
 
 #
 # Path to sdl-config
