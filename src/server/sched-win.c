@@ -24,7 +24,7 @@ static MMRESULT timer_id = 0;
 /*
 * Our timer callback
 */
-void CALLBACK timer_callback(UINT wTimerID, UINT msg, DWORD dwUser, DWORD dw1, DWORD dw2) {
+void CALLBACK timer_callback(UINT wTimerID, UINT msg, DWORD_PTR dwUser, DWORD_PTR dw1, DWORD_PTR dw2) {
 	timer_ticks++;
 }
 
