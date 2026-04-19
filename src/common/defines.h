@@ -2365,6 +2365,9 @@
 //#define HEAL_CUT(p_ptr, heal)	((p_ptr->cut + p_ptr->cut_bandaged) - ((heal * HEAL_CUT_FACTOR) / ((p_ptr->cut + p_ptr->cut_bandaged) + HEAL_CUT_FACTOR)) - (p_ptr->cut + p_ptr->cut_bandaged) / 50 - 1)
 #define HEAL_CUT(p_ptr, heal)	(p_ptr->cut - ((heal * HEAL_CUT_FACTOR) / (p_ptr->cut + HEAL_CUT_FACTOR)) - p_ptr->cut / 50 - 1)
 
+/* How much cuts are lessened by a bandage */
+#define BANDAGE_CUT_HEAL	100	/* Heal instantly everything including 'nasty cut'; at least lessen more drastic cuts by this amount */
+
 /*** Option Definitions ***/
 #define OPT_PAGES	9	/* at least: number of pages of options in = menu */
 #define OPT_MAX		(198+1)	/* at least: 9 pages a 22 options (+1 for termination, paranoia in any case, as we xfer all options in one as a single string) */

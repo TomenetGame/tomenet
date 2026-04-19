@@ -10416,7 +10416,7 @@ void bandage_fails(int Ind) {
 	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
 
 	/* clear cut_intrinsic_nocut properly */
-	tmp  = p_ptr->cut_bandaged;
+	tmp = p_ptr->cut_bandaged;
 	p_ptr->cut_bandaged = 0;
 	(void)set_cut(Ind, p_ptr->cut + tmp, p_ptr->cut_attacker, TRUE);
 }

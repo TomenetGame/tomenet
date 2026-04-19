@@ -7858,12 +7858,12 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		msg_print(Ind, "\376You apply a bandage to your wound.");
 
 		/* Bandages can only lessen very bad cuts somewhat */
-		if (p_ptr->cut <= 100) {
+		if (p_ptr->cut <= BANDAGE_CUT_HEAL) {
 			p_ptr->cut_bandaged = p_ptr->cut;
 			p_ptr->cut = 0;
 		} else {
-			p_ptr->cut_bandaged = 100;
-			p_ptr->cut -= 100;
+			p_ptr->cut_bandaged = BANDAGE_CUT_HEAL;
+			p_ptr->cut -= BANDAGE_CUT_HEAL;
 		}
 
 		p_ptr->update |= (PU_BONUS);
@@ -8460,12 +8460,12 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			msg_print(Ind, "\376You apply a bandage to your wound.");
 
 			/* Bandages can only lessen very bad cuts somewhat */
-			if (p_ptr->cut <= 100) {
+			if (p_ptr->cut <= BANDAGE_CUT_HEAL) {
 				p_ptr->cut_bandaged = p_ptr->cut;
 				p_ptr->cut = 0;
 			} else {
-				p_ptr->cut_bandaged = 100;
-				p_ptr->cut -= 100;
+				p_ptr->cut_bandaged = BANDAGE_CUT_HEAL;
+				p_ptr->cut -= BANDAGE_CUT_HEAL;
 			}
 
 			p_ptr->update |= (PU_BONUS);
@@ -8506,12 +8506,12 @@ void do_cmd_activate_dir(int Ind, int dir) {
 			msg_format(Ind2, "\376%s applies a bandage to your wound.", p_ptr->name);
 
 			/* Bandages can only lessen very bad cuts somewhat */
-			if (p2_ptr->cut <= 100) {
+			if (p2_ptr->cut <= BANDAGE_CUT_HEAL) {
 				p2_ptr->cut_bandaged = p2_ptr->cut;
 				p2_ptr->cut = 0;
 			} else {
-				p2_ptr->cut_bandaged = 100;
-				p2_ptr->cut -= 100;
+				p2_ptr->cut_bandaged = BANDAGE_CUT_HEAL;
+				p2_ptr->cut -= BANDAGE_CUT_HEAL;
 			}
 
 			p2_ptr->update |= (PU_BONUS);
