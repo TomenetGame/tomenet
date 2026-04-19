@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 9. April 2026 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 19. April 2026 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11012,13 +11012,24 @@ Cut                     Cuts will make you lose HP continuously.
                         (mostly undead forms), the player becomes immune to
                         cut effects.
                         Cuts from shards can be avoided with shard resistance.
-                        Cure Light/Serious Wounds potions can heal cuts a bit,
-                        while Cure Critical Wounds and Healing work much better
-                        and any means of 'Curing' will completely heal cuts.
+
+                        Cure Light/Serious/Critical Wounds effects and Lembas
+                        can heal non-mortal cuts a bit. Healing effects (eg
+                        potion or rod of Healing) work on mortal wounds too.
+                        However, HP-healing effects have less effects on wounds
+                        the more severe the wound is. For that reason, in
+                        general the most effective way to treat any kind of
+                        wound are 'Curing' effects (eg rod/potion of Curing).
+                        There are some other effects or items that can cure
+                        cuts competely in one go such as staves of holiness.
+
                         While cut, HP regeneration is inhibited except
                         for half-trolls, trolls and hydras which can continue
                         regenerating HP even while cut - except if the cut was
                         applied before shapeshifting into one of these forms.
+
+                        Cuts can be lessened or healed by applying a bandage,
+                        also see (5.9) or search via '/? bandage' command.
 
 Poison   -Poisoned      The player will continuously lose Hit Points.
                         Resisting poison will prevent the player from getting
@@ -15517,17 +15528,22 @@ Grinding Tool       Used by demolitionists (see "Digging" skill in (7.2)) to
 Bandage             Stops some bleeding of open wounds, reducing the wound
                     severeness. Only one bandage can be applied on a character
                     at a time.
+                    Wounds up to nasty cuts are completely healed by a bandage,
+                    while more severe cuts are still lessened by it.
+                    Bandaged wounds are still there even though they are not
+                    shown as active in your 'cut indicator' and need to fully
+                    heal up under the bandage before they are really gone.
+                    It is advisable to stay out of combat until the wound has
+                    fully healed so as not to rip your bandage accidentally.
+                    Bandaged wounds also heal up faster and are more affected
+                    by cure-wounds or healing effects than open wounds.
                     Bandages can be applied to yourself (direction '5') or to
                     another player standing next to you. To apply the bandage
                     correctly, a basic amount of dexterity and intelligence is
                     required.
-                    Bandaged wounds also heal up faster and are more affected
-                    by cure-wounds or healing effects than open wounds.
                     Bandages can be purchased in the temple or general store or
-                    can be made ad hoc via /tear or /rip command from cloth-
-                    based items you no longer need (they get destroyed).
-                    It is advisable to stay out of combat until the wound has
-                    fully healed so as not to rip your bandage accidentally.
+                    can be made ad hoc via '/tear' or '/rip' command from any
+                    cloth-based items you no longer need (they get destroyed).
 
 
 (5.9a) Activatable items
