@@ -205,7 +205,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 	/* remember cursor position */
 	Term_locate(&x, &y);
 
-	Term_putstr(0, ROW_LEVEL, -1, TERM_WHITE, "LEVEL ");
+	Term_putstr(0, ROW_LEVEL, -1, TERM_WHITE, (level < max_lev) ? "Level " : "LEVEL ");
 	//Level 100 (admins): If we cut off LEVEL to LEVE, just cut it off 1 more to LEV to look better -_-
 	if (max_plv >= 100) sprintf(tmp, "%4d", level);
 	else sprintf(tmp, "%3d", level);
