@@ -3047,9 +3047,9 @@ bool make_attack_spell(int Ind, int m_idx) {
 			msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
 			//take_hit(Ind, damroll(8, 8), ddesc, -m_idx);
 			take_sanity_hit(Ind, damroll(6, 6), ddesc, -m_idx);/* 8,8 was too powerful */
+
 			if (!p_ptr->resist_conf)
 				(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
-
 			if ((!p_ptr->resist_chaos) && (randint(3) == 1))
 				(void)set_image(Ind, p_ptr->image + rand_int(100) + 100);
 		}
@@ -3068,14 +3068,18 @@ bool make_attack_spell(int Ind, int m_idx) {
 		} else {
 			msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
 			//take_hit(Ind, damroll(12, 15), ddesc, -m_idx);
-			take_sanity_hit(Ind, damroll(9,9), ddesc, -m_idx);/* 12,15 was too powerful */
+			take_sanity_hit(Ind, damroll(9, 9), ddesc, -m_idx);/* 12,15 was too powerful */
+
+			if (!p_ptr->resist_conf)
+				(void)set_confused(Ind, p_ptr->confused + rand_int(6) + 6);
+			if ((!p_ptr->resist_chaos) && (randint(2) == 1))
+				(void)set_image(Ind, p_ptr->image + rand_int(100) + 100);
 			if (!p_ptr->resist_blind)
 				(void)set_blind(Ind, p_ptr->blind + 8 + rand_int(8));
-			if (!p_ptr->resist_conf)
-				(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 			if (!p_ptr->free_act)
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4);
-			(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 4);
+			if (!p_ptr->mindboost || !magik(p_ptr->mindboost_power))
+				(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 4);
 		}
 		break;
 
@@ -5290,9 +5294,9 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 			msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
 			//take_hit(Ind, damroll(8, 8), ddesc, -m_idx);
 			take_sanity_hit(Ind, damroll(6, 6), ddesc, -m_idx);/* 8,8 was too powerful */
+
 			if (!p_ptr->resist_conf)
 				(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
-
 			if ((!p_ptr->resist_chaos) && (randint(3) == 1))
 				(void)set_image(Ind, p_ptr->image + rand_int(100) + 100);
 		}
@@ -5311,14 +5315,18 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		} else {
 			msg_print(Ind, "\377RYour mind is blasted by psionic energy.");
 			//take_hit(Ind, damroll(12, 15), ddesc, -m_idx);
-			take_sanity_hit(Ind, damroll(9,9), ddesc, -m_idx);/* 12,15 was too powerful */
+			take_sanity_hit(Ind, damroll(9, 9), ddesc, -m_idx);/* 12,15 was too powerful */
+
+			if (!p_ptr->resist_conf)
+				(void)set_confused(Ind, p_ptr->confused + rand_int(6) + 6);
+			if ((!p_ptr->resist_chaos) && (randint(2) == 1))
+				(void)set_image(Ind, p_ptr->image + rand_int(100) + 100);
 			if (!p_ptr->resist_blind)
 				(void)set_blind(Ind, p_ptr->blind + 8 + rand_int(8));
-			if (!p_ptr->resist_conf)
-				(void)set_confused(Ind, p_ptr->confused + rand_int(4) + 4);
 			if (!p_ptr->free_act)
 				(void)set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4);
-			(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 4);
+			if (!p_ptr->mindboost || !magik(p_ptr->mindboost_power))
+				(void)set_slow(Ind, p_ptr->slow + rand_int(4) + 4);
 		}
 		break;
 
