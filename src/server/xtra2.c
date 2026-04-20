@@ -1666,7 +1666,7 @@ bool set_tim_wraith(int Ind, int v) {
 				}
 				/* We don't have a permanent source */
 				if (v != 10000) {
-					msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his":"her");
+					msg_format_near(Ind, "%s loses %s wraith powers.", p_ptr->name, p_ptr->male ? "his" : "her");
 					msg_print(Ind, "You lose your wraith powers.");
 					p_ptr->redraw |= PR_BPR_WRAITH_PROB;
 					notice = TRUE;
@@ -3980,7 +3980,7 @@ bool do_divine_hp(int Ind, int p, int v) {
 	else { //v = 0;
 		if (p_ptr->divine_hp) {
 			p_ptr->divine_hp_mod = 0;
-			msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male? "his" : "her"));
+			msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male ? "his" : "her"));
 			msg_print(Ind, "You no longer feel courageous.");
 			notice = (TRUE);
 		}
@@ -11952,7 +11952,7 @@ bool add_xorder(int Ind, int target, u16b type, u16b num, u16b flags) {
 		msg_print(j, "\374\377oYou have been given an extermination order from your guild\377y!");
 	else
 		msg_print(j, "\376\377oYou have been given a extermination order\377y!");
-	//msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name+r_info[type].name, flags & QUEST_GUILD?"":" \377obefore any other player");
+	//msg_format(j, "\377oFind and kill \377y%d \377g%s%s\377y!", num, r_name + r_info[type].name, (flags & QUEST_GUILD) ? "" : " \377obefore any other player");
 	if (is_admin(p_ptr)) msg_format(j, "\376\377oFind and kill \377y%d \377g%s\377o (level %d, %d)!", num, r_name + r_info[type].name, r_info[type].level, type);
 	else msg_format(j, "\376\377oFind and kill \377y%d \377g%s\377o (level %d)!", num, r_name + r_info[type].name, r_info[type].level);
 	msg_format(Ind, "\376\377oThe remaining time to carry it out is \377y%d\377o minutes.", MAX_XORDER_TURNS / (cfg.fps * 60));

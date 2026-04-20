@@ -1240,7 +1240,8 @@ s_printf("points=%u\n", points);
 	//return(p_ptr->max_plv * (300 + (p_ptr->max_exp / 100000)) / 300);
 #if 0
 	/* Maggot bonus.. beware, r_idx is hard-coded! */
-	int i = p_ptr->r_killed[8]? 50 : 100;
+	int i = p_ptr->r_killed[8] ? 50 : 100;
+
 	if (p_ptr->mode & MODE_HARD) i = i * 5 / 4;
 
 	if (p_ptr->mode & MODE_NO_GHOST) return(((((p_ptr->max_exp + (100 * p_ptr->max_dlv)) * 4) / 3) * i) / 100);

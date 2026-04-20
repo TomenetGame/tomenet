@@ -8700,7 +8700,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 		    !exceptionally_shareable_item(o_ptr) && o_ptr->tval != TV_GAME &&
 		    !(o_ptr->tval == TV_PARCHMENT && (o_ptr->sval == SV_DEED_HIGHLANDER || o_ptr->sval == SV_DEED_DUNGEONKEEPER))) {
 /*			msg_format(Ind, "Please don't litter the %s.",
-			    istown(wpos) ? "town":(wpos->wz ? "dungeon":"Nature"));*/
+			    istown(wpos) ? "town":(wpos->wz ? "dungeon" : "Nature"));*/
 			msg_format(Ind, "You need to be at least level %d to throw items.", cfg.newbies_cannot_drop);
 			return;
 		}
@@ -10123,7 +10123,7 @@ void do_cmd_own(int Ind) {
 	char buf[100];
 
 	if (!p_ptr->total_winner) {
-		msg_format(Ind, "You must be a %s to own a land!", (p_ptr->male)?"king":"queen");
+		msg_format(Ind, "You must be a %s to own a land!", p_ptr->male ? "king" : "queen");
 		return;
 	}
 

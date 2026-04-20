@@ -1570,7 +1570,7 @@ static void Delete_player(int Ind) {
 			else if (p_ptr->total_winner) {
 				if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
 					title = (p_ptr->male) ? "Emperor ": ((!strcmp(p_ptr->name, "Tina")) ? "Tiny " : "Empress ");
-				else title = (p_ptr->male) ? "King ":"Queen ";
+				else title = (p_ptr->male) ? "King " : "Queen ";
 			}
 			else if (p_ptr->iron_winner) title = "Iron Champion ";
 
@@ -4051,7 +4051,7 @@ static int Handle_login(int ind) {
 	else if (p_ptr->total_winner) {
 		if (p_ptr->iron_winner) title = p_ptr->male ? "Iron Emperor" : "Iron Empress";
 		else if (p_ptr->mode & (MODE_HARD | MODE_NO_GHOST))
-			title = (p_ptr->male)? "Emperor ": ((!strcmp(p_ptr->name, "Tina")) ? "Tiny ": "Empress ");
+			title = (p_ptr->male) ? "Emperor ": ((!strcmp(p_ptr->name, "Tina")) ? "Tiny ": "Empress ");
 		else	title = (p_ptr->male) ? "King " : "Queen ";
 	}
 	else if (p_ptr->iron_winner) title = "Iron Champion ";
@@ -4082,7 +4082,7 @@ static int Handle_login(int ind) {
 
 			if (newly_created_msg) {
 				if (p_ptr->fruit_bat)
-					msg_format(i, "\374\377%c%s%s flaps %s wings into the world.", COLOUR_SERVER, title, p_ptr->name, (p_ptr->male?"his":"her"));
+					msg_format(i, "\374\377%c%s%s flaps %s wings into the world.", COLOUR_SERVER, title, p_ptr->name, (p_ptr->male ? "his" : "her"));
 				else
 					msg_format(i, "\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name);
 			} else
@@ -4105,7 +4105,7 @@ static int Handle_login(int ind) {
 		if (Players[i]->conn == NOT_CONNECTED) continue;
 		if (newly_created_msg) {
 			if (p_ptr->fruit_bat)
-				msg_format(i, "\374\377%c%s%s flaps %s wings into the world.", COLOUR_SERVER, title, p_ptr->name, (p_ptr->male?"his":"her"));
+				msg_format(i, "\374\377%c%s%s flaps %s wings into the world.", COLOUR_SERVER, title, p_ptr->name, (p_ptr->male ? "his" : "her"));
 			else
 				msg_format(i, "\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name);
 		} else if (!Players[i]->taciturn_messages)
@@ -4125,7 +4125,7 @@ static int Handle_login(int ind) {
 	if (cfg.worldd_pjoin) {
 		if (newly_created_msg) {
 			if (p_ptr->fruit_bat)
-				world_msg(format("\374\377%c%s%s flaps %s wings into the world.", COLOUR_SERVER, title, p_ptr->name, (p_ptr->male?"his":"her")));
+				world_msg(format("\374\377%c%s%s flaps %s wings into the world.", COLOUR_SERVER, title, p_ptr->name, (p_ptr->male ? "his" : "her")));
 			else
 				world_msg(format("\374\377%c%s%s sets foot into the world.", COLOUR_SERVER, title, p_ptr->name));
 		} else
@@ -5996,7 +5996,7 @@ static int Receive_file(int ind) {
 				break;
 			case PKT_FILE_END:
 				x = local_file_close(ind, fnum);
-				msg_format(Ind, "\377oFile transfer %s.", x? "successful":"failed");
+				msg_format(Ind, "\377oFile transfer %s.", x ? "successful" : "failed");
 				break;
 			case PKT_FILE_CHECK:
 				/* Admin to do this only !!! */

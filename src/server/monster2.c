@@ -5682,7 +5682,7 @@ static s32b modify_aux(s32b a, s32b b, char mod) {
 }
 
 #define MODIFY_AUX(o, n) ((o) = modify_aux((o), (n) >> 2, (n) & 3))
-#define MODIFY(o, n, min) MODIFY_AUX(o, n); (o) = ((o) < (min))?(min):(o)
+#define MODIFY(o, n, min) MODIFY_AUX(o, n); (o) = ((o) < (min)) ? (min) : (o)
 
 /* Is this ego ok for this monster ? */
 bool mego_ok(int r_idx, int ego) {

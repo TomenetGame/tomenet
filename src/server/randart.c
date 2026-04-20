@@ -2044,7 +2044,7 @@ artifact_type *randart_make(object_type *o_ptr) {
 	   Some items that use bpval in a special way are exempt and need to
 	   keep their bpval: Rings of Power. */
 	if ((k_ptr->tval != TV_RING) || (k_ptr->sval != SV_RING_SPECIAL)) {
-		//if (o_ptr->bpval) a_ptr->pval = (o_ptr->pval < o_ptr->bpval)? o_ptr->bpval : o_ptr->pval;
+		//if (o_ptr->bpval) a_ptr->pval = (o_ptr->pval < o_ptr->bpval) ? o_ptr->bpval : o_ptr->pval;
 		o_ptr->bpval = 0;
 	}
 

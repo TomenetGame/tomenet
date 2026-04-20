@@ -152,7 +152,7 @@ byte level_up_x(struct worldpos *wpos) {
 
 	wild = &wild_info[wpos->wy][wpos->wx];
 	if (wpos->wz == 0) return(wild->surface.up_x);
-	return(wpos->wz > 0? wild->tower->level[wpos->wz - 1].up_x : wild->dungeon->level[ABS(wpos->wz) - 1].up_x);
+	return(wpos->wz > 0 ? wild->tower->level[wpos->wz - 1].up_x : wild->dungeon->level[ABS(wpos->wz) - 1].up_x);
 }
 byte level_up_y(struct worldpos *wpos) {
 	struct wilderness_type *wild;

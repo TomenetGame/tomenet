@@ -467,7 +467,7 @@ bool do_xtra_stats(int Ind, int s, int p, int v, bool demonic) {
 	/* Shut */
 	else {
 		if (p_ptr->xtrastat_tim) {
-			msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male? "his" : "her"));
+			msg_format_near(Ind, "%s returns to %s normal self.", p_ptr->name, (p_ptr->male ? "his" : "her"));
 			msg_print(Ind, "You somehow feel weak.");
 
 			p_ptr->xtrastat_pow = 0;

@@ -2498,14 +2498,14 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		/* Give credit for boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h) ? 0 :
+			    ((k_ptr->to_h < 0) ? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
-			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d) ? 0 :
+			    ((k_ptr->to_d < 0) ? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2))) +
-			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
+			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a) ? 0 :
+			    ((k_ptr->to_a < 0) ? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
 			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), PBA1, PBA2))) ) * 100L;
 
 		/* Costumes */
@@ -2537,14 +2537,14 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		/* Factor in the boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h) ? 0 :
+			    ((k_ptr->to_h < 0) ? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
-			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d) ? 0 :
+			    ((k_ptr->to_d < 0) ? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2))) +
-			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
+			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a) ? 0 :
+			    ((k_ptr->to_a < 0) ? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
 			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), PBA1, PBA2))) ) * 100L;
 
 		/* Hack -- Factor in extra damage dice */
@@ -2564,11 +2564,11 @@ s64b object_value_real(int Ind, object_type *o_ptr) {
 		/* Factor in the boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h) ? 0 :
+			    ((k_ptr->to_h < 0) ? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
-			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d) ? 0 :
+			    ((k_ptr->to_d < 0) ? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2)))  ) * 5L;
 
 		/* Hack -- Factor in extra damage dice */
@@ -3424,14 +3424,14 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		/* Give credit for boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h) ? 0 :
+			    ((k_ptr->to_h < 0) ? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
-			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d) ? 0 :
+			    ((k_ptr->to_d < 0) ? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2))) +
-			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
+			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a) ? 0 :
+			    ((k_ptr->to_a < 0) ? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
 			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), PBA1, PBA2))) ) * 100L;
 
 		/* Costumes */
@@ -3463,14 +3463,14 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		/* Factor in the boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d + o_ptr->to_a) * 100L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h) ? 0 :
+			    ((k_ptr->to_h < 0) ? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
-			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d) ? 0 :
+			    ((k_ptr->to_d < 0) ? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2))) +
-			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a)? 0 :
-			    ((k_ptr->to_a < 0)? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
+			    ((o_ptr->to_a <= 0 || o_ptr->to_a <= k_ptr->to_a) ? 0 :
+			    ((k_ptr->to_a < 0) ? PRICE_BOOST(o_ptr->to_a, PBA1, PBA2):
 			    PRICE_BOOST((o_ptr->to_a - k_ptr->to_a), PBA1, PBA2))) ) * 100L;
 
 		/* Hack -- Factor in extra damage dice */
@@ -3490,11 +3490,11 @@ s64b artifact_value_real(int Ind, object_type *o_ptr) {
 		/* Factor in the boni */
 		//value += ((o_ptr->to_h + o_ptr->to_d) * 5L);
 		/* Ignore base boni that come from k_info.txt (eg quarterstaff +10 AC) */
-		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h)? 0 :
-			    ((k_ptr->to_h < 0)? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
+		value += (  ((o_ptr->to_h <= 0 || o_ptr->to_h <= k_ptr->to_h) ? 0 :
+			    ((k_ptr->to_h < 0) ? PRICE_BOOST(o_ptr->to_h, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_h - k_ptr->to_h), PB1, PB2))) +
-			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d)? 0 :
-			    ((k_ptr->to_d < 0)? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
+			    ((o_ptr->to_d <= 0 || o_ptr->to_d <= k_ptr->to_d) ? 0 :
+			    ((k_ptr->to_d < 0) ? PRICE_BOOST(o_ptr->to_d, PB1, PB2):
 			    PRICE_BOOST((o_ptr->to_d - k_ptr->to_d), PB1, PB2)))  ) * 5L;
 
 		/* Hack -- Factor in extra damage dice */
@@ -6129,7 +6129,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u64b resf) {
 
 		/* Talisman (Amulet of Luck) */
 		case SV_AMULET_LUCK:
-			o_ptr->bpval = magik(40)?randint(3):(magik(40)?randint(4):randint(5));
+			o_ptr->bpval = magik(40) ? randint(3) : (magik(40) ? randint(4) : randint(5));
 
 			/* Cursed */
 			if (power < 0) {

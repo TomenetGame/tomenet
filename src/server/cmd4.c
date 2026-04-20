@@ -1263,8 +1263,8 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 			    q_ptr->total_winner ?
 			    (q_ptr->iron_winner ? (q_ptr->male ? "Iron Emperor" : "Iron Empress") :
 			    ((p_ptr->mode & (MODE_HARD | MODE_NO_GHOST)) ?
-			    (q_ptr->male ? "Emperor":"Empress") : (q_ptr->male ? "King, ":"Queen, "))) :
-			    (q_ptr->iron_winner ? "\377DIron Champion " : (q_ptr->male ? "Male, ":"Female, ")),
+			    (q_ptr->male ? "Emperor" : "Empress") : (q_ptr->male ? "King, " : "Queen, "))) :
+			    (q_ptr->iron_winner ? "\377DIron Champion " : (q_ptr->male ? "Male, " : "Female, ")),
 			    q_ptr->fruit_bat ? "Fruit bat, " : "",
 			    q_ptr->lev, parties[q_ptr->party].name);
 

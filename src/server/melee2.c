@@ -9210,7 +9210,7 @@ static bool get_moves_questor(int Ind, int m_idx, int *mm) {
 		y2 = (tm_idx > 0) ? m_list[tm_idx].fy : Players[-tm_idx]->py;
 		x2 = (tm_idx > 0) ? m_list[tm_idx].fx : Players[-tm_idx]->px;
 		//isn't this BAD paranoia?
-		if (!(inarea(&m_ptr->wpos, (tm_idx > 0)? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return(FALSE);
+		if (!(inarea(&m_ptr->wpos, (tm_idx > 0) ? &m_list[tm_idx].wpos : &Players[-tm_idx]->wpos))) return(FALSE);
 	}
 	/* continue moving */
 	else {
@@ -9889,7 +9889,8 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				case 65:
 					if (p_ptr->inventory[INVEN_NECK].tval == TV_AMULET && p_ptr->inventory[INVEN_NECK].sval == SV_AMULET_INVINCIBILITY) {
 						msg_format(m_ptr->strongest_los, "\377BThe guy in blue robes asks if you are planning to keep displaying that decree..");
-						floor_msg_format(m_ptr->strongest_los, wpos, "\377BThe guy in blue robes asks %s if %s is planning to keep displaying that decree..", Players[m_ptr->strongest_los]->name, Players[m_ptr->strongest_los]->male? "he" : "she");
+						floor_msg_format(m_ptr->strongest_los, wpos, "\377BThe guy in blue robes asks %s if %s is planning to keep displaying that decree..",
+						    Players[m_ptr->strongest_los]->name, Players[m_ptr->strongest_los]->male ? "he" : "she");
 					}
 					break;
 				}

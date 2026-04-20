@@ -3874,7 +3874,7 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 	int i, j, y, x, y1, x1, y2, x2, dun_lev, xval, yval;
 	bool empty = FALSE;
 #if 0
-	bool aqua = magik(dun->watery? 50 : 10);
+	bool aqua = magik(dun->watery ? 50 : 10);
 #else
 	/* Disabled for now because aquatic pits are getting filled with eyes of the deep - mikaelh */
 	bool aqua = FALSE;
