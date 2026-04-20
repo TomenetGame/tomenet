@@ -2232,16 +2232,16 @@ byte spell_color(int type) {
 	case GF_SHARDS:		return(TERM_SHAR);
 	case GF_FORCE:		return(randint(5) < 3 ? TERM_L_WHITE : TERM_ORANGE);
 	case GF_INERTIA:	return(randint(5) < 3 ? TERM_SLATE : TERM_L_WHITE);
-	case GF_GRAVITY:	return(randint(3) == 1? TERM_L_UMBER : TERM_UMBER);
-	case GF_TIME:		return(randint(3) == 1? TERM_GREEN : TERM_L_BLUE);
+	case GF_GRAVITY:	return(randint(3) == 1 ? TERM_L_UMBER : TERM_UMBER);
+	case GF_TIME:		return(randint(3) == 1 ? TERM_GREEN : TERM_L_BLUE);
 	case GF_FLARE:		return(TERM_LITE);
 	case GF_LITE_WEAK:	return(TERM_LITE);
 	case GF_LITE:		return(TERM_LITE);
 	case GF_DARK_WEAK:	return(TERM_DARKNESS);
 	case GF_DARK:		return(TERM_DARKNESS);
-	case GF_PLASMA:		return(randint(5) == 1? TERM_RED : TERM_L_RED);
-	case GF_METEOR:		return(randint(3) == 1? TERM_RED : TERM_UMBER);
-	case GF_ICE:		return(randint(4) == 1? TERM_L_BLUE : TERM_WHITE);
+	case GF_PLASMA:		return(randint(5) == 1 ? TERM_RED : TERM_L_RED);
+	case GF_METEOR:		return(randint(3) == 1 ? TERM_RED : TERM_UMBER);
+	case GF_ICE:		return(randint(4) == 1 ? TERM_L_BLUE : TERM_WHITE);
 	case GF_HAVOC: //too much hassle to simulate the correct colours, this is just replacement code anyway
 	case GF_INFERNO:
 	case GF_DETONATION:
@@ -8058,7 +8058,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		else do_dist = 0;
 
 		if ((r_ptr->flags4 & RF4_BR_GRAV) ||
-		    r_ptr->d_char != 'y' || /* Yeeks have intrinsic feather falling! */
+		    r_ptr->d_char == 'y' || /* Yeeks have intrinsic feather falling! */
 		    (r_ptr->flags7 & RF7_CAN_FLY)) {
 			note = " resists";
 			dam *= 3; dam /= (randint(6) + 6);
@@ -15495,7 +15495,7 @@ int approx_damage(int m_idx, int dam, int typ) {
 		else {}//do_dist = 0;
 
 		if ((r_ptr->flags4 & RF4_BR_GRAV) ||
-		    r_ptr->d_char != 'y' || /* Yeeks have intrinsic feather falling! */
+		    r_ptr->d_char == 'y' || /* Yeeks have intrinsic feather falling! */
 		    (r_ptr->flags7 & RF7_CAN_FLY)) {
 			dam /= 3;
 			//do_dist = 0;
