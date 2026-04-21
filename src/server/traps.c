@@ -5812,6 +5812,9 @@ bool mon_hit_trap(int m_idx) {
 
 	/* Otherwise, activate the trap! */
 	if (!disarm) {
+		bool hit_body;
+		int break_chance, j;
+
 #ifdef USE_SOUND_2010
 		sound_near_monster(m_idx, "trap_setoff", NULL, SFX_TYPE_MISC);
 #endif
@@ -5832,9 +5835,24 @@ bool mon_hit_trap(int m_idx) {
 			while (shots-- && !dead) {
 				/* Total hit probability */
 				chance = (kit_o_ptr->to_h + load_o_ptr->to_h + 20) * BTH_PLUS_ADJ;
+				hit_body = test_hit_fire(chance, m_ptr->ac, TRUE);
+
+				/* Break ammo? */
+				break_chance = breakage_chance(load_o_ptr);
+
+				j = (break_chance * 100) / (hit_body ? 1 : 3);
+				//if (who > 0) j = (j * (100 - get_skill_scale(Players[who], SKILL_TRAPPING, 80))) / 100; <- for when base ammo break chance was 50% in breakage_chance
+				if (who > 0) j = (j * (100 - get_skill_scale(Players[who], SKILL_TRAPPING, 90))) / 100;
+
+				if ((load_o_ptr->pval != 0 || rand_int(10000) < j) /* exploding ammo always breaks */
+				    && !(load_o_ptr->tval == TV_ARROW && load_o_ptr->sval == SV_AMMO_MAGIC)
+				    && load_o_ptr->name2 != EGO_ETHEREAL && load_o_ptr->name2b != EGO_ETHEREAL
+				    && !artifact_p(load_o_ptr))
+					j = 0;
+				else j = 1;
 
 				/* Check if we hit the monster */
-				if (test_hit_fire(chance, m_ptr->ac, TRUE)) {
+				if (hit_body) {
 					/* Assume a default death */
 					cptr note_dies = " sets off a missile trap and dies";
 
@@ -5932,19 +5950,14 @@ bool mon_hit_trap(int m_idx) {
 				if (load_o_ptr->pval) do_arrow_explode(who > 0 ? who : 0 - who, load_o_ptr, &wpos, my, mx, 2);
 
 				/* Decrease ammo, except for magic ammo or artifact ammo of course */
-				if (!(load_o_ptr->tval == TV_ARROW &&
-				    load_o_ptr->sval == SV_AMMO_MAGIC)
-				    && !artifact_p(load_o_ptr)) {
-
+				if (!(load_o_ptr->tval == TV_ARROW && load_o_ptr->sval == SV_AMMO_MAGIC && !cursed_p(load_o_ptr)) &&
+				    !((load_o_ptr->name2 == EGO_ETHEREAL || load_o_ptr->name2b == EGO_ETHEREAL) && !magik(breakage_chance(load_o_ptr))) && /* Ethereal ammo decreases more slowly */
+				    !artifact_p(load_o_ptr)) {
 					/* Copy and decrease ammo */
 					object_copy(j_ptr, load_o_ptr);
 					j_ptr->number = 1;
 
-					/* Ethereal ammo decreases more slowly */
-					if (load_o_ptr->name2 == EGO_ETHEREAL || load_o_ptr->name2b == EGO_ETHEREAL) {
-						if (magik(breakage_chance(load_o_ptr))) load_o_ptr->number--;
-					} else load_o_ptr->number--;
-
+					load_o_ptr->number--;
 					if (load_o_ptr->number <= 0) {
 						remove = TRUE;
 						o_list[kit_o_ptr->next_o_idx].embed = 0; /* Don't go recursive, because delete_object_idx() actually calls erase_mon_trap()! */
@@ -5954,8 +5967,7 @@ bool mon_hit_trap(int m_idx) {
 
 					/* Drop (or break) near that location,
 					   but only if non-exploding and non-ethereal. */
-					if (!load_o_ptr->pval && load_o_ptr->name2 != EGO_ETHEREAL && load_o_ptr->name2b != EGO_ETHEREAL)
-						drop_near(TRUE, 0, j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
+					if (j) drop_near(TRUE, 0, j_ptr, breakage_chance(j_ptr), &wpos, my, mx);
 				}
 
 			}
