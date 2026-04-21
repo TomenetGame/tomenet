@@ -6631,9 +6631,10 @@ int breakage_chance(object_type *o_ptr) {
 	case TV_ARROW:
 		if (o_ptr->sval == SV_AMMO_MAGIC && !cursed_p(o_ptr)) return(0);
 		else if (o_ptr->name2 == EGO_ETHEREAL || o_ptr->name2b == EGO_ETHEREAL) return(10);
+		else if (o_ptr->pval) return(100); /* exploding (non-magical) ammo */
 		else if (o_ptr->tval == TV_SHOT) return(10);
 		else if (o_ptr->tval == TV_BOLT) return(15);
-		return(20);
+		return(20); /* TV_ARROW */
 
 	/* seldom break */
 	case TV_BOOMERANG:
@@ -8215,13 +8216,13 @@ void do_cmd_fire(int Ind, int dir) {
 			//j = (j * (1000 - get_skill_scale(p_ptr, archery, 950))) / 1000;
 			j = (j * (2500 - get_skill_scale(p_ptr, archery, 2450))) / 5000;
 		} else {
-			j = (hit_body ? break_chance : break_chance / 3) * 100;
+			j = (break_chance * 100) / (hit_body ? 1 : 3);
 			//j = (j * (100 - get_skill_scale(p_ptr, archery, 80))) / 100; <- for when base ammo break chance was 50% in breakage_chance
 			j = (j * (100 - get_skill_scale(p_ptr, archery, 90))) / 100;
 		}
 
 		/* Break ammo? (In case of boomerangs this turns into a drop. Chance at the time of writing: 1 in 5000.) */
-		if ((((o_ptr->pval != 0) && !boomerang) || (rand_int(10000) < j))
+		if (((o_ptr->pval != 0 && !boomerang) || rand_int(10000) < j) /* exploding ammo always breaks */
 		    && !magic && !ethereal && !artifact_p(o_ptr)
 		    && !(boomerang && (o_ptr->name2 || o_ptr->name2b))) { /* <- 2024 for rune sigils - ego-boomerangs don't drop to the floor either, like arts */
 			/* Remember as broken */
