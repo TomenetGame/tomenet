@@ -449,7 +449,7 @@ static void display_fruit(int Ind, int row, int col, int fruit) {
 static bool gamble_comm(int Ind, int cmd, int gold) {
 	player_type *p_ptr = Players[Ind];
 	int roll1, roll2, roll3;
-	int choice, odds, win;
+	int choice, odds_deci, win;
 	bool old_casino = is_older_than(&p_ptr->version, 4, 9, 3, 0, 0, 2);
 
 	s32b wager;
@@ -612,14 +612,14 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	}
 
 	win = FALSE;
-	odds = 0;
+	odds_deci = 0;
 
 	switch (cmd) {
 	case BACT_IN_BETWEEN: /* Game of In-Between */
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_VIOLET, "=== In Between ===");
 
-		odds = 3;
+		odds_deci = 30;
 		/* Changed it for better formatting visually to use 0..9 instead of 1..10, so we know the number is always 1 char wide ^^' - C. Blue */
 		roll1 = rand_int(10);
 		roll2 = rand_int(10);
@@ -712,7 +712,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 4, TERM_L_GREEN, "You won!");
 		} else Send_store_special_str(Ind, DICE_Y + 12, DICE_X - 4, TERM_SLATE, "You lost.");
 
-		if (win == TRUE) s_printf("CASINO: In Between - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+		if (win == TRUE) s_printf("CASINO: In Between - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
 		else s_printf("CASINO: In Between - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 		break;
 
@@ -722,7 +722,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_ORANGE, "=== Craps ===");
 
 		win = 3;
-		odds = 1;
+		odds_deci = 10;
 		roll1 = randint(6);
 		roll2 = randint(6);
 		roll3 = roll1 +  roll2;
@@ -787,19 +787,19 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		} else {
 			p_ptr->casino_roll = choice;
 			p_ptr->casino_progress = 0;
-			p_ptr->casino_odds = odds;
+			p_ptr->casino_odds_deci = odds_deci;
 			p_ptr->casino_wager = wager;
 			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again (ESC to forfeit) -");
 			return(TRUE);
 		}
 
-		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
 		else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 		break;
 
 	case BACT_SPIN_WHEEL:  /* Spin the Wheel Game */
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
-		odds = 9;
+		odds_deci = 90;
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_GREEN, "=== Wheel ===");
 		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 15, TERM_RED, "  0  \377w1  2  3  4  5  6  7  8  9");
 #if 0 //not for now; should probably add more proper graphics: horizontal 'chain', an arrow/triange, better selected-number brackets/marker (existing half-triangles maybe)
@@ -819,7 +819,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #endif
 		Send_store_special_str(Ind, DICE_Y + 3, DICE_X - 15, TERM_WHITE, "--------------------------------");
 
-		p_ptr->casino_odds = odds;
+		p_ptr->casino_odds_deci = odds_deci;
 		p_ptr->casino_wager = wager;
 
 		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
@@ -868,35 +868,40 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 		if (roll1 == roll2 && roll2 == choice) {
 			win = TRUE;
-			if (roll1 == 1) odds = 4;
-			else if (roll1 == 2) odds = 6;
-			else odds = roll1 * roll1;
+			if (roll1 == 1) odds_deci = 40;
+			else if (roll1 == 2) odds_deci = 60;
+			else odds_deci = roll1 * roll1 * 10;
 		} else if (roll1 == 6 && roll2 == 6) {
 			win = TRUE;
-			odds = choice + 3;
+			odds_deci = (choice + 3) * 10;
 		} else if (roll1 == 5 && roll2 == 5) {
 			win = TRUE;
-			odds = choice + 1;
+			odds_deci = (choice + 1) * 10;
 		} else if ((roll1 == 3 || roll1 == 4) && (roll2 == 3 || roll2 == 4) && (choice == 3 || choice == 4)) {
 			win = TRUE;
-			odds = 2;
+			odds_deci = 20;
 		} else if (roll2 == choice && roll2 != 3 && roll2 != 4) {
 			win = TRUE;
-			odds = 1; //just get the wager back
+			odds_deci = 10; //just get the wager back
 		} else if (roll1 == choice && roll1 != 3 && roll1 != 4) {
 			win = TRUE;
-			odds = 1; //just get the wager back
+			odds_deci = 10; //just get the wager back
 		} else if (roll1 == roll2 && roll1 != 3 && roll1 != 4) {
 			win = TRUE;
-			odds = 1; //just get the wager back
+			odds_deci = 10; //just get the wager back
 		}
 
 		if (win) {
-			if (odds == 1) Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 16, TERM_L_GREEN, "Recuperated your wager!");
-			else Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, format("You won (x%d)!", odds));
+			if (odds_deci == 10) Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 16, TERM_L_GREEN, "Recuperated your wager!");
+			else {
+				if (odds_deci % 10 == 0)
+					Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, format("You won (x%d)!", odds_deci / 10));
+				else
+					Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_L_GREEN, format("You won (x%d.%d)!", odds_deci / 10, odds_deci % 10));
+			}
 		} else Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_SLATE, "You lost.");
 
-		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
 		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 		break;
 
@@ -995,7 +1000,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		*/
 
 		win = 1;
-		odds = 1;
+		odds_deci = 10;
 		roll1 = randint(13);
 		roll2 = randint(13);
 		roll3 = randint(13);
@@ -1011,19 +1016,19 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		} else {
 			p_ptr->casino_roll = choice;
 			p_ptr->casino_progress = 0;
-			p_ptr->casino_odds = odds;
+			p_ptr->casino_odds_deci = odds_deci;
 			p_ptr->casino_wager = wager;
 			Send_request_key(Ind, RID_BLACKJACK, "- hit any key to roll again -");
 			return(TRUE);
 		}
 
-		if (win == TRUE) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, odds * wager);
+		if (win == TRUE) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
 		else s_printf("CASINO: Black Jack - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 #endif
 		break;
 	}
 
-	p_ptr->casino_odds = odds;
+	p_ptr->casino_odds_deci = odds_deci;
 	p_ptr->casino_wager = wager;
 	casino_result(Ind, win, cmd != BACT_DICE_SLOTS); //dice slots required payment upfront already, so in case of loss don't double-deduct
 	return(TRUE);
@@ -1037,10 +1042,10 @@ void casino_result(int Ind, bool win, bool deduct_loss) {
 		sound(Ind, "casino_win", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 		/* hack: prevent s32b overflow */
-		if (PY_MAX_GOLD - (p_ptr->casino_odds * p_ptr->casino_wager) < p_ptr->au) {
+		if (PY_MAX_GOLD - (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10 < p_ptr->au) {
 			msg_format(Ind, "\377oYou won! But you cannot carry more than %d gold!", PY_MAX_GOLD);
 		} else {
-			p_ptr->au = p_ptr->au + (p_ptr->casino_odds * p_ptr->casino_wager);
+			p_ptr->au = p_ptr->au + (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10;
 #ifdef USE_SOUND_2010
 			sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
@@ -1049,8 +1054,12 @@ void casino_result(int Ind, bool win, bool deduct_loss) {
 				msg_print(Ind, "You gain a tiny bit of experience from gambling.");
 				gain_exp(Ind, 1);
 			}
-			if (p_ptr->casino_odds) msg_format(Ind, "\377GYou won %d Au! (Payoff: %d)", p_ptr->casino_odds * p_ptr->casino_wager, p_ptr->casino_odds);
-			else msg_format(Ind, "\377GYou won and got your wager of %d Au back.", p_ptr->casino_wager);
+			if (p_ptr->casino_odds_deci) {
+				if (p_ptr->casino_odds_deci % 10 == 0)
+					msg_format(Ind, "\377GYou won %d Au! (Payoff: %d)", (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10, p_ptr->casino_odds_deci / 10);
+				else
+					msg_format(Ind, "\377GYou won %d Au! (Payoff: %d.%d)", (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10, p_ptr->casino_odds_deci / 10, p_ptr->casino_odds_deci % 10);
+			} else msg_format(Ind, "\377GYou won and got your wager of %d Au back.", p_ptr->casino_wager);
 		}
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 	} else {

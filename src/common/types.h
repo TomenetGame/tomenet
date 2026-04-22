@@ -4400,7 +4400,7 @@ struct player_type {
 	s16b go_mail_cooldown;
 	/* For the 'new' casino games o_O */
 	s32b casino_wager;
-	int casino_odds, casino_roll, casino_progress, casino_choice;
+	int casino_odds_deci, casino_roll, casino_progress, casino_choice;
 #if 0
 	int casino_game, casino_timer; /* In case we ever need server-side timed casino operations, currently all animation is just client-side */
 #endif

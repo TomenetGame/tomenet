@@ -11771,7 +11771,7 @@ void handle_request_return_num(int Ind, int id, int num) {
 			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 22, TERM_SLATE, tmp_str);
 		}
 
-		if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->casino_odds * p_ptr->casino_wager);
+		if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
 		else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
 		casino_result(Ind, win, TRUE);
@@ -12019,7 +12019,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 			return;
 		}
 
-		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->casino_odds * p_ptr->casino_wager);
+		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
 		else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
 		casino_result(Ind, win, TRUE);
@@ -12238,7 +12238,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 			return;
 		}
 
-		if (win == TRUE) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, p_ptr->casino_odds * p_ptr->casino_wager);
+		if (win == TRUE) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
 		else s_printf("CASINO: Black Jack - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
 		casino_result(Ind, win, TRUE);
