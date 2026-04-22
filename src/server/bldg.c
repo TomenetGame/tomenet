@@ -1042,7 +1042,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		Send_store_special_clr_force(Ind, 4, 18); /* Note: This requires 4.9.3.0.0.3+, and many other things in here would also require older version checks but are already superceded by the 4.9.3.0.0.3+ check. */
 
 		/* --- under construction - just show a full card deck demo screen --- */
-		if (TRUE) {
+		if (FALSE) {
 			int y = 5, x = 2;
 
 			Send_store_special_anim(Ind, 4, x, y, 0);
