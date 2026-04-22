@@ -985,6 +985,15 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			return(FALSE);
 		}
 
+		/* Black Jack implementation:
+		   - Bet was already placed.
+		   - Deal 2 cards to player, 1 card + 1 hidden to bank. Check both for Black Jack.
+		     No 'dealer ace exposed' side-bat at this time.
+		   - Split cards? (Allow only initially; equal _point value_ cards) NAND Double down? (Allow only initially)
+		   - Player loop: hit or stand?
+		   - Bank draws till 17+ (Ace+6 shall also finish)
+		*/
+
 		win = 1;
 		odds = 1;
 		roll1 = randint(13);
