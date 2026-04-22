@@ -11771,7 +11771,7 @@ void handle_request_return_num(int Ind, int id, int num) {
 			Send_store_special_str(Ind, DICE_Y + 6, DICE_X - 22, TERM_SLATE, tmp_str);
 		}
 
-		if (win == TRUE) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
+		if (win) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
 		else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
 		casino_result(Ind, win, TRUE);
@@ -11807,7 +11807,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 #endif
 
 	case RID_CRAPS: {
-		int win = 3;
+		bool win = FALSE;
 		int roll1, roll2, roll3, ycv = p_ptr->casino_progress;
 
 		/* User esc'ed out? Abort (and lose) */
@@ -12002,6 +12002,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 		} else
 #endif
 		Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X - 3, TERM_L_UMBER, format("%2d  %2d", roll1, roll2));
+
 		if (roll3 == p_ptr->casino_roll) {
 			win = TRUE;
 #if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
@@ -12009,7 +12010,6 @@ void handle_request_return_key(int Ind, int id, char c) {
 #endif
 			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_GREEN, "You won!");
 		} else if (roll3 == 7) {
-			win = FALSE;
 #if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
 			ycv++; //looks slightly better?
 #endif
@@ -12019,14 +12019,14 @@ void handle_request_return_key(int Ind, int id, char c) {
 			return;
 		}
 
-		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
+		if (win) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
 		else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
 		casino_result(Ind, win, TRUE);
 		return; }
 
 	case RID_BLACKJACK: {		// TODO: implement (this is just copy-pasta from Craps)
-		int win = 3;
+		bool win = FALSE;
 		int roll1, roll2, roll3, ycv = p_ptr->casino_progress;
 
 		/* User esc'ed out? Abort (and lose) */
@@ -12221,6 +12221,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 		} else
 #endif
 		Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X - 3, TERM_L_UMBER, format("%2d  %2d", roll1, roll2));
+
 		if (roll3 == p_ptr->casino_roll) {
 			win = TRUE;
 #if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
@@ -12228,7 +12229,6 @@ void handle_request_return_key(int Ind, int id, char c) {
 #endif
 			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_GREEN, "You won!");
 		} else if (roll3 == 7) {
-			win = FALSE;
 #if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
 			ycv++; //looks slightly better?
 #endif
@@ -12238,7 +12238,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 			return;
 		}
 
-		if (win == TRUE) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
+		if (win) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
 		else s_printf("CASINO: Black Jack - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
 		casino_result(Ind, win, TRUE);

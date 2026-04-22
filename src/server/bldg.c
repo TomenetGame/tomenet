@@ -449,8 +449,8 @@ static void display_fruit(int Ind, int row, int col, int fruit) {
 static bool gamble_comm(int Ind, int cmd, int gold) {
 	player_type *p_ptr = Players[Ind];
 	int roll1, roll2, roll3;
-	int choice, odds_deci, win;
-	bool old_casino = is_older_than(&p_ptr->version, 4, 9, 3, 0, 0, 2);
+	int choice, odds_deci = 10;
+	bool win = FALSE, old_casino = is_older_than(&p_ptr->version, 4, 9, 3, 0, 0, 2);
 
 	s32b wager;
 	s32b maxbet;
@@ -611,9 +611,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		wager = 1;
 	}
 
-	win = FALSE;
-	odds_deci = 0;
-
 	switch (cmd) {
 	case BACT_IN_BETWEEN: /* Game of In-Between */
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
@@ -721,7 +718,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 #define CRAPS_1STDICE_ATTR TERM_RED /* Colour of the first pair of dice rolled for better distinguishing of function :). (Second pair is normal colour aka k_info->TERM_L_UMBER.) */
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 6, TERM_ORANGE, "=== Craps ===");
 
-		win = 3;
 		odds_deci = 10;
 		roll1 = randint(6);
 		roll2 = randint(6);
@@ -778,7 +774,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_L_GREEN, "You won!");
 #endif
 		} else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12)) {
-			win = FALSE;
 #if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
 			Send_store_special_str(Ind, DICE_Y + 2 + 1, DICE_X + 7, TERM_SLATE, "You lost.");
 #else
@@ -793,7 +788,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			return(TRUE);
 		}
 
-		if (win == TRUE) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
+		if (win) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
 		else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 		break;
 
@@ -901,7 +896,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			}
 		} else Send_store_special_str(Ind, DICE_Y + 6, DICE_X + 18, TERM_SLATE, "You lost.");
 
-		if (win == TRUE) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
+		if (win) s_printf("CASINO: Dice Slots - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
 		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 		break;
 
@@ -914,7 +909,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_L_DARK, "=== Black Jack ===");
 
-		/* --- under construction --- */
+		/* --- under construction - just show a full card deck demo screen --- */
 		if (TRUE) {
 			int y = 5;
 
@@ -1000,7 +995,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		   - Payoff 1:1, 3/2:1 for player Blackjack; tie (also called "push") means nobody loses and works for Black Jacks too.
 		*/
 
-		win = 1;
 		odds_deci = 10;
 		roll1 = randint(13);
 		roll2 = randint(13);
@@ -1012,7 +1006,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			win = TRUE;
 			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_L_GREEN, "You won!");
 		} else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12)) {
-			win = FALSE;
 			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_SLATE, "You lost.");
 		} else {
 			p_ptr->casino_roll = choice;
@@ -1023,7 +1016,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			return(TRUE);
 		}
 
-		if (win == TRUE) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
+		if (win) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
 		else s_printf("CASINO: Black Jack - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 #endif
 		break;
