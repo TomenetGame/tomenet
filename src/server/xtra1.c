@@ -12057,170 +12057,21 @@ void handle_request_return_key(int Ind, int id, char c) {
 #ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
  #define CRAPS_DICE_ATTR TERM_UMBER /* Use different colour than default k_attr (TERM_L_UMBER)? */
 		connection_t *connp;
- #ifndef DICE_HUGE //normal die
-		char32_t c_die[6 + 1];
- #else
-		char32_t c_die_huge[6 + 1][2][2];
- #endif
-		byte a_die[6 + 1];
 		bool custom_visuals = FALSE;
 		connp = Conn[p_ptr->conn];
 
 		/* Prepare the graphical visuals for this player (6 dice results) */
-		if (connp->use_graphics && is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1) && !p_ptr->ascii_items) { //client must know PKT_CHAR_DIRECT
-			int k_idx;
-
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_1);
- #ifndef DICE_HUGE //normal die
-			c_die[1] = p_ptr->k_char[k_idx];
- #endif
- #ifdef CRAPS_DICE_ATTR
-			a_die[1] = CRAPS_DICE_ATTR;
- #else
-			a_die[1] = p_ptr->k_attr[k_idx];
- #endif
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_2);
- #ifndef DICE_HUGE //normal die
-			c_die[2] = p_ptr->k_char[k_idx];
- #endif
- #ifdef CRAPS_DICE_ATTR
-			a_die[2] = CRAPS_DICE_ATTR;
- #else
-			a_die[2] = p_ptr->k_attr[k_idx];
- #endif
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_3);
- #ifndef DICE_HUGE //normal die
-			c_die[3] = p_ptr->k_char[k_idx];
- #endif
- #ifdef CRAPS_DICE_ATTR
-			a_die[3] = CRAPS_DICE_ATTR;
- #else
-			a_die[3] = p_ptr->k_attr[k_idx];
- #endif
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_4);
- #ifndef DICE_HUGE //normal die
-			c_die[4] = p_ptr->k_char[k_idx];
- #endif
- #ifdef CRAPS_DICE_ATTR
-			a_die[4] = CRAPS_DICE_ATTR;
- #else
-			a_die[4] = p_ptr->k_attr[k_idx];
- #endif
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_5);
- #ifndef DICE_HUGE //normal die
-			c_die[5] = p_ptr->k_char[k_idx];
- #endif
- #ifdef CRAPS_DICE_ATTR
-			a_die[5] = CRAPS_DICE_ATTR;
- #else
-			a_die[5] = p_ptr->k_attr[k_idx];
- #endif
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_6);
- #ifndef DICE_HUGE //normal die
-			c_die[6] = p_ptr->k_char[k_idx];
- #endif
- #ifdef CRAPS_DICE_ATTR
-			a_die[6] = CRAPS_DICE_ATTR;
- #else
-			a_die[6] = p_ptr->k_attr[k_idx];
- #endif
-
- #ifdef DICE_HUGE
-			/* Huge dice (1/4 tiles): */
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TL);
-			c_die_huge[4][0][0] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TR);
-			c_die_huge[4][1][0] = p_ptr->k_char[k_idx];
-			c_die_huge[2][1][0] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TLT);
-			c_die_huge[6][0][0] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TRT);
-			c_die_huge[6][1][0] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TLM);
-			c_die_huge[5][0][0] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TRM);
-			c_die_huge[5][1][0] = p_ptr->k_char[k_idx];
-			c_die_huge[3][1][0] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TlM);
-			c_die_huge[1][0][0] = p_ptr->k_char[k_idx];
-			c_die_huge[3][0][0] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_TrM);
-			c_die_huge[1][1][0] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_Tl);
-			c_die_huge[2][0][0] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_BL);
-			c_die_huge[4][0][1] = p_ptr->k_char[k_idx];
-			c_die_huge[2][0][1] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_BR);
-			c_die_huge[4][1][1] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_BLB);
-			c_die_huge[6][0][1] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_BRB);
-			c_die_huge[6][1][1] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_BLM);
-			c_die_huge[5][0][1] = p_ptr->k_char[k_idx];
-			c_die_huge[3][0][1] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_BRM);
-			c_die_huge[5][1][1] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_BlM);
-			c_die_huge[1][0][1] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_BrM);
-			c_die_huge[1][1][1] = p_ptr->k_char[k_idx];
-			c_die_huge[3][1][1] = p_ptr->k_char[k_idx];
-			k_idx = lookup_kind(TV_PSEUDO_OBJ, SV_PO_DIE_Br);
-			c_die_huge[2][1][1] = p_ptr->k_char[k_idx];
- #endif
-
+		if (connp->use_graphics && !p_ptr->ascii_items) {
 			custom_visuals = TRUE;
 		}
 #endif
-
-		//This is only needed for old clients < 4.4.6b
-		//msg_print(Ind, "Rerolling..");
 
 		roll1 = randint(6);
 		roll2 = randint(6);
 		roll3 = roll1 + roll2;
 
-		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
-			Send_store_special_anim(Ind, 3, 0, 0, 0); /* fake 'animation' - it's actually just a delay, waiting for the dice to fall ;) */
-#ifdef USE_SOUND_2010
-		else
-			sound(Ind, "casino_craps", NULL, SFX_TYPE_MISC, FALSE);//same for 'draw' and 'deal' actually
-#endif
-
-		//This is only needed for old clients < 4.4.6b
-		//msg_format(Ind, "Roll result:  \377s%d %d\377w   Total: \377s%d", roll1, roll2, roll3);
-#ifdef CUSTOM_VISUALS
- #ifdef GRAPHICS_BG_MASK
-		if (custom_visuals) {
-  #ifndef DICE_HUGE //normal die
-			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2 + ycv, a_die[roll1], c_die[roll1], 0, 32);
-			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2 + ycv, a_die[roll2], c_die[roll2], 0, 32);
-  #else //huge die
-			int dx, dy;
-
-			for (dx = 0; dx != 2; dx++) for (dy = 0; dy != 2; dy++) {
-			Send_char_direct(Ind, DICE_HUGE_X + dx, DICE_HUGE_Y + 2 + ycv + dy, a_die[roll1], c_die_huge[roll1][dx][dy], 0, 32);
-			Send_char_direct(Ind, DICE_HUGE_X + 4 + dx, DICE_HUGE_Y + 2 + ycv + dy, a_die[roll2], c_die_huge[roll2][dx][dy], 0, 32);
-			}
-  #endif
- #else
-  #ifndef DICE_HUGE //normal die
-			Send_char_direct(Ind, DICE_X - 1, DICE_Y + 2 + ycv, a_die[roll1], c_die[roll1]);
-			Send_char_direct(Ind, DICE_X - 1 + 2, DICE_Y + 2 + ycv, a_die[roll2], c_die[roll2]);
-  #else //huge die
-			int dx, dy;
-
-			for (dx = 0; dx != 2; dx++) for (dy = 0; dy != 2; dy++) {
-			Send_char_direct(Ind, DICE_HUGE_X + dx, DICE_HUGE_Y + 2 + ycv + dy, a_die[roll1], c_die_huge[roll1][dx][dy], 0, 32);
-			Send_char_direct(Ind, DICE_HUGE_X + 4 + dx, DICE_HUGE_Y + 2 + ycv + dy, a_die[roll2], c_die_huge[roll2][dx][dy], 0, 32);
-			}
-  #endif
- #endif
-		} else
-#endif
-		Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X - 3, TERM_L_UMBER, format("%2d  %2d", roll1, roll2));
+		if (custom_visuals)
+			Send_store_special_anim(Ind, 4, 0, 0, 10);
 
 		if (roll3 == p_ptr->casino_roll) {
 			win = TRUE;
