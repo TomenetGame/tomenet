@@ -4690,7 +4690,6 @@ static void display_card(int col, int row, int card_colour, int card_value) {
 				break;
 			}
 
-use_gfx_cards = TRUE; //hack: prf defs are under construction atm
 		if (use_gfx_cards) {
 			(void)((*Term->rawpict_hook)(col, row, RAWPICT_OFFSET_CARDS + card));
 			return;
