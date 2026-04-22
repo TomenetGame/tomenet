@@ -4671,6 +4671,8 @@ int Receive_store_special_clr(void) {
 
 #define CARDS_DUAL_LINES	/* For ASCII cards, display value and colour in separate lines above each other */
 #define CARDS_VAL_BEFORE_COL	/* For ASCII cards, display value first, then colour */
+#define CARD_STACK1_COL		TERM_BLUE	/* Generic cover colour for card stack '#1' */
+#define CARD_STACK2_COL		TERM_L_UMBER	/* Generic cover colour for card stack '#2' (feasible: TERM_L_UMBER, TERM_ORANGE, TERM_GREEN, TERM_SLATE) */
 #define RAWPICT_OFFSET_CARDS 10	/* First indices (6 + future reservations) are dice slot symbols, after that come the cards */
 static void display_card(int col, int row, int card_colour, int card_value) {
 	int card = card_colour * 14 + card_value; //joker,2-10,j,q,k
@@ -4704,20 +4706,22 @@ static void display_card(int col, int row, int card_colour, int card_value) {
  #endif
 	switch (card_colour) {
 	case 0:
-		attr = TERM_SLATE;
-		Term_putstr(col, row, -1, attr, "-+");
+		attr = TERM_L_DARK;
+		if (card_value != 0) Term_putstr(col, row, -1, attr, "-+"); /* Card covers don't have 'colour value' */
+		else attr = CARD_STACK1_COL; //generic cover colour "stack 1"
 		break;
 	case 1:
-		attr = TERM_SLATE;
-		Term_putstr(col, row, -1, attr, "->");
+		attr = TERM_L_DARK;
+		if (card_value != 0) Term_putstr(col, row, -1, attr, "->"); /* Jokers don't have 'colour value' */
 		break;
 	case 2:
 		attr = TERM_RED;
-		Term_putstr(col, row, -1, attr, "<3");
+		if (card_value != 0) Term_putstr(col, row, -1, attr, "<3"); /* Jokers don't have 'colour value' */
 		break;
 	case 3:
 		attr = TERM_RED;
-		Term_putstr(col, row, -1, attr, "<>");
+		if (card_value != 0) Term_putstr(col, row, -1, attr, "<>"); /* Card covers don't have 'colour value' */
+		else attr = CARD_STACK2_COL; //generic cover colour "stack 2"
 		break;
 	}
  #ifdef CARDS_VAL_BEFORE_COL
@@ -4728,7 +4732,19 @@ static void display_card(int col, int row, int card_colour, int card_value) {
 
 	switch (card_value) {
 	case 0:
-		Term_putstr(col, row, -1, attr, "Jk");
+		switch (card_colour) {
+		case 0: case 3: /* Generic card cover (ie face down, unknown card) */
+ #if 1 /* too much? */
+			Term_putstr(col, row - 1, -1, attr, " _ ");
+			Term_putstr(col, row, -1, attr, "|?|");
+			Term_putstr(col, row + 1, -1, attr, "|_|");
+ #else
+			Term_putstr(col, row, -1, attr, "[?]");
+ #endif
+			break;
+		default: /* 1+2 */
+			Term_putstr(col, row, -1, attr, "Jk"); /* Joker */
+		}
 		break;
 	case 10:
 		Term_putstr(col, row, -1, attr, "J");
@@ -4753,20 +4769,22 @@ static void display_card(int col, int row, int card_colour, int card_value) {
  #endif
 	switch (card_colour) {
 	case 0:
-		attr = TERM_SLATE;
-		Term_putstr(col, row, -1, attr, "+");
+		attr = TERM_L_DARK;
+		if (card_value != 0) Term_putstr(col, row, -1, attr, "+"); /* Card covers don't have 'colour value' */
+		else attr = CARD_STACK1_COL; //generic cover colour "stack 1"
 		break;
 	case 1:
-		attr = TERM_SLATE;
-		Term_putstr(col, row, -1, attr, "^");
+		attr = TERM_L_DARK;
+		if (card_value != 0) Term_putstr(col, row, -1, attr, "^"); /* Jokers don't have 'colour value' */
 		break;
 	case 2:
 		attr = TERM_RED;
-		Term_putstr(col, row, -1, attr, "v");
+		if (card_value != 0) Term_putstr(col, row, -1, attr, "v"); /* Jokers don't have 'colour value' */
 		break;
 	case 3:
 		attr = TERM_RED;
-		Term_putstr(col, row, -1, attr, "#");
+		if (card_value != 0) Term_putstr(col, row, -1, attr, "#"); /* Card covers don't have 'colour value' */
+		else attr = CARD_STACK2_COL; //generic cover colour "stack 2"
 		break;
 	}
  #ifndef CARDS_VAL_BEFORE_COL
@@ -4780,7 +4798,13 @@ static void display_card(int col, int row, int card_colour, int card_value) {
  #ifdef CARDS_VAL_BEFORE_COL
 		col--;
  #endif
-		Term_putstr(col, row, -1, attr, "Jk");
+		switch (card_colour) {
+		case 0: case 3:
+			Term_putstr(col, row, -1, attr, "[?]"); /* Generic card cover (ie face down, unknown card) */
+			break;
+		default: /* 1+2 */
+			Term_putstr(col, row, -1, attr, "Jk"); /* Joker */
+		}
 		break;
 	case 10:
 		Term_putstr(col, row, -1, attr, "J");
