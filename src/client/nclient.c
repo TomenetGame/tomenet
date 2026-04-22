@@ -4669,40 +4669,40 @@ int Receive_store_special_clr(void) {
 	return(1);
 }
 
-#define RAWPICT_OFFSET_CARDS 10 /* First indices (6 + future reservations) are dice slot symbols, after that come the cards */
+#define CARDS_DUAL_LINES	/* For ASCII cards, display value and colour in separate lines above each other */
+#define CARDS_VAL_BEFORE_COL	/* For ASCII cards, display value first, then colour */
+#define RAWPICT_OFFSET_CARDS 10	/* First indices (6 + future reservations) are dice slot symbols, after that come the cards */
 static void display_card(int col, int row, int card_colour, int card_value) {
-#ifdef USE_GRAPHICS
-	bool use_gfx_cards = FALSE;
-	int card = card_colour * 14 + card_value; // #14 is the Joker
+	int card = card_colour * 14 + card_value; //joker,2-10,j,q,k
 	byte attr = TERM_WHITE;
 
+#ifdef USE_GRAPHICS
  #ifdef TEST_RAWPICT
 	if (!c_cfg.ascii_items) {
+		bool use_gfx_cards = TRUE;
 		int nc, nv;
 
-		use_gfx_cards = TRUE;
+		/* Can only use graphics if all playing card visuals are defined */
 		for (nc = 0; nc < 4; nc++)
 			for (nv = 0; nv < 14; nv++) {
 				if (tiles_rawpict_org[RAWPICT_OFFSET_CARDS + nc * 14 + nv].defined) continue;
 				use_gfx_cards = FALSE;
 				break;
 			}
+
+use_gfx_cards = TRUE; //hack: prf defs are under construction atm
+		if (use_gfx_cards) {
+			(void)((*Term->rawpict_hook)(col, row, RAWPICT_OFFSET_CARDS + card));
+			return;
+		}
 	}
  #endif
 #endif
 
-use_gfx_cards = TRUE; //hack: prf defs are under construction atm
-#ifdef USE_GRAPHICS
-	if (use_gfx_cards) {
-		(void)((*Term->rawpict_hook)(col, row, RAWPICT_OFFSET_CARDS + card));
-		return;
-	}
-#endif
-
-	/* Align text vertically 'centered' (kinda) */
+#ifdef CARDS_DUAL_LINES /* Use two lines */
+ #ifdef CARDS_VAL_BEFORE_COL
 	row++;
-
-#if 0 /* These are too wide compared to graphical cards! The server cannot maintain different layouts for us, there is way not enough space leeway for that. */
+ #endif
 	switch (card_colour) {
 	case 0:
 		attr = TERM_SLATE;
@@ -4721,11 +4721,13 @@ use_gfx_cards = TRUE; //hack: prf defs are under construction atm
 		Term_putstr(col, row, -1, attr, "<>");
 		break;
 	}
-
-	col += 3;
+ #ifdef CARDS_VAL_BEFORE_COL
+	row--;
+ #else
+	row++;
+ #endif
 
 	switch (card_value) {
- #if 1
 	case 0:
 		Term_putstr(col, row, -1, attr, "Jk");
 		break;
@@ -4741,28 +4743,15 @@ use_gfx_cards = TRUE; //hack: prf defs are under construction atm
 	case 13:
 		Term_putstr(col, row, -1, attr, "A");
 		break;
- #else
-	case 0:
-		Term_putstr(col, row, -1, attr, "Joker");
-		break;
-	case 10:
-		Term_putstr(col, row, -1, attr, "Jack ");
-		break;
-	case 11:
-		Term_putstr(col, row, -1, attr, "Queen");
-		break;
-	case 12:
-		Term_putstr(col, row, -1, attr, "King ");
-		break;
-	case 13:
-		Term_putstr(col, row, -1, attr, "Ace  ");
-		break;
- #endif
 	default:
-		Term_putstr(col, row, -1, attr, format("%2d", card_value + 1));
+		Term_putstr(col, row, -1, attr, format("%-2d", card_value + 1));
 		break;
 	}
-#else
+#else /* Use just one line */
+	row++; /* Align text vertically centered into the room a graphical card would take up (3x3) */
+ #ifdef CARDS_VAL_BEFORE_COL
+	col += 2;
+ #endif
 	switch (card_colour) {
 	case 0:
 		attr = TERM_SLATE;
@@ -4781,11 +4770,17 @@ use_gfx_cards = TRUE; //hack: prf defs are under construction atm
 		Term_putstr(col, row, -1, attr, "#");
 		break;
 	}
-
+ #ifndef CARDS_VAL_BEFORE_COL
 	col++;
+ #else
+	col--;
+ #endif
 
 	switch (card_value) {
 	case 0:
+ #ifdef CARDS_VAL_BEFORE_COL
+		col--;
+ #endif
 		Term_putstr(col, row, -1, attr, "Jk");
 		break;
 	case 10:
@@ -4801,7 +4796,12 @@ use_gfx_cards = TRUE; //hack: prf defs are under construction atm
 		Term_putstr(col, row, -1, attr, "A");
 		break;
 	default:
+ #ifdef CARDS_VAL_BEFORE_COL
+		col--;
 		Term_putstr(col, row, -1, attr, format("%2d", card_value + 1));
+ #else
+		Term_putstr(col, row, -1, attr, format("%-2d", card_value + 1));
+ #endif
 		break;
 	}
 #endif
