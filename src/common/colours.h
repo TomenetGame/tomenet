@@ -65,6 +65,7 @@
 #define COLOUR_DUNGEON		'u' /* enter/leave dungeon or tower */
 #define COLOUR_SERVER		'U' /* enter/leave the server */
 #define COLOUR_GAMBLE		's' /* throwing dice, flipping coins, dealing cards */
+#define COLOUR_GAMBLE_RESULT	'U' /* throwing dice, flipping coins, dealing cards */
 
 /* Chat modes (server-side) */
 #define COLOUR_CHAT		'B'
