@@ -4678,7 +4678,7 @@ static void display_card(int col, int row, int card_colour, int card_value) {
 
 #ifdef USE_GRAPHICS
  #ifdef TEST_RAWPICT
-	if (!c_cfg.ascii_items) {
+	if (!c_cfg.ascii_items && use_graphics) {
 		bool use_gfx_cards = TRUE;
 		int nc, nv;
 
