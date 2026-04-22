@@ -9717,6 +9717,10 @@ int Send_store_special_anim(int Ind, u16b anim1, u16b anim2, u16b anim3, u16b an
 
 	return Packet_printf(&connp->c, "%c%hd%hd%hd%hd", PKT_STORE_SPECIAL_ANIM, anim1, anim2, anim3, anim4);
 }
+/* Client needs to be 4.9.3.0.0.3+ to recognize this hack! */
+int Send_store_special_clr_force(int Ind, char line_start, char line_end) {
+	return(Send_store_special_clr(Ind, 100 + line_start, line_end));
+}
 
 /*
  * This function is supposed to handle 'store actions' too,

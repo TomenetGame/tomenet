@@ -4655,6 +4655,9 @@ int Receive_store_special_clr(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%c%c", &ch, &line_start, &line_end)) <= 0) return(n);
 	if (!shopping) return(1);
 
+	/* Hack: 'line_start+100' means 'force clear', for graphical special visuals */
+	if (line_start >= 100) clear_force_from_to(line_start - 100, line_end);
+	else
 #if 0
 	for (n = line_start; n <= line_end; n++)
 		c_put_str(TERM_WHITE, "                                                                                ", n, 0);

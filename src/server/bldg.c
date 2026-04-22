@@ -359,6 +359,137 @@ static void arena_comm(int cmd) {
 
 #endif	// 0
 
+/* Prepare a deck of cards for the casino, for a specific player.
+   'deck': 32 or 52.
+   'jokers': 0 to 12.
+   */
+static void shuffle_deck(int Ind, int deck, int jokers) {
+	player_type *p_ptr = Players[Ind];
+
+	if (deck == 32) {
+		p_ptr->casino_cards_diamonds = 0x1FC1;
+		p_ptr->casino_cards_hearts = 0x1FC1;
+		p_ptr->casino_cards_spades = 0x1FC1;
+		p_ptr->casino_cards_clubs = 0x1FC1;
+	} else {
+		p_ptr->casino_cards_diamonds = 0x1FFF;
+		p_ptr->casino_cards_hearts = 0x1FFF;
+		p_ptr->casino_cards_spades = 0x1FFF;
+		p_ptr->casino_cards_clubs = 0x1FFF;
+	}
+
+	if (jokers) {
+		if (jokers > 9) {
+			p_ptr->casino_cards_diamonds |= 0xE000;
+			p_ptr->casino_cards_hearts |= 0xE000;
+			p_ptr->casino_cards_spades |= 0xE000;
+			if (jokers == 12) p_ptr->casino_cards_clubs |= 0xE000;
+			else if (jokers == 11) p_ptr->casino_cards_clubs |= 0x6000;
+			else p_ptr->casino_cards_clubs |= 0x2000;
+		} else if (jokers > 6) {
+			p_ptr->casino_cards_diamonds |= 0xE000;
+			p_ptr->casino_cards_hearts |= 0xE000;
+			if (jokers == 9) p_ptr->casino_cards_spades |= 0xE000;
+			else if (jokers == 8) p_ptr->casino_cards_spades |= 0x6000;
+			else p_ptr->casino_cards_spades |= 0x2000;
+		} else if (jokers > 3) {
+			p_ptr->casino_cards_diamonds |= 0xE000;
+			if (jokers == 6) p_ptr->casino_cards_hearts |= 0xE000;
+			else if (jokers == 5) p_ptr->casino_cards_hearts |= 0x6000;
+			else p_ptr->casino_cards_hearts |= 0x2000;
+		} else if (jokers > 0) {
+			if (jokers == 3) p_ptr->casino_cards_diamonds |= 0xE000;
+			else if (jokers == 2) p_ptr->casino_cards_diamonds |= 0x6000;
+			else p_ptr->casino_cards_diamonds |= 0x2000;
+		}
+	}
+}
+
+/* Draw a card in the casino, for a specific player, returns its index
+   (this is different from slash.c code and same as display_card() in nclient.c):
+   0: Joker, 1...9: 2...10, 10: Jack, 11: Queen, 12: King, 13: Ace;
+   +14*(0...3) for Clubs/Spades/Hearts/Diamonds.
+   Returns -1 if the player's casino card stack is empty. */
+static int draw_card(int Ind, int *colour, int *value) {
+	player_type *p_ptr = Players[Ind];
+	int i, j, k;
+
+	/* count amount of cards remaining in our deck */
+	k = 0;
+	for (i = 0; i < 16; i++) {
+		if (p_ptr->casino_cards_diamonds & (0x1 << i)) k++;
+		if (p_ptr->casino_cards_hearts & (0x1 << i)) k++;
+		if (p_ptr->casino_cards_spades & (0x1 << i)) k++;
+		if (p_ptr->casino_cards_clubs & (0x1 << i)) k++;
+	}
+
+	/* Paranoia: No more cards left? */
+	if (!k) return(-1);
+
+#ifdef USE_SOUND_2010
+	sound(Ind, "playing_cards", NULL, SFX_TYPE_MISC, TRUE);
+#endif
+
+	/* draw one */
+	j = randint(k);
+	for (i = 0; i < 16; i++) {
+		if (p_ptr->casino_cards_diamonds & (0x1 << i)) {
+			j--;
+			if (!j) {
+				p_ptr->casino_cards_diamonds &= ~(0x1 << i);
+				switch (i) { /* Translate from 'slash.c format' to 'nclient.c format' */
+				case 0: i = 13; break; /* Ace */
+				case 13: case 14: case 15: i = 0; break; /* Joker */
+				}
+				*colour = 3;
+				*value = i;
+				return(42 + i); /* Translate colour too */
+			}
+		}
+		if (p_ptr->casino_cards_hearts & (0x1 << i)) {
+			j--;
+			if (!j) {
+				p_ptr->casino_cards_hearts &= ~(0x1 << i);
+				switch (i) { /* Translate from 'slash.c format' to 'nclient.c format' */
+				case 0: i = 13; break; /* Ace */
+				case 13: case 14: case 15: i = 0; break; /* Joker */
+				}
+				*colour = 2;
+				*value = i;
+				return(28 + i); /* Translate colour too */
+			}
+		}
+		if (p_ptr->casino_cards_spades & (0x1 << i)) {
+			j--;
+			if (!j) {
+				p_ptr->casino_cards_spades &= ~(0x1 << i);
+				switch (i) { /* Translate from 'slash.c format' to 'nclient.c format' */
+				case 0: i = 13; break; /* Ace */
+				case 13: case 14: case 15: i = 0; break; /* Joker */
+				}
+				*colour = 1;
+				*value = i;
+				return(14 + i); /* Translate colour too */
+			}
+		}
+		if (p_ptr->casino_cards_clubs & (0x1 << i)) {
+			j--;
+			if (!j) {
+				p_ptr->casino_cards_clubs &= ~(0x1 << i);
+				switch (i) { /* Translate from 'slash.c format' to 'nclient.c format' */
+				case 0: i = 13; break; /* Ace */
+				case 13: case 14: case 15: i = 0; break; /* Joker */
+				}
+				*colour = 0;
+				*value = i;
+				return(i); /* Translate colour too */
+			}
+		}
+	}
+
+	/* Paranoia: Impossible */
+	return(-1);
+}
 
 /*
  * display fruit for dice slots
@@ -907,10 +1038,11 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		}
 
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
-		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_L_DARK, "=== Black Jack ===");
+		Send_store_special_str(Ind, 3, 31, TERM_L_DARK, "=== Black Jack ===");
+		Send_store_special_clr_force(Ind, 4, 18); /* Note: This requires 4.9.3.0.0.3+, and many other things in here would also require older version checks but are already superceded by the 4.9.3.0.0.3+ check. */
 
 		/* --- under construction - just show a full card deck demo screen --- */
-		if (TRUE) {
+		if (FALSE) {
 			int y = 5;
 
 			Send_store_special_anim(Ind, 4, 5, y, 0);
@@ -977,8 +1109,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			Send_store_special_anim(Ind, 4, 57, y, 55);
 
 #ifdef USE_SOUND_2010
-			sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
-			sound(Ind, "playing_cards", NULL, SFX_TYPE_MISC, TRUE);
+			if (rand_int(2)) sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
+			else sound(Ind, "playing_cards", NULL, SFX_TYPE_MISC, TRUE);
 #endif
 
 			Send_store_special_str(Ind, DICE_Y + 2 - 3, DICE_X - 22, TERM_YELLOW, "Sorry, Blackjack is currently not available.");
@@ -986,7 +1118,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		}
 
 		/* Black Jack implementation:
-		   - Bet was already placed.
+		   - Bet was placed.
+		   - We use 1 standard deck of 52 cards.
 		   - Deal 2 cards to player, 1 card + 1 hidden (face down, called 'hole') to bank. Check both for Black Jack.
 		     No 'dealer ace exposed' side-bat (2:1 'insurance') at this time.
 		   - Split cards? (Allow only initially; equal _point value_ cards) NAND Double down? (Allow only initially)
@@ -996,10 +1129,62 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		*/
 
 		odds_deci = 10;
-		roll1 = randint(13);
-		roll2 = randint(13);
-		roll3 = randint(13);
-		choice = randint(13);
+
+		shuffle_deck(Ind, 52, 0);
+#ifdef USE_SOUND_2010
+		sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
+#endif
+
+		/* 'Manual' clear screen */
+//		for (choice = 5; choice < 16; choice++)
+			//Send_store_special_str(Ind, choice, 10, TERM_L_WHITE, "                                                                   "); //68
+//			Send_store_special_str(Ind, choice, 10, TERM_L_WHITE, "-------------------------------------------------------------------"); //68
+		//msg_print(Ind, NULL);
+
+		p_ptr->casino_var1 = 0; /* Bank: Total points with aces counted as '1' */
+		p_ptr->casino_var2 = 0; /* Bank: Amount of aces */
+		p_ptr->casino_var3 = 0; /* Player: Total points with aces counted as '1' */
+		p_ptr->casino_var4 = 0; /* Player: Amount of aces */
+		p_ptr->casino_var5 = 0; /* Player, Split: Total points with aces counted as '1' */
+		p_ptr->casino_var6 = 0; /* Player, Split: Amount of aces */
+
+		Send_store_special_str(Ind, 6, 4, TERM_L_WHITE, "The bank's cards:");
+
+		/* Bank card #1 */
+		Send_store_special_anim(Ind, 4, 23, 5, draw_card(Ind, &roll1, &roll2));
+		switch (roll2) {
+		case 13: p_ptr->casino_var1++; p_ptr->casino_var2++; break; /* Ace */
+		case 10: case 11: case 12: p_ptr->casino_var1 += 10; break; /* Picture cards */
+		default: p_ptr->casino_var1 += roll2 + 1; /* Number cards */
+		}
+
+		/* Bank card #2 */
+		Send_store_special_anim(Ind, 4, 27, 5, draw_card(Ind, &roll1, &roll2));
+		switch (roll2) {
+		case 13: p_ptr->casino_var1++; p_ptr->casino_var2++; break; /* Ace */
+		case 10: case 11: case 12: p_ptr->casino_var1 += 10; break; /* Picture cards */
+		default: p_ptr->casino_var1 += roll2 + 1; /* Number cards */
+		}
+
+		Send_store_special_str(Ind, 10, 10, TERM_L_GREEN, "Your cards:");
+
+		/* Player card #1 */
+		Send_store_special_anim(Ind, 4, 23, 9, draw_card(Ind, &roll1, &roll2));
+		switch (roll2) {
+		case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
+		case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
+		default: p_ptr->casino_var3 += roll2 + 1; /* Number cards */
+		}
+
+		/* Player card #2 */
+		Send_store_special_anim(Ind, 4, 27, 9, draw_card(Ind, &roll1, &roll2));
+		switch (roll2) {
+		case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
+		case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
+		default: p_ptr->casino_var3 += roll2 + 1; /* Number cards */
+		}
+
+		//s_printf("CASINO_DEBUG: Black Jack; %d,%d,%d,%d\n", roll1, roll2, roll3, choice);
 
 #if 0
 		if ((roll3 == 7) || (roll3 == 11)) {
@@ -1015,7 +1200,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			Send_request_key(Ind, RID_BLACKJACK, "- hit any key to roll again -");
 			return(TRUE);
 		}
-
 		if (win) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
 		else s_printf("CASINO: Black Jack - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 #endif

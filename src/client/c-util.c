@@ -5173,12 +5173,22 @@ void clear_from_to(int row_s, int row_e) {
 
 	/* Erase requested rows */
 	for (y = row_s; y <= row_e; y++) {
-		/* This is specifically required for rawpict image clearing, or the images will remain on screen */
-		Term_fresh();
-
 		/* Erase part of the screen */
 		Term_erase(0, y, 255);
 	}
+}
+/* Same as clear_from_to() but forces re-erasing even of unchanged grids, added for clearing special image visuals (graphics mode) - C. Blue */
+void clear_force_from_to(int row_s, int row_e) {
+	int y;
+
+	if (row_e >= Term->hgt) row_e = Term->hgt;
+
+	/* Erase requested rows */
+	for (y = row_s; y <= row_e; y++) {
+		/* Erase part of the screen */
+		Term_erase_force(0, y, 255);
+	}
+	Term_redraw_section(0, row_s, 70, row_e);
 }
 
 void prt_num(cptr header, int num, int row, int col, byte color) {
@@ -11988,7 +11998,7 @@ static void do_cmd_options_tilesets(void) {
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377sTilesets AUTO-ZOOM to font size which you can change in Window Fonts menu (\377yf\377s).");
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377sSo for graphics to look good, you should selected a font size that matches it");
 		Term_putstr(0, l++, -1, TERM_WHITE, " \377sas best as possible and is not significantly smaller than the selected tileset.");
-		Term_putstr(0, l++, -1, TERM_WHITE, " \377sFor example for a 16x22 sized tileset a 16x22 or 16x24 font works very well.");
+		Term_putstr(0, l++, -1, TERM_WHITE, " \377sFor example for a 16x24 sized tileset a 16x24 or 18x24 font works very well.");
 		l++;
 
 		Term_putstr(1, l++, -1, TERM_WHITE, format("%d graphical tileset%s available, \377yl\377w to list in message window", tilesets, tilesets == 1 ? "" : "s"));

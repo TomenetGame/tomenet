@@ -272,6 +272,7 @@ extern errr Term_addstr(int n, byte a, cptr s);
 extern errr Term_putch(int x, int y, byte a, char c);
 extern errr Term_putstr(int x, int y, int n, byte a, char *s);
 extern errr Term_erase(int x, int y, int n);
+extern errr Term_erase_force(int x, int y, int n);
 extern errr Term_clear(void);
 extern errr Term_redraw(void);
 extern errr Term_redraw_section(int x1, int y1, int x2, int y2);
