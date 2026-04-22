@@ -9683,12 +9683,21 @@ int Send_store_special_clr(int Ind, char line_start, char line_end) {
 #ifdef MINDLINK_STORE
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&connp2->version, 4, 4, 6, 1, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%c", PKT_STORE_SPECIAL_CLR, line_start, line_end);
+		if (is_newer_than(&connp2->version, 4, 4, 6, 1, 0, 0)) {
+			if (line_start >= 100 && is_older_than(&connp2->version, 4, 9, 3, 0, 0, 3))
+				Packet_printf(&connp2->c, "%c%c%c", PKT_STORE_SPECIAL_CLR, line_start - 100, line_end);
+			else
+				Packet_printf(&connp2->c, "%c%c%c", PKT_STORE_SPECIAL_CLR, line_start, line_end);
+		}
 	}
 #endif
 
+	if (line_start >= 100 && is_older_than(&connp->version, 4, 9, 3, 0, 0, 3)) line_start -= 100;
 	return Packet_printf(&connp->c, "%c%c%c", PKT_STORE_SPECIAL_CLR, line_start, line_end);
+}
+/* Client needs to be 4.9.3.0.0.3+ to recognize this hack! */
+int Send_store_special_clr_force(int Ind, char line_start, char line_end) {
+	return(Send_store_special_clr(Ind, 100 + line_start, line_end));
 }
 
 int Send_store_special_anim(int Ind, u16b anim1, u16b anim2, u16b anim3, u16b anim4) {
@@ -9716,10 +9725,6 @@ int Send_store_special_anim(int Ind, u16b anim1, u16b anim2, u16b anim3, u16b an
 #endif
 
 	return Packet_printf(&connp->c, "%c%hd%hd%hd%hd", PKT_STORE_SPECIAL_ANIM, anim1, anim2, anim3, anim4);
-}
-/* Client needs to be 4.9.3.0.0.3+ to recognize this hack! */
-int Send_store_special_clr_force(int Ind, char line_start, char line_end) {
-	return(Send_store_special_clr(Ind, 100 + line_start, line_end));
 }
 
 /*
