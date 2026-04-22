@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 19. April 2026 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 22. April 2026 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2424,9 +2424,10 @@ The ! inscriptions:
     part is not parsed as it is separated by a space from the "!..." sequence.
     You can inscribe an item by pressing '{' and uninscribe it with '}'.
 
-    !* inscription, this is a "combo" shortcut inscription.
-        *       is a 'wild card' which stands for multiple inscriptions at,
-                once inscribing an item '!*' will do ALL of these checks:
+    !* inscription, this is a "combo" shortcut inscription. The '*' is a 'wild
+        card' which combines the effect of multiple inscriptions. Inscribing an
+        item '!*' will perform ALL of the following checks:
+
         !d      Prevent dropping an item.
                 If on a bag this will also prevent storing it in a list house.
                 This inscription will actually also prevent spilling an item to
@@ -2445,7 +2446,7 @@ The ! inscriptions:
     either inscribe it   !dsvk   or just   !*   (implies != too, but whatever).
 
     !+ inscription:
-        Implies !k, !s, !=, !h.
+        A 'wild card' inscription that combines these: !k, !s, !=, !h.
         So it does the same as !* except that it does not prevent dropping or
         throwing an item. This can be useful for throwing weapons for example.
 
