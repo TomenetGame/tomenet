@@ -902,7 +902,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	case BACT_BLACKJACK:
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
-#define CRAPS_1STDICE_ATTR TERM_RED /* Colour of the first pair of dice rolled for better distinguishing of function :). (Second pair is normal colour aka k_info->TERM_L_UMBER.) */
 		Send_store_special_str(Ind, DICE_Y, DICE_X - 9, TERM_L_DARK, "=== Black Jack ===");
 
 		win = 1;
@@ -912,22 +911,84 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		roll3 = randint(13);
 		choice = randint(13);
 
-#if 0
-		if (is_atleast(&p_ptr->version, 4, 9, 2, 1, 0, 1))
-			Send_store_special_anim(Ind, 4, 0, 0, 0);
- #ifdef USE_SOUND_2010
-		else
-			//msg_print(Ind, "\377GCraps");
-			sound(Ind, "casino_craps", NULL, SFX_TYPE_MISC, FALSE);
- #endif
-#else
- #ifdef USE_SOUND_2010
-		sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
- #endif
- #ifdef USE_SOUND_2010
-		sound(Ind, "playing_cards", NULL, SFX_TYPE_MISC, TRUE);
- #endif
+		//testing - WiP
+		if (is_atleast(&p_ptr->version, 4, 9, 3, 0, 0, 3)) {
+			//Send_store_special_anim(Ind, 4, 35, 5, 0);
+			//Send_store_special_anim(Ind, 4, 40, 5, 1);
+			//Send_store_special_anim(Ind, 4, 35, 9, 2);
+			//Send_store_special_anim(Ind, 4, 40, 9, 3);
+
+			int y = 5;
+
+			Send_store_special_anim(Ind, 4, 5, y, 0);
+			Send_store_special_anim(Ind, 4, 9, y, 1);
+			Send_store_special_anim(Ind, 4, 13, y, 2);
+			Send_store_special_anim(Ind, 4, 17, y, 3);
+			Send_store_special_anim(Ind, 4, 21, y, 4);
+			Send_store_special_anim(Ind, 4, 25, y, 5);
+			Send_store_special_anim(Ind, 4, 29, y, 6);
+			Send_store_special_anim(Ind, 4, 33, y, 7);
+			Send_store_special_anim(Ind, 4, 37, y, 8);
+			Send_store_special_anim(Ind, 4, 41, y, 9);
+			Send_store_special_anim(Ind, 4, 45, y, 10);
+			Send_store_special_anim(Ind, 4, 49, y, 11);
+			Send_store_special_anim(Ind, 4, 53, y, 12);
+			Send_store_special_anim(Ind, 4, 57, y, 13);
+
+			y += 4;
+			Send_store_special_anim(Ind, 4, 5, y, 14);
+			Send_store_special_anim(Ind, 4, 9, y, 15);
+			Send_store_special_anim(Ind, 4, 13, y, 16);
+			Send_store_special_anim(Ind, 4, 17, y, 17);
+			Send_store_special_anim(Ind, 4, 21, y, 18);
+			Send_store_special_anim(Ind, 4, 25, y, 19);
+			Send_store_special_anim(Ind, 4, 29, y, 20);
+			Send_store_special_anim(Ind, 4, 33, y, 21);
+			Send_store_special_anim(Ind, 4, 37, y, 22);
+			Send_store_special_anim(Ind, 4, 41, y, 23);
+			Send_store_special_anim(Ind, 4, 45, y, 24);
+			Send_store_special_anim(Ind, 4, 49, y, 25);
+			Send_store_special_anim(Ind, 4, 53, y, 26);
+			Send_store_special_anim(Ind, 4, 57, y, 27);
+
+			y += 4;
+			Send_store_special_anim(Ind, 4, 5, y, 28);
+			Send_store_special_anim(Ind, 4, 9, y, 29);
+			Send_store_special_anim(Ind, 4, 13, y, 30);
+			Send_store_special_anim(Ind, 4, 17, y, 31);
+			Send_store_special_anim(Ind, 4, 21, y, 32);
+			Send_store_special_anim(Ind, 4, 25, y, 33);
+			Send_store_special_anim(Ind, 4, 29, y, 34);
+			Send_store_special_anim(Ind, 4, 33, y, 35);
+			Send_store_special_anim(Ind, 4, 37, y, 36);
+			Send_store_special_anim(Ind, 4, 41, y, 37);
+			Send_store_special_anim(Ind, 4, 45, y, 38);
+			Send_store_special_anim(Ind, 4, 49, y, 39);
+			Send_store_special_anim(Ind, 4, 53, y, 40);
+			Send_store_special_anim(Ind, 4, 57, y, 41);
+
+			y += 4;
+			Send_store_special_anim(Ind, 4, 5, y, 42);
+			Send_store_special_anim(Ind, 4, 9, y, 43);
+			Send_store_special_anim(Ind, 4, 13, y, 44);
+			Send_store_special_anim(Ind, 4, 17, y, 45);
+			Send_store_special_anim(Ind, 4, 21, y, 46);
+			Send_store_special_anim(Ind, 4, 25, y, 47);
+			Send_store_special_anim(Ind, 4, 29, y, 48);
+			Send_store_special_anim(Ind, 4, 33, y, 49);
+			Send_store_special_anim(Ind, 4, 37, y, 50);
+			Send_store_special_anim(Ind, 4, 41, y, 51);
+			Send_store_special_anim(Ind, 4, 45, y, 52);
+			Send_store_special_anim(Ind, 4, 49, y, 53);
+			Send_store_special_anim(Ind, 4, 53, y, 54);
+			Send_store_special_anim(Ind, 4, 57, y, 55);
+		} else {
+			//msg_print(Ind, "\377GBlack Jack");
+#ifdef USE_SOUND_2010
+			sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
+			sound(Ind, "playing_cards", NULL, SFX_TYPE_MISC, TRUE);
 #endif
+		}
 
 #if 0
 #ifdef CUSTOM_VISUALS
@@ -982,7 +1043,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 #else
 		/* --- under construction --- */
-		Send_store_special_str(Ind, DICE_Y + 2, DICE_X - 22, TERM_YELLOW, "Sorry, Blackjack is currently not available.");
+		Send_store_special_str(Ind, DICE_Y + 2 - 3, DICE_X - 22, TERM_YELLOW, "Sorry, Blackjack is currently not available.");
 		return(TRUE);
 #endif
 		break;

@@ -745,7 +745,7 @@ extern bool sound_warning(void);
 extern int bell_sound_idx, page_sound_idx, warning_sound_idx;
 extern int rain1_sound_idx, rain2_sound_idx, snow1_sound_idx, snow2_sound_idx, thunder_sound_idx;
 extern int browse_sound_idx, browsebook_sound_idx, browseinven_sound_idx;
-extern int casino_craps_sound_idx, casino_inbetween_sound_idx, casino_wheel_sound_idx, casino_slots_sound_idx;
+extern int casino_craps_sound_idx, casino_inbetween_sound_idx, casino_wheel_sound_idx, casino_slots_sound_idx, casino_card_sound_idx;
 #endif
 extern errr options_dump(cptr fname);
 extern bool parse_macro;

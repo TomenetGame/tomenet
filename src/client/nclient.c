@@ -4669,6 +4669,141 @@ int Receive_store_special_clr(void) {
 	return(1);
 }
 
+#define RAWPICT_OFFSET_CARDS 10 /* First indices (6 + future reservations) are dice slot symbols, after that come the cards */
+static void display_card(int col, int row, int card_colour, int card_value) {
+#ifdef USE_GRAPHICS
+	bool use_gfx_cards = FALSE;
+	int card = card_colour * 14 + card_value; // #14 is the Joker
+	byte attr = TERM_WHITE;
+
+ #ifdef TEST_RAWPICT
+	if (!c_cfg.ascii_items) {
+		int nc, nv;
+
+		use_gfx_cards = TRUE;
+		for (nc = 0; nc < 4; nc++)
+			for (nv = 0; nv < 14; nv++) {
+				if (tiles_rawpict_org[RAWPICT_OFFSET_CARDS + nc * 14 + nv].defined) continue;
+				use_gfx_cards = FALSE;
+				break;
+			}
+	}
+ #endif
+#endif
+
+use_gfx_cards = TRUE; //hack: prf defs are under construction atm
+#ifdef USE_GRAPHICS
+	if (use_gfx_cards) {
+		(void)((*Term->rawpict_hook)(col, row, RAWPICT_OFFSET_CARDS + card));
+		return;
+	}
+#endif
+
+#if 0 /* These are too wide compared to graphical cards! The server cannot maintain different layouts for us, there is way not enough space leeway for that. */
+	switch (card_colour) {
+	case 0:
+		attr = TERM_SLATE;
+		Term_putstr(col, row, -1, attr, "-+");
+		break;
+	case 1:
+		attr = TERM_SLATE;
+		Term_putstr(col, row, -1, attr, "->");
+		break;
+	case 2:
+		attr = TERM_RED;
+		Term_putstr(col, row, -1, attr, "<3");
+		break;
+	case 3:
+		attr = TERM_RED;
+		Term_putstr(col, row, -1, attr, "<>");
+		break;
+	}
+
+	col += 3;
+
+	switch (card_value) {
+ #if 1
+	case 0:
+		Term_putstr(col, row, -1, attr, "Jk");
+		break;
+	case 10:
+		Term_putstr(col, row, -1, attr, "J");
+		break;
+	case 11:
+		Term_putstr(col, row, -1, attr, "Q");
+		break;
+	case 12:
+		Term_putstr(col, row, -1, attr, "K");
+		break;
+	case 13:
+		Term_putstr(col, row, -1, attr, "A");
+		break;
+ #else
+	case 0:
+		Term_putstr(col, row, -1, attr, "Joker");
+		break;
+	case 10:
+		Term_putstr(col, row, -1, attr, "Jack ");
+		break;
+	case 11:
+		Term_putstr(col, row, -1, attr, "Queen");
+		break;
+	case 12:
+		Term_putstr(col, row, -1, attr, "King ");
+		break;
+	case 13:
+		Term_putstr(col, row, -1, attr, "Ace  ");
+		break;
+ #endif
+	default:
+		Term_putstr(col, row, -1, attr, format("%2d", card_value + 1));
+		break;
+	}
+#else
+	switch (card_colour) {
+	case 0:
+		attr = TERM_SLATE;
+		Term_putstr(col, row, -1, attr, "+");
+		break;
+	case 1:
+		attr = TERM_SLATE;
+		Term_putstr(col, row, -1, attr, "^");
+		break;
+	case 2:
+		attr = TERM_RED;
+		Term_putstr(col, row, -1, attr, "v");
+		break;
+	case 3:
+		attr = TERM_RED;
+		Term_putstr(col, row, -1, attr, "#");
+		break;
+	}
+
+	col++;
+
+	switch (card_value) {
+	case 0:
+		Term_putstr(col, row, -1, attr, "Jk");
+		break;
+	case 10:
+		Term_putstr(col, row, -1, attr, "J");
+		break;
+	case 11:
+		Term_putstr(col, row, -1, attr, "Q");
+		break;
+	case 12:
+		Term_putstr(col, row, -1, attr, "K");
+		break;
+	case 13:
+		Term_putstr(col, row, -1, attr, "A");
+		break;
+	default:
+		Term_putstr(col, row, -1, attr, format("%2d", card_value + 1));
+		break;
+	}
+#endif
+}
+
 static void display_fruit(int row, int col, int fruit) {
 #ifdef USE_GRAPHICS
 	bool use_gfx_fruits = /* perhaps display both, first ascii fruit and then gfx fruit on top of it, so ascii fruit will still be there if screen gets refreshed? */
@@ -5188,6 +5323,13 @@ int Receive_store_special_anim(void) {
 #else
 		usleep(500000);
 #endif
+		break;
+
+	case 4: //Black Jack, maybe just any card...
+#ifdef USE_SOUND_2010
+		sound(casino_card_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
+#endif
+		display_card(anim2, anim3, anim4 / 14, anim4 % 14);
 		break;
 
 	default:

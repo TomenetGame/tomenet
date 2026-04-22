@@ -406,7 +406,7 @@ int grid_weather_volume = 100, grid_ambient_volume = 100, grid_weather_volume_go
 int bell_sound_idx = -1, page_sound_idx = -1, warning_sound_idx = -1;
 int rain1_sound_idx = -1, rain2_sound_idx = -1, snow1_sound_idx = -1, snow2_sound_idx = -1, thunder_sound_idx = -1;
 int browse_sound_idx = -1, browsebook_sound_idx = -1, browseinven_sound_idx = -1;
-int casino_craps_sound_idx = -1, casino_inbetween_sound_idx = -1, casino_wheel_sound_idx = -1, casino_slots_sound_idx = -1;
+int casino_craps_sound_idx = -1, casino_inbetween_sound_idx = -1, casino_wheel_sound_idx = -1, casino_slots_sound_idx = -1, casino_card_sound_idx = -1;
 
 /* optimization options */
 bool sound_hint = TRUE;

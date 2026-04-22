@@ -3481,6 +3481,7 @@ static void init_sound() {
 	casino_inbetween_sound_idx = exec_lua(0, "return get_sound_index(\"casino_inbetween\")");
 	casino_wheel_sound_idx = exec_lua(0, "return get_sound_index(\"casino_wheel\")");
 	casino_slots_sound_idx = exec_lua(0, "return get_sound_index(\"casino_slots\")");
+	casino_card_sound_idx = exec_lua(0, "return get_sound_index(\"playing_cards\")");
 #endif
 }
 /* Try to re-init specifically SDL-audio.
@@ -3546,6 +3547,7 @@ int re_init_sound() {
 	casino_inbetween_sound_idx = exec_lua(0, "return get_sound_index(\"casino_inbetween\")");
 	casino_wheel_sound_idx = exec_lua(0, "return get_sound_index(\"casino_wheel\")");
 	casino_slots_sound_idx = exec_lua(0, "return get_sound_index(\"casino_slots\")");
+	casino_card_sound_idx = exec_lua(0, "return get_sound_index(\"playing_cards\")");
 
 	/* Inform server about potentially changed capabilities */
 	Send_audio();
