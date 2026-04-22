@@ -4699,6 +4699,9 @@ use_gfx_cards = TRUE; //hack: prf defs are under construction atm
 	}
 #endif
 
+	/* Align text vertically 'centered' (kinda) */
+	row++;
+
 #if 0 /* These are too wide compared to graphical cards! The server cannot maintain different layouts for us, there is way not enough space leeway for that. */
 	switch (card_colour) {
 	case 0:
