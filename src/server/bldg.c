@@ -992,11 +992,12 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 		/* Black Jack implementation:
 		   - Bet was already placed.
-		   - Deal 2 cards to player, 1 card + 1 hidden to bank. Check both for Black Jack.
-		     No 'dealer ace exposed' side-bat at this time.
+		   - Deal 2 cards to player, 1 card + 1 hidden (face down, called 'hole') to bank. Check both for Black Jack.
+		     No 'dealer ace exposed' side-bat (2:1 'insurance') at this time.
 		   - Split cards? (Allow only initially; equal _point value_ cards) NAND Double down? (Allow only initially)
-		   - Player loop: hit or stand?
-		   - Bank draws till 17+ (Ace+6 shall also finish)
+		   - Player loop: 'hit' (+card) or 'stand' (no more cards)? >21 is 'bust' aka loss.
+		   - Bank draws till 17+ (Ace+6 shall also finish). >21 is 'bust' aka loss.
+		   - Payoff 1:1, 3/2:1 for player Blackjack; tie (also called "push") means nobody loses and works for Black Jacks too.
 		*/
 
 		win = 1;
