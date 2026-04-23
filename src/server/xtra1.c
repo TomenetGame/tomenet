@@ -12323,7 +12323,14 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 #endif
 
 	case RID_BLACKJACK1: {
-		//Send_store_special_str(Ind, 10, 10, TERM_L_GREEN, "Your cards:");
+		if (!cfr) { /* We don't want to split? */
+			/* Ask for more cards */
+			Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+			return;
+		}
+
+		p_ptr->casino_progress = 1; /* Track 'we did split just now' state */
+
 		Send_store_special_str(Ind, 14, 2, TERM_L_DARK, "(Your split cards:)");
 
 		/* Rearrange player card #2 -- some card gfx are actually slightly larger than 3x3, so clear 4x4 ~~ */
@@ -12333,9 +12340,189 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		Send_store_special_str(Ind, 12, 27, TERM_WHITE, "    ");
 		Send_store_special_anim(Ind, 4, 23, 13, p_ptr->casino_var6); /* Move it into first position, 3rd card row */
 
+		/* Recalculate our points; var3/4 are split stack A, var5/6 are split stack B: */
+		switch (p_ptr->casino_var6 % 14) { /* (var6 still holds one of the split cards. As their point value is identical, we just need one of them here to calculate) */
+		case 13: p_ptr->casino_var5 = p_ptr->casino_var3 = 1; p_ptr->casino_var6 = p_ptr->casino_var4 = 1; break; /* Ace */
+		case 10: case 11: case 12: p_ptr->casino_var5 = p_ptr->casino_var3 = 10; break; /* Picture cards */
+		default: p_ptr->casino_var5 = p_ptr->casino_var3 = (p_ptr->casino_var6 % 14) + 1; /* Number cards */
+		}
+
+		/* Ask for more cards */
+		Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+
 		return; }
 
 	case RID_BLACKJACK2: {
+		int n, roll1, roll2;
+
+		if (!cfr) { /* We don't want to double down? */
+			/* Ask for more cards */
+			Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+			return;
+		}
+
+		p_ptr->casino_wager *= 2;
+
+		/* Receive exactly 1 more card and stand */
+		n = draw_card(Ind, &roll1, &roll2);
+		Send_store_special_anim(Ind, 4, 27, 9, n);
+		switch (roll2) {
+		case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
+		case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
+		default: p_ptr->casino_var3 += roll2 + 1; /* Number cards */
+		}
+
+		/* Bank must act now */
+msg_print(Ind, "BANK'S TURN B");
+		goto RID_BLACKJACK_BANK; }
+
+	case RID_BLACKJACK3: {
+		if (!cfr) { /* We didn't want a card? */
+			/* Are we currently in a 'split'? */
+			switch (p_ptr->casino_progress) {
+			case 1:
+			case 3:
+				/* Activate second split card */
+				p_ptr->casino_progress = 2;
+				Send_store_special_str(Ind, 10, 2, TERM_L_DARK, "(Your split cards:)");
+				Send_store_special_str(Ind, 14, 2, TERM_L_GREEN, "        Your cards:");
+
+				/* Ask for more cards again, now for the 2nd stack */
+				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+				break;
+			case 2:
+				/* Splitting finished, both stacks are active now to await bank play. */
+				Send_store_special_str(Ind, 10, 2, TERM_L_GREEN, "        Your cards:");
+				/* fallthrough */
+			case 4:
+				/* We finished any split stacks, time for the bank to act */
+				/* Fallthrough */
+			case 0:
+				/* We don't want any more cards, time for the bank to act */
+				p_ptr->casino_progress = 5;
+				break;
+			}
+		} else {
+			/* We take another card! */
+			int n, roll1, roll2;
+
+			/* New player card added; either 3rd+ card, or 2nd of either stack if we did split */
+			n = draw_card(Ind, &roll1, &roll2);
+
+			/* Figure out our state (split or not) */
+			switch (p_ptr->casino_progress) {
+			case 1: /* We just split and are handling the first stack - as it's the 2nd card, Black Jack is possible */
+				Send_store_special_anim(Ind, 4, 27, 9, n);
+
+				switch (roll2) {
+				case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
+				case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
+				default: p_ptr->casino_var3 += roll2 + 1; /* Number cards */
+				}
+
+				/* Player started with Black Jack? */
+				if (p_ptr->casino_var4 == 1 && p_ptr->casino_var3 == 11) {
+					/* This stack wins! */
+					
+
+					/* Activate second split card and continue with it*/
+					p_ptr->casino_progress = 2;
+					Send_store_special_str(Ind, 10, 2, TERM_L_DARK, "(Your split cards:)");
+					Send_store_special_str(Ind, 14, 2, TERM_L_GREEN, "        Your cards:");
+
+					/* Ask for more cards again, now for the 2nd stack */
+					Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+					return;
+				}
+
+				/* Continue with more cards if desired */
+				p_ptr->casino_progress = 3;
+				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+				return;
+			case 2: /* We just split and are handling the second stack - as it's the 2nd card, Black Jack is possible */
+				Send_store_special_anim(Ind, 4, 27, 13, n);
+
+				switch (roll2) {
+				case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
+				case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
+				default: p_ptr->casino_var3 += roll2 + 1; /* Number cards */
+				}
+
+				/* Player started with Black Jack? */
+				if (p_ptr->casino_var4 == 1 && p_ptr->casino_var3 == 11) {
+					/* This stack wins! */
+					
+					return;
+				}
+
+				/* Continue with more cards if desired */
+				p_ptr->casino_progress = 4;
+				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+				return;
+			}
+		}
+
+		/* Evaluate our result and allow getting more cards if we didn't bust? */
+		if (p_ptr->casino_progress != 5) {
+			bool bust = FALSE;
+
+			/* Evaluate whether our current score is still not busted */
+
+			/* First stack (if split), or just the one stack we have (no split) */
+			if (p_ptr->casino_progress == 0 || p_ptr->casino_progress == 1) {
+				
+			}
+
+			/* Second stack */
+			if (p_ptr->casino_progress == 2) {
+				
+			}
+
+			/* If not busted, ask for another card */
+			if (!bust) {
+				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+				return;
+			} else {
+				switch (p_ptr->casino_progress) {
+				case 0:
+					/* Lost */
+					
+					break;
+				case 3:
+					/* Lost first split stack */
+					
+
+					/* Activate second split card and continue with it*/
+					p_ptr->casino_progress = 2;
+					Send_store_special_str(Ind, 10, 2, TERM_L_DARK, "(Your split cards:)");
+					Send_store_special_str(Ind, 14, 2, TERM_L_GREEN, "        Your cards:");
+
+					/* Ask for more cards again, now for the 2nd stack */
+					Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+					return;
+				case 4:
+					/* Lost second split stack */
+					
+					return;
+				}
+			}
+		}
+
+		/* Bank must act now */
+msg_print(Ind, "BANK'S TURN A");
+
+		RID_BLACKJACK_BANK: {
+			bool win = FALSE;
+			/* Open the second card if it was face down */
+			
+			/* Draw more cards until we bust, win or tie (a "push") */
+			
+
+#if 0
+			casino_result(Ind, win, TRUE);
+#endif
+		}
+
 		return; }
 
 	default: ;

@@ -1145,7 +1145,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		   - We use 1 standard deck of 52 cards.
 		   - Deal 2 cards to player, 1 card + 1 hidden (face down, called 'hole') to bank. Check both for Black Jack.
 		     No 'dealer ace exposed' side-bat (2:1 'insurance') at this time.
-		   - Split cards? (Allow only initially; equal _point value_ cards) NAND Double down? (Allow only initially)
+		   - Split cards? (Allow only initially; equal _point value_ cards)
+		     NAND Double down? (Allow only initially, not allow after splitting here)
 		   - Player loop: 'hit' (+card) or 'stand' (no more cards)? >21 is 'bust' aka loss.
 		   - Bank draws till 17+ (Ace+6 shall also finish). >21 is 'bust' aka loss.
 		   - Payoff 1:1, 3/2:1 for player Blackjack; tie (also called "push") means nobody loses and works for Black Jacks too.
@@ -1243,18 +1244,24 @@ roll2 = 4;
 			break;
 		}
 
-		//p_ptr->casino_progress = 0;
-		//p_ptr->casino_odds_deci = odds_deci;
+		p_ptr->casino_progress = 0; /* 'not split atm' */
 		p_ptr->casino_wager = wager;
 
-		/* Allow to split? */
-		if (choice == roll3) {
-			Send_request_cfr(Ind, RID_BLACKJACK1, "Split cards?", 1);
+		if (p_ptr->au < wager) msg_print(Ind, "\377s(You cannot split or double down as you don't have enough money left.)");
+		else {
+			/* Allow to split? */
+			if (choice == roll3) {
+				Send_request_cfr(Ind, RID_BLACKJACK1, "Split cards?", 1);
+				return(TRUE);
+			}
+
+			/* Allow to double down */
+			Send_request_cfr(Ind, RID_BLACKJACK2, "Double down?", 2);
 			return(TRUE);
 		}
 
-		/* Ask for more cards */
-		Send_request_cfr(Ind, RID_BLACKJACK2, "Hit (get a card)?", 1);
+		/* Just ask for more cards */
+		Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
 		return(TRUE);
 
 		}

@@ -10041,7 +10041,8 @@ extern int PlayerUID;
 #define RID_SPIN_WHEEL		23	//casino
 #define RID_CRAPS		24	//casino
 #define RID_BLACKJACK1		25	//casino: Split cards?
-#define RID_BLACKJACK2		26	//casino: Get a card?
+#define RID_BLACKJACK2		26	//casino: Double down?
+#define RID_BLACKJACK3		27	//casino: Get a card?
 
 #define RID_QUEST		100	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
 #define RID_QUEST_ACQUIRE	(RID_QUEST + MAX_Q_IDX)	/* this is a broadband RID, going from its value up to value+MAX_Q_IDX-1 */
