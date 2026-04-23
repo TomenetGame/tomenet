@@ -204,7 +204,7 @@ I:48:0:x:0
 
 N:38:Play Blackjack
 C:0:0:0
-I:49:0:j:32772
+I:49:0:j:4
 
 N:39:Herbal Healing
 C:15000:10000:7500

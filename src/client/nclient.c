@@ -5361,7 +5361,7 @@ int Receive_store_special_anim(void) {
 #endif
 		break;
 
-	case 4: //Black Jack, maybe just any card...
+	case 4: //Blackjack, maybe just any card...
 #ifdef USE_SOUND_2010
 		sound(casino_card_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
 #endif

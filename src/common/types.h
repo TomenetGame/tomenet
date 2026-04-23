@@ -4402,7 +4402,7 @@ struct player_type {
 	s32b casino_wager;
 	int casino_odds_deci, casino_roll, casino_progress, casino_choice;
 	u16b casino_var1, casino_var2, casino_var3, casino_var4, casino_var5, casino_var6, casino_var7;
-	u16b casino_cards_diamonds, casino_cards_hearts, casino_cards_spades, casino_cards_clubs; /* For Casino card games (Black Jack) */
+	u16b casino_cards_diamonds, casino_cards_hearts, casino_cards_spades, casino_cards_clubs; /* For Casino card games (Blackjack) */
 #if 0
 	int casino_game, casino_timer; /* In case we ever need server-side timed casino operations, currently all animation is just client-side */
 #endif

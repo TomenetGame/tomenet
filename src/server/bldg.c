@@ -366,6 +366,10 @@ static void arena_comm(int cmd) {
 static void shuffle_deck(int Ind, int deck, int jokers) {
 	player_type *p_ptr = Players[Ind];
 
+#ifdef USE_SOUND_2010
+	sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
+#endif
+
 	if (deck == 32) {
 		p_ptr->casino_cards_diamonds = 0x1FC1;
 		p_ptr->casino_cards_hearts = 0x1FC1;
@@ -1032,131 +1036,32 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		break;
 
 	case BACT_BLACKJACK: {
-		bool pBJ = FALSE, bBJ = FALSE, pSplit = FALSE;
+		bool pBJ = FALSE, bBJ = FALSE;
 
 		if (is_older_than(&p_ptr->version, 4, 9, 3, 0, 0, 3)) {
-			msg_print(Ind, "\377yYou need at least game client version 4.9.3.0.0.3 to play Black Jack.");
+			msg_print(Ind, "\377yYou need at least game client version 4.9.3.0.0.3 to play Blackjack.");
 			return(FALSE);
 		}
 
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
-		Send_store_special_str(Ind, 3, 31, TERM_L_DARK, "=== Black Jack ===");
+		Send_store_special_str(Ind, 3, 31, TERM_L_DARK, "=== Blackjack ===");
 		Send_store_special_clr_force(Ind, 4, 18); /* Note: This requires 4.9.3.0.0.3+, and many other things in here would also require older version checks but are already superceded by the 4.9.3.0.0.3+ check. */
 
-		/* --- under construction - just show a full card deck demo screen --- */
-		if (FALSE) {
-			int y = 5, x = 2;
-
-			Send_store_special_anim(Ind, 4, x, y, 0);
-			Send_store_special_anim(Ind, 4, x + 4, y, 3);
-			Send_store_special_anim(Ind, 4, x + 8, y, 6);
-			Send_store_special_anim(Ind, 4, x + 12, y, 9);
-			Send_store_special_anim(Ind, 4, x + 16, y, 12);
-			Send_store_special_anim(Ind, 4, x + 20, y, 15);
-			Send_store_special_anim(Ind, 4, x + 24, y, 18);
-			Send_store_special_anim(Ind, 4, x + 28, y, 21);
-			Send_store_special_anim(Ind, 4, x + 32, y, 24);
-			Send_store_special_anim(Ind, 4, x + 36, y, 27);
-			Send_store_special_anim(Ind, 4, x + 40, y, 30);
-			Send_store_special_anim(Ind, 4, x + 44, y, 33);
-			Send_store_special_anim(Ind, 4, x + 48, y, 36);
-			Send_store_special_anim(Ind, 4, x + 52, y, 39);
-			Send_store_special_anim(Ind, 4, x + 56, y, 42);
-			Send_store_special_anim(Ind, 4, x + 60, y, 45);
-			Send_store_special_anim(Ind, 4, x + 64, y, 48);
-			Send_store_special_anim(Ind, 4, x + 68, y, 51);
-			Send_store_special_anim(Ind, 4, x + 72, y, 54);
-
-			y += 4;
-			Send_store_special_anim(Ind, 4, x, y, 1);
-			Send_store_special_anim(Ind, 4, x + 4, y, 4);
-			Send_store_special_anim(Ind, 4, x + 8, y, 7);
-			Send_store_special_anim(Ind, 4, x + 12, y, 10);
-			Send_store_special_anim(Ind, 4, x + 16, y, 13);
-			Send_store_special_anim(Ind, 4, x + 20, y, 16);
-			Send_store_special_anim(Ind, 4, x + 24, y, 19);
-			Send_store_special_anim(Ind, 4, x + 28, y, 22);
-			Send_store_special_anim(Ind, 4, x + 32, y, 25);
-			Send_store_special_anim(Ind, 4, x + 36, y, 28);
-			Send_store_special_anim(Ind, 4, x + 40, y, 31);
-			Send_store_special_anim(Ind, 4, x + 44, y, 34);
-			Send_store_special_anim(Ind, 4, x + 48, y, 37);
-			Send_store_special_anim(Ind, 4, x + 52, y, 40);
-			Send_store_special_anim(Ind, 4, x + 56, y, 43);
-			Send_store_special_anim(Ind, 4, x + 60, y, 46);
-			Send_store_special_anim(Ind, 4, x + 64, y, 49);
-			Send_store_special_anim(Ind, 4, x + 68, y, 52);
-			Send_store_special_anim(Ind, 4, x + 72, y, 55);
-
-			y += 4;
-			Send_store_special_anim(Ind, 4, x, y, 2);
-			Send_store_special_anim(Ind, 4, x + 4, y, 5);
-			Send_store_special_anim(Ind, 4, x + 8, y, 8);
-			Send_store_special_anim(Ind, 4, x + 12, y, 11);
-			Send_store_special_anim(Ind, 4, x + 16, y, 14);
-			Send_store_special_anim(Ind, 4, x + 20, y, 17);
-			Send_store_special_anim(Ind, 4, x + 24, y, 20);
-			Send_store_special_anim(Ind, 4, x + 28, y, 23);
-			Send_store_special_anim(Ind, 4, x + 32, y, 26);
-			Send_store_special_anim(Ind, 4, x + 36, y, 29);
-			Send_store_special_anim(Ind, 4, x + 40, y, 32);
-			Send_store_special_anim(Ind, 4, x + 44, y, 35);
-			Send_store_special_anim(Ind, 4, x + 48, y, 38);
-			Send_store_special_anim(Ind, 4, x + 52, y, 41);
-			Send_store_special_anim(Ind, 4, x + 56, y, 44);
-			Send_store_special_anim(Ind, 4, x + 60, y, 47);
-			Send_store_special_anim(Ind, 4, x + 64, y, 50);
-			Send_store_special_anim(Ind, 4, x + 68, y, 53);
-			Send_store_special_anim(Ind, 4, x + 72, y, 0);
-
-			y += 4;
-			Send_store_special_anim(Ind, 4, x, y, 3);
-			Send_store_special_anim(Ind, 4, x + 4, y, 6);
-			Send_store_special_anim(Ind, 4, x + 8, y, 9);
-			Send_store_special_anim(Ind, 4, x + 12, y, 12);
-			Send_store_special_anim(Ind, 4, x + 16, y, 15);
-			Send_store_special_anim(Ind, 4, x + 20, y, 18);
-			Send_store_special_anim(Ind, 4, x + 24, y, 21);
-			Send_store_special_anim(Ind, 4, x + 28, y, 24);
-			Send_store_special_anim(Ind, 4, x + 32, y, 27);
-			Send_store_special_anim(Ind, 4, x + 36, y, 30);
-			Send_store_special_anim(Ind, 4, x + 40, y, 33);
-			Send_store_special_anim(Ind, 4, x + 44, y, 36);
-			Send_store_special_anim(Ind, 4, x + 48, y, 39);
-			Send_store_special_anim(Ind, 4, x + 52, y, 42);
-			Send_store_special_anim(Ind, 4, x + 56, y, 45);
-			Send_store_special_anim(Ind, 4, x + 60, y, 48);
-			Send_store_special_anim(Ind, 4, x + 64, y, 51);
-			Send_store_special_anim(Ind, 4, x + 68, y, 54);
-			Send_store_special_anim(Ind, 4, x + 72, y, 1);
-
-#ifdef USE_SOUND_2010
-			if (rand_int(2)) sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
-			else sound(Ind, "playing_cards", NULL, SFX_TYPE_MISC, TRUE);
-#endif
-
-			Send_store_special_str(Ind, DICE_Y + 2 - 3, DICE_X - 22, TERM_YELLOW, "Sorry, Blackjack is currently not available.");
-			return(FALSE);
-		}
-
-		/* Black Jack implementation:
+		/* Blackjack implementation:
 		   - Bet was placed.
 		   - We use 1 standard deck of 52 cards.
-		   - Deal 2 cards to player, 1 card + 1 hidden (face down, called 'hole') to bank. Check both for Black Jack.
+		   - Deal 2 cards to player, 1 card + 1 hidden (face down, called 'hole') to bank. Check both for Blackjack.
 		     No 'dealer ace exposed' side-bat (2:1 'insurance') at this time.
 		   - Split cards? (Allow only initially; equal _point value_ cards)
 		     NAND Double down? (Allow only initially, not allow after splitting here)
 		   - Player loop: 'hit' (+card) or 'stand' (no more cards)? >21 is 'bust' aka loss.
 		   - Bank draws till 17+ (Ace+6 shall also finish). >21 is 'bust' aka loss.
-		   - Payoff 1:1, 3/2:1 for player Blackjack; tie (also called "push") means nobody loses and works for Black Jacks too.
+		   - Payoff 1:1, 3/2:1 for player Blackjack; tie (also called "push") means nobody loses and works for Blackjacks too.
 		*/
 
-		odds_deci = 10;
+		odds_deci = 10; /* Payoff is 1:1 except for Blackjack where it's 3:2 */
 
 		shuffle_deck(Ind, 52, 0);
-#ifdef USE_SOUND_2010
-		sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
-#endif
 
 		p_ptr->casino_var1 = 0; /* Bank: Total points with aces counted as '1' */
 		p_ptr->casino_var2 = 0; /* Bank: Amount of aces */
@@ -1170,8 +1075,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 		/* Player card #1 */
 		p_ptr->casino_var5 = draw_card(Ind, &roll1, &roll2); /* Remember card for potential splitting */
-p_ptr->casino_var5 = 4; //hack 1/2: simulate Split
-roll2 = 4;
 		Send_store_special_anim(Ind, 4, 23, 9, p_ptr->casino_var5);
 		/* Remember roll2's value in 'choice' for potential splitting. */
 		switch (roll2) {
@@ -1183,8 +1086,6 @@ roll2 = 4;
 
 		/* Player card #2 */
 		p_ptr->casino_var6 = draw_card(Ind, &roll1, &roll2); /* Remember card for potential splitting */
-p_ptr->casino_var6 = 4 + 14; //hack 2/2: simulate Split
-roll2 = 4;
 		Send_store_special_anim(Ind, 4, 27, 9, p_ptr->casino_var6);
 		/* Remember roll2's value in 'roll3' for potential splitting. */
 		switch (roll2) {
@@ -1194,7 +1095,7 @@ roll2 = 4;
 		}
 		p_ptr->casino_var3 += roll3;
 
-		/* Player started with Black Jack? */
+		/* Player started with Blackjack? */
 		if (p_ptr->casino_var4 == 1 && p_ptr->casino_var3 == 11) pBJ = TRUE;
 
 
@@ -1216,29 +1117,29 @@ roll2 = 4;
 		default: p_ptr->casino_var1 += roll2 + 1; /* Number cards */
 		}
 
-		/* Bank started with Black Jack? */
+		/* Bank started with Blackjack? */
 		if (p_ptr->casino_var2 == 1 && p_ptr->casino_var1 == 11) bBJ = TRUE;
 
-		/* Hide second card if not a Black Jack */
+		/* Hide second card if not a Blackjack */
 		if (!pBJ && !bBJ) Send_store_special_anim(Ind, 4, 27, 5, 0);
 		else Send_store_special_anim(Ind, 4, 27, 5, p_ptr->casino_var7);
 
 
-		/* Black Jacks already ended the game? */
+		/* Blackjacks already ended the game? */
 		if (pBJ && bBJ) {
 			tie = TRUE;
 			Send_store_special_str(Ind, 11, 10, TERM_WHITE, "Tie!");
-			s_printf("CASINO: Black Jack - Player '%s' ties (BJ) %d Au.\n", p_ptr->name, wager);
+			s_printf("CASINO: Blackjack - Player '%s' ties (BJ) %d Au.\n", p_ptr->name, wager);
 			break;
 		} else if (pBJ) {
 			win = TRUE;
-			odds_deci = 15; /* Black Jack has 3/2 payoff */
+			odds_deci = 15; /* Blackjack has 3/2 payoff */
 			Send_store_special_str(Ind, 11, 10, TERM_L_GREEN, "You won!");
-			s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
+			s_printf("CASINO: Blackjack - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
 			break;
 		} else if (bBJ) {
 			Send_store_special_str(Ind, 11, 10, TERM_SLATE, "You lost.");
-			s_printf("CASINO: Black Jack - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+			s_printf("CASINO: Blackjack - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 			break;
 		}
 
