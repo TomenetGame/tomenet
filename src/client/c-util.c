@@ -5188,6 +5188,9 @@ void clear_force_from_to(int row_s, int row_e) {
 
 	/* Erase requested rows */
 	for (y = row_s; y <= row_e; y++) {
+		/* This is specifically required for rawpict image clearing, or the images will remain on screen */
+		Term_fresh();
+
 		/* Erase part of the screen */
 		Term_erase(0, y, 255);
 	}
