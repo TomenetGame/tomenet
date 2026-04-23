@@ -581,7 +581,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	player_type *p_ptr = Players[Ind];
 	int roll1, roll2, roll3;
 	int choice, odds_deci = 10;
-	bool win = FALSE, old_casino = is_older_than(&p_ptr->version, 4, 9, 3, 0, 0, 2);
+	bool win = FALSE, tie = FALSE, old_casino = is_older_than(&p_ptr->version, 4, 9, 3, 0, 0, 2);
 
 	s32b wager;
 	s32b maxbet;
@@ -1032,7 +1032,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		break;
 
 	case BACT_BLACKJACK: {
-		int n;
 		bool pBJ = FALSE, bBJ = FALSE, pSplit = FALSE;
 
 		if (is_older_than(&p_ptr->version, 4, 9, 3, 0, 0, 3)) {
@@ -1210,7 +1209,7 @@ roll2 = 4;
 		}
 
 		/* Bank card #2 */
-		n = draw_card(Ind, &roll1, &roll2);
+		p_ptr->casino_var7 = draw_card(Ind, &roll1, &roll2); /* Remember face down card so we can show it later */
 		switch (roll2) {
 		case 13: p_ptr->casino_var1++; p_ptr->casino_var2++; break; /* Ace */
 		case 10: case 11: case 12: p_ptr->casino_var1 += 10; break; /* Picture cards */
@@ -1222,13 +1221,12 @@ roll2 = 4;
 
 		/* Hide second card if not a Black Jack */
 		if (!pBJ && !bBJ) Send_store_special_anim(Ind, 4, 27, 5, 0);
-		else Send_store_special_anim(Ind, 4, 27, 5, n);
+		else Send_store_special_anim(Ind, 4, 27, 5, p_ptr->casino_var7);
 
 
 		/* Black Jacks already ended the game? */
 		if (pBJ && bBJ) {
-			win = TRUE; /* Tie actually, 0 payout */
-			odds_deci = 0;
+			tie = TRUE;
 			Send_store_special_str(Ind, 11, 10, TERM_WHITE, "Tie!");
 			s_printf("CASINO: Black Jack - Player '%s' ties (BJ) %d Au.\n", p_ptr->name, wager);
 			break;
@@ -1246,6 +1244,8 @@ roll2 = 4;
 
 		p_ptr->casino_progress = 0; /* 'not split atm' */
 		p_ptr->casino_wager = wager;
+		p_ptr->casino_odds_deci = odds_deci;
+		p_ptr->casino_choice = 2; /* count cards we took so far, for visual placement */
 
 		if (p_ptr->au < wager) msg_print(Ind, "\377s(You cannot split or double down as you don't have enough money left.)");
 		else {
@@ -1269,14 +1269,34 @@ roll2 = 4;
 
 	p_ptr->casino_odds_deci = odds_deci;
 	p_ptr->casino_wager = wager;
-	casino_result(Ind, win, cmd != BACT_DICE_SLOTS); //dice slots required payment upfront already, so in case of loss don't double-deduct
+	casino_result(Ind, win, tie, cmd != BACT_DICE_SLOTS); //dice slots required payment upfront already, so in case of loss don't double-deduct
 	return(TRUE);
 }
 
-void casino_result(int Ind, bool win, bool deduct_loss) {
+/* 'deduct_loss' should be FALSE if player had to do upfront payment of the wager already,
+   otherwise TRUE (standard for most games). */
+void casino_result(int Ind, bool win, bool tie, bool deduct_loss) {
 	player_type *p_ptr = Players[Ind];
 
-	if (win) {
+	/* Prevent a very far-fetched IDDC/Highlander exploit ^^ */
+	if (!p_ptr->max_exp) {
+		msg_print(Ind, "You gain a tiny bit of experience from gambling.");
+		gain_exp(Ind, 1);
+	}
+
+	if (tie) {
+#ifdef USE_SOUND_2010
+		sound(Ind, "casino_tie", NULL, SFX_TYPE_MISC, FALSE);
+#endif
+		/* If we paid upfront, get our money back */
+		if (!deduct_loss) {
+			/* paranoia: prevent s32b overflow (since we paid upfront this ALMOST cannot...) */
+			if (PY_MAX_GOLD - p_ptr->casino_wager >= p_ptr->au) {
+				p_ptr->au += p_ptr->casino_wager;
+				Send_gold(Ind, p_ptr->au, p_ptr->balance);
+			}
+		}
+	} else if (win) {
 #ifdef USE_SOUND_2010
 		sound(Ind, "casino_win", NULL, SFX_TYPE_MISC, FALSE);
 #endif
@@ -1288,17 +1308,13 @@ void casino_result(int Ind, bool win, bool deduct_loss) {
 #ifdef USE_SOUND_2010
 			sound(Ind, "pickup_gold", NULL, SFX_TYPE_COMMAND, FALSE);
 #endif
-			/* Prevent a very far-fetched IDDC/Highlander exploit ^^ */
-			if (!p_ptr->max_exp) {
-				msg_print(Ind, "You gain a tiny bit of experience from gambling.");
-				gain_exp(Ind, 1);
-			}
 			if (p_ptr->casino_odds_deci) {
 				if (p_ptr->casino_odds_deci % 10 == 0)
 					msg_format(Ind, "\377GYou won %d Au! (Payoff: %d)", (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10, p_ptr->casino_odds_deci / 10);
 				else
 					msg_format(Ind, "\377GYou won %d Au! (Payoff: %d.%d)", (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10, p_ptr->casino_odds_deci / 10, p_ptr->casino_odds_deci % 10);
-			} else msg_format(Ind, "\377GYou won and got your wager of %d Au back.", p_ptr->casino_wager);
+			} else if (deduct_loss) msg_format(Ind, "\377GYou won and got your wager of %d Au back.", p_ptr->casino_wager);
+			else msg_format(Ind, "\377GYou won but there is no reward."); /* paranoia, deduct_loss should always be TRUE if casino_odds_deci are 0. */
 		}
 		Send_gold(Ind, p_ptr->au, p_ptr->balance);
 	} else {

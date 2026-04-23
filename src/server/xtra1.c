@@ -11774,7 +11774,7 @@ void handle_request_return_num(int Ind, int id, int num) {
 		if (win) s_printf("CASINO: Spin the Wheel - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
 		else s_printf("CASINO: Spin the Wheel - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
-		casino_result(Ind, win, TRUE);
+		casino_result(Ind, win, FALSE, TRUE);
 		return;
 		}
 
@@ -11817,7 +11817,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 #endif
 			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "You forfeit!");
 			s_printf("CASINO: Craps - Player '%s' forfeit %d Au.\n", p_ptr->name, p_ptr->casino_wager);
-			casino_result(Ind, FALSE, TRUE);
+			casino_result(Ind, FALSE, FALSE, TRUE);
 			return;
 		}
 
@@ -12022,7 +12022,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 		if (win) s_printf("CASINO: Craps - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
 		else s_printf("CASINO: Craps - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 
-		casino_result(Ind, win, TRUE);
+		casino_result(Ind, win, FALSE, TRUE);
 		return; }
 
 	default:;
@@ -12324,8 +12324,8 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 
 	case RID_BLACKJACK1: {
 		if (!cfr) { /* We don't want to split? */
-			/* Ask for more cards */
-			Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+			/* Also allow to double down */
+			Send_request_cfr(Ind, RID_BLACKJACK2, "Double down?", 2);
 			return;
 		}
 
@@ -12365,7 +12365,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 
 		/* Receive exactly 1 more card and stand */
 		n = draw_card(Ind, &roll1, &roll2);
-		Send_store_special_anim(Ind, 4, 27, 9, n);
+		Send_store_special_anim(Ind, 4, 31, 9, n);
 		switch (roll2) {
 		case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
 		case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
@@ -12373,7 +12373,6 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		}
 
 		/* Bank must act now */
-msg_print(Ind, "BANK'S TURN B");
 		goto RID_BLACKJACK_BANK; }
 
 	case RID_BLACKJACK3: {
@@ -12395,25 +12394,53 @@ msg_print(Ind, "BANK'S TURN B");
 				Send_store_special_str(Ind, 10, 2, TERM_L_GREEN, "        Your cards:");
 				/* fallthrough */
 			case 4:
-				/* We finished any split stacks, time for the bank to act */
-				/* Fallthrough */
+				/* We don't want any more cards for split stacks, time for the bank to act */
+				p_ptr->casino_progress = 5;
+				break;
 			case 0:
 				/* We don't want any more cards, time for the bank to act */
-				p_ptr->casino_progress = 5;
+				p_ptr->casino_progress = 6;
 				break;
 			}
 		} else {
 			/* We take another card! */
 			int n, roll1, roll2;
+			int score, ace_score;
 
 			/* New player card added; either 3rd+ card, or 2nd of either stack if we did split */
 			n = draw_card(Ind, &roll1, &roll2);
 
 			/* Figure out our state (split or not) */
 			switch (p_ptr->casino_progress) {
+			case 0: /* non-splitting, normal card drawing */
+				p_ptr->casino_choice++; /* Count cards for visual placement */
+				Send_store_special_anim(Ind, 4, 23 + (p_ptr->casino_choice - 1) * 4, 9, n);
+
+				/* Add the card to our score */
+				switch (roll2) {
+				case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
+				case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
+				default: p_ptr->casino_var3 += roll2 + 1; /* Number cards */
+				}
+
+				/* Get highest score; if we have an Ace we have to check whether it counts 1 or 11 (only for 1 Ace, others must count 1) */
+				ace_score = p_ptr->casino_var4 ? p_ptr->casino_var3 - 1 + 11 : p_ptr->casino_var3;
+				/* Final best sum */
+				score = ace_score <= 21 ? ace_score : p_ptr->casino_var3;
+				/* Did we bust? */
+				if (score > 21) {
+					/* First stack needs to be evaluated in between, as 2nd stack is still following after this */
+					casino_result(Ind, FALSE, FALSE, TRUE);
+					return;
+				}
+
+				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+				return;
+
 			case 1: /* We just split and are handling the first stack - as it's the 2nd card, Black Jack is possible */
 				Send_store_special_anim(Ind, 4, 27, 9, n);
 
+				/* Add the card to our score */
 				switch (roll2) {
 				case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
 				case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
@@ -12422,105 +12449,234 @@ msg_print(Ind, "BANK'S TURN B");
 
 				/* Player started with Black Jack? */
 				if (p_ptr->casino_var4 == 1 && p_ptr->casino_var3 == 11) {
+					int wager = p_ptr->casino_wager;
+
 					/* This stack wins! */
-					
+					p_ptr->casino_odds_deci = 15; /* Black Jack is 3/2 payout */
+
+					/* First stack needs to be evaluated in between, as 2nd stack is still following after this */
+					casino_result(Ind, TRUE, FALSE, TRUE);
+					/* casino_result() nulls the wager, so restore it for 2nd stack: */
+					p_ptr->casino_wager = wager;
+					p_ptr->casino_odds_deci = 10;
 
 					/* Activate second split card and continue with it*/
 					p_ptr->casino_progress = 2;
 					Send_store_special_str(Ind, 10, 2, TERM_L_DARK, "(Your split cards:)");
 					Send_store_special_str(Ind, 14, 2, TERM_L_GREEN, "        Your cards:");
 
-					/* Ask for more cards again, now for the 2nd stack */
 					Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
 					return;
 				}
 
 				/* Continue with more cards if desired */
 				p_ptr->casino_progress = 3;
+				p_ptr->casino_choice = 2; /* Count: We got 2 cards so far */
 				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
 				return;
+
 			case 2: /* We just split and are handling the second stack - as it's the 2nd card, Black Jack is possible */
 				Send_store_special_anim(Ind, 4, 27, 13, n);
 
+				switch (roll2) {
+				case 13: p_ptr->casino_var5++; p_ptr->casino_var6++; break; /* Ace */
+				case 10: case 11: case 12: p_ptr->casino_var5 += 10; break; /* Picture cards */
+				default: p_ptr->casino_var5 += roll2 + 1; /* Number cards */
+				}
+
+				/* Player started with Black Jack? */
+				if (p_ptr->casino_var6 == 1 && p_ptr->casino_var5 == 11) {
+					/* This stack wins! */
+					p_ptr->casino_odds_deci = 15; /* Black Jack is 3/2 payout */
+					casino_result(Ind, TRUE, FALSE, TRUE);
+					return;
+				}
+
+				/* Continue with more cards if desired */
+				p_ptr->casino_progress = 4;
+				p_ptr->casino_choice = 2; /* Count: We got 2 cards so far */
+				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+				return;
+
+			case 3: /* We're drawing the 3rd+ card of the first split stack */
+				p_ptr->casino_choice++; /* Count cards for visual placement */
+				Send_store_special_anim(Ind, 4, 23 + (p_ptr->casino_choice - 1) * 4, 9, n);
+
+				/* Add the card to our score */
 				switch (roll2) {
 				case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
 				case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
 				default: p_ptr->casino_var3 += roll2 + 1; /* Number cards */
 				}
 
-				/* Player started with Black Jack? */
-				if (p_ptr->casino_var4 == 1 && p_ptr->casino_var3 == 11) {
-					/* This stack wins! */
-					
-					return;
-				}
+				/* Get highest score; if we have an Ace we have to check whether it counts 1 or 11 (only for 1 Ace, others must count 1) */
+				ace_score = p_ptr->casino_var4 ? p_ptr->casino_var3 - 1 + 11 : p_ptr->casino_var3;
+				/* Final best sum */
+				score = ace_score <= 21 ? ace_score : p_ptr->casino_var3;
+				/* Did we bust? */
+				if (score > 21) {
+					int wager = p_ptr->casino_wager;
 
-				/* Continue with more cards if desired */
-				p_ptr->casino_progress = 4;
-				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
-				return;
-			}
-		}
-
-		/* Evaluate our result and allow getting more cards if we didn't bust? */
-		if (p_ptr->casino_progress != 5) {
-			bool bust = FALSE;
-
-			/* Evaluate whether our current score is still not busted */
-
-			/* First stack (if split), or just the one stack we have (no split) */
-			if (p_ptr->casino_progress == 0 || p_ptr->casino_progress == 1) {
-				
-			}
-
-			/* Second stack */
-			if (p_ptr->casino_progress == 2) {
-				
-			}
-
-			/* If not busted, ask for another card */
-			if (!bust) {
-				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
-				return;
-			} else {
-				switch (p_ptr->casino_progress) {
-				case 0:
-					/* Lost */
-					
-					break;
-				case 3:
-					/* Lost first split stack */
-					
+					/* First stack needs to be evaluated in between, as 2nd stack is still following after this */
+					casino_result(Ind, FALSE, FALSE, TRUE);
+					/* casino_result() nulls the wager, so restore it for 2nd stack: */
+					p_ptr->casino_wager = wager;
 
 					/* Activate second split card and continue with it*/
-					p_ptr->casino_progress = 2;
+					p_ptr->casino_progress = 4;
 					Send_store_special_str(Ind, 10, 2, TERM_L_DARK, "(Your split cards:)");
 					Send_store_special_str(Ind, 14, 2, TERM_L_GREEN, "        Your cards:");
 
 					/* Ask for more cards again, now for the 2nd stack */
 					Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
 					return;
-				case 4:
-					/* Lost second split stack */
-					
+				}
+
+				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+				return;
+
+			case 4: /* We're drawing the 3rd+ card of the second split stack */
+				p_ptr->casino_choice++; /* Count cards for visual placement */
+				Send_store_special_anim(Ind, 4, 23 + (p_ptr->casino_choice - 1) * 4, 13, n);
+
+				/* Add the card to our score */
+				switch (roll2) {
+				case 13: p_ptr->casino_var5++; p_ptr->casino_var6++; break; /* Ace */
+				case 10: case 11: case 12: p_ptr->casino_var5 += 10; break; /* Picture cards */
+				default: p_ptr->casino_var5 += roll2 + 1; /* Number cards */
+				}
+
+				/* Get highest score; if we have an Ace we have to check whether it counts 1 or 11 (only for 1 Ace, others must count 1) */
+				ace_score = p_ptr->casino_var4 ? p_ptr->casino_var3 - 1 + 11 : p_ptr->casino_var3;
+				/* Final best sum */
+				score = ace_score <= 21 ? ace_score : p_ptr->casino_var3;
+				/* Did we bust? */
+				if (score > 21) {
+					/* First stack needs to be evaluated in between, as 2nd stack is still following after this */
+					casino_result(Ind, FALSE, FALSE, TRUE);
 					return;
 				}
+
+				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+				return;
 			}
 		}
 
 		/* Bank must act now */
-msg_print(Ind, "BANK'S TURN A");
-
 		RID_BLACKJACK_BANK: {
-			bool win = FALSE;
-			/* Open the second card if it was face down */
-			
-			/* Draw more cards until we bust, win or tie (a "push") */
-			
+			bool win = FALSE, tie = FALSE;
+			int bank_score, ace_score, cards = 2, roll1, roll2;
 
-#if 0
-			casino_result(Ind, win, TRUE);
-#endif
+			/* Open the second card if it was face down */
+			Send_store_special_str(Ind, 5, 27, TERM_WHITE, "    "); /* Erase the face down card (cover) */
+			Send_store_special_str(Ind, 6, 27, TERM_WHITE, "    ");
+			Send_store_special_str(Ind, 7, 27, TERM_WHITE, "    ");
+			Send_store_special_str(Ind, 8, 27, TERM_WHITE, "    ");
+			Send_store_special_anim(Ind, 4, 27, 5, p_ptr->casino_var7);
+
+			/* Draw more cards until we bust, win or tie (a "push") */
+			while (TRUE) {
+				/* If we have at least 1 Ace, it might push our score into the 17-21 region and that would end the drawing. */
+				ace_score = p_ptr->casino_var2 ? p_ptr->casino_var1 - 1 + 11 : p_ptr->casino_var1;
+				/* Bank's card sum, assuming Ace must count as 11 if that helps to reach 17 but doesn't bust over 21 yet: */
+				bank_score = (ace_score >= 17 && ace_score <= 21) ? ace_score : p_ptr->casino_var1;
+				if (bank_score >= 17) break; /* Stand or bust */
+
+				/* Must draw a card */
+				cards++;
+				Send_store_special_anim(Ind, 4, 23 + (cards - 1) * 4, 5, draw_card(Ind, &roll1, &roll2));
+				switch (roll2) {
+				case 13: p_ptr->casino_var1++; p_ptr->casino_var2++; break; /* Ace */
+				case 10: case 11: case 12: p_ptr->casino_var1 += 10; break; /* Picture cards */
+				default: p_ptr->casino_var1 += roll2 + 1; /* Number cards */
+				}
+			}
+			/* Bank busted? */
+			if (bank_score > 21) {
+				win = TRUE;
+				Send_store_special_str(Ind, 11, 10, TERM_L_GREEN, "You won!");
+
+				/* Did we have split cards? */
+				if (p_ptr->casino_progress == 5) {
+					p_ptr->casino_wager *= 2;
+					s_printf("CASINO: Black Jack - Player '%s' dual-won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
+				} else s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
+			} else {
+				/* Did we have split cards? */
+				if (p_ptr->casino_progress == 5) {
+					int score, ace_score, wager = p_ptr->casino_wager;
+
+					/* ---- Bank vs stack 1: ---- */
+
+					/* Get highest score; if we have an Ace we have to check whether it counts 1 or 11 (only for 1 Ace, others must count 1) */
+					ace_score = p_ptr->casino_var4 ? p_ptr->casino_var3 - 1 + 11 : p_ptr->casino_var3;
+					/* Final best sum */
+					score = ace_score <= 21 ? ace_score : p_ptr->casino_var3;
+
+					if (bank_score == score) {
+						tie = TRUE;
+						Send_store_special_str(Ind, 11, 10, TERM_WHITE, "Tie!");
+						s_printf("CASINO: Black Jack - Player '%s' split 1 ties %d Au.\n", p_ptr->name, p_ptr->casino_wager);
+						return;
+					} else if (bank_score < score) {
+						win = TRUE;
+						Send_store_special_str(Ind, 11, 10, TERM_L_GREEN, "You won!");
+						s_printf("CASINO: Black Jack - Player '%s' split 1 won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
+					} else {
+						Send_store_special_str(Ind, 11, 10, TERM_SLATE, "You lost.");
+						s_printf("CASINO: Black Jack - Player '%s' split 1 lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
+					}
+					/* First stack needs to be evaluated in between, as 2nd stack is still following after this */
+					casino_result(Ind, win, tie, TRUE);
+					/* casino_result() nulls the wager, so restore it for 2nd stack: */
+					p_ptr->casino_wager = wager;
+
+					/* ---- Bank vs stack 2: ---- */
+
+					win = tie = FALSE;
+
+					/* Get highest score; if we have an Ace we have to check whether it counts 1 or 11 (only for 1 Ace, others must count 1) */
+					ace_score = p_ptr->casino_var6 ? p_ptr->casino_var5 - 1 + 11 : p_ptr->casino_var5;
+					/* Final best sum */
+					score = ace_score <= 21 ? ace_score : p_ptr->casino_var5;
+
+					if (bank_score == score) {
+						tie = TRUE;
+						Send_store_special_str(Ind, 11, 10, TERM_WHITE, "Tie!");
+						s_printf("CASINO: Black Jack - Player '%s' split 2 ties %d Au.\n", p_ptr->name, p_ptr->casino_wager);
+						return;
+					} else if (bank_score < score) {
+						win = TRUE;
+						Send_store_special_str(Ind, 11, 10, TERM_L_GREEN, "You won!");
+						s_printf("CASINO: Black Jack - Player '%s' split 2 won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
+					} else {
+						Send_store_special_str(Ind, 11, 10, TERM_SLATE, "You lost.");
+						s_printf("CASINO: Black Jack - Player '%s' split 2 lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
+					}
+				} else {
+					int score, ace_score;
+
+					/* Get highest score; if we have an Ace we have to check whether it counts 1 or 11 (only for 1 Ace, others must count 1) */
+					ace_score = p_ptr->casino_var4 ? p_ptr->casino_var3 - 1 + 11 : p_ptr->casino_var3;
+					/* Final best sum */
+					score = ace_score <= 21 ? ace_score : p_ptr->casino_var3;
+
+					if (bank_score == score) {
+						tie = TRUE;
+						Send_store_special_str(Ind, 11, 10, TERM_WHITE, "Tie!");
+						s_printf("CASINO: Black Jack - Player '%s' ties %d Au.\n", p_ptr->name, p_ptr->casino_wager);
+						return;
+					} else if (bank_score < score) {
+						win = TRUE;
+						Send_store_special_str(Ind, 11, 10, TERM_L_GREEN, "You won!");
+						s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
+					} else {
+						Send_store_special_str(Ind, 11, 10, TERM_SLATE, "You lost.");
+						s_printf("CASINO: Black Jack - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
+					}
+				}
+			}
+			casino_result(Ind, win, tie, TRUE);
 		}
 
 		return; }
