@@ -11815,7 +11815,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 #if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
 			ycv++; //looks slightly better?
 #endif
-			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "You forfeit!");
+			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 7, TERM_SLATE, "You forfeit!");
 			s_printf("CASINO: Craps - Player '%s' forfeit %d Au.\n", p_ptr->name, p_ptr->casino_wager);
 			casino_result(Ind, FALSE, FALSE, TRUE);
 			return;
@@ -12008,12 +12008,12 @@ void handle_request_return_key(int Ind, int id, char c) {
 #if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
 			ycv++; //looks slightly better?
 #endif
-			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_GREEN, "You won!");
+			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 7, TERM_GREEN, "You won!");
 		} else if (roll3 == 7) {
 #if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
 			ycv++; //looks slightly better?
 #endif
-			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "You lost!");
+			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 7, TERM_SLATE, "You lost!");
 		} else {
 			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again (ESC to forfeit) -");
 			return;
@@ -12388,7 +12388,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 
 				/* Ask for more cards again, now for the 2nd stack */
 				Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
-				break;
+				return;
 			case 2:
 				/* Splitting finished, both stacks are active now to await bank play. */
 				Send_store_special_str(Ind, 10, 2, TERM_L_GREEN, "        Your cards:");
