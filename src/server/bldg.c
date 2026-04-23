@@ -410,7 +410,7 @@ static void shuffle_deck(int Ind, int deck, int jokers) {
    0: Joker, 1...9: 2...10, 10: Jack, 11: Queen, 12: King, 13: Ace;
    +14*(0...3) for Clubs/Spades/Hearts/Diamonds.
    Returns -1 if the player's casino card stack is empty. */
-static int draw_card(int Ind, int *colour, int *value) {
+int draw_card(int Ind, int *colour, int *value) {
 	player_type *p_ptr = Players[Ind];
 	int i, j, k;
 
@@ -1031,7 +1031,10 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		else s_printf("CASINO: Dice Slots - Player '%s' lost %d Au.\n", p_ptr->name, wager);
 		break;
 
-	case BACT_BLACKJACK:
+	case BACT_BLACKJACK: {
+		int n;
+		bool pBJ = FALSE, bBJ = FALSE, pSplit = FALSE;
+
 		if (is_older_than(&p_ptr->version, 4, 9, 3, 0, 0, 3)) {
 			msg_print(Ind, "\377yYou need at least game client version 4.9.3.0.0.3 to play Black Jack.");
 			return(FALSE);
@@ -1155,18 +1158,45 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		sound(Ind, "playing_cards_shuffle", NULL, SFX_TYPE_MISC, TRUE);
 #endif
 
-		/* 'Manual' clear screen */
-//		for (choice = 5; choice < 16; choice++)
-			//Send_store_special_str(Ind, choice, 10, TERM_L_WHITE, "                                                                   "); //68
-//			Send_store_special_str(Ind, choice, 10, TERM_L_WHITE, "-------------------------------------------------------------------"); //68
-		//msg_print(Ind, NULL);
-
 		p_ptr->casino_var1 = 0; /* Bank: Total points with aces counted as '1' */
 		p_ptr->casino_var2 = 0; /* Bank: Amount of aces */
 		p_ptr->casino_var3 = 0; /* Player: Total points with aces counted as '1' */
 		p_ptr->casino_var4 = 0; /* Player: Amount of aces */
 		p_ptr->casino_var5 = 0; /* Player, Split: Total points with aces counted as '1' */
 		p_ptr->casino_var6 = 0; /* Player, Split: Amount of aces */
+
+
+		Send_store_special_str(Ind, 10, 10, TERM_L_GREEN, "Your cards:");
+
+		/* Player card #1 */
+		p_ptr->casino_var5 = draw_card(Ind, &roll1, &roll2); /* Remember card for potential splitting */
+p_ptr->casino_var5 = 4; //hack 1/2: simulate Split
+roll2 = 4;
+		Send_store_special_anim(Ind, 4, 23, 9, p_ptr->casino_var5);
+		/* Remember roll2's value in 'choice' for potential splitting. */
+		switch (roll2) {
+		case 13: choice = 1; p_ptr->casino_var4++; break; /* Ace */
+		case 10: case 11: case 12: choice = 10; break; /* Picture cards */
+		default: choice = roll2 + 1; /* Number cards */
+		}
+		p_ptr->casino_var3 += choice;
+
+		/* Player card #2 */
+		p_ptr->casino_var6 = draw_card(Ind, &roll1, &roll2); /* Remember card for potential splitting */
+p_ptr->casino_var6 = 4 + 14; //hack 2/2: simulate Split
+roll2 = 4;
+		Send_store_special_anim(Ind, 4, 27, 9, p_ptr->casino_var6);
+		/* Remember roll2's value in 'roll3' for potential splitting. */
+		switch (roll2) {
+		case 13: roll3 = 1; p_ptr->casino_var4++; break; /* Ace */
+		case 10: case 11: case 12: roll3 = 10; break; /* Picture cards */
+		default: roll3 = roll2 + 1; /* Number cards */
+		}
+		p_ptr->casino_var3 += roll3;
+
+		/* Player started with Black Jack? */
+		if (p_ptr->casino_var4 == 1 && p_ptr->casino_var3 == 11) pBJ = TRUE;
+
 
 		Send_store_special_str(Ind, 6, 4, TERM_L_WHITE, "The bank's cards:");
 
@@ -1179,51 +1209,55 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 		}
 
 		/* Bank card #2 */
-		Send_store_special_anim(Ind, 4, 27, 5, draw_card(Ind, &roll1, &roll2));
+		n = draw_card(Ind, &roll1, &roll2);
 		switch (roll2) {
 		case 13: p_ptr->casino_var1++; p_ptr->casino_var2++; break; /* Ace */
 		case 10: case 11: case 12: p_ptr->casino_var1 += 10; break; /* Picture cards */
 		default: p_ptr->casino_var1 += roll2 + 1; /* Number cards */
 		}
 
-		Send_store_special_str(Ind, 10, 10, TERM_L_GREEN, "Your cards:");
+		/* Bank started with Black Jack? */
+		if (p_ptr->casino_var2 == 1 && p_ptr->casino_var1 == 11) bBJ = TRUE;
 
-		/* Player card #1 */
-		Send_store_special_anim(Ind, 4, 23, 9, draw_card(Ind, &roll1, &roll2));
-		switch (roll2) {
-		case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
-		case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
-		default: p_ptr->casino_var3 += roll2 + 1; /* Number cards */
-		}
+		/* Hide second card if not a Black Jack */
+		if (!pBJ && !bBJ) Send_store_special_anim(Ind, 4, 27, 5, 0);
+		else Send_store_special_anim(Ind, 4, 27, 5, n);
 
-		/* Player card #2 */
-		Send_store_special_anim(Ind, 4, 27, 9, draw_card(Ind, &roll1, &roll2));
-		switch (roll2) {
-		case 13: p_ptr->casino_var3++; p_ptr->casino_var4++; break; /* Ace */
-		case 10: case 11: case 12: p_ptr->casino_var3 += 10; break; /* Picture cards */
-		default: p_ptr->casino_var3 += roll2 + 1; /* Number cards */
-		}
 
-		//s_printf("CASINO_DEBUG: Black Jack; %d,%d,%d,%d\n", roll1, roll2, roll3, choice);
-
-#if 0
-		if ((roll3 == 7) || (roll3 == 11)) {
+		/* Black Jacks already ended the game? */
+		if (pBJ && bBJ) {
+			win = TRUE; /* Tie actually, 0 payout */
+			odds_deci = 0;
+			Send_store_special_str(Ind, 11, 10, TERM_WHITE, "Tie!");
+			s_printf("CASINO: Black Jack - Player '%s' ties (BJ) %d Au.\n", p_ptr->name, wager);
+			break;
+		} else if (pBJ) {
 			win = TRUE;
-			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_L_GREEN, "You won!");
-		} else if ((roll3 == 2) || (roll3 == 3) || (roll3 == 12)) {
-			Send_store_special_str(Ind, DICE_Y + 2, DICE_X + 7, TERM_SLATE, "You lost.");
-		} else {
-			p_ptr->casino_roll = choice;
-			p_ptr->casino_progress = 0;
-			p_ptr->casino_odds_deci = odds_deci;
-			p_ptr->casino_wager = wager;
-			Send_request_key(Ind, RID_BLACKJACK, "- hit any key to roll again -");
+			odds_deci = 15; /* Black Jack has 3/2 payoff */
+			Send_store_special_str(Ind, 11, 10, TERM_L_GREEN, "You won!");
+			s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
+			break;
+		} else if (bBJ) {
+			Send_store_special_str(Ind, 11, 10, TERM_SLATE, "You lost.");
+			s_printf("CASINO: Black Jack - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+			break;
+		}
+
+		//p_ptr->casino_progress = 0;
+		//p_ptr->casino_odds_deci = odds_deci;
+		p_ptr->casino_wager = wager;
+
+		/* Allow to split? */
+		if (choice == roll3) {
+			Send_request_cfr(Ind, RID_BLACKJACK1, "Split cards?", 1);
 			return(TRUE);
 		}
-		if (win) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
-		else s_printf("CASINO: Black Jack - Player '%s' lost %d Au.\n", p_ptr->name, wager);
-#endif
-		break;
+
+		/* Ask for more cards */
+		Send_request_cfr(Ind, RID_BLACKJACK2, "Hit (get a card)?", 1);
+		return(TRUE);
+
+		}
 	}
 
 	p_ptr->casino_odds_deci = odds_deci;

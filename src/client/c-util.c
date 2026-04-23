@@ -5173,6 +5173,9 @@ void clear_from_to(int row_s, int row_e) {
 
 	/* Erase requested rows */
 	for (y = row_s; y <= row_e; y++) {
+		/* This is specifically required for rawpict image clearing, or the images will remain on screen */
+		Term_fresh();
+
 		/* Erase part of the screen */
 		Term_erase(0, y, 255);
 	}
@@ -5186,9 +5189,9 @@ void clear_force_from_to(int row_s, int row_e) {
 	/* Erase requested rows */
 	for (y = row_s; y <= row_e; y++) {
 		/* Erase part of the screen */
-		Term_erase_force(0, y, 255);
+		Term_erase(0, y, 255);
 	}
-	Term_redraw_section(0, row_s, 70, row_e);
+	Term_redraw_section(0, row_s, 255, row_e);
 }
 
 void prt_num(cptr header, int num, int row, int col, byte color) {

@@ -12025,76 +12025,6 @@ void handle_request_return_key(int Ind, int id, char c) {
 		casino_result(Ind, win, TRUE);
 		return; }
 
-	case RID_BLACKJACK: {		// TODO: implement (this is just copy-pasta from Craps)
-		bool win = FALSE;
-		int roll1, roll2, roll3, ycv = p_ptr->casino_progress;
-
-		/* User esc'ed out? Abort (and lose) */
-		if (c == ESCAPE || !c) { /* ESC will always result in 0 instead of 27, just paranoia/in case of future changes */
-#if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
-			ycv++; //looks slightly better?
-#endif
-			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "You forfeit!");
-			s_printf("CASINO: Black Jack - Player '%s' forfeit %d Au.\n", p_ptr->name, p_ptr->casino_wager);
-			casino_result(Ind, FALSE, TRUE);
-			return;
-		}
-
-#if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
-		if (ycv < 10) ycv += 2; //screen overflow limit >,>
-		else {
-			ycv = 2;
-			Send_store_special_clr(Ind, 8, 17); //don't clear the 'Gold Remaining:' line!
-#else
-		if (ycv < 10) ycv++; //screen overflow limit >,>
-		else {
-			ycv = 1;
-			Send_store_special_clr(Ind, 7, 17); //don't clear the 'Gold Remaining:' line!
-#endif
-		}
-		p_ptr->casino_progress = ycv;
-
-#ifdef CUSTOM_VISUALS /* use graphical font or tileset mapping if available */
- #define CRAPS_DICE_ATTR TERM_UMBER /* Use different colour than default k_attr (TERM_L_UMBER)? */
-		connection_t *connp;
-		bool custom_visuals = FALSE;
-		connp = Conn[p_ptr->conn];
-
-		/* Prepare the graphical visuals for this player (6 dice results) */
-		if (connp->use_graphics && !p_ptr->ascii_items) {
-			custom_visuals = TRUE;
-		}
-#endif
-
-		roll1 = randint(6);
-		roll2 = randint(6);
-		roll3 = roll1 + roll2;
-
-		if (custom_visuals)
-			Send_store_special_anim(Ind, 4, 0, 0, 10);
-
-		if (roll3 == p_ptr->casino_roll) {
-			win = TRUE;
-#if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
-			ycv++; //looks slightly better?
-#endif
-			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_GREEN, "You won!");
-		} else if (roll3 == 7) {
-#if defined(CUSTOM_VISUALS) && defined(DICE_HUGE)
-			ycv++; //looks slightly better?
-#endif
-			Send_store_special_str(Ind, DICE_Y + 2 + ycv, DICE_X + 6, TERM_SLATE, "You lost!");
-		} else {
-			Send_request_key(Ind, RID_CRAPS, "- hit any key to roll again (ESC to forfeit) -");
-			return;
-		}
-
-		if (win) s_printf("CASINO: Black Jack - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
-		else s_printf("CASINO: Black Jack - Player '%s' lost %d Au.\n", p_ptr->name, p_ptr->casino_wager);
-
-		casino_result(Ind, win, TRUE);
-		return; }
-
 	default:;
 	}
 }
@@ -12391,6 +12321,22 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 		p_ptr->reskill_possible |= RESKILL_F_RESET; /* Permanent flag: Only once per character */
 		return;
 #endif
+
+	case RID_BLACKJACK1: {
+		//Send_store_special_str(Ind, 10, 10, TERM_L_GREEN, "Your cards:");
+		Send_store_special_str(Ind, 14, 2, TERM_L_DARK, "(Your split cards:)");
+
+		/* Rearrange player card #2 -- some card gfx are actually slightly larger than 3x3, so clear 4x4 ~~ */
+		Send_store_special_str(Ind, 9, 27, TERM_WHITE, "    "); /* Erase it from its old position */
+		Send_store_special_str(Ind, 10, 27, TERM_WHITE, "    ");
+		Send_store_special_str(Ind, 11, 27, TERM_WHITE, "    ");
+		Send_store_special_str(Ind, 12, 27, TERM_WHITE, "    ");
+		Send_store_special_anim(Ind, 4, 23, 13, p_ptr->casino_var6); /* Move it into first position, 3rd card row */
+
+		return; }
+
+	case RID_BLACKJACK2: {
+		return; }
 
 	default: ;
 	}

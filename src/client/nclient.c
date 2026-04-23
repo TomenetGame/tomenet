@@ -4616,7 +4616,14 @@ int Receive_store_special_str(void) {
 	if ((n = Packet_scanf(&rbuf, "%c%c%c%c%s", &ch, &line, &col, &attr, str)) <= 0) return(n);
 	if (!shopping) return(1);
 
+	/* Hack: Making this function usable for clearing graphical special images, which don't register in the char/attr matrix. */
+	Term_erase(col, line, col + strlen(str));
+	Term_redraw_section(col, line, col + strlen(str) - 1, line);
+
 	c_put_str(attr, str, line, col);
+
+	/* Hack still (redraw instantly instead of half a second later or so): */
+	Term_fresh();
 
 	/* hack: hide cursor */
 	Term->scr->cx = Term->wid;
