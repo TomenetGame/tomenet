@@ -10708,7 +10708,7 @@ void handle_request_return_str(int Ind, int id, char *str) {
 	player_type *p_ptr = Players[Ind];
 
 	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
-	if (id != p_ptr->request_id) return;
+	if (id == RID_NONE || id != p_ptr->request_id) return;
 
 	/* request done */
 	p_ptr->request_id = RID_NONE;
@@ -11619,7 +11619,7 @@ void handle_request_return_amt(int Ind, int id, int num) {
 	player_type *p_ptr = Players[Ind];
 
 	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
-	if (id != p_ptr->request_id) return;
+	if (id == RID_NONE || id != p_ptr->request_id) return;
 
 	/* request done */
 	p_ptr->request_id = RID_NONE;
@@ -11716,7 +11716,7 @@ void handle_request_return_num(int Ind, int id, int num) {
 	player_type *p_ptr = Players[Ind];
 
 	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
-	if (id != p_ptr->request_id) return;
+	if (id == RID_NONE || id != p_ptr->request_id) return;
 
 	/* request done */
 	p_ptr->request_id = RID_NONE;
@@ -11786,7 +11786,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 	player_type *p_ptr = Players[Ind];
 
 	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
-	if (id != p_ptr->request_id) return;
+	if (id == RID_NONE || id != p_ptr->request_id) return;
 
 	/* request done */
 	p_ptr->request_id = RID_NONE;
@@ -12035,7 +12035,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 	int i;
 
 	/* verify that the ID is actually valid (maybe clear p_ptr->request_id here too) */
-	if (id != p_ptr->request_id) return;
+	if (id == RID_NONE || id != p_ptr->request_id) return;
 
 	/* request done */
 	p_ptr->request_id = RID_NONE;
