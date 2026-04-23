@@ -11800,7 +11800,7 @@ void kill_xorder(int Ind) {
 		acquirement_direct(Ind, o_ptr, &p_ptr->wpos, great, verygreat, resf);
 		val = object_value_real(0, o_ptr) * o_ptr->number;
 
-		/* New: Sometimes generate consumables instead */
+		/* New: Sometimes generate consumables instead --- maybe TODO: Don't generate teleporting items in NO_TELE dungeons (Halls of Mandos) */
 		if (val < 1000 && rand_int(3)) { /* eg instead of basic (non-ego) enchanted armour/weapon */
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_printf("XORDER_REPLACE_REWARD: Tier 1, %s, value %lld\n", o_name, object_value_real(0, o_ptr));
@@ -11818,7 +11818,14 @@ void kill_xorder(int Ind) {
 				case 6: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT)); o_ptr->number = 5 + rand_int(2); break;
 				case 7: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM)); o_ptr->number = 5 + rand_int(2); break;
 
-				case 8: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 1; break;
+				case 8: if (p_ptr->suscep_good || p_ptr->suscep_life) {
+						invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_ARMOR));
+						o_ptr->number = 3 + rand_int(2); //worth more money actually...
+					 } else {
+						invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL));
+						o_ptr->number = 1;
+					}
+					break;
 				case 9: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT)); o_ptr->number = 1; break;
 				case 10: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_VERMIN_CONTROL)); o_ptr->number = 1; break;
 
@@ -11842,7 +11849,14 @@ void kill_xorder(int Ind) {
 				case 2: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_SERIOUS)); o_ptr->number = 15 + rand_int(3); break;
 				case 3: invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_CURE_CRITICAL)); o_ptr->number = 6 + rand_int(2); break;
 
-				case 4: invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD)); o_ptr->number = 2 + rand_int(2); break;
+				case 4: if (p_ptr->suscep_good || p_ptr->suscep_life) {
+						invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_HEALING));
+						o_ptr->number = 1 + rand_int(2);
+					} else {
+						invcopy(o_ptr, lookup_kind(TV_FOOD, SV_FOOD_WAYBREAD));
+						o_ptr->number = 2 + rand_int(2);
+					}
+					break;
 				}
 				break;
 			}
@@ -11863,7 +11877,14 @@ void kill_xorder(int Ind) {
 				case 2: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_HIT)); o_ptr->number = 16 + rand_int(3); break;
 				case 3: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_ENCHANT_WEAPON_TO_DAM)); o_ptr->number = 16 + rand_int(3); break;
 
-				case 4: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL)); o_ptr->number = 3 + rand_int(2); break;
+				case 4: if (p_ptr->suscep_good || p_ptr->suscep_life) {
+						invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_STAR_ENCHANT_ARMOR));
+						o_ptr->number = 1;
+					} else {
+						invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_PROTECTION_FROM_EVIL));
+						o_ptr->number = 3 + rand_int(2);
+					}
+					break;
 				case 5: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_TELEPORT)); o_ptr->number = 3; break;
 				case 6: invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_VERMIN_CONTROL)); o_ptr->number = 2 + rand_int(2); break;
 
