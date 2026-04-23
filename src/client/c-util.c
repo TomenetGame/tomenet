@@ -5179,6 +5179,7 @@ void clear_from_to(int row_s, int row_e) {
 		/* Erase part of the screen */
 		Term_erase(0, y, 255);
 	}
+	Term_redraw_section(0, row_s, 255, row_e);
 }
 /* Same as clear_from_to() but forces re-erasing even of unchanged grids, added for clearing special image visuals (graphics mode) - C. Blue */
 void clear_force_from_to(int row_s, int row_e) {
