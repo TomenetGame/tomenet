@@ -9623,8 +9623,29 @@ The casino is a very special 'store', located in Minas Anor and in the special
 dungeon towns in the Ironman Deep Dive Challenge at 2000 and 4000 ft.
 
 It provides a variety of games that you can play for money.
-Most of these are pure luck, but there's also the ancient board game of Go,
+Most of these are based on luck, but there's also the ancient board game of Go,
 which you can play on a 9x9 board.
+
+DISCLAIMER:
+I hope it is clear that, exactly like any real-life casino, while the dice and
+other random elements in this casino work fair ie are truly random (within the
+limits of computer technology in use) and not biased towards either the player
+or the bank (the house), all games (except for Go) are simply by their rules
+favouring the bank very slightly.
+
+Otherwise casinos would always go broke on the long run and everyone would be
+a millionaire just by playing in the casino 24/7.
+So statistically, do not expect to make positive gains in the very long run -
+you can only do that consistently if luck is truly on your side. :)
+
+The game of Go is an exception as it is skill-based and your potential skill
+expression is not outweighed by any random elements, so you can actually make
+money in the long run! For that reason each character is limited to winning
+only once on each difficulty tier of the game and the game has a minimum
+character level requirement, to avoid instant unlimited free money.
+Since there is also a casino in dungeon towns, playing Go can therefore bolster
+your resources when you arrive in Menegroth or Nargothrond in the IDDC.
+
 
 Below you'll find the gamling rules, you can also view these in-game when
 entering the casino and pressing 'r' there:
