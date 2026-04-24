@@ -2073,7 +2073,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			j = Ind; //k=0;
 			u16b r, num;
 			int lev;
-			u16b flags = (QUEST_MONSTER|QUEST_RANDOM);
+			u16b flags = (QUEST_MONSTER | QUEST_RANDOM);
 
 			if (tk && !strcmp(token[1], "reset")) {
 				int qn;

@@ -4463,16 +4463,23 @@ int Receive_special_other(void) {
 
 int Receive_store_action(void) {
 	int n;
-	short bact, action, cost;
+	short bact, action;
 	char ch, pos, name[MAX_CHARS], letter;
-	byte attr, oldflag;
-	u16b flag;
+	byte attr, oldflag2;
+	u16b oldflag, oldcost;
+	u32b flag;
+	s32b cost;
 
-	if (is_atleast(&server_version, 4, 9, 2, 1, 0, 1)) {
-		if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%hu", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &flag)) <= 0) return(n);
+	if (is_atleast(&server_version, 4, 9, 3, 0, 0, 3)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%d%u", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &flag)) <= 0) return(n);
+	} else if (is_atleast(&server_version, 4, 9, 2, 1, 0, 1)) {
+		if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%hu", &ch, &pos, &bact, &action, name, &attr, &letter, &oldcost, &oldflag)) <= 0) return(n);
+		cost = (s32b)oldcost;
+		flag = (u32b)oldflag;
 	} else {
-		if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%c", &ch, &pos, &bact, &action, name, &attr, &letter, &cost, &oldflag)) <= 0) return(n);
-		flag = (u16b)oldflag;
+		if ((n = Packet_scanf(&rbuf, "%c%c%hd%hd%s%c%c%hd%c", &ch, &pos, &bact, &action, name, &attr, &letter, &oldcost, &oldflag2)) <= 0) return(n);
+		cost = (s32b)oldcost;
+		flag = (u32b)oldflag2;
 	}
 
 	/* Newer server? (Or just incompatible?) */

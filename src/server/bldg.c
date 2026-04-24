@@ -744,7 +744,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 	} else if (wager < 1) {
 		msg_print(Ind, "Ok, we'll start with 1 Au.");
 		wager = 1;
-	}
+	} else msg_format(Ind, "You bet %d Au...", wager);
 
 	switch (cmd) {
 	case BACT_IN_BETWEEN: /* Game of In-Between */
@@ -1075,6 +1075,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 		/* Player card #1 */
 		p_ptr->casino_var5 = draw_card(Ind, &roll1, &roll2); /* Remember card for potential splitting */
+p_ptr->casino_var5 = 12;
+roll2 = 10;
 		Send_store_special_anim(Ind, 4, 23, 9, p_ptr->casino_var5);
 		/* Remember roll2's value in 'choice' for potential splitting. */
 		switch (roll2) {
@@ -1086,6 +1088,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 		/* Player card #2 */
 		p_ptr->casino_var6 = draw_card(Ind, &roll1, &roll2); /* Remember card for potential splitting */
+p_ptr->casino_var6 = 11;
+roll2 = 10;
 		Send_store_special_anim(Ind, 4, 27, 9, p_ptr->casino_var6);
 		/* Remember roll2's value in 'roll3' for potential splitting. */
 		switch (roll2) {
@@ -1135,11 +1139,11 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 			win = TRUE;
 			odds_deci = 15; /* Blackjack has 3/2 payoff */
 			Send_store_special_str(Ind, 11, 10, TERM_L_GREEN, "You won!");
-			s_printf("CASINO: Blackjack - Player '%s' won %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
+			s_printf("CASINO: Blackjack - Player '%s' won (BJ) %d Au.\n", p_ptr->name, (odds_deci * wager) / 10);
 			break;
 		} else if (bBJ) {
 			Send_store_special_str(Ind, 11, 10, TERM_SLATE, "You lost.");
-			s_printf("CASINO: Blackjack - Player '%s' lost %d Au.\n", p_ptr->name, wager);
+			s_printf("CASINO: Blackjack - Player '%s' lost (BJ) %d Au.\n", p_ptr->name, wager);
 			break;
 		}
 
@@ -1150,19 +1154,17 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 		if (p_ptr->au < wager) msg_print(Ind, "\377s(You cannot split or double down as you don't have enough money left.)");
 		else {
-			/* Allow to split? */
+			/* Allow to split nand double down? */
 			if (choice == roll3) {
-				Send_request_cfr(Ind, RID_BLACKJACK1, "Split cards?", 1);
+				Send_request_key(Ind, RID_BLACKJACK1, "Split cards (s), double down (d), hit (SPACE) or stand (ESC)?");
 				return(TRUE);
 			}
-
 			/* Allow to double down */
-			Send_request_cfr(Ind, RID_BLACKJACK2, "Double down?", 2);
+			Send_request_key(Ind, RID_BLACKJACK2, "Double down (d), hit (SPACE) or stand (ESC)?");
 			return(TRUE);
 		}
-
 		/* Just ask for more cards */
-		Send_request_cfr(Ind, RID_BLACKJACK3, "Hit (get a card)?", 1);
+		Send_request_key(Ind, RID_BLACKJACK3, "Hit (SPACE) or stand (ESC)?");
 		return(TRUE);
 
 		}
@@ -1175,7 +1177,8 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 }
 
 /* 'deduct_loss' should be FALSE if player had to do upfront payment of the wager already,
-   otherwise TRUE (standard for most games). */
+   otherwise TRUE (standard for most games).
+   NOTE: This function nulls p_ptr->casino_wager. */
 void casino_result(int Ind, bool win, bool tie, bool deduct_loss) {
 	player_type *p_ptr = Players[Ind];
 
@@ -1197,6 +1200,7 @@ void casino_result(int Ind, bool win, bool tie, bool deduct_loss) {
 				Send_gold(Ind, p_ptr->au, p_ptr->balance);
 			}
 		}
+		msg_format(Ind, "\377wYou get a tie and keep your wager of %d Au.", p_ptr->casino_wager);
 	} else if (win) {
 #ifdef USE_SOUND_2010
 		sound(Ind, "casino_win", NULL, SFX_TYPE_MISC, FALSE);
@@ -1806,7 +1810,7 @@ static int repair_cost(int k_idx, int to_x) {
 /* Repair an item (no enchantment!) */
 /* Don't allow repairing if item is damaged more than this, to prevent money-cheezing by uncursing heavily negative items: */
 #define REPAIR_ITEM_EXPLOIT_LIMIT -5
-static bool repair_item(int Ind, int i, bool iac, u16b flags) {
+static bool repair_item(int Ind, int i, bool iac, u32b flags) {
 	player_type *p_ptr = Players[Ind];
 
 	int minenchant, cost;

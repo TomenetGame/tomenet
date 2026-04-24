@@ -771,7 +771,14 @@ void store_do_command(int num, bool one) {
 		} else if (!c_get_item(&item, "Which item? ", get_item_mode)) return;
 	}
 
-	if (c_store.flags[num] & BACT_F_GOLD) {
+	if (c_store.flags[num] & BACT_F_GOLD_MORE) {
+		/* Get how much */
+		inkey_letter_all = TRUE;
+		gold = c_get_quantity("How much gold ('a' or spacebar for all)? ", std_wager, -1);
+
+		/* Send it */
+		if (!gold) return;
+	} else if (c_store.flags[num] & BACT_F_GOLD) {
 		/* Get how much */
 		inkey_letter_all = TRUE;
 		gold = c_get_quantity("How much gold ('a' or spacebar for all)? ", 1, -1);

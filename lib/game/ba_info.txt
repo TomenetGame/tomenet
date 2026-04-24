@@ -38,6 +38,8 @@
 
 # 16384 = toggle cloaks (repair service flag: general store vs armoury)
 # 32768 = admin-only flag
+# 65536 = Specify gold (suggested amount: 10 - for Casino, so decimal-point payouts don't get rounded down very unfavourably)
+#         Add +4 flag (BACT_F_GOLD) to this for easy backward client compatibility.
 
 
 # Version stamp (required)
@@ -82,19 +84,19 @@ I:42:0:l:0
 
 N:9:In-Between
 C:0:0:0
-I:12:0:n:4
+I:12:0:n:65540
 
 N:10:Play craps
 C:0:0:0
-I:14:0:c:4
+I:14:0:c:65540
 
 N:11:Spin the wheel
 C:0:0:0
-I:15:0:s:4
+I:15:0:s:65540
 
 N:12:Play dice slots
 C:0:0:0
-I:16:0:d:4
+I:16:0:d:65540
 
 N:13:* Game rules *
 C:0:0:0
@@ -204,7 +206,7 @@ I:48:0:x:0
 
 N:38:Play Blackjack
 C:0:0:0
-I:49:0:j:4
+I:49:0:j:65540
 
 N:39:Herbal Healing
 C:15000:10000:7500

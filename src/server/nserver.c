@@ -9776,7 +9776,7 @@ int Send_store_info(int Ind, int num, cptr store, cptr owner, int items, int pur
 	}
 }
 
-int Send_store_action(int Ind, char pos, u16b bact, u16b action, cptr name, byte attr, char letter, s16b cost, u16b flag) {
+int Send_store_action(int Ind, char pos, u16b bact, u16b action, cptr name, byte attr, char letter, s32b cost, u32b flag) {
 	connection_t *connp = Conn[Players[Ind]->conn];
 #ifdef MINDLINK_STORE
 	connection_t *connp2;
@@ -9793,18 +9793,22 @@ int Send_store_action(int Ind, char pos, u16b bact, u16b action, cptr name, byte
 #ifdef MINDLINK_STORE
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		if (is_newer_than(&connp2->version, 4, 9, 2, 1, 0, 0))
-			Packet_printf(&connp2->c, "%c%c%hd%hd%s%c%c%hd%hu", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag);
+		if (is_atleast(&connp2->version, 4, 9, 3, 0, 0, 3))
+			Packet_printf(&connp2->c, "%c%c%hd%hd%s%c%c%d%u", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag);
+		else if (is_newer_than(&connp2->version, 4, 9, 2, 1, 0, 0))
+			Packet_printf(&connp2->c, "%c%c%hd%hd%s%c%c%hd%hu", PKT_BACT, pos, bact, action, name, attr, letter, cost > 65535 ? 65535 : cost, (u16b)(flag & 0xFFFF));
 		else if (pos < 6 || is_newer_than(&connp2->version, 4, 9, 1, 0, 0, 1))
-			Packet_printf(&connp2->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter, cost, (byte)(flag & 0xFF));
+			Packet_printf(&connp2->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter,  cost > 65535 ? 65535 : cost, (byte)(flag & 0xFF));
 	}
 #endif
 
 	if (pos >= 6 && is_older_than(&connp->version, 4, 9, 1, 0, 0, 2)) return(1);
-	if (is_newer_than(&connp->version, 4, 9, 2, 1, 0, 0))
-		return(Packet_printf(&connp->c, "%c%c%hd%hd%s%c%c%hd%hu", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag));
+	if (is_atleast(&connp->version, 4, 9, 3, 0, 0, 3))
+		return(Packet_printf(&connp->c, "%c%c%hd%hd%s%c%c%d%u", PKT_BACT, pos, bact, action, name, attr, letter, cost, flag));
+	else if (is_newer_than(&connp->version, 4, 9, 2, 1, 0, 0))
+		return(Packet_printf(&connp->c, "%c%c%hd%hd%s%c%c%hd%hu", PKT_BACT, pos, bact, action, name, attr, letter, cost > 65535 ? 65535 : cost, (u16b)(flag & 0xFFFF)));
 	else
-		return(Packet_printf(&connp->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter, cost, (byte)(flag & 0xFF)));
+		return(Packet_printf(&connp->c, "%c%c%hd%hd%s%c%c%hd%c", PKT_BACT, pos, bact, action, name, attr, letter,  cost > 65535 ? 65535 : cost, (byte)(flag & 0xFF)));
 }
 
 int Send_store_sell(int Ind, int price) {

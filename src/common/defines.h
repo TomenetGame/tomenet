@@ -9605,24 +9605,24 @@ extern int PlayerUID;
 #define BACT_IDENT_ONE			78
 
 
-#define BACT_F_NOTHING		0x0000
-#define BACT_F_STORE_ITEM	0x0001
-#define BACT_F_INVENTORY	0x0002
-#define BACT_F_GOLD		0x0004
-#define BACT_F_STAR_ID	 	0x0008
-#define BACT_F_ID	 	0x0010
-#define BACT_F_AMMO		0x0020	/* for enchanting services */
-#define BACT_F_RANGED		0x0040	/* for enchanting services */
-#define BACT_F_HARDCODE		0x0080
-#define BACT_F_ARMOUR		0x0100	/* for enchanting services */
-#define BACT_F_NO_SHIELDS	0x0200	/* for enchanting/repair services: Exempt shields */
-#define BACT_F_WEAPON		0x0400	/* for enchanting/repair services */
-#define BACT_F_NO_ART		0x0800	/* for enchanting services: Exempt artifacts (for repair services: don't check on client-side) */
-#define BACT_F_MELEE		0x1000	/* for enchanting services */
-#define BACT_F_TRAPKIT_FA	0x2000	/* for enchanting services (FA = firearm type trapkits, as others don't have any (+hit,+dam) */
-#define BACT_F_TOGGLE_CLOAKS	0x4000	/* for repairing service: If specified with BACT_F_ARMOUR it _exempts_ cloaks, otherwise it _allows_ cloaks. (Flag efficiency -_-) */
-#define BACT_F_ADMIN		0x8000	/* action only available to admins */
-
+#define BACT_F_NOTHING		0x0000000
+#define BACT_F_STORE_ITEM	0x0000001
+#define BACT_F_INVENTORY	0x0000002
+#define BACT_F_GOLD		0x0000004
+#define BACT_F_STAR_ID	 	0x0000008
+#define BACT_F_ID	 	0x0000010
+#define BACT_F_AMMO		0x0000020	/* for enchanting services */
+#define BACT_F_RANGED		0x0000040	/* for enchanting services */
+#define BACT_F_HARDCODE		0x0000080
+#define BACT_F_ARMOUR		0x0000100	/* for enchanting services */
+#define BACT_F_NO_SHIELDS	0x0000200	/* for enchanting/repair services: Exempt shields */
+#define BACT_F_WEAPON		0x0000400	/* for enchanting/repair services */
+#define BACT_F_NO_ART		0x0000800	/* for enchanting services: Exempt artifacts (for repair services: don't check on client-side) */
+#define BACT_F_MELEE		0x0001000	/* for enchanting services */
+#define BACT_F_TRAPKIT_FA	0x0002000	/* for enchanting services (FA = firearm type trapkits, as others don't have any (+hit,+dam) */
+#define BACT_F_TOGGLE_CLOAKS	0x0004000	/* for repairing service: If specified with BACT_F_ARMOUR it _exempts_ cloaks, otherwise it _allows_ cloaks. (Flag efficiency -_-) */
+#define BACT_F_ADMIN		0x0008000	/* action only available to admins */
+#define BACT_F_GOLD_MORE	0x0010000	/* for casino */
 
 /* Reskill flags */
 #define RESKILL_F_UNDO		0x1

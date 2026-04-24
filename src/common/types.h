@@ -2708,7 +2708,7 @@ struct store_action_type {
 	char letter;			/* Action letter */
 	s16b action;			/* Action code */
 	s16b action_restr;		/* Action restriction */
-	u16b flags;			/* Client flags */
+	u32b flags;			/* Client flags */
 };
 
 
@@ -5011,13 +5011,13 @@ struct c_store_extra {
 
 	/* list of command */
 	u16b actions[MAX_STORE_ACTIONS];		/* Actions(refers to ba_info) */
-	u16b bact[MAX_STORE_ACTIONS];		/* ba_ptr->action */
+	u16b bact[MAX_STORE_ACTIONS];			/* ba_ptr->action */
 	char action_name[MAX_STORE_ACTIONS][40];
 	byte action_attr[MAX_STORE_ACTIONS];
 	u16b action_restr[MAX_STORE_ACTIONS];
 	char letter[MAX_STORE_ACTIONS];
-	s16b cost[MAX_STORE_ACTIONS];
-	u16b flags[MAX_STORE_ACTIONS];
+	s32b cost[MAX_STORE_ACTIONS];
+	u32b flags[MAX_STORE_ACTIONS];
 
 	/* Store attr and char */
 	byte store_attr;
