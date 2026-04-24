@@ -101,7 +101,49 @@ if lemon, cherry, cherry appears, you lose.
 
 
 \{D==============================================================================
-\{U5. 'Go challenge'
+\{U5. 'Blackjack'
+
+Setup:
+------
+-A deck of 52 standard cards is used, numbers 2-10, Jack, Queen, King, Ace.
+ Jack, Queen, King count 10, Ace counts 1 or 11 (depending on what's best).
+
+-The goal of the game is to get a higher score than the bank to win.
+ Same score as the bank ties, lesser score loses.
+
+-If the bank or the player exceed 21 points they lose automatically ('bust').
+
+-A combination of 10-value card (10, J, Q, K) and Ace is called 'Blackjack'
+ and wins over any other hand except another Blackjack, against which it ties.
+
+-A Blackjack has payout ratio 3:2, all other hands have payout 1:1.
+
+Game process:
+-------------
+-The Player is dealt two cards, the bank two cards of which one is concealed
+ except if it's a Blackjack, in which case the game ends instantly.
+
+-If the player's cards are of equal value they may 'split' the cards and play
+ them as two separate games against the same bank cards.
+ The player will pay another wager of the same amount for the 2nd game.
+
+-If the player does not split they may choose to 'double down' now.
+ This will double their wager and they will receive exactly one more card,
+ after which it's the bank's turn (unless the card busts and the player loses).
+
+-If a player doesn't double down, they may choose to take more cards ('hit')
+ or stop taking cards ('stand').
+
+-After the player stands, it's the bank's turn. The concealed card is revealed.
+ The bank must draw cards until reaching at least a score of 17.
+ If the bank draws an Ace and this would result in a score from 17 to 21 if
+ interpreted as '11 points' then the Ace will be counted as 11 points,
+ the bank's turn finishes and the game result is evaluated.
+ (This means that unlike the player, the bank never has any freedom of choice.)
+
+
+\{D==============================================================================
+\{U6. 'Go challenge'
 
 Two different short video tutorials on YouTube:
 \{Bhttp://youtu.be/qhBQasS5IRI
