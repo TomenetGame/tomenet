@@ -12328,9 +12328,20 @@ void handle_request_return_key(int Ind, int id, char c) {
 					Send_request_key(Ind, RID_BLACKJACK3, "Hit (SPACE) or stand (ESC)?");
 					return;
 				}
-				/* We're at 21, so we cannot pick another card (except if we have aces and are silyl); proceed to Bank's turn */
-				p_ptr->casino_progress = 5;
-				break;
+				/* We're at 21, so we cannot pick another card (except if we have aces and are silyl); proceed to stack 2...
+				   ...BUT only if we haven't reached 21 by counting one ace as 11. It seems crazy, but the decision is the player's! */
+				if (score != p_ptr->casino_var3) {
+					Send_request_key(Ind, RID_BLACKJACK3, "Hit (SPACE) or stand (ESC)?");
+					return;
+				}
+				/* Activate second split card and continue with it*/
+				p_ptr->casino_progress = 4;
+				p_ptr->casino_choice = 1; /* Count: We got 1 card so far in stack 2 */
+				Send_store_special_str(Ind, 10, 2, TERM_L_DARK, "(Your split cards:)");
+				Send_store_special_str(Ind, 14, 2, TERM_L_GREEN, "        Your cards:");
+				/* Ask for more cards again, now for the 2nd stack */
+				Send_request_key(Ind, RID_BLACKJACK3, "Hit (SPACE) or stand (ESC)?");
+				return;
 
 			case 4: case 8: /* We're drawing the 3rd+ card of the second split stack */
 				p_ptr->casino_choice++; /* Count cards for visual placement */
@@ -12379,7 +12390,12 @@ void handle_request_return_key(int Ind, int id, char c) {
 					Send_request_key(Ind, RID_BLACKJACK3, "Hit (SPACE) or stand (ESC)?");
 					return;
 				}
-				/* We're at 21, so we cannot pick another card (except if we have aces and are silyl); proceed to Bank's turn */
+				/* We're at 21, so we cannot pick another card (except if we have aces and are silyl); proceed to Bank's turn...
+				   ...BUT only if we haven't reached 21 by counting one ace as 11. It seems crazy, but the decision is the player's! */
+				if (score != p_ptr->casino_var5) {
+					Send_request_key(Ind, RID_BLACKJACK3, "Hit (SPACE) or stand (ESC)?");
+					return;
+				}
 				/* Show the 'greyed out' stack 1 in normal colour again too */
 				Send_store_special_str(Ind, 10, 2, TERM_L_GREEN, "        Your cards:");
 				p_ptr->casino_progress = (p_ptr->casino_progress == 4 ? 5 : 8);
