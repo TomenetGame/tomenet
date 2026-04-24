@@ -8293,6 +8293,23 @@ void cmd_message(void) {
 			c_msg_format("%s", string_exec_lua(0, buf + 3));
 			inkey_msg = FALSE;
 			return;
+		} else if (!strncasecmp(buf, "/wager", 6)) {
+			if (!buf[6]) {
+				c_msg_format("\377yYour current standard wager is %d Au.", std_wager);
+				return;
+			}
+			/* std_wager is s32b so it can overflow into negatives for very large amounts easily, so we test with atol() directly: */
+			if (atol(buf + 6) > PY_MAX_GOLD) {
+				std_wager = PY_MAX_GOLD;
+				c_msg_format("\377yStandard wager must be at most %d Au.", std_wager);
+			} else std_wager = atol(buf + 6);
+			if (std_wager < 1) {
+				std_wager = 1;
+				c_msg_format("\377yStandard wager must be at least %d Au.", std_wager);
+			}
+			c_msg_format("\377yYour standard wager is now %d Au.", std_wager);
+			inkey_msg = FALSE;
+			return;
 		}
 
 		Send_msg(buf);

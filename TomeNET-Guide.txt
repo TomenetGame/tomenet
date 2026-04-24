@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 22. April 2026 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 24. April 2026 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2299,9 +2299,12 @@ They all start with a slash '/' hence they're called slash commands:
 /uptime     Displays time passed since the TomeNET server started up (running).
 
 /version [x]
-/ver       Displays the server version.
-           If used with any parameter it will display the server settings too,
-           same as pressing ~i (knowledge menu -> server settings).
+/ver        Displays the server version.
+            If used with any parameter it will display the server settings too,
+            same as pressing ~i (knowledge menu -> server settings).
+
+/wager      Client-side command to set your standard wager for casinos, ie the
+            amount suggested automatically in the "How much gold...?" prompt.
 
 /whisper <text>
 /wh         Whispers <text> to players currently standing right next to you.

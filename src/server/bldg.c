@@ -729,6 +729,7 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 	/* Set maximum bet */
 	if (p_ptr->lev < 10) maxbet = (p_ptr->lev * 100);
+	else if (p_ptr->lev < 20) maxbet = (p_ptr->lev * 300);
 	else maxbet = (p_ptr->lev * 1000);
 
 	/* Get the wager */
@@ -1075,8 +1076,6 @@ static bool gamble_comm(int Ind, int cmd, int gold) {
 
 		/* Player card #1 */
 		p_ptr->casino_var5 = draw_card(Ind, &roll1, &roll2); /* Remember card for potential splitting */
-p_ptr->casino_var5 = 12;
-roll2 = 10;
 		Send_store_special_anim(Ind, 4, 23, 9, p_ptr->casino_var5);
 		/* Remember roll2's value in 'choice' for potential splitting. */
 		switch (roll2) {
@@ -1088,8 +1087,6 @@ roll2 = 10;
 
 		/* Player card #2 */
 		p_ptr->casino_var6 = draw_card(Ind, &roll1, &roll2); /* Remember card for potential splitting */
-p_ptr->casino_var6 = 11;
-roll2 = 10;
 		Send_store_special_anim(Ind, 4, 27, 9, p_ptr->casino_var6);
 		/* Remember roll2's value in 'roll3' for potential splitting. */
 		switch (roll2) {

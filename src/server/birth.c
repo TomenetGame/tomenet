@@ -3031,6 +3031,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_fill = 1;
 		p_ptr->warning_away = 1;
 		p_ptr->warning_tss = 1;
+		p_ptr->warning_stdwager = 1;
 		return;
 	}
 

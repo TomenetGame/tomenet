@@ -54,7 +54,7 @@ char store_names[STORE_INVEN_MAX][ONAME_LEN];		/* The names of the stuff in the 
 char store_powers[STORE_INVEN_MAX][MAX_CHARS_WIDE];		/* For chat-pasting: Add '@@'-info so everyone knows what the store item can do. Equippables only, hidden-powers-egos only. */
 s16b store_num;				/* The current store number */
 int store_last_item = -1, store_last_item_tval, store_last_item_sval;
-int std_wager = 10;
+s32b std_wager = 10;
 
 /* XXX Mergin for future expansion -- this should be handled in Net_setup */
 char spell_info[MAX_REALM + 9][9][9][80];		/* Spell information */
