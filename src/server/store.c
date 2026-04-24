@@ -2859,15 +2859,17 @@ static void display_special_store(int Ind) {
 	switch (st_ptr->st_idx) {
 	case STORE_CASINO:
 		Send_store_special_str(Ind, 5, 5, TERM_YELLOW, "Welcome to the casino, where the lucky makes a fortune!");
+		if (is_atleast(&p_ptr->version, 4, 9, 3, 0, 0, 3)) {
 #if 1
-		Send_store_special_str(Ind, 7, 5, TERM_L_UMBER, "The command '/wager' can be used to set your standard wager.");
+			Send_store_special_str(Ind, 7, 5, TERM_L_UMBER, "The command '/wager' can be used to set your standard wager.");
 #else
-		if (!p_ptr->warning_stdwager) {
-			msg_print(Ind, "\374\377GHint: Use chat command '\377W/tss\377G' to make Thunderstorm hit sleeping monsters too.");
-			p_ptr->warning_stdwager = 1;
-			s_printf("warning_stdwager: %s\n", p_ptr->name);
-		}
+			if (!p_ptr->warning_stdwager) {
+				msg_print(Ind, "\374\377GHint: Use chat command '\377W/tss\377G' to make Thunderstorm hit sleeping monsters too.");
+				p_ptr->warning_stdwager = 1;
+				s_printf("warning_stdwager: %s\n", p_ptr->name);
+			}
 #endif
+		}
 		break;
 	}
 }
