@@ -12069,9 +12069,8 @@ void handle_request_return_key(int Ind, int id, char c) {
 
 		return; }
 
-	case RID_BLACKJACK2: {
-		RID_BLACKJACK_DOUBLEDOWN:
-
+	case RID_BLACKJACK2:
+		RID_BLACKJACK_DOUBLEDOWN: {
 		int roll1, roll2;
 		int score, ace_score;
 
@@ -12158,7 +12157,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 			break;
 		case ' ':
 			/* We take a card ('hit') */
-			RID_BLACKJACK_HIT:
+			RID_BLACKJACK_HIT: {
 
 			/* We take another card! */
 			int n, roll1, roll2;
@@ -12386,7 +12385,7 @@ void handle_request_return_key(int Ind, int id, char c) {
 				p_ptr->casino_progress = (p_ptr->casino_progress == 4 ? 5 : 8);
 				break;
 			}
-			break;
+			break; }
 		default: /* Player input invalid -> repeat request */
 			Send_request_key(Ind, RID_BLACKJACK3, "Hit (SPACE) or stand (ESC)?");
 			return;
