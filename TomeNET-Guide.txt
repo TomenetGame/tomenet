@@ -18878,7 +18878,6 @@ stated.
         .Divination             Learn spells of the Divination branch.
         .Temporal               Learn spells of the Temporal branch.
         .Udun                   Learn spells of the Udun branch.
-        .Mind                   Learn spells of the Mind branch.
 
         .Spell-power            Increases the power of learned spells by
                                 adding a bonus to the spell level.
@@ -22097,7 +22096,6 @@ to reduce incoming insanity damage, depending on the flags of a mimicked form
 or your race, class or skills, in three tiers:
     Mimicry: UNDEAD/WEIRD_MIND/MIND_BLAST/RES_PSI = tier 1.
     Mimicry: NONLIVING/EMPTY_MIND/BRAIN_SMASH/IM_PSI = tier 2.
-    Mind school skill: Level 40/50 = tier 1/2.
     Hereticism + Traumaturgy skills: Both level 15/30/45 = tier 1/2/3.
     Mindcrafter class: Level 10/20/40 = tier 1/2/3.
     Vampire race: Tier 2.
