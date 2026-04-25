@@ -82,7 +82,7 @@ function get_waterbolt_dam(Ind, limit_lev)
 end
 WATERBOLT_I = add_spell {
 	["name"] = 	"Water Bolt I",
-	["name2"] = 	"WBolt I",
+	["name2"] = 	"WaBolt I",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	10,
 	["mana"] = 	3,
@@ -103,7 +103,7 @@ WATERBOLT_I = add_spell {
 }
 WATERBOLT_II = add_spell {
 	["name"] = 	"Water Bolt II",
-	["name2"] = 	"WBolt II",
+	["name2"] = 	"WaBolt II",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	24,
 	["mana"] = 	7,
@@ -124,7 +124,7 @@ WATERBOLT_II = add_spell {
 }
 WATERBOLT_III = add_spell {
 	["name"] = 	"Water Bolt III",
-	["name2"] = 	"WBolt III",
+	["name2"] = 	"WaBolt III",
 	["school"] = 	SCHOOL_WATER,
 	["level"] = 	40,
 	["mana"] = 	14,

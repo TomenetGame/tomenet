@@ -60,7 +60,7 @@ function get_acidbolt_dam(Ind, limit_lev)
 end
 ACIDBOLT_I = add_spell {
 	["name"] = 	"Acid Bolt I",
-	["name2"] = 	"ABolt I",
+	["name2"] = 	"AcBolt I",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	5,
 	["mana"] = 	3,
@@ -81,7 +81,7 @@ ACIDBOLT_I = add_spell {
 }
 ACIDBOLT_II = add_spell {
 	["name"] = 	"Acid Bolt II",
-	["name2"] = 	"ABolt II",
+	["name2"] = 	"AcBolt II",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	24,
 	["mana"] = 	6,
@@ -102,7 +102,7 @@ ACIDBOLT_II = add_spell {
 }
 ACIDBOLT_III = add_spell {
 	["name"] = 	"Acid Bolt III",
-	["name2"] = 	"ABolt III",
+	["name2"] = 	"AcBolt III",
 	["school"] = 	SCHOOL_EARTH,
 	["level"] = 	40,
 	["mana"] = 	12,

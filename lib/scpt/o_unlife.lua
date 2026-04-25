@@ -165,7 +165,7 @@ function get_netherbolt_dam(Ind)
 end
 NETHERBOLT = add_spell {
 	["name"] = 	"Nether Bolt",
-	["name2"] = 	"NBolt",
+	["name2"] = 	"NtBolt",
 	["school"] = 	{SCHOOL_OUNLIFE},
 	["spell_power"] = 0,
 	["level"] = 	30,

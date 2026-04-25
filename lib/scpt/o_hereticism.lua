@@ -73,7 +73,7 @@ function get_firebolt2_dam(Ind, limit_lev)
 end
 OFIREBOLT_I = add_spell {
 	["name"] = 	"Fire Bolt I",
-	["name2"] = 	"FBolt I",
+	["name2"] = 	"FiBolt I",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
 	["level"] = 	6,
@@ -95,7 +95,7 @@ OFIREBOLT_I = add_spell {
 }
 OFIREBOLT_II = add_spell {
 	["name"] = 	"Fire Bolt II",
-	["name2"] = 	"FBolt II",
+	["name2"] = 	"FiBolt II",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
 	["level"] = 	25,
@@ -117,7 +117,7 @@ OFIREBOLT_II = add_spell {
 }
 OFIREBOLT_III = add_spell {
 	["name"] = 	"Fire Bolt III",
-	["name2"] = 	"FBolt III",
+	["name2"] = 	"FiBolt III",
 	["school"] = 	SCHOOL_OHERETICISM,
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -203,7 +203,7 @@ function get_chaosbolt2_dam(Ind)
 end
 CHAOSBOLT2 = add_spell {
 	["name"] = 	"Chaos Bolt",
-	["name2"] = 	"CBolt",
+	["name2"] = 	"ChBolt",
 	["school"] = 	{SCHOOL_OHERETICISM},
 	["spell_power"] = 0,
 	["level"] = 	29,

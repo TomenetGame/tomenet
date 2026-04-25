@@ -41,7 +41,7 @@ end
 
 POWERBOLT_I = add_spell {
 	["name"] = 	"Power Bolt I",
-	["name2"] = 	"PBolt I",
+	["name2"] = 	"PwBolt I",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	1,
@@ -75,7 +75,7 @@ POWERBOLT_I = add_spell {
 __lua_POWERBOLT = POWERBOLT_I
 POWERBOLT_II = add_spell {
 	["name"] = 	"Power Bolt II",
-	["name2"] = 	"PBolt II",
+	["name2"] = 	"PwBolt II",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	20,
@@ -108,7 +108,7 @@ POWERBOLT_II = add_spell {
 }
 POWERBOLT_III = add_spell {
 	["name"] = 	"Power Bolt III",
-	["name2"] = 	"PBolt III",
+	["name2"] = 	"PwBolt III",
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	40,

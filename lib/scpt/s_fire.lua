@@ -57,7 +57,7 @@ function get_firebolt_dam(Ind, limit_lev)
 end
 FIREBOLT_I = add_spell {
 	["name"] = 	"Fire Bolt I",
-	["name2"] = 	"FBolt I",
+	["name2"] = 	"FiBolt I",
 	["school"] = 	SCHOOL_FIRE,
 	["level"] = 	4,
 	["mana"] = 	3,
@@ -78,7 +78,7 @@ FIREBOLT_I = add_spell {
 }
 FIREBOLT_II = add_spell {
 	["name"] = 	"Fire Bolt II",
-	["name2"] = 	"FBolt II",
+	["name2"] = 	"FiBolt II",
 	["school"] = 	SCHOOL_FIRE,
 	["level"] = 	25,
 	["mana"] = 	6,
@@ -99,7 +99,7 @@ FIREBOLT_II = add_spell {
 }
 FIREBOLT_III = add_spell {
 	["name"] = 	"Fire Bolt III",
-	["name2"] = 	"FBolt III",
+	["name2"] = 	"FiBolt III",
 	["school"] = 	SCHOOL_FIRE,
 	["level"] = 	40,
 	["mana"] = 	12,

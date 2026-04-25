@@ -72,7 +72,7 @@ end
 
 LIGHTNINGBOLT_I = add_spell {
 	["name"] = 	"Lightning Bolt I",
-	["name2"] = 	"LBolt I",
+	["name2"] = 	"LnBolt I",
 	["school"] = 	SCHOOL_AIR,
 	["level"] = 	2,
 	["mana"] = 	2,
@@ -95,7 +95,7 @@ LIGHTNINGBOLT_I = add_spell {
 }
 LIGHTNINGBOLT_II = add_spell {
 	["name"] = 	"Lightning Bolt II",
-	["name2"] = 	"LBolt II",
+	["name2"] = 	"LnBolt II",
 	["school"] = 	SCHOOL_AIR,
 	["level"] = 	21,
 	["mana"] = 	5,
@@ -118,7 +118,7 @@ LIGHTNINGBOLT_II = add_spell {
 }
 LIGHTNINGBOLT_III = add_spell {
 	["name"] = 	"Lightning Bolt III",
-	["name2"] = 	"LBolt III",
+	["name2"] = 	"LnBolt III",
 	["school"] = 	SCHOOL_AIR,
 	["level"] = 	40,
 	["mana"] = 	10,

@@ -147,7 +147,7 @@ function get_darkbolt_dam(Ind, limit_lev)
 end
 DARKBOLT_I = add_spell {
 	["name"] = 	"Shadow Bolt I",
-	["name2"] = 	"SBolt I",
+	["name2"] = 	"ShBolt I",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	6,
@@ -169,7 +169,7 @@ DARKBOLT_I = add_spell {
 }
 DARKBOLT_II = add_spell {
 	["name"] = 	"Shadow Bolt II",
-	["name2"] = 	"SBolt II",
+	["name2"] = 	"ShBolt II",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	25,
@@ -191,7 +191,7 @@ DARKBOLT_II = add_spell {
 }
 DARKBOLT_III = add_spell {
 	["name"] = 	"Shadow Bolt III",
-	["name2"] = 	"SBolt III",
+	["name2"] = 	"ShBolt III",
 	["school"] = 	{SCHOOL_OSHADOW},
 	["spell_power"] = 0,
 	["level"] = 	40,
@@ -415,7 +415,7 @@ function get_chaosbolt_dam(Ind)
 end
 CHAOSBOLT = add_spell {
 	["name"] = 	"Chaos Bolt",
-	["name2"] = 	"CBolt",
+	["name2"] = 	"ChBolt",
 	["school"] = 	{SCHOOL_OSHADOW, SCHOOL_HOFFENSE},
 	["spell_power"] = 0,
 	["level"] = 	30,
