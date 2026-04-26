@@ -2692,7 +2692,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		} else if (my_strcasestr(buf, "modu")) {
 			init_search_type = 2;
 			strcpy(init_search_string, "Adventure modules");
-		}
+		} else if (my_strcasestr(buf, "guild") && my_strcasestr(buf, "hou")) strcpy(init_search_string, "Guild Halls");
 
 		/* clean up */
 		buf[0] = 0;
@@ -3857,7 +3857,8 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "Death Fate   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Mandos") || my_strcasestr(buf, "Halls") || !strcasecmp(buf, "hom")) {
+				if (((my_strcasestr(buf, "Mandos") || my_strcasestr(buf, "Halls")) && !my_strcasestr(buf, "Guild"))
+				    || !strcasecmp(buf, "hom")) {
 					strcpy(chapter, "The Halls of Mandos   ");
 					continue;
 				}
