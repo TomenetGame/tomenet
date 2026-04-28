@@ -12456,7 +12456,11 @@ void handle_request_return_key(int Ind, int id, char c) {
 
 					/* Second stack... */
 					Send_store_special_str(Ind, 15, 10, TERM_L_GREEN, "You won!");
-				} else s_printf("CASINO: Blackjack - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
+				} else {
+					/* Only first stack exists/is alive */
+					Send_store_special_str(Ind, 11, 10, TERM_L_GREEN, "You won!");
+					s_printf("CASINO: Blackjack - Player '%s' won %d Au.\n", p_ptr->name, (p_ptr->casino_odds_deci * p_ptr->casino_wager) / 10);
+				}
 			} else {
 				/* Did we have split cards? */
 				if (p_ptr->casino_progress == 5 || p_ptr->casino_progress == 8) {
