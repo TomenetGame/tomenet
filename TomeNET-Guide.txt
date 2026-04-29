@@ -10317,7 +10317,7 @@ certain amount of experience points depending on the trap type; it can pay off
 to disarm a large patch of traps.
 
 Note that detected traps might be obscured visually if there are items lying on
-top of it. In this case you can either look at the grid and you will see the
+top of them. In this case you can either look at the grid and you will see the
 item name prefixed with a "^" smybol and postfixed with either "(trapped)" if
 you don't know the trap type yet or the actual trap's name if you do, to
 indicate that the grid below the item(s) is trapped. You can disarm traps even
