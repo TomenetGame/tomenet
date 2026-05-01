@@ -27,6 +27,7 @@ typedef struct {
 	int		my_port;
 	int		his_port;
 	int		id;
+	int		prev_type;
 //	unsigned	version;
 	version_type version;
 	char		*real;

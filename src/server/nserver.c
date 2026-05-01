@@ -4352,6 +4352,9 @@ void process_pending_commands(int ind) {
 		}
 #endif
 
+		/* Remember packet type for debug messages*/
+		connp->prev_type = type;
+
 		/* Check whether the socket buffer has advanced */
 		if (connp->r.ptr == foo) {
 			/* Return code 0 means that there wasn't enough data in the socket buffer */
@@ -5955,6 +5958,11 @@ static int Receive_file(int ind) {
 	n = Packet_scanf(&connp->r, "%c%c%hd", &ch, &command, &fnum);
 	if (n == 3) {
 		bytes_read = 4;
+		if (fnum == 0) {
+			/* Bad packet */
+			s_printf("%s - FNUM0: <%s:%s> (%d,%d,%d)\n", showtime(), p_ptr->name, p_ptr->accountname, ch, command, connp->prev_type);
+			return(-1);
+		}
 		switch (command) {
 			case PKT_FILE_INIT:
 				/* Admin to do this only !!! */
@@ -6067,7 +6075,9 @@ static int Receive_file(int ind) {
 				return(1);
 				break;
 			default:
+				/* Bad packet */
 				s_printf("unknown file transfer packet\n");
+				s_printf("%s - UFTP: <%s:%s> (%d,%d,%d)\n", showtime(), p_ptr->name, p_ptr->accountname, ch, command, connp->prev_type);
 				x = 0;
 		}
 		Packet_printf(&connp->c, "%c%c%hd", PKT_FILE, x ? PKT_FILE_ACK : PKT_FILE_ERR, fnum);
