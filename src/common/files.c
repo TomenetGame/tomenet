@@ -147,6 +147,9 @@ static bool client_user_path(char *newpath, cptr oldpath) {
 int local_file_ack(int ind, unsigned short fnum) {
 	struct ft_data *c_fd;
 
+	/* Ignore invalid fnum */
+	if (!fnum) return(0);
+
 	c_fd = getfile(ind, fnum);
 	if (c_fd == (struct ft_data*)NULL) return(0);
 	if (c_fd->state&FS_SEND) c_fd->state |= FS_READY;
