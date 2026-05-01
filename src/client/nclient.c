@@ -80,6 +80,7 @@ static void do_meta_pings(void);
 static sockbuf_t	rbuf, wbuf, qbuf;
 static int		(*receive_tbl[256])(void);
 static int		last_send_anything;
+static int		prev_type;
 static char		cl_initialized = 0;
 
 
@@ -485,6 +486,12 @@ int Receive_file(void) {
 
 	bytes_read = 4;
 
+	if (fnum == 0) {
+		/* Bad packet */
+		c_msg_format("\377RReceived file transfer packet without fnum (%d, %d, %d), dropping", ch, command, prev_type);
+		return(-1);
+	}
+
 	switch (command) {
 	case PKT_FILE_INIT:
 		if ((n = Packet_scanf(&rbuf, "%s", fname)) <= 0) {
@@ -623,6 +630,8 @@ int Receive_file(void) {
 	case 0:
 		return(1);
 	default:
+		/* Bad packet */
+		c_msg_format("\377RReceived unknown file transfer packet (%d, %d, %d), dropping", ch, command, prev_type);
 		x = 0;
 	}
 
@@ -1809,7 +1818,7 @@ int Net_start(int sex, int race, int class) {
  * Process a packet.
  */
 static int Net_packet(void) {
-	int type, prev_type = 0, result;
+	int type, result;
 	char *old_ptr;
 
 	/* Process all of the received client updates */
