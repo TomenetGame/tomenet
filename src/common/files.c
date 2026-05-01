@@ -161,6 +161,9 @@ int local_file_ack(int ind, unsigned short fnum) {
 int local_file_err(int ind, unsigned short fnum) {
 	struct ft_data *c_fd;
 
+	/* Ignore invalid fnum */
+	if (!fnum) return(0);
+
 	c_fd = getfile(ind, fnum);
 	if (c_fd == (struct ft_data*)NULL) return(0);
 	fclose(c_fd->fp);	/* close the file */
