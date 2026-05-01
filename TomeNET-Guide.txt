@@ -21014,8 +21014,10 @@ create a character!):
     rogue be unable to avoid or disarm a trap. Rogues also have the unusual
     ability to train stealing from shops and their fellow men, a dangerous but
     sometimes very rewarding profession.
-    Searching (or entering searching mode) will actually search within a radius
-    instead of just the adjacent grids, another special trick of this class -
+    Another special perk of this class is 'area searching':
+    When rogues searche (or enter searching mode) they will actually search
+    within a radius instead of just the adjacent grids. This is handy for
+    example for finding staircases when you don't have magic mapping at hand.
     this ability can even detect staircases, shops, hostile rune- or monster
     traps making navigation easier without relying on stair-detection magic or
     mapping magic.
