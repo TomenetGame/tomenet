@@ -16211,14 +16211,22 @@ CURSE_NO_DROP   these items cannot be dropped from inventory as long as the
 AUTO_CURSE      occurs together with CURSED or HEAVY_CURSE.
                 If the curse is broken, AUTO_CURSE items will automatically
                 recurse themselves as soon as the item is equipped, taken off,
-                or picked up. To get rid of an AUTO_CURSEd item that you don't
-                need anymore (d)rop it to the ground after the curse has been
-                broken. If you had the item equipped, don't take it off but
-                (d)rop it to the ground right from your equipment! Otherwise
-                it will recurse itself.
+                or picked up.
+                To get rid of an AUTO_CURSEd item that you don't need anymore,
+                (d)rop it to the ground after the curse has been broken. If you
+                had the item equipped, don't take it off but (d)rop it to the
+                ground right from your equipment! Otherwise it will recurse
+                itself in your inventory. This can be very annoying if the item
+                also has CURSE_NO_DROP flag, like Nazgul rings of power.
                 To drop directly from your equipment, press '/' key at the
                 "drop what?" prompt, which will switch to equipment (and back
                 to inventory if pressed again).
+                When items recurse themselves they will regain their original
+                curse status, meaning that heavily cursed items will be heavily
+                cursed again. So items that flipped boni for vampires or hell
+                knights but lost their flipped state by getting uncursed, can
+                be "restored" this way to their cursed state that allows
+                flipping again. Prominent example: Iron Crown of Beruthiel.
 TY_CURSE        "It carries an ancient foul curse."
                 Randomly drains stats sometimes, even if the item is uncursed.
                 (TY_CURSE will stay, even if the 'normal' curse is broken!)
