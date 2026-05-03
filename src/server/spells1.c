@@ -13011,7 +13011,12 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 	case GF_OLD_POLY:
 		s_printf("PLAYER_POLY: %s -> %s ", Players[0 - who]->name, p_ptr->name);
-		if (p_ptr->afk) {
+		if (p_ptr->mode & MODE_PVP) {
+			if (fuzzy || self) msg_print(Ind, "You feel bizzare for a moment, but you are unaffected!");
+			else msg_format(Ind, "%^s tries to polymorph you, but you are unaffected!", killer);
+			dam = 0;
+			break;
+		} else if (p_ptr->afk) {
 			if (fuzzy || self) msg_print(Ind, "You feel bizzare for a moment, but being AFK you are unaffected!");
 			else msg_format(Ind, "%^s tries to polymorph you, but being AFK you are unaffected!", killer);
 			dam = 0;
@@ -13024,7 +13029,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			break;
 		}
 		if (fuzzy || self) msg_print(Ind, "You feel bizzare!");
-		else msg_format(Ind, "%^s polymorphs you!", killer);
+		else msg_format(Ind, "%^s tries to polymorph you!", killer);
 		if (p_ptr->resist_nexus) {
 			s_printf("resists\n");
 			msg_print(Ind, "You resist the effects!");

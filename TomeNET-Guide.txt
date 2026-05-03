@@ -26350,7 +26350,8 @@ by an opponent! The special rules that apply are as follows:
 -while in a fight with another pvp-char, you cannot teleport away easily
  (takes about 30 seconds to wear off, or just enter a town to reset).
 -PvP characters are unaffected by certain effects caused by other players:
- Hallucination, Life force drain (exp drain), Stat drain, Nexus scrambling.
+ Hallucination, Life force drain (exp drain), Stat drain, Nexus scrambling,
+ Polymorphing.
 -They may not own more than one house.
 
 Note: Item rewards depend on your character, see (9.5) for more information
