@@ -8662,12 +8662,12 @@ void fortune(int Ind, byte mode) {
 
 	bracer_ff(Rumor); /* Convert { colour codes to \377 */
 	msg_print(Ind, NULL);
-	msg_format(Ind, "~\377s%s\377w~", Rumor);
+	msg_format(Ind, "\376~\377s%s\377w~", Rumor);
 	msg_print(Ind, NULL);
 
 	if (broadcast) {
 		msg_broadcast(Ind, Broadcast);
-		msg_broadcast_format(Ind, "~\377s%s\377w~", Rumor);
+		msg_broadcast_format(Ind, "\376~\377s%s\377w~", Rumor);
 	}
 
 }
