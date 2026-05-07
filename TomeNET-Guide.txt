@@ -8200,7 +8200,9 @@ level required for normal, non-penalised experience gain, showing some steps:
           90            185  |
           95            190  |
           98            193  /
-          99         no exp gained (this the maximum reachable player level)
+          99         no exp gained (this the maximum reachable player level).
+                     Characters of level 99 are impervious to any life force
+                     (aka experience) draining attacks or effects.
 
 If you are below the optimum depth, your experience gain will decrease.
 The experience gained will be multiplied by 2 / (2 + leveldifference).
