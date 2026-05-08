@@ -3057,7 +3057,7 @@ int calc_blows_weapons(int Ind) {
 	if (p_ptr->dual_wield && p_ptr->dual_mode) {
 		if (!p_ptr->rogue_heavyarmor) num_blow = (blows1 + blows2 + 1) / 2;
 		/* if encumbered, we cannot gain any dual-wield advantage! */
-		else num_blow = (blows1 + blows2) / 2;
+		else num_blow = (blows1 < blows2) ? blows1 : blows2;
 	}
 #endif
 	else num_blow = blows1;
@@ -5996,7 +5996,7 @@ void calc_boni(int Ind) {
 
 		/* one of our two weapons is NEVER_BLOW? half total # of attacks (and half extra blows accordingly) */
 		if ((never_blow == 0x2 || never_blow == 0x4) && p_ptr->dual_wield && p_ptr->dual_mode) {
-			p_ptr->num_blow += (p_ptr->extra_blows + 1) / 2; //we're nice: rounding up! ('Character has control over weapon usaage'..)
+			p_ptr->num_blow += (p_ptr->extra_blows + 1) / 2; //we're nice: rounding up! ('Character has control over weapon usage'..)
 			if (p_ptr->num_blow < 1) p_ptr->num_blow = 1;
 
 			/* Boost blows with masteries */
@@ -6414,7 +6414,7 @@ void calc_boni(int Ind) {
 	   Granting a percentage-BpR-bonus instead doesn't work as it would only work on tresholds due to rounding issues, as BpR is integer.
 	   So turning it into a +dam bonu works best even, allow for smooth increases. - C. Blue */
 	if (!p_ptr->rogue_heavyarmor && p_ptr->dual_wield && p_ptr->dual_mode)
-		p_ptr->to_d_melee += (p_ptr->max_plv > 50 ? 50 : p_ptr->max_plv) / 2; /* Basically 'simulate' a dual-wield skill that auto-increase from 0 to 50 as SKILL_STANCE does. */
+		p_ptr->to_d_melee += (p_ptr->max_plv > 50 ? 50 : p_ptr->max_plv) / 3; /* Basically 'simulate' a dual-wield skill that auto-increase from 0 to 50 as SKILL_STANCE does. */
 	/* Alternative idea: boni from each weapon partially (or it would be way too much, eg +60 damage) count for both weapons! Eg to-hit, to-dam, +crit, +ea, etc. (The_sandman)
 	   Alternative idea: main hand weapon hits as usual for the full BpR (no BpR bonus from dual-wield in this case), and afterwards the 2nd weapon hits once or more times depending on some metrics. (Virus) */
 
