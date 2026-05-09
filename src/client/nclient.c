@@ -5378,6 +5378,13 @@ int Receive_store_special_anim(void) {
 		break;
 
 	case 4: //Blackjack, maybe just any card...
+		/* hack: hide cursor, or after the card-stack result is printed into the shop screen,
+		   a black cursor box (x11) will overwrite a part of a card */
+		Term->scr->cx = Term->wid;
+		Term->scr->cu = 1;
+		//Term_set_cursor(0);
+		//Term_fresh();
+
 #ifdef USE_SOUND_2010
 		sound(casino_card_sound_idx, SFX_TYPE_OVERLAP, 100, 0, 0, 0);
 #endif
