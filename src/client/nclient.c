@@ -4638,12 +4638,13 @@ int Receive_store_special_str(void) {
 
 	c_put_str(attr, str, line, col);
 
-	/* Hack still (redraw instantly instead of half a second later or so): */
-	Term_fresh();
-
 	/* hack: hide cursor */
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
+
+	/* Hack still (redraw instantly instead of half a second later or so):
+	   --moved this after hiding the cursor to try and prevent random glitch where part of the last dice is overwritten by a black cursor box (x11) */
+	Term_fresh();
 
 	return(1);
 }
