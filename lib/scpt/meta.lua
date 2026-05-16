@@ -214,7 +214,7 @@ function meta_display(xml_feed)
 			end
 		end
 
-		line = line + 1
+		--line = line + 1
 		color_print(line, 0, "\255B--- Unofficial servers ---"); line = line + 1
 		for k, e in categories_unofficial do
 			color_print(line, 0, "\255o " .. e.name .. " :"); line = line + 1
