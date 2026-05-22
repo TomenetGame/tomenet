@@ -1,0 +1,172 @@
+.==========================================================================+--.
+|                       TomeNET Administrator Guide                        |
++==========================================================================+-
+| Latest update: 22. May 2026 - written by C. Blue (c_blue@gmx.net)        |
+| for TomeNET version v4.9.4 - official websites are:                      :
+| https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
+| https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
+|
+| This guide is meant for TomeNET server administrators, not for players.
+| The guide for players is just called "TomeNET Guide" (without 'Admin').
+|
+| If your text editor cannot display the guide properly (needs fixed-width
+| font like for example Courier), simply open it in any web browser instead.
++---
+| Welcome to this guide!
+| Although I'm trying, I give no guarantee that this guide is always correct.
+| Don't blame me if something differs or is missing; it shouldn't though.
+|
+| If you have any suggestions about the guide or the game, please use the
+| /rfe command in the game or write to the official forum on www.tomenet.eu.
+:
+\
+
+
+Contents
+--------
+(0) Administrative slash commands
+    (0.1) Shutting down the server gracefully
+(1) Accounts
+    (1.1) The account editor 'accedit'
+    (1.2) New accounts and validation
+    (1.3) The administrator account
+    (1.3a) Dungeon Master
+    (1.3b) Dungeon Wizards
+    (1.4) Commands to change powers of individual accounts
+
+
+
+(0) Slash commands
+==================
+Issuing slash commands is done in-game, by pressing ':' key to open the chat
+prompt and entering the command there, starting with the slash '/' symbol.
+This guide only mentions slash commands that are specifically for use by
+administrators or players with elevated privileges and thereby not accessible
+to normal player accounts.
+
+(0.1) Shutting down the server gracefully
+-----------------------------------------
+Log in with a Dungeon Master or Dungeon Wizard and issue the slash command
+    /shutdown 0
+
+This will initiate an orderly shutdown with proper cleanup and therefore is
+much preferable over things such as spamming CTRL+C into the server's terminal
+or to kill it otherwise.
+
+
+
+(1) Accounts
+============
+Everyone who interacts with the server within the game world uses an 'account',
+defined by login name and login password.
+
+(1.1) The account editor 'accedit'
+---------------------------------
+Accounts can be moderated and managed with the account editor 'accedit', which
+resides in 'src/account' folder. The compiled 'accedit' binary must be placed
+into the same folder where file 'tomenet.acc' resides, usually 'lib/save'.
+This tool can be used to validate, invalidate or change privileges of players,
+and many more. However, it is usually simpler and more comfortable to use
+administrative slash commands instead, issued in-game on an administrator
+character, ie a DM or DW (see below), see (1.4).
+
+
+
+(1.2) New accounts and validation
+---------------------------------
+Whenever someone logs in to the TomeNET game server for the first time ie
+with a (valid) account name that is not yet known to the server, the server
+automatically creates a new account for this player (provided the player
+also entered a valid password).
+
+These accounts start out as 'invalid', which means they are restricted in
+what they can do and how far they can level up, until they are 'validated'
+by a server administrator character (by using '/val' command, see (1.4))
+or via the 'accedit' program, which can
+
+Only the first account ever created on a server is not automatically an
+invalid player account, but instead...
+
+
+
+(1.3) The administrator account
+-------------------------------
+The very first account created on a server will automatically become the
+main administrative account: The "dungeon master" (DM) account.
+
+(1.3a) Dungeon Master
+---------------------
+The character of the same name as an administrative account will be
+the Dungeon Master (DM) character, which means it'll automatically be a ghost
+while still retaining the powers of carrying items and doing basically
+everything a living character could.
+At the same time it can move through any kind of walls except for level
+boundaries and can also do various things that normal player characters cannot
+do, both in terms of gameplay interactions and also in usage of specific slash
+commands that are not available to normal players.
+Last but not least the DM character is always invisible to everyone
+(except for other DM characters) and does not appear on the players list ('@'
+key), unless this is changed explicitely in the tomenet.cfg file.
+
+(1.3a) Dungeon Wizards
+----------------------
+All other characters on the DM account will become Dungeon Wizards (DW), which
+are not ghosts but still have full administrative capabilities and therefore
+can use all administrative slash commands same as the Dungeon Master can.
+The DWs are fully visible to everyone, just as any other character.
+
+
+
+(1.4) Commands to change powers of individual accounts
+------------------------------------------------------
+
+Instead of modifying account status using the 'accedit' tool, it's usually much
+easier and more comfortable to log in with a Dungeon Master or Dungeon Wizard
+and use administrative slash commands to moderate player accounts and change
+their privileges:
+
+Privileged commands
+-------------------
+These commands can be used by DMs, DWs but also by normal players whose
+accounts were set to 'privileged mode' by an administrator.
+
+/val            Validate a newly created player account, so it can be used for
+                normal gameplay without 'trial mode' restrictions, such as:
+                - no levelling beyond 25.
+                - no private chatting.
+                - no dropping items.
+
+/inval          Invalidate a player account, reapplying 'trial mode'
+                restrictions. This is for example done on the official servers
+                where a strict one-account-per-player rule is enforced, when an
+                admin notices that a player uses more than one account. Usually
+                the admin will /inval all accounts aside from the first one, or
+                all accounts other then the one with most/highest characters.
+
+/linv           List all newly created invalid accounts (so you can decide to
+                validate them one by one using the /val command then.)
+
+Administrative commands
+-----------------------
+These commands can only be used by administrators (DMs and DWs).
+
+/privilege      Set a player account to 'privileged' mode, unlocking the 3
+                commands listed above. Sometimes, some quests in 'testing'
+                stage might be accessible to privileged players for early
+                testing.
+
+/vprivilege     Set a player account to 'very privileged' mode.
+                Has no further benefits over privileged mode, but may sometimes
+                allow early testing of new features or commands if available.
+
+/unprivilege    Set a player's account back to non-privileged aka normal.
+
+/makeadmin      Turns a player account into an administrative account
+                (see (1.3) for administrative accounts).
+                Use with care as this action cannot be undone; instead, you
+                will have to invoke the 'accedit' tool and 'D'elete the account
+                there, to get rid of it again.
+
+When logged in on an account you can check its status by pressing = A.
+
+===============================================================================
