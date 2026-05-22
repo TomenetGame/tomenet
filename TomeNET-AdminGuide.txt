@@ -163,9 +163,7 @@ accounts were set to 'privileged mode' by an administrator.
 /inval          Invalidate a player account, reapplying 'trial mode'
                 restrictions. This is for example done on the official servers
                 where a strict one-account-per-player rule is enforced, when an
-                admin notices that a player uses more than one account. Usually
-                the admin will /inval all accounts aside from the first one, or
-                all accounts other then the one with most/highest characters.
+                admin notices that a player uses more than one account.
 
 /linv           List all newly created invalid accounts (so you can decide to
                 validate them one by one using the /val command then.)
