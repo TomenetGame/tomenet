@@ -37,6 +37,9 @@ Contents
 (2) Admininstrator menu
 (3) Server command-line options
 (4) Server configuration files
+(5) Compilation
+    (5.1) Server compilation
+    (5.2) accedit compilation
 
 
 
@@ -89,6 +92,8 @@ This tool can be used to validate, invalidate or change privileges of players,
 and much more. However, it is usually simpler and more comfortable to use
 administrative slash commands instead, issued in-game on an administrator
 character, ie a DM or DW (see below), see (1.4).
+
+For compilation of accedit see (5.2) much further down.
 
 
 
@@ -256,7 +261,7 @@ Various files influence the server configuration and the world.
   most notably the world map location of the 'Ironman Deep Dive Challenge'
   dungeon (defines-local.h).
   If anything in the header files is changed, a full, clean recompilation of
-  the server is required.
+  the server is required (see (5.1)).
 
 - lib/scpt/custom.lua
   LUA code in here can manage things such as starting scheduled events or
@@ -264,5 +269,59 @@ Various files influence the server configuration and the world.
   Any changes to LUA files can be put live instantly if a DM/DW issues the
   '/initlua' command, which reinitializes the LUA framework without the need
   for a server restart.
+
+
+
+(5) Compilation
+===============
+Anything described here is for Linux.
+
+Unlike the TomeNET client the server side has way less package requirements.
+See TomeNET-Guide.txt (2.1b) for basic requirements, only some of that will be
+needed for the server, eg having a compiler installed - default is 'clang' but
+you can edit 'src/makefile' to change 'CC = clang' to 'CC = gcc' if you prefer.
+
+(5.1) Server compilation
+------------------------
+To compile the server, assuming you are in the 'tomenet' folder, switch to
+folder 'src':
+    cd src
+and issue clean-compilation commands:
+    make clean
+    make tomenet.server
+Now move the binary up one level so it's no longer in 'src' but in the main
+tomenet folder:
+    mv tomenet.server ..
+And then switch back up one folder to the binary:
+    cd ..
+and run it with:
+    ./tomenet.server
+
+Use the same instructions to recompile the server if you modified any .h-files.
+
+
+
+(5.2) accedit compilation
+-------------------------
+To compile the 'accedit' account editor, assuming you are in the 'tomenet'
+folder, switch to folder 'src':
+    cd src
+and type:
+    make accedit
+Now move the resulting 'accedit' binary to the server's savegame folder:
+    mv accedit ../lib/save
+and return to the tomenet folder:
+    cd ..
+
+Then you can run 'accedit' by going into folder 'lib/save':
+    cd lib/save
+and then invoking the binary:
+    ./accedit
+
+The reason we moved accedit to the save folder is that it must find the file
+'tomenet.acc' in its folder, and tomenet.acc is located in 'lib/save'.
+Alternatively you can just sym-link the tomenet.acc file to any location
+you prefer and put accedit there accordingly, for example the root 'tomenet'
+folder.
 
 ===============================================================================
