@@ -33,6 +33,7 @@ Contents
     (1.3a) Dungeon Master
     (1.3b) Dungeon Wizards
     (1.4) Commands to change powers of individual accounts
+(2) Admininstrator menu
 
 
 
@@ -161,11 +162,35 @@ These commands can only be used by administrators (DMs and DWs).
 /unprivilege    Set a player's account back to non-privileged aka normal.
 
 /makeadmin      Turns a player account into an administrative account
-                (see (1.3) for administrative accounts).
+                (see (1.3) for administrative accounts). All its characters
+                will turn into DM (if same name as account) and DWs.
                 Use with care as this action cannot be undone; instead, you
                 will have to invoke the 'accedit' tool and 'D'elete the account
                 there, to get rid of it again.
+                Alternatively to 'accedit' you can also use the admin menu
+                in-game, invoked with ']' key ->Player Commands ->Delete Player
+                which asks for an account name and will delete all characters
+                on that account and the account itself (compare (2)).
 
 When logged in on an account you can check its status by pressing = A.
+
+
+
+(2) Admininstrator menu
+=======================
+When logged on as DM or DW you can press the ']' key in-game to invoke the
+administrator menu:
+
+    (1) Level Commands
+        (3) Add dungeon       --- Use this to place an IDDC dungeon on a newly
+                                  created server; make sure its coordinates
+                                  match the ones the server compiled with in
+                                  'src/common/defines-local.h'.
+    (2) Building Commands
+    (3) Summoning Commands
+    (4) Generation Commands
+    (5) Player Commands
+        (6) Delete player     --- fully deletes an account and all its chars.
+    (6) System Commands
 
 ===============================================================================
