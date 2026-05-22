@@ -208,6 +208,16 @@ administrator menu:
                                   created server; make sure its coordinates
                                   match the ones the server compiled with in
                                   'src/common/defines-local.h'.
+                                  The standard IDDC flags to enter here are:
+                                   "Theme" 0; "Base level" 1; "Max depth" 127;
+                                   "Is it a tower?" - check defines-local.h:
+                                     If you left WPOS_IRONDEEPDIVE_Z to -1 then
+                                     no, if you set it to 1 then yes;
+                                   "Generate towns inbetween?" y,
+                                   "Generate towns randomly?" n,
+                                   "Disallow simple stores?" y,
+                                   "Generate hidden library?" y,
+                                   "Custom DF1/2/3 flags" 0.
     (2) Building Commands
     (3) Summoning Commands
     (4) Generation Commands
