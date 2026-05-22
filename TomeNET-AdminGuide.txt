@@ -39,6 +39,7 @@ Contents
 (4) Server configuration files
 (5) Compilation
     (5.1) Server compilation
+    (5.1a) Server recompilation
     (5.2) accedit compilation
 
 
@@ -261,7 +262,7 @@ Various files influence the server configuration and the world.
   most notably the world map location of the 'Ironman Deep Dive Challenge'
   dungeon (defines-local.h).
   If anything in the header files is changed, a full, clean recompilation of
-  the server is required (see (5.1)).
+  the server is required (see (5.1a)).
 
 - lib/scpt/custom.lua
   LUA code in here can manage things such as starting scheduled events or
@@ -301,17 +302,26 @@ And then switch back up one folder to the binary:
 Now if it's the first time running this server, it will create the world.
 For this reason consider (3) for potential command-line options you might wish
 to add. Here are two examples,
- (a) for first-time-ever server startup that generates the world and
+ (a) for first-time-ever server startup that generates the randomized world, ie
+     the main server savefile at 'lib/save/server', and...
  (b) for a normal subsequent startup as they happen all the time:
 
 a) First time server-startup, to randomly generate the game world:
     ./tomenet.server -a -b -l
 
-b) Just a normal, subsequent server-startup after the world was already created:
+b) Just a normal, subsequent server-startup after the world was already created
+   so we don't need to (and cannot) specify any world-creation-related options:
     ./tomenet.server
 
-If you modify any header files (*.h files), use these same instructions to
-recompile the server. Run the recompiled server, as usual in (b) above, with:
+
+(5.1a) Server recompilation
+---------------------------
+If you modify any C files, especially the header files (*.h files, see (4)
+about defines*.h config files), use these same instructions to recompile the
+server as given above in (5.1). Assuming again that this isn't the very first
+server startup ever, ie the file 'lib/save/server' already exists, run the
+recompiled server as in the example (b) without any world-creation-related
+command-line options:
     ./tomenet.server
 
 
