@@ -48,6 +48,8 @@ This guide only mentions slash commands that are specifically for use by
 administrators or players with elevated privileges and thereby not accessible
 to normal player accounts.
 
+Account-level related commands (validation, privileging) are listed in (1.4).
+
 (0.1) Shutting down the server gracefully
 -----------------------------------------
 Log in with a Dungeon Master or Dungeon Wizard and issue the slash command
@@ -231,7 +233,7 @@ All command-line options available are:
     -f        Reset the server partially: New flavours
     -a        (On server creation!) Ensure that all terrain types are created
     -b        (On server creation!) Don't allow watery wilderness around Bree
-    -l        (On server creation!) Place low-level dungeons not too far from Bree
+    -l        (On server creation!) Place low-level dungeons not far from Bree
     -H        Reinitialize houses
     -z        Don't catch signals
     -u<path>  Look for user files in the directory <path> (UNUSED)
