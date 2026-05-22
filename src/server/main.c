@@ -309,6 +309,10 @@ int main(int argc, char *argv[]) {
 
 		/* Analyze option */
 		switch (argv[0][1]) {
+		case 'h':
+			goto usage;
+			break;
+
 #if 0 /* this folder isn't really used on server-side */
 		case 'u':
 			ANGBAND_DIR_USER = &argv[0][2];
@@ -349,7 +353,7 @@ int main(int argc, char *argv[]) {
 			new_flavours = TRUE;
 			break;
 
-		case 'h':
+		case 'H':
 			new_houses = TRUE;
 			break;
 
@@ -375,9 +379,9 @@ int main(int argc, char *argv[]) {
 			puts("  -a        (On server creation!) Ensure that all terrain types are created");
 			puts("  -b        (On server creation!) Don't allow watery wilderness around Bree");
 			puts("  -l        (On server creation!) Place low-level dungeons not too far from Bree");
-			puts("  -h        Reinitialize houses");
+			puts("  -H        Reinitialize houses");
 			puts("  -z        Don't catch signals");
-			//puts("  -u<path>  Look for user files in the directory <path>"); -- this folder isn't really used on server-side
+			//puts("  -u<path>  Look for user files in the directory <path>"); -- this folder isn't used on server-side
 			puts("  -s<path>  Look for save files in the directory <path>");
 			puts("  -t<path>  Look for text files in the directory <path>");
 			puts("  -m<file>  Specify configuration <file>");
