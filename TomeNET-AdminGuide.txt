@@ -26,6 +26,7 @@ Contents
 --------
 (0) Administrative slash commands
     (0.1) Shutting down the server gracefully
+    (0.2) Live LUA changes
 (1) Accounts
     (1.1) The account editor 'accedit'
     (1.2) New accounts and validation
@@ -59,6 +60,16 @@ or to kill it otherwise.
 To make the server wait for all players to leave the dungeons before executing
 the shutdown, use this command:
     /shutempty
+
+
+(0.2) Live LUA changes
+----------------------
+To reinitialize the LUA framework immediately without the need for a server
+restart, use this command:
+    /initlua
+
+Use this if you changed any LUA files and want to put the changes live
+immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
 
 
 
@@ -244,5 +255,12 @@ Various files influence the server configuration and the world.
   dungeon (defines-local.h).
   If anything in the header files is changed, a full, clean recompilation of
   the server is required.
+
+- lib/scpt/custom.lua
+  LUA code in here can manage things such as starting scheduled events or
+  season changes.
+  Any changes to LUA files can be put live instantly if a DM/DW issues the
+  '/initlua' command, which reinitializes the LUA framework without the need
+  for a server restart.
 
 ===============================================================================
