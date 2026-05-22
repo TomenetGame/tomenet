@@ -56,6 +56,10 @@ This will initiate an orderly shutdown with proper cleanup and therefore is
 much preferable over things such as spamming CTRL+C into the server's terminal
 or to kill it otherwise.
 
+To make the server wait for all players to leave the dungeons before executing
+the shutdown, use this command:
+    /shutempty
+
 
 
 (1) Accounts
