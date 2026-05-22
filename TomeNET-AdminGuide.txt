@@ -34,6 +34,8 @@ Contents
     (1.3b) Dungeon Wizards
     (1.4) Commands to change powers of individual accounts
 (2) Admininstrator menu
+(3) Server command-line options
+(4) Server configuration files
 
 
 
@@ -76,17 +78,16 @@ character, ie a DM or DW (see below), see (1.4).
 (1.2) New accounts and validation
 ---------------------------------
 Whenever someone logs in to the TomeNET game server for the first time ie
-with a (valid) account name that is not yet known to the server, the server
-automatically creates a new account for this player (provided the player
-also entered a valid password).
+with an account name that is not yet known to the server, the server
+automatically creates a new account for this player.
 
 These accounts start out as 'invalid', which means they are restricted in
 what they can do and how far they can level up, until they are 'validated'
 by a server administrator character (by using '/val' command, see (1.4))
-or via the 'accedit' program, which can
+or via the 'accedit' program.
 
 Only the first account ever created on a server is not automatically an
-invalid player account, but instead...
+invalid player account, instead it will become...
 
 
 
@@ -192,5 +193,52 @@ administrator menu:
     (5) Player Commands
         (6) Delete player     --- fully deletes an account and all its chars.
     (6) System Commands
+
+
+
+(3) Server command-line options
+===============================
+The server binary (usually 'tomenet.server') can be invoked with command-line
+options.
+
+Some of these are only available the first time a new TomeNET server is started
+as they will affect the random world generation - a process that is only done
+the very first time a server starts.
+If you want to change the server's world again with those particular options
+labeled 'On server creation', you must delete the file 'lib/save/server' which
+contains the world. This will reset the server's world to a fresh state.
+
+All command-line options available are:
+
+    -h        Just display all available command-line options and exit.
+    -r        Reset the server (implies -w and -f)
+    -w        Reset the server partially: New wilderness
+    -f        Reset the server partially: New flavours
+    -a        (On server creation!) Ensure that all terrain types are created
+    -b        (On server creation!) Don't allow watery wilderness around Bree
+    -l        (On server creation!) Place low-level dungeons not too far from Bree
+    -H        Reinitialize houses
+    -z        Don't catch signals
+    -u<path>  Look for user files in the directory <path> (UNUSED)
+    -s<path>  Look for save files in the directory <path>
+    -t<path>  Look for text files in the directory <path>
+    -m<file>  Specify configuration <file>
+
+
+
+(4) Server configuration files
+==============================
+Various files influence the server configuration and the world.
+
+- lib/config/tomenet.cfg
+  This is the main configuration file, which the server reads each time it
+  starts up.
+
+- src/common/defines*.h
+  Header files starting on 'defines...' that contain a lot of server settings,
+  most notably the world map location of the 'Ironman Deep Dive Challenge'
+  dungeon (defines-local.h).
+  If anything in the header files is changed, a full, clean recompilation of
+  the server is required.
 
 ===============================================================================
