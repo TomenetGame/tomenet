@@ -286,18 +286,33 @@ you can edit 'src/makefile' to change 'CC = clang' to 'CC = gcc' if you prefer.
 To compile the server, assuming you are in the 'tomenet' folder, switch to
 folder 'src':
     cd src
+
 and issue clean-compilation commands:
     make clean
     make tomenet.server
+
 Now move the binary up one level so it's no longer in 'src' but in the main
 tomenet folder:
     mv tomenet.server ..
+
 And then switch back up one folder to the binary:
     cd ..
-and run it with:
+
+Now if it's the first time running this server, it will create the world.
+For this reason consider (3) for potential command-line options you might wish
+to add. Here are two examples,
+ (a) for first-time-ever server startup that generates the world and
+ (b) for a normal subsequent startup as they happen all the time:
+
+a) First time server-startup, to randomly generate the game world:
+    ./tomenet.server -a -b -l
+
+b) Just a normal, subsequent server-startup after the world was already created:
     ./tomenet.server
 
-Use the same instructions to recompile the server if you modified any .h-files.
+If you modify any header files (*.h files), use these same instructions to
+recompile the server. Run the recompiled server, as usual in (b) above, with:
+    ./tomenet.server
 
 
 
@@ -306,15 +321,19 @@ Use the same instructions to recompile the server if you modified any .h-files.
 To compile the 'accedit' account editor, assuming you are in the 'tomenet'
 folder, switch to folder 'src':
     cd src
+
 and type:
     make accedit
+
 Now move the resulting 'accedit' binary to the server's savegame folder:
     mv accedit ../lib/save
+
 and return to the tomenet folder:
     cd ..
 
 Then you can run 'accedit' by going into folder 'lib/save':
     cd lib/save
+
 and then invoking the binary:
     ./accedit
 
