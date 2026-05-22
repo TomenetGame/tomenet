@@ -119,7 +119,6 @@ The DWs are fully visible to everyone, just as any other character.
 
 (1.4) Commands to change powers of individual accounts
 ------------------------------------------------------
-
 Instead of modifying account status using the 'accedit' tool, it's usually much
 easier and more comfortable to log in with a Dungeon Master or Dungeon Wizard
 and use administrative slash commands to moderate player accounts and change
