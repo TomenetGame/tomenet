@@ -67,7 +67,7 @@ Accounts can be moderated and managed with the account editor 'accedit', which
 resides in 'src/account' folder. The compiled 'accedit' binary must be placed
 into the same folder where file 'tomenet.acc' resides, usually 'lib/save'.
 This tool can be used to validate, invalidate or change privileges of players,
-and many more. However, it is usually simpler and more comfortable to use
+and much more. However, it is usually simpler and more comfortable to use
 administrative slash commands instead, issued in-game on an administrator
 character, ie a DM or DW (see below), see (1.4).
 
