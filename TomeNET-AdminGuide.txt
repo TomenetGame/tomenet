@@ -37,7 +37,7 @@ Contents
 (2) Admininstrator menus
     (2.1) The administrator menu
     (2.2) The knowledge menu
-    (2.3) Other admin-enhanced menus
+    (2.3) Other admin-enhanced menus and keys
     (2.4) Interaction leeway
 (3) Server command-line options
 (4) Server configuration files
@@ -131,21 +131,70 @@ invalid player account, instead it will become...
 The very first account created on a server will automatically become the
 main administrative account: The "dungeon master" (DM) account.
 
+All characters on an administrative account will start out with different
+items than players, none of which will be equipped automatically:
+
+- a Handbook of Dungeon Keeping
+- 3 Rods of Probing
+- an Administrative Decree    --- this amulet will always prevent any kind of
+                                  harm and at the same time will make all
+                                  monsters ignore you (no effect for DM,
+                                  as they are already ignored by all monsters).
+- an Amulet of *Invulnerability*    --- this is simimlar to the decree but will
+                                        not prevent monsters from targetting
+                                        you if you are a Dungeon Wizard.
+                                        Useful for testing stuff.
+- an Amulet of *Immortality*        --- same as the Invulnerability amulet but
+                                        you will take damage, you just won't
+                                        die from it.
+- a Dwarven Lantern of Brightness
+- The Shadow Cloak of the Dungeon Master
+- The Goggles of the Dungeon Master    --- This allows a DW (or any char) to
+                                           actually see unseeable DM chars.
+- The Scythe of the Dungeon Master     --- This deals monster's HP + 1 to any
+                                           monster, thereby one-shotting them,
+                                           except if they have NO_DEATH flag.
+                                           Inscribe it 'IDDQD' to even kill
+                                           monsters that have NO_DEATH flag.
+                                           If this weapon is worn, the DM
+                                           will not auto-switch places with
+                                           monsters when running/bumping into
+                                           them, but instead stop when running
+                                           and attack when bumping.
+                                           If the scythe is inscribed '@Ox'
+                                           the DM will still auto-switch places
+                                           with monsters on running into them.
+- A Long Bow of Power and a Magic Arrow to go with it.
+
+
+
 (1.3a) Dungeon Master
 ---------------------
 The character of the same name as an administrative account will be
 the Dungeon Master (DM) character, which means it'll automatically be a ghost
 while still retaining the powers of carrying items and doing basically
 everything a living character could.
+
 At the same time it can move through any kind of walls except for level
 boundaries and can also do various things that normal player characters cannot
 do, both in terms of gameplay interactions and also in usage of specific slash
 commands that are not available to normal players.
+
+The dungeon master moves at +50 base speed and always can see all players and
+monsters telepathically, even those without a mind.
+The dungeon master is level 100, while all other chars stop at 99. This has no
+particular effect.
+The dungeon master is always ignored by all monsters as if they weren't there.
+
+The DM has particular movement behaviour, mentioned above in (1.3) under the
+item explanation for 'The Scythe of the Dungeon Master'.
+
 Last but not least the DM character is always invisible to everyone
 (except for other DM characters) and does not appear on the players list ('@'
 key), unless this is changed explicitely in the tomenet.cfg file.
 
-(1.3a) Dungeon Wizards
+
+(1.3b) Dungeon Wizards
 ----------------------
 All other characters on the DM account will become Dungeon Wizards (DW), which
 are not ghosts but still have full administrative capabilities and therefore
@@ -296,12 +345,27 @@ Some submenus in the knowledge menu ('~') provide additional info for admins:
 
 
 
-(2.3) Other admin-enhanced menus
---------------------------------
+(2.3) Other admin-enhanced menus and keys
+-----------------------------------------
 The Mathom-house in Bree has a new submenu for admins:
     f) Static floor records    --- shows all dungeon floors currently static,
                                    usually from some perma-/ghost-death, but
                                    also from someone having logged out there.
+
+Keys:
+    '        to inspect other players shows all players (compare (2.2), ~b).
+    d        admins can drop any items, always.
+    g/5      to pick up an item always works for admins (even as ghost).
+    h        admins can modify any houses even if they are owned by others,
+             and they can permanently DELETE a house with 'D' (don't do it).
+    I        admins can always inspect any item for full knowledge.
+    k        admins can destroy any item, including artifacts.
+    t   T    admins can take off any items, always.
+    @        admins can see additional info in the players list (location).
+
+In shops:
+    o        Dungeon Masters will receive item orders immediately on revisiting
+             the shop.
 
 
 
@@ -320,13 +384,15 @@ This makes testing certain things much easier as you do not need to modify the
 admin character first in all necessary ways to meet the requirements for
 certain actions.
 
-Example: Admins can send items via telekinesis to any character, even those
+Example 1: Admins can send items via telekinesis to any character, even those
 of incompatible mode and even to ghosts. In the specific case of sending to a
 soloist-mode character they will still see an error message but nevertheless
 the spell will go through successfully.
 There is no specific rule when this works or not, and when there will still be
 a message or not, it's kinda random/arbitrary, as this was usually hot-coded
 for quick debug/prototype reasons, for the eyes of developers only. :-p
+
+Example 2: Admins can tunnel even if they are ghosts.
 
 
 
