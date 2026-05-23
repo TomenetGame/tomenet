@@ -34,7 +34,11 @@ Contents
     (1.3a) Dungeon Master
     (1.3b) Dungeon Wizards
     (1.4) Commands to change powers of individual accounts
-(2) Admininstrator menu
+(2) Admininstrator menus
+    (2.1) The administrator menu
+    (2.2) The knowledge menu
+    (2.3) Other admin-enhanced menus
+    (2.4) Interaction leeway
 (3) Server command-line options
 (4) Server configuration files
 (5) Compilation
@@ -54,6 +58,13 @@ to normal player accounts.
 
 Account-level related commands (validation, privileging) are listed in (1.4).
 
+Note that unlike player-usable slash commands, admin slash commands sometimes
+don't have guard rails so it might be easy to crash the server if you specify
+invalid arguments to a command (resulting in a 'Panic Save' log message, which
+means the server realized it's going to crash and quickly saves all active
+players and the world state to savefiles on the disk to preserve the current
+progress).
+
 (0.1) Shutting down the server gracefully
 -----------------------------------------
 Log in with a Dungeon Master or Dungeon Wizard and issue the slash command
@@ -66,6 +77,7 @@ or to kill it otherwise.
 To make the server wait for all players to leave the dungeons before executing
 the shutdown, use this command:
     /shutempty
+
 
 
 (0.2) Live LUA changes
@@ -154,13 +166,13 @@ Privileged commands
 These commands can be used by DMs, DWs but also by normal players whose
 accounts were set to 'privileged mode' by an administrator.
 
-/val            Validate a newly created player account, so it can be used for
+/val <name>     Validate a newly created player account, so it can be used for
                 normal gameplay without 'trial mode' restrictions, such as:
                 - no levelling beyond 25.
                 - no private chatting.
                 - no dropping items.
 
-/inval          Invalidate a player account, reapplying 'trial mode'
+/inval <name>   Invalidate a player account, reapplying 'trial mode'
                 restrictions. This is for example done on the official servers
                 where a strict one-account-per-player rule is enforced, when an
                 admin notices that a player uses more than one account.
@@ -192,19 +204,58 @@ These commands can only be used by administrators (DMs and DWs).
                 Alternatively to 'accedit' you can also use the admin menu
                 in-game, invoked with ']' key ->Player Commands ->Delete Player
                 which asks for an account name and will delete all characters
-                on that account and the account itself (compare (2)).
+                on that account and the account itself (compare (2.1)).
 
 When logged in on an account you can check its status by pressing = A.
 
+/vinv <index>   Validate a specific entry of the list shown by '/linv' command.
+
+/dinv <index>   Discard a specific entry of the list shown by '/linv' command.
+                (The account will remain invalid, it's just no longer shown on
+                the 'newly created accounts' list. You can still validate it
+                by using the '/val' command anytime.)
+
+/clinv          Clears all entries from the list shown by '/linv' command.
+
+/ ...           (<- note the space that must follow after the slash!)
+/script ...
+/lua ...        These commands all do the same: Execute a LUA script command on
+                the server. Example: '/ prn("Hello, world!")'
+                This can also be done by entering the DM menu, (6) System, 'e'.
+
+// ...          (<- note the space that must follow after the slashes!)
+                This command executes a LUA script command on the client.
+                This can also be done by entering the DM menu, (6) System, 'c'.
+                This is not really an administrative command, as it is run
+                purely on the client-side, so anyone can actually use it.
+                Can be helpful for debugging purpose.
+
+/log            View the server's log file 'lib/data/tomenet.log', ie the same
+                that is shown in the terminal where the server is running.
+                Can also be viewed by ']' admin menu -> (6) System Commands
+                -> (1) View tomenet.log.
+
+/rec            The recall command works almost-instantly for admins and has no
+                range limit. Admins also do not need any recall items/spells,
+                they can use this command freely, at any time.
+                They can also use an extra syntax, adding '/x,y' for a specific
+                grid in the target worldmap sector, eg:
+                /rec 32,32/15,15
+
+/ex             The extra-info command shows additional info for admins.
 
 
-(2) Admininstrator menu
-=======================
+
+(2) Admininstrator menus
+========================
+
+(2.1) The administrator menu
+----------------------------
 When logged on as DM or DW you can press the ']' key in-game to invoke the
 administrator menu:
 
     (1) Level Commands
-        (3) Add dungeon       --- Use this to place an IDDC dungeon on a newly
+        (3) Add dungeon       --- use this to place an IDDC dungeon on a newly
                                   created server; make sure its coordinates
                                   match the ones the server compiled with in
                                   'src/common/defines-local.h'.
@@ -224,6 +275,58 @@ administrator menu:
     (5) Player Commands
         (6) Delete player     --- fully deletes an account and all its chars.
     (6) System Commands
+        (1) View tomenet.log             --- same as invoking '/log' command
+        (e) Execute script command       --- same as invoking '/ ' command
+        (c) Execute local script command --- same as invoking '// ' command
+
+
+
+(2.2) The knowledge menu
+------------------------
+Some submenus in the knowledge menu ('~') provide additional info for admins:
+    (1) Artifacts found    --- also shows artifact carrier and timeout
+    (3) Unique monsters    --- also shows 'unseen' uniques.
+    (b) Other players' equipment    --- (same as the ' key) for admins shows
+                                        equipment of all players, not just
+                                        those nearby, below level 10, or in
+                                        your party as it does for players.
+    (8) Recall depth and towns    --- shows complete info for admins
+    (9) Houses             --- shows complete houses list, with extra info
+    (0) Wilderness map     --- shows the complete world map
+
+
+
+(2.3) Other admin-enhanced menus
+--------------------------------
+The Mathom-house in Bree has a new submenu for admins:
+    f) Static floor records    --- shows all dungeon floors currently static,
+                                   usually from some perma-/ghost-death, but
+                                   also from someone having logged out there.
+
+
+
+(2.4) Interaction leeway
+------------------------
+Admins can often perform certain game commands, actions, interactions even
+though their character does not meet required criteria.
+Sometimes this only works only for DMs, in most cases it works for DWs too.
+
+In most cases they will see the usual failure/error message that a normal
+player character who tries this would see, but for the admin the action they
+tried to perform will actually be accepted and executed successfully despite
+the error message!
+
+This makes testing certain things much easier as you do not need to modify the
+admin character first in all necessary ways to meet the requirements for
+certain actions.
+
+Example: Admins can send items via telekinesis to any character, even those
+of incompatible mode and even to ghosts. In the specific case of sending to a
+soloist-mode character they will still see an error message but nevertheless
+the spell will go through successfully.
+There is no specific rule when this works or not, and when there will still be
+a message or not, it's kinda random/arbitrary, as this was usually hot-coded
+for quick debug/prototype reasons, for the eyes of developers only. :-p
 
 
 
