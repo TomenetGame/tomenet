@@ -27,6 +27,7 @@ Contents
 (0) Administrative slash commands
     (0.1) Shutting down the server gracefully
     (0.2) Live LUA changes
+    (0.3) More commands
 (1) Accounts
     (1.1) The account editor 'accedit'
     (1.2) New accounts and validation
@@ -91,6 +92,116 @@ restart, use this command:
 
 Use this if you changed any LUA files and want to put the changes live
 immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
+
+
+
+(0.3) More slash commands
+-------------------------
+/ ...           (<- note the space that must follow after the slash!)
+/script ...
+/lua ...        These commands all do the same: Execute a LUA script command on
+                the server. Example: '/ prn("Hello, world!")'
+                This can also be done by entering the DM menu, (6) System, 'e'.
+                Also see (0.4) about issuing LUA commands.
+
+// ...          (<- note the space that must follow after the slashes!)
+                This command executes a LUA script command on the client.
+                This can also be done by entering the DM menu, (6) System, 'c'.
+                This is not really an administrative command, as it is run
+                purely on the client-side, so anyone can actually use it.
+                Can be helpful for debugging purpose.
+
+/log            View the server's log file 'lib/data/tomenet.log', ie the same
+                that is shown in the terminal where the server is running.
+                Can also be viewed by ']' admin menu -> (6) System Commands
+                -> (1) View tomenet.log.
+
+/rec            The recall command works almost-instantly for admins and has no
+                range limit. Admins also do not need any recall items/spells,
+                they can use this command freely, at any time.
+                They can also use an extra syntax, adding '/x,y' for a specific
+                grid in the target worldmap sector, eg:
+                /rec 32,32/15,15
+
+/ex             The extra-info command shows additional info for admins.
+
+
+/wish <tval> <sval> [<xNum>] [<bpval> <pval> <name1> <name2> <name2b>]
+(DEPRECATED)    Creates an item and puts it into your inventory.
+                This command's syntax is rather complex and yet the /wish
+                command is lacking certain features. For that reason I do not
+                recommend using this function anymore; I created three simpler,
+                yet also more powerful versions, these are:
+
+/nwish [[<#skip>]:][#amount ][\\<prefix-ego>\\]<item name>[\\<postfix-ego>]
+        [+<bpval>][^<pval>]
+                Creates an item and puts it into your inventory.
+                Common usage examples for XP/stat potions:
+                /nwish ex        --- Potion of Experience
+                /nwish str       --- Potion of Strength, likewise for 'int',
+                                     'wis', 'dex'.
+                /nwish 4:con     --- Potion of Constitution (as there are 4
+                                     other items having 'con' in their name
+                                     first, in the 'lib/game/k_info.txt' file).
+                                     Or instead, for a direct match:
+                /nwish cons
+                /nwish 17:cha    --- Potion of Charisma, lots of CHAin mail
+                                     and stuff before it >:) - or:
+                /nwish 1:chari   --- still have to skip 'Amulet of Charisma'
+
+/awish [<#skip>:]<artifact name>
+                Creates a static artifact (true artifact) and puts it into your
+                inventory.
+
+/swish [<#skip>:][#amount ]<spell name>
+                Creates a specific spell scroll and puts it into your
+                inventory.
+
+
+
+(0.4) LUA commands
+------------------
+The slash command "/ " (note the space after the slash) can be used to execute
+arbitrary LUA code on the server (as mentioned above in (0.3)).
+The LUA scripting language in TomeNET is the old 4.0.1 version, so attempting
+to use commands of newer LUA versions may fail.
+
+Whenever there is no specific admin slash command to do something, chances are
+you can just use LUA code to achieve your goal.
+All functions and variables you can access in LUA are defined in these files,
+so you can browse those to see if there's anything you could use:
+
+lib/scpt/*.lua          --- the scpt folder contains all the LUA script files.
+src/server/lua_bind.c   --- a bunch of functions created for use in LUA.
+src/server/player.pre
+src/server/spells.pre
+src/server/util.pre     --- these three files declare functions and variables
+                            of the TomeNET C code to be also available in LUA.
+
+Also important here is the file 'src/common/types.h' which contains for example
+the 'player_type' which is the structure of the 'player'/'players' variables in
+LUA to access live player data (ie currently logged on characters).
+Looking there you can for example see that the 'struct player_type' has -among
+many others- the properties 'pclass', 'prace', 'ptrait' and 'mode.
+With this knowledge you can manipulate online characters:
+
+Examples of an admin char using LUA scripting:
+    / player.mode=8    --- sets the character mode of this character to 8,
+                           which corresponds to MODE_EVERLASTING (compare file
+                           'src/common/defines.h'.
+    / players("Gandalf").pclass=1    --- sets the class of the currently logged
+                                         in character 'Gandalf' to 1, which
+                                         corresponds to CLASS_MAGE (compare
+                                         file 'src/common/defines.h' again).
+
+Note that some LUA changes might not be 'refreshed' instantly in all aspects of
+the live game code in RAM, so sometimes it might be required to for example:
+  - press CTRL+R to redraw the windows,
+  - relog (log out + log in again) the affected character,
+in order to see the changes.
+
+There is a quirk in LUA: Arrays start at index 1, not 0 (as in C).
+So if you manipulate array elements you might need to add +1 to the index.
 
 
 
@@ -268,33 +379,6 @@ When logged in on an account you can check its status by pressing = A.
                 by using the '/val' command anytime.)
 
 /clinv          Clears all entries from the list shown by '/linv' command.
-
-/ ...           (<- note the space that must follow after the slash!)
-/script ...
-/lua ...        These commands all do the same: Execute a LUA script command on
-                the server. Example: '/ prn("Hello, world!")'
-                This can also be done by entering the DM menu, (6) System, 'e'.
-
-// ...          (<- note the space that must follow after the slashes!)
-                This command executes a LUA script command on the client.
-                This can also be done by entering the DM menu, (6) System, 'c'.
-                This is not really an administrative command, as it is run
-                purely on the client-side, so anyone can actually use it.
-                Can be helpful for debugging purpose.
-
-/log            View the server's log file 'lib/data/tomenet.log', ie the same
-                that is shown in the terminal where the server is running.
-                Can also be viewed by ']' admin menu -> (6) System Commands
-                -> (1) View tomenet.log.
-
-/rec            The recall command works almost-instantly for admins and has no
-                range limit. Admins also do not need any recall items/spells,
-                they can use this command freely, at any time.
-                They can also use an extra syntax, adding '/x,y' for a specific
-                grid in the target worldmap sector, eg:
-                /rec 32,32/15,15
-
-/ex             The extra-info command shows additional info for admins.
 
 
 
