@@ -135,18 +135,22 @@ immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
 /nwish [[<#skip>]:][#amount ][\\<prefix-ego>\\]<item name>[\\<postfix-ego>]
         [+<bpval>][^<pval>]
                 Creates an item and puts it into your inventory.
+
                 Common usage examples for XP/stat potions:
-                /nwish ex        --- Potion of Experience
-                /nwish str       --- Potion of Strength, likewise for 'int',
+                /nwish ex         -- Potions of Experience
+                /nwish str        -- Potion of Strength, likewise for 'int',
                                      'wis', 'dex'.
-                /nwish 4:con     --- Potion of Constitution (as there are 4
+                /nwish 4:con      -- Potion of Constitution (as there are 4
                                      other items having 'con' in their name
                                      first, in the 'lib/game/k_info.txt' file).
                                      Or instead, for a direct match:
                 /nwish cons
-                /nwish 17:cha    --- Potion of Charisma, lots of CHAin mail
+                /nwish 17:cha     -- Potion of Charisma, lots of CHAin mail
                                      and stuff before it >:) - or:
-                /nwish 1:chari   --- still have to skip 'Amulet of Charisma'
+                /nwish 1:chari    -- still have to skip 'Amulet of Charisma'
+
+                Or for multiple items:
+                /nwish 1:3 chari  -- creates 3 Potions of Charisma.
 
 /awish [<#skip>:]<artifact name>
                 Creates a static artifact (true artifact) and puts it into your
@@ -170,11 +174,11 @@ you can just use LUA code to achieve your goal.
 All functions and variables you can access in LUA are defined in these files,
 so you can browse those to see if there's anything you could use:
 
-lib/scpt/*.lua          --- the scpt folder contains all the LUA script files.
-src/server/lua_bind.c   --- a bunch of functions created for use in LUA.
+lib/scpt/*.lua           -- the scpt folder contains all the LUA script files.
+src/server/lua_bind.c    -- a bunch of functions created for use in LUA.
 src/server/player.pre
 src/server/spells.pre
-src/server/util.pre     --- these three files declare functions and variables
+src/server/util.pre      -- these three files declare functions and variables
                             of the TomeNET C code to be also available in LUA.
 
 Also important here is the file 'src/common/types.h' which contains for example
@@ -185,10 +189,10 @@ many others- the properties 'pclass', 'prace', 'ptrait' and 'mode.
 With this knowledge you can manipulate online characters:
 
 Examples of an admin char using LUA scripting:
-    / player.mode=8    --- sets the character mode of this character to 8,
+    / player.mode=8     -- sets the character mode of this character to 8,
                            which corresponds to MODE_EVERLASTING (compare file
                            'src/common/defines.h'.
-    / players("Gandalf").pclass=1    --- sets the class of the currently logged
+    / players("Gandalf").pclass=1     -- sets the class of the currently logged
                                          in character 'Gandalf' to 1, which
                                          corresponds to CLASS_MAGE (compare
                                          file 'src/common/defines.h' again).
@@ -249,22 +253,22 @@ items than players, none of which will be equipped automatically:
 
 - a Handbook of Dungeon Keeping
 - 3 Rods of Probing
-- an Administrative Decree    --- this amulet will always prevent any kind of
+- an Administrative Decree     -- this amulet will always prevent any kind of
                                   harm and at the same time will make all
                                   monsters ignore you (no effect for DM,
                                   as they are already ignored by all monsters).
-- an Amulet of *Invulnerability*    --- this is simimlar to the decree but will
+- an Amulet of *Invulnerability*     -- this is simimlar to the decree but will
                                         not prevent monsters from targetting
                                         you if you are a Dungeon Wizard.
                                         Useful for testing stuff.
-- an Amulet of *Immortality*        --- same as the Invulnerability amulet but
+- an Amulet of *Immortality*         -- same as the Invulnerability amulet but
                                         you will take damage, you just won't
                                         die from it.
 - a Dwarven Lantern of Brightness
 - The Shadow Cloak of the Dungeon Master
-- The Goggles of the Dungeon Master    --- This allows a DW (or any char) to
+- The Goggles of the Dungeon Master     -- This allows a DW (or any char) to
                                            actually see unseeable DM chars.
-- The Scythe of the Dungeon Master     --- This deals monster's HP + 1 to any
+- The Scythe of the Dungeon Master      -- This deals monster's HP + 1 to any
                                            monster, thereby one-shotting them,
                                            except if they have NO_DEATH flag.
                                            Inscribe it 'IDDQD' to even kill
@@ -390,7 +394,7 @@ When logged on as DM or DW you can press the ']' key in-game to invoke the
 administrator menu:
 
     (1) Level Commands
-        (3) Add dungeon       --- use this to place an IDDC dungeon on a newly
+        (3) Add dungeon        -- use this to place an IDDC dungeon on a newly
                                   created server; make sure its coordinates
                                   match the ones the server compiled with in
                                   'src/common/defines-local.h'.
@@ -408,33 +412,33 @@ administrator menu:
     (3) Summoning Commands
     (4) Generation Commands
     (5) Player Commands
-        (6) Delete player     --- fully deletes an account and all its chars.
+        (6) Delete player      -- fully deletes an account and all its chars.
     (6) System Commands
-        (1) View tomenet.log             --- same as invoking '/log' command
-        (e) Execute script command       --- same as invoking '/ ' command
-        (c) Execute local script command --- same as invoking '// ' command
+        (1) View tomenet.log              -- same as invoking '/log' command
+        (e) Execute script command        -- same as invoking '/ ' command
+        (c) Execute local script command  -- same as invoking '// ' command
 
 
 
 (2.2) The knowledge menu
 ------------------------
 Some submenus in the knowledge menu ('~') provide additional info for admins:
-    (1) Artifacts found    --- also shows artifact carrier and timeout
-    (3) Unique monsters    --- also shows 'unseen' uniques.
-    (b) Other players' equipment    --- (same as the ' key) for admins shows
+    (1) Artifacts found     -- also shows artifact carrier and timeout
+    (3) Unique monsters     -- also shows 'unseen' uniques.
+    (b) Other players' equipment     -- (same as the ' key) for admins shows
                                         equipment of all players, not just
                                         those nearby, below level 10, or in
                                         your party as it does for players.
-    (8) Recall depth and towns    --- shows complete info for admins
-    (9) Houses             --- shows complete houses list, with extra info
-    (0) Wilderness map     --- shows the complete world map
+    (8) Recall depth and towns     -- shows complete info for admins
+    (9) Houses              -- shows complete houses list, with extra info
+    (0) Wilderness map      -- shows the complete world map
 
 
 
 (2.3) Other admin-enhanced menus and keys
 -----------------------------------------
 The Mathom-house in Bree has a new submenu for admins:
-    f) Static floor records    --- shows all dungeon floors currently static,
+    f) Static floor records     -- shows all dungeon floors currently static,
                                    usually from some perma-/ghost-death, but
                                    also from someone having logged out there.
 
