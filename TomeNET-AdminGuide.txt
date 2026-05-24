@@ -58,8 +58,8 @@ to normal player accounts.
 
 Account-level related commands (validation, privileging) are listed in (1.4).
 
-All admin-specific slash commands start in file 'src/server/slash.c' starting
-after the code "else if (admin) {".
+All admin-specific slash commands can be found in file 'src/server/slash.c'
+starting after the code "else if (admin) {".
 
 Note that unlike player-usable slash commands, admin slash commands sometimes
 don't have guard rails so it might be easy to crash the server if you specify
