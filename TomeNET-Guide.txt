@@ -5944,8 +5944,8 @@ Unworldly characters will receive 25% bonus on their high score.
 Soloist (no-ghost and no PC-trading)
 ------------------------------------
 This is exactly like above 'Unworldly' mode, except you cannot do any trading
-ie exchange of items or gold with other player characters. You can use all NPC
-stores as usual though.
+ie exchange of items or gold with other player characters and you cannot create
+or join any guilds or parties. You can use all NPC stores as usual though.
 Furthermore, Soloists will not be affected by buff-spells other players cast on
 them, and they cannot pick up any items dropped by monsters that they didn't
 kill themselves.
