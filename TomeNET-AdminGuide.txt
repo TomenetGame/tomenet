@@ -426,9 +426,7 @@ Some submenus in the knowledge menu ('~') provide additional info for admins:
     (1) Artifacts found     -- also shows artifact carrier and timeout
     (3) Unique monsters     -- also shows 'unseen' uniques.
     (b) Other players' equipment     -- (same as the ' key) for admins shows
-                                        equipment of all players, not just
-                                        those nearby, below level 10, or in
-                                        your party as it does for players.
+                                        inventory+equipment of all players.
     (8) Recall depth and towns     -- shows complete info for admins
     (9) Houses              -- shows complete houses list, with extra info
     (0) Wilderness map      -- shows the complete world map
@@ -443,7 +441,7 @@ The Mathom-house in Bree has a new submenu for admins:
                                    also from someone having logged out there.
 
 Keys:
-    '        to inspect other players shows all players (compare (2.2), ~b).
+    '        to view other players' inventory+equipment  (compare (2.2), ~b).
     d        admins can drop any items, always.
     g/5      to pick up an item always works for admins (even as ghost).
     h        admins can modify any houses even if they are owned by others,
