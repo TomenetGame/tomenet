@@ -269,8 +269,8 @@ items than players, none of which will be equipped automatically:
 - 3 Rods of Probing
 - an Administrative Decree     -- this amulet will always prevent any kind of
                                   harm and at the same time will make all
-                                  monsters ignore you (no effect for DM,
-                                  as they are already ignored by all monsters).
+                                  monsters ignore you (note that DMs are
+                                  already ignored by all monsters anyway).
 - an Amulet of *Invulnerability*     -- this is simimlar to the decree but will
                                         not prevent monsters from targetting
                                         you if you are a Dungeon Wizard.
