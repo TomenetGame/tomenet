@@ -204,8 +204,9 @@ Examples of an admin char using LUA scripting:
                            'src/common/defines.h'.
     / players("Gandalf").pclass=1     -- sets the class of the currently logged
                                          in character 'Gandalf' to 1, which
-                                         corresponds to CLASS_MAGE (compare
-                                         file 'src/common/defines.h' again).
+                                         corresponds to CLASS_MAGE aka 'Istar'
+                                         (compare file 'src/common/defines.h'
+                                         again).
 
 Note that some LUA changes might not be 'refreshed' instantly in all aspects of
 the live game code in RAM, so sometimes it might be required to for example:
