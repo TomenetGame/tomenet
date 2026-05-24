@@ -82,6 +82,9 @@ To make the server wait for all players to leave the dungeons before executing
 the shutdown, use this command:
     /shutempty
 
+To cancel a pending '/shutempty' command again, use:
+    /shutcancel
+
 
 
 (0.2) Live LUA changes
