@@ -161,7 +161,7 @@ immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
                 inventory.
 
 /qinf           Prints information about all available quests. These are
-                defined in 'lib/game'q_info.txt' and optionally additionally in
+                defined in 'lib/game/q_info.txt' and optionally additionally in
                 'lib/scpt/quests.lua'.
 
 /qstart         Starts (enables) a quest that is currently inactive.
