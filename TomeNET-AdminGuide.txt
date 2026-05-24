@@ -160,6 +160,16 @@ immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
                 Creates a specific spell scroll and puts it into your
                 inventory.
 
+/qinf           Prints information about all available quests. These are
+                defined in 'lib/game'q_info.txt' and optionally additionally in
+                'lib/scpt/quests.lua'.
+
+/qstart         Starts (enables) a quest that is currently inactive.
+
+/qstop          Stops (disables) a quest that is currently active.
+                Chaining the two commands, first '/qstop' then '/qstart' will
+                therefore reset a quest, in case questors disappeared etc.
+
 
 
 (0.4) LUA commands
