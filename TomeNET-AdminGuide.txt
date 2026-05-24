@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                       TomeNET Administrator Guide                        |
 +==========================================================================+-
-| Latest update: 22. May 2026 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 24. May 2026 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -57,6 +57,9 @@ administrators or players with elevated privileges and thereby not accessible
 to normal player accounts.
 
 Account-level related commands (validation, privileging) are listed in (1.4).
+
+All admin-specific slash commands start in file 'src/server/slash.c' starting
+after the code "else if (admin) {".
 
 Note that unlike player-usable slash commands, admin slash commands sometimes
 don't have guard rails so it might be easy to crash the server if you specify
