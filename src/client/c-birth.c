@@ -1710,7 +1710,7 @@ static bool choose_mode(void) {
 	put_str("g) No Ghost", 17, 2);
 	c_put_str(TERM_SLATE, "('Unworldly' - One life only. The traditional rogue-like way)", 17, 14);
 	put_str("s) Soloist", 18, 2);
-	c_put_str(TERM_SLATE, "(Same as 'No Ghost' but cannot exchange gold/items with anybody)", 18, 14);
+	c_put_str(TERM_SLATE, "(Like No-Ghost but can't trade gold/items or join parties/guilds)", 18, 14);
 	if (!s_RPG) {
 		put_str("e) Everlasting", 19, 2);
 		c_put_str(TERM_SLATE, "(You may resurrect infinite times but cannot enter highscore)", 19, 17);
