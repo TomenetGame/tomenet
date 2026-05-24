@@ -104,20 +104,22 @@ immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
 /script ...
 /lua ...        These commands all do the same: Execute a LUA script command on
                 the server. Example: '/ prn("Hello, world!")'
-                This can also be done by entering the DM menu, (6) System, 'e'.
+                This can also be done by entering the admin menu with ']',
+                then (6) System, 'e'.
                 Also see (0.4) about issuing LUA commands.
 
 // ...          (<- note the space that must follow after the slashes!)
                 This command executes a LUA script command on the client.
-                This can also be done by entering the DM menu, (6) System, 'c'.
+                This can also be done by entering the admin menu with ']',
+                then (6) System, 'c'.
                 This is not really an administrative command, as it is run
                 purely on the client-side, so anyone can actually use it.
                 Can be helpful for debugging purpose.
 
 /log            View the server's log file 'lib/data/tomenet.log', ie the same
                 that is shown in the terminal where the server is running.
-                Can also be viewed by ']' admin menu -> (6) System Commands
-                -> (1) View tomenet.log.
+                Can also be viewed by entering the admin menu with ']', and
+                then -> (6) System Commands -> (1) View tomenet.log.
 
 /rec            The recall command works almost-instantly for admins and has no
                 range limit. Admins also do not need any recall items/spells,
@@ -204,7 +206,7 @@ With this knowledge you can manipulate online characters:
 Examples of an admin char using LUA scripting:
     / player.mode=8     -- sets the character mode of this character to 8,
                            which corresponds to MODE_EVERLASTING (compare file
-                           'src/common/defines.h'.
+                           'src/common/defines.h').
     / players("Gandalf").pclass=1     -- sets the class of the currently logged
                                          in character 'Gandalf' to 1, which
                                          corresponds to CLASS_MAGE aka 'Istar'
