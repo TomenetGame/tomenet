@@ -125,7 +125,6 @@ immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
 
 /ex             The extra-info command shows additional info for admins.
 
-
 /wish <tval> <sval> [<xNum>] [<bpval> <pval> <name1> <name2> <name2b>]
 (DEPRECATED)    Creates an item and puts it into your inventory.
                 This command's syntax is rather complex and yet the /wish
