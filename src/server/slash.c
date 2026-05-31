@@ -245,10 +245,10 @@ void sc_report(int Ind, void *string) {
  */
 
 static char *find_inscription(s16b quark, char *what) {
-	const char  *ax = quark_str(quark);
+	const char *ax = quark_str(quark);
 
 	if (ax == NULL || !what) return(FALSE);
-	return(strstr(ax, what));
+	return(strstr((char*)ax, what));
 }
 
 static void do_cmd_refresh(int Ind) {
