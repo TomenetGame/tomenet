@@ -5972,6 +5972,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(Ind, "\377yUsage: /beta0 ... /beta9");
 				return;
 			}
+
 			exec_lua(0, format("beta(%d,%d)", Ind, i));
 			return;
 		}
@@ -6906,7 +6907,31 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			/* random temporary test output */
 			if (prefix(messagelc, "/tmp")) {
-				if (!tk) return;
+				/* print all possible poly ring buy/sell prices and mark those not player-forgeable (cause no ring slots) */
+				int c = 0, old_body = p_ptr->body_monster;
+				object_type forge, *o_ptr = &forge;
+
+				invcopy(o_ptr, lookup_kind(TV_RING, SV_RING_POLYMORPH));
+				s_printf("PRINTING max. %d polyring prices:\n", max_r_idx);
+				for (n = 1; n < max_r_idx; n++) {
+					monster_race *r_ptr = &r_info[n];
+
+					if (!r_ptr->name) continue;
+					if (!r_ptr->level) continue; /* As these cannot be forged by players, they also shouldn't be found */
+					if (!r_ptr->rarity) continue;
+					if (r_ptr->flags1 & RF1_UNIQUE) continue;
+					if (!mon_allowed_chance(r_ptr)) continue;
+					c++;
+
+					o_ptr->pval = n;
+					o_ptr->level = ring_of_polymorph_level(r_info[n].level);
+					o_ptr->timeout_magic = 6000; //3000 + rand_int(3001);
+
+					p_ptr->body_monster = n;
+					s_printf("(%4d) L%3d, %6dXP, %-28s%c: %7d - %7d\n", n, r_ptr->level, r_ptr->mexp, r_name + r_ptr->name, item_tester_hook_wear(Ind, INVEN_RIGHT) ? ' ' : 'X', price_poly_ring(0, o_ptr, 0), price_poly_ring(0, o_ptr, 1));
+				}
+				p_ptr->body_monster = old_body;
+				s_printf("DONE, %d forms valid.\n", c);
 				return;
 			}
 
