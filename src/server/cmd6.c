@@ -7762,6 +7762,7 @@ void do_cmd_activate(int Ind, int item, int dir) {
 					else {
 						msg_format(Ind, "The form of the ring seems to change to a small %s.", r_info[p_ptr->body_monster].name + r_name);
 						o_ptr->pval = p_ptr->body_monster;
+						o_ptr->mode &= ~MODE_STARTER_ITEM; //wootleeway
 
 						/* Set appropriate level requirements */
 						o_ptr->level = ring_of_polymorph_level(r_info[p_ptr->body_monster].level);
