@@ -2529,6 +2529,7 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 	if (r_ptr->flags3 & RF3_UNDEAD) {
 		/* p_ptr->see_inv = TRUE;
 		p_ptr->resist_neth = TRUE;
+		p_ptr->resist_time = TRUE;
 		p_ptr->hold_life = TRUE;
 		p_ptr->free_act = TRUE;
 		p_ptr->see_infra += 3;
@@ -2537,13 +2538,14 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		/* p_ptr->resist_pois = TRUE; */ /* instead of immune */
 		/* p_ptr->resist_cold = TRUE; */
 
-		p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS;
-		p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK;
-		p_ptr->resist_blind = TRUE; csheet_boni->cb[1] |= CB2_RBLND;
 		p_ptr->no_cut = TRUE; csheet_boni->cb[12] |= CB13_XNCUT;
+		p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS;
 		if (!p_ptr->reduce_insanity) { p_ptr->reduce_insanity = 1; csheet_boni->cb[3] |= CB4_RMIND; }
-		p_ptr->see_infra += 2; csheet_boni->infr += 2;
 
+		p_ptr->resist_dark = TRUE; csheet_boni->cb[2] |= CB3_RDARK;
+		//p_ptr->resist_blind = TRUE; csheet_boni->cb[1] |= CB2_RBLND;
+
+		p_ptr->see_infra += 2; csheet_boni->infr += 2;
 		if (strchr("GWLV", r_ptr->d_char)) {
 			p_ptr->see_infra += 5; csheet_boni->infr += 3;
 		}
@@ -2551,8 +2553,9 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 
 	/* Non-living got a nice ability set too ;) */
 	if (r_ptr->flags3 & RF3_NONLIVING) {
-		p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS;
+		/* Note: All concerning nonliving monsters also have NO_CUT flag */
 		p_ptr->resist_fear = TRUE; csheet_boni->cb[4] |= CB5_RFEAR;
+		p_ptr->resist_pois = TRUE; csheet_boni->cb[1] |= CB2_RPOIS;
 		p_ptr->reduce_insanity = 2; csheet_boni->cb[4] |= CB5_XMIND;
 	}
 

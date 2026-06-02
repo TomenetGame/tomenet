@@ -22460,8 +22460,8 @@ All dragonriders
 All evil creatures
                 Becomes susceptible to certain 'good' or 'holy' effects.
 All undead creatures
-                Resist darkness, blindness, poison (usually immunity, depends
-                on ~7 flags), time and nether;
+                Resist darkness, poison (usually immunity, depends on ~7 flags)
+                as well as time and nether;
                 can't bleed (no_cut), infra-vision +2, insanity attacks are
                 reduced by a little bit (see (7.6)).
                 Drowning damage taken is halved.
