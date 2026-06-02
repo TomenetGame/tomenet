@@ -528,6 +528,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		bool body_humanoid;
 #ifdef MISC_FORM_BONI
 		int extra = 0, extra2 = 0, i, j;
+		bool wild_ok;
 #endif
 
 		r_ptr = &r_info[o_ptr->pval];
@@ -623,14 +624,16 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 
 #ifdef MISC_FORM_BONI
 			/* Terrain (ignoring RF3_IM_WATER for water-terrain-movement here as it'd be duplicate with immunities check further below) */
+			wild_ok = ((r_ptr->flags8 & RF8_WILD_TOO) && !(r_ptr->flags8 & RF8_WILD_TOO_MASK));
 			extra += ((r_ptr->flags7 & RF7_CAN_FLY) ? 3 : 0)
 			    + ((r_ptr->flags7 & RF7_CAN_SWIM) ? 1 : 0)
-			    + (((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL)) ? 2 : 0)
+			    + (((r_ptr->flags8 & RF8_WILD_WOOD) || wild_ok || (r_ptr->flags3 & RF3_ANIMAL)) ? 2 : 0)
 			    + ((r_ptr->flags2 & RF2_PASS_WALL) ? 3 : 0)
 			    + ((r_ptr->flags2 & RF2_KILL_WALL) ? 3 : 0)
 			    + ((r_ptr->flags7 & RF7_SPIDER) ? 1 : 0)
-			    + (((r_ptr->flags8 & RF8_WILD_MOUNTAIN) || (r_ptr->flags8 & RF8_WILD_VOLCANO) || (r_ptr->flags7 & RF7_CAN_CLIMB)) ? 2 : 0)
+			    + (((r_ptr->flags8 & RF8_WILD_MOUNTAIN) || (r_ptr->flags8 & RF8_WILD_VOLCANO) || wild_ok || (r_ptr->flags7 & RF7_CAN_CLIMB)) ? 2 : 0)
 			    + ((r_ptr->flags2 & RF2_OPEN_DOOR) ? 1 : 0);
+
 
 			/* Immunities */
 			extra2 = 4
