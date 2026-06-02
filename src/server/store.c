@@ -634,7 +634,6 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 			    + (((r_ptr->flags8 & RF8_WILD_MOUNTAIN) || (r_ptr->flags8 & RF8_WILD_VOLCANO) || wild_ok || (r_ptr->flags7 & RF7_CAN_CLIMB)) ? 2 : 0)
 			    + ((r_ptr->flags2 & RF2_OPEN_DOOR) ? 1 : 0);
 
-
 			/* Immunities */
 			extra2 = 4
 			    + ((r_ptr->flags3 & RF3_IM_ACID) ? 2 : 0)
