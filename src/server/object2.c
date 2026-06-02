@@ -8567,7 +8567,13 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 		char o_name_short[ONAME_LEN];
 
 		/* Spoiler for contents of the gift wrapping, otherwise nobody will ever get anything useful */
+#if 0 /* Always base item name on tval+sval. Works good for non-flavour items but spoils flavour items. */
 		object_desc(0, o_name_short, &forge, TRUE, 256 + 4096);
+#else
+		/* Assume unknown AND *unaware* (latter only works for Ind=0) */
+		//object_desc(0, o_name_short, &forge, TRUE, 256 + 4096 + 16384);
+		object_desc(0, o_name_short, &forge, TRUE, 256 + 4096 + 16384);
+#endif
 		forge.note = quark_add(o_name_short);
 		forge.note_utag = 0;
 

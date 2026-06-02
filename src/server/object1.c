@@ -2170,6 +2170,7 @@ static char *object_desc_lnum(char *t, uint n) {
  * +2048 - Do not display anything referring to the base item (for seals and wrapped gifts). Add +32 too when using this.
  * +4096 - Assume item is not "known", even if Ind is 0.
  * +8192 - For TV_GOLD items add actual amount (for 9999 pseudo 'gold' item hack for listhouse homes)
+ * +16384 - Assume we're not "aware" of the item AND we can't even see its flavour 'colour' (for gift-wrapped items), aka '*unaware*'
  *
  * If the strings created with mode 0-3 are too long, this function is called
  * again with 8 added to 'mode' and attempt to 'abbreviate' the strings. -Jir-
@@ -2198,11 +2199,12 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	char		tmp_val[ONAME_LEN];
 	static char	basenm2[ONAME_LEN];
-	bool		short_item_names = FALSE;
+	bool		short_item_names = FALSE, conceal = (mode & 16384);
 	u32b		f1, f2, f3, f4, f5, f6, esp;
 	object_kind	*k_ptr = &k_info[o_ptr->k_idx];
 	bool		skip_base_article = FALSE;
 	bool		special_rop = (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_SPECIAL);
+	bool		hide_flavour = !seed_flavor; //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 #ifdef ENABLE_DEMOLITIONIST
 	char		tmp_modstr[ONAME_LEN];
 #endif
@@ -2236,8 +2238,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	} else {
 		/* Assume aware and known */
 		aware = known = TRUE;
-		if (mode & 1024) aware = FALSE; //don't spoil flavours in player shop export list!
+		if (mode & (1024 | 16384)) aware = FALSE; //don't spoil flavour-knowledge in player shop export list! (1024) and for wrapped gifts (16384)
 		if (mode & 4096) known = FALSE;
+		if (mode & 16384) conceal = hide_flavour = TRUE; //don't spoil flavours for wrapped gifts
 	}
 	/* Never use short item names in flavour knowledge list */
 	if ((mode & 512)) short_item_names = FALSE;
@@ -2246,6 +2249,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	   so we need to strip the flavour really (way too annoying) */
 	else if ((mode & 256)) short_item_names = TRUE;
 #endif
+	/* Don't show flavours? */
+	if (hide_flavour) short_item_names = TRUE;
 
 	/* Hack -- Extract the sub-type "indexx" */
 	indexx = o_ptr->sval;
@@ -2267,32 +2272,64 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		if (o_ptr->sval == SV_CUSTOM_OBJECT)
 			basenm = o_ptr->note ? quark_str(o_ptr->note) : "";
 	case TV_SKELETON:
+		if (conceal) basenm = "Bones"; //could be a broken bone, skull or whole skeleton actually...
+		break;
 	case TV_BOTTLE:
+		break;
 	case TV_JUNK:
+		if (conceal) basenm = "Rattling Stuff"; //all sorts of pft
+		break;
 	case TV_GAME:
+		if (conceal) basenm = "Rattling Stuff"; //wooden pieces, ball, snowball ~~
+		break;
 	case TV_SPIKE:
+		break;
 	case TV_KEY:
+		if (conceal) basenm = "& Key~";
+		break;
 	case TV_FLASK:
+		if (conceal) basenm = "& Flask~";
+		break;
 	case TV_CHEST:
+		if (conceal) basenm = "& Chest~"; //impossible, as concealed means inside a gift wrapping
+		break;
 	case TV_FIRESTONE:
+		break;
 	case TV_INSTRUMENT:
+		if (conceal) basenm = "& Musical Instrument~";
+		break;
+
 	case TV_TOOL:
+		break;
+	case TV_DIGGING:
+		if (conceal) {
+			if (o_ptr->sval < SV_PICK) basenm = "& Shovel~";
+			else basenm = "& Pick~";
+		}
+		show_weapon = TRUE;
+		break;
+
 #ifdef ENABLE_SUBINVEN
 	case TV_SUBINVEN:
-#endif
+		if (conceal) basenm = "& Bag~";
 		break;
+#endif
 
 	/* Missiles/ Bows/ Weapons */
 	case TV_SHOT:
 	case TV_BOLT:
 	case TV_ARROW:
 	case TV_BOW:
+		show_weapon = TRUE;
+		break;
 	case TV_BLUNT:
 	case TV_POLEARM:
 	case TV_SWORD:
-	case TV_DIGGING:
 	case TV_BOOMERANG:
 	case TV_AXE:
+		show_weapon = TRUE;
+		//if (conceal) basenm = "& Weapon~";
+		break;
 	case TV_MSTAFF:
 		show_weapon = TRUE;
 		break;
@@ -2301,7 +2338,8 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	case TV_TRAPKIT:
 		modstr = basenm;
 		switched_ego_prefix_and_modstr = TRUE;
-		basenm = "& # Trap Kit~";
+		if (conceal) basenm = "& Trap Kit~"; //gift-wrapping even conceals trap type, just for fun? :-s (it's not necessary)
+		else basenm = "& # Trap Kit~";
 		break;
 
 		/* Armour */
@@ -2317,23 +2355,48 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	case TV_HELM:
 	case TV_SOFT_ARMOR:
 	case TV_HARD_ARMOR:
+		show_armour = TRUE;
+		//if (conceal) basenm = "& Piece~ of Armour";
+		break;
 	case TV_DRAG_ARMOR:
 		show_armour = TRUE;
+		if (conceal) basenm = "Dragon Scale Mail"; //pft @ Dracolich Bone Amour
 		break;
 
 	case TV_GOLEM:
+		if (conceal) basenm = "& Skeleton~";
 		break;
 
 	/* Lites (including a few "Specials") */
 	case TV_LITE:
+		if (conceal) {
+			switch (o_ptr->sval) {
+			case SV_LITE_TORCH:
+			case SV_LITE_TORCH_EVER:
+				basenm = "& Torch~";
+				break;
+			case SV_LITE_LANTERN:
+			case SV_LITE_DWARVEN:
+			case SV_LITE_FEANORIAN:
+				basenm = "& Lamp~";
+				break;
+			case SV_LITE_GALADRIEL:
+			case SV_LITE_UNDEATH:
+				basenm = "& Small Light Source~";
+				break;
+			default:
+				basenm = "& Glowing Orb~";
+				break;
+			}
+		}
 		break;
 
 	/* Amulets (including a few "Specials") */
 	case TV_AMULET:
 		/* "Amulets of Luck" are just called "Talismans" -C. Blue */
-		if ((o_ptr->sval == SV_AMULET_LUCK) && aware) {
+		if (o_ptr->sval == SV_AMULET_LUCK && aware) {
 			if (mode & 512) { /* Specialty: In ~ menu list, show the colour actually, so player knows which flavour is a talisman */
-				if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+				if (hide_flavour) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 				modstr = amulet_adj[indexx];
 				basenm = "& # Talisman~";
 				break;
@@ -2344,54 +2407,75 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 		/* Optionally flavoury */
 		if (o_ptr->sval == SV_AMULET_INVINCIBILITY) {
-			basenm = "& Administrative Decree~";
+			if (conceal) basenm = "& Scripture~"; //concealed within gift wrapping, just for fun
+			else basenm = "& Administrative Decree~";
 			hacked_base_name = TRUE;
 			break;
 		}
 
 		/* Color the object */
-		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
-		modstr = amulet_adj[indexx];
-		if (aware) append_name = TRUE;
-		if (short_item_names) basenm = aware ? "& Amulet~" : "& # Amulet~";
-		else basenm = "& # Amulet~";
+		if (hide_flavour) {
+			modstr = ""; //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+			basenm = "& Amulet~";
+		} else {
+			modstr = amulet_adj[indexx];
+			if (aware) append_name = TRUE;
+			if (short_item_names) basenm = aware ? "& Amulet~" : "& # Amulet~";
+			else basenm = "& # Amulet~";
+		}
 		break;
 
 	/* Rings (including a few "Specials") */
 	case TV_RING:
 		/* Color the object */
-		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
-		modstr = ring_adj[indexx];
-		if (aware) append_name = TRUE;
-		if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
-		else basenm = "& # Ring~";
+		if (hide_flavour) {
+			modstr = ""; //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+			basenm = "& Ring~";
+		} else {
+			modstr = ring_adj[indexx];
+			if (aware) append_name = TRUE;
+			if (short_item_names) basenm = aware ? "& Ring~" : "& # Ring~";
+			else basenm = "& # Ring~";
+		}
 		break;
 
 	case TV_STAFF:
 		/* Color the object */
-		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
-		modstr = staff_adj[indexx];
-		if (aware) append_name = TRUE;
-		if (short_item_names) basenm = aware ? "& Staff~" : "& # Staff~";
-		else basenm = "& # Staff~";
+		if (hide_flavour) {
+			modstr = ""; //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+			basenm = "& Staff~";
+		} else {
+			modstr = staff_adj[indexx];
+			if (aware) append_name = TRUE;
+			if (short_item_names) basenm = aware ? "& Staff~" : "& # Staff~";
+			else basenm = "& # Staff~";
+		}
 		break;
 
 	case TV_WAND:
 		/* Color the object */
-		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
-		modstr = wand_adj[indexx];
-		if (aware) append_name = TRUE;
-		if (short_item_names) basenm = aware ? "& Wand~" : "& # Wand~";
-		else basenm = "& # Wand~";
+		if (hide_flavour) {
+			modstr = ""; //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+			basenm = "& Wand~";
+		} else {
+			modstr = wand_adj[indexx];
+			if (aware) append_name = TRUE;
+			if (short_item_names) basenm = aware ? "& Wand~" : "& # Wand~";
+			else basenm = "& # Wand~";
+		}
 		break;
 
 	case TV_ROD:
 		/* Color the object */
-		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
-		modstr = rod_adj[indexx];
-		if (aware) append_name = TRUE;
-		if (short_item_names) basenm = aware ? "& Rod~" : "& # Rod~";
-		else basenm = "& # Rod~";
+		if (hide_flavour) {
+			modstr = ""; //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+			basenm = "& Rod~";
+		} else {
+			modstr = rod_adj[indexx];
+			if (aware) append_name = TRUE;
+			if (short_item_names) basenm = aware ? "& Rod~" : "& # Rod~";
+			else basenm = "& # Rod~";
+		}
 		break;
 
 	case TV_ROD_MAIN: {
@@ -2404,9 +2488,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	case TV_SCROLL:
 #ifdef NEW_WILDERNESS_MAP_SCROLLS
 		/* For new wilderness mapping code, where it's actually a puzzle piece of the map */
-		if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP) {
+		if (o_ptr->sval == SV_SCROLL_WILDERNESS_MAP && !(conceal)) {
 			if (mode & 512) { /* Specialty: In ~ menu list, show the colour actually, so player knows which flavour is a talisman */
-				if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+				if (hide_flavour) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
 				modstr = scroll_adj[indexx];
 				basenm = "& Wilderness Map Piece~ titled \"#\"";
 				break;
@@ -2417,7 +2501,7 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 #endif
 
-		if (o_ptr->sval == SV_SCROLL_CHEQUE) {
+		if (o_ptr->sval == SV_SCROLL_CHEQUE && !(conceal)) {
 			if (mode & 256)
 				basenm = "& Cheque~";
 			else
@@ -2427,79 +2511,132 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		}
 
 		/* Color the object */
-		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
-		modstr = scroll_adj[indexx];
-		if (aware) append_name = TRUE;
-		if (short_item_names) basenm = aware ? "& Scroll~" : "& Scroll~ titled \"#\"";
-		else basenm = aware ? "& Scroll~ \"#\"" : "& Scroll~ titled \"#\"";
+		if (hide_flavour) {
+			modstr = ""; //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+			basenm = "& Scroll~";
+		} else {
+			modstr = scroll_adj[indexx];
+			if (aware) append_name = TRUE;
+			if (short_item_names) basenm = aware ? "& Scroll~" : "& Scroll~ titled \"#\"";
+			else basenm = aware ? "& Scroll~ \"#\"" : "& Scroll~ titled \"#\"";
+		}
 		break;
 
 	case TV_POTION:
 	case TV_POTION2:
 		/* Color the object */
-		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
-		modstr = potion_adj[indexx + (o_ptr->tval == TV_POTION2 ? STATIC_COLORS : 0)]; /* the first n potions have static flavours */
-		if (aware) append_name = TRUE;
-		if (short_item_names) basenm = aware ? "& Potion~" : "& # Potion~";
-		else basenm = "& # Potion~";
+		if (hide_flavour) {
+			modstr = ""; //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+			basenm = "& Potion~";
+		} else {
+			modstr = potion_adj[indexx + (o_ptr->tval == TV_POTION2 ? STATIC_COLORS : 0)]; /* the first n potions have static flavours */
+			if (aware) append_name = TRUE;
+			if (short_item_names) basenm = aware ? "& Potion~" : "& # Potion~";
+			else basenm = "& # Potion~";
+		}
 		break;
 
 	case TV_FOOD:
 		/* Ordinary food is "boring" */
-		if (o_ptr->sval > SV_FOOD_MUSHROOMS_MAX) break;
+		if (o_ptr->sval > SV_FOOD_MUSHROOMS_MAX) {
+			if (conceal) {
+				if (o_ptr->sval == SV_FOOD_PINT_OF_ALE || o_ptr->sval == SV_FOOD_PINT_OF_WINE || o_ptr->sval == SV_FOOD_KHAZAD)
+					basenm = "Ale"; //always singular
+				else
+					basenm = "Food"; //always singular
+			}
+			break;
+		}
 
 		/* Color the object */
-		if (!seed_flavor) modstr = ""; else //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
-		modstr = food_adj[indexx];
+		if (hide_flavour) {
+			modstr = ""; //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+			basenm = "& Mushroom~";
+		} else {
+			modstr = food_adj[indexx];
 
-		if (aware) append_name = TRUE;
-		if (short_item_names) basenm = aware ? "& Mushroom~" : "& # Mushroom~";
-		else basenm = "& # Mushroom~";
+			if (aware) append_name = TRUE;
+			if (short_item_names) basenm = aware ? "& Mushroom~" : "& # Mushroom~";
+			else basenm = "& # Mushroom~";
+		}
 		break;
 
 	case TV_PARCHMENT:
-		modstr = basenm;
-		switched_ego_prefix_and_modstr = TRUE;
-		basenm = "& Parchment~ - #";
+		if (hide_flavour) {
+			modstr = ""; //hack: Allow object_desc() calls early on in load2.c before flavours are actually initialised
+			basenm = "& Parchment~";
+		} else {
+			modstr = basenm;
+			switched_ego_prefix_and_modstr = TRUE;
+			basenm = "& Parchment~ - #";
+		}
 		break;
 
 		/* Hack -- Gold/Gems */
 	case TV_GOLD:
-		if (mode & 8192) sprintf(buf, "%d gold piece%s worth of %s", o_ptr->pval, o_ptr->pval == 1 ? "" : "s", basenm);
+		//could utilize gold_colour() for gems, but player always drops Au, so coins seem right
+		if (conceal) strcpy(buf, "Coins");
+		else if (mode & 8192) sprintf(buf, "%d gold piece%s worth of %s", o_ptr->pval, o_ptr->pval == 1 ? "" : "s", basenm);
 		else strcpy(buf, basenm);
 		return;
 
 	case TV_BOOK:
-		/* hack for mindcrafter spell scrolls -> spell crystals - C. Blue */
-		if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST)
-			basenm = "& Spell Crystal~ of #";
-		/* hack for priest spell scrolls -> prayer scrolls - C. Blue */
-		if (o_ptr->pval >= __lua_P_FIRST && o_ptr->pval <= __lua_P_LAST)
-			basenm = "& Prayer Scroll~ of #";
-		//basenm = k_name + k_ptr->name;
 		if (o_ptr->sval == SV_SPELLBOOK) {
+			/* hack for mindcrafter spell scrolls -> spell crystals - C. Blue */
+			if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST) {
+				if (mode & 16834) basenm = "& Crystal~";
+				else basenm = "& Spell Crystal~ of #";
+			}
+			/* hack for priest spell scrolls -> prayer scrolls - C. Blue */
+			else if (o_ptr->pval >= __lua_P_FIRST && o_ptr->pval <= __lua_P_LAST) {
+				if (mode & 16834) basenm = "& Heavy Scroll~";
+				else basenm = "& Prayer Scroll~ of #";
+			}
+			else if (mode & 16834) basenm = "& Heavy Scroll~";
+
 			if (school_spells[o_ptr->pval].name)
 				modstr = school_spells[o_ptr->pval].name;
 			else modstr = "Unknown spell";
+		} else if (conceal) {
+			switch (o_ptr->sval) {
+			case 19: /* Mindcraft Crystals */
+			case 20:
+			case 21:
+				basenm = "& Heavy Crystal~"; //(same weight as 'Book', just heavier than 'Crystal')
+				break;
+			case SV_CUSTOM_TOME_1:
+				basenm = "& Light Book~";
+				break;
+			case SV_CUSTOM_TOME_2: /* Tomes, Handbooks */
+			default:
+				basenm = "& Book~";
+				break;
+			case SV_CUSTOM_TOME_3:
+				basenm = "& Heavy Book~";
+				break;
+			}
 		}
 		break;
 
 	case TV_RUNE:
-		append_name = TRUE;
+		if (!(conceal)) append_name = TRUE;
 		basenm = "& Rune~";
 		break;
 
 	case TV_MONSTER:
+		if (mode & 16834) basenm = "& Corpse~"; //oO'
 		break;
 
 #ifdef ENABLE_DEMOLITIONIST
 	case TV_CHEMICAL:
-		if (o_ptr->sval == SV_MIXTURE) {
+		if (conceal) basenm = "& Chemical~";
+		else if (o_ptr->sval == SV_MIXTURE) {
 			mixture_flavour(o_ptr, tmp_modstr);
 			modstr = tmp_modstr;
 		}
 		break;
 	case TV_CHARGE:
+		if (conceal) basenm = "& Chemic Charge~";
 		break;
 #endif
 

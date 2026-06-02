@@ -3872,7 +3872,7 @@
 #define SV_HOUSE_KEY			1
 #define SV_GUILD_KEY			2
 
-/* Sval for golems */
+/* Sval for TV_GOLEM */
 #define SV_GOLEM_WOOD			0
 #define SV_GOLEM_COPPER			1
 #define SV_GOLEM_IRON			2
@@ -3888,7 +3888,7 @@
 #define SV_GOLEM_FOLLOW			201
 #define SV_GOLEM_GUARD			202
 
-/* Sval for bones */
+/* Sval for TV_SKELETON */
 #define SV_BROKEN_SKULL			1
 #define SV_BROKEN_BONE			2
 
