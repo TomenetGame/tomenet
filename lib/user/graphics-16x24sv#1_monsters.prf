@@ -1,0 +1,779 @@
+# File: graphics-16x24sv#1_monsters.prf
+#
+# TomeNET graphics redefinitions for 16x24sv#1_monsters.bmp file.
+# This file defines special attr/char mappings for use in "graphics" mode.
+#
+# Highly inspired by Tangar's font https://tangar.info/en/t/tileset
+# And Urizen tileset https://vurmux.itch.io/urizen-onebit-tileset
+#
+
+### "a" monsters
+R:581:/4100 # Level=23 NAME='The Queen Ant' Comments=ANT WITH CROWN
+
+### "b" - bats (4001)
+#R:1114:/4101 # Level=44 NAME='Bad Luck Bat from Hell' Comments=
+
+### "c" - centipedes (4002)
+
+#R:515:/4102 # Level=34 NAME='Carrion crawler' Comments=
+
+### "d" - baby dragons (4003)
+R:616:/4103 # Level=39 NAME='Kavlax the Many-Headed' Comments=HYDRA Multi-headed dragon
+
+### "e" monsters
+R:603:/4104 # Level=40 NAME='Beholder' Comments=e I
+R:893:/4104 # Level=40 NAME='Eye of the deep' Comments=e I
+
+R:664:/4204 # Level=45 NAME='Undead beholder' Comments=e I with eye
+R:781:/4204 # Level=67 NAME='Beholder hive-mother' Comments=e I with eye
+
+R:805:/4304 # Level=73 NAME='Omarax the Eye Tyrant' Comments=EYE
+R:826:/4304 # Level=80 NAME='Cyaegha' Comments=EYE
+R:841:/4304 # Level=88 NAME='Shuma-Gorath' Comments=EYE
+R:1078:/4304 # Level=127 NAME='Evil Administrator from Hell' Comments=// EYE joke
+R:1085:/4304 # Level=128 NAME='Dor' Comments=EYE
+
+### "f" - cats (4005)
+R:57:/4105 # Level=2 NAME='Freesia' Comments=CAT
+R:200:/4105 # Level=10 NAME='Hobbes the Tiger' Comments=// CAT joke
+R:777:/4105 # Level=66 NAME='The Cat Lord' Comments=CAT
+
+### "g" - golems (4006)
+R:558:/4106 # Level=36 NAME='Colossus' Comments=GOLEM 
+R:672:/4106 # Level=43 NAME='Juggernaut of Khorne' Comments=GOLEM 
+R:691:/4106 # Level=44 NAME='Drolem' Comments=GOLEM 
+
+R:397:/4206 # Level=35 NAME='Silent watcher' Comments=GOLEM with eye
+R:1013:/4206 # Level=61 NAME='Bone golem' Comments=GOLEM with eye
+R:1015:/4206 # Level=65 NAME='Bronze golem' Comments=GOLEM with eye
+
+R:177:/4306 # Level=10 NAME='The Borshin' Comments=GOLEM
+R:451:/4306 # Level=28 NAME='The Ultimate Dungeon Cleaner' Comments=// GOLEM joke
+R:855:/4306 # Level=94 NAME='The Destroyer' Comments=GOLEM
+
+### "h" - humanoids (4007)
+
+R:375:/4107 # Level=23 NAME='Dark-elven warlock' Comments=h I
+R:450:/4107 # Level=28 NAME='Mind flayer' Comments=h I
+R:539:/4107 # Level=35 NAME='Halfling slinger' Comments=h I
+R:657:/4107 # Level=41 NAME='Dark-elven sorcerer' Comments=h I
+R:945:/4107 # Level=40 NAME='High-elven ranger' Comments=h I
+R:529:/4207 # Level=35 NAME='Malicious leprechaun' Comments=h II leprechaun
+R:680:/4207 # Level=44 NAME='Death leprechaun' Comments=h II leprechaun
+R:700:/4207 # Level=46 NAME='Leprechaun fanatic' Comments=h II leprechaun
+
+R:382:/4307 # Level=24 NAME='Khim, Son of Mim' Comments=DWARF
+R:383:/4307 # Level=24 NAME='Ibun, Son of Mim' Comments=DWARF
+R:419:/4307 # Level=27 NAME='Mim, Betrayer of Turin' Comments=DWARF
+R:762:/4307 # Level=56 NAME='Fundin Bluecloak' Comments=DWARF
+R:936:/4307 # Level=17 NAME='Nar, the Dwarf' Comments=DWARF
+R:1042:/4307 # Level=60 NAME='Thrain, the King Under the Mountain' Comments=DWARF
+
+R:628:/4407 # Level=44 NAME='Malekith the Accursed' Comments=ELF
+R:660:/4407 # Level=49 NAME='Eol, the Dark-Elf' Comments=ELF
+R:770:/4407 # Level=59 NAME='Artsi, the Champion of Chaos' Comments=ELF
+R:825:/4407 # Level=81 NAME='Maeglin, the Traitor of Gondolin' Comments=ELF
+
+R:970:/4507 # Level=1 NAME='Merton Proudfoot, the lost hobbit' Comments=HOBBIT
+R:985:/4507 # Level=5 NAME='Bullroarer the Hobbit' Comments=HOBBIT
+R:1041:/4507 # Level=1 NAME='Melinda Proudfoot' Comments=HOBBIT
+
+R:63:/4607 # Level=3 NAME='Smeagol' Comments=SMALL HUMANOID
+
+R:1102:/4707 # Level=52 NAME='Santa Claus' Comments=// DWARF joke
+
+### "i" monsters
+R:873:/4108 # Level=20 NAME='The Icky Queen' Comments=SLIME WITH CROWN
+
+### "j" monsters
+R:685:/4109 # Level=44 NAME='Shoggoth' Comments=slimy j
+
+R:655:/4209 # Level=41 NAME='Ubbo-Sathla, the Unbegotten Source' Comments=JELLY
+R:734:/4209 # Level=53 NAME='Eihort, the Thing in the Labyrinth' Comments=JELLY
+R:760:/4209 # Level=56 NAME='Nyogtha, the Thing that Should not Be' Comments=JELLY
+R:833:/4209 # Level=85 NAME='Abhoth, Source of Uncleanness' Comments=JELLY
+R:845:/4209 # Level=90 NAME='Yog-Sothoth, the All-in-One' Comments=JELLY
+
+### "k" monsters
+R:135:/4110 # Level=7 NAME='Mughash, the Kobold Lord' Comments=SMALL HUMANOID
+R:1007:/4110 # Level=7 NAME='Vort the Kobold Queen' Comments=GIRL HUMANOID
+
+### "l" monsters 4011
+
+
+### "m" - molds and mimics (4012)
+#R:978:/4012 # Level=1 NAME='Moldoux, the Defenceless Mold' Comments=// 
+#R:1039:/4012 # Level=127 NAME='Improv, the mighty MoLD' Comments=// 
+
+R:711:/4112 # Level=47 NAME='Death mold' Comments=
+
+### "n" monsters
+R:642:/4113 # Level=40 NAME='Medusa, the Gorgon' Comments=MEDUSA
+
+### "o" monsters
+R:140:/4114 # Level=8 NAME='Lagduf, the Snaga' Comments=ORC
+R:186:/4114 # Level=10 NAME='Grishnakh, the Hill Orc' Comments=ORC
+R:215:/4114 # Level=12 NAME='Golfimbul, the Hill Orc Chief' Comments=ORC
+R:260:/4114 # Level=14 NAME='Ufthak of Cirith Ungol' Comments=ORC
+R:314:/4114 # Level=19 NAME='Shagrat, the Orc Captain' Comments=ORC
+R:315:/4114 # Level=19 NAME='Gorbag, the Orc Captain' Comments=ORC
+R:330:/4114 # Level=20 NAME='Bolg, Son of Azog' Comments=ORC
+R:350:/4114 # Level=21 NAME='Ugluk, the Uruk' Comments=ORC
+R:356:/4114 # Level=21 NAME='Lugdush, the Uruk' Comments=ORC
+R:373:/4114 # Level=23 NAME='Azog, King of the Uruk-Hai' Comments=ORC
+
+### "p" monsters
+
+## tier 0 "p"s (no graphic remap)
+# R:31:/ # Level=2 NAME='Novice warrior' Comments=
+# R:32:/ # Level=2 NAME='Novice rogue' Comments=
+# R:33:/ # Level=2 NAME='Novice priest' Comments=
+# R:34:/ # Level=2 NAME='Novice mage' Comments=
+# R:71:/ # Level=4 NAME='Novice ranger' Comments=
+# R:81:/ # Level=6 NAME='Novice mage' Comments=
+# R:85:/ # Level=4 NAME='Novice paladin' Comments=
+# R:97:/ # Level=6 NAME='Novice priest' Comments=
+# R:98:/ # Level=6 NAME='Novice warrior' Comments=
+# R:104:/ # Level=6 NAME='Novice rogue' Comments=
+# R:16:/ # Level=8 NAME='Novice ranger' Comments=
+# R:135:/ # Level=8 NAME='Novice paladin' Comments=
+# R:138:/ # Level=10 NAME='Bandit' Comments=
+# R:187:/ # Level=10 NAME='Brigand' Comments=
+# R:204:/ # Level=12 NAME='Swordsman' Comments=
+# R:228:/ # Level=13 NAME='Illusionist' Comments=
+# R:988:/ # Level=4 NAME='Novice mindcrafter' Comments=
+# R:1032:/ # Level=15 NAME='Positivist' Comments=
+
+## tier I "p"s
+# tier I "p" warriors: cannot summon
+R:372:/4115 # Level=23 NAME='Hardened warrior' Comments=p I
+R:376:/4115 # Level=23 NAME='Master rogue' Comments=p I
+R:485:/4115 # Level=32 NAME='Ninja' Comments=p I
+R:532:/4115 # Level=35 NAME='Dagashi' Comments=p I
+R:1047:/4215 # Level=20 NAME='Unbeliever' Comments=p I with minus under head
+R:1048:/4215 # Level=30 NAME='Unbeliever' Comments=p I with minus under head
+R:346:/4115 # Level=20 NAME='Paladin' Comments=p I
+R:370:/4115 # Level=23 NAME='Jade monk' Comments=p I
+R:442:/4115 # Level=28 NAME='Black knight' Comments=p I
+R:497:/4115 # Level=33 NAME='Anti-paladin' Comments=p I
+
+# tier I "p" mages: ranged with summons
+R:241:/4315 # Level=13 NAME='Druid' Comments=p I with hollow thorns and an eye
+R:345:/4315 # Level=20 NAME='Ranger' Comments=p I with hollow thorns and an eye
+R:449:/4315 # Level=28 NAME='Mage' Comments=p I with hollow thorns and an eye
+R:225:/4315 # Level=12 NAME='Priest' Comments=p I with hollow thorns and an eye
+R:1017:/4315 # Level=17 NAME='Cultist' Comments=p I with hollow thorns and an eye
+
+# tier I "p" hybrids: melee with magic(summons)
+R:162:/4415 # Level=20 NAME='Mindcrafter' Comments=p I with hollow thorns
+R:988:/4415 # Level=33 NAME='Mystic' Comments=p I with hollow thorns
+
+## tier II "p"s
+
+# tier II "p" warriors: cannot summon
+R:293:/4515 # Level=45 NAME='Berserker' Comments=p II
+R:492:/4515 # Level=33 NAME='Ivory monk' Comments=p II
+R:516:/4515 # Level=34 NAME='Master thief' Comments=p II
+R:1049:/4615 # Level=50 NAME='Master Unbeliever' Comments=p II with minus under head
+R:1058:/4515 # Level=40 NAME='Swordsmaster' Comments=p II
+# R:1008:/ # Level=45 NAME='Avatar of Nyarlathotep' Comments=// NO TILE protected at server CHANGER
+
+# tier II "p" mages: ranged with summons
+R:638:/4715 # Level=40 NAME='Sorcerer' Comments=p II with hollow thorns and an eye
+R:571:/4715 # Level=36 NAME='Necromancer' Comments=p II with hollow thorns and an eye
+R:636:/4715 # Level=40 NAME='Enchantress' Comments=p II with hollow thorns and an eye
+R:689:/4715 # Level=40 NAME='Patriarch' Comments=p II with hollow thorns and an eye
+R:991:/4715 # Level=36 NAME='Demonologist' Comments=p II with hollow thorns and an eye
+
+# tier II "p" hybrids: melee with magic(summons)
+R:498:/4815 # Level=37 NAME='Chaos master' Comments=p II with hollow thorns
+R:597:/4815 # Level=38 NAME='Death knight' Comments=p II with hollow thorns
+R:445:/4815 # Level=28 NAME='Clairvoyant' Comments=p II with hollow thorns
+R:647:/4815 # Level=40 NAME='Wyrd sister' Comments=p II with hollow thorns
+R:997:/4815 # Level=50 NAME='Master mystic' Comments=p II with hollow thorns
+
+## tier III "p"s
+
+# "p" warriors: cannot summon
+R:696:/4915 # Level=46 NAME='Grand master thief' Comments=p III
+R:1050:/5015 # Level=57 NAME='True Believer' Comments=p III with minus under head
+R:1059:/4915 # Level=60 NAME='Grand Swordsmaster' Comments=p III
+R:1080:/4915 # Level=97 NAME='Minion of Doom' Comments=p III
+# R:954:/4915 # Level=61 NAME='Dolphiner' Comments=p III SPECIAL watery
+
+# "p" mages: ranged with summons
+R:738:/5115 # Level=54 NAME='Old Sorcerer' Comments=p III with hollow thorns and an eye
+R:1018:/5115 # Level=47 NAME='Cult leader' Comments=p III with hollow thorns and an eye
+R:637:/5115 # Level=41 NAME='Ranger chieftain' Comments=p III actually p II hard with hollow thorns and an eye
+
+# "p" hybrids: melee with magic(summons)
+R:998:/5215 # Level=57 NAME='Grand master mystic' Comments=p III with hollow thorns
+R:731:/5215 # Level=52 NAME='Hell knight' Comments=p III with hollow thorns
+R:799:/5215 # Level=40 NAME='Master mindcrafter' Comments=p III with hollow thorns
+R:699:/5215 # Level=44 NAME='Knight Templar' Comments=p III with hollow thorns
+# R:725:/ # Level=60 NAME='Lord of Chaos' Comments=// NO TILE protected at server CHANGER
+
+# special "p"s
+R:681:/5315 # Level=45 NAME='Warrior of the Dawn' Comments=p SPECIAL multiple warriors.. Clones? Shadow?
+
+# "p" uniques
+R:137:/5515 # Level=9 NAME='Wormtongue, Agent of Saruman' Comments=HUMANOID MAGE
+R:598:/5515 # Level=38 NAME='Castamir the Usurper' Comments=HUMANOID MAGE
+R:771:/5515 # Level=60 NAME='Saruman of Many Colours' Comments=HUMANOID MAGE
+R:794:/5515 # Level=42 NAME='Eilinel the Entrapped' Comments=HUMANOID MAGE
+R:817:/5515 # Level=74 NAME='Hela, Queen of the Dead' Comments=HUMANOID MAGE
+R:818:/5515 # Level=78 NAME='The Mouth of Sauron' Comments=HUMANOID MAGE
+R:819:/5515 # Level=75 NAME='The Shadow of Dol Guldur' Comments=HUMANOID MAGE
+R:935:/5515 # Level=60 NAME='Gandalf the Grey' Comments=HUMANOID MAGE
+R:980:/5515 # Level=55 NAME='Ar-Pharazon the Golden' Comments=HUMANOID MAGE
+R:1022:/5515 # Level=67 NAME='Hypnos, Lord of Sleep' Comments=HUMANOID MAGE
+
+R:670:/5615 # Level=60 NAME='Jack of Shadows' Comments=HUMANOID THIEF
+R:772:/5615 # Level=51 NAME='Harowen the Black Hand' Comments=HUMANOID THIEF
+
+R:138:/5715 # Level=10 NAME='Robin Hood, the Outlaw' Comments=HUMANOID THIEF WITH BOW
+
+R:169:/5815 # Level=9 NAME='Brodda, the Easterling' Comments=HUMANOID WARRIOR
+R:291:/5815 # Level=16 NAME='Ulfast, Son of Ulfang' Comments=HUMANOID WARRIOR
+R:380:/5815 # Level=24 NAME='Angamaite of Umbar' Comments=HUMANOID WARRIOR
+R:392:/5815 # Level=24 NAME='Sangahyando of Umbar' Comments=HUMANOID WARRIOR
+R:413:/5815 # Level=26 NAME='Ulwarth, Son of Ulfang' Comments=HUMANOID WARRIOR
+R:505:/5815 # Level=35 NAME='Groo, the Wanderer' Comments=HUMANOID WARRIOR
+R:573:/5815 # Level=36 NAME='Lorgan, Chief of the Easterlings' Comments=HUMANOID WARRIOR
+R:961:/5815 # Level=41 NAME='Gorlim, Betrayer of Barahir' Comments=HUMANOID WARRIOR
+R:987:/5815 # Level=28 NAME='Uldor the Accursed' Comments=HUMANOID WARRIOR
+R:990:/5815 # Level=44 NAME='Ulfang the Black' Comments=HUMANOID WARRIOR
+
+R:1075:/5915 # Level=72 NAME='Lord Jubei, The Legendary Swordsmaster' Comments=HUMANOID WARRIOR
+
+R:860:/6015 # Level=99 NAME='Sauron, the Sorcerer' Comments=! SAURON !
+
+R:1101:/6115 # Level=50 NAME='Target dummy' Comments=Dummy
+R:1126:/6115 # Level=50 NAME='Snow-covered target dummy' Comments=Dummy
+R:1144:/6115 # Level=50 NAME='Armoured target dummy' Comments=Dummy
+R:1145:/6215 # Level=50 NAME='Snow-covered armoured target dummy' Comments=Dummy
+
+### "q" - beasts
+R:721:/4116 # Level=50 NAME='Goat of Mendes' Comments=horns? black he-goat demon
+R:159:/4216 # Level=12 NAME='The wounded bear' Comments=BEAR
+R:467:/4216 # Level=28 NAME='Beorn, the Shape-Changer' Comments=BEAR
+R:681:/4316 # Level=44 NAME='Chaugnar Faugn, Horror from the Hills' Comments=HORSE actually a horse
+
+R:629:/4416 # Level=40 NAME='Shadowfax, steed of Gandalf' Comments=HORSE
+R:859:/4516 # Level=75 NAME='The Unicorn of Order' Comments=HORSE WITH HORN
+
+### "r" - rats
+R:1006:/4117 # Level=18 NAME='The Rat King' Comments=RAT
+
+### "s" - skeletons
+R:748:/4118 # Level=57 NAME='Hand druj' Comments=s I
+R:749:/4118 # Level=58 NAME='Eye druj' Comments=s I
+R:750:/4118 # Level=59 NAME='Skull druj' Comments=s I
+
+R:654:/4218 # Level=41 NAME='Judge Fire' Comments=// SKELETON joke
+R:830:/4218 # Level=84 NAME='Cantoras, the Skeletal Lord' Comments=SKELETON druj like? Separate bodyparts
+
+### "t" 
+# 4019
+
+### "u" - small demons
+R:319:/4120 # Level=18 NAME='Daemonette of Slaanesh' Comments=u I
+R:357:/4120 # Level=21 NAME='Arch-vile' Comments=u I
+R:566:/4120 # Level=36 NAME='Bodak' Comments=u I
+R:568:/4120 # Level=36 NAME='Mezzodaemon' Comments=u I
+R:569:/4120 # Level=36 NAME='Elder thing' Comments=u I
+R:649:/4120 # Level=40 NAME='Death quasit' Comments=u I
+
+R:595:/4220 # Level=38 NAME='Draebor, the Imp' Comments=IMP
+R:1051:/4220 # Level=10 NAME='Jan, the Minimite' Comments=// IMP joke
+
+R:596:/4320 # Level=40 NAME='Mother Hydra' Comments=IMP
+
+### "v" - vortex
+R:751:/4121 # Level=53 NAME='Chaos vortex' Comments=v I
+R:752:/4121 # Level=54 NAME='Aether vortex' Comments=v I
+R:1084:/4121 # Level=97 NAME='Force vortex' Comments=v I
+R:1143:/4121 # Level=97 NAME='Nether vortex' Comments=v I
+
+R:682:/4221 # Level=44 NAME='Lloigor' Comments=v summon
+
+R:576:/4321 # Level=53 NAME='Storm of Unmagic' Comments=v with minus above
+
+R:707:/4421 # Level=46 NAME='Ghatanothoa' Comments=BIZZARE.. Tooths & tentacles
+
+### "w" - worms
+R:619:/4122 # Level=39 NAME='Chthonian' Comments=w I duna
+R:747:/4222 # Level=59 NAME='Shudde M'ell' Comments=SERPENT its actually a worm, but..
+R:1030:/4322 # Level=30 NAME='The Sandworm Queen' Comments=GIRL HUMANOID
+
+### "x"
+R:1067:/4123 # Level=128 NAME='The Hellraiser' Comments=
+
+### "y" - yeeks
+R:180:/4124 # Level=11 NAME='Orfax, Son of Boldor' Comments=SMALL HUMANOID
+R:1081:/4124 # Level=40 NAME='The Kung-Fu Yeek from Hell' Comments=SMALL HUMANOID
+
+R:237:/4224 # Level=15 NAME='Boldor, King of the Yeeks' Comments=SMALL HUMANOID with crown
+
+### "z" - zombies
+R:483:/4125 # Level=32 NAME='Ghoulking' Comments=z I
+R:522:/4125 # Level=36 NAME='Greater mummy' Comments=z I
+
+R:409:/4225 # Level=26 NAME='Khufu, the Mummified King' Comments=ZOMBIE with crown
+
+R:684:/4325 # Level=44 NAME='Quachil Uttaus, Treader of the Dust' Comments=ZOMBIE
+
+R:112:/4425 # Level=6 NAME='The disembodied hand that strangled people' Comments=HAND
+
+### "A" - angels
+R:1071:/4126 # Level=70 NAME='Sky Blade' Comments=BLADE its angel actually, but.. :)
+R:1072:/4126 # Level=80 NAME='Solar Blade' Comments=BLADE its angel actually, but.. :)
+R:1073:/4126 # Level=90 NAME='Star Blade' Comments=BLADE its angel actually, but.. :)
+
+R:764:/4226 # Level=61 NAME='Uriel, Angel of Fire' Comments=ANGEL
+R:765:/4226 # Level=62 NAME='Azriel, Angel of Death' Comments=ANGEL
+R:769:/4226 # Level=64 NAME='Gabriel, the Messenger' Comments=ANGEL
+R:1074:/4326 # Level=98 NAME='Michael, The Guardian Overlord' Comments=ANGEL
+
+R:1100:/4426 # Level=99 NAME='Brightlance' Comments=BLADE its angel actually, but.. :)
+
+### "B" - birds
+
+R:1083:/4127 # Level=98 NAME='Ironwing' Comments=STEEL BIRD
+
+R:384:/4227 # Level=24 NAME='Meneldor the Swift' Comments=BIRD
+R:410:/4227 # Level=24 NAME='Gwaihir the Windlord' Comments=BIRD
+R:468:/4227 # Level=30 NAME='Thorondor, Lord of Eagles' Comments=BIRD
+R:743:/4227 # Level=54 NAME='The Phoenix' Comments=BIRD
+
+### "C" - dogs
+
+R:829:/4128 # Level=78 NAME='Black Dog' Comments=DOGGY
+
+R:53:/4228 # Level=2 NAME='Grip, Farmer Maggot's dog' Comments=WOLF
+R:54:/4228 # Level=2 NAME='Wolf, Farmer Maggot's dog' Comments=WOLF
+R:55:/4228 # Level=2 NAME='Fang, Farmer Maggot's dog' Comments=WOLF
+
+R:170:/4228 # Level=9 NAME='Bloodfang, the Wolf' Comments=WOLF
+R:717:/4228 # Level=49 NAME='Garm, Guardian of Hel' Comments=WOLF
+R:840:/4228 # Level=83 NAME='Draugluin, Sire of All Werewolves' Comments=WOLF
+R:846:/4228 # Level=90 NAME='Fenris Wolf' Comments=WOLF
+R:850:/4228 # Level=94 NAME='Carcharoth, the Jaws of Thirst' Comments=WOLF
+R:853:/4228 # Level=93 NAME='Huan, Wolfhound of the Valar' Comments=WOLF
+
+### "D" - Dragons
+
+## tier 0 "D"s
+
+# "D" warriors: cannot summon (no graphic remap)
+#R:589:/ # Level=40 NAME='Ancient blue dragon' Comments=
+#R:590:/ # Level=40 NAME='Ancient bronze dragon' Comments=
+#R:605:/ # Level=40 NAME='Ancient white dragon' Comments=
+#R:606:/ # Level=40 NAME='Ancient green dragon' Comments=
+#R:612:/ # Level=41 NAME='Ancient black dragon' Comments=
+#R:631:/ # Level=45 NAME='Death drake' Comments=
+#R:632:/ # Level=41 NAME='Ancient red dragon' Comments=
+#R:633:/ # Level=41 NAME='Ancient gold dragon' Comments=
+#R:634:/ # Level=45 NAME='Great crystal drake' Comments=
+#R:663:/ # Level=43 NAME='Ancient multi-hued dragon' Comments=
+#R:664:/ # Level=45 NAME='Ethereal dragon' Comments=
+## R:902:/ # Level=41 NAME='Ancient dragon turtle' Comments=
+#R:1097:/ # Level=41 NAME='Ancient silver dragon' Comments=
+
+# "D" wraiths: pass wall
+R:676:/4629 # Level=45 NAME='Ethereal dragon' Comments=D 0 with grid holes
+R:643:/4629 # Level=45 NAME='Death drake' Comments=D 0 with grid holes
+
+## tier I "D"s
+
+# "D" warriors: cannot summon (no graphic remap)
+R:701:/4129 # Level=55 NAME='Dracolich' Comments=D I drakolich
+R:703:/4129 # Level=55 NAME='Dracolisk' Comments=D I dracolisk
+R:728:/4129 # Level=63 NAME='Great Storm Wyrm' Comments=D I wyrm
+R:741:/4129 # Level=63 NAME='Great Ice Wyrm' Comments=D I wyrm
+R:756:/4129 # Level=67 NAME='Great Hell Wyrm' Comments=D I wyrm
+R:915:/4129 # Level=52 NAME='Fastitocalon' Comments=D I turtle
+R:938:/4129 # Level=63 NAME='Great Swamp Wyrm' Comments=D I wyrm
+R:939:/4129 # Level=67 NAME='Great Bile Wyrm' Comments=D I wyrm
+R:1002:/4129 # Level=63 NAME='Great Wyrm of Perplexity' Comments=D I wyrm
+R:1004:/4129 # Level=67 NAME='Great Wyrm of Thunder' Comments=D I wyrm
+R:1110:/4129 # Level=65 NAME='Great Wyrm of Radiance' Comments=D I wyrm
+
+# Dragonroders, also "D" warriors: cannot summon 
+R:955:/4729 # Level=30 NAME='Green Dragonrider' Comments=D I SPECIAL dragonrider
+R:956:/4729 # Level=40 NAME='Blue Dragonrider' Comments=D I SPECIAL dragonrider
+R:957:/4729 # Level=50 NAME='Brown Dragonrider' Comments=D I SPECIAL dragonrider
+R:958:/4729 # Level=60 NAME='Bronze Dragonrider' Comments=D I SPECIAL dragonrider
+
+## tier II "D"s
+
+# "D" hybrids: melee with magic(summons)
+R:783:/4229 # Level=75 NAME='Great Wyrm of Chaos' Comments=D II wyrm with hollow thorns
+R:784:/4229 # Level=75 NAME='Great Wyrm of Law' Comments=D II wyrm with hollow thorns
+R:793:/4229 # Level=77 NAME='Sky Drake' Comments=D II dragon with hollow thorns
+
+# Dragonroders(hybrids): melee with magic(summons)
+R:959:/4829 # Level=70 NAME='Gold Dragonrider' Comments=D II SPECIAL dragonrider
+
+## tier III "D"s
+# "D" warriors: cannot summon
+R:790:/4329 # Level=80 NAME='Great Wyrm of Many Colours' Comments=D III wyrm with solid thorns
+# "D" hybrids: melee with magic(summons)
+R:785:/4429 # Level=80 NAME='Great Wyrm of Balance' Comments=D III wyrm with hollow thorns
+
+## tier IV "D"s
+# "D" hybrids: melee with magic(summons)
+R:847:/4529 # Level=85 NAME='Great Wyrm of Power' Comments=D IV wyrm with hollow thorns
+
+# special "D"s
+R:1113:/4929 # Level=71 NAME='Great Dragon of Bad Luck' Comments=D SPECIAL arrow down pass_walls
+
+## "D" uniques
+
+R:692:/5029 # Level=46 NAME='Scatha the Worm' Comments=DRAGON
+R:697:/5029 # Level=70 NAME='Smaug the Golden' Comments=DRAGON
+R:710:/5029 # Level=47 NAME='Itangast the Fire Drake' Comments=DRAGON
+R:712:/5029 # Level=48 NAME='Fafner the Dragon' Comments=DRAGON
+R:715:/5029 # Level=70 NAME='Glaurung, Father of the Dragons' Comments=DRAGON no wings ;) make separate?
+R:753:/5029 # Level=55 NAME='Nidhogg, the Hel-Drake' Comments=DRAGON
+R:766:/5029 # Level=90 NAME='Ancalagon the Black' Comments=DRAGON
+R:1066:/5029 # Level=70 NAME='Tiamat, Celestial Dragon of Evil' Comments=DRAGON
+R:1146:/5029 # Level=127 NAME='Bahamut, the Platinum King' Comments=DRAGON
+
+R:789:/5129 # Level=72 NAME='T'ron, the Rebel Dragonrider' Comments=DRAGONRIDER
+R:791:/5129 # Level=75 NAME='Mardra, rider of the Gold Loranth' Comments=DRAGONRIDER
+R:820:/5129 # Level=78 NAME='Lessa, rider of the Gold Ramoth' Comments=DRAGONRIDER
+R:824:/5129 # Level=79 NAME='F'lar, rider of the Bronze Mnementh' Comments=DRAGONRIDER
+R:858:/5129 # Level=97 NAME='Sorka, rider of the Gold Faranth' Comments=DRAGONRIDER
+
+### "E" - elementals
+
+R:786:/4130 # Level=67 NAME='Shambler' Comments=E I
+R:975:/4230 # Level=80 NAME='Death orb' Comments=E I
+
+#R:815:/4130 # Level=77 NAME='Unmaker' Comments=E 2/serrver protected, unused
+
+R:687:/4330 # Level=43 NAME='Ariel, Queen of Air' Comments=ELEMENTAL
+R:606:/4430 # Level=43 NAME='Vargo, Tyrant of Fire' Comments=ELEMENTAL
+R:615:/4530 # Level=43 NAME='Waldern, King of Water' Comments=ELEMENTAL
+R:679:/4630 # Level=43 NAME='Quaker, Master of Earth' Comments=ELEMENTAL
+
+
+R:823:/4730 # Level=78 NAME='Cthugha, the Living Flame' Comments=ELEMENTAL
+R:842:/4730 # Level=89 NAME='Tulzscha, the Green Flame' Comments=ELEMENTAL
+R:852:/4730 # Level=93 NAME='Azathoth, the Daemon Sultan' Comments=ELEMENTAL
+
+### "F" - flies (4031)
+
+### "G" - ghosts
+R:690:/4132 # Level=44 NAME='Dreadmaster' Comments=GHOST
+R:774:/4132 # Level=62 NAME='Dreadlord' Comments=GHOST
+
+R:792:/4232 # Level=68 NAME='Tselakus, the Dreadlord' Comments=GHOST
+R:875:/4232 # Level=80 NAME='Death' Comments=// GHOST horseman joke
+R:876:/4232 # Level=77 NAME='Famine' Comments=// GHOST horseman joke
+R:877:/4232 # Level=74 NAME='Pestilence' Comments=// GHOST horseman joke
+R:878:/4232 # Level=71 NAME='War' Comments=// GHOST horseman joke
+R:1009:/4232 # Level=34 NAME='Fire Phantom' Comments=GHOST
+R:1032:/4232 # Level=127 NAME='Tik'srvzllat' Comments=GHOST
+
+R:1086:/4332 # Level=127 NAME='The Great Pumpkin' Comments=// NO SPECIFIC TILE PUMPKIN boss Q
+R:1087:/4332 # Level=127 NAME='The Great Pumpkin' Comments=// NO SPECIFIC TILE PUMPKIN boss Q
+R:1088:/4332 # Level=127 NAME='The Great Pumpkin' Comments=// NO SPECIFIC TILE PUMPKIN boss Q
+
+### "H" - hybrids
+
+R:716:/4133 # Level=49 NAME='Behemoth' Comments=H I fiery
+R:723:/4133 # Level=50 NAME='Maulotaur' Comments=H I fiery
+R:746:/4133 # Level=64 NAME='Keeper of Secrets' Comments=H I fiery
+R:778:/4133 # Level=68 NAME='Jabberwock' Comments=H I fiery
+
+R:730:/4233 # Level=58 NAME='Baphomet the Minotaur Lord' Comments=MINOTAUR
+R:757:/4233 # Level=55 NAME='Hastur the Unspeakable' Comments=MINOTAUR ? Bizzare
+R:796:/4233 # Level=70 NAME='The Norsa' Comments=MINOTAUR
+R:810:/4233 # Level=75 NAME='Y'golonac' Comments=MINOTAUR
+R:1029:/4233 # Level=40 NAME='The Minotaur of the Labyrinth' Comments=MINOTAUR
+
+### "I" - bugs (4034)
+
+### "J" - snakes
+R:1130:/4135 # Level=56 NAME='Sea Serpent' Comments=J I
+R:1131:/4135 # Level=66 NAME='Horned Serpent' Comments=J 
+
+R:813:/4235 # Level=75 NAME='The Serpent of Chaos' Comments=SERPENT
+R:814:/4235 # Level=76 NAME='Yig, Father of Serpents' Comments=SERPENT
+R:854:/4235 # Level=94 NAME='Jormungand the Midgard Serpent' Comments=SERPENT
+
+### "K" - beetles (4036)
+
+### "L" - lich
+
+R:694:/4137 # Level=45 NAME='Lesser black reaver' Comments=L I
+R:742:/4137 # Level=54 NAME='Demilich' Comments=L I
+
+R:776:/4237 # Level=64 NAME='Archlich' Comments=L II
+R:798:/4237 # Level=74 NAME='Black reaver' Comments=L II
+
+R:735:/4337 # Level=53 NAME='The King in Yellow' Comments=LICH
+R:804:/4337 # Level=77 NAME='Feagwath, the Undead Sorcerer' Comments=LICH
+R:844:/4337 # Level=92 NAME='Vecna, the Emperor Lich' Comments=LICH
+
+### "M" - hydra
+
+R:610:/4138 # Level=42 NAME='Scylla' Comments=HYDRA
+R:754:/4138 # Level=55 NAME='The Lernaean Hydra' Comments=HYDRA
+
+### "N" - netherguards
+R:1097:/4139 # Level=128 NAME='Zu-Aon, The Cosmic Border Guard' Comments=STAR ?
+
+### "O" - ogres
+R:431:/4140 # Level=32 NAME='Lokkak, the Ogre Chieftain' Comments=GIANT
+
+### "P" - giants
+R:634:/4141 # Level=50 NAME='Lesser titan' Comments=P I
+R:702:/4141 # Level=58 NAME='Greater titan' Comments=P I
+R:709:/4241 # Level=66 NAME='Hru' Comments=P I KILL_WALL
+
+R:19:/4341 # Level=0 NAME='Martti Ihrasaari' Comments=// GIANT joke
+R:506:/4341 # Level=33 NAME='Fasolt the Giant' Comments=GIANT
+R:683:/4341 # Level=44 NAME='Utgard-Loke' Comments=GIANT
+R:706:/4341 # Level=46 NAME='Yibb-Tstll, the Patient One' Comments=GIANT
+R:834:/4341 # Level=71 NAME='Ymir, the Ice Giant' Comments=GIANT
+R:835:/4341 # Level=85 NAME='Loki, the Trickster' Comments=GIANT
+R:837:/4341 # Level=71 NAME='Surtur, the Fire Giant' Comments=GIANT
+R:849:/4341 # Level=81 NAME='Nodens, Lord of the Great Abyss' Comments=GIANT
+R:861:/4341 # Level=127 NAME='DarkGod, the Mighty Coder of Hell' Comments=// GIANT joke
+R:982:/4341 # Level=127 NAME='Marylene, Heartbreakeress of the Netherworld' Comments=// GIANT joke
+R:984:/4341 # Level=78 NAME='Hrungnir, the Stone Giant' Comments=GIANT
+R:1001:/4341 # Level=69 NAME='Polyphemus, the Blind Cyclops' Comments=GIANT
+R:1021:/4341 # Level=78 NAME='Thiazi, the Storm Giant' Comments=GIANT
+R:1036:/4341 # Level=76 NAME='Atlas, the Titan' Comments=GIANT
+R:1037:/4341 # Level=87 NAME='Kronos, Lord of the Titans' Comments=GIANT
+R:1063:/4341 # Level=70 NAME='Zeus, the Omnipotent' Comments=// GIANT joke
+R:862:/4441 # Level=100 NAME='Morgoth, Lord of Darkness' Comments=! MORGOTH !
+
+R:1098:/4541 # Level=200 NAME='Orome, The Hunter'
+
+### "Q" - quylthulg
+
+R:800:/4142 # Level=71 NAME='Greater demonic quylthulg' Comments=Q I
+R:801:/4142 # Level=71 NAME='Greater draconic quylthulg' Comments=Q I
+R:802:/4142 # Level=71 NAME='Greater rotting quylthulg' Comments=Q I
+
+R:821:/4242 # Level=76 NAME='Master quylthulg' Comments=Q II
+
+R:572:/4342 # Level=36 NAME='The Greater hell magic mushroom were-quylthulg' Comments=// Q joke
+R:822:/4342 # Level=79 NAME='Qlzqqlzuup, the Lord of Flesh' Comments=Q
+
+### "R" - repriles
+
+R:668:/4143 # Level=42 NAME='Greater basilisk' Comments=R I
+R:705:/4143 # Level=46 NAME='Spectral tyrannosaur' Comments=R I
+R:1069:/4143 # Level=50 NAME='Gorm' Comments=R I
+R:1070:/4143 # Level=60 NAME='Cave Gorm' Comments=R I
+
+R:441:/4243 # Level=29 NAME='Barney the Dinosaur' Comments=// DINOSAUR joke
+R:489:/4243 # Level=33 NAME='Bokrug' Comments=DINOSAUR
+R:695:/4243 # Level=45 NAME='Zoth-Ommog' Comments=DINOSAUR
+R:806:/4243 # Level=74 NAME='Tsathoggua, the Sleeper of N'kai' Comments=DINOSAUR
+R:832:/4243 # Level=84 NAME='Godzilla' Comments=// DINOSAUR joke
+
+R:838:/4343 # Level=84 NAME='The Tarrasque' Comments=DINOSAUR
+
+### "S" - spiders
+R:894:/4144 # Level=27 NAME='Murk dweller' Comments=S I
+R:964:/4144 # Level=40 NAME='Elder aranea' Comments=S I
+
+R:1155:/4244 # Level=34 NAME='Saenathra, Daughter of Shelob' Comments=SPIDER
+R:481:/4244 # Level=55 NAME='Shelob, Spider of Darkness' Comments=SPIDER
+R:797:/4244 # Level=70 NAME='Rhan-Tegoth' Comments=SPIDER
+R:808:/4244 # Level=75 NAME='Ungoliant, the Unlight' Comments=SPIDER
+R:809:/4244 # Level=73 NAME='Atlach-Nacha, the Spider God' Comments=SPIDER
+
+### "T" - trolls
+
+R:493:/4145 # Level=34 NAME='Bert the Stone Troll' Comments=TROLL
+R:494:/4145 # Level=34 NAME='Bill the Stone Troll' Comments=TROLL
+R:495:/4145 # Level=34 NAME='Tom the Stone Troll' Comments=TROLL
+R:551:/4145 # Level=41 NAME='Rogrog the Black Troll' Comments=TROLL
+R:729:/4145 # Level=51 NAME='Ulik the Troll' Comments=TROLL
+
+### "U" - demos
+# IDEA - indicate diggers
+
+## tier "-1" "U"s
+
+# "U" warriors: cannot summon (no graphic remap)
+# R:511:/ # Level=34 NAME='Bloodletter of Khorne' Comments=
+# R:1048:/ # Level=35 NAME='Incubus' Comments=
+# R:1049:/ # Level=35 NAME='Succubus' Comments=
+# R:596:/ # Level=38 NAME='Nightgaunt' Comments=
+# R:597:/ # Level=38 NAME='Baron of hell' Comments=
+# R:987:/ # Level=38 NAME='Erinyes' Comments=
+# R:636:/ # Level=40 NAME='Vrock' Comments=
+# R:912:/ # Level=40 NAME='Water demon' Comments=
+
+## tier 0 "U"s
+
+# "U" hybrids: melee with magic(summons)
+R:659:/4146 # Level=41 NAME='Byakhee' Comments=U 0
+R:662:/4146 # Level=41 NAME='Formless spawn of Tsathoggua' Comments=U 0
+R:663:/4146 # Level=42 NAME='Hunting horror' Comments=U 0
+R:677:/4146 # Level=43 NAME='Dark young of Shub-Niggurath' Comments=U 0
+R:992:/4146 # Level=41 NAME='Hezrou' Comments=U 0
+R:993:/4146 # Level=43 NAME='Glabrezu' Comments=U 0
+R:994:/4146 # Level=45 NAME='Nalfeshnee' Comments=U 0
+R:995:/4146 # Level=47 NAME='Marilith' Comments=U 0
+
+## tier I "U"s
+
+# "U" warriors: cannot summon
+R:758:/4246 # Level=55 NAME='Bloodthirster' Comments=U I
+
+# "U" hybrids: melee with magic(summons)
+R:720:/4346 # Level=55 NAME='Barbazu' Comments=U I  with eyes
+R:736:/4346 # Level=53 NAME='Great unclean one' Comments=U I with eyes
+R:745:/4346 # Level=54 NAME='Lord of Change' Comments=U I with eyes
+R:763:/4346 # Level=61 NAME='Bile Demon' Comments=U I with eyes
+R:773:/4346 # Level=65 NAME='Osyluth' Comments=U I with eyes
+
+# "U" hybrids: melee with magic(summons) diggers
+R:719:/4446 # Level=51 NAME='Nycadaemon' Comments=U I with eyes and scars
+R:996:/4446 # Level=49 NAME='Lesser Balrog' Comments=U I with eyes and scars
+
+## tier II "U"s
+
+# "U" warriors: cannot summon
+# "U" hybrids: melee with magic(summons)
+R:787:/4546 # Level=69 NAME='Gelugon' Comments=U II with eyes
+R:812:/4546 # Level=77 NAME='Pit Fiend' Comments=U II with eyes
+R:795:/4546 # Level=72 NAME='Horned Reaper' Comments=U II with eyes
+R:1154:/4546 # Level=72 NAME='Horned Reaper' Comments=U II with eyes
+
+R:816:/4646 # Level=77 NAME='Cyberdemon' Comments=U II, special char
+
+
+## tier III "U"s
+# "U" hybrids: melee with magic(summons)
+R:807:/4746 # Level=80 NAME='Greater Balrog' Comments=U III with eyes and scars
+R:836:/4846 # Level=86 NAME='Star-spawn of Cthulhu' Comments=U III with eyes
+
+## "U" uniques
+
+R:39:/4946 # Level=1 NAME='The Greater hell-beast' Comments=// DEMON joke
+R:651:/4946 # Level=41 NAME='Strygalldwir' Comments=DEMON
+R:767:/4946 # Level=58 NAME='Daoloth, the Render of the Veils' Comments=DEMON
+R:827:/4946 # Level=82 NAME='Pazuzu, Lord of Air' Comments=DEMON
+R:831:/4946 # Level=84 NAME='Mephistopheles, Lord of Hell' Comments=DEMON
+R:839:/4946 # Level=88 NAME='Lungorthin, the Balrog of White Fire' Comments=DEMON
+R:843:/4946 # Level=89 NAME='Oremorj, the Cyberdemon Lord' Comments=// DEMON joke
+R:848:/4946 # Level=91 NAME='Shub-Niggurath, Black Goat of the Woods' Comments=DEMON
+R:851:/4946 # Level=93 NAME='Nyarlathotep, the Crawling Chaos' Comments=DEMON
+R:856:/4946 # Level=95 NAME='Gothmog, the High Captain of Balrogs' Comments=DEMON
+R:857:/4946 # Level=97 NAME='Great Cthulhu' Comments=DEMON
+R:872:/4946 # Level=50 NAME='The Balrog of Moria' Comments=DEMON
+R:983:/4946 # Level=95 NAME='The Greater Lag Monster' Comments=// DEMON joke
+R:1034:/4946 # Level=50 NAME='The White Balrog' Comments=DEMON
+R:1151:/4946 # Level=96 NAME='Tzeentch, the Changer of Ways' Comments=new U
+
+R:1011:/5046 # Level=41 NAME='Glaryssa, Succubus Queen' Comments=DEMON Succubus
+R:1076:/5046 # Level=82 NAME='Pirotessa, Succubus Empress' Comments=DEMON Succubus
+
+### "V" - vampires
+R:755:/4147 # Level=67 NAME='Thuringwethil, the Vampire Messenger' Comments=VAMPIRE
+R:780:/4147 # Level=76 NAME='Vlad Dracula, Prince of Darkness' Comments=VAMPIRE
+
+### "W" - wraiths/wights
+
+R:671:/4148 # Level=43 NAME='Zephyr Lord' Comments=W I
+R:722:/4148 # Level=61 NAME='Nightwing' Comments=W I
+
+R:744:/4248 # Level=69 NAME='Nightcrawler' Comments=W II kill wall squares
+R:768:/4348 # Level=73 NAME='Nightwalker' Comments=W III
+
+R:674:/4448 # Level=43 NAME='Judge Fear' Comments=// WRAITH joke
+R:686:/4448 # Level=43 NAME='Judge Death' Comments=// WRAITH joke
+R:713:/4448 # Level=47 NAME='Charon, Boatman of the Styx' Comments=WRAITH
+R:971:/4448 # Level=35 NAME='The Wight-King of the Barrow-downs' Comments=WRAITH
+
+R:946:/4548 # Level=40 NAME='Uvatha the Horseman' Comments=WRAITH NAZGUL
+R:947:/4548 # Level=43 NAME='Adunaphel the Quiet' Comments=WRAITH NAZGUL
+R:948:/4548 # Level=45 NAME='Akhorahil the Blind' Comments=WRAITH NAZGUL
+R:949:/4548 # Level=48 NAME='Ren the Unclean' Comments=WRAITH NAZGUL
+R:950:/4548 # Level=52 NAME='Ji Indur Dawndeath' Comments=WRAITH NAZGUL
+R:951:/4548 # Level=56 NAME='Dwar, Dog Lord of Waw' Comments=WRAITH NAZGUL
+R:952:/4548 # Level=64 NAME='Hoarmurath of Dir' Comments=WRAITH NAZGUL
+R:953:/4548 # Level=72 NAME='Khamul, the Black Easterling' Comments=WRAITH NAZGUL
+R:954:/4648 # Level=80 NAME='The Witch-King of Angmar' Comments=WRAITH NAZGUL
+
+
+### "X" - natural diggers (4049) maybe make them like U diggers
+#R:283:/ # Level=16 NAME='Umber hulk' Comments=
+#R:550:/ # Level=36 NAME='Xorn' Comments=
+#R:639:/ # Level=40 NAME='Xaren' Comments=
+
+### "Y" - yeti
+R:828:/4150 # Level=82 NAME='Ithaqua the Windwalker' Comments=YETI
+
+### "Z" - hounds
+
+R:540:/4151 # Level=35 NAME='Gravity hound' Comments=Z I
+
+R:543:/4151 # Level=35 NAME='Impact hound' Comments=Z I
+R:724:/4151 # Level=51 NAME='Nether hound' Comments=Z I
+R:725:/4151 # Level=51 NAME='Time hound' Comments=Z I
+R:726:/4151 # Level=51 NAME='Plasma hound' Comments=Z I
+R:779:/4151 # Level=65 NAME='Chaos hound' Comments=Z I
+
+R:542:/4251 # Level=35 NAME='Inertia hound' Comments=Z slow arrow down
+
+R:739:/4351 # Level=55 NAME='Ethereal hound' Comments=Z pass_wall
+R:1003:/4351 # Level=59 NAME='Hound of Tindalos' Comments=Z pass_wall
+
+R:1038:/4451 # Level=43 NAME='Water hound' Comments=Z aqua
+R:923:/4451 # Level=20 NAME='Aquatic hound' Comments=Z aqua
+
+R:811:/4551 # Level=74 NAME='Aether hound' Comments=Z II
+
+
+### "," - mushrooms (4052)
+
+### "." - lurkers (4053)
+
+### "$" - coins (4054)
+
+### "~" - fishes, aquatic 
+
+R:740:/4155 # Level=54 NAME='Lesser kraken' Comments=~ I kraken
+R:775:/4155 # Level=60 NAME='Greater kraken' Comments=~ I kraken
+R:782:/4155 # Level=67 NAME='Leviathan' Comments=~ I kraken violet
+
+R:517:/4255 # Level=45 NAME='The Watcher in the Water' Comments=SEA MONSTER
+R:650:/4255 # Level=38 NAME='Giganto, the Gargantuan' Comments=SEA MONSTER
+R:669:/4255 # Level=42 NAME='Charybdis' Comments=SEA MONSTER
+R:903:/4255 # Level=40 NAME='Jaws' Comments=SEA MONSTER
+R:922:/4255 # Level=50 NAME='Moby Dick, the White Whale' Comments=// SEA MONSTER joke
+R:788:/4255 # Level=67 NAME='Glaaki' Comments=SEA MONSTER
+
+### "|" - sentient blades (4056)
+
+### "#" - mists, trees (4057)
+
+#R:1035:/ # Level=45 NAME='Golgarach, the Living Rock' Comments=// NO TILE protected at server
+#R:206:/ # Level=25 NAME='Old Man Willow' Comments=// NO TILE protected at server
+
+R:1033:/4157 # Level=52 NAME='The Glass Golem' Comments=GOLEM
+R:761:/4257 # Level=56 NAME='Ahtu, Avatar of Nyarlathotep' Comments=BIZZARE.. Tooths & tentacles
+
+### "(" - Cloaker (4058)
+
+#R:243:/ # Level=13 NAME='Cloaker' Comments=// NO TILE protected at server
+
+### "*" - sentient elemental spheres (4059)
+
+R:1147:/4159 # Level=127 NAME='The Living Lightning' Comments=LIGHTNING
+
+### "+" - door mimics (4060)
+
+### "?" - tomes (4061)
+#R:557:/ # Level=36 NAME='Raal's Tome of Destruction' Comments=// NO TILE protected at server
