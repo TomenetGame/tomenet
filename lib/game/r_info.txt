@@ -1706,7 +1706,7 @@ F:MALE |
 F:FRIENDS | DROP_60 |
 F:TAKE_ITEM | OPEN_DOOR | BASH_DOOR |
 F:EVIL | HURT_LITE | RES_DISE | DROP_SKELETON | DROP_CORPSE |
-F:MORTAL | ZANGBAND | HAS_LITE | RES_DARK
+F:MORTAL | ZANGBAND | HAS_LITE | RES_DARK | CAN_CLIMB
 D:Night dwarves collecting riches.
 
 N:112:The disembodied hand that strangled people
