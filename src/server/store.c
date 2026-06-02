@@ -515,8 +515,10 @@ static int player_store_factor(object_type *o_ptr) {
 /* Form ability to wield a melee/ranged weapon doesn't affect score much, acknowledging MA - however, MA can wield boomerangs!
    Commented out for now as losing the boomerang slot as MA seems a significant hit to cover resistances. - C. Blue */
 //#define WEAPON_LOW_SCORE
+/* Give price bonus for terrain-crossing abilities (fly, climb, levitate, swim), immunities and high resistances and melee damage? */
+#define MISC_FORM_BONI
 u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
-	u32b price = 0;
+	u64b price = 0;
 	monster_race *r_ptr = &r_info[0]; //slay (unfounded) compiler warning
 	u64b r_val = 0;
 
@@ -524,6 +526,9 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		u64b d, x, y, z, s, xp, rspd;
 		int body = 0;
 		bool body_humanoid;
+#ifdef MISC_FORM_BONI
+		int extra = 0, extra2 = 0, i, j;
+#endif
 
 		r_ptr = &r_info[o_ptr->pval];
 		xp = r_ptr->mexp;
@@ -614,6 +619,98 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 #else
 			/* With low-priority weapon-check, acknowledging MA, but boomerang is still missing: Body count goes from 0 to 25: */
 			r_val = (r_val * (body + 8)) / (25 + 8);
+#endif
+
+#ifdef MISC_FORM_BONI
+			/* Terrain (ignoring RF3_IM_WATER for water-terrain-movement here as it'd be duplicate with immunities check further below) */
+			extra += ((r_ptr->flags7 & RF7_CAN_FLY) ? 3 : 0)
+			    + ((r_ptr->flags7 & RF7_CAN_SWIM) ? 1 : 0)
+			    + (((r_ptr->flags8 & RF8_WILD_WOOD) || (r_ptr->flags3 & RF3_ANIMAL)) ? 2 : 0)
+			    + ((r_ptr->flags2 & RF2_PASS_WALL) ? 3 : 0)
+			    + ((r_ptr->flags2 & RF2_KILL_WALL) ? 3 : 0)
+			    + ((r_ptr->flags7 & RF7_SPIDER) ? 1 : 0)
+			    + (((r_ptr->flags8 & RF8_WILD_MOUNTAIN) || (r_ptr->flags8 & RF8_WILD_VOLCANO) || (r_ptr->flags7 & RF7_CAN_CLIMB)) ? 2 : 0)
+			    + ((r_ptr->flags2 & RF2_OPEN_DOOR) ? 1 : 0);
+
+			/* Immunities */
+			extra2 = 4
+			    + ((r_ptr->flags3 & RF3_IM_ACID) ? 2 : 0)
+			    + ((r_ptr->flags3 & RF3_IM_ELEC) ? 2 : 0)
+			    + ((r_ptr->flags3 & RF3_IM_FIRE) ? 2 : 0)
+			    + ((r_ptr->flags3 & RF3_IM_COLD) ? 2 : 0)
+			    + ((r_ptr->flags3 & RF3_IM_POIS) ? 2 : 0)
+			    + ((r_ptr->flags3 & RF3_IM_WATER) ? 2 : 0);
+			extra += 12 - 48 / extra2; //diminishing returns
+
+			/* High resistances */
+			extra += ((r_ptr->flags9 & RF9_IM_TELE) ? 2 :
+			    ((r_ptr->flags3 & RF3_RES_TELE) ? 1 : 0))
+
+			    + (((r_ptr->flags2 & RF2_EMPTY_MIND) || (r_ptr->flags9 & RF9_IM_PSI) || (r_ptr->flags5 & RF5_BRAIN_SMASH)) ? 4 :
+			    (((r_ptr->flags2 & RF2_WEIRD_MIND) || (r_ptr->flags9 & RF9_RES_PSI) || (r_ptr->flags5 & RF5_MIND_BLAST)) ? 2 : 0))
+
+			    + ((r_ptr->flags8 & RF8_NO_CUT || r_ptr->flags3 & RF3_UNDEAD) ? 2 : 0)
+
+			    + (((r_ptr->flags9 & RF9_RES_ACID) && !(r_ptr->flags3 & RF3_IM_ACID)) ? 1 : 0)
+			    + (((r_ptr->flags9 & RF9_RES_ELEC) && !(r_ptr->flags3 & RF3_IM_ELEC)) ? 1 : 0)
+			    + (((r_ptr->flags9 & RF9_RES_FIRE) && !(r_ptr->flags3 & RF3_IM_FIRE)) ? 1 : 0)
+			    + (((r_ptr->flags9 & RF9_RES_COLD) && !(r_ptr->flags3 & RF3_IM_COLD)) ? 1 : 0)
+			    + (((r_ptr->flags9 & RF9_RES_POIS) && !(r_ptr->flags3 & RF3_IM_POIS)) ? 1 : 0)
+			    + (((r_ptr->flags3 & RF3_RES_WATE) && !(r_ptr->flags3 & RF3_IM_WATER)) ? 1 : 0)
+			    + ((r_ptr->flags9 & RF9_RES_LITE) ? 2 : 0)
+			    + ((r_ptr->flags9 & RF9_RES_DARK) ? 2 : 0)
+			    + ((r_ptr->flags9 & RF9_RES_BLIND) ? 2 : 0)
+			    + ((r_ptr->flags9 & RF9_RES_SOUND) ? 2 : 0)
+			    + ((r_ptr->flags9 & RF9_RES_SHARDS) ? 2 : 0)
+			    + ((r_ptr->flags9 & RF9_RES_CHAOS) ? 2 : 0)
+			    + ((r_ptr->flags9 & RF9_RES_TIME) ? 3 : 0)
+			    + ((r_ptr->flags9 & RF9_RES_MANA) ? 3 : 0)
+			    + ((r_ptr->flags3 & RF3_RES_NETH) ? 2 : 0)
+			    + ((r_ptr->flags3 & RF3_RES_NEXU) ? 2 : 0)
+			    + ((r_ptr->flags3 & RF3_RES_DISE) ? 2 : 0);
+
+			/* Melee damage (ignoring brands/vampirism for now) */
+			extra2 = 0;
+			for (i = 0; i < 4; i++) {
+				j = (r_ptr->blow[i].d_dice * r_ptr->blow[i].d_side);
+				extra2 += (j * 2);
+			}
+			extra2 /= 4;
+ #ifndef MIMIC_TO_D_DENTHACK /* a bit too little distinguishment for high-dam MA forms (Jabberwock vs Maulotaur for druids -> almost NO difference!) */
+			extra2 = (2200 / ((250 / (extra2 + 4)) + 22)) - 20;
+ #else /* add a 'dent' for '08/15 forms' :-p to help Jabberwock shine moar vs Maulotaur */
+			extra = (2200 / ((250 / (extra2 + 4)) + 22)) - 20 - 950 / ((extra2 - 25) * (extra2 - 25) + 100);
+ #endif
+			extra += extra2 / 5;
+
+			/* Ranged attacks (ignoring spell arrays and spell frequency for now) */
+			extra += ((r_ptr->flags4 & (RF4_ARROW_1 | RF4_ARROW_2 | RF4_ARROW_3))) ? (r_ptr->freq_innate > 30 ? 5 : 3) : 0;
+
+			/* Some Spells */
+			extra += ((r_ptr->flags6 & RF6_HASTE) ? 2 : 0)
+			    + ((r_ptr->flags6 & RF6_HEAL) ? 1 : 0)
+			    + ((r_ptr->flags6 & RF6_BLINK) ? 1 : 0)
+			    + ((r_ptr->flags6 & RF6_TPORT) ? 1 : 0)
+			    + ((r_ptr->flags4 & RF4_BR_DISI) ? 1 : 0); /* 'digging' oO */
+
+			/* Misc abilities (ignoring ghosts' see_inv, RF7_DISBELIEVE and RF7_AQUATIC for now) */
+			extra += ((r_ptr->flags9 & RF9_VAMPIRIC) ? 3 : 0)
+			    + ((r_ptr->flags2 & RF2_REFLECTING) ? 2 : 0)
+			    + ((r_ptr->flags2 & RF2_INVISIBLE) ? 4 : 0);
+
+			/* Big negatives (ignoring susceptibilities and NO_BLOCK for now) */
+			extra -= ((r_ptr->flags2 & RF2_NEVER_ACT) ? 50 : (
+			    ((r_ptr->flags2 & RF2_NEVER_BLOW) ? 4 : 0)
+			    + ((r_ptr->flags2 & RF2_NEVER_MOVE) ? 8 : (
+			    ((r_ptr->flags1 & RF1_RAND_5) ? 1 : 0)	/* Note: RAND flags might not apply to shamans... */
+			    + ((r_ptr->flags1 & RF1_RAND_10) ? 2 : 0)
+			    + ((r_ptr->flags1 & RF1_RAND_25) ? 4 : 0)
+			    + ((r_ptr->flags1 & RF1_RAND_50) ? 8 : 0)
+			    + ((r_ptr->flags1 & RF1_RAND_100) ? 16 : 0)
+			    ))));
+
+			/* Apply all accumulated extra boni */
+			r_val = (r_val * (100 + extra)) / 100;
 #endif
 		}
 	}
