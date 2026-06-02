@@ -8271,59 +8271,59 @@
  */
 
 #define creature_can_enter2(R,C) \
-(cave_floor_grid(C) || /* Floor is open? */ \
-(((f_info[(C)->feat].flags1 & FF1_CAN_FEATHER) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
-((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY))) || \
-/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
-/* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
-(((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
-(((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
-/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
-((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
-/* POWERFUL monsters can hack down trees */ \
-((R)->flags2 & RF2_POWERFUL))) || \
-/* Spiders can of course pass webs.. */ \
-((f_info[(C)->feat].flags1 & FF1_WEB) && ((R)->flags7 & RF7_SPIDER)) || \
-/* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
-(((C)->feat == FEAT_MOUNTAIN) && \
-(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags7 & RF7_CAN_CLIMB))) || \
-/* Monster moves through walls (and doors) */ \
-/*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
-/*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \
-((f_info[(C)->feat].flags1 & FF1_WALL) && (f_info[(C)->feat].flags1 & FF1_CAN_PASS) && ((R)->flags2 & (RF2_PASS_WALL))) || \
-/* Monster can crush walls (note: Morgoth isn't taken into account here, shouldn't matter much though) */ \
-/*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
-((f_info[(C)->feat].flags1 & FF1_WALL) &&!(f_info[(C)->feat].flags1 & FF1_PERMANENT) && ((R)->flags2 & (RF2_KILL_WALL))) || \
-(C)->feat == FEAT_MON_TRAP) /* Floor is trapped? */ \
+    (cave_floor_grid(C) || /* Floor is open? */ \
+    (((f_info[(C)->feat].flags1 & FF1_CAN_FEATHER) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
+    ((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY))) || \
+    /* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+    /* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
+    (((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
+    (((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
+    /* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
+    ((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
+    /* POWERFUL monsters can hack down trees */ \
+    ((R)->flags2 & RF2_POWERFUL))) || \
+    /* Spiders can of course pass webs.. */ \
+    ((f_info[(C)->feat].flags1 & FF1_WEB) && ((R)->flags7 & RF7_SPIDER)) || \
+    /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+    (((C)->feat == FEAT_MOUNTAIN) && \
+    (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags7 & RF7_CAN_CLIMB))) || \
+    /* Monster moves through walls (and doors) */ \
+    /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
+    /*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \
+    ((f_info[(C)->feat].flags1 & FF1_WALL) && (f_info[(C)->feat].flags1 & FF1_CAN_PASS) && ((R)->flags2 & (RF2_PASS_WALL))) || \
+    /* Monster can crush walls (note: Morgoth isn't taken into account here, shouldn't matter much though) */ \
+    /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
+    ((f_info[(C)->feat].flags1 & FF1_WALL) &&!(f_info[(C)->feat].flags1 & FF1_PERMANENT) && ((R)->flags2 & (RF2_KILL_WALL))) || \
+    (C)->feat == FEAT_MON_TRAP) /* Floor is trapped? */ \
 
 /* Extended version of the above, again! This one is used for monsters utilising A* path-finding. - C. Blue
    This version really covers ALL grids that the monster could somehow enter: It includes doors too. */
 #define creature_can_enter3(R,C) \
-(cave_floor_grid(C) || /* Floor is open? */ \
-(((f_info[(C)->feat].flags1 & FF1_CAN_FEATHER) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
-((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY))) || \
-/* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
-/* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
-(((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
-(((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
-/* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
-((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
-/* POWERFUL monsters can hack down trees */ \
-((R)->flags2 & RF2_POWERFUL))) || \
-/* Spiders can of course pass webs.. */ \
-((f_info[(C)->feat].flags1 & FF1_WEB) && ((R)->flags7 & RF7_SPIDER)) || \
-/* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
-(((C)->feat == FEAT_MOUNTAIN) && \
-(((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags7 & RF7_CAN_CLIMB))) || \
-/* Monster moves through walls (and doors) */ \
-/*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
-/*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \
-((f_info[(C)->feat].flags1 & FF1_WALL) && (f_info[(C)->feat].flags1 & FF1_CAN_PASS) && ((R)->flags2 & (RF2_PASS_WALL))) || \
-/* Monster can crush walls (note: Morgoth isn't taken into account here, shouldn't matter much though) */ \
-/*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
-((f_info[(C)->feat].flags1 & FF1_WALL) &&!(f_info[(C)->feat].flags1 & FF1_PERMANENT) && ((R)->flags2 & (RF2_KILL_WALL))) || \
-(C)->feat == FEAT_MON_TRAP || /* Floor is trapped? */ \
-((((c_ptr->feat >= FEAT_DOOR_HEAD) && (c_ptr->feat <= FEAT_DOOR_TAIL)) || (c_ptr->feat == FEAT_SECRET)) && ((R)->flags2 & (RF2_KILL_WALL | RF2_OPEN_DOOR))))
+    (cave_floor_grid(C) || /* Floor is open? */ \
+    (((f_info[(C)->feat].flags1 & FF1_CAN_FEATHER) && ((R)->flags7 & RF7_CAN_FLY)) || /* Some monsters can fly */ \
+    ((f_info[(C)->feat].flags1 & FF1_CAN_LEVITATE) && ((R)->flags7 & RF7_CAN_FLY))) || \
+    /* Some monsters live in the woods natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+    /* else if <<c_ptr->feat==FEAT_TREE || c_ptr->feat==FEAT_EVIL_TREE || */ \
+    (((C)->feat == FEAT_DEAD_TREE || (C)->feat == FEAT_TREE || (C)->feat == FEAT_BUSH) && \
+    (((R)->flags8 & RF8_WILD_WOOD) || ((R)->flags3 & RF3_ANIMAL) || \
+    /* KILL_WALL / PASS_WALL  monsters can hack down / pass trees */ \
+    ((R)->flags2 & RF2_PASS_WALL) || ((R)->flags2 & RF2_KILL_WALL) || \
+    /* POWERFUL monsters can hack down trees */ \
+    ((R)->flags2 & RF2_POWERFUL))) || \
+    /* Spiders can of course pass webs.. */ \
+    ((f_info[(C)->feat].flags1 & FF1_WEB) && ((R)->flags7 & RF7_SPIDER)) || \
+    /* Some monsters live in the mountains natively - Should be moved to monster_can_cross_terrain (C. Blue) */ \
+    (((C)->feat == FEAT_MOUNTAIN) && \
+    (((R)->flags8 & RF8_WILD_MOUNTAIN) || ((R)->flags8 & RF8_WILD_VOLCANO) || ((R)->flags7 & RF7_CAN_CLIMB))) || \
+    /* Monster moves through walls (and doors) */ \
+    /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
+    /*              else if (r_ptr->flags2 & RF2_PASS_WALL) */ \
+    ((f_info[(C)->feat].flags1 & FF1_WALL) && (f_info[(C)->feat].flags1 & FF1_CAN_PASS) && ((R)->flags2 & (RF2_PASS_WALL))) || \
+    /* Monster can crush walls (note: Morgoth isn't taken into account here, shouldn't matter much though) */ \
+    /*  -- added check whether it's actually a WALL, to prevent monsters from crossing terrain they don't like (eg lava) */ \
+    ((f_info[(C)->feat].flags1 & FF1_WALL) &&!(f_info[(C)->feat].flags1 & FF1_PERMANENT) && ((R)->flags2 & (RF2_KILL_WALL))) || \
+    (C)->feat == FEAT_MON_TRAP || /* Floor is trapped? */ \
+    ((((c_ptr->feat >= FEAT_DOOR_HEAD) && (c_ptr->feat <= FEAT_DOOR_TAIL)) || (c_ptr->feat == FEAT_SECRET)) && ((R)->flags2 & (RF2_KILL_WALL | RF2_OPEN_DOOR))))
 
 
 /* A wall that doesn't "fill" the grid completely, ie could be passed without
