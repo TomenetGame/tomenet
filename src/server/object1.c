@@ -2238,9 +2238,9 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 	} else {
 		/* Assume aware and known */
 		aware = known = TRUE;
-		if (mode & (1024 | 16384)) aware = FALSE; //don't spoil flavour-knowledge in player shop export list! (1024) and for wrapped gifts (16384)
+		if ((mode & 1024) || conceal) aware = FALSE; //don't spoil flavour-knowledge in player shop export list! (1024) and for wrapped gifts (16384)
 		if (mode & 4096) known = FALSE;
-		if (mode & 16384) conceal = hide_flavour = TRUE; //don't spoil flavours for wrapped gifts
+		if (conceal) hide_flavour = TRUE; //don't spoil flavours for wrapped gifts
 	}
 	/* Never use short item names in flavour knowledge list */
 	if ((mode & 512)) short_item_names = FALSE;
@@ -2584,15 +2584,15 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		if (o_ptr->sval == SV_SPELLBOOK) {
 			/* hack for mindcrafter spell scrolls -> spell crystals - C. Blue */
 			if (o_ptr->pval >= __lua_M_FIRST && o_ptr->pval <= __lua_M_LAST) {
-				if (mode & 16834) basenm = "& Crystal~";
+				if (conceal) basenm = "& Crystal~";
 				else basenm = "& Spell Crystal~ of #";
 			}
 			/* hack for priest spell scrolls -> prayer scrolls - C. Blue */
 			else if (o_ptr->pval >= __lua_P_FIRST && o_ptr->pval <= __lua_P_LAST) {
-				if (mode & 16834) basenm = "& Heavy Scroll~";
+				if (conceal) basenm = "& Heavy Scroll~";
 				else basenm = "& Prayer Scroll~ of #";
 			}
-			else if (mode & 16834) basenm = "& Heavy Scroll~";
+			else if (conceal) basenm = "& Heavy Scroll~";
 
 			if (school_spells[o_ptr->pval].name)
 				modstr = school_spells[o_ptr->pval].name;
