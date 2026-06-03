@@ -964,16 +964,16 @@ static HBITMAP ResizeTilesWithMasks(HBITMAP hbm, int ix, int iy, int ox, int oy,
  #endif
 
 	/* Select our tiles into the memory DC and store default bitmap to not leak GDI objects. */
-	HBITMAP hbmOldMemTiles = SelectObject(hdcMemTiles, g_hbmTiles);
-	HBITMAP hbmOldMemBgMask = SelectObject(hdcMemBgMask, g_hbmBgMask);
-	HBITMAP hbmOldMemFgMask = SelectObject(hdcMemFgMask, g_hbmFgMask);
+	HBITMAP hbmOldMemTiles = SelectObject(hdcMemTiles, hbm);
+	HBITMAP hbmOldMemBgMask = SelectObject(hdcMemBgMask, hbmBgMask);
+	HBITMAP hbmOldMemFgMask = SelectObject(hdcMemFgMask, hbmFgMask);
 
 	HBITMAP hbmOldMemResTiles = SelectObject(hdcMemResTiles, hbmResTiles);
 	HBITMAP hbmOldMemResBgMask = SelectObject(hdcMemResBgMask, hbmResBgMask);
 	HBITMAP hbmOldMemResFgMask = SelectObject(hdcMemResFgMask, hbmResFgMask);
 
  #ifdef GRAPHICS_BG_MASK
-	HBITMAP hbmOldMemBg2Mask = SelectObject(hdcMemBg2Mask, g_hbmBg2Mask);
+	HBITMAP hbmOldMemBg2Mask = SelectObject(hdcMemBg2Mask, hbmBg2Mask);
 	HBITMAP hbmOldMemResBg2Mask = SelectObject(hdcMemResBg2Mask, hbmResBg2Mask);
  #endif
 
