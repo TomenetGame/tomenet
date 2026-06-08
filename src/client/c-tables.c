@@ -301,7 +301,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.basic_players_symb,	FALSE,	1,	0, 46, TRUE,
 	    "basic_players_symb",	"Use very basic static symbols for players" },
 
-	{ &c_cfg.subterm_flicker,	TRUE,	4,	0, 47, TRUE,
+	{ &c_cfg.subterm_flicker,	TRUE,	1,	0, 47, TRUE,
 	    "subterm_flicker",		"Show animated text colours in sub-windows" },
 	{ &c_cfg.no_verify_sell,	FALSE,	8,	0, 48, TRUE,
 	    "no_verify_sell",		"Skip safety question when selling items" },
@@ -575,7 +575,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.ascii_uniques,		FALSE,	4,	0, 157, TRUE,
 	    "ascii_uniques",		"Disable font-specific mapping for unique monsters" },
 
-	{ &c_cfg.no_flicker,		FALSE,	4,	0, 158, TRUE,
+	{ &c_cfg.no_flicker,		FALSE,	1,	0, 158, TRUE,
 	    "no_flicker",		"Disable all fast colour animations" },
 	{ &c_cfg.stun_huge_bar,		TRUE,	1,	0, 159, TRUE,
 	    "stun_huge_bar",		"Show stun status as huge bar (big_map only)" },
@@ -605,7 +605,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "gfx_hack_repaint",		"May reduce flicker if gfx_palanim_repaint is off" },
 	{ &c_cfg.topline_first,		TRUE,	0,	0, 170, TRUE,
 	    "topline_first",		"Top line shows first line of multi-line messages" },
-	{ &c_cfg.ascii_weather,		FALSE,	1,	0, 171, TRUE, //just for debugging weather glitches
+	{ &c_cfg.ascii_weather,		FALSE,	4,	0, 171, TRUE, //just for debugging weather glitches
 	    "ascii_weather",		"Always use plain ASCII symbols for weather" },
 	{ &c_cfg.no2mask_weather,	FALSE,	1,	0, 172, FALSE, //just for debugging weather glitches
 	    "no2mask_weather",		"Never use dual-mask grapics for weather" },
