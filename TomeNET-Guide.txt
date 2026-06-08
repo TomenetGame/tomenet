@@ -547,11 +547,13 @@ pressing the following keys in game to access the various options pages (0-9):
  =2  disable_lightning (the aforementioned thunderstorm flash)
  =4  flash_player (your '@' flickers brightly whenever you change location
      rapidly to make it easier spotting yourself on the screen)
- =2  subterm_flicker (show animated colours in the various game windows)
+ =1  subterm_flicker (show animated colours in the various game windows)
  =4  flash_insane (your '@' flickers rapidly when your sanity is very low
      to alert you of impending no-ghost-death by sanity)
- =2  no_flicker (disables all fast-flickering colour animations. This can
+ =1  no_flicker (disables all fast-flickering colour animations. This can
      make it quite hard to distinguish monsters though.)
+ =1  misc_no_flicker (disables all fast-flickering colour animations other than
+     on the main screen or for text/messages.)
 
 
 (0.1d) Readability improvements
