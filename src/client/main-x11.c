@@ -3475,6 +3475,8 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	/* Initialize the term (full size) */
 	term_init(t, win_cols, win_lines, num);
 
+	t->idx = index;
+
 	/* Use a "soft" cursor */
 	t->soft_cursor = TRUE;
 

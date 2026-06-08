@@ -1131,7 +1131,8 @@ byte flick_colour(byte attr) {
 #endif
 
 	if (c_cfg.no_flicker ||
-	    (!c_cfg.subterm_flicker && Term != term_term_main)
+	    (!c_cfg.subterm_flicker && Term != term_term_main) ||
+	    (c_cfg.misc_no_flicker && Term != term_term_main && !(window_flag[Term->idx] & (PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT)))
 	    ) {
 #if 0
 		return(TERM_VIOLET); /* Translate ALL animated colours just to violet? */
@@ -4560,6 +4561,8 @@ errr term_nuke(term *t) {
 	int w = t->wid;
 	int h = t->hgt;
 	int i;
+
+	t->idx = -1;
 
 	/* Hack -- Call the special "nuke" hook */
 	if (t->active_flag) {

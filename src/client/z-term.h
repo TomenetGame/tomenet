@@ -145,6 +145,8 @@ struct key_queue {
 
 typedef struct term term;
 struct term {
+	int idx;
+
 	vptr user;
 	vptr data;
 

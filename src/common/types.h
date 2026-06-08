@@ -4764,6 +4764,7 @@ struct server_opts {
 /* Consider separate it into client/types.h and server/types.h */
 typedef struct client_opts client_opts;
 struct client_opts {
+	//---- pages and numbering are deprecated and no longer correct; actual array indices are in c-tables.c
     //page 1
 	bool rogue_like_commands; //0
 	bool newbie_hints;
@@ -4987,6 +4988,7 @@ struct client_opts {
 	bool huge_bars_gfx;
 	bool show_newest;
 	bool log_music;
+	bool misc_no_flicker;
 };
 
 /*

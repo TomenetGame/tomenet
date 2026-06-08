@@ -4134,6 +4134,8 @@ static void term_data_link(int i, term_data *td) {
 	/* Initialize the term */
 	term_init(t, td->cols, td->rows, td->keys);
 
+	t->idx = i;
+
 	/* Use a "software" cursor */
 	t->soft_cursor = TRUE;
 

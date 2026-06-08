@@ -630,13 +630,15 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.autoloot_dununown,	FALSE,	8,	0, 181, TRUE,
 	    "autoloot_dununown",	"Suppress auto-pck/des if owned and not in dungeon" },
 	{ &c_cfg.flash_starvation,	TRUE,	7,	0, 182, TRUE, //moved exp_bar to page 2 to make room for this
-	    "flash_starvation",		"Flash 'Starved' food status by colour animation." },
+	    "flash_starvation",		"Flash 'Starved' food status by colour animation" },
 	{ &c_cfg.autoswitch_inven,	TRUE,	6,	0, 183, TRUE,
-	    "autoswitch_inven",		"Empty inven prompts auto-switch to equip or bag." },
+	    "autoswitch_inven",		"Empty inven prompts auto-switch to equip or bag" },
 	{ &c_cfg.show_newest,		FALSE,	7,	0, 184, TRUE, //'items' page 8; could also be on page 3 (formatting) or 4 (notifications) perhaps
-	    "show_newest",		"Marks the inventory slot of the 'newest' item." },
+	    "show_newest",		"Marks the inventory slot of the 'newest' item" },
 	{ &c_cfg.log_music,		FALSE,	9,	0, 185, TRUE,
 	    "log_music",		"Log game-initiated music to 'Messages' window" },
+	{ &c_cfg.misc_no_flicker,	FALSE,	1,	0, 186, TRUE,
+	    "misc_no_flicker",		"Only animate colours for main screen and messages" },
 };
 
 cptr melee_techniques[16] = {

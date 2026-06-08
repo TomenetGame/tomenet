@@ -814,7 +814,7 @@ static errr Term_text_gcu(int x, int y, int n, byte a, cptr s) {
 
 
 
-static errr term_data_init(term_data *td, int rows, int cols, int y, int x) {
+static errr term_data_init(int index, term_data *td, int rows, int cols, int y, int x) {
 	term *t = &td->t;
 
 	/* Make sure the window has a positive size */
@@ -833,6 +833,8 @@ static errr term_data_init(term_data *td, int rows, int cols, int y, int x) {
 
 	/* Initialize the term */
 	term_init(t, cols, rows, 256);
+
+	t->idx = index;
 
 	/* Avoid the bottom right corner */
 	t->icky_corner = TRUE;
@@ -1194,7 +1196,7 @@ errr init_gcu(void) {
 	   because curses will then redirect it to the first active curses screen (ie the main screen) instead,
 	   so only the init-term printf for term #0 aka the main screen will actually be printed to the console. */
 	for (i = 0; i < next_win; i++) {
-		term_data_init(&data[i], rows[i], cols[i], y[i], x[i]);
+		term_data_init(i, &data[i], rows[i], cols[i], y[i], x[i]);
 		ang_term[i] = Term;
 	}
 
