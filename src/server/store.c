@@ -5067,6 +5067,9 @@ void store_confirm(int Ind) {
 		} else if (price * 10 <= value) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_printf("SOLD_UNID_VALUE: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
+		} else if (value > 300000) {
+			object_desc(0, o_name, o_ptr, TRUE, 3);
+			s_printf("SOLD_EXPENSIVE: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 		}
 
 		/* Actually this warning is rather specifically a warning about selling unid'ed but already aware-of magic devices with charges! */
