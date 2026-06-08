@@ -4536,6 +4536,15 @@ void store_purchase(int Ind, int item, int amt) {
 
 			/* Player can afford it */
 			if (p_ptr->au >= price) {
+				/* Log purchase of super-expensive items */
+				s64b value = object_value_real(0, o_ptr);
+
+				if (value >= 200000) {
+					object_desc(0, o_name, &sell_obj, TRUE, 3);
+					s_printf("BOUGHT_EXPENSIVE: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
+				}
+
+				/* Buy the item! */
 				if (p_ptr->taciturn_messages) suppress_message = TRUE;
 
 				/* Hack -- clear the "fixed" flag from the item */
@@ -4898,7 +4907,7 @@ void store_sell(int Ind, int item, int amt) {
 void store_confirm(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	long item, amt;
-	s64b price, price_redundance;//, value;
+	s64b price, price_redundance, value;
 
 	object_type *o_ptr, sold_obj;
 	char o_name[ONAME_LEN];
@@ -5052,9 +5061,9 @@ void store_confirm(int Ind) {
 	store_prt_gold(Ind);
 
 	/* fun stuff - log sold unidentified ego items :-p (could make nice statistics from this) */
+	value = object_value_real(0, o_ptr);
 	if (!object_known_p(Ind, o_ptr)) {
 		s64b value = object_value_real(0, o_ptr);
-
 		if (o_ptr->name1 == ART_RANDART) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_printf("SOLD_UNID_RANDART: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
@@ -5067,9 +5076,6 @@ void store_confirm(int Ind) {
 		} else if (price * 10 <= value) {
 			object_desc(0, o_name, o_ptr, TRUE, 3);
 			s_printf("SOLD_UNID_VALUE: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
-		} else if (value >= 200000) {
-			object_desc(0, o_name, o_ptr, TRUE, 3);
-			s_printf("SOLD_EXPENSIVE: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 		}
 
 		/* Actually this warning is rather specifically a warning about selling unid'ed but already aware-of magic devices with charges! */
@@ -5080,6 +5086,10 @@ void store_confirm(int Ind) {
 			p_ptr->warning_sellunid = 1;
 			s_printf("warning_sellunid: %s\n", p_ptr->name);
 		}
+	}
+	if (value >= 200000) {
+		object_desc(0, o_name, o_ptr, TRUE, 3);
+		s_printf("SOLD_EXPENSIVE: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 	}
 
 	if (p_ptr->store_num > -2) { /* Never become aware of player store items */
