@@ -1130,7 +1130,9 @@ byte flick_colour(byte attr) {
 	byte flags = attr;//(remember flags) obsolete: & 0xE0;
 #endif
 
-	if (c_cfg.no_flicker) {
+	if (c_cfg.no_flicker ||
+	    (!c_cfg.recall_flicker && Term != term_term_main)
+	    ) {
 #if 0
 		return(TERM_VIOLET); /* Translate ALL animated colours just to violet? */
 #else
@@ -1739,8 +1741,6 @@ void flicker(void) {
 
 		/* Actually flush the output */
 		Term_xtra(TERM_XTRA_FRESH, 0);
-
-		if (!c_cfg.recall_flicker) break;
 	}
 
 	Term_activate(old);
