@@ -9,8 +9,8 @@
 # unless you wish to risk possible system crashes and broken savefiles.
 
 # N:<index>:<name>
-# I:<max_cost>:<max_inflate>:<min_inflate>:<haggle_per>:<insult_max>
-# C:<hated cost>:<normal cost>:<liked cost>
+# I:<max_cost/10>:<max_inflate>:<min_inflate>:<haggle_per>:<insult_max>
+# C:<hated cost%>:<normal cost%>:<liked cost%>
 # L:liked races
 # H:hated races
 
