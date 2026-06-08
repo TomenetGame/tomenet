@@ -641,7 +641,7 @@ void flicker(void) {
 				(void)((*tterm->text_hook)(x, y, 1, attr, &ch));
 			}
 		}
-		if (!c_cfg.recall_flicker) break;
+		if (!c_cfg.subterm_flicker) break;
 	}
 	Term_activate(old);
 }

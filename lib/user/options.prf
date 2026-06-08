@@ -65,7 +65,7 @@ Y:flash_player
 X:highlight_player
 X:basic_players_symb
 X:basic_players_col
-Y:recall_flicker
+Y:subterm_flicker
 X:no_verify_sell
 X:no_verify_destroy
 X:topline_no_msg

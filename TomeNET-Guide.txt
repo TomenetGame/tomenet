@@ -547,7 +547,7 @@ pressing the following keys in game to access the various options pages (0-9):
  =2  disable_lightning (the aforementioned thunderstorm flash)
  =4  flash_player (your '@' flickers brightly whenever you change location
      rapidly to make it easier spotting yourself on the screen)
- =2  recall_flicker (show animated colours in the various game windows)
+ =2  subterm_flicker (show animated colours in the various game windows)
  =4  flash_insane (your '@' flickers rapidly when your sanity is very low
      to alert you of impending no-ghost-death by sanity)
  =2  no_flicker (disables all fast-flickering colour animations. This can
@@ -6302,7 +6302,7 @@ Example:
 
 If you cannot see coloured messages in your secondary Tomenet windows other
 than the big main window, check your client option settings by typing  =2
-and looking for 'Show animated text colours in sub-windows' (recall_flicker).
+and looking for 'Show animated text colours in sub-windows' (subterm_flicker).
 Set it to 'yes'.
 
 If you want to type the character '{' in a chat message, rather than using
@@ -29265,7 +29265,7 @@ Solution:   Change the audio sample rate in '.tomenetrc' config file to match
             as 96000 aka 96kHz.
 
 PROBLEM 50: On Linux/X11 I get 100% cpu usage when switching workspace away
-            from TomeNET when I have 'recall_flicker' option enabled.
+            from TomeNET when I have 'subterm_flicker' option enabled.
             (The system on which this happened had AMD graphics drivers, but
             that might not be relevant.)
 Solution:   This is suspected to be a problem with 'Awesome' window manager.

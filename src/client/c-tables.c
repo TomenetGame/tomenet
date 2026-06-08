@@ -301,8 +301,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	{ &c_cfg.basic_players_symb,	FALSE,	1,	0, 46, TRUE,
 	    "basic_players_symb",	"Use very basic static symbols for players" },
 
-	{ &c_cfg.recall_flicker,	TRUE,	4,	0, 47, TRUE,
-	    "recall_flicker",		"Show animated text colours in sub-windows" },
+	{ &c_cfg.subterm_flicker,	TRUE,	4,	0, 47, TRUE,
+	    "subterm_flicker",		"Show animated text colours in sub-windows" },
 	{ &c_cfg.no_verify_sell,	FALSE,	8,	0, 48, TRUE,
 	    "no_verify_sell",		"Skip safety question when selling items" },
 	{ &c_cfg.no_verify_destroy,	FALSE,	8,	0, 49, TRUE,

@@ -4816,7 +4816,7 @@ struct client_opts {
 	bool flash_player2;
 	bool hilite_player;
 	bool basic_players_symb, basic_players_col;
-	bool recall_flicker;
+	bool subterm_flicker;
 	bool no_verify_destroy;
 	bool no_verify_sell;
 	//more see at the end..

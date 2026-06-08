@@ -1131,7 +1131,7 @@ byte flick_colour(byte attr) {
 #endif
 
 	if (c_cfg.no_flicker ||
-	    (!c_cfg.recall_flicker && Term != term_term_main)
+	    (!c_cfg.subterm_flicker && Term != term_term_main)
 	    ) {
 #if 0
 		return(TERM_VIOLET); /* Translate ALL animated colours just to violet? */
