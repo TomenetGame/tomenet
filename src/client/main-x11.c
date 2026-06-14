@@ -3292,6 +3292,296 @@ void tiles_rawpict_scale(void) {
 #endif /* USE_GRAPHICS */
 
 
+#ifdef USE_GRAPHICS
+/*
+ * Initialize a term_data's 'USE_GRAPHICS/use_graphics' part specifically,
+ * which can be done after the normal term initialization routine, to save time during the phase of window spawning!
+ */
+static void term_data_init_graphics(int index, term_data *td) {
+	term *t = &td->t;
+	int i;
+
+	/* No graphics yet */
+	td->tiles = NULL;
+	td->fgmask = NULL;
+ #ifdef GRAPHICS_BG_MASK
+	td->bgmask = NULL;
+	td->tilePreparation2 = None;
+ #endif
+	td->tilePreparation = None;
+
+	for (i = 0; i < MAX_SUBFONTS; i++) {
+		td->tiles_sub[i] = NULL;
+		td->fgmask_sub[i] = NULL;
+ #ifdef GRAPHICS_BG_MASK
+		td->bgmask_sub[i] = NULL;
+ #endif
+	}
+
+ #ifdef TILE_CACHE_SIZE
+	if (!disable_tile_cache)
+	for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+		td->tile_cache[i].tilePreparation = None;
+		td->tile_cache[i].c = 0xffffffff;
+		td->tile_cache[i].a = 0xff;
+  #ifdef GRAPHICS_BG_MASK
+		td->tile_cache[i].tilePreparation2 = None;
+		td->tile_cache[i].c_back = 0xffffffff;
+		td->tile_cache[i].a_back = 0xff;
+  #endif
+		td->tile_cache[i].is_valid = FALSE;
+	}
+ #endif
+
+	if (use_graphics) {
+		logprint(format("Termdata graphics init (%d): fwid %d, fhgt %d.\n", index, td->fnt->wid, td->fnt->hgt));
+
+		/* Use resized tiles & masks. */
+		td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+		td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+ #ifdef GRAPHICS_BG_MASK
+		td->bgmask = ResizeImage(Metadpy->dpy, graphics_bgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+ #endif
+		rescaleRawpict(graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, -1);
+
+		for (i = 0; i < MAX_SUBFONTS; i++) {
+			if (graphics_image_sub[i] == None) continue;
+			td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+			td->fgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_fgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+ #ifdef GRAPHICS_BG_MASK
+			td->bgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_bgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+ #endif
+			rescaleRawpict(graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, i);
+		}
+
+		/* Initialize preparation pixmap. */
+		td->tilePreparation = XCreatePixmap(
+				Metadpy->dpy, Metadpy->root,
+				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+ #ifdef GRAPHICS_BG_MASK
+		td->tilePreparation2 = XCreatePixmap(
+				Metadpy->dpy, Metadpy->root,
+				td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+ #endif
+
+		/* Note: If we want to cache even more graphics for faster drawing, we could initialize 16 copies of the graphics image with all possible mask colours already applied.
+		   Memory cost could become "large" quickly though (eg 5MB bitmap -> 80MB). Not a real issue probably. */
+ #ifdef TILE_CACHE_SIZE
+		if (!disable_tile_cache) {
+			for (int i = 0; i < TILE_CACHE_SIZE; i++) {
+				td->tile_cache[i].tilePreparation = XCreatePixmap(
+					Metadpy->dpy, Metadpy->root,
+					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+  #ifdef GRAPHICS_BG_MASK
+				td->tile_cache[i].tilePreparation2 = XCreatePixmap(
+					Metadpy->dpy, Metadpy->root,
+					td->fnt->wid, td->fnt->hgt, td->tiles->depth);
+  #endif
+			}
+		}
+ #endif
+
+		if (td->tiles != NULL && td->tilePreparation != None
+ #ifdef GRAPHICS_BG_MASK
+		    && td->tilePreparation2 != None
+ #endif
+		    ) {
+			/* Graphics hook */
+ #ifdef GRAPHICS_BG_MASK
+			if (use_graphics == UG_2MASK) t->pict_hook_2mask = Term_pict_x11_2mask;
+ #endif
+			t->pict_hook = Term_pict_x11;
+			t->rawpict_hook = Term_rawpict_x11;
+
+			/* Use graphics sometimes */
+			t->higher_pict = TRUE;
+		}
+		else {
+			fprintf(stderr, "Couldn't prepare images for terminal %d\n", index);
+		}
+	}
+
+	/* Save the data */
+	t->data = td;
+
+	/* Activate (important) */
+	Term_activate(t);
+}
+#endif /* USE_GRAPHICS */
+/*
+ * Initialize a term_data, excluding all USE_GRAPHICS/use_graphics stuff,
+ * which is instead moved to be handled in separate term_data_init_graphics() function!
+ */
+static errr term_data_init_base(int index, term_data *td, bool fixed, cptr name, cptr font) {
+	term *t = &td->t;
+
+	int wid, hgt, num;
+	int win_cols, win_lines, wid_outer, hgt_outer;
+	cptr n;
+	int topx, topy; /* 0, 0 default */
+
+
+	/* Use values from .tomenetrc;
+	   Environment variables (see further below) may override those. */
+	win_cols = term_prefs[index].columns;
+	win_lines = term_prefs[index].lines;
+	topx = term_prefs[index].x;
+	topy = term_prefs[index].y;
+
+	/* Prepare the standard font */
+	MAKE(td->fnt, infofnt);
+	infofnt *old_infofnt = Infofnt;
+	Infofnt_set(td->fnt);
+	if (Infofnt_init_data(font) == -1) {
+		/* Initialization failed, log and try to use the default font. */
+		fprintf(stderr, "Failed to load the \"%s\" font for terminal %d\n", font, index);
+		if (in_game) {
+			/* If in game, inform the user. */
+			Infofnt_set(old_infofnt);
+			plog_fmt("Failed to load the \"%s\" font! Falling back to default font.\n", font);
+			Infofnt_set(td->fnt);
+		}
+		if (Infofnt_init_data(x11_terms_font_default[index]) == -1) {
+			/* Initialization of the default font failed too. Log, free allocated memory and return with error. */
+			fprintf(stderr, "Failed to load the default \"%s\" font for terminal %d\n", x11_terms_font_default[index], index);
+			Infofnt_set(old_infofnt);
+			if (in_game) {
+				/* If in game, inform the user. */
+				plog_fmt("Failed to load the default \"%s\" font too! Try to change font manually.\n", x11_terms_font_default[index]);
+			}
+			FREE(td->fnt, infofnt);
+			return(1);
+		}
+	}
+
+	/* Hack -- extract key buffer size */
+	num = (fixed ? 1024 : 16);
+
+	if (!strcmp(name, ang_term_name[0])) {
+		n = getenv("TOMENET_X11_WID_TERM_MAIN");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_MAIN");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, ang_term_name[1])) {
+		n = getenv("TOMENET_X11_WID_TERM_1");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_1");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, ang_term_name[2])) {
+		n = getenv("TOMENET_X11_WID_TERM_2");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_2");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, ang_term_name[3])) {
+		n = getenv("TOMENET_X11_WID_TERM_3");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_3");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, ang_term_name[4])) {
+		n = getenv("TOMENET_X11_WID_TERM_4");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_4");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, ang_term_name[5])) {
+		n = getenv("TOMENET_X11_WID_TERM_5");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_5");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, ang_term_name[6])) {
+		n = getenv("TOMENET_X11_WID_TERM_6");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_6");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, ang_term_name[7])) {
+		n = getenv("TOMENET_X11_WID_TERM_7");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_7");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, ang_term_name[8])) {
+		n = getenv("TOMENET_X11_WID_TERM_8");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_8");
+		if (n) win_lines = atoi(n);
+	}
+	if (!strcmp(name, ang_term_name[9])) {
+		n = getenv("TOMENET_X11_WID_TERM_9");
+		if (n) win_cols = atoi(n);
+		n = getenv("TOMENET_X11_HGT_TERM_9");
+		if (n) win_lines = atoi(n);
+	}
+
+	/* Reset timers just to be sure. */
+	td->resize_timer.tv_sec = 0;
+	td->resize_timer.tv_usec = 0;
+
+	/* Hack -- Assume full size windows */
+	wid = win_cols * td->fnt->wid;
+	hgt = win_lines * td->fnt->hgt;
+	wid_outer = wid + (2 * DEFAULT_X11_INNER_BORDER_WIDTH);
+	hgt_outer = hgt + (2 * DEFAULT_X11_INNER_BORDER_WIDTH);
+
+	/* Create a top-window. */
+	MAKE(td->outer, infowin);
+	Infowin_set(td->outer);
+	Infowin_init_top(topx, topy, wid_outer, hgt_outer, DEFAULT_X11_OUTER_BORDER_WIDTH, Metadpy->fg, Metadpy->bg);
+	Infowin_set_mask(StructureNotifyMask | KeyPressMask);
+	if (!strcmp(name, ang_term_name[0])) {
+		char version[MAX_CHARS];
+
+		sprintf(version, "TomeNET %d.%d.%d%s",
+		    VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
+		Infowin_set_name(version);
+	} else Infowin_set_name(name);
+	Infowin_set_class_hint(name);
+	Infowin_set_size_hints(topx, topy, wid_outer, hgt_outer, DEFAULT_X11_INNER_BORDER_WIDTH, td->fnt->wid, td->fnt->hgt, fixed);
+	Infowin_map();
+
+	/* Create a sub-window for playing field */
+	MAKE(td->inner, infowin);
+	Infowin_set(td->inner);
+	Infowin_init_std(td->outer, 0, 0, wid, hgt, DEFAULT_X11_INNER_BORDER_WIDTH);
+	Infowin_set_mask(ExposureMask);
+	Infowin_map();
+
+
+	/* Initialize the term (full size) */
+	term_init(t, win_cols, win_lines, num);
+
+	t->idx = index;
+
+	/* Use a "soft" cursor */
+	t->soft_cursor = TRUE;
+
+	/* Erase with "white space" */
+	t->attr_blank = TERM_WHITE;
+	t->char_blank = ' ';
+
+	/* Hooks */
+	t->xtra_hook = Term_xtra_x11;
+	t->curs_hook = Term_curs_x11;
+	t->wipe_hook = Term_wipe_x11;
+	t->text_hook = Term_text_x11;
+	t->nuke_hook = Term_nuke_x11;
+
+	/* Save the data */
+	t->data = td;
+
+	/* Activate (important) */
+	Term_activate(t);
+
+	/* Success */
+	return(0);
+}
+
+
 
 /*
  * Initialize a term_data
@@ -3327,7 +3617,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 			Infofnt_set(old_infofnt);
 			plog_fmt("Failed to load the \"%s\" font! Falling back to default font.\n", font);
 			Infofnt_set(td->fnt);
-		} 
+		}
 		if (Infofnt_init_data(x11_terms_font_default[index]) == -1) {
 			/* Initialization of the default font failed too. Log, free allocated memory and return with error. */
 			fprintf(stderr, "Failed to load the default \"%s\" font for terminal %d\n", x11_terms_font_default[index], index);
@@ -3746,7 +4036,11 @@ static errr x11_term_init(int term_id) {
 	if (!fnt_name) fnt_name = x11_terms_font_default[term_id];
 
 	/* Initialize the terminal window, allow resizing, for font changes. */
+#if 0
 	err = term_data_init(term_id, x11_terms_term_data[term_id], FALSE, ang_term_name[term_id], fnt_name);
+#else
+	err = term_data_init_base(term_id, x11_terms_term_data[term_id], FALSE, ang_term_name[term_id], fnt_name);
+#endif
 	/* Store created terminal with X11 term data to ang_term array, even if term_data_init failed, but only if there is one. */
 	if (Term && term_data_to_term_idx(Term->data) == term_id) ang_term[term_id] = Term;
 
@@ -4102,6 +4396,16 @@ errr init_x11(void) {
 			}
 		}
 	}
+
+#ifdef USE_GRAPHICS
+	/* Initialize the graphics part of each term */
+	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
+		/* Main window is always visible, all other depend on configuration. */
+		if ((i == 0 || term_prefs[i].visible) && ang_term[i]) {
+			term_data_init_graphics(i, term_idx_to_term_data(i));
+		}
+	}
+#endif
 
 	/* Activate the "Angband" main window screen. */
 	Term_activate(&term_main.t);
@@ -4605,6 +4909,7 @@ void term_toggle_visibility(int term_idx) {
 
 	/* Create and initialize terminal window. */
 	errr err = x11_term_init(term_idx);
+	term_data_init_graphics(term_idx, term_idx_to_term_data(term_idx));
 	/* After initializing the new window is active. Switch to main window. */
 	Term_activate(&term_main.t);
 
