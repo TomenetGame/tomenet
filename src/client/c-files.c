@@ -13,7 +13,6 @@
  #include <regex.h>
 #endif
 
-
 /* Does WINDOWS client use the user's home folder instead of the TomeNET folder for 'scpt' and 'user' subfolders?
    This may be required in Windows 7 and higher, where access rights could cause problems when writing to these folders. - C. Blue */
 #define WINDOWS_USER_HOME
@@ -27,6 +26,8 @@
    in which case the tileset will win as it is loaded after the font. - C. Blue*/
 #define CUSTOM_MAPPING_ALWAYS
 
+#define TOMENET_GUIDE_SHA256_URL "https://www.tomenet.eu/TomeNET-Guide.sha256"
+#define TOMENET_GUIDE_SHA256_URL_TIMEOUT 25L
 
 
 static int MACRO_WAIT = 96; //hack: see c-util.c and keep consistent
@@ -226,13 +227,15 @@ void text_to_ascii(char *buf, cptr str) {
  * Replace "~/" by the home directory of the current user
  */
 static errr path_parse(char *buf, cptr file) {
+#ifndef USE_SDL2
 #ifndef WIN32
 #ifndef AMIGA
 	cptr	    u, s;
 	struct passwd   *pw;
 	char	    user[128];
-#endif
+#endif /* AMIGA */
 #endif /* WIN32 */
+#endif /* USE_SDL2 */
 
 
 	/* Assume no result */
@@ -247,7 +250,8 @@ static errr path_parse(char *buf, cptr file) {
 		return(0);
 	}
 
-	/* Windows should never have ~ in filename */
+	/* SDL2, Windows and Amiga clients should never have ~ in filename */
+#ifndef USE_SDL2
 #ifndef WIN32
 #ifndef AMIGA
 
@@ -285,16 +289,137 @@ static errr path_parse(char *buf, cptr file) {
 	/* Append the rest of the filename, if any */
 	if (s) (void)strcat(buf, s);
 
-#endif
+#endif /* AMIGA */
 #endif /* WIN32 */
+#endif /* USE_SDL2 */
 	/* Success */
 	return(0);
 }
 
 
 
+#ifdef USE_SDL2
+/* Ensure that all directories required for a file path exist. */
+bool sdl2_ensure_parent_dirs(const char *path) {
+	char dir[1024];
+	char *last_sep = NULL;
+	size_t len;
+	char *p;
+	char path_sep = SDL2_PATH_SEP[0];
+	char *skip_prefix_end = dir;
+
+	if (!path) return FALSE;
+
+	len = strlen(path);
+	if (!len || len >= sizeof(dir)) return FALSE;
+
+	/* Work on a mutable copy. */
+	strnfmt(dir, sizeof(dir), "%s", path);
+
+	/* Strip the filename, keep only the directory portion. */
+	for (p = dir; *p; p++) {
+		if (*p == path_sep) last_sep = p;
+	}
+	if (!last_sep) return TRUE; /* No directories to create. */
+
+	/* Handle paths that end with a separator (unlikely here, but safe). */
+	while (last_sep > dir && (*last_sep == path_sep)) last_sep--;
+	last_sep[1] = '\0';
+
+	if (!dir[0]) return TRUE; /* Root directory only. */
+
+	/* Skip UNC share prefix (e.g. \\host\share or //host/share). */
+	if (path_sep && dir[0] == path_sep && dir[1] == path_sep) {
+		char *cursor = dir + 2;
+		size_t components_skipped = 0;
+
+		/* Collapse any additional leading separators. */
+		while (*cursor == path_sep) cursor++;
+
+		while (components_skipped < 2 && *cursor) {
+			while (*cursor && *cursor != path_sep) cursor++;
+			if (*cursor == path_sep) {
+				skip_prefix_end = cursor;
+				components_skipped++;
+
+				/* Skip any duplicate separators before the next component. */
+				while (*cursor == path_sep) cursor++;
+			}
+		}
+
+		/* If we ran out of components, skip whatever we have consumed. */
+		if (components_skipped < 2) skip_prefix_end = cursor;
+	}
+	/* Skip drive letter prefix (e.g. C:\...). */
+	else if (((dir[0] >= 'A' && dir[0] <= 'Z') || (dir[0] >= 'a' && dir[0] <= 'z')) &&
+	         dir[1] == ':' && dir[2] == path_sep) {
+		skip_prefix_end = dir + 2;
+	}
+
+	/* Create intermediate directories one-by-one. */
+	for (p = dir + 1; *p; p++) {
+		if (*p == path_sep) {
+			if (p <= skip_prefix_end) continue;
+
+			char saved = *p;
+			*p = '\0';
+
+			if (!check_dir2(dir)) {
+				if (MKDIR(dir) != 0 && errno != EEXIST) {
+					*p = saved;
+					return FALSE;
+				}
+			}
+			*p = saved;
+		}
+	}
+
+	/* Finally ensure the deepest directory exists. */
+	if (skip_prefix_end >= dir && *skip_prefix_end == '\0') return TRUE;
+	if (!check_dir2(dir)) {
+		if (MKDIR(dir) != 0 && errno != EEXIST) return FALSE;
+	}
+
+	return TRUE;
+}
+
+bool sdl2_paths_same(cptr path1, cptr path2) {
+	size_t len1, len2;
+	size_t i;
+
+	if (!path1 || !path2) return(FALSE);
+
+	len1 = strlen(path1);
+	len2 = strlen(path2);
+
+	while (len1 > 1 && path1[len1 - 1] == SDL2_PATH_SEP[0]) len1--;
+	while (len2 > 1 && path2[len2 - 1] == SDL2_PATH_SEP[0]) len2--;
+
+	if (len1 != len2) return(FALSE);
+
+	const bool windows_paths = SDL2_PATH_SEP[0] == '\\';
+	for (i = 0; i < len1; i++) {
+		unsigned char c1 = (unsigned char)path1[i];
+		unsigned char c2 = (unsigned char)path2[i];
+
+		if (windows_paths) {
+			if (tolower(c1) != tolower(c2)) return(FALSE);
+		} else {
+			if (c1 != c2) return(FALSE);
+		}
+	}
+
+	return(TRUE);
+}
+#endif
+
 /*
  * Hack -- replacement for "fopen()"
+ * Parses the path and returns error > 900 when path is invalid.
+ *
+ * In SDL2 client the ANGBAND_DIR is considered read-only and ANGBAND_USER_DIR is for writing.
+ * So when opening a file in ANGBAND_DIR for writing, copy the file to ANGBAND_USER_DIR first and open it there.
+ * When opening a file in ANGBAND_DIR for reading only, first looks for the file in ANGBAND_USER_DIR and opens it if present.
  */
 FILE *my_fopen(cptr file, cptr mode) {
 	char		buf[1024];
@@ -305,6 +430,47 @@ FILE *my_fopen(cptr file, cptr mode) {
 		errno = 900 + err;
 		return(NULL);
 	}
+
+	/* SDL2 user dir redirection */
+#ifdef USE_SDL2
+	/* Check if file is in the game storage. */
+	if (prefix(buf, ANGBAND_DIR)) {
+		char ubuf[1024];
+		cptr tail = buf + strlen(ANGBAND_DIR);
+		strnfmt(ubuf, sizeof(ubuf), "%s%s", ANGBAND_USER_DIR, tail);
+
+		/* Skip redirection overhead if user and game storage resolve to the same file. */
+		if (sdl2_paths_same(ubuf, buf)) return fopen(buf, mode);
+
+		/* If file exists in user storage, use it. */
+		if (my_fexists(ubuf)) {
+			return fopen(ubuf, mode);
+		}
+		/* Now we know, the file does not exist in user storage. */
+
+		/* If the file is opened in read-only mode, open the file in the game storage. */
+		if (mode[0] == 'r' && !strchr(mode, '+') && !strchr(mode, 'a')) {
+			return fopen(buf, mode);
+		}
+		/* Now we know, that the file wants to be open in write/append mode and therefore the file will be create/copied in/to user storage. */
+
+		/* First ensure the directory exist in user storage. */ 
+		if (!sdl2_ensure_parent_dirs(ubuf)) {
+			plog_fmt("Failed to prepare directory for user file: %s", ubuf);
+			return(NULL);
+		}
+
+		/* If file exists in game storage, copy it to user storage. */
+		if (my_fexists(buf)) {
+			if (my_fcopy(buf, ubuf) != 0) {
+				plog_fmt("Failed to copy file from %s to %s", buf, ubuf);
+			}
+		}
+
+		/* Open file in user storage. */
+		return fopen(ubuf, mode);
+	}
+#endif
 
 	/* Attempt to fopen the file anyway */
 	return(fopen(buf, mode));
@@ -641,6 +807,14 @@ void init_file_paths(char *path) {
 	string_free(ANGBAND_DIR_USER);
 	string_free(ANGBAND_DIR_XTRA);
 	string_free(ANGBAND_DIR_GAME);
+#ifdef USE_SDL2
+	string_free(ANGBAND_USER_DIR);
+	string_free(ANGBAND_USER_DIR_SCPT);
+	string_free(ANGBAND_USER_DIR_TEXT);
+	string_free(ANGBAND_USER_DIR_USER);
+	string_free(ANGBAND_USER_DIR_XTRA);
+	string_free(ANGBAND_USER_DIR_GAME);
+#endif
 
 
 	/*** Prepare the "path" ***/
@@ -680,7 +854,7 @@ void init_file_paths(char *path) {
 
  /* On Windows 7 and higher, users should save their data to their designated user folder,
     or write access problems might occur, especially when overwriting a file! */
- #if !defined(WINDOWS) || !defined(WINDOWS_USER_HOME)
+ #if !defined(WINDOWS) || !defined(WINDOWS_USER_HOME) || defined(USE_SDL2)
 	/* Build a path name */
 	strcpy(tail, "scpt");
 	ANGBAND_DIR_SCPT = string_make(path);
@@ -728,6 +902,50 @@ void init_file_paths(char *path) {
 
 		/* terminate lib path again at it's actual location of the 'lib' folder */
 		strcpy(tail, ""); /* -> this is ANGBAND_DIR */
+
+ #ifdef USE_SDL2
+	{
+		char buf[1024], *btail;
+		bool scpt_created = false;
+
+		strcpy(buf, SDL2_USER_PATH);
+		btail = buf + strlen(buf);
+		ANGBAND_USER_DIR = string_make(buf);
+
+		char *dirs[5] = {"scpt", "text", "user", "xtra", "game"};
+		cptr *targets[5] = {&ANGBAND_USER_DIR_SCPT, &ANGBAND_USER_DIR_TEXT, &ANGBAND_USER_DIR_USER, &ANGBAND_USER_DIR_XTRA, &ANGBAND_USER_DIR_GAME};
+
+		for (int i = 0; i < 5; i++) {
+			strcpy(btail, dirs[i]);
+			*targets[i] = string_make(buf);
+			if (!check_dir2(*targets[i])) {
+				plog_fmt("Creating directory in user data location: %s", *targets[i]);
+				MKDIR(*targets[i]);
+				if (targets[i] == &ANGBAND_USER_DIR_SCPT) scpt_created = true;
+
+			}
+		}
+
+		/* After creating the user script directory, copy scripts from game lib. */
+		if (scpt_created) {
+			DIR *dp;
+			struct dirent *ep;
+			char src[1024], dst[1024];
+
+			if ((dp = opendir(ANGBAND_DIR_SCPT)) != NULL) {
+				while ((ep = readdir(dp)) != NULL) {
+					if (ep->d_name[0] == '.') continue;
+					path_build(src, sizeof(src), ANGBAND_DIR_SCPT, ep->d_name);
+					path_build(dst, sizeof(dst), ANGBAND_USER_DIR_SCPT, ep->d_name);
+					if (my_fexists(src)) {
+						my_fcopy(src, dst);
+					}
+				}
+				closedir(dp);
+			}
+		}
+	}
+ #endif /* USE_SDL2 */
 
 #endif /* VM */
 }
@@ -830,6 +1048,9 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 	int n1, n2;
 
 	char *zz[16], tmp[1024];
+#if defined(USE_SDL2) && defined(USE_GRAPHICS)
+	uint32_t color;
+#endif
 
 	/* We use our own macro__buf - mikaelh */
 	static char *macro__buf = NULL;
@@ -1260,6 +1481,41 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 			return(0);
 		}
 		break;
+
+#if defined(USE_SDL2) && defined(USE_GRAPHICS)
+	/* Process "m:<num>:<hexRGB>" -- specify mask color for SDL2 graphic tiles. */
+	case 'm':
+		if (tokenize(buf + 2, 2, zz) == 2) {
+			i = (byte)strtol(zz[0], NULL, 0);
+			if (i >= GRAPHICS_MAX_MPT) {
+				c_message_add("\377yInvalid mask color number.");
+				return(1);
+			}
+
+			/* If the format is '#......', parse the color */
+			if (zz[1][0] != '#') {
+					c_message_add("\377yInvalid mask color format.");
+					return(1);
+			}
+
+			/* Read the RGB value and store. */
+			if (sscanf(zz[1] + 1, "%06x", &color) == 1) {
+				uint32_t *mask_colors = graphics_image_masks_colors_prefs;
+
+				if (subtileset >= 0 && subtileset < MAX_SUBFONTS) {
+					mask_colors = graphics_image_masks_colors_sub_prefs[subtileset];
+				}
+				/* Convert to RGBA and store. */
+				mask_colors[i] = 0x000000ff | (color << 8);
+			} else {
+				c_message_add("\377yInvalid mask color value.");
+				return(1);
+			}
+
+			return(0);
+		}
+		break;
+#endif
 	}
 
 	/* Failure */
@@ -1293,6 +1549,8 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	c = buf + strlen(buf);
 #ifdef WINDOWS
 	while (c >= buf && *c != '\\') c--;
+#elif defined(USE_SDL2)
+	while (c >= buf && *c != SDL2_PATH_SEP[0]) c--;
 #else
 	while (c >= buf && *c != '/') c--;
 #endif
@@ -2159,7 +2417,11 @@ void xhtml_screenshot(cptr name, byte redux) {
 			DIR *dp;
 			struct dirent *entry;
 
+ #ifdef USE_SDL2
+			dp = opendir(ANGBAND_USER_DIR_USER);
+ #else
 			dp = opendir(ANGBAND_DIR_USER);
+ #endif
 
 			if (!dp) {
 				c_msg_print("Couldn't open the user directory.");
@@ -2198,17 +2460,23 @@ void xhtml_screenshot(cptr name, byte redux) {
 			    ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
 		}
 
+#ifdef USE_SDL2
+		path_build(buf, 1024, ANGBAND_USER_DIR_USER, file_name);
+#else
 		path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
+#endif
 	} else {
 		strncpy(file_name, name, 249);
 		file_name[249] = '\0';
 		strcat(file_name, ".xhtml");
+#ifdef USE_SDL2
+		path_build(buf, 1024, ANGBAND_USER_DIR_USER, file_name);
+#else
 		path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
-		fp = fopen(buf, "rb");
-		if (fp) {
+#endif
+		if (my_fexists(buf)) {
 			char buf2[1028];
 
-			fclose(fp);
 			strcpy(buf2, buf);
 			strcat(buf2, ".bak");
 			/* Make a backup of an already existing file */
@@ -2217,7 +2485,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 	}
 
 #ifdef ENABLE_SHIFT_SPECIALKEYS
-	/* Hack: SHIFT+CTRL+T makes a real (PNG) screenshot instead of an xhtml screenshot - C. Blue */
+	/* Hack: SHIFT+CTRL+T makes a real screenshot (PNG or BMP) instead of an xhtml screenshot - C. Blue */
 	if ((!c_cfg.screenshot_keys && inkey_shift_special == 3) ||
 	    (c_cfg.screenshot_keys && inkey_shift_special != 3)) {
  #if defined(USE_X11)
@@ -2235,6 +2503,23 @@ void xhtml_screenshot(cptr name, byte redux) {
 			silent_dump = FALSE;
 			return;
 		}
+ #elif defined(USE_SDL2)
+		/* Change the screenshot path extension to png/bmp. */
+		buf[strlen(buf) - 5] = 0;
+		strcat(buf, SDL2_SCREENSHOT_EXT);
+		/* Make png/bmp screenshot. */
+		if (sdl2_win_term_main_screenshot(buf)) { /* Fail. */
+			c_msg_format("Error: Failed to save screenshot of main term window to %s", buf);
+		} else { /* Success. */
+			/* Change the screenshot filename extension to png/bmp. */
+			file_name[strlen(file_name) - 5] = 0;
+			strcat(file_name, SDL2_SCREENSHOT_EXT);
+			if (!silent_dump) c_msg_format("Screenshot saved to %s", file_name);
+			/* Store last taken screenshot file name with extension. */
+			strcpy(screenshot_filename, file_name);
+		}
+		silent_dump = FALSE;
+		return;
  #elif defined(WINDOWS)
 		/* On Windows, use the .NET framework if available, via batch file */
 		char buf2[1028];
@@ -2260,7 +2545,7 @@ void xhtml_screenshot(cptr name, byte redux) {
 	}
 #endif
 
-	fp = fopen(buf, "wb");
+	fp = my_fopen(buf, "wb");
 	if (!fp) {
 		/* Couldn't write */
 		silent_dump = FALSE;
@@ -2442,8 +2727,13 @@ void xhtml_screenshot(cptr name, byte redux) {
 	if (!silent_dump) c_msg_format("Screenshot saved to %s.xhtml", file_name);
 	else silent_dump = FALSE;
 
-	/* For PNG screenshot */
+	/* For last screenshot */
+#ifdef USE_SDL2
+	/* SDL2 clients store screenshot_filename with extension. */
+	strnfmt(screenshot_filename, sizeof(screenshot_filename), "%s.xhtml", file_name);
+#else
 	strcpy(screenshot_filename, file_name);
+#endif
 	screenshot_height = ss_lines;
 }
 
@@ -2468,9 +2758,13 @@ void save_auto_inscriptions(cptr name) {
 		} else strcat(file_name, ".ins");
 	} else strcat(file_name, ".ins");
 
+#ifdef USE_SDL2
+	path_build(buf, 1024, ANGBAND_USER_DIR_USER, file_name);
+#else
 	path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
+#endif
 
-	fp = fopen(buf, "w");
+	fp = my_fopen(buf, "w");
 	if (!fp) {
 		/* Couldn't write */
 		c_msg_print("Saving Auto-inscriptions failed!");
@@ -2552,9 +2846,13 @@ bool load_auto_inscriptions(cptr name) {
 		} else strcat(file_name, ".ins");
 	} else strcat(file_name, ".ins");
 
+#ifdef USE_SDL2
+	path_build(buf, 1024, ANGBAND_USER_DIR_USER, file_name);
+	if (!my_fexists(buf) && !sdl2_paths_same(ANGBAND_USER_DIR_USER, ANGBAND_DIR_USER))
+#endif
 	path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 
-	fp = fopen(buf, "r");
+	fp = my_fopen(buf, "r");
 	if (!fp) {
 		/* Couldn't open */
 		return(FALSE);
@@ -2842,9 +3140,13 @@ void save_birth_file(cptr cname, bool touch) {
 		} else strcat(file_name, ".dna");
 	} else strcat(file_name, ".dna");
 
+#ifdef USE_SDL2
+	path_build(buf, 1024, ANGBAND_USER_DIR_USER, file_name);
+#else
 	path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
+#endif
 
-	fp = fopen(buf, "w");
+	fp = my_fopen(buf, "w");
 	if (!fp) {
 		/* Couldn't write */
 		c_msg_print("Saving character birth dna failed!");
@@ -2919,9 +3221,13 @@ void load_birth_file(cptr cname) {
 		} else strcat(file_name, ".dna");
 	} else strcat(file_name, ".dna");
 
+#ifdef USE_SDL2
+	path_build(buf, 1024, ANGBAND_USER_DIR_USER, file_name);
+	if (!my_fexists(buf) && !sdl2_paths_same(ANGBAND_USER_DIR_USER, ANGBAND_DIR_USER))
+#endif
 	path_build(buf, 1024, ANGBAND_DIR_USER, file_name);
 
-	fp = fopen(buf, "r");
+	fp = my_fopen(buf, "r");
 	if (!fp) {
 		/* Couldn't open */
 		return;
@@ -3019,36 +3325,204 @@ void load_birth_file(cptr cname) {
 	if (update) save_birth_file(name, TRUE);
 }
 
+#if defined(USE_SDL2) && defined(SDL2_CURL_SSL)
+ #include <curl/curl.h>
+ #include <openssl/evp.h>
+
+/* Memory structure for storing downloaded data */
+typedef struct {
+	char *data;
+	size_t size;
+} Memory;
+
+/* Callback function for libcurl to write received data */
+static size_t WriteMemoryCallback(void *contents, size_t size, size_t nmemb, void *userp) {
+	size_t realSize = size * nmemb;
+	Memory *mem = (Memory *)userp;
+	char *ptr = realloc(mem->data, mem->size + realSize + 1);
+	if (ptr == NULL) {
+		return 0;  /* out of memory */
+	}
+	mem->data = ptr;
+	memcpy(&(mem->data[mem->size]), contents, realSize);
+	mem->size += realSize;
+	mem->data[mem->size] = '\0';
+	return realSize;
+}
+
+/*
+ * Check if our Guide is outdated by comparing the SHA256 checksums.
+ * This function is executed only on initial client startup or when forced.
+ */
+int check_guide_checksums(bool forced) {
+	FILE *fp;
+	char filepath[MAX_PATH_LENGTH];
+	char localHashHex[EVP_MAX_MD_SIZE * 2 + 1];
+	char remoteHashHex[MAX_CHARS_WIDE];
+	unsigned char localHashBin[EVP_MAX_MD_SIZE];
+	unsigned int hash_len;
+	unsigned char readBuffer[4096];
+	size_t bytesRead;
+	Memory mem;
+	CURL *curl;
+	CURLcode res;
+	char message[256];
+	const char *cause;
+	EVP_MD_CTX *mdctx;
+	char *space;
+	int i;
+
+	if (!forced)
+		return 0;
+
+	snprintf(filepath, MAX_PATH_LENGTH, "%s%s", ANGBAND_USER_DIR, "TomeNET-Guide.txt");
+	if (!my_fexists(filepath) && !sdl2_paths_same(ANGBAND_USER_DIR, ANGBAND_DIR))
+		snprintf(filepath, MAX_PATH_LENGTH, "%s%s", ANGBAND_DIR, "TomeNET-Guide.txt");
+	if (!my_fexists(filepath))
+		snprintf(filepath, MAX_PATH_LENGTH, "%s%s", SDL2_GAME_PATH, "TomeNET-Guide.txt");
+
+	fp = my_fopen(filepath, "rb");
+	if (fp == NULL) {
+		c_msg_print("\377yError verifying Guide version: Cannot read 'TomeNET-Guide.txt'.");
+		return 2;
+	}
+
+	mdctx = EVP_MD_CTX_new();
+	if (!mdctx) {
+		c_msg_print("\377yError verifying Guide version: Failed to create EVP context.");
+		fclose(fp);
+		return 6;
+	}
+
+	if (EVP_DigestInit_ex(mdctx, EVP_sha256(), NULL) != 1) {
+		c_msg_print("\377yError verifying Guide version: Failed to initialize SHA256.");
+		EVP_MD_CTX_free(mdctx);
+		fclose(fp);
+		return 6;
+	}
+
+	while ((bytesRead = fread(readBuffer, 1, sizeof(readBuffer), fp)) > 0) {
+		if (EVP_DigestUpdate(mdctx, readBuffer, bytesRead) != 1) {
+			c_msg_print("\377yError verifying Guide version: SHA256 update failed.");
+			EVP_MD_CTX_free(mdctx);
+			fclose(fp);
+			return 6;
+		}
+	}
+
+	fclose(fp);
+
+	if (EVP_DigestFinal_ex(mdctx, localHashBin, &hash_len) != 1) {
+		c_msg_print("\377yError verifying Guide version: SHA256 finalization failed.");
+		EVP_MD_CTX_free(mdctx);
+		return 6;
+	}
+
+	EVP_MD_CTX_free(mdctx);
+
+	for (i = 0; i < hash_len; i++) {
+		sprintf(&localHashHex[i * 2], "%02x", localHashBin[i]);
+	}
+	localHashHex[hash_len * 2] = '\0';
+
+	mem.data = malloc(1);
+	mem.size = 0;
+	if (mem.data == NULL) {
+		c_msg_print("\377yError verifying Guide version: Memory allocation failed.");
+		return 7;
+	}
+
+	curl = curl_easy_init();
+	if (!curl) {
+		c_msg_print("\377yError verifying Guide version: Failed to initialize libcurl.");
+		free(mem.data);
+		return 7;
+	}
+
+	c_msg_format("Verifying Guide version against hash at %s, please wait (max %lds)...", TOMENET_GUIDE_SHA256_URL, TOMENET_GUIDE_SHA256_URL_TIMEOUT);
+	/* Refresh all relevant the windows (except main) to show the message. */
+	{
+		const u32b msg_flags = PW_MESSAGE | PW_CHAT | PW_MSGNOCHAT;
+
+		if (p_ptr->window & msg_flags) {
+			const u32b pending = p_ptr->window & ~msg_flags;
+
+			p_ptr->window &= msg_flags;
+			window_stuff();
+			p_ptr->window |= pending;
+		}
+	}
+
+	curl_easy_setopt(curl, CURLOPT_URL, TOMENET_GUIDE_SHA256_URL);
+	curl_easy_setopt(curl, CURLOPT_TIMEOUT, TOMENET_GUIDE_SHA256_URL_TIMEOUT);
+	curl_easy_setopt(curl, CURLOPT_FOLLOWLOCATION, 1L);
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, WriteMemoryCallback);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, (void *)&mem);
+
+	res = curl_easy_perform(curl);
+	curl_easy_cleanup(curl);
+	if (res != CURLE_OK || mem.size == 0) {
+		cause = (res != CURLE_OK) ? curl_easy_strerror(res) : "Empty response";
+		snprintf(message, sizeof(message), "\377yError verifying Guide version: Cannot download 'TomeNET-Guide.sha256' (%s).", cause);
+		c_msg_print(message);
+		free(mem.data);
+		return 3;
+	}
+
+	strncpy(remoteHashHex, mem.data, MAX_CHARS_WIDE - 1);
+	remoteHashHex[MAX_CHARS_WIDE - 1] = '\0';
+	free(mem.data);
+
+	space = strchr(remoteHashHex, ' ');
+	if (space) {
+		*space = '\0';
+	}
+
+	guide_outdated = (strcmp(localHashHex, remoteHashHex) != 0);
+
+	return 0;
+}
+#elif defined(USE_SDL2)
+int check_guide_checksums(bool forced) {
+    /* If not forced, do not perform the checksum check */
+    if (!forced)
+        return 0;
+
+    plog("This client was built without guide checksum checks.\nYou can check manually a sha256 checksum for TomeNET-Guide.txt against the content of https://www.tomenet.eu/TomeNET-Guide.sha256");
+
+    return 0;
+}
+#else
 /* Check if our Guide is outdated -- only do this once on initial client startup, not on every relog (retry_contact).
    Also do this when explicitely requested (eg via =U or /reinit_guide). */
-#ifdef WINDOWS
- #include <process.h> /* for _spawnl() */
-#endif
+ #ifdef WINDOWS
+  #include <process.h> /* for _spawnl() */
+ #endif
 int check_guide_checksums(bool forced) {
 	FILE *fp;
 	char buf[MAX_CHARS_WIDE], buf2[MAX_CHARS_WIDE], *c;
 
 	/* TODO: Make this a .tomenetrc / tomenet.ini switch */
-#ifdef WINDOWS
- #if 1	/* 1: Don't check guide checksums on client startup. \
+ #ifdef WINDOWS
+  #if 1	/* 1: Don't check guide checksums on client startup. \
 	      Disabled now as nobody has the required sha256sum.exe/bat files in their 'updater' folder anyway. Reenable on next release. */
 	/* (guide_outdated remains FALSE) */
 	if (!forced) return(0);
- #endif
-#else /* Assume POSIX - We assume that sha256sum is probably available on POSIX, so this could be worth using already. */
- #if 1	/* 1: Don't check guide checksums on client startup. We have = C now, so this isn't that important anymore. */
+  #endif
+ #else /* Assume POSIX - We assume that sha256sum is probably available on POSIX, so this could be worth using already. */
+  #if 1	/* 1: Don't check guide checksums on client startup. We have = C now, so this isn't that important anymore. */
 	/* (guide_outdated remains FALSE) */
 	if (!forced) return(0);
+  #endif
  #endif
-#endif
 
 	/* Do we have sha256sum tool? */
-#ifdef WINDOWS
+ #ifdef WINDOWS
 	if (!my_fexists("updater\\sha256sum.bat"))
 	//if (access("updater\\sha256sum.bat", F_OK))
-#else /* assume POSIX */
+ #else /* assume POSIX */
 	if (system("sha256sum --version"))
-#endif
+ #endif
 	{
 		//logprint("Warning: No sha256sum found, cannot auto-check guide for outdatedness.\n"); --could be spammy
 		guide_outdated = FALSE;
@@ -3057,11 +3531,11 @@ int check_guide_checksums(bool forced) {
 	}
 
 	buf2[0] = buf[0] = 0;
-#ifdef WINDOWS
+ #ifdef WINDOWS
 	(void)_spawnl(_P_WAIT, "updater\\sha256sum.bat", "updater\\sha256sum.bat", NULL);
-#else /* assume POSIX */
+ #else /* assume POSIX */
 	(void)system("sha256sum TomeNET-Guide.txt > TomeNET-Guide.sha256.local");
-#endif
+ #endif
 	fp = fopen("TomeNET-Guide.sha256.local", "r");
 	if (fp) {
 		if (fgets(buf2, MAX_CHARS_WIDE - 1, fp) == NULL) {
@@ -3069,7 +3543,7 @@ int check_guide_checksums(bool forced) {
 			fclose(fp);
 			return(4);
 		}
-		buf[MAX_CHARS_WIDE - 1] = 0; //paranoia
+		buf2[MAX_CHARS_WIDE - 1] = 0; //paranoia
 		fclose(fp);
 	} else {
 		c_msg_print("\377yError verifying Guide version: Cannot read 'TomeNET-Guide.sha256.local'.");
@@ -3077,11 +3551,11 @@ int check_guide_checksums(bool forced) {
 	}
 	remove("TomeNET-Guide.sha256.local");
 	if ((c = strchr(buf2, ' '))) *c = 0; //cut off file name, only keep the actual hash
-#ifdef WINDOWS
+ #ifdef WINDOWS
 	(void)_spawnl(_P_WAIT, "updater\\wget.exe", "wget.exe", "--dot-style=mega", "https://www.tomenet.eu/TomeNET-Guide.sha256", NULL);
-#else /* assume POSIX */
+ #else /* assume POSIX */
 	(void)system("wget --timeout=3 https://www.tomenet.eu/TomeNET-Guide.sha256");
-#endif
+ #endif
 	fp = fopen("TomeNET-Guide.sha256", "r");
 	if (fp) {
 		if (fgets(buf, MAX_CHARS_WIDE - 1, fp) == NULL) {
@@ -3105,3 +3579,4 @@ int check_guide_checksums(bool forced) {
 
 	return(0);
 }
+#endif

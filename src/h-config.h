@@ -88,58 +88,60 @@
  * OPTION: Compile on Pyramid, treat it as Ultrix
  */
 #if defined(Pyramid)
-# ifndef ultrix
-#  define ultrix
-# endif
+ #ifndef ultrix
+  #define ultrix
+ #endif
 #endif
 
 /*
  * Extract the "ATARI" flag from the compiler [cjh]
  */
 #if defined(__atarist) || defined(__atarist__)
-# ifndef ATARI
-#  define ATARI
-# endif
+ #ifndef ATARI
+  #define ATARI
+ #endif
 #endif
 
 /*
  * Extract the "ACORN" flag from the compiler
  */
 #ifdef __riscos
-# ifndef ACORN
-#  define ACORN
-# endif
+ #ifndef ACORN
+  #define ACORN
+ #endif
 #endif
 
 /*
  * Extract the "SGI" flag from the compiler
  */
 #ifdef sgi
-# ifndef SGI
-#  define SGI
-# endif
+ #ifndef SGI
+  #define SGI
+ #endif
 #endif
 
 /*
  * Extract the "MSDOS" flag from the compiler
  */
 #ifdef __MSDOS__
-# ifndef MSDOS
-#  define MSDOS
-# endif
+ #ifndef MSDOS
+  #define MSDOS
+ #endif
 #endif
 
 /*
- * Extract the "WINDOWS" flag from the compiler
+ * Extract the "WINDOWS" flag from the compiler, but only if not an SDL2 client.
  */
-#if defined(_Windows) || defined(__WINDOWS__) || \
-    defined(__WIN32__) || defined(WIN32) || \
-    defined(__WINNT__) || defined(__NT__)
-# ifndef WINDOWS
-#  define WINDOWS
-#  define strcasecmp stricmp
-#  define strncasecmp strnicmp
-# endif
+#ifndef USE_SDL2
+ #if defined(_Windows) || defined(__WINDOWS__) || \
+     defined(__WIN32__) || defined(WIN32) || \
+     defined(__WINNT__) || defined(__NT__)
+  #ifndef WINDOWS
+   #define WINDOWS
+   #define strcasecmp stricmp
+   #define strncasecmp strnicmp
+  #endif
+ #endif
 #endif
 /* Note: The client-side code for Windows often runs into the trouble of Wine/Win7/Win10/Win11 etc. behaving
          differently and inconsistently or straight out having bugs that Microsoft never bothered to fix.
@@ -153,7 +155,7 @@
  * OPTION: Define "L64" if a "long" is 64-bits.  See "h-types.h".
  */
 #if defined(__alpha) || defined(__amd64__) || defined(__ia64__)
-# define L64
+ #define L64
 #endif
 
 
@@ -169,10 +171,10 @@
  * Basically, SET_UID should *only* be set for "Unix" machines,
  * or for the "Atari" platform which is Unix-like, apparently
  */
-#if !defined(MACINTOSH) && !defined(WINDOWS) && \
+#if !defined(MACINTOSH) && !defined(WINDOWS) && !defined(USE_SDL2) && \
     !defined(MSDOS) && \
     !defined(AMIGA) && !defined(ACORN) && !defined(VM)
-# define SET_UID
+ #define SET_UID
 #endif
 
 
@@ -184,12 +186,12 @@
  * involving userid's, or multiple users on a single machine, etc.
  */
 #ifdef SET_UID
-# if defined(SYS_III) || defined(SYS_V) || defined(SOLARIS) || \
+ #if defined(SYS_III) || defined(SYS_V) || defined(SOLARIS) || \
      defined(HPUX) || defined(SGI) || defined(ATARI)
-#  ifndef USG
-#   define USG
-#  endif
-# endif
+  #ifndef USG
+   #define USG
+  #endif
+ #endif
 #endif
 
 
@@ -205,28 +207,28 @@
 #undef PATH_SEP
 #define PATH_SEP "/"
 #ifdef MACINTOSH
-# undef PATH_SEP
-# define PATH_SEP ":"
+ #undef PATH_SEP
+ #define PATH_SEP ":"
 #endif
 #if defined(WINDOWS) || defined(WINNT)
-# undef PATH_SEP
-# define PATH_SEP "\\"
+ #undef PATH_SEP
+ #define PATH_SEP "\\"
 #endif
 #if defined(MSDOS) || defined(OS2) || defined(USE_EMX)
-# undef PATH_SEP
-# define PATH_SEP "\\"
+ #undef PATH_SEP
+ #define PATH_SEP "\\"
 #endif
 #ifdef AMIGA
-# undef PATH_SEP
-# define PATH_SEP "/"
+ #undef PATH_SEP
+ #define PATH_SEP "/"
 #endif
 #ifdef __GO32__
-# undef PATH_SEP
-# define PATH_SEP "/"
+ #undef PATH_SEP
+ #define PATH_SEP "/"
 #endif
 #ifdef VM
-# undef PATH_SEP
-# define PATH_SEP ""
+ #undef PATH_SEP
+ #define PATH_SEP ""
 #endif
 
 
@@ -234,12 +236,12 @@
  * The Macintosh allows the use of a "file type" when creating a file
  */
 #if defined(MACINTOSH) && !defined(applec)
-# define FILE_TYPE_TEXT 'TEXT'
-# define FILE_TYPE_DATA 'DATA'
-# define FILE_TYPE_SAVE 'SAVE'
-# define FILE_TYPE(X) (_ftype = (X))
+ #define FILE_TYPE_TEXT 'TEXT'
+ #define FILE_TYPE_DATA 'DATA'
+ #define FILE_TYPE_SAVE 'SAVE'
+ #define FILE_TYPE(X) (_ftype = (X))
 #else
-# define FILE_TYPE(X) ((void)0)
+ #define FILE_TYPE(X) ((void)0)
 #endif
 
 
@@ -247,10 +249,10 @@
  * OPTION: Hack -- Make sure "strchr()" and "strrchr()" will work
  */
 #if defined(SYS_III) || defined(SYS_V) || defined(MSDOS)
-# if !defined(__TURBOC__) && !defined(__WATCOMC__) && !defined(MINGW)
-#  define strchr index
-#  define strrchr rindex
-# endif
+ #if !defined(__TURBOC__) && !defined(__WATCOMC__) && !defined(MINGW)
+  #define strchr index
+  #define strrchr rindex
+ #endif
 #endif
 
 
@@ -264,8 +266,8 @@
  * Linux has "stricmp()" with a different name
  */
 #if defined(linux)
-# define HAS_STRICMP
-# define stricmp strcasecmp
+ #define HAS_STRICMP
+ #define stricmp strcasecmp
 #endif
 
 
@@ -281,14 +283,13 @@
  * Note that this is only relevant for "SET_UID" machines
  */
 #ifdef SET_UID
-# if !defined(ultrix) && !defined(SOLARIS) && \
+ #if !defined(ultrix) && !defined(SOLARIS) && \
      !defined(SGI) && !defined(ISC) && !defined(USE_EMX)
-#  define HAS_USLEEP
-# endif
+  #define HAS_USLEEP
+ #endif
 #endif
 
 
 
-#endif
-
+#endif /* #ifndef INCLUDED_H_CONFIG_H */
 

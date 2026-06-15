@@ -51,6 +51,6 @@ color_rgb getBgmaskPixelColor(color_rgb pixel_color);
 
 color_rgb pixelBilinearInterpolation(float fractionOfX, float fractionOfY, color_rgb p11, color_rgb p12, color_rgb p21, color_rgb p22);
 
-double lanczosKernel(double x, int lanczos_a);
+float lanczosKernel(float x, int lanczos_a);
 
 #endif //SRC_GRAPHICS_COMMON_H

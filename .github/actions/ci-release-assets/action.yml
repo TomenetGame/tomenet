@@ -1,0 +1,92 @@
+name: CI Release Assets
+description: Resolve release version, tag name, and expected asset names.
+inputs:
+  version:
+    description: Version string without v prefix.
+    required: false
+  tag_name:
+    description: Tag name with v prefix.
+    required: false
+outputs:
+  tag_name:
+    description: Tag name with v prefix.
+    value: ${{ steps.resolve.outputs.tag_name }}
+  version:
+    description: Version string without v prefix.
+    value: ${{ steps.resolve.outputs.version }}
+  asset_1:
+    description: Client SDL2 Linux archive.
+    value: ${{ steps.resolve.outputs.asset_1 }}
+  asset_2:
+    description: Client SDL2 Win32 archive.
+    value: ${{ steps.resolve.outputs.asset_2 }}
+  asset_3:
+    description: Client X11 Linux archive.
+    value: ${{ steps.resolve.outputs.asset_3 }}
+  asset_4:
+    description: Server X11 Linux archive.
+    value: ${{ steps.resolve.outputs.asset_4 }}
+  asset_5:
+    description: Client Win32 archive.
+    value: ${{ steps.resolve.outputs.asset_5 }}
+  asset_list_json:
+    description: JSON array with all 5 asset names.
+    value: ${{ steps.resolve.outputs.asset_list_json }}
+runs:
+  using: composite
+  steps:
+    - id: resolve
+      shell: bash
+      run: |
+        set -euo pipefail
+
+        version_input="${{ inputs.version }}"
+        tag_input="${{ inputs.tag_name }}"
+
+        if [[ -n "$version_input" && -n "$tag_input" ]]; then
+          echo "Provide either 'version' or 'tag_name', not both." >&2
+          exit 1
+        fi
+
+        if [[ -z "$version_input" && -z "$tag_input" ]]; then
+          echo "Either 'version' or 'tag_name' must be provided." >&2
+          exit 1
+        fi
+
+        if [[ -n "$tag_input" ]]; then
+          if [[ "$tag_input" != v* ]]; then
+            echo "tag_name must start with 'v': $tag_input" >&2
+            exit 1
+          fi
+          tag_name="$tag_input"
+          version="${tag_input#v}"
+          if [[ -z "$version" || "$version" == "$tag_input" ]]; then
+            echo "Unable to derive version from tag '$tag_input'." >&2
+            exit 1
+          fi
+        else
+          version="$version_input"
+          if [[ -z "$version" ]]; then
+            echo "version cannot be empty." >&2
+            exit 1
+          fi
+          tag_name="v${version}"
+        fi
+
+        asset_1="tomenet-${version}-client-sdl2-linux-amd64.tar.bz2"
+        asset_2="tomenet-${version}-client-sdl2-win32.zip"
+        asset_3="tomenet-${version}-client-x11-linux-amd64.tar.bz2"
+        asset_4="tomenet-${version}-server-x11-linux-amd64.tar.bz2"
+        asset_5="tomenet-${version}-client-win32.zip"
+        asset_list_json="[\"${asset_1}\",\"${asset_2}\",\"${asset_3}\",\"${asset_4}\",\"${asset_5}\"]"
+
+        {
+          echo "tag_name=$tag_name"
+          echo "version=$version"
+          echo "asset_1=$asset_1"
+          echo "asset_2=$asset_2"
+          echo "asset_3=$asset_3"
+          echo "asset_4=$asset_4"
+          echo "asset_5=$asset_5"
+          echo "asset_list_json=$asset_list_json"
+        } >> "$GITHUB_OUTPUT"

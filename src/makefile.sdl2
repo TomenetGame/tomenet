@@ -1,0 +1,427 @@
+# $Id$
+# File: makefile.sdl2
+
+#
+# This file allows compiling TomeNET SDL2 client binaries for Linux and Windows.
+#
+# Compiling for linux uses clang by default, but can be changed if necessary.
+# Compiling for the Windows platform uses the MinGW cross-compiler running on Linux. You must install the MinGW cross compiler first.
+# If you want to use tolua.exe for .c files generation from .pkg files, wine must be installed to run the tolua.exe during compilation.
+# If wine isn't installed, the generation of .c files from .pkg files will be automatically done by linux native tolua executable.
+#
+# Also you need to install the headers for SDL2, SDL2_mixer, SDL2_ttf and SDL2_net in your (cross) compiling environment.
+#
+#
+# If you need to change executables, paths or flags, you can use ENV variables to steer the compilation without editing this makefile.
+# E.g you have wine installed, but don't want to use it in mingw compilation use: `HAVE_WINE=no make -f makefile.sdl2 tomenet.exe`.
+# List of variables you can override using ENV variables:
+#  - MINGW_TARGET - MinGW target triplet for Windows cross-compiles.
+#  - CC_LINUX / CC_MINGW - C compilers for Linux and MinGW builds.
+#  - PKG_CONFIG_LINUX / PKG_CONFIG_MINGW - pkg-config binaries used for dependency checks.
+#  - SDL_CONFIG_LINUX / SDL_CONFIG_MINGW - sdl2-config binaries used for SDL2 flags.
+#  - HAVE_SDL2_IMAGE_LINUX / HAVE_SDL2_IMAGE_MINGW - Force SDL2_image detection (yes/no).
+#  - HAVE_LIBARCHIVE_LINUX / HAVE_LIBARCHIVE_MINGW - Force libarchive detection (yes/no).
+#  - HAVE_CURL_LINUX / HAVE_OPENSSL_LINUX - Force curl/openssl detection (yes/no).
+#  - HAVE_CURL_MINGW / HAVE_OPENSSL_MINGW - Force curl/openssl detection (yes/no).
+#  - DEBUG_SOUND - Non-empty to enable SDL2_mixer debug logging.
+#  - WINE / HAVE_WINE - Wine binary and detection override (yes/no).
+#  - CPP / CPPFLAGS - preprocessor command and flags for preproc.
+#  - STICKY_KEYS_LINUX / STICKY_KEYS_MINGW - Use sticky keys in client (yes/no).
+#  - USE_GCU_LINUX - Enable Linux SDL2 build with GCU backend for `-c` CUI mode and GUI->GCU fallback (yes/no, default no).
+#
+#
+#
+# Compiler flags:
+#
+#  - USE_SDL2 - Required for all SDL2 clients, uses SDL2, SDL2_mixer, SDL2_ttf and SDL_net libraries.
+#  - SOUND_SDL2 - Optional, using SDL2_mixer library and provides SDL sound/music support. Is set as default.
+#  - SDL2_IMAGE - Optional, enables PNG screenshot support using the SDL2_image library. Without it, image screenshots will be saved in BMP format. If library is detected, used by default. Use environment variables to force on/off.
+#  - SDL2_ARCHIVE - Optional, enables audio pack extraction using the libarchive library. If library is detected, used by default. Use environment variables to force on/off.
+#  - SDL2_CURL_SSL - Optional, using curl & openssl libraries for guide checks. If libraries are detected, used by default. Use environment variables to force on/off.
+#  - SDL2_STICKY_KEYS - Optional, enables sticky key emulation logic in the SDL2 client. Disabled by default. Use environment variables to force on/off.
+#  - USE_GCU - Optional (Linux SDL2 build only). Disabled by default via USE_GCU_LINUX=no. Adds curses backend so `-c` works and GUI init can fallback to GCU.
+#  - MINGW - Required only for MinGW builds (cross-compiling Windows binaries). Used across shared code for MinGW-specific handling. Please try to write OS independent code (do not detect OS/platform using macros such as MINGW).
+#  - DEBUG_SOUND - Optional. When not empty sound debugging messages are printed.
+#  - TEST_CLIENT - Used for building test clients (tomente.test, tomenet.test.exe).
+
+
+#
+# The SDL2 client "object" files.
+#
+CLI_OBJS := \
+  common/z-util.o common/z-virt.o common/z-form.o common/z-rand.o \
+  common/net-sdl2.o common/sockbuf.o common/common.o \
+  client/z-term.o client/c-util.o client/c-cmd.o client/c-inven.o \
+  client/c-files.o client/c-tables.o client/c-store.o client/c-init.o \
+  client/variable.o client/main-sdl2.o client/nclient.o client/client.o \
+  client/c-birth.o client/c-xtra1.o client/c-xtra2.o client/c-spell.o \
+  client/skills.o common/files.o common/SFMT.o client/snd-sdl2.o \
+  client/graphics_common.o \
+  common/tables.o common/md5.o
+
+CLI_OBJS_GCU_LINUX :=
+CLI_OBJS_LINUX = $(patsubst %.o, %.linux.o, $(CLI_OBJS) $(CLI_OBJS_GCU_LINUX))
+CLI_OBJS_MINGW = $(patsubst %.o, %.mingw.o, $(CLI_OBJS))
+
+CLI_LUAOBJS := \
+  client/c-script.o client/lua_bind.o \
+  client/w_player.o client/w_util.o client/w_spells.o
+
+CLI_LUAOBJS_LINUX = $(patsubst %.o, %.linux.o, $(CLI_LUAOBJS))
+CLI_LUAOBJS_MINGW = $(patsubst %.o, %.mingw.o, $(CLI_LUAOBJS))
+
+#
+# The TOLUA compiler "object" files.
+#
+# TODO: lua directory should be under common/ and not server/
+TOLUAOBJS := \
+  server/lua/lapi.o server/lua/lcode.o server/lua/ldebug.o server/lua/ldo.o server/lua/lfunc.o server/lua/lgc.o \
+  server/lua/llex.o server/lua/lmem.o server/lua/lobject.o server/lua/lparser.o server/lua/lstate.o server/lua/lstring.o \
+  server/lua/ltable.o server/lua/ltests.o server/lua/ltm.o server/lua/lundump.o server/lua/lvm.o server/lua/lzio.o \
+  server/lua/lauxlib.o server/lua/lbaselib.o server/lua/ldblib.o server/lua/liolib.o server/lua/lstrlib.o \
+  server/lua/tolua_lb.o server/lua/tolua_rg.o server/lua/tolua_tt.o server/lua/tolua_tm.o server/lua/tolua_gp.o \
+  server/lua/tolua_eh.o server/lua/tolua_bd.o server/lua/lmathlib.o
+
+TOLUAOBJS_LINUX = $(patsubst %.o, %.linux.o, $(TOLUAOBJS))
+TOLUAOBJS_MINGW = $(patsubst %.o, %.mingw.o, $(TOLUAOBJS))
+
+#
+
+
+# Following are some "system" definitions
+#
+# No changes are needed to compile a version that will run on
+# SDL2, in debugging mode, with maximal warnings, on many
+# normal Unix machines.
+#
+# To use an "alternative" definition, simply "modify" (or "replace")
+# the definition below with one that you like.  For example, you can
+# change the compiler to "cc", or remove the "debugging" options, or
+# remove the sound or guide check support, etc, as desired.
+#
+# See also "config.h" and "h-config.h" for important information.
+#
+# Some "examples" are given below, they can be used by simply
+# removing the FIRST column of "#" signs from the "block" of lines
+# you wish to use, and commenting out "standard" block below.
+#
+# This is not intended to be a "good" Makefile, just a "simple" one.
+#
+
+
+#
+# MinGW toolchain target name for cross compiling to windows
+#
+# You many need to change this depending on your setup.
+MINGW_TARGET ?= i686-w64-mingw32
+
+
+#
+# Default C compiler for client, tolua, preproc and object files
+#
+CC_LINUX ?= clang
+CC_MINGW ?= $(MINGW_TARGET)-gcc
+
+
+#
+# Binaries for generating configurating flags and libraries.
+#
+PKG_CONFIG_LINUX ?= pkg-config
+SDL_CONFIG_LINUX ?= sdl2-config
+PKG_CONFIG_MINGW ?= $(MINGW_TARGET)-pkg-config
+SDL_CONFIG_MINGW_DETECTED := $(firstword \
+	$(wildcard /usr/$(MINGW_TARGET)/bin/sdl2-config) \
+	$(wildcard /usr/$(MINGW_TARGET)/sys-root/mingw/bin/sdl2-config) \
+	$(shell command -v $(MINGW_TARGET)-sdl2-config 2>/dev/null))
+
+SDL_CONFIG_MINGW ?= $(if $(SDL_CONFIG_MINGW_DETECTED),$(SDL_CONFIG_MINGW_DETECTED),/usr/$(MINGW_TARGET)/bin/sdl2-config)
+
+
+#
+# Common flags and libraries.
+#
+COMMON_FLAGS_LINUX := -std=c99 -pipe -Wall -fPIE -fsigned-char -DMEXP=19937 -D_XOPEN_SOURCE -D_BSD_SOURCE -D_DEFAULT_SOURCE -DLINUX -Iserver -Iserver/lua
+COMMON_FLAGS_MINGW := -flto=auto -Wall -DMEXP=19937 -std=c99 -DWINVER=0x0501 -DMINGW -Iserver -Iserver/lua
+FLAGS_GCU_LINUX :=
+LIBS_GCU_LINUX :=
+
+# Optional Linux SDL2 build with GCU backend.
+# When enabled (`USE_GCU_LINUX=yes`), `-c` can run terminal mode and SDL2 GUI init can fallback to GCU.
+USE_GCU_LINUX ?= no
+ifeq ($(USE_GCU_LINUX),yes)
+	# Keep USE_GCU for -c/fallback frontend support; SDL2 socket backend still uses pseudo-fd indexes.
+	FLAGS_GCU_LINUX += -DUSE_GCU
+	CLI_OBJS_GCU_LINUX += client/main-gcu.o
+	LIBS_GCU_LINUX += -lncurses
+
+	# Some Linux distributions have a separate libtinfo.
+	HAVE_TINFO_LINUX ?= $(shell command -v ldconfig >/dev/null 2>&1 && ldconfig -p 2>/dev/null | grep -q libtinfo && echo 1 || echo 0)
+	ifneq ($(strip $(HAVE_TINFO_LINUX)),0)
+		LIBS_GCU_LINUX += -ltinfo
+	endif
+endif
+
+#
+# Sound flags and libraries
+#
+FLAGS_SDL2_SOUND_LINUX := -DSOUND_SDL2
+LIBS_SDL2_SOUND_LINUX := -lSDL2_mixer
+FLAGS_SDL2_SOUND_MINGW := -DSOUND_SDL2
+LIBS_SDL2_SOUND_MINGW := -lSDL2_mixer
+
+ifneq ($(strip $(DEBUG_SOUND)),)
+FLAGS_SDL2_SOUND_LINUX += -DDEBUG_SOUND
+FLAGS_SDL2_SOUND_MINGW += -DDEBUG_SOUND
+endif
+
+# Check for SDL2_image library and set flags accordingly
+HAVE_SDL2_IMAGE_LINUX ?= $(shell $(PKG_CONFIG_LINUX) --exists SDL2_image && echo yes)
+HAVE_SDL2_IMAGE_MINGW ?= $(shell $(PKG_CONFIG_MINGW) --exists SDL2_image && echo yes)
+ifeq ($(HAVE_SDL2_IMAGE_LINUX),yes)
+	FLAGS_SDL2_IMAGE_LINUX := -DSDL2_IMAGE
+  LIBS_SDL2_IMAGE_LINUX := -lSDL2_image
+else
+  $(warning Warning: SDL2_image library for linux not found, PNG screenshot support disabled)
+endif
+ifeq ($(HAVE_SDL2_IMAGE_MINGW),yes)
+  FLAGS_SDL2_IMAGE_MINGW := -DSDL2_IMAGE
+  LIBS_SDL2_IMAGE_MINGW := -lSDL2_image
+else
+  $(warning Warning: SDL2_image library for mingw not found, PNG screenshot support disabled)
+endif
+
+# Check for libarchive library for extracting audio packs
+HAVE_LIBARCHIVE_LINUX ?= $(shell $(PKG_CONFIG_LINUX) --exists libarchive && echo yes)
+HAVE_LIBARCHIVE_MINGW ?= $(shell $(PKG_CONFIG_MINGW) --exists libarchive && echo yes)
+ifeq ($(HAVE_LIBARCHIVE_LINUX),yes)
+  FLAGS_LIBARCHIVE_LINUX := -DSDL2_ARCHIVE
+  LIBS_LIBARCHIVE_LINUX := -larchive
+else
+  $(warning Warning: libarchive library for linux not found, 7z support disabled)
+endif
+ifeq ($(HAVE_LIBARCHIVE_MINGW),yes)
+  FLAGS_LIBARCHIVE_MINGW := -DSDL2_ARCHIVE
+  LIBS_LIBARCHIVE_MINGW := -larchive
+else
+  $(warning Warning: libarchive library for mingw not found, 7z support disabled)
+endif
+
+
+#
+# Check for libcurl and openssl libraries and set flags accordingly.
+#
+HAVE_CURL_LINUX ?= $(shell $(PKG_CONFIG_LINUX) --exists libcurl && echo yes)
+HAVE_OPENSSL_LINUX ?= $(shell $(PKG_CONFIG_LINUX) --exists openssl && echo yes)
+ifeq ($(and $(HAVE_CURL_LINUX),$(HAVE_OPENSSL_LINUX)),yes)
+  FLAGS_SDL2_CURL_SSL_LINUX := -DSDL2_CURL_SSL
+  LIBS_SDL2_CURL_SSL_LINUX := $(shell $(PKG_CONFIG_LINUX) --libs libcurl openssl)
+else
+  ifneq ($(HAVE_CURL_LINUX),yes)
+    $(warning Warning: libcurl library for linux not found, SDL2_CURL_SSL will not be enabled)
+  endif
+  ifneq ($(HAVE_OPENSSL_LINUX),yes)
+    $(warning Warning: openssl library for linux not found, SDL2_CURL_SSL will not be enabled)
+  endif
+endif
+
+HAVE_CURL_MINGW ?= $(shell $(PKG_CONFIG_MINGW) --exists libcurl && echo yes)
+HAVE_OPENSSL_MINGW ?= $(shell $(PKG_CONFIG_MINGW) --exists openssl && echo yes)
+ifeq ($(and $(HAVE_CURL_MINGW),$(HAVE_OPENSSL_MINGW)),yes)
+  FLAGS_SDL2_CURL_SSL_MINGW := -DSDL2_CURL_SSL
+  LIBS_SDL2_CURL_SSL_MINGW := $(shell $(PKG_CONFIG_MINGW) --libs libcurl openssl)
+else
+  ifneq ($(HAVE_CURL_MINGW),yes)
+    $(warning Warning: libcurl library for mingw not found, SDL2_CURL_SSL will not be enabled)
+  endif
+  ifneq ($(HAVE_OPENSSL_MINGW),yes)
+    $(warning Warning: openssl library for mingw not found, SDL2_CURL_SSL will not be enabled)
+  endif
+endif
+
+STICKY_KEYS_LINUX ?= no
+STICKY_KEYS_MINGW ?= no
+ifeq ($(STICKY_KEYS_LINUX),yes)
+	COMMON_FLAGS_LINUX += -DSDL2_STICKY_KEYS
+endif
+ifeq ($(STICKY_KEYS_MINGW),yes)
+	COMMON_FLAGS_MINGW += -DSDL2_STICKY_KEYS
+endif
+
+# Optional: Compile with Link Time Optimization (LTO)
+#COMMON_FLAGS_LINUX += -flto=auto
+
+# Optional: Catch memory errors with AddressSanitizer
+#COMMON_FLAGS_LINUX += -fsanitize=address -fno-omit-frame-pointer
+
+# Optional: Catch bugs with UndefinedBehaviorSanitizer
+#COMMON_FLAGS_LINUX += -fsanitize=undefined -fno-omit-frame-pointer
+
+# Reduce warnings
+#COMMON_FLAGS_LINUX += -Wno-format-overflow
+
+
+#
+# Lua convertor and flags
+#
+TOLUA_CC_LINUX = $(CC_LINUX)
+TOLUA_LINUX = server/tolua
+TOLUA_FLAGS_LINUX = $(COMMON_FLAGS_LINUX)
+TOLUA_LIBS_LINUX = -lm
+TOLUA_TOLUAOBJS_LINUX = $(TOLUAOBJS_LINUX)
+
+# Detect whether Wine is available on this system
+WINE ?= wine
+HAVE_WINE ?= $(if $(shell command -v $(WINE) 2>/dev/null),yes,no)
+
+ifeq ($(HAVE_WINE),yes)
+  # Build settings when Wine is present.
+  # Use the native MinGW-built tolua.exe under Wine.
+  TOLUA_CC_MINGW = $(CC_MINGW)
+  TOLUA_MINGW = server/tolua.exe
+  TOLUA_FLAGS_MINGW = $(COMMON_FLAGS_MINGW)
+  TOLUA_LIBS_MINGW =
+  TOLUA_TOLUAOBJS_MINGW = $(TOLUAOBJS_MINGW)
+else
+  # Fallback: build with the Linux-hosted tolua binary.
+  TOLUA_CC_MINGW = $(TOLUA_CC_LINUX)
+  TOLUA_MINGW = $(TOLUA_LINUX).linux.exe
+  TOLUA_FLAGS_MINGW = $(TOLUA_FLAGS_LINUX)
+  TOLUA_LIBS_MINGW = $(TOLUA_LIBS_LINUX)
+  TOLUA_TOLUAOBJS_MINGW = $(TOLUAOBJS_LINUX)
+  WINE =
+endif
+
+#
+# Default CPP compiler and flags for usage with the preprocessor
+#
+CPP ?= cpp
+CPPFLAGS ?= -x c -E -Wp,-C,-P,-nostdinc,-Wno-format-overflow
+
+
+#
+# Define files for dependencies.
+#
+DEPS_LINUX = $(CLI_OBJS_LINUX:.linux.o=.linux.d) $(CLI_LUAOBJS_LINUX:.linux.o=.linux.d) $(TOLUAOBJS_LINUX:.linux.o=.linux.d)
+DEPS_MINGW = $(CLI_OBJS_MINGW:.mingw.o=.mingw.d) $(CLI_LUAOBJS_MINGW:.mingw.o=.mingw.d) $(TOLUAOBJS_MINGW:.mingw.o=.mingw.d)
+DEPS = $(DEPS_LINUX) $(DEPS_MINGW)
+# Include existing .d files. The "-include" suppresses error when files are missing.
+-include $(DEPS)
+
+#
+# Rules
+#
+all: tomenet tomenet.exe
+	@echo Now you need to copy the binaries out of the src directory or run \"make install\".
+
+
+install: all
+	install -b tomenet ..
+	install -b tomenet.exe ..
+
+
+date:
+	touch common/common.c
+
+
+# Rules for building the TomeNET SDL2 (test) client
+#
+tomenet tomenet.test: CFLAGS = $(COMMON_FLAGS_LINUX) -DUSE_SDL2 $(FLAGS_GCU_LINUX) $(FLAGS_SDL2_SOUND_LINUX) $(FLAGS_SDL2_IMAGE_LINUX) $(FLAGS_LIBARCHIVE_LINUX) $(FLAGS_SDL2_CURL_SSL_LINUX) $(shell $(SDL_CONFIG_LINUX) --cflags)
+tomenet tomenet.test: LIBS = -lm -lSDL2_ttf -lSDL2_net $(LIBS_GCU_LINUX) $(LIBS_SDL2_SOUND_LINUX) $(LIBS_SDL2_IMAGE_LINUX) $(LIBS_LIBARCHIVE_LINUX) $(LIBS_SDL2_CURL_SSL_LINUX) $(shell $(SDL_CONFIG_LINUX) --libs)
+# Prefer .so beside the binary, fallback to system paths.
+tomenet tomenet.test: LDFLAGS = -Wl,-rpath,\$$ORIGIN
+# Compiler for lient gets additional security hardening flags (linker too)
+tomenet: CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -g -O2
+tomenet: $(CLI_OBJS_LINUX) $(CLI_LUAOBJS_LINUX) $(TOLUAOBJS_LINUX)
+	$(CC_LINUX) $(CFLAGS) -Wl,-z,relro -Wl,-z,now $(LDFLAGS) -o tomenet $(CLI_OBJS_LINUX) $(CLI_LUAOBJS_LINUX) $(TOLUAOBJS_LINUX) $(LIBS)
+
+# No security hardening for test client
+tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0
+tomenet.test: CPPFLAGS += -DTEST_CLIENT
+tomenet.test: $(CLI_OBJS_LINUX) $(CLI_LUAOBJS_LINUX) $(TOLUAOBJS_LINUX)
+	$(CC_LINUX) $(CFLAGS) $(LDFLAGS) -o tomenet.test $(CLI_OBJS_LINUX) $(CLI_LUAOBJS_LINUX) $(TOLUAOBJS_LINUX) $(LIBS)
+
+tomenet.exe tomenet.test.exe: CFLAGS = $(COMMON_FLAGS_MINGW) -DUSE_SDL2 $(FLAGS_SDL2_SOUND_MINGW) $(FLAGS_SDL2_IMAGE_MINGW) $(FLAGS_LIBARCHIVE_MINGW) $(FLAGS_SDL2_CURL_SSL_MINGW) $(shell $(SDL_CONFIG_MINGW) --cflags)
+tomenet.exe tomenet.test.exe: LIBS = -lregex -lSDL2_ttf -lSDL2_net $(LIBS_SDL2_SOUND_MINGW) $(LIBS_SDL2_IMAGE_MINGW) $(LIBS_LIBARCHIVE_MINGW) $(LIBS_SDL2_CURL_SSL_MINGW) $(shell $(SDL_CONFIG_MINGW) --libs)
+# Compiler for lient gets additional security hardening flags (linker too)
+tomenet.exe: CFLAGS += -D_FORTIFY_SOURCE=2 -O2
+tomenet.exe: $(CLI_OBJS_MINGW) $(CLI_LUAOBJS_MINGW) $(TOLUAOBJS_MINGW)
+	$(CC_MINGW) $(CFLAGS) -mwindows -o tomenet.exe $(CLI_OBJS_MINGW) $(CLI_LUAOBJS_MINGW) $(TOLUAOBJS_MINGW) $(LIBS)
+
+# No security hardening for test client
+tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0
+tomenet.test.exe: CPPFLAGS = -DTEST_CLIENT
+tomenet.test.exe: $(CLI_OBJS_MINGW) $(CLI_LUAOBJS_MINGW) $(TOLUAOBJS_MINGW)
+	$(CC_MINGW) $(CFLAGS) -mwindows -o tomenet.test.exe $(CLI_OBJS_MINGW) $(CLI_LUAOBJS_MINGW) $(TOLUAOBJS_MINGW) $(LIBS)
+
+#
+# Rules for building the tolua convertor
+#
+$(TOLUA_LINUX): CFLAGS = $(TOLUA_FLAGS_LINUX)
+$(TOLUA_LINUX): LIBS = $(TOLUA_LIBS_LINUX)
+$(TOLUA_LINUX): $(TOLUA_TOLUAOBJS_LINUX) server/lua/tolua.c server/lua/tolualua.c
+	$(TOLUA_CC_LINUX) $(CFLAGS) -o $@ $(TOLUA_TOLUAOBJS_LINUX) server/lua/tolua.c server/lua/tolualua.c $(LIBS)
+
+$(TOLUA_MINGW): CFLAGS = $(TOLUA_FLAGS_MINGW)
+$(TOLUA_MINGW): LIBS = $(TOLUA_LIBS_MINGW)
+$(TOLUA_MINGW): $(TOLUA_TOLUAOBJS_MINGW) server/lua/tolua.c server/lua/tolualua.c
+	$(TOLUA_CC_MINGW) $(CFLAGS) -o $@ $(TOLUA_TOLUAOBJS_MINGW) server/lua/tolua.c server/lua/tolualua.c $(LIBS)
+
+#
+# Rules for building the custom LUA preprocessor
+#
+preproc/preproc: CFLAGS =
+preproc/preproc: preproc/preproc.linux.o
+	$(CC_LINUX) $(CFLAGS) -o preproc/preproc preproc/preproc.linux.o
+preproc/preproc.linux.o: preproc/preproc.c
+	$(CC_LINUX) $(CFLAGS) -o preproc/preproc.linux.o -c preproc/preproc.c
+
+
+##
+## Rules for making a "object" ('.o') file for linux and windows
+##
+%.linux.o: %.c
+	$(CC_LINUX) $(CFLAGS) -MMD -MP -o $@ -c $<
+%.linux.o: %.linux.c
+	$(CC_LINUX) $(CFLAGS) -MMD -MP -o $@ -c $<
+
+%.mingw.o: %.c
+	$(CC_MINGW) $(CFLAGS) -MMD -MP -o $@ -c $<
+%.mingw.o: %.mingw.c
+	$(CC_MINGW) $(CFLAGS) -MMD -MP -o $@ -c $<
+
+#
+# Lua library compilation rules
+#
+# List of .pkg files to generate from .pre files for use in the client (in format [server|client]/<name>.pre).
+# The .pkg files are then used to generate .c files (in format [server|client]/w_<name>.[linux|mingw].c).
+PKG_FILES = client/util.pkg client/player.pkg client/spells.pkg
+
+# Use preprocessor with CPP to generate the <dir>/<name>.pkg files from <dir>/<name>.pre files.
+$(PKG_FILES): %.pkg: %.pre preproc/preproc
+	cd $(dir $@); ../preproc/preproc $(notdir $<) $(notdir $@) $(CPP) $(CPPFLAGS); cd ..
+
+# Use TOLUA_LINUX to generate client/w_<name>.linux.c files from client/<name>.pkg files.
+client/w_%.linux.c: client/%.pkg $(TOLUA_LINUX)
+	cd $(dir $@);  ../$(TOLUA_LINUX) -n $(basename $(notdir $<)) -o $(notdir $@) $(notdir $<); cd ..
+
+# Use TOLUA_MINGW to generate client/w_<name>.mingw.c files from client/<name>.pkg files.
+client/w_%.mingw.c: client/%.pkg $(TOLUA_MINGW)
+	cd $(dir $@);  $(WINE) ../$(TOLUA_MINGW) -n $(basename $(notdir $<)) -o $(notdir $@) $(notdir $<); cd ..
+
+
+#
+# Clean up old junk
+#
+clean:
+	cd server/lua; rm -f *.o *.d
+	cd server; rm -f *.o *.d w_player.*c w_util.*c w_spells.*c *.pkg tolua*
+	cd client; rm -f *.o *.d w_player.*c w_util.*c w_spells.*c *.pkg
+	cd common; rm -f *.o *.d
+	cd console; rm -f *.o *.d
+	rm -f preproc/preproc.o
+
+
+#
+# Clean and build all
+#
+re: clean all

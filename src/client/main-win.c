@@ -6289,7 +6289,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 		}
 	}
 
+#ifdef TILE_CACHE_SIZE
 	if (disable_tile_cache) logprint("Graphics tiles cache disabled.\n");
+#endif
 
 	if (hPrevInst == NULL) {
 /* Not required, just a paranoia note, it's pretty undocumented */

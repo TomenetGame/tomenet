@@ -1,0 +1,61 @@
+name: Compile Check (Fedora 41)
+
+on:
+  push:
+    branches:
+      - '**'
+    tags-ignore:
+      - '*'
+  pull_request:
+
+concurrency:
+  group: build-check-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  compile-check:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Resolve image repo name
+        id: image_repo
+        uses: ./.github/actions/ci-image-repo
+
+      - name: Log in to GHCR (best effort)
+        continue-on-error: true
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve deps build image
+        id: deps_image
+        uses: ./.github/actions/ci-resolve-deps-image
+        with:
+          image_repo: ${{ steps.image_repo.outputs.image_repo }}
+          ttl_days: "30"
+          can_push: ${{ github.event_name == 'push' }}
+          update_latest_alias: ${{ github.event_name == 'push' && github.ref == 'refs/heads/main' }}
+
+      - name: Build native Linux server + X11 client (makefile)
+        run: |
+          docker run --rm -v "$PWD":/workspace -w /workspace "${{ steps.deps_image.outputs.image_ref }}" \
+            bash -lc 'cd src && make -f makefile clean && make -f makefile tomenet.server tomenet'
+
+      - name: Build native Windows client (makefile.mingw)
+        run: |
+          docker run --rm -v "$PWD":/workspace -w /workspace "${{ steps.deps_image.outputs.image_ref }}" \
+            bash -lc 'cd src && make -f makefile.mingw clean && make -f makefile.mingw tomenet.exe'
+
+      - name: Build SDL2 Linux + SDL2 MinGW client (makefile.sdl2)
+        run: |
+          docker run --rm -v "$PWD":/workspace -w /workspace "${{ steps.deps_image.outputs.image_ref }}" \
+            bash -lc 'cd src && make -f makefile.sdl2 clean && make -f makefile.sdl2 tomenet tomenet.exe'

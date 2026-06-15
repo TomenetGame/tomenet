@@ -4095,6 +4095,13 @@ programs you can install on Windows:
 - Dot-net (.NET) framework for utilizing direct PNG screenshot capture via
   the CTRL+SHIFT+T hotkey.
 
+Optional dependencies for SDL2 client on Windows:
+---------------------------------
+To make use of all features of the game, there are the following optional
+programs you can install on Windows:
+- explorer (this is already installed by default in any Windows
+  version): For opening URLs and folders from within the knowledge (~) menu.
+
 Optional dependencies on Linux/Mac OS X:
 ----------------------------------------
 To make use of all features of the game, there are the following optional
@@ -4107,6 +4114,11 @@ packages you can install on Linux:
 - imagemagick for making PNG screenshots directly (via SHIFT+CTRL+T hotkey).
 - 7-zip: 7zG on X11, 7z on GCU. For installing or updating audio packs.
 
+Optional dependencies for SDL2 client on Linux:
+----------------------------------------
+To make use of all features of the game, there are the following optional
+packages you can install on Linux:
+- browser: For opening URLs from within the knowledge (~) menu.
 
 Installation details / custom installation:
 -------------------------------------------
@@ -4176,6 +4188,8 @@ changed via dragging the windows around, which is an easier way), or choosing
 font size (look into lib/xtra/font directory to see available fonts).
 Further you can specify an account name and password to be filled in
 automatically, and various other things.
+This applies to the traditional native Windows client. The SDL2 Windows client
+instead uses 'tomenet.cfg' in its SDL2 user-data directory.
 
 Windows command-line options:
 -h                      Displays this list of command-line parameters
@@ -4222,6 +4236,9 @@ Windows command-line options:
 
 Windows (cross-compiling from Linux):
 -------------------------------------
+This paragraph applies to the traditional native Windows client that is built
+via 'makefile.mingw'. For the SDL2 Windows client see the paragraph below.
+
 Install the usual compiling environment with gcc or clang.
 
 For the crosscompiling part, install mingw32 and take note of the folder prefix
@@ -4254,6 +4271,31 @@ make tomenet.exe
 (Or for the server: make tomenet.server.exe)
 
 
+Windows SDL2 client (cross-compiling from Linux):
+-------------------------------------------------
+The SDL2 Windows client is built via 'makefile.sdl2' and is intended to be
+cross-compiled from Linux using MinGW. Unlike the older Windows client build,
+the normal build path does not require Wine.
+
+The makefile can build both SDL2 clients in one tree:
+ make -f makefile.sdl2 tomenet
+ make -f makefile.sdl2 tomenet.exe
+
+It uses environment variables for customization, so in many cases there is no
+need to edit the makefile itself. See the comments at the top of
+'src/makefile.sdl2' for the available knobs.
+
+Required libraries for the SDL2 Windows client are mingw versions of SDL2,
+SDL2_mixer, SDL2_ttf and SDL2_net. Optional libraries are SDL2_image (for
+PNG screenshots), libarchive (for archive-based audio pack installation),
+and curl+openssl (for TomeNET Guide checksum checking and updates).
+
+Since obtaining the full MinGW dependency set manually can be cumbersome and
+time-consuming on many distributions, the repository also contains GitHub CI
+and reusable container helper scripts for local builds. See the Fedora notes
+in the Linux/SDL2 section below if you want a pre-arranged build environment.
+
+
 (2.1b) Linux (custom/compilation)
 ---------------------------------
 
@@ -4273,6 +4315,10 @@ in chapter Troubleshooting (9.8).
 
 Linux (compiling from source):
 ------------------------------
+The paragraph immediately below applies to the traditional X11 client built via
+'makefile'. For the SDL2 Linux client and the unified SDL2 Linux/Windows
+cross-build flow, see the SDL2 paragraph further below.
+
 There are additional distribution-specific information on Mikael's website at:
 https://muuttuja.org/tomenet/installation-linux.php
 (It's linked on www.tomenet.eu -> "Links".)
@@ -4318,6 +4364,72 @@ to start the game.
 
 If you get a font-related error ("Font not found: 9x15") please see PROBLEM 56
 in chapter Troubleshooting (9.8).
+
+
+Linux SDL2 client (compiling from source):
+------------------------------------------
+The SDL2 Linux client is built via 'src/makefile.sdl2'. This same makefile can
+also cross-compile the SDL2 Windows client from Linux.
+
+Go into '/tomenet/src' where the file 'makefile.sdl2' is located.
+
+Required libraries for the SDL2 Linux client are SDL2, SDL2_mixer, SDL2_ttf
+and SDL2_net. Optional libraries are SDL2_image (for PNG screenshots),
+libarchive (for archive-based audio pack installation), and curl+openssl
+(for TomeNET Guide checksum checking and updates).
+
+The exact package names vary by distribution, but they will usually resemble:
+build-essential or development-tools, clang or gcc, SDL2-devel, SDL2_net-devel,
+SDL2_ttf-devel, SDL2_mixer-devel, SDL2_image-devel, libarchive-devel,
+libcurl-devel and openssl-devel.
+
+To build the Linux SDL2 client:
+        make -f makefile.sdl2 clean
+        make -f makefile.sdl2 tomenet
+
+To cross-compile the SDL2 Windows client from Linux:
+        make -f makefile.sdl2 tomenet.exe
+
+If you want both in one go:
+        make -f makefile.sdl2 clean
+        make -f makefile.sdl2 tomenet tomenet.exe
+
+IMPORTANT NOW: If you built inside the repository tree, move/copy the freshly
+               built 'tomenet' binary from 'tomenet/src' one level upwards into
+               the repository root 'tomenet/' before running it, or use
+               'make -f makefile.sdl2 install'. The SDL2 client expects to run
+               from the game root so it can find the game data files.
+
+The SDL2 client stores writable data separately from the game installation
+directory. It uses 'tomenet.cfg' in its SDL2 user-data directory instead of
+'.tomenetrc'. By default this directory is obtained from SDL_GetPrefPath(),
+which on Linux will typically be:
+        ~/.local/share/TomenetGame/tomenet/
+You can override this location via the environment variable
+        TOMENET_SDL2_USER_PATH
+This user-data directory contains configuration, screenshots, user scripts,
+fonts, graphics overrides, audio packs and other writable files, while the
+actual game assets remain in the installation directory.
+
+To simplify local builds for future contributors, the repository contains
+GitHub CI workflows plus reusable Docker/Podman+distrobox helper scripts.
+Fedora was chosen for this because it provides most dependencies directly from
+its repositories. Fedora 41 is the preferred default for release-oriented SDL2
+builds, because Fedora 43 produced release archives with runtime libc issues on
+older Ubuntu 24.04 LTS systems. Fedora 43 helper files are kept as well for
+future use, but Fedora 41 is the recommended baseline.
+
+The helper scripts live in:
+        .github/docker/fedora41/
+        .github/docker/fedora43/
+Their 'install-build-requirements.sh' comments contain example commands for
+creating a distrobox/container and compiling inside it, typically in one or
+two commands after Docker or Podman plus distrobox are installed.
+
+The SDL2 makefile can optionally include GCU support on Linux by setting
+        USE_GCU_LINUX=yes
+which enables '-c' command-line mode and GUI fallback to GCU. This is optional
+and disabled by default.
 
 
 Configure TomeNET on Linux by editing config files or setting environment vars:
@@ -5638,6 +5750,9 @@ Tilesets also have two designated 'mask colours':
   colour.
   For example a tile depicting an orc would display the mask colour in umber
   (ie brown) if it was a hill orc or in light green if it was a cave orc.
+  In SDL2 clients, the foreground mask color can be redefined in .prf file, 
+  using the 'm:1:<hex-color>' redefinition (for example 'm:1:#ff00ff').
+  If redefinition is not present, default mask color (0xFC00FB) is used.
 - (Currently no effect, as all grids in TomeNET always have black background:)
   A 'background colour mask' defined by colour R=62,G=61,B=0 (hex 0x3E3D00) aka
   a dark, somewhat greenish ochre. This is not a transparency mask but just for
@@ -5649,6 +5764,9 @@ Tilesets also have two designated 'mask colours':
   blue background. In that case, if you switched from ASCII to a graphical
   tileset that maps fountains to a picture, all pixels that ought to show the
   blueness around the fountain would have to be 0x3E3D00.)
+  In SDL2 clients, the background mask color can be redefined in .prf file, 
+  using the 'm:0:<hex-color>' redefinition (for example 'm:0:#000000').
+  If redefinition is not present, default mask color (0x3E3D00) is used.
 - No effect in clients not newer than 4.9.2:
   A 'dual-background mask' defined by colour R=29,G=33,B=28 (hex 0x1D211C),
   ie a very dark green. This is a transparency-mask.
@@ -5664,6 +5782,35 @@ Tilesets also have two designated 'mask colours':
   If you use a dual-mode tileset with normal graphics settings instead, this is
   not a problem as it is 'backward compatible' and will interpret the dual-mask
   colour (ie 0x1D211C) instead as background (0x3E3D00) automatically.
+  In SDL2 clients this is not called a transparency mask, but an outline mask.
+  Before, when drawing tiles, you had to use background mask for terrain tiles
+  and transparency mask for other tiles (monsters, items, ...). And for the
+  other tiles to not visually blend with the terrain tile below you'd have to
+  paint the transparency mask in a way an outline is formed. In SDL2 clients you
+  use the background mask and outline mask for all tiles. When a tile is used as
+  a terrain tile, the background mask and outline mask becomes the background
+  color (currently only black) and when a tile is drawn above a terrain tile,
+  the background mask becomes fully transparent, to see the terrain tile below
+  and the outline mask becomes a semi-transparent black. This way you don't have
+  to think what mask to use depending on tile type (terrain, monsters, ...). And
+  the outline color can be used to indicate some effects in the future (eg.
+  player's outline becomes colorful when quaffing some potion).
+  You don't even have to paint the outline mask into the bitmap. There is an
+  'graphicsForceOutline` setting in tomenet.cfg. When set to a non negative
+  number, outline of set width will be generated automatically (0 is no
+  outline, 1 is one-pixel outline, etc...). This can be also changed in the = g
+  menu. This way you can use bitmaps for 'simple' graphics mode in the 'dual'
+  mode with outline too.
+  Also you can redefine the outline mask color in .prf file too, by using the
+  'm:2:<hex-color>' redefinition. If redefinition is not present, default
+  outline mask color (0x1D211C) is used.
+  For backward compatibility, when there are no mask redefinitions in .prf file,
+  the transparency-mask (0x1D211C) is used as background mask and the original
+  background mask for terrain tile (0x3E3D00) is handled as outline mask
+  (outline mask for bottom tile will become the same color as background). If
+  you're drawing tiles for SDL2 clients (background, foreground, outline) and
+  don't want to "kick in" this compatibility logic, define your mask colors in
+  the .prf file.
 
 Svechnik (aka 'EvgenijK' on github) has worked on a major graphical tileset
 that can be found on his github, including instructions on how to use it:
@@ -29569,6 +29716,13 @@ Solution:   TomeNET writes a hint to its config file after asking this so next
              Edit .tomenetrc file (assumed you aren't using a command-line parm
              to load a differently named rc file) and add a line just saying:
              "hintBigmap".
+            For SDL2 client (Linux/Windows):
+             Edit 'tomenet.cfg' in the SDL2 user-data directory (on Linux this
+             is typically "~/.local/share/TomenetGame/tomenet/" and on Windows
+             typically "%APPDATA%\\TomenetGame\\tomenet\\", unless you
+             overrode it via TOMENET_SDL2_USER_PATH) and add the same hint as
+             for the X11 client:
+             "hintBigmap"
 
 PROBLEM 79: On Windows OS using graphical tileset mode results in slow screen
             drawing.
@@ -29577,7 +29731,16 @@ Solution:   If Windows' "Aero" is enabled, turn it off, as it can greatly slow
 
 PROBLEM 80: Client compiles fine but crashes on startup with a message:
             "Failed loading SDL3 library."
-Solution:   If your client uses SDL2, make sure you have the "normal" sdl2
-            packages installed and NOT the 'sdl2-compat' ones.
+Solution:   If your client uses SDL2, make sure your runtime libraries match
+            how that client was built and bundled.
+            On some systems, notably Fedora 41/43, the 'sdl2-compat' package
+            provides libSDL2 but internally dlopen()s libSDL3.so.0 at runtime.
+            In that case ldd on the TomeNET client binary will not show this
+            extra dependency, yet the client will still fail at startup unless
+            libSDL3.so.0 is also available.
+            If you are building or bundling a portable SDL2 client, either use
+            a normal SDL2 runtime or make sure to include the required SDL3
+            runtime library as well when your SDL2 package is actually the
+            compatibility shim.
 
 ===============================================================================

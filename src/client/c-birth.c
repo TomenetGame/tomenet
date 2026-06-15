@@ -110,25 +110,54 @@ static void choose_name(void) {
 	strcpy(introline[5], "    |##|     |######|  |##| \\/ |##|  |######|   |##| \\##|  |######|     |##|   ");
   #endif
   #ifdef USE_GRAPHICS
+	bool use_logo_graphics = false;
+
 	if (use_graphics) {
-		int w;
+   #ifdef USE_SDL2
+		if (Client_setup.f_char[FEAT_SOLID] > MAX_FONT_CHAR
+				&& Client_setup.f_char[FEAT_SOLID_HALF_TOPRIGHT_SHAVED] > MAX_FONT_CHAR
+				&& Client_setup.f_char[FEAT_SOLID_HALF_BOTTOMLEFT_SHAVED] > MAX_FONT_CHAR
+				&& Client_setup.f_char[FEAT_SOLID_HALF_BOTTOMRIGHT_SHAVED] > MAX_FONT_CHAR
+				&& Client_setup.f_char[FEAT_SOLID_HALF_TOPLEFT_SHAVED] > MAX_FONT_CHAR
+			 ) {
+			use_logo_graphics = true;
+		}
+   #else
+		use_logo_graphics = true;
+   #endif
+	}
+
+	if (use_logo_graphics) {
 		char c;
 		char32_t c32;
+   #ifdef USE_SDL2
+		char32_t solid_char = Client_setup.f_char[FEAT_SOLID];
+		char32_t solid_half_topright_shaved_char = Client_setup.f_char[FEAT_SOLID_HALF_TOPRIGHT_SHAVED];
+		char32_t solid_half_bottomleft_shaved_char = Client_setup.f_char[FEAT_SOLID_HALF_BOTTOMLEFT_SHAVED];
+		char32_t solid_half_bottomright_shaved_char = Client_setup.f_char[FEAT_SOLID_HALF_BOTTOMRIGHT_SHAVED];
+		char32_t solid_half_topleft_shaved_char = Client_setup.f_char[FEAT_SOLID_HALF_TOPLEFT_SHAVED];
+   #else
+		char32_t solid_char = 813;
+		char32_t solid_half_topright_shaved_char = 825;
+		char32_t solid_half_bottomleft_shaved_char = 826;
+		char32_t solid_half_bottomright_shaved_char = 827;
+		char32_t solid_half_topleft_shaved_char = 828;
+   #endif
 
 		for (y = 0; y < 6; y++) {
-			for (w = 0; w < 80; w++) {
-				c = introline[y][w];
+			for (x = 0; x < 80; x++) {
+				c = introline[y][x];
 				switch (c) {
-				case '#': c32 = 813; break;
+				case '#': c32 = solid_char; break;
 				case '|': c32 = ' '; break;
-				case '\\': c32 = (introline[y][w - 1] == '#' || introline[y][w + 1] == ' ' ? 825 : 826); break;
-				case '/': c32 = (introline[y][w - 1] == '#' || introline[y][w + 1] == ' ' ? 827 : 828); break;
+				case '\\': c32 = (introline[y][x - 1] == '#' || introline[y][x + 1] == ' ' ? solid_half_topright_shaved_char : solid_half_bottomleft_shaved_char); break;
+				case '/': c32 = (introline[y][x - 1] == '#' || introline[y][x + 1] == ' ' ? solid_half_bottomright_shaved_char : solid_half_topleft_shaved_char); break;
    #if 0 // 0'ed -> keep the flickering top parts ASCII? :)
 				//case '^': c32 = ...we don't have anything for this actually^^...; break;
    #endif
 				default: c32 = (char32_t)c;
 				}
-				Term_draw(w, LOGO_ROW + y, introline_col[y], c32);
+				Term_draw(x, LOGO_ROW + y, introline_col[y], c32);
 			}
 		}
 	} else
@@ -2511,7 +2540,11 @@ bool get_server_name(void) {
 		strcat(buf, "\\__ping.tmp");
 	} else
  #endif
+ #ifdef USE_SDL2
+	path_build(buf, 1024, os_temp_path, "__ping.tmp");
+ #else
 	path_build(buf, 1024, ANGBAND_DIR_USER, "__ping.tmp");
+ #endif
  #ifdef WINDOWS
 	meta_pings_xpath[0] = 0;
 	r = system(format("ping /? > %s 2>&1", buf));
@@ -2682,7 +2715,11 @@ bool get_server_name(void) {
 				strcat(path, format("\\__ping_%s.tmp", meta_pings_server_name[i]));
 			} else
    #endif
+   #ifdef USE_SDL2
+			path_build(path, 1024, os_temp_path, format("__ping_%s.tmp", meta_pings_server_name[j]));
+   #else
 			path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[j]));
+   #endif
 			fhan[j] = CreateFile(path,
 			    FILE_WRITE_DATA, //FILE_APPEND_DATA,
    #if 0
@@ -2735,7 +2772,11 @@ bool get_server_name(void) {
 					strcat(path, format("\\__ping_%s.tmp", meta_pings_server_name[i]));
 				} else
  #endif
+ #ifdef USE_SDL2
+				path_build(path, 1024, os_temp_path, format("__ping_%s.tmp", meta_pings_server_name[i]));
+ #else
 				path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
+ #endif
 				remove(path);
 			}
  #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
@@ -2746,7 +2787,11 @@ bool get_server_name(void) {
 				strcat(path, "\\__ping.tmp");
 			} else
  #endif
+ #ifdef USE_SDL2
+			path_build(path, 1024, os_temp_path, "__ping.tmp");
+ #else
 			path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
+ #endif
 			remove(path);
 			meta_pings_servers = 0;
 #endif
@@ -2766,7 +2811,11 @@ bool get_server_name(void) {
 					strcat(path, format("\\__ping_%s.tmp", meta_pings_server_name[i]));
 				} else
  #endif
+ #ifdef USE_SDL2
+				path_build(path, 1024, os_temp_path, format("__ping_%s.tmp", meta_pings_server_name[i]));
+ #else
 				path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
+ #endif
 				remove(path);
 			}
  #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
@@ -2777,7 +2826,11 @@ bool get_server_name(void) {
 				strcat(path, "\\__ping.tmp");
 			} else
  #endif
+ #ifdef USE_SDL2
+			path_build(path, 1024, os_temp_path, "__ping.tmp");
+ #else
 			path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
+ #endif
 			remove(path);
 			meta_pings_servers = 0;
 #endif
@@ -2803,7 +2856,11 @@ bool get_server_name(void) {
 			strcat(path, format("\\__ping_%s.tmp", meta_pings_server_name[i]));
 		} else
  #endif
+ #ifdef USE_SDL2
+		path_build(path, 1024, os_temp_path, format("__ping_%s.tmp", meta_pings_server_name[i]));
+ #else
 		path_build(path, 1024, ANGBAND_DIR_USER, format("__ping_%s.tmp", meta_pings_server_name[i]));
+ #endif
 		remove(path);
 	}
  #if defined(WINDOWS) && defined(WINDOWS_USE_TEMP)
@@ -2814,7 +2871,11 @@ bool get_server_name(void) {
 		strcat(path, "\\__ping.tmp");
 	} else
  #endif
+ #ifdef USE_SDL2
+	path_build(path, 1024, os_temp_path, "__ping.tmp");
+ #else
 	path_build(path, 1024, ANGBAND_DIR_USER, "__ping.tmp");
+ #endif
 	remove(path);
 	meta_pings_servers = 0;
 #endif

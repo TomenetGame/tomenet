@@ -3934,7 +3934,7 @@ static Mix_Music* load_song(int idx, int subidx) {
 		logprint(format("Too many audio files. Reached maximum of %d, discarding <%s>.\n", sdl_files_max, filename));
 		// and for now just disable the whole event, to be safe against repeated attempts to load it
 		songs[idx].disabled = songs[idx].force_disabled = TRUE;
-		SDL_UnlockMutex(load_sample_mutex);
+		SDL_UnlockMutex(load_song_mutex);
 		return(NULL);
 	}
  #ifdef DEBUG_SOUND

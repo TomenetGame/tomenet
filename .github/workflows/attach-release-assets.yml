@@ -1,0 +1,253 @@
+name: Attach Release Assets
+
+on:
+  release:
+    types:
+      - published
+
+permissions:
+  actions: read
+  contents: write
+  packages: read
+
+concurrency:
+  group: attach-release-assets-${{ github.event.release.tag_name }}
+  cancel-in-progress: false
+
+jobs:
+  attach-release-assets:
+    name: Attach assets to published release
+    if: startsWith(github.event.release.tag_name, 'v')
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout release tag
+        uses: actions/checkout@v4
+        with:
+          # Fallback build must use exact tag content, not default branch HEAD.
+          ref: ${{ github.event.release.tag_name }}
+
+      - name: Resolve release asset names from tag
+        id: assets
+        uses: ./.github/actions/ci-release-assets
+        with:
+          tag_name: ${{ github.event.release.tag_name }}
+
+      - name: Check whether release already has all assets
+        id: release_assets_state
+        uses: actions/github-script@v7
+        env:
+          TAG_NAME: ${{ steps.assets.outputs.tag_name }}
+          EXPECTED_ASSETS_JSON: ${{ steps.assets.outputs.asset_list_json }}
+        with:
+          script: |
+            // Fetch release by tag and decide whether attaching is still needed.
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const tagName = process.env.TAG_NAME;
+            const expectedAssets = JSON.parse(process.env.EXPECTED_ASSETS_JSON || "[]");
+
+            const rel = await github.rest.repos.getReleaseByTag({
+              owner,
+              repo,
+              tag: tagName
+            });
+
+            const existingNames = new Set((rel.data.assets || []).map((a) => a.name));
+            const missing = expectedAssets.filter((n) => !existingNames.has(n));
+
+            core.info(`Release ${tagName} currently has ${(rel.data.assets || []).length} asset(s).`);
+            core.setOutput("needs_attach", missing.length > 0 ? "true" : "false");
+            core.setOutput("missing_count", String(missing.length));
+
+      - name: Find successful build run with artifacts for this tag
+        if: steps.release_assets_state.outputs.needs_attach == 'true'
+        id: find_run
+        uses: actions/github-script@v7
+        env:
+          EXPECTED_ARTIFACT: ${{ steps.assets.outputs.asset_1 }}
+          POLL_SECONDS: "900"
+          POLL_INTERVAL_SECONDS: "20"
+        with:
+          script: |
+            // Poll for build-release-assets run artifacts to appear.
+            const owner = context.repo.owner;
+            const repo = context.repo.repo;
+            const thisRunId = Number(process.env.GITHUB_RUN_ID);
+            const workflowPath = ".github/workflows/build-release-assets.yml";
+            const expectedArtifact = process.env.EXPECTED_ARTIFACT;
+            const pollSeconds = Number(process.env.POLL_SECONDS || "600");
+            const pollIntervalSeconds = Number(process.env.POLL_INTERVAL_SECONDS || "20");
+            const deadline = Date.now() + pollSeconds * 1000;
+
+            const sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms));
+
+            while (Date.now() < deadline) {
+              const runs = await github.paginate(github.rest.actions.listWorkflowRunsForRepo, {
+                owner,
+                repo,
+                event: "push",
+                status: "success",
+                per_page: 100
+              });
+
+              // Only consider successful push runs from the dedicated build workflow.
+              const candidateRuns = runs.filter((run) =>
+                run.path === workflowPath &&
+                run.id !== thisRunId
+              );
+
+              let match = null;
+              for (const run of candidateRuns) {
+                const artifactsPage = await github.rest.actions.listWorkflowRunArtifacts({
+                  owner,
+                  repo,
+                  run_id: run.id,
+                  per_page: 100
+                });
+
+                const artifactNames = new Set(artifactsPage.data.artifacts.map((a) => a.name));
+                if (artifactNames.has(expectedArtifact)) {
+                  match = run;
+                  break;
+                }
+              }
+
+              if (match) {
+                core.info(`Using build run ${match.id} (${match.html_url}).`);
+                core.setOutput("found", "true");
+                core.setOutput("run_id", String(match.id));
+                return;
+              }
+
+              core.info(`Build artifacts not available yet; waiting ${pollIntervalSeconds}s...`);
+              await sleep(pollIntervalSeconds * 1000);
+            }
+
+            core.info(`No build artifacts found within ${pollSeconds}s; fallback build will be used.`);
+            core.setOutput("found", "false");
+
+      - name: Download artifact (client SDL2 Linux)
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.find_run.outputs.run_id }}
+          name: ${{ steps.assets.outputs.asset_1 }}
+          path: release-assets
+
+      - name: Download artifact (client SDL2 Win32)
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.find_run.outputs.run_id }}
+          name: ${{ steps.assets.outputs.asset_2 }}
+          path: release-assets
+
+      - name: Download artifact (client X11 Linux)
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.find_run.outputs.run_id }}
+          name: ${{ steps.assets.outputs.asset_3 }}
+          path: release-assets
+
+      - name: Download artifact (server X11 Linux)
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.find_run.outputs.run_id }}
+          name: ${{ steps.assets.outputs.asset_4 }}
+          path: release-assets
+
+      - name: Download artifact (client Win32)
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found == 'true'
+        uses: actions/download-artifact@v4
+        with:
+          github-token: ${{ github.token }}
+          run-id: ${{ steps.find_run.outputs.run_id }}
+          name: ${{ steps.assets.outputs.asset_5 }}
+          path: release-assets
+
+      - name: Verify downloaded assets
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found == 'true'
+        uses: ./.github/actions/ci-verify-assets
+        with:
+          base_dir: release-assets
+          asset_list_json: ${{ steps.assets.outputs.asset_list_json }}
+
+      - name: Attach downloaded assets to release
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found == 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.assets.outputs.tag_name }}
+          files: |
+            release-assets/${{ steps.assets.outputs.asset_1 }}
+            release-assets/${{ steps.assets.outputs.asset_2 }}
+            release-assets/${{ steps.assets.outputs.asset_3 }}
+            release-assets/${{ steps.assets.outputs.asset_4 }}
+            release-assets/${{ steps.assets.outputs.asset_5 }}
+          fail_on_unmatched_files: true
+          overwrite_files: true
+
+      - name: Resolve image repo name (fallback build)
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found != 'true'
+        id: image_repo_fallback
+        uses: ./.github/actions/ci-image-repo
+
+      - name: Log in to GHCR (best effort, fallback build)
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found != 'true'
+        continue-on-error: true
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Resolve deps build image (fallback build)
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found != 'true'
+        id: deps_image_fallback
+        uses: ./.github/actions/ci-resolve-deps-image
+        with:
+          image_repo: ${{ steps.image_repo_fallback.outputs.image_repo }}
+          ttl_days: "30"
+          can_push: "false"
+          update_latest_alias: "false"
+
+      - name: Build release archives locally (fallback build)
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found != 'true'
+        shell: bash
+        run: |
+          set -euo pipefail
+          # If artifacts are still unavailable, build archives directly from this release tag.
+          docker run --rm -v "$PWD":/workspace -w /workspace "${{ steps.deps_image_fallback.outputs.image_ref }}" \
+            bash -lc '
+              set -euo pipefail
+              # Reuse the same release script to keep archive names and content identical.
+              cd /workspace
+              RELEASE_WORKSPACE=/workspace bash .github/docker/fedora41/release-all.sh
+            '
+
+      - name: Verify fallback-built assets
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found != 'true'
+        uses: ./.github/actions/ci-verify-assets
+        with:
+          base_dir: fedora41
+          asset_list_json: ${{ steps.assets.outputs.asset_list_json }}
+
+      - name: Attach fallback-built assets to release
+        if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found != 'true'
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ steps.assets.outputs.tag_name }}
+          files: |
+            fedora41/${{ steps.assets.outputs.asset_1 }}
+            fedora41/${{ steps.assets.outputs.asset_2 }}
+            fedora41/${{ steps.assets.outputs.asset_3 }}
+            fedora41/${{ steps.assets.outputs.asset_4 }}
+            fedora41/${{ steps.assets.outputs.asset_5 }}
+          fail_on_unmatched_files: true
+          overwrite_files: true

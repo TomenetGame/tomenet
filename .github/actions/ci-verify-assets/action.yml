@@ -1,0 +1,25 @@
+name: CI Verify Assets
+description: Verify that all release assets in a JSON list exist.
+inputs:
+  base_dir:
+    description: Base directory where assets are expected.
+    required: false
+    default: .
+  asset_list_json:
+    description: JSON array of asset names.
+    required: true
+runs:
+  using: composite
+  steps:
+    - shell: bash
+      run: |
+        set -euo pipefail
+
+        while IFS= read -r asset; do
+          path="${{ inputs.base_dir }}/${asset}"
+          if [[ ! -f "$path" ]]; then
+            echo "Missing required asset: $path" >&2
+            exit 1
+          fi
+          ls -lh "$path"
+        done < <(node -e 'const arr = JSON.parse(process.argv[1]); for (const x of arr) console.log(x);' '${{ inputs.asset_list_json }}')

@@ -1,0 +1,8 @@
+FROM registry.fedoraproject.org/fedora:41
+
+COPY .github/docker/fedora41/install-build-requirements.sh /tmp/install-build-requirements.sh
+RUN bash /tmp/install-build-requirements.sh \
+  && dnf clean all \
+  && rm -f /tmp/install-build-requirements.sh
+
+WORKDIR /workspace

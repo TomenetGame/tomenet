@@ -2,6 +2,10 @@
 #include "graphics_common.h"
 #include "math.h"
 
+#ifndef M_PI
+ #define M_PI 3.14159265358979323846
+#endif
+
 color_rgb blackColor = {0, 0, 0};
 color_rgb transparancyColor = {29, 33, 28};
 color_rgb bgColor = {62, 61, 0};
@@ -142,12 +146,12 @@ bilinear_sample make_bilinear_sample(float topLeft, float topRight, float bottom
     return sample;
 }
 
-double lanczosKernel(double x, int lanczos_a) {
+float lanczosKernel(float x, int lanczos_a) {
     x = fabs(x);
     if (x == 0.0) {
         return 1.0;
     } else if (fabs(x) < lanczos_a) {
-        double pi_x = M_PI * x;
+        float pi_x = M_PI * x;
         return lanczos_a * sin(pi_x) * sin(pi_x / lanczos_a) / (pi_x * pi_x);
     } else {
         return 0.0;

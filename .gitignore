@@ -1,23 +1,31 @@
 # Object files
 *.o
+# Dependency files
+*.d
 
 # Binaries in root folder
 tomenet
+tomenet.exe
 tomenet.server
 accedit
 evilmeta
 
 # Binaries in src folder
 src/tomenet
+src/tomenet.exe
 src/tomenet.server
 src/accedit
 src/evilmeta
 
 # Tolua binary
 src/server/tolua
+src/server/tolua.exe
 
 # Preproc binary
 src/preproc/preproc
+
+# Local release workspace
+.github/workspace/
 
 # Data files from a running server
 lib/data/*
@@ -38,6 +46,12 @@ src/client/util.pkg
 src/client/w_play.c
 src/client/w_spells.c
 src/client/w_util.c
+src/client/w_player.linux.c
+src/client/w_player.mingw.c
+src/client/w_spells.linux.c
+src/client/w_spells.mingw.c
+src/client/w_util.linux.c
+src/client/w_util.mingw.c
 src/server/player.pkg
 src/server/spells.pkg
 src/server/util.pkg

@@ -1,0 +1,79 @@
+name: Cleanup Fedora 41 Builder Deps Tags
+
+on:
+  workflow_dispatch:
+  push:
+    branches:
+      - main
+    paths:
+      - '.github/docker/fedora41/**'
+      - '.github/actions/ci-resolve-deps-image/action.yml'
+      - '.github/workflows/ghcr-cleanup-builder-tags.yml'
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  cleanup:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Cleanup old deps-* container versions (keep latest 20)
+        uses: actions/github-script@v7
+        env:
+          PACKAGE_NAME: tomenet-fedora41-builder
+          KEEP_COUNT: "20"
+        with:
+          script: |
+            // Determine package owner scope (user/org) and enumerate container versions.
+            const owner = context.repo.owner;
+            const packageName = process.env.PACKAGE_NAME;
+            const keepCount = Number(process.env.KEEP_COUNT || "20");
+            const ownerType = context.payload.repository.owner.type;
+
+            const listFn = ownerType === "Organization"
+              ? github.rest.packages.getAllPackageVersionsForPackageOwnedByOrg
+              : github.rest.packages.getAllPackageVersionsForPackageOwnedByUser;
+
+            const deleteFn = ownerType === "Organization"
+              ? github.rest.packages.deletePackageVersionForOrg
+              : github.rest.packages.deletePackageVersionForUser;
+
+            const versions = await github.paginate(listFn, {
+              package_type: "container",
+              package_name: packageName,
+              org: ownerType === "Organization" ? owner : undefined,
+              username: ownerType === "Organization" ? undefined : owner,
+              per_page: 100
+            });
+
+            // Keep only versions that carry deps-* tags and sort newest first.
+            const depsVersions = versions
+              .map((v) => {
+                const tags = v.metadata?.container?.tags || [];
+                return { id: v.id, created_at: v.created_at, tags };
+              })
+              .filter((v) => v.tags.some((t) => t.startsWith("deps-")))
+              .sort((a, b) => new Date(b.created_at) - new Date(a.created_at));
+
+            core.info(`Found ${depsVersions.length} versions carrying deps-* tags.`);
+
+            // Delete only older deps-only versions; never delete mixed-tag entries with 'latest'.
+            const toDelete = depsVersions.slice(keepCount).filter((v) => {
+              if (v.tags.includes("latest")) return false;
+              return v.tags.every((t) => t.startsWith("deps-"));
+            });
+
+            for (const item of toDelete) {
+              core.info(`Deleting package version id=${item.id} tags=${item.tags.join(",")}`);
+              await deleteFn({
+                package_type: "container",
+                package_name: packageName,
+                package_version_id: item.id,
+                org: ownerType === "Organization" ? owner : undefined,
+                username: ownerType === "Organization" ? undefined : owner
+              });
+            }
+
+            core.info(`Deleted ${toDelete.length} old deps versions; kept ${Math.min(keepCount, depsVersions.length)} newest.`);

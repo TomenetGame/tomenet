@@ -81,7 +81,7 @@ u32b Rand_state[RAND_DEG];
  */
 void Rand_state_init(u32b seed) {
 #ifdef USE_SFMT
-#ifndef WIN32
+#if !defined(WIN32) && !defined(USE_SDL2)
 	/* SFMT initialization using /dev/urandom if possible */
 	const int seed_bytes = 2496;
 	char *seed_array[seed_bytes];
