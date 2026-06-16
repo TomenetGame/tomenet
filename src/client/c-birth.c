@@ -2713,7 +2713,7 @@ bool get_server_name(void) {
 		/* Get a key */
 		Term->scr->cx = Term->wid;
 		Term->scr->cu = 1;
-		c = inkey();
+		c = inkey(); /* Note, at least for X11 systems: This is actually the first time where window focus is grabbed from the OS (to raise the TomeNET main window) after the TomeNET initialization process has finished. */
 #ifdef META_DISPLAYPINGS_LATER
 		/* Without this, choosing a server too quickly may result in the login screen being partially overwritten with the meta server again */
 		refresh_meta_once = FALSE;

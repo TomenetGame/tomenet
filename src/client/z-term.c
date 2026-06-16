@@ -4063,6 +4063,8 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 		return((*Term_inkey_hook)(ch, wait, take));
 	}
 
+	//Side note: On X11 the Term_xtra() calls below may grab window focus to raise the main TomeNET window, via CheckEvent().
+
 	/* Hack -- get bored */
 	if (!Term->never_bored) {
 		/* Process random events */

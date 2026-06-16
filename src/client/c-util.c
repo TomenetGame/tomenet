@@ -988,7 +988,7 @@ static char inkey_aux(void) {
 #else
 		do {
 			do_flicker();
-			(void)(Term_inkey(&ch, FALSE, TRUE));
+			(void)(Term_inkey(&ch, FALSE, TRUE)); //Side note: On X11 this grabs window focus to raise the main TomeNET window (via CheckEvent()).
 			if (ch) break;
 			update_ticks();		// <-(x)!! in -c (terminal) mode, this is actually _the_ (only) update_ticks() that is called during meta server display and that is able to visibly redraw meta server list every 9s! (META_DISPLAYPINGS_LATER)
  #ifdef RAINY_TOMB
@@ -1575,7 +1575,7 @@ char inkey(void) {
 			continue;
 		}
 
-		/* Get a key (see above) */
+		/* Get a key (see above) -- (Side note: On X11 this actually also grabs the window focus from OS and raises the TomeNET main window, via CheckEvent()) */
 		kk = ch = inkey_aux();//		<-(y)!! in -c (terminal) mode, this waits for keypress (META_DISPLAYPINGS_LATER)
 
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT

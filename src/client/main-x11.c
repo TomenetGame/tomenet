@@ -1793,9 +1793,10 @@ static errr CheckEvent(bool wait) {
 				Infowin_move(term_prefs[t_idx].x, term_prefs[t_idx].y);
 			}
 
-			if (td == &term_main) {
-				Infowin_set_focus();
-			}
+			/* Main TomeNET window grabs focus from the OS
+			   --- Hmm, why though? Could be annoying maybe eg on gfx startup, when it re-grabs focus after graphics has initialized,
+			       but the user meanwhile raised some other app's window . Disabled for now, let me know what you think - C. Blue */
+			//if (td == &term_main) Infowin_set_focus();
 			break;
 
 		/* An UnMap Event */
@@ -3404,8 +3405,8 @@ static void term_data_init_graphics(int index, term_data *td) {
 	/* Save the data */
 	t->data = td;
 
-	/* Activate (important) */
-	Term_activate(t);
+	/* Activate (not important here, will just steal window focus if eg the user clicked on some other window while graphics was still initializing...) */
+	//Term_activate(t);
 }
 #endif /* USE_GRAPHICS */
 /*
@@ -4397,6 +4398,19 @@ errr init_x11(void) {
 		}
 	}
 
+	/* Activate the "Angband" main window screen. */
+	Term_activate(&term_main.t);
+
+	/* Raise the "Angband" main window. */
+	Infowin_set(term_main.outer);
+	Infowin_raise();
+
+	/* Required to show the final subterm window too for some reason.
+	   (Otherwise it'll actually get initialized with the according graphics-processing delay,
+	    via the first XCreatePixmap() call that happens in term_data_init_graphics() loop below.) */
+	Term_xtra(TERM_XTRA_FRESH, 0);
+
+
 #ifdef USE_GRAPHICS
 	/* Initialize the graphics part of each term */
 	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
@@ -4406,13 +4420,6 @@ errr init_x11(void) {
 		}
 	}
 #endif
-
-	/* Activate the "Angband" main window screen. */
-	Term_activate(&term_main.t);
-
-	/* Raise the "Angband" main window. */
-	Infowin_set(term_main.outer);
-	Infowin_raise();
 
 	/* Success */
 	return(0);
