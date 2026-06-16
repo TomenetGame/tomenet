@@ -586,6 +586,7 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #endif
 #ifdef USE_X11
 	bool found_window[ANGBAND_TERM_MAX] = { FALSE };
+	bool found_graphic_resize_type = FALSE;
 #endif
 	bool explicit_save = !(creds_only == TRUE && update_creds == FALSE) /* Don't execute if we got called from client_init(). */
 	    && !(creds_only == TRUE && update_creds == TRUE); /* Don't execute if we got called from store_crecedentials(). */
@@ -751,19 +752,18 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 								strcat(buf, format("%d\n", use_graphics_new));
 							}
  #ifdef USE_GRAPHICS
+							/* scan for exact 'graphic_tiles', not for 'grapic_tiles[0-9]' subtile entries: */
 							else if (!strncmp(buf, "graphic_tiles", 13) && !(buf[13] >= '0' && buf[13] <= '9')) {
 								strcpy(buf, "graphic_tiles\t\t");
 								strcat(buf, format("%s\n", graphic_tiles));
 								/* Specialty: Write all sub-tilesets lines right after this one (and ignore/discard the existing ones) */
 								for (i = 0; i < MAX_SUBFONTS; i++)
 									fputs(format("graphic_tiles%d\t\t%d\n", i, graphic_subtiles[i] ? 1 : 0), config2);
-#ifdef USE_X11
-							} else if (!strncmp(buf, "graphic_resize_type", 19))
-							{
+							} else if (!strncmp(buf, "graphic_resize_type", 19)) {
 								strcpy(buf, "graphic_resize_type\t");
 								strcat(buf, format("%d\n", gfx_resize_type));
-#endif
-							} else if (!strncmp(buf, "graphic_tiles", 13)) continue; //graphic_subtiles[] -> ignore/discard
+								found_graphic_resize_type = TRUE;
+							} else if (!strncmp(buf, "graphic_tiles", 13)) continue; //These are 'graphic_tiles[0-9]' ie graphic_subtiles[] -> ignore/discard
  #endif
 						}
 #endif /* USE_X11 */
@@ -862,6 +862,14 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 					write_mangrc_aux(9, term_names[9], config2);
 					logprint("Added missing Term-9 window to config file.\n");
 				}
+ #ifdef USE_GRAPHICS
+				if (!found_graphic_resize_type) {
+					strcpy(buf, "graphic_resize_type\t");
+					strcat(buf, format("%d\n", gfx_resize_type));
+					fputs(buf, config2);
+					logprint("Added missing 'graphic_resize_type' option to config file.\n");
+				}
+ #endif
 			}
 #endif
 
