@@ -4444,6 +4444,7 @@ errr init_x11(void) {
 	if (use_graphics) {
 		/* Give a message so user doesn't think we just froze up (especially with Lanczos interpolation) */
 		Term_putstr(1, 12, -1, TERM_WHITE, "\377o                 Please wait while initializing graphics...");
+		Term_fresh();
 		Term_flush();
 	}
 #endif
