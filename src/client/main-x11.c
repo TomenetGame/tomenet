@@ -3407,7 +3407,7 @@ static void term_data_init_graphics(int index, term_data *td) {
 	/* Save the data */
 	t->data = td;
 
-	/* Activate (not important here, will just steal window focus if eg the user clicked on some other window while graphics was still initializing...) */
+	/* Activate (apparently not important here) */
 	//Term_activate(t);
 }
 #endif /* USE_GRAPHICS */
