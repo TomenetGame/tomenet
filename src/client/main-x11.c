@@ -4440,17 +4440,29 @@ errr init_x11(void) {
 	Infowin_set(term_main.outer);
 	Infowin_raise();
 
+#ifdef USE_GRAPHICS
+	if (use_graphics) {
+		/* Give a message so user doesn't think we just froze up (especially with Lanczos interpolation) */
+		Term_putstr(1, 12, -1, TERM_WHITE, "\377o                 Please wait while initializing graphics...");
+		Term_flush();
+	}
+#endif
+
 	/* Required to show the final subterm window too for some reason.
 	   (Otherwise it'll actually get initialized with the according graphics-processing delay,
 	    via the first XCreatePixmap() call that happens in term_data_init_graphics() loop below.) */
 	Term_xtra(TERM_XTRA_FRESH, 0);
-
 
 #ifdef USE_GRAPHICS
 	/* Initialize the graphics part of each term */
 	for (i = 0; i < ANGBAND_TERM_MAX; i++) {
 		/* Main window is always visible, all other depend on configuration. */
 		if ((i == 0 || term_prefs[i].visible) && ang_term[i]) {
+			/* Re-give a message so user doesn't think we just froze up (especially with Lanczos interpolation),
+			   because sometimes the above message will just not appear. */
+			Term_putstr(1, 12, -1, TERM_WHITE, "\377o                 Please wait while initializing graphics...");
+			Term_flush();
+
 			term_data_init_graphics(i, term_idx_to_term_data(i));
 		}
 	}
