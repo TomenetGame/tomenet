@@ -966,6 +966,7 @@ static errr Infowin_raise(void) {
 /*
  * Request to focus Infowin.
  */
+#if 0 /* unused, as it is commented out again for now in CheckEvents() */
 static errr Infowin_set_focus(void) {
 	/* Set input focus for window. */
 	XSetInputFocus(Metadpy->dpy, Infowin->win, RevertToNone, CurrentTime);
@@ -973,6 +974,7 @@ static errr Infowin_set_focus(void) {
 	/* Success */
 	return(0);
 }
+#endif
 
 /*
  * Move an infowin.
@@ -3587,6 +3589,7 @@ static errr term_data_init_base(int index, term_data *td, bool fixed, cptr name,
 /*
  * Initialize a term_data
  */
+#if 0 /* Replaced by split functions term_data_init_base() and term_data_init_graphics() for more atomic window initialization - C. Blue */
 static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr font) {
 	term *t = &td->t;
 
@@ -3863,6 +3866,7 @@ static errr term_data_init(int index, term_data *td, bool fixed, cptr name, cptr
 	/* Success */
 	return(0);
 }
+#endif //0
 
 /*
  * Names of the 16 colors
