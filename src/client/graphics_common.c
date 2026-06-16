@@ -32,14 +32,14 @@ bilinear_sample make_bilinear_sample(float topLeft, float topRight, float bottom
 
 coordinates confineCoordinatesToRectangle(int x, int y, rectangle restriction_rectangle) {
     coordinates correctedPixelCoordinates;
-    correctedPixelCoordinates.x = x;
-    correctedPixelCoordinates.y = y;
 
     if (x < restriction_rectangle.top_left.x) correctedPixelCoordinates.x = restriction_rectangle.top_left.x;
-    if (x > restriction_rectangle.bottom_right.x) correctedPixelCoordinates.x = restriction_rectangle.bottom_right.x;
+    else if (x > restriction_rectangle.bottom_right.x) correctedPixelCoordinates.x = restriction_rectangle.bottom_right.x;
+    else correctedPixelCoordinates.x = x;
 
     if (y < restriction_rectangle.top_left.y) correctedPixelCoordinates.y = restriction_rectangle.top_left.y;
-    if (y > restriction_rectangle.bottom_right.y) correctedPixelCoordinates.y = restriction_rectangle.bottom_right.y;
+    else if (y > restriction_rectangle.bottom_right.y) correctedPixelCoordinates.y = restriction_rectangle.bottom_right.y;
+    else correctedPixelCoordinates.y = y;
 
     return correctedPixelCoordinates;
 }

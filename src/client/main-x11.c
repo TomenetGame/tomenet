@@ -3074,6 +3074,7 @@ Pixell xInterpolationLanczos(XImage *originalImage, float originalX, float origi
 	Pixell new_pixel = 0;
 	int originalLoopX = round(originalX);
 	int originalLoopY = round(originalY);
+	char *originalImageData = originalImage->data;
 
 	color_rgb newPixelRgb;
 
@@ -3082,17 +3083,27 @@ Pixell xInterpolationLanczos(XImage *originalImage, float originalX, float origi
 	double sum_green = 0.0;
 	double sum_blue = 0.0;
 	double weight_sum = 0.0;
-	for (int y = originalLoopY - LANCZOS_A; y <= originalLoopY + LANCZOS_A; y++)
-	{
-		for (int x = originalLoopX - LANCZOS_A; x <= originalLoopX + LANCZOS_A; x++)
-		{
+	color_rgb sample_pixel_color;
+
+	double dist_x, dist_y, weight;
+
+	for (int y = originalLoopY - LANCZOS_A; y <= originalLoopY + LANCZOS_A; y++) {
+		for (int x = originalLoopX - LANCZOS_A; x <= originalLoopX + LANCZOS_A; x++) {
 			coordinates sample_pixel_coordinates = confineCoordinatesToRectangle(x, y, tile_boundaries);
+
+			/* Tried different methods - maybe direct memory access is somewhat faster. - C. Blue */
+#if 0
 			color_rgb sample_pixel_color = xGetPixelRgb(originalImage, sample_pixel_coordinates.x, sample_pixel_coordinates.y);
+#else
+			sample_pixel_color.green = originalImageData[sample_pixel_coordinates.y * originalImage->width * 4 + sample_pixel_coordinates.x * 4 + 1]; //green
+			sample_pixel_color.red   = originalImageData[sample_pixel_coordinates.y * originalImage->width * 4 + sample_pixel_coordinates.x * 4 + 2]; //red
+			sample_pixel_color.blue  = originalImageData[sample_pixel_coordinates.y * originalImage->width * 4 + sample_pixel_coordinates.x * 4 + 0]; //blue
+#endif
 
-			double dist_x = originalX - x;
-			double dist_y = originalY - y;
+			dist_x = originalX - x;
+			dist_y = originalY - y;
 
-			double weight = lanczosKernel(dist_x, LANCZOS_A) * lanczosKernel(dist_y, LANCZOS_A);
+			weight = lanczosKernel(dist_x, LANCZOS_A) * lanczosKernel(dist_y, LANCZOS_A);
 
 			sum_red += weight * sample_pixel_color.red;
 			sum_green += weight * sample_pixel_color.green;
@@ -3195,7 +3206,7 @@ void rescaleRawpict(XImage *originalImage, int tileWidth, int tileHeight, int fo
  *
  * It's your responsibility to free returned XImage after usage.
  */
-static XImage *ResizeImage(Display *display, XImage *originalImage,	int tileWidth, int tileHeight, int fontWidth, int fontHeight)
+static XImage *ResizeImage(Display *display, XImage *originalImage, int tileWidth, int tileHeight, int fontWidth, int fontHeight)
 {
 	int originalImageWidth, originalImageHeight, resizedWidth, resizedHeight;
 
@@ -3217,31 +3228,51 @@ static XImage *ResizeImage(Display *display, XImage *originalImage,	int tileWidt
 	float widthRatio = ((float)originalImageWidth) / ((float)resizedWidth);
 	float heightRatio = ((float)originalImageHeight) / ((float)resizedHeight);
 
-	for (int targetLoopY = 0; targetLoopY < resizedHeight; targetLoopY++) {
-		float originalY = (float) targetLoopY * heightRatio;
+#if 1
+	unsigned int *p = (unsigned int *)resizedImageData; // sizeof(*p) mus tbe 4 bytes (ie unsigned int)
+#endif
 
-		int tileYCount = targetLoopY / fontHeight;
+	float originalY, originalX;
+	int tileYCount, tileXCount, originalTileStartY, originalTileEndY, originalTileStartX, originalTileEndX;
+	int targetLoopY, targetLoopX;
+	unsigned long newPixelHex;
+	rectangle tile_boundaries;
 
-		for (int targetLoopX = 0; targetLoopX < resizedWidth; targetLoopX++) {
-			float originalX = (float) targetLoopX * widthRatio;
+	for (targetLoopY = 0; targetLoopY < resizedHeight; targetLoopY++) {
+		originalY = (float) targetLoopY * heightRatio;
+		tileYCount = targetLoopY / fontHeight;
 
-			int tileXCount = targetLoopX / fontWidth;
+		for (targetLoopX = 0; targetLoopX < resizedWidth; targetLoopX++) {
+			originalX = (float) targetLoopX * widthRatio;
 
-			int originalTileStartY = tileYCount * tileHeight;
-			int originalTileEndY = (tileYCount + 1) * tileHeight - 1;
+			tileXCount = targetLoopX / fontWidth;
 
-			int originalTileStartX = tileXCount * tileWidth;
-			int originalTileEndX = (tileXCount + 1) * tileWidth - 1;
+			originalTileStartY = tileYCount * tileHeight;
+			originalTileEndY = (tileYCount + 1) * tileHeight - 1;
 
-			rectangle tile_boundaries;
+			originalTileStartX = tileXCount * tileWidth;
+			originalTileEndX = (tileXCount + 1) * tileWidth - 1;
+
 			tile_boundaries.top_left.x = originalTileStartX;
 			tile_boundaries.top_left.y = originalTileStartY;
 			tile_boundaries.bottom_right.x = originalTileEndX;
 			tile_boundaries.bottom_right.y = originalTileEndY;
 
 			// tiles fixed colors
-			unsigned long newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries);
+			newPixelHex = XPixelInterpolation(originalImage, originalX, originalY, tile_boundaries);
+			/* Tried different methods - they seem to have no speed difference,
+			   even XPutPixel() is basically the same speed. Might be machine-dependant.
+			   Therefore using XPutPixel() as standard method seems fine. - C. Blue */
+#if 1
+			*p++ = newPixelHex;
+#elif 0
+			resizedImageData[targetLoopY * resizedWidth * 4 + targetLoopX * 4 + 0] = (newPixelHex & 0x00ff0000) >> 16; //green
+			resizedImageData[targetLoopY * resizedWidth * 4 + targetLoopX * 4 + 1] = (newPixelHex & 0x0000ff00) >> 8; //red
+			resizedImageData[targetLoopY * resizedWidth * 4 + targetLoopX * 4 + 2] = (newPixelHex & 0x000000ff); //blue
+			resizedImageData[targetLoopY * resizedWidth * 4 + targetLoopX * 4 + 3] = 0xff;
+#else
 			XPutPixel(resizedImage, targetLoopX, targetLoopY, newPixelHex);
+#endif
 		}
 	}
 
