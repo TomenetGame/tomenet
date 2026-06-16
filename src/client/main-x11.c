@@ -2216,15 +2216,15 @@ static cptr ANGBAND_DIR_XTRA_GRAPHICS;
 /* Loaded tiles image and masks. */
 XImage *graphics_image = None;
 XImage *graphics_fgmask = None;
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 XImage *graphics_bgmask = None;
  #endif
 
 XImage *graphics_image_sub[MAX_SUBFONTS] = { None };
 XImage *graphics_fgmask_sub[MAX_SUBFONTS] = { None };
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 XImage *graphics_bgmask_sub[MAX_SUBFONTS] = { None };
-#endif
+ #endif
 
 /* These variables are computed at image load (in 'init_x11'). */
 int graphics_tile_wid, graphics_tile_hgt;
@@ -2498,10 +2498,10 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	Pixmap tilePreparation2;
    #ifdef TILE_CACHE_SIZE
 	struct tile_cache_entry *entry;
-	int i, j, hole = -1;
-#endif
+	int i, hole = -1;
+   #endif
 	XImage *tiles, *fgmask, *bgmask;
-	XImage *back_tiles, *back_fgmask, *back_bgmask;
+	XImage *back_tiles, *back_fgmask;//, *back_bgmask;
 
 	/* Avoid visual glitches while not in 2mask mode */
 	if (use_graphics != UG_2MASK) {
@@ -2643,11 +2643,11 @@ static errr Term_pict_x11_2mask(int x, int y, byte a, char32_t c, byte a_back, c
 	if (c_subtileset[c_back] == -1) {
 		back_tiles = td->tiles;
 		back_fgmask = td->fgmask;
-		back_bgmask = td->bgmask;
+		//back_bgmask = td->bgmask;
 	} else {
 		back_tiles = td->tiles_sub[c_subtileset[c_back]];
 		back_fgmask = td->fgmask_sub[c_subtileset[c_back]];
-		back_bgmask = td->bgmask_sub[c_subtileset[c_back]];
+		//back_bgmask = td->bgmask_sub[c_subtileset[c_back]];
 	}
 
 	XImage *preparedBackTile;
