@@ -2930,65 +2930,169 @@ typedef struct RGBQUAD {
  * Function will not free memory if allready allocated in data_return input variable.
  */
 static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int *height_return) {
-	FILE *f;
+	FILE *fp;
 	BITMAPFILEHEADER fileheader;
 	BITMAPINFOHEADER infoheader;
 	vptr fileheaderhack = (vptr)((char *)(&fileheader) + sizeof(fileheader.bfAlign));
+	char *data;
+	int i, n, x, y;
+	int linePadding;
+	errr err = 0;
 
 	/* Open the BMP file. */
-	if (NULL == (f = fopen(Name, "r")))
+	if (NULL == (fp = fopen(Name, "r")))
 		/* No such file. */
 		return(ReadBMPNoFile);
 
 	/* Read the "BITMAPFILEHEADER". */
-	if (1 != fread(fileheaderhack, sizeof(fileheader) - sizeof(fileheader.bfAlign), 1, f)) {fclose(f); return(ReadBMPReadErrorOrUnexpectedEOF);}
+	if (1 != fread(fileheaderhack, sizeof(fileheader) - sizeof(fileheader.bfAlign), 1, fp)) {
+		fclose(fp);
+		return(ReadBMPReadErrorOrUnexpectedEOF);
+	}
 	/* Read the "BITMAPINFOHEADER". */
-	if (1 != fread(&infoheader, sizeof(infoheader), 1, f)) {fclose(f); return(ReadBMPReadErrorOrUnexpectedEOF);}
+	if (1 != fread(&infoheader, sizeof(infoheader), 1, fp)) {
+		fclose(fp);
+		return(ReadBMPReadErrorOrUnexpectedEOF);
+	}
 	/* Verify. */
-	if (feof(f) || fileheader.bfType != 19778) {fclose(f); return(ReadBMPInvalidFile);}
-	if (infoheader.biBitCount != 24 && infoheader.biBitCount != 32) {fclose(f); return(ReadBMPIllegalBitCount);}
-	if (infoheader.biWidth * infoheader.biHeight == 0) {fclose(f); return(ReadBMPNoImageData);}
+	if (feof(fp) || fileheader.bfType != 19778) {
+		fclose(fp);
+		return(ReadBMPInvalidFile);
+	}
+	if (infoheader.biBitCount != 24 && infoheader.biBitCount != 32) {
+		fclose(fp);
+		return(ReadBMPIllegalBitCount);
+	}
+	if (infoheader.biWidth * infoheader.biHeight == 0) {
+		fclose(fp);
+		return(ReadBMPNoImageData);
+	}
 	/* Position file read head to image data. */
-	if (0 != fseek(f, fileheader.bfOffBytes, SEEK_SET)) {fclose(f); return(ReadBMPUnexpectedEOF);}
+	if (0 != fseek(fp, fileheader.bfOffBytes, SEEK_SET)) {
+		fclose(fp);
+		return(ReadBMPUnexpectedEOF);
+	}
 
-	char *data;
 	C_MAKE(data, infoheader.biWidth*infoheader.biHeight * 4, char);
 	memset(data, 0, infoheader.biWidth*infoheader.biHeight * 4);
-	errr err = 0;
 
 	/* Every line is padded, to have multiple o 4 bytes. */
-	int linePadding = (4 - (3 * infoheader.biWidth) % 4) % 4;
+	linePadding = (4 - (3 * infoheader.biWidth) % 4) % 4;
 
-	for (int n = 0; err == 0 && n < abs(infoheader.biHeight); n++) {
-		int y = infoheader.biHeight - n - 1;
+	for (n = 0; err == 0 && n < abs(infoheader.biHeight); n++) {
+		y = infoheader.biHeight - n - 1;
 
 		if (infoheader.biHeight < 0) y = n;
 
-		for (int x = 0; x < infoheader.biWidth; x++) {
-			int i = 4 * (y * infoheader.biWidth + x);
+		for (x = 0; x < infoheader.biWidth; x++) {
+			i = 4 * (y * infoheader.biWidth + x);
 
 			/* Usually the pixel colors are in BGR (or BGRA) order. The order can be different,
 			 * depending on header info, but for simplicity assume BGR (or BGRA) ordering. */
-			if (1 != fread(&data[i], 3, 1, f)) {err = ReadBMPUnexpectedEOF; break;}
+			if (1 != fread(&data[i], 3, 1, fp)) {
+				err = ReadBMPUnexpectedEOF;
+				break;
+			}
 			if (infoheader.biBitCount == 32) {
 				/* The format can be BGRA or BGRX, anyway skip last byte (A or X component). */
-				if (0 != fseek(f, 1, SEEK_CUR)) {fclose(f); return(ReadBMPUnexpectedEOF);}
+				if (0 != fseek(fp, 1, SEEK_CUR)) {
+					fclose(fp);
+					return(ReadBMPUnexpectedEOF);
+				}
 			}
 		}
 		/* Adjust read head if padding. */
 		if (linePadding > 0)
-			if (0 != fseek(f, linePadding, SEEK_CUR)) {err = ReadBMPUnexpectedEOF; break;}
+			if (0 != fseek(fp, linePadding, SEEK_CUR)) {
+				err = ReadBMPUnexpectedEOF;
+				break;
+			}
 	}
-	fclose(f);
+	fclose(fp);
 
 	if (err != 0) {
-		C_KILL(data, infoheader.biWidth*infoheader.biHeight*4, char);
+		C_KILL(data, infoheader.biWidth * infoheader.biHeight * 4, char);
 		return(err);
 	}
 
 	(*width_return) = infoheader.biWidth;
 	(*height_return) = abs(infoheader.biHeight);
 	(*data_return) = data;
+	return(0);
+}
+
+// Save raw image data (BGR byte array) to a 24-bit BMP file
+// All of 'data', 'header' and 'row' stuff would usually be unsigned, but we use plain 'char' for graphics data atm.
+int SaveBMPData(const char* filename, int width, int height, const unsigned char* data) {
+	// 14-byte BMP File Header
+	unsigned char file_header[14] = {
+	    'B', 'M',		// Signature
+	     0, 0, 0, 0,	// File size in bytes (will fill later)
+	     0, 0, 0, 0,	// Reserved
+	    54, 0, 0, 0		// Offset to image data (14 + 40 = 54)
+	};
+
+	// 40-byte BMP Info Header
+	unsigned char info_header[40] = {
+	    40, 0, 0, 0,	// Header size
+	     0, 0, 0, 0,	// Image width
+	     0, 0, 0, 0,	// Image height
+	     1, 0,		// Planes
+	    24, 0,		// Bits per pixel (24)
+	     0, 0, 0, 0,	// Compression (0 = uncompressed)
+	     0, 0, 0, 0,	// Image size (can be 0 for uncompressed)
+	     0, 0, 0, 0,	// X pixels per meter
+	     0, 0, 0, 0,	// Y pixels per meter
+	     0, 0, 0, 0,	// Total colors
+	     0, 0, 0, 0		// Important colors
+	};
+
+	int padded_row_size, data_size, file_size, y;
+	FILE *fp;
+	const unsigned char* row_ptr;
+
+	unsigned char padding[3] = {0, 0, 0}; // Write pixel data with 4-byte row padding
+	int unpadded_row_size = width * 3, padding_bytes_needed;
+
+	fp = fopen(filename, "wb");
+	if (!fp) return(1);
+
+	padded_row_size = ((width * 3 + 3) / 4) * 4;
+	data_size = padded_row_size * height;
+	// Fill in width and height to headers
+	file_size = 54 + data_size;
+
+	*(int*)&file_header[2] = file_size;
+	*(int*)&info_header[4] = width;
+	*(int*)&info_header[8] = height;
+
+	// Write headers
+	fwrite(file_header, 1, 14, fp);
+	fwrite(info_header, 1, 40, fp);
+
+#if 0
+	for (y = 0; y < height; y++) {
+		// Write actual pixel data (BMP stores data bottom-to-top)
+		row_ptr = data + (height - 1 - y) * unpadded_row_size;
+		for (int x = 0; x < width; x++) fwrite(row_ptr + x * 3, 3, 1, fp);
+
+		// Write row padding
+		padding_bytes_needed = padded_row_size - unpadded_row_size;
+		if (padding_bytes_needed > 0) fwrite(padding, 1, padding_bytes_needed, fp);
+	}
+#else
+	for (y = 0; y < height; y++) {
+		// Write actual pixel data (BMP stores data bottom-to-top)
+		row_ptr = data + (height - 1 - y) * unpadded_row_size;
+		fwrite(row_ptr, 1, unpadded_row_size, fp);
+
+		// Write row padding
+		padding_bytes_needed = padded_row_size - unpadded_row_size;
+		if (padding_bytes_needed > 0) fwrite(padding, 1, padding_bytes_needed, fp);
+	}
+#endif
+
+	fclose(fp);
 	return(0);
 }
 
@@ -3372,6 +3476,7 @@ static void term_data_init_graphics(int index, term_data *td) {
 
 		/* Use resized tiles & masks. */
 		td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+		//(void)SaveBMPData(format("cache_tiles_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles), td->tiles->width, td->tiles->height, (const char unsigned*)td->tiles->data);
 		td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
  #ifdef GRAPHICS_BG_MASK
 		td->bgmask = ResizeImage(Metadpy->dpy, graphics_bgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
