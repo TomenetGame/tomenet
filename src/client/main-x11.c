@@ -4581,22 +4581,17 @@ void change_font(int s) {
 	}
 }
 
-void resize_term_gfx(int term_idx)
-{
+void resize_term_gfx(int term_idx) {
 	term_data *td = term_idx_to_term_data(term_idx);
 	int i;
 
 	if (!term_get_visibility(term_idx)) return;
-
-	if (! use_graphics)
-	{
-		return;
-	}
+	if (! use_graphics) return;
 
 	/* Free old tiles & masks */
 	free_graphics(td);
 
-	/* If window was resized, grapics tiles need to be resized too. */
+	/* If font was resized, grapics tiles need to be resized too. */
 	td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
 	td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
 #ifdef GRAPHICS_BG_MASK
