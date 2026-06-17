@@ -1205,8 +1205,8 @@ static term_data* term_idx_to_term_data(int term_idx);
 #endif
 
 #ifdef TILE_CACHE_SIZE
-extern bool disable_tile_cache;
-bool disable_tile_cache = FALSE;
+extern bool disable_tile_cache, disable_tileset_caching;
+bool disable_tile_cache = FALSE, disable_tileset_caching = FALSE;
 struct tile_cache_entry {
     Pixmap tilePreparation;
     char32_t c;
@@ -3366,8 +3366,7 @@ Pixell XPixelInterpolation(XImage *originalImage, float originalX, float origina
 	return new_pixel;
 }
 
-void rescaleRawpict(XImage *originalImage, int tileWidth, int tileHeight, int fontWidth, int fontHeight, term_data *td, int sub_tileset_index)
-{
+void rescaleRawpict(XImage *originalImage, int tileWidth, int tileHeight, int fontWidth, int fontHeight, term_data *td, int sub_tileset_index) {
 	int originalImageWidth = originalImage->width;
 	int originalImageHeight = originalImage->height;
 	int resizedWidth = fontWidth * originalImageWidth / tileWidth;
@@ -3414,8 +3413,7 @@ void rescaleRawpict(XImage *originalImage, int tileWidth, int tileHeight, int fo
  *
  * It's your responsibility to free returned XImage after usage.
  */
-static XImage *ResizeImage(Display *display, XImage *originalImage, int tileWidth, int tileHeight, int fontWidth, int fontHeight)
-{
+static XImage *ResizeImage(Display *display, XImage *originalImage, int tileWidth, int tileHeight, int fontWidth, int fontHeight) {
 	int originalImageWidth, originalImageHeight, resizedWidth, resizedHeight;
 
 	XImage *resizedImage;
@@ -3587,67 +3585,73 @@ static void term_data_init_graphics(int index, term_data *td) {
 
 		/* Tileset */
 		errr = 255;
-		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_tiles_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
-		if (my_fexists(filename)) {
-			char *data = NULL;
+		if (!disable_tileset_caching) {
+			path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_tiles_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
+			if (my_fexists(filename)) {
+				char *data = NULL;
 
-			errr = ReadBMPData(filename, &data, &wtmp, &htmp);
-			if (!errr) {
-				/* Store loaded image data in XImage format */
-				td->tiles = XCreateImage(
-				    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
-				    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
-				if (!td->tiles) errr = 254;
+				errr = ReadBMPData(filename, &data, &wtmp, &htmp);
+				if (!errr) {
+					/* Store loaded image data in XImage format */
+					td->tiles = XCreateImage(
+					    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
+					    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
+					if (!td->tiles) errr = 254;
+				}
 			}
-		}
-		logprint(format("Cache check result (Tileset): %d.\n", errr));
-		if (errr) {
-			td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-			(void)SaveBMPData(td->tiles, filename);
-		}
+			logprint(format("Cache check result (Tileset): %d.\n", errr));
+			if (errr) {
+				td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+				(void)SaveBMPData(td->tiles, filename);
+			}
+		} else td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
 
 		/* Foreground mask */
-		errr = 255;
-		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_fgmask_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
-		if (my_fexists(filename)) {
-			char *data = NULL;
+		if (!disable_tileset_caching) {
+			errr = 255;
+			path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_fgmask_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
+			if (my_fexists(filename)) {
+				char *data = NULL;
 
-			errr = ReadBMPData(filename, &data, &wtmp, &htmp);
-			if (!errr) {
-				/* Store loaded image data in XImage format */
-				td->fgmask = XCreateImage(
-				    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
-				    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
-				if (!td->fgmask) errr = 254;
+				errr = ReadBMPData(filename, &data, &wtmp, &htmp);
+				if (!errr) {
+					/* Store loaded image data in XImage format */
+					td->fgmask = XCreateImage(
+					    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
+					    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
+					if (!td->fgmask) errr = 254;
+				}
 			}
-		}
-		logprint(format("Cache check result (FgMask): %d.\n", errr));
-		if (errr) {
-			td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-			(void)SaveBMPData(td->fgmask, filename);
-		}
+			logprint(format("Cache check result (FgMask): %d.\n", errr));
+			if (errr) {
+				td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+				(void)SaveBMPData(td->fgmask, filename);
+			}
+		} else td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
 
  #ifdef GRAPHICS_BG_MASK
 		/* Background mask */
-		errr = 255;
-		path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_bgmask_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
-		if (my_fexists(filename)) {
-			char *data = NULL;
+		if (!disable_tileset_caching) {
+			errr = 255;
+			path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_bgmask_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
+			if (my_fexists(filename)) {
+				char *data = NULL;
 
-			errr = ReadBMPData(filename, &data, &wtmp, &htmp);
-			if (!errr) {
-				/* Store loaded image data in XImage format */
-				td->bgmask = XCreateImage(
-				    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
-				    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
-				if (!td->bgmask) errr = 254;
+				errr = ReadBMPData(filename, &data, &wtmp, &htmp);
+				if (!errr) {
+					/* Store loaded image data in XImage format */
+					td->bgmask = XCreateImage(
+					    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
+					    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
+					if (!td->bgmask) errr = 254;
+				}
 			}
-		}
-		logprint(format("Cache check result (BgMask): %d.\n", errr));
-		if (errr) {
-			td->bgmask = ResizeImage(Metadpy->dpy, graphics_bgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-			(void)SaveBMPData(td->bgmask, filename);
-		}
+			logprint(format("Cache check result (BgMask): %d.\n", errr));
+			if (errr) {
+				td->bgmask = ResizeImage(Metadpy->dpy, graphics_bgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+				(void)SaveBMPData(td->bgmask, filename);
+			}
+		} else td->bgmask = ResizeImage(Metadpy->dpy, graphics_bgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
  #endif
 
 		rescaleRawpict(graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, -1);
@@ -3657,67 +3661,73 @@ static void term_data_init_graphics(int index, term_data *td) {
 
 			/* Tileset */
 			errr = 255;
-			path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_tiles_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
-			if (my_fexists(filename)) {
-				char *data = NULL;
+			if (!disable_tileset_caching) {
+				path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_tiles_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
+				if (my_fexists(filename)) {
+					char *data = NULL;
 
-				errr = ReadBMPData(filename, &data, &wtmp, &htmp);
-				if (!errr) {
-					/* Store loaded image data in XImage format */
-					td->tiles_sub[i] = XCreateImage(
-					    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
-					    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
-					if (!td->tiles_sub[i]) errr = 254;
+					errr = ReadBMPData(filename, &data, &wtmp, &htmp);
+					if (!errr) {
+						/* Store loaded image data in XImage format */
+						td->tiles_sub[i] = XCreateImage(
+						    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
+						    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
+						if (!td->tiles_sub[i]) errr = 254;
+					}
 				}
-			}
-			logprint(format("Cache check result (Tileset): %d.\n", errr));
-			if (errr) {
-				td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-				(void)SaveBMPData(td->tiles_sub[i], format("cache_tiles_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
-			}
+				logprint(format("Cache check result (Tileset): %d.\n", errr));
+				if (errr) {
+					td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+					(void)SaveBMPData(td->tiles_sub[i], format("cache_tiles_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
+				}
+			} else td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
 
 			/* Foreground mask */
 			errr = 255;
-			path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_fgmask_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
-			if (my_fexists(filename)) {
-				char *data = NULL;
+			if (!disable_tileset_caching) {
+				path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_fgmask_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
+				if (my_fexists(filename)) {
+					char *data = NULL;
 
-				errr = ReadBMPData(filename, &data, &wtmp, &htmp);
-				if (!errr) {
-					/* Store loaded image data in XImage format */
-					td->fgmask_sub[i] = XCreateImage(
-					    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
-					    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
-					if (!td->fgmask_sub[i]) errr = 254;
+					errr = ReadBMPData(filename, &data, &wtmp, &htmp);
+					if (!errr) {
+						/* Store loaded image data in XImage format */
+						td->fgmask_sub[i] = XCreateImage(
+						    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
+						    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
+						if (!td->fgmask_sub[i]) errr = 254;
+					}
 				}
-			}
-			logprint(format("Cache check result (FgMask): %d.\n", errr));
-			if (errr) {
-				td->fgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_fgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-				(void)SaveBMPData(td->fgmask_sub[i], filename);
-			}
+				logprint(format("Cache check result (FgMask): %d.\n", errr));
+				if (errr) {
+					td->fgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_fgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+					(void)SaveBMPData(td->fgmask_sub[i], filename);
+				}
+			} else td->fgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_fgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
 
  #ifdef GRAPHICS_BG_MASK
 			/* Background mask */
 			errr = 255;
-			path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_bgmask_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
-			if (my_fexists(filename)) {
-				char *data = NULL;
+			if (!disable_tileset_caching) {
+				path_build(filename, 1024, ANGBAND_DIR_XTRA_GRAPHICS, format("cache_bgmask_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
+				if (my_fexists(filename)) {
+					char *data = NULL;
 
-				errr = ReadBMPData(filename, &data, &wtmp, &htmp);
-				if (!errr) {
-					/* Store loaded image data in XImage format */
-					td->bgmask_sub[i] = XCreateImage(
-					    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
-					    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
-					if (!td->bgmask_sub[i]) errr = 254;
+					errr = ReadBMPData(filename, &data, &wtmp, &htmp);
+					if (!errr) {
+						/* Store loaded image data in XImage format */
+						td->bgmask_sub[i] = XCreateImage(
+						    Metadpy->dpy, visual, depth, ZPixmap, 0 /*offset*/,
+						    data, wtmp, htmp, 32 /*bitmap_pad*/, 0 /*bytes_per_line*/);
+						if (!td->bgmask_sub[i]) errr = 254;
+					}
 				}
-			}
-			logprint(format("Cache check result (BgMask): %d.\n", errr));
-			if (errr) {
-				td->bgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_bgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-				(void)SaveBMPData(td->bgmask_sub[i], filename);
-			}
+				logprint(format("Cache check result (BgMask): %d.\n", errr));
+				if (errr) {
+					td->bgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_bgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+					(void)SaveBMPData(td->bgmask_sub[i], filename);
+				}
+			} else td->bgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_bgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
  #endif
 
 			rescaleRawpict(graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, i);

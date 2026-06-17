@@ -9,7 +9,7 @@
  */
 
 #include "angband.h"
-extern bool disable_tile_cache;
+extern bool disable_tile_cache, disable_tileset_caching;
 #ifdef USE_X11
 extern int gfx_resize_type;
 #endif
@@ -1305,6 +1305,7 @@ int main(int argc, char **argv) {
 		case 'a': override_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
 		case 'g': override_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
 		case 'G': override_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
+		case 't': disable_tileset_caching = TRUE; break;
 		case 'T': disable_tile_cache = TRUE; break; //TILE_CACHE_SIZE
 		}
 
@@ -1353,6 +1354,8 @@ int main(int argc, char **argv) {
 		puts("  -V                 Save complete message log on exit, don't prompt");
 		puts("  -x                 Don't save chat/message log on exit (don't prompt)");
 		puts("  -a/-g/-G           Switch to ASCII/gfx/dualmask-gfx mode");
+		puts("  -t                 Don't cache graphical tilesets on disk");
+		puts("  -T                 Don't cache graphical tile drawing");
 
 #ifdef USE_SOUND_2010
 #if 0 //we don't have 'modules' for everything, yet :-p only sound_modules for now - C. Blue

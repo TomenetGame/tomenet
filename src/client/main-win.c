@@ -382,7 +382,7 @@ void resize_main_window_win(int cols, int rows);
 #endif
 
 #ifdef TILE_CACHE_SIZE
-bool disable_tile_cache = FALSE;
+bool disable_tile_cache = FALSE, disable_tileset_caching = FALSE;
 struct tile_cache_entry {
  #ifndef TILE_CACHE_SINGLEBMP
     HBITMAP hbmTilePreparation;
@@ -6209,6 +6209,8 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    "  -V              save chat+message log on exit",
 					    "  -x              don't save chat/message log on exit",
 					    "  -a/-g/-G       switch to ASCII/gfx/dualgfx mode"));
+					    //"  -t                 Don't cache graphical tilesets on disk",
+					    //"  -T                 Don't cache graphical tile drawing",
 				else /* We're called BEFORE init_windows()? Then we'll appear in the terminal window, with normal fixed-width formatting */
 					plog(format("%s\nRunning on %s.\n\n%s\n%s\n\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s\n%s",
 					    longVersion,
@@ -6236,7 +6238,9 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    "  -v              save chat log on exit",
 					    "  -V              save chat+message log on exit",
 					    "  -x              don't save chat/message log on exit",
-					    "  -a/-g/-G        switch to ASCII/gfx/dualgfx mode"));
+					    "  -a/-g/-G        switch to ASCII/gfx/dualgfx mode",
+					    "  -t                 Don't cache graphical tilesets on disk",
+					    "  -T                 Don't cache graphical tile drawing"));
 				if (initialized) quit(NULL);
 				just_h = TRUE;
 				break;
@@ -6272,6 +6276,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			case 'a': override_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
 			case 'g': override_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
 			case 'G': override_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics
+			case 't': disable_tileset_caching = TRUE; break;
 #ifdef TILE_CACHE_SIZE
 			case 'T': disable_tile_cache = TRUE; break;
 #endif
