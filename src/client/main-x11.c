@@ -3021,9 +3021,13 @@ static errr ReadBMPData(char *Name, char **data_return,  int *width_return, int 
 	return(0);
 }
 
+#if 0
 // Save raw image data (BGR byte array) to a 24-bit BMP file
 // All of 'data', 'header' and 'row' stuff would usually be unsigned, but we use plain 'char' for graphics data atm.
-int SaveBMPData(const char* filename, int width, int height, const unsigned char* data) {
+int SaveBMPData(XImage *image, const char* filename) {
+	int width = image->width, height = image->height;
+	const unsigned char* data = (unsigned char*)image->data;
+
 	// 14-byte BMP File Header
 	unsigned char file_header[14] = {
 	    'B', 'M',		// Signature
@@ -3070,7 +3074,7 @@ int SaveBMPData(const char* filename, int width, int height, const unsigned char
 	fwrite(file_header, 1, 14, fp);
 	fwrite(info_header, 1, 40, fp);
 
-#if 0
+ #if 0
 	for (y = 0; y < height; y++) {
 		// Write actual pixel data (BMP stores data bottom-to-top)
 		row_ptr = data + (height - 1 - y) * unpadded_row_size;
@@ -3080,7 +3084,7 @@ int SaveBMPData(const char* filename, int width, int height, const unsigned char
 		padding_bytes_needed = padded_row_size - unpadded_row_size;
 		if (padding_bytes_needed > 0) fwrite(padding, 1, padding_bytes_needed, fp);
 	}
-#else
+ #else
 	for (y = 0; y < height; y++) {
 		// Write actual pixel data (BMP stores data bottom-to-top)
 		row_ptr = data + (height - 1 - y) * unpadded_row_size;
@@ -3090,11 +3094,109 @@ int SaveBMPData(const char* filename, int width, int height, const unsigned char
 		padding_bytes_needed = padded_row_size - unpadded_row_size;
 		if (padding_bytes_needed > 0) fwrite(padding, 1, padding_bytes_needed, fp);
 	}
-#endif
+ #endif
 
 	fclose(fp);
 	return(0);
 }
+#else
+ #pragma pack(push, 1) // Set alignment to 1 byte
+typedef struct {
+	unsigned short file_type;	// 'BM' (0x4D42)
+	unsigned int file_size;		// Total file size
+	unsigned short reserved1;	// 0
+	unsigned short reserved2;	// 0
+	unsigned int offset_data;	// Pixel data offset
+} BMPFileHeader;
+
+// Заголовок информации (40 байт, BITMAPINFOHEADER)
+typedef struct {
+	unsigned int header_size;	// Size of this header (40)
+	int width;
+	int height;
+	unsigned short planes;		// 1
+	unsigned short bits_per_pixel;	// 24 for True Color
+	unsigned int compression;	// 0 (BI_RGB, no compression)
+	unsigned int image_size;	// Pixel data size
+	int x_pixels_per_meter;		// 0
+	int y_pixels_per_meter;		// 0
+	unsigned int colors_used;	// 0
+	unsigned int important_colors;	// 0
+} BMPInfoHeader;
+ #pragma pack(pop) // Restore default alignment
+int SaveBMPData(XImage *image, const char *filename) {
+	FILE *fp;
+	int bits_per_pixel, row_size_bytes;
+	unsigned int data_size, file_size;
+	BMPFileHeader file_header = {0};
+	BMPInfoHeader info_header = {0};
+	unsigned char *bmp_row_data;
+	int x, y, offset;
+	unsigned long pixel;
+	unsigned char r, g, b;
+
+	if (!image) {
+		logprint("Error: XImage is null.\n");
+		return(-1);
+	}
+
+	bits_per_pixel = 24;
+	row_size_bytes = ((image->width * bits_per_pixel + 31) / 32) * 4;
+	data_size = row_size_bytes * image->height;
+	file_size = sizeof(BMPFileHeader) + sizeof(BMPInfoHeader) + data_size;
+
+	file_header.file_type = 0x4D42;
+	file_header.file_size = file_size;
+	file_header.offset_data = sizeof(BMPFileHeader) + sizeof(BMPInfoHeader);
+
+	info_header.header_size = 40;
+	info_header.width = image->width;
+	info_header.height = -image->height;
+	info_header.planes = 1;
+	info_header.bits_per_pixel = bits_per_pixel;
+	info_header.compression = 0; // BI_RGB
+	info_header.image_size = data_size;
+
+	fp = fopen(filename, "wb");
+	if (!fp) {
+		logprint(format("Cannot open BMP file <%s>", filename));
+		return(-2);
+	}
+	fwrite(&file_header, sizeof(BMPFileHeader), 1, fp);
+	fwrite(&info_header, sizeof(BMPInfoHeader), 1, fp);
+
+	bmp_row_data = (unsigned char*)malloc(row_size_bytes);
+
+	for (y = 0; y < image->height; y++) {
+		memset(bmp_row_data, 0, row_size_bytes);
+
+		for (x = 0; x < image->width; x++) {
+			pixel = XGetPixel(image, x, y);
+			if (image->depth == 24) {
+				r = (pixel & image->red_mask) >> (ffs(image->red_mask) - 1);
+				g = (pixel & image->green_mask) >> (ffs(image->green_mask) - 1);
+				b = (pixel & image->blue_mask) >> (ffs(image->blue_mask) - 1);
+			} else {
+				 logprint(format("Error: Image depth (bpp) is %d instead of 24.\n", image->depth));
+				 r = g = b = 0;
+			}
+
+			// BMP colour order: B, G, R
+			offset = x * 3;
+			bmp_row_data[offset + 0] = b; // Blue
+			bmp_row_data[offset + 1] = g; // Green
+			bmp_row_data[offset + 2] = r; // Red
+		}
+		// Write the prepared string (including padding)
+		fwrite(bmp_row_data, 1, row_size_bytes, fp);
+	}
+
+	free(bmp_row_data);
+	fclose(fp);
+	logprint(format("Wrote tileset cache file <%s>\n", filename));
+	return(0);
+}
+#endif
 
 void filterImagePixels(XImage *image, color_rgb (*color_filter_function)(color_rgb))
 {
@@ -3476,19 +3578,24 @@ static void term_data_init_graphics(int index, term_data *td) {
 
 		/* Use resized tiles & masks. */
 		td->tiles = ResizeImage(Metadpy->dpy, graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
-		//(void)SaveBMPData(format("cache_tiles_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles), td->tiles->width, td->tiles->height, (const char unsigned*)td->tiles->data);
+		(void)SaveBMPData(td->tiles, format("cache_tiles_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
 		td->fgmask = ResizeImage(Metadpy->dpy, graphics_fgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+		(void)SaveBMPData(td->fgmask, format("cache_fgmask_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
  #ifdef GRAPHICS_BG_MASK
 		td->bgmask = ResizeImage(Metadpy->dpy, graphics_bgmask, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+		(void)SaveBMPData(td->bgmask, format("cache_bgmask_term%d_%dx%d_%s.bmp", index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
  #endif
 		rescaleRawpict(graphics_image, graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, -1);
 
 		for (i = 0; i < MAX_SUBFONTS; i++) {
 			if (graphics_image_sub[i] == None) continue;
 			td->tiles_sub[i] = ResizeImage(Metadpy->dpy, graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+			(void)SaveBMPData(td->tiles_sub[i], format("cache_tiles_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
 			td->fgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_fgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+			(void)SaveBMPData(td->fgmask_sub[i], format("cache_fgmask_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
  #ifdef GRAPHICS_BG_MASK
 			td->bgmask_sub[i] = ResizeImage(Metadpy->dpy, graphics_bgmask_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt);
+			(void)SaveBMPData(td->bgmask_sub[i], format("cache_bgmask_sub%d_term%d_%dx%d_%s.bmp", i, index, td->fnt->wid, td->fnt->hgt, graphic_tiles));
  #endif
 			rescaleRawpict(graphics_image_sub[i], graphics_tile_wid, graphics_tile_hgt, td->fnt->wid, td->fnt->hgt, td, i);
 		}
