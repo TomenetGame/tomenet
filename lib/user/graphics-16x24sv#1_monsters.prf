@@ -214,7 +214,7 @@ R:699:/5215 # Level=44 NAME='Knight Templar' Comments=p III with hollow thorns
 # R:725:/ # Level=60 NAME='Lord of Chaos' Comments=// NO TILE protected at server CHANGER
 
 # special "p"s
-R:681:/5315 # Level=45 NAME='Warrior of the Dawn' Comments=p SPECIAL multiple warriors.. Clones? Shadow?
+R:693:/5315 # Level=45 NAME='Warrior of the Dawn' Comments=p SPECIAL multiple warriors.. Clones? Shadow?
 
 # "p" uniques
 R:137:/5515 # Level=9 NAME='Wormtongue, Agent of Saruman' Comments=HUMANOID MAGE
@@ -777,3 +777,4 @@ R:1147:/4159 # Level=127 NAME='The Living Lightning' Comments=LIGHTNING
 
 ### "?" - tomes (4061)
 #R:557:/ # Level=36 NAME='Raal's Tome of Destruction' Comments=// NO TILE protected at server
+
