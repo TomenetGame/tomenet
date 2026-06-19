@@ -3760,6 +3760,10 @@ void client_init(char *argv1, bool skip) {
 	/* Capitalize the name */
 	nick[0] = toupper(nick[0]);
 
+	/* Give a message so user doesn't think we just froze up (especially with Lanczos interpolation) */
+	prt(format("Connecting to game server %s on port %d....", server_name, cfg_game_port), 1, 1);
+	Term_fresh();
+
 	/* Create the net socket and make the TCP connection */
 	if ((Socket = CreateClientSocket(server_name, cfg_game_port)) == -1)
 		quit("That server either isn't up, or you mistyped the hostname.\n");

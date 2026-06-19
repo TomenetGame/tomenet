@@ -2485,7 +2485,6 @@ bool get_server_name(void) {
 
 	/* Message */
 	prt("Connecting to metaserver for server list....", 1, 1);
-
 	/* Make sure message is shown */
 	Term_fresh();
 

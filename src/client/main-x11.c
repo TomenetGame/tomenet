@@ -4814,6 +4814,11 @@ errr init_x11(void) {
 	}
 #endif
 
+	/* Clear message again */
+	Term_putstr(1, 12, -1, TERM_WHITE, "\377o                                                           ");
+	Term_fresh();
+	Term_flush();
+
 	/* Success */
 	return(0);
 }
