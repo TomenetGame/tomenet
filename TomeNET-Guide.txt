@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 31. May 2026 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 22. June 2026 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2443,6 +2443,7 @@ The ! inscriptions:
                 If on a bag this will also prevent storing it in a list house.
         !v      Prevent throwing an item away.
         !=      Automatically pick the item up from the floor.
+                (This only works if we already own that item.)
         !h      (Prevent selling a house key. Keys usually aren't used anymore
                 though.)
 
@@ -2575,6 +2576,7 @@ Wands and staves:
 
 Ammunition:
     !=          Will make your character auto-pickup the ammo from the floor.
+                (This only works if we already own that ammunition.)
     !b          Will make your ammunition break. Rather disadvantageous but
                 maybe useful if you use rather worthless ammo that you don't
                 want to pick up again and don't like littering the floor with
