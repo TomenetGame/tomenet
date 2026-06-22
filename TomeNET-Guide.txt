@@ -22379,8 +22379,12 @@ F: flag list
                 are in wraithform.
     NEVER_MOVE  Using this form, the player won't be able to move (except for
                 teleportation/phasing/recalling).
-    RAND_25     The player has +10% chance of moving randomly.
-    RAND_50     The player has +20% chance of moving randomly.
+    RAND_5      The player has +2% chance of moving randomly. (*)
+    RAND_10     The player has +4% chance of moving randomly. (*)
+    RAND_25     The player has +10% chance of moving randomly. (*)
+    RAND_50     The player has +20% chance of moving randomly. (*)
+    RAND_100    The player has +40% chance of moving randomly. (*)
+        (*) Note: Shamans are not affected by RAND_xxx flags!
     OPEN_DOOR   This form can open doors.
                 Note that forms can open doors even if they don't have this
                 flag, provided they have fingers and are able to wield weapons
