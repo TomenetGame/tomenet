@@ -2057,11 +2057,18 @@ void write_player_info(int Ind, int i, char *pinfo) {
  * Check the equipments of other player.
  */
 void do_cmd_check_player_equip(int Ind, int line) {
-	int i, k;
+	int i, j, k;
 	FILE *fff;
 	char file_name[MAX_PATH_LENGTH];
-	player_type *p_ptr = Players[Ind];
+	player_type *p_ptr = Players[Ind], *q_ptr;
 	bool admin = is_admin(p_ptr), init = FALSE;
+	object_type *o_ptr;
+	char o_name[ONAME_LEN];
+	byte attr;
+	bool hidden, hidden_diz;
+#ifdef ENABLE_SUBINVEN
+	int within_subinven = FALSE;
+#endif
 
 	/* Temporary file */
 	if (path_temp(file_name, MAX_PATH_LENGTH)) return;
@@ -2071,9 +2078,10 @@ void do_cmd_check_player_equip(int Ind, int line) {
 
 	/* Scan the player races */
 	for (k = 1; k <= NumPlayers; k++) {
-		player_type *q_ptr = Players[k];
-		byte attr = 'w';
-		bool hidden = FALSE, hidden_diz = FALSE;
+		q_ptr = Players[k];
+		attr = 'w';
+		hidden = FALSE;
+		hidden_diz = FALSE;
 
 		/* Only print connected players */
 		if (q_ptr->conn == NOT_CONNECTED) continue;
@@ -2083,6 +2091,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 		 */
 		if (q_ptr->admin_dm && !p_ptr->admin_dm &&
 		    (cfg.secret_dungeon_master)) continue;
+
 
 		/*** Determine color ***/
 
@@ -2102,6 +2111,7 @@ void do_cmd_check_player_equip(int Ind, int line) {
 
 		/* Party member & hostile players only */
 		/* else continue; */
+
 
 		/* Only party member or those on the same dungeon level */
 		//if ((attr != 'B') && (p_ptr->dun_depth != q_ptr->dun_depth)) continue;
@@ -2154,9 +2164,23 @@ void do_cmd_check_player_equip(int Ind, int line) {
 #else
 		    i < INVEN_TOTAL; i++)
 #endif
-		{
-			object_type *o_ptr = &q_ptr->inventory[i];
-			char o_name[ONAME_LEN];
+		    {
+			o_ptr = &q_ptr->inventory[i];
+#ifdef ENABLE_SUBINVEN /* Display subinventory contents in between? */
+			dccpe_sub:
+			if (within_subinven) {
+				j++;
+				if (j == within_subinven) { /* bpval is subinven size */
+					within_subinven = FALSE;
+					continue;
+				}
+				o_ptr = &q_ptr->subinventory[i][j];
+				if (!o_ptr->tval) {
+					within_subinven = FALSE;
+					continue;
+				}
+			}
+#endif
 
 #ifdef WRAPPING_NEW
 			if (hidden) {
@@ -2169,12 +2193,25 @@ void do_cmd_check_player_equip(int Ind, int line) {
 #endif
 			if (o_ptr->tval) {
 				object_desc(Ind, o_name, o_ptr, TRUE, 3 + (i < INVEN_WIELD ? 0 : 0x10));
-				if (admin && i < INVEN_WIELD)
+				if (admin && i < INVEN_WIELD) {
+#ifdef ENABLE_SUBINVEN
+					if (within_subinven)
+						fprintf(fff, "\377%c%c)%c) %s\n", i < INVEN_WIELD ? 'u' : (!o_ptr->level && admin ? 's' : 'w'), 97 + i, 97 + j, o_name);
+					else
+#endif
 					fprintf(fff, "\377%c%c) %s\n", i < INVEN_WIELD ? 'u' : (!o_ptr->level && admin ? 's' : 'w'), 97 + i, o_name);
-				else
-					fprintf(fff, "\377%c %s\n", i < INVEN_WIELD ? 'u' : (!o_ptr->level && admin ? 's' : 'w'), o_name);
+				} else
+					fprintf(fff, "\377%c %s\n",  !o_ptr->level && admin ? 's' : 'w', o_name);
 				hidden_diz = FALSE;
 			}
+
+#ifdef ENABLE_SUBINVEN
+			if (within_subinven) goto dccpe_sub;
+			else if (o_ptr->tval == TV_SUBINVEN && (within_subinven = o_ptr->bpval)) {
+				j = -1;
+				goto dccpe_sub;
+			}
+#endif
 		}
 #ifndef WRAPPING_NEW
 		/* Covered by a mummy wrapping? */
