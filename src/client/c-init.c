@@ -3761,7 +3761,7 @@ void client_init(char *argv1, bool skip) {
 	nick[0] = toupper(nick[0]);
 
 	/* Give a message so user doesn't think we just froze up (especially with Lanczos interpolation) */
-	prt(format("Connecting to game server %s on port %d....", server_name, cfg_game_port), 1, 1);
+	prt(format("Connecting to game server %s on port %d....", server_name, cfg_game_port), 0, 0);
 	Term_fresh();
 
 	/* Create the net socket and make the TCP connection */

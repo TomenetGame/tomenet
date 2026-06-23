@@ -2484,7 +2484,7 @@ bool get_server_name(void) {
 	init_lua();
 
 	/* Message */
-	prt("Connecting to metaserver for server list....", 1, 1);
+	prt("Connecting to metaserver for server list....", 0, 0);
 	/* Make sure message is shown */
 	Term_fresh();
 
