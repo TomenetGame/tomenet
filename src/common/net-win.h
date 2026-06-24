@@ -72,10 +72,12 @@ extern char	*DgramLastaddr(int fd);
 extern char	*DgramLastname(int fd);
 extern int	DgramLastport(int fd);
 extern void	DgramClose(int);
+extern void	DgramCloseSoft(int, int);
+extern void	do_DgramClose(int);
 extern void	GetLocalHostName(char *, unsigned);
 extern int	CreateServerSocket(int port);
-extern int SocketClose(int fd);
-extern void CleanupDgramSocket(int sock);
+extern int	SocketClose(int fd);
+extern void	CleanupDgramSocket(int sock);
 
 #if !defined(select) && defined(__linux__)
 #define select(N, R, W, E, T)	select((N),		\

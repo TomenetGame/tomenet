@@ -67,6 +67,8 @@ extern char	*DgramLastaddr(void);
 extern char	*DgramLastname(void);
 extern int	DgramLastport(void);
 extern void	DgramClose(int);
+extern void	DgramCloseSoft(int, int);
+extern void	do_DgramCloseSoft(int);
 extern void	GetLocalHostName(char *, unsigned);
 
 #if !defined(select) && defined(__linux__)

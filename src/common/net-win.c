@@ -1425,6 +1425,29 @@ void DgramClose(int fd) {
 	if (retval == 0) retval = closesocket(fd);
 } /* DgramClose */
 
+/* To allow lagging/low-perf clients a bit more grace time to read the remaining packet data before slamming the door.
+   Otherwise things like death cause or even the client-side RETRY_LOGIN trigger wouldn't happen sometimes, depending on timing issues. - C. Blue */
+void DgramCloseSoft(int fd, int frames) {
+	int retval;
+	/* clean up the socket */
+	retval = shutdown(fd, 2);
+
+	if (retval == 0) {
+		int i;
+
+		for (i = 0; i < MAX_DGRAMCLOSESOFT; i++) {
+			if (!DgramCloseSoft_list_timer[i]) {
+				DgramCloseSoft_list_fd[i] = fd;
+				DgramCloseSoft_list_timer[i] = frames;
+			}
+			break;
+		}
+		if (i == MAX_DGRAMCLOSESOFT) retval = closesocket(fd); /* insta pouf */
+	}
+}
+void do_DgramCloseSoft(int fd_idx) {
+	int retval = closesocket(DgramCloseSoft_list_fd[fd_idx]);
+}
 /*
  *******************************************************************************
  *

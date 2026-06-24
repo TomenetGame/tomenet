@@ -116,6 +116,8 @@ extern char	*DgramLastaddr(int fd);
 extern char	*DgramLastname(int fd);
 extern int	DgramLastport(int fd);
 extern void	DgramClose(int);
+extern void	DgramCloseSoft(int, int);
+extern void	do_DgramCloseSoft(int);
 extern void	GetLocalHostName(char *, unsigned);
 #else /* __STDC__ */
 extern void	SetTimeout();
@@ -151,6 +153,8 @@ extern char	*DgramLastaddr();
 extern char	*DgramLastname();
 extern int	DgramLastport();
 extern void	DgramClose();
+extern void	DgramCloseSoft();
+extern void	do_DgramCloseSoft();
 extern void	GetLocalHostName();
 #endif /* __STDC__ */
 

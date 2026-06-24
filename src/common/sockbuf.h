@@ -98,3 +98,7 @@ int Sockbuf_copy(sockbuf_t *dest, sockbuf_t *src, int len);
 
 #endif
 
+
+#define MAX_DGRAMCLOSESOFT 100
+extern u32b DgramCloseSoft_list_timer[MAX_DGRAMCLOSESOFT];
+extern int DgramCloseSoft_list_fd[MAX_DGRAMCLOSESOFT];

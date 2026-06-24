@@ -2428,6 +2428,23 @@ int	fd;
     close(fd);
 } /* DgramClose */
 
+/* To allow lagging/low-perf clients a bit more grace time to read the remaining packet data before slamming the door.
+   Otherwise things like death cause or even the client-side RETRY_LOGIN trigger wouldn't happen sometimes, depending on timing issues. - C. Blue */
+void DgramCloseSoft(int fd, int frames) {
+	int i;
+
+	for (i = 0; i < MAX_DGRAMCLOSESOFT; i++) {
+		if (!DgramCloseSoft_list_timer[i]) {
+			DgramCloseSoft_list_fd[i] = fd;
+			DgramCloseSoft_list_timer[i] = frames;
+		}
+		break;
+	}
+	if (i == MAX_DGRAMCLOSESOFT) close(fd); /* insta pouf */
+}
+void do_DgramCloseSoft(int fd_idx) {
+	close(DgramCloseSoft_list_fd[fd_idx]);
+}
 
 /*
  *******************************************************************************

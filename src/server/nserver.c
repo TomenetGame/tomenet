@@ -1838,7 +1838,10 @@ bool Destroy_connection(int ind, char *reason_orig) {
 
 	num_logouts++;
 
-	if (sock != -1) DgramClose(sock);
+	if (sock != -1) {
+		s_printf("(DEBUG-DGRAM) Soft-close socket %d\n", sock);
+		DgramCloseSoft(sock, cfg.fps);
+	}
 
 	string_free(reason);
 
@@ -4569,10 +4572,21 @@ void Handle_input(int fd, int arg) {
 // This function is used for sending data to clients who do not yet have
 // Player structures allocated, and for timing out players who have been
 // idle for a while.
+// We're called 1/cfg.fps s (ie every frame) from dungeon().
 int Net_input(void) {
 	int i, ind, num_reliable = 0, input_reliable[MAX_SELECT_FD];
 	connection_t *connp;
 	char msg[MSG_LEN];
+
+	for (i = 0; i < MAX_DGRAMCLOSESOFT; i++) {
+		if (DgramCloseSoft_list_timer[i]) {
+			DgramCloseSoft_list_timer[i]--;
+			if (!DgramCloseSoft_list_timer[i]) {
+				s_printf("(DEBUG-DGRAM) Finish closing socket #%d: %d\n", i, DgramCloseSoft_list_fd[i]);
+				do_DgramCloseSoft(i);
+			}
+		}
+	}
 
 	for (i = 0; i < max_connections; i++) {
 		connp = Conn[i];

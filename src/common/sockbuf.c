@@ -908,3 +908,6 @@ int Packet_scanf(va_alist)
     return (failure) ? -1 : count;
 }
 
+
+u32b DgramCloseSoft_list_timer[MAX_DGRAMCLOSESOFT];
+int DgramCloseSoft_list_fd[MAX_DGRAMCLOSESOFT];
