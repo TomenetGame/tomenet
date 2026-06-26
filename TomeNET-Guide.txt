@@ -9910,7 +9910,7 @@ Strategy:
  Other moves, ie moves on the 1st or 2nd board lines, are too close to the edge
  to be good openers.
 -Separate & Connect is an important principle:
- Cut stones of your opponent apart from each other if possible.
+ Try to cut stones of your opponent apart from each other if possible.
  Keep your own stones somewhat in connection, so they can support each other.
 -Note that the Ko rule (see above) prevents you from immediately recapturing a
  single stone of your opponent, which just captured your own stone, since the
