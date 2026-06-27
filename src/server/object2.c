@@ -4678,13 +4678,9 @@ static bool make_artifact_special(struct worldpos *wpos, object_type *o_ptr, u64
 		/* Allow non-dropchosen/specialgene winner arts */
 		if (winner_arts_only && !(a_ptr->flags5 & TR5_WINNERS_ONLY)) continue;
 
-		/* Paranoia, as WINNERS_ONLY base type items cannot be generated for non-winners anyway,
-		   but somehow Antiriad was generated for never-winner oO. Todo: find out how.
-		   -- WINNERS_ONLY items may only be generated for winners! -- */
-		if (!(resf & RESF_WINNER) && (a_ptr->flags5 & TR5_WINNERS_ONLY)) {
-			s_printf("CAUGHT BUG: Artifact %d was prevented to get generated for non-winner.\n", i);
-			continue;
-		}
+		/* WINNERS_ONLY base type items cannot be generated for non-winners,
+		   but there is no such check for INSTA_ARTs, so we need to check it here. */
+		if (!(resf & RESF_WINNER) && (a_ptr->flags5 & TR5_WINNERS_ONLY)) continue;
 
 		/* Sauron-slayers and players currently in Mt Doom can't find The One Ring (anymore) */
 		if (i == ART_POWER && (resf & RESF_SAURON)) continue;
@@ -4798,13 +4794,7 @@ static bool make_artifact(struct worldpos *wpos, object_type *o_ptr, u64b resf) 
 			/* Allow non-dropchosen/specialgene winner arts */
 			if (winner_arts_only && !(a_ptr->flags5 & TR5_WINNERS_ONLY)) continue;
 
-			/* Paranoia, as WINNERS_ONLY base type items cannot be generated for non-winners anyway,
-			   but somehow Antiriad was generated for never-winner oO. Todo: find out how.
-			   -- WINNERS_ONLY items may only be generated for winners! -- */
-			if (!(resf & RESF_WINNER) && (a_ptr->flags5 & TR5_WINNERS_ONLY)) {
-				s_printf("CAUGHT BUG: Artifact %d was prevented to get generated for non-winner.\n", i);
-				continue;
-			}
+			/* (Note: WINNERS_ONLY base type items cannot be generated for non-winners anyway, so no need to check it here again.) */
 
 			/* Must have the correct fields */
 			if (a_ptr->tval != o_ptr->tval) continue;
