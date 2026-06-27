@@ -8340,7 +8340,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			case 8: i = 17; break;
 			case 9: i = 18; break;
 			}
-			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
+			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, FALSE, clone, clone_summoning);
 		}
 		break;
 
@@ -10399,7 +10399,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			delete_monster_idx(c_ptr->m_idx, TRUE);
 
 			/* Create a new monster (no groups) */
-			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
+			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, FALSE, clone, clone_summoning);
 
 			/* XXX XXX XXX Hack -- Assume success */
 			if (!quiet && c_ptr->m_idx == 0) {
@@ -10757,7 +10757,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 			delete_monster_idx(c_ptr->m_idx, TRUE);
 
 			/* Create a new monster (no groups) */
-			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, clone, clone_summoning);
+			(void)place_monster_aux(wpos, y, x, i, FALSE, FALSE, FALSE, clone, clone_summoning);
 
 			/* XXX XXX XXX Hack -- Assume success */
 			if (!quiet) {

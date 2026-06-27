@@ -9574,13 +9574,13 @@ static errr process_dungeon_file_aux(char *buf, worldpos *wpos, int *yval, int *
 			else if (monster_index) {
 				/* Place it */
 				m_allow_special[monster_index] = TRUE;
-				place_monster_aux(y, x, monster_index, meta_sleep, FALSE, MSTATUS_ENEMY, 0);
+				place_monster_aux(y, x, monster_index, FALSE, meta_sleep, FALSE, MSTATUS_ENEMY, 0);
 				m_allow_special[monster_index] = FALSE;
 			}
 #else /* rudimentary support till above code has been looked at, too lazy atm - C. Blue */
 			else if (monster_index) {
 				summon_override_checks = SO_ALL; /* disable all checks */
-				place_monster_aux(wpos, y, x, monster_index, FALSE, FALSE, 0, 0);
+				place_monster_aux(wpos, y, x, monster_index, FALSE, FALSE, FALSE, 0, 0);
 				if (zcave[y][x].m_idx > 0 && (zcave[y][x].info2 & CAVE2_DECAL)) m_list[zcave[y][x].m_idx].status |= M_STATUS_FRIENDLY;
 				//place_monster_one(wpos, y, x, monster_index, 0, 0, FALSE, 0, 0);
 				summon_override_checks = SO_NONE; /* re-enable default */

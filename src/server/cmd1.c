@@ -5827,7 +5827,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 							delete_monster_idx(c_ptr->m_idx, TRUE);
 
 							/* Create a new monster (no groups) */
-							(void)place_monster_aux(wpos, y, x, tmp, FALSE, FALSE, cl, cls);
+							(void)place_monster_aux(wpos, y, x, tmp, FALSE, FALSE, FALSE, cl, cls);
 
 							/* XXX XXX XXX Hack -- Assume success */
 

@@ -10238,7 +10238,7 @@ static void process_global_event(int ge_id) {
 				if (!n) s_printf("..COULDN'T PLACE Horned Reaper\n");
 				else {
 					summon_override_checks = SO_ALL;
-					place_monster_one(&wpos, y, x, RI_HORNED_REAPER_GE, FALSE, FALSE, FALSE, 0, 0);
+					place_monster_one(&wpos, y, x, RI_HORNED_REAPER_GE, 0, 0, FALSE, 0, 0);
 					summon_override_checks = SO_NONE;
 					s_printf("..placed Horned Reaper\n");
 				}

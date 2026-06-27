@@ -1187,7 +1187,7 @@ extern void update_monsters(bool dist);
 extern void update_player(int Ind);
 extern void update_player_flicker(int Ind);
 extern void update_players(void);
-extern int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning);
+extern int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool forbid_ego, bool slp, bool grp, int clo, int clone_summoning);
 extern int place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning);
 extern bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp);
 #ifdef DM_MODULES

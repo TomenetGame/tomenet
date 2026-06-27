@@ -4093,7 +4093,7 @@ static bool place_monster_okay_escort(int r_idx) {
  * Note the use of the new "monster allocation table" code to restrict
  * the "get_mon_num()" function to "legal" escort types.
  */
-int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, bool grp, int clo, int clone_summoning) {
+int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool forbid_ego, bool slp, bool grp, int clo, int clone_summoning) {
 	int i;
 	monster_race *r_ptr = &r_info[r_idx];
 	cave_type **zcave;
@@ -4113,7 +4113,7 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool slp, 
 #endif
 
 	/* Place one monster, or fail */
-	if ((res = place_monster_one(wpos, y, x, r_idx, pick_ego_monster(r_idx, dlevel), 0, slp, clo, clone_summoning)) != 0) {
+	if ((res = place_monster_one(wpos, y, x, r_idx, forbid_ego ? 0 : pick_ego_monster(r_idx, dlevel), 0, slp, clo, clone_summoning)) != 0) {
 		// DEBUG
 		/* s_printf("place_monster_one failed at (%d, %d, %d), y = %d, x = %d, r_idx = %d, feat = %d\n",
 			wpos->wx, wpos->wy, wpos->wz, y, x, r_idx, zcave[y][x].feat); */
@@ -4308,7 +4308,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 		if (no_high_level_players) {
 			r_idx = RI_PUMPKIN;
 			summon_override_checks = SO_FORCE_DEPTH;
-			if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, 0, 0) == 0) {
+			if (place_monster_aux(wpos, y, x, r_idx, TRUE, FALSE, FALSE, 0, 0) == 0) {
 				summon_override_checks = SO_NONE;
 				//spam--  s_printf("%s HALLOWEEN: Generated Great Pumpkin (%d) on %d,%d,%d (lev %d)\n", showtime(), r_idx, wpos->wx, wpos->wy, wpos->wz, lev);
 				great_pumpkin_timer = -1; /* put generation on hold */
@@ -4397,7 +4397,7 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
 	if (!r_idx) return(FALSE);
 
 	/* Attempt to place the monster */
-	if (place_monster_aux(wpos, y, x, r_idx, slp, grp, FALSE, 0) == 0) return(TRUE);
+	if (place_monster_aux(wpos, y, x, r_idx, FALSE, slp, grp, FALSE, 0) == 0) return(TRUE);
 
 	/* Oops */
 	return(FALSE);
@@ -4610,7 +4610,7 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 	}
 
 	/* Attempt to place the monster, allow groups */
-	if ((res = place_monster_aux(wpos, y, x, r_idx, slp, TRUE, FALSE, 0)) == 0) return(0);
+	if ((res = place_monster_aux(wpos, y, x, r_idx, FALSE, slp, TRUE, FALSE, 0)) == 0) return(0);
 
 	/* Nope */
 	if (res != 37) /* no spam for players who have killed the boss already */
@@ -4962,7 +4962,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	if (!r_idx) return(FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-	if (place_monster_aux(wpos, y, x, r_idx, FALSE, allow_sidekicks ? TRUE : FALSE, s_clone, clone_summoning) != 0) return(FALSE);
+	if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, allow_sidekicks ? TRUE : FALSE, s_clone, clone_summoning) != 0) return(FALSE);
 
 	/* Success */
 	return(TRUE);
@@ -5004,7 +5004,7 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 		if (i == 20) return(FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
-		if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE,
+		if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE,
 		    s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0) != 0)
 			return(FALSE);
 
@@ -5742,9 +5742,6 @@ int pick_ego_monster(int r_idx, int Level) {
 
 	/* No townspeople ego */
 	if (!r_info[r_idx].level) return(0);
-
-	/* No Great Pumpkin ego (HALLOWEEN) */
-	if (r_idx == RI_PUMPKIN) return(0);
 
 	/* First are we allowed to find an ego */
 	if (!magik(MEGO_CHANCE)) return(0);

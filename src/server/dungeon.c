@@ -4098,11 +4098,11 @@ static void process_player_begin(int Ind) {
 		everyone_lite_spot(&p_ptr->wpos, oy, ox);
 		everyone_lite_spot(&p_ptr->wpos, p_ptr->py, p_ptr->px);
 		/* Summon 'monsters' */
-		place_monster_one(&p_ptr->wpos, 7, 10, RI_BRIGHTLANCE, 0, 0, 0, 0, 0);
+		place_monster_one(&p_ptr->wpos, 7, 10, RI_BRIGHTLANCE, 0, 0, FALSE, 0, 0);
 		everyone_lite_spot(&p_ptr->wpos, 7, 10);
-		place_monster_one(&p_ptr->wpos, 7, 15, RI_BRIGHTLANCE, 0, 0, 0, 0, 0);
+		place_monster_one(&p_ptr->wpos, 7, 15, RI_BRIGHTLANCE, 0, 0, FALSE, 0, 0);
 		everyone_lite_spot(&p_ptr->wpos, 7, 15);
-		place_monster_one(&p_ptr->wpos, 10, 25, RI_OROME, 0, 0, 0, 0, 0);
+		place_monster_one(&p_ptr->wpos, 10, 25, RI_OROME, 0, 0, FALSE, 0, 0);
 		everyone_lite_spot(&p_ptr->wpos, 10, 25);
 		p_ptr->update |= PU_LITE;
 		p_ptr->update |= (PU_VIEW | PU_LITE | PU_FLOW);
@@ -8425,7 +8425,7 @@ static void process_various(void) {
 						/* Require "empty" floor grids */
 						if (!cave_empty_bold(zcave, y, x)) continue;
 
-						if (place_monster_aux(BREE_WPOS_P, y, x, RI_SANTA2, FALSE, FALSE, 0, 0) == 0) {
+						if (place_monster_aux(BREE_WPOS_P, y, x, RI_SANTA2, TRUE, FALSE, FALSE, 0, 0) == 0) {
 							s_printf("%s XMAS: Generated Santa Claus.\n", showtime());
 							santa_claus_timer = -1; /* put generation on hold */
 							break;
@@ -11974,34 +11974,34 @@ void process_timers() {
 					x = (1 * 10) - 3;
 					summon_override_checks = SO_ALL;
 					//866 elite uruk, 563 young red dragon
-					//place_monster_aux(&wpos, y, x, 866, FALSE, FALSE, 100, 0);
-					//place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);
-					place_monster_one(&wpos, y, x, 102, FALSE, FALSE, FALSE, 100, 0);//large k
+					//place_monster_aux(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, 102, 0, 0, FALSE, 100, 0);//large k
 					x = (2 * 10) - 3;
 					//487 storm giant
-					//place_monster_aux(&wpos, y, x, 487, FALSE, FALSE, 100, 0);
-					//place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);
-					place_monster_one(&wpos, y, x, 249, FALSE, FALSE, FALSE, 100, 0);//light Z(271) //vlasta(249)
+					//place_monster_aux(&wpos, y, x, 487, FALSE, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, 249, 0, 0, FALSE, 100, 0);//light Z(271) //vlasta(249)
 					x = (3 * 10) - 3;
 					//609 baron of hell
-					//place_monster_aux(&wpos, y, x, 590, FALSE, FALSE, 100, 0);
-					//place_monster_one(&wpos, y, x, 487, FALSE, FALSE, FALSE, 100, 0);
-					place_monster_one(&wpos, y, x, 866, FALSE, FALSE, FALSE, 100, 0);//elite o
+					//place_monster_aux(&wpos, y, x, 590, FALSE, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, 487, FALSE, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, 866, 0, 0, FALSE, 100, 0);//elite o
 					x = (4 * 10) - 3;
 					//590 mature gold d
-					//place_monster_aux(&wpos, y, x, 720, FALSE, FALSE, 100, 0);
-					//place_monster_one(&wpos, y, x, 720, FALSE, FALSE, FALSE, 100, 0);
-					place_monster_one(&wpos, y, x, 563, FALSE, FALSE, FALSE, 100, 0);//young red d
+					//place_monster_aux(&wpos, y, x, 720, FALSE, FALSE, FALSE, 100, 0);
+					//place_monster_one(&wpos, y, x, 720, FALSE, FALSE, FALSE, FALSE, 100, 0);
+					place_monster_one(&wpos, y, x, 563, 0, 0, FALSE, 100, 0);//young red d
 					x = (5 * 10) - 3;
 					//995 marilith, 558 colossus
-					//place_monster_aux(&wpos, y, x, 558, FALSE, FALSE, 100, 0);
+					//place_monster_aux(&wpos, y, x, 558, FALSE, FALSE, FALSE, 100, 0);
 					//place_monster_one(&wpos, y, x, 558, FALSE, FALSE, FALSE, 100, 0);
-					place_monster_one(&wpos, y, x, 194, FALSE, FALSE, FALSE, 100, 0);//tengu
+					place_monster_one(&wpos, y, x, 194, 0, 0, FALSE, 100, 0);//tengu
 					x = (6 * 10) - 3;
 					//602 bronze D, 720 barbazu
-					//place_monster_aux(&wpos, y, x, 609, FALSE, FALSE, 100, 0);
+					//place_monster_aux(&wpos, y, x, 609, FALSE, FALSE, FALSE, 100, 0);
 					//place_monster_one(&wpos, y, x, 609, FALSE, FALSE, FALSE, 100, 0);
-					place_monster_one(&wpos, y, x, 321, FALSE, FALSE, FALSE, 100, 0);//stone P
+					place_monster_one(&wpos, y, x, 321, 0, 0, FALSE, 100, 0);//stone P
 					summon_override_checks = SO_NONE;
 					timer_pvparena3++; /* start releasing cycle */
 				} else if (timer_pvparena3 == 2) { /* prepare second cycle */
@@ -12011,9 +12011,9 @@ void process_timers() {
 						x = (i * 10) - 3;
 						//613 hellhound is too tough, 963 aranea im_pois, 986 3-h hydra, 249 vlasta
 						//440 5-h hydra, 387 4-h hydra, 341 chimaera, 301 2-h hydra, 325 gold dfly
-						//place_monster_aux(&wpos, y, x, 963, FALSE, FALSE, 100, 0);
+						//place_monster_aux(&wpos, y, x, 963, FALSE, FALSE, FALSE, 100, 0);
 						//place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 341 : 325 : 301, FALSE, FALSE, FALSE, 100, 0);
-						place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 295 : 325 : 275, FALSE, FALSE, FALSE, 100, 0);//sphinx,gold dfly,tarantula
+						place_monster_one(&wpos, y, x, i % 3 ? i % 2 ? 295 : 325 : 275, 0, 0, FALSE, 100, 0);//sphinx,gold dfly,tarantula
 						everyone_lite_spot(&wpos, y, x);
 					}
 					summon_override_checks = SO_NONE;

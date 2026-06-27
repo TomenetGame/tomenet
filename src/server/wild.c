@@ -798,7 +798,7 @@ void wild_add_monster(struct worldpos *wpos) {
 	r_idx = get_mon_num(monster_level, monster_level);
 
 	/* place the monster */
-	tries = place_monster_aux(wpos, monst_y, monst_x, r_idx, FALSE, TRUE, FALSE, 0);
+	tries = place_monster_aux(wpos, monst_y, monst_x, r_idx, FALSE, FALSE, TRUE, FALSE, 0);
 
 	/* hack -- restore the monster selection function */
 	get_mon_num_hook = dungeon_aux;
@@ -1261,7 +1261,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 
 			/* place the owner */
 			summon_override_checks = SO_HOUSE;
-			place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE, 0);
+			place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE, FALSE, 0);
 			summon_override_checks = SO_NONE;
 		}
 	}
@@ -1284,7 +1284,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			summon_override_checks = SO_HOUSE;
 			for (y = y1; y <= y2; y++) {
 				for (x = x1; x <= x2; x++) {
-					place_monster_aux(wpos, y,x, r_idx, FALSE, FALSE, FALSE, 0);
+					place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE, FALSE, 0);
 				}
 			}
 			summon_override_checks = SO_NONE;

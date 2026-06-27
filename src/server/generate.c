@@ -3801,7 +3801,7 @@ static void build_type5(struct worldpos *wpos, int by0, int bx0, player_type *p_
 			int r_idx = what[rand_int(64)];
 
 			/* Place that "random" monster (no groups) */
-			(void)place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE, 0);
+			(void)place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE, FALSE, 0);
 
 #if 0 /* not needed, monster level is in fact limited (see further above) */
 			if (r_info[r_idx].level >= (dun_lev * 3) / 2 ||
@@ -4314,49 +4314,49 @@ static void build_type6(struct worldpos *wpos, int by0, int bx0, player_type *p_
 
 	/* Top and bottom rows */
 	for (x = xval - 9; x <= xval + 9; x++) {
-		place_monster_aux(wpos, yval - 2, x, what[0], FALSE, FALSE, FALSE, 0);
-		place_monster_aux(wpos, yval + 2, x, what[0], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, yval - 2, x, what[0], FALSE, FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, yval + 2, x, what[0], FALSE, FALSE, FALSE, FALSE, 0);
 	}
 
 	/* Middle columns */
 	for (y = yval - 1; y <= yval + 1; y++) {
-		place_monster_aux(wpos, y, xval - 9, what[0], FALSE, FALSE, FALSE, 0);
-		place_monster_aux(wpos, y, xval + 9, what[0], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval - 9, what[0], FALSE, FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 9, what[0], FALSE, FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 8, what[1], FALSE, FALSE, FALSE, 0);
-		place_monster_aux(wpos, y, xval + 8, what[1], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval - 8, what[1], FALSE, FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 8, what[1], FALSE, FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 7, what[1], FALSE, FALSE, FALSE, 0);
-		place_monster_aux(wpos, y, xval + 7, what[1], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval - 7, what[1], FALSE, FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 7, what[1], FALSE, FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 6, what[2], FALSE, FALSE, FALSE, 0);
-		place_monster_aux(wpos, y, xval + 6, what[2], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval - 6, what[2], FALSE, FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 6, what[2], FALSE, FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 5, what[2], FALSE, FALSE, FALSE, 0);
-		place_monster_aux(wpos, y, xval + 5, what[2], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval - 5, what[2], FALSE, FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 5, what[2], FALSE, FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 4, what[3], FALSE, FALSE, FALSE, 0);
-		place_monster_aux(wpos, y, xval + 4, what[3], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval - 4, what[3], FALSE, FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 4, what[3], FALSE, FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 3, what[3], FALSE, FALSE, FALSE, 0);
-		place_monster_aux(wpos, y, xval + 3, what[3], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval - 3, what[3], FALSE, FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 3, what[3], FALSE, FALSE, FALSE, FALSE, 0);
 
-		place_monster_aux(wpos, y, xval - 2, what[4], FALSE, FALSE, FALSE, 0);
-		place_monster_aux(wpos, y, xval + 2, what[4], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval - 2, what[4], FALSE, FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, y, xval + 2, what[4], FALSE, FALSE, FALSE, FALSE, 0);
 	}
 
 	/* Above/Below the center monster */
 	for (x = xval - 1; x <= xval + 1; x++) {
-		place_monster_aux(wpos, yval + 1, x, what[5], FALSE, FALSE, FALSE, 0);
-		place_monster_aux(wpos, yval - 1, x, what[5], FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, yval + 1, x, what[5], FALSE, FALSE, FALSE, FALSE, 0);
+		place_monster_aux(wpos, yval - 1, x, what[5], FALSE, FALSE, FALSE, FALSE, 0);
 	}
 
 	/* Next to the center monster */
-	place_monster_aux(wpos, yval, xval + 1, what[6], FALSE, FALSE, FALSE, 0);
-	place_monster_aux(wpos, yval, xval - 1, what[6], FALSE, FALSE, FALSE, 0);
+	place_monster_aux(wpos, yval, xval + 1, what[6], FALSE, FALSE, FALSE, FALSE, 0);
+	place_monster_aux(wpos, yval, xval - 1, what[6], FALSE, FALSE, FALSE, FALSE, 0);
 
 	/* Center monster */
-	place_monster_aux(wpos, yval, xval, what[7], FALSE, FALSE, FALSE, 0);
+	place_monster_aux(wpos, yval, xval, what[7], FALSE, FALSE, FALSE, FALSE, 0);
 }
 
 
@@ -8523,7 +8523,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			zcave[11][33].feat = 235; zcave[11][33].info = 7;
 			x = 33; y = 11;
 			summon_override_checks = SO_ALL;
-			i = place_monster_one(wpos, y, x + 1, RI_BLUE, 0, 0, 0, 0, 0);
+			i = place_monster_one(wpos, y, x + 1, RI_BLUE, 0, 0, FALSE, 0, 0);
 			if (i) s_printf("place_monster_one() failed: %d.\n", i);
 			summon_override_checks = SO_NONE;
 			dun->l_ptr->flags2 |= LF2_BROKEN; //abuse this as indicator
@@ -9798,8 +9798,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			y = y1;
 		}
 
-		if (rand_int(2) == 1) place_monster_one(wpos, y, x, RI_CANDLEBEARER, FALSE, FALSE, FALSE, 0, 0);
-		else place_monster_one(wpos, y, x, RI_DARKLING, FALSE, FALSE, FALSE, 0, 0);
+		if (rand_int(2) == 1) place_monster_one(wpos, y, x, RI_CANDLEBEARER, 0, 0, FALSE, 0, 0);
+		else place_monster_one(wpos, y, x, RI_DARKLING, 0, 0, FALSE, 0, 0);
 	}
 #endif
 

@@ -5843,7 +5843,7 @@ void do_cmd_bash(int Ind, int dir) {
 			temp = 50;
 			do scatter(wpos, &y2, &x2, y, x, 1, TRUE);
 			while (!(in_bounds(y2, x2) && cave_empty_bold(zcave, y2, x2) && distance(y2, x2, p_ptr->py, p_ptr->px) > 1) && --temp);
-			if (!place_monster_one(&p_ptr->wpos, y2, x2, RI_MIRROR, 0, 0, 0, 0, 0)) {
+			if (!place_monster_one(&p_ptr->wpos, y2, x2, RI_MIRROR, 0, 0, FALSE, 0, 0)) {
 				/* Success */
 				monster_type *m_ptr;
 

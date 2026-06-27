@@ -823,7 +823,7 @@ void check_Morgoth(int Ind) {
 
 						/* place Sauron so players can kill him first */
 						summon_override_checks = SO_ALL; /* (SO_IDDC?) -- Halls of Mandos too */
-						place_monster_one(&p_ptr->wpos, y, x, RI_SAURON, FALSE, FALSE, FALSE, 0, 0);
+						place_monster_one(&p_ptr->wpos, y, x, RI_SAURON, 0, 0, FALSE, 0, 0);
 						summon_override_checks = SO_NONE;
 
 						/* Notice */
@@ -877,8 +877,8 @@ void check_Morgoth(int Ind) {
 
 					/* place replacement monster (clone): Death Orb (Star-Spawn, GB, GWoP) */
 					summon_override_checks = SO_ALL; /* needed? */
-					//place_monster_one(&p_ptr->wpos, y, x, RI_DEATH_ORB, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//Death Orb (kills items)
-					place_monster_one(&p_ptr->wpos, y, x, RI_GWOP, FALSE, FALSE, FALSE, 100, 4 + cfg.clone_summoning);//GWoP (best maybe)
+					//place_monster_one(&p_ptr->wpos, y, x, RI_DEATH_ORB, 0, 0, FALSE, 100, 4 + cfg.clone_summoning);//Death Orb (kills items)
+					place_monster_one(&p_ptr->wpos, y, x, RI_GWOP, 0, 0, FALSE, 100, 4 + cfg.clone_summoning);//GWoP (best maybe)
 					summon_override_checks = SO_NONE;
 
 					/* Notice */
