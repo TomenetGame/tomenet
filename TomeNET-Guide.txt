@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 22. June 2026 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 28. June 2026 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -9070,7 +9070,7 @@ White '#' are permanent walls which cannot be damaged or destroyed, or in
 some special places can be ice walls (which can be destroyed).
 '#' and '%' of different grey tones are granite walls, magma intrusions,
 quartz veins and can be tunneled into and take damage from earthquakes.
-Yellow '#' are sand walls, red/brown '#' are indestructible lava walls which
+Yellow '#' are sandwalls, red/brown '#' are indestructible lava walls which
 may occur in some remote places..
 
 Water-

@@ -3878,7 +3878,9 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 					strcpy(chapter, "The Helcaraxe   ");
 					continue;
 				}
-				if (my_strcasestr(buf, "Sandw") || (my_strcasestr(buf, "Lair") && !my_strcasestr(buf, "clair")) || !strcasecmp(buf, "swl") || !strcasecmp(buf, "sl")) {
+				if (!my_strcasestr(buf, "wa") /* not 'sand wall/sandwall' */ && (my_strcasestr(buf, "Sandw") ||
+				    (my_strcasestr(buf, "Lair") && !my_strcasestr(buf, "clair")) || !strcasecmp(buf, "swl") || !strcasecmp(buf, "sl")
+				    || (my_strcasestr(buf, "Sand") && my_strcasestr(buf, "Lair")))) { /* 'sand lair' pft... */
 					strcpy(chapter, "The Sandworm Lair   ");
 					continue;
 				}

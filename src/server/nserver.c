@@ -3100,9 +3100,9 @@ static void set_player_font_definitions(int ind, int player) {
 	p_ptr->f_char_solid[77] = feat_solid;
 	p_ptr->f_char_solid[78] = feat_solid;
 	p_ptr->f_char_solid[95] = feat_solid; //ice wall
-	p_ptr->f_char_solid[98] = feat_solid; //sand wall
+	p_ptr->f_char_solid[98] = feat_solid; //sandwall
 	p_ptr->f_char_solid[99] = feat_solid;
-	p_ptr->f_char_solid[100] = feat_vein; //specialty: sand wall with treasure (diamond ascii)
+	p_ptr->f_char_solid[100] = feat_vein; //specialty: sandwall with treasure (diamond ascii)
 
 	p_ptr->f_char_solid[177] = feat_solid;
 	p_ptr->f_char_solid[183] = feat_solid;
