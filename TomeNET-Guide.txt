@@ -8050,7 +8050,7 @@ to some key that you usually don't use, especially in the specific combination
 with a modifier key:
   xmodmap -e "keycode  77 = acute grave period"
 ...run TomeNET, afterwards restore numlock to normal:
-  xmodmap -e "keycode  77 = NumLock NoSymbol NumLock"
+  xmodmap -e "keycode  77 = Num_Lock NoSymbol Num_Lock"
 
 Depending on your system you can specify a larger number of modifier-affected
 key definitions than just the 3 'columns' in these xmodmap-keycode-commands.
