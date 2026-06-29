@@ -73,6 +73,7 @@ extern char	*DgramLastname(int fd);
 extern int	DgramLastport(int fd);
 extern void	DgramClose(int);
 extern void	DgramCloseSoft(int, int);
+extern void	do_DgramCloseSoft(int);
 extern void	do_DgramClose(int);
 extern void	GetLocalHostName(char *, unsigned);
 extern int	CreateServerSocket(int port);
