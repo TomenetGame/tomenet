@@ -1446,7 +1446,7 @@ void DgramCloseSoft(int fd, int frames) {
 	}
 }
 void do_DgramCloseSoft(int fd_idx) {
-	int retval = closesocket(DgramCloseSoft_list_fd[fd_idx]);
+	(void)closesocket(DgramCloseSoft_list_fd[fd_idx]);
 }
 /*
  *******************************************************************************
