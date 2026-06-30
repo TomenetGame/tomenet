@@ -1008,8 +1008,9 @@ static void Trim_name(char *nick_name) {
 }
 
 /* verify that account, user, host name are valid,
-   and that we're resuming from the same IP address if we're resuming  */
-static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr, bool check_for_resume) {
+   and that we're resuming from the same IP address if we're resuming.
+   NOTE: At some place we pass account name as 'nick_name', but at some other place we pass 'choice' aka character name as 'nick_name'! :/ */
+static int Check_names(char *nick_name, char *real_name, char *host_name, char *addr, bool check_for_resume, bool nickname_is_accountname) {
 	player_type *p_ptr = NULL;
 	connection_t *connp = NULL;
 	int i;
@@ -1019,7 +1020,11 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 	if (strchr(nick_name, ':')) return(E_INVAL);
 
 	/* Account/Character names must be at least of length 2 */
-	if (strlen(nick_name) < ACC_CHAR_MIN_LEN || strlen(nick_name) < ACCNAME_MIN_LEN) return(E_LENGTH); //Account name too sort
+	if (nickname_is_accountname) {
+		if (strlen(nick_name) < ACC_CHAR_MIN_LEN || strlen(nick_name) < ACCNAME_MIN_LEN) return(E_LENGTH); //Account name too short
+	} else {
+		if (strlen(nick_name) < ACC_CHAR_MIN_LEN || strlen(nick_name) < CNAME_MIN_LEN) return(E_LENGTH); //Character name too short
+	}
 
 	if (check_for_resume) {
 		for (i = 1; i <= NumPlayers; i++) {
@@ -1383,7 +1388,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	   a second account login - it may be a subsequent resume.
 	   We can check duplicate account use on player entry
 	   (PKT_LOGIN) */
-	if ((status = Check_names(nick, real, host, addr, TRUE)) != SUCCESS) {
+	if ((status = Check_names(nick, real, host, addr, TRUE, FALSE)) != SUCCESS) {
 		/*s_printf("Check_names failed with result %d.\n", status);*/
 		return(status);
 	}
@@ -5181,7 +5186,10 @@ static int Receive_login(int ind) {
 				Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password (2).");
 				return(-1);
 			}
-			if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE)) != SUCCESS) {
+			if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE, FALSE)) != SUCCESS) {
+				int k;
+				char *accname = strdup(connp->nick);
+
 				if (res == E_LETTER)
 					Destroy_connection(ind, "Your accountname must start on a letter (A-Z).");
 				else if (res == E_LENGTH) { /* Account name too short */
@@ -5193,6 +5201,35 @@ static int Receive_login(int ind) {
 						Destroy_connection(ind, format("Account names must be at least %d characters long.", ACCNAME_MIN_LEN));
 				} else
 					Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
+
+				/* Since if this was a new account, despite not matching the name length criteria it will now have been added to both,
+				   the tomenet.acc file and the invalid-accounts list. So remove it from both again before returning -_- (1/2). */
+
+				acc.flags |= ACC_DELD;
+				WriteAccount(&acc, FALSE);
+
+				for (k = 0; k < MAX_LIST_INVALID; k++) {
+					if (!list_invalid_name[k][0]) {
+						k = MAX_LIST_INVALID; // paranoia - we should never arrive here as the account MUST be somewhere
+						break;
+					}
+					if (streq(list_invalid_name[k], accname)) break;
+				}
+				while (k < MAX_LIST_INVALID - 1) {
+					if (!list_invalid_name[k][0]) break;
+					strcpy(list_invalid_name[k], list_invalid_name[k + 1]);
+					strcpy(list_invalid_host[k], list_invalid_host[k + 1]);
+					strcpy(list_invalid_addr[k], list_invalid_addr[k + 1]);
+					strcpy(list_invalid_date[k], list_invalid_date[k + 1]);
+					k++;
+				}
+				if (k < MAX_LIST_INVALID) { // paranoia - should always be TRUE, as the account MUST be somewhere
+					s_printf("ERASE_NEW_ACCOUNT: <%s> too short.\n", accname);
+					list_invalid_name[k][0] = 0;
+				}
+				free(accname);
+
+				/* All done; fail-quit login attempt */
 				return(-1);
 			}
 
@@ -5351,6 +5388,7 @@ static int Receive_login(int ind) {
 				Destroy_connection(ind, format("Account and character names must be at least %d characters long!", CNAME_MIN_LEN));
 			else
 				Destroy_connection(ind, format("Character names must be at least %d characters long.", CNAME_MIN_LEN));
+
 			return(-1);
 		}
 
@@ -5481,7 +5519,7 @@ static int Receive_login(int ind) {
 		}
 
 		/* Validate names/resume in proper place */
-		if ((res = Check_names(choice, connp->real, connp->host, connp->addr, TRUE))) {
+		if ((res = Check_names(choice, connp->real, connp->host, connp->addr, TRUE, TRUE))) {
 			/* connp->real is _always_ 'PLAYER' - connp->nick is the account name, choice the c_name */
 			/* fail login here */
 			switch (res) {
@@ -5491,13 +5529,14 @@ static int Receive_login(int ind) {
 			case E_INVAL:
 				Destroy_connection(ind, "Your charactername contains invalid characters"); //user+host names have already been checked previously (on account login)
 				break;
-			case E_LENGTH: /* Account name too short */
+			case E_LENGTH: /* _character_ name too short (we passed 'choice' to Check_names, not connp->nick!) */
 				if (ACC_CHAR_MIN_LEN >= ACCNAME_MIN_LEN && ACC_CHAR_MIN_LEN >= CNAME_MIN_LEN)
 					Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
 				else if (CNAME_MIN_LEN == ACCNAME_MIN_LEN)
-					Destroy_connection(ind, format("Account and character names must be at least %d characters long!", ACCNAME_MIN_LEN));
+					Destroy_connection(ind, format("Account and character names must be at least %d characters long!", CNAME_MIN_LEN));
 				else
-					Destroy_connection(ind, format("Account names must be at least %d characters long.", ACCNAME_MIN_LEN));
+					Destroy_connection(ind, format("Character names must be at least %d characters long.", CNAME_MIN_LEN));
+
 				break;
 			case E_IN_USE_PC:
 				Destroy_connection(ind, format("You are still logged in by another PC user. Please wait %d seconds and try again.", IDLE_TIMEOUT));
