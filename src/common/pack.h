@@ -297,7 +297,7 @@
 #define E_INVITE	0x0B
 #define E_BANNED	0x0C
 #define E_VERSION_UNKNOWN	0x0D
-#define E_LENGTH	0x0E
+#define E_LENGTH	0x0E	/* Account name length (too short) */
 #define E_IN_USE_PC	0x0F
 #define E_CLOSED	0x10
 #ifdef CLIENT_SIDE /* RETRY_LOGIN: */

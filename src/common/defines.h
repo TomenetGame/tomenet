@@ -247,7 +247,9 @@
 #define GUILD_NAME_MIN_LEN	3
 /* max length of login info + 1 */
 #define CNAME_LEN		16
-#define ACCNAME_LEN		16
+#define CNAME_MIN_LEN		1	/* Overridden by ACC_CHAR_MIN_LEN if that's stricter (higher) */
+#define ACCNAME_LEN		16	/* keep consistent with accedit.c */
+#define ACCNAME_MIN_LEN		3	/* Overridden by ACC_CHAR_MIN_LEN if that's stricter (higher) */
 #define PASSWORD_LEN		16
 #define PASSWORD_MIN_LEN	6
 /* Note: These two are [20], but in fact user_name(), real_name, getlocalhostname() all cap at 16 - TODO maybe: fix */

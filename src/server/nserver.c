@@ -1019,7 +1019,7 @@ static int Check_names(char *nick_name, char *real_name, char *host_name, char *
 	if (strchr(nick_name, ':')) return(E_INVAL);
 
 	/* Account/Character names must be at least of length 2 */
-	if (strlen(nick_name) < ACC_CHAR_MIN_LEN) return(E_LENGTH); //Account name
+	if (strlen(nick_name) < ACC_CHAR_MIN_LEN || strlen(nick_name) < ACCNAME_MIN_LEN) return(E_LENGTH); //Account name too sort
 
 	if (check_for_resume) {
 		for (i = 1; i <= NumPlayers; i++) {
@@ -5184,9 +5184,14 @@ static int Receive_login(int ind) {
 			if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE)) != SUCCESS) {
 				if (res == E_LETTER)
 					Destroy_connection(ind, "Your accountname must start on a letter (A-Z).");
-				else if (res == E_LENGTH)
-					Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
-				else
+				else if (res == E_LENGTH) { /* Account name too short */
+					if (ACC_CHAR_MIN_LEN >= ACCNAME_MIN_LEN && ACC_CHAR_MIN_LEN >= CNAME_MIN_LEN)
+						Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
+					else if (ACCNAME_MIN_LEN == CNAME_MIN_LEN)
+						Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACCNAME_MIN_LEN));
+					else
+						Destroy_connection(ind, format("Account names must be at least %d characters long.", ACCNAME_MIN_LEN));
+				} else
 					Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
 				return(-1);
 			}
@@ -5337,15 +5342,21 @@ static int Receive_login(int ind) {
 		if (fix_player_case(choice)) s_printf("Name capitalization: -> '%s'\n", choice);
 		s_printf(" processed: '%s'\n", choice);
 
-		/* Account/Character names must be at least of length 2 (E_LENGTH) */
-		if (strlen(choice) < ACC_CHAR_MIN_LEN) {
-			Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
+		/* Account/Character names must be at least of length 2 (For account names gives E_LENGTH, but we're treating character names here) */
+		if (strlen(choice) < ACC_CHAR_MIN_LEN || strlen(choice) < CNAME_MIN_LEN) {
+			/* Character name too short */
+			if (ACC_CHAR_MIN_LEN >= CNAME_MIN_LEN && ACC_CHAR_MIN_LEN >= ACCNAME_MIN_LEN)
+				Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
+			else if (CNAME_MIN_LEN == ACCNAME_MIN_LEN)
+				Destroy_connection(ind, format("Account and character names must be at least %d characters long!", CNAME_MIN_LEN));
+			else
+				Destroy_connection(ind, format("Character names must be at least %d characters long.", CNAME_MIN_LEN));
 			return(-1);
 		}
 
 		/* Check for forbidden names (technical/lore reasons) */
 		if (forbidden_name(choice)) {
-//			Packet_printf(&connp->c, "%c", E_INVAL);
+			//Packet_printf(&connp->c, "%c", E_INVAL);
 			Destroy_connection(ind, "Forbidden character name. Please choose a different name.");
 			return(-1);
 		}
@@ -5480,8 +5491,13 @@ static int Receive_login(int ind) {
 			case E_INVAL:
 				Destroy_connection(ind, "Your charactername contains invalid characters"); //user+host names have already been checked previously (on account login)
 				break;
-			case E_LENGTH:
-				Destroy_connection(ind, format("Account and character names must be at least 2 characters long.", ACC_CHAR_MIN_LEN));
+			case E_LENGTH: /* Account name too short */
+				if (ACC_CHAR_MIN_LEN >= ACCNAME_MIN_LEN && ACC_CHAR_MIN_LEN >= CNAME_MIN_LEN)
+					Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
+				else if (CNAME_MIN_LEN == ACCNAME_MIN_LEN)
+					Destroy_connection(ind, format("Account and character names must be at least %d characters long!", ACCNAME_MIN_LEN));
+				else
+					Destroy_connection(ind, format("Account names must be at least %d characters long.", ACCNAME_MIN_LEN));
 				break;
 			case E_IN_USE_PC:
 				Destroy_connection(ind, format("You are still logged in by another PC user. Please wait %d seconds and try again.", IDLE_TIMEOUT));

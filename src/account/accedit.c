@@ -778,7 +778,7 @@ static char *t_crypt(char *inbuf, const char *salt) {
 	} else
  #endif
  #if 0 /* 2021-12-22 - suddenly crypt() returns a null pointer if 3rd character is a space, wth */
-  #define ACCNAME_LEN 16
+  #define ACCNAME_LEN 16	/* keep consistent with defines.h */
 	if (0) {
 		char fixed_name[ACCNAME_LEN];
 		int n;
@@ -796,7 +796,7 @@ static char *t_crypt(char *inbuf, const char *salt) {
 	} else
  #endif
  #if 1 /* SPACE _ ! - ' , and probably more as _2nd character_ cause crypt() to return a null pointer ('.' is ok) */
-  #define ACCNAME_LEN 16
+  #define ACCNAME_LEN 16	/* keep consistent with defines.h */
 	if (!((salt[1] >= 'A' && salt[1] <= 'Z') ||
 	    (salt[1] >= 'a' && salt[1] <= 'z') ||
 	    (salt[1] >= '0' && salt[1] <= '9') ||
