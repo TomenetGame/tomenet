@@ -566,7 +566,7 @@ static void rd_item(object_type *o_ptr) {
 		rd_u32b(&t32);
 		o_ptr->f_time = (time_t)t32;
 		rd_u32b(&t32);
-		if (sizeof(time_t) >= 8) o_ptr->f_time += ((time_t)(t32)) << 32; //outlast heavier red dwarfs
+		if (sizeof(time_t) >= 8) o_ptr->f_time |= (time_t)(((u64b)t32) << 32); //outlast heavier red dwarfs
 		rd_s16b(&o_ptr->f_wpos.wx);
 		rd_s16b(&o_ptr->f_wpos.wy);
 		rd_s16b(&o_ptr->f_wpos.wz);

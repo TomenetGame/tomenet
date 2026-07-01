@@ -248,7 +248,7 @@ static void wr_item(object_type *o_ptr) {
 	wr_string(o_ptr->f_name);
 	wr_s32b(o_ptr->f_turn);
 	wr_u32b((u32b)(o_ptr->f_time & 0xFFFFFFFF));
-	if (sizeof(time_t) >= 8) wr_u32b((u32b)(o_ptr->f_time >> 32));
+	if (sizeof(time_t) >= 8) wr_u32b((u32b)(((u64b)o_ptr->f_time) >> 32));
 	else wr_u32b(0);
 	wr_s16b(o_ptr->f_wpos.wx);
 	wr_s16b(o_ptr->f_wpos.wy);
