@@ -1661,7 +1661,7 @@ s16b auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
     If o_stowed_ptr isn't NULL its reference will be set to the resulting stowed object. */
 s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, u32b cave_info) {
 	int i, num, slot, globalslot;
-	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr;
+	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr, forge_org = *o_ptr;
 	player_type *p_ptr = Players[Ind];
 	bool delete_it, fully_stowed = FALSE, stowed_some = FALSE, pick_all = FALSE;
 
@@ -1748,7 +1748,7 @@ s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store
 		o_ptr = o_ptr_tmp;
 
 		/* If nothing got stowed, restore the 1 piece we 'divided off' in advance (right after 'divide_charged_item()') */
-		if (!stowed_some) o_ptr->number++;
+		if (!stowed_some) *o_ptr = forge_org;
 	} else
 	/* Unhack number */
 	if (pick_one) o_ptr->number += num - 1;
