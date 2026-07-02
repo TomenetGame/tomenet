@@ -14336,7 +14336,7 @@ void c_close_game(cptr reason) {
 		/* Dump */
 		else if ((k == 'f') || (k == 'F')) {
 			strnfmt(tmp, MAX_CHARS - 1, "%s.txt", cname);
-			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, MAX_CHARS - 1)) {
+			if (get_string("Filename (you can post it to https://angband.live): ", tmp, MAX_CHARS - 1)) {
 				if (tmp[0] && (tmp[0] != ' ')) {
 					file_character(tmp, FALSE);
 					break;

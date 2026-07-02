@@ -2310,7 +2310,7 @@ void cmd_character(void) {
 		case 'f': case 'F':
 			/* Dump */
 			strnfmt(tmp, MAX_CHARS - 1, "%s.txt", cname);
-			if (get_string("Filename(you can post it to http://angband.oook.cz/): ", tmp, MAX_CHARS - 1)) {
+			if (get_string("Filename (you can post it to https://angband.live): ", tmp, MAX_CHARS - 1)) {
 				if (tmp[0] && (tmp[0] != ' ')) {
 					/* add '.txt' extension if not already existing */
 					if (strlen(tmp) > 4) {
@@ -7526,7 +7526,7 @@ void cmd_check_misc(void) {
 			Term_putstr( 5, row + 0, -1, TERM_WHITE, "(\377UW\377w) Open TomeNET website");
 			Term_putstr(40, row + 0, -1, TERM_WHITE, "(\377UR\377w) Open Mikael's monster search");
 			Term_putstr( 5, row + 1, -1, TERM_WHITE, "(\377UG\377w) Open git repository site");
-			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UL\377w) Open oook.cz ladder site");
+			Term_putstr(40, row + 1, -1, TERM_WHITE, "(\377UL\377w) Open 'angband.live' ladder site");
 			row += 3;
 			Term_putstr( 5, row, -1, TERM_WHITE, "(\377o#\377w) Convert last screenshot to");
 			Term_putstr( 5, row + 1,   -1, TERM_WHITE, "    a PNG and leave this menu:");
@@ -7742,7 +7742,7 @@ void cmd_check_misc(void) {
 			URLMAN("https://muuttuja.org/tomenet/monsters/index.php");
 			break;
 		case 'L': //ow http
-			URLMAN("http://angband.oook.cz/ladder-browse.php?v=TomeNET"); //https fails, NET::ERR_CERT_COMMON_NAME_INVALID
+			URLMAN("https://angband.live/ladder/ladder-browse.php?v=TomeNET"); //https fails, NET::ERR_CERT_COMMON_NAME_INVALID
 			break;
 #else
 		/* USE_GCU (without USE_X11) and any other unknown OS.. */

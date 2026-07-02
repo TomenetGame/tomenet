@@ -1814,7 +1814,7 @@ errr file_character(cptr name, bool quiet) {
 		/* Dump each row */
 #if 0 /* this is actually correct */
 		for (x = 0; x < Term->wid; x++) {
-#else /* bad hack actually, just to avoid spacer lines on oook.cz */
+#else /* bad hack actually, just to avoid spacer lines on oook.cz (now angband.live) */
 		for (x = 0; x < DUMP_MAX_X; x++) {
 #endif
 			/* Get the attr/char */
@@ -1838,7 +1838,7 @@ errr file_character(cptr name, bool quiet) {
 		/* Dump each row */
 #if 0 /* this is actually correct */
 		for (x = 0; x < Term->wid; x++) {
-#else /* bad hack actually, just to avoid spacer lines on oook.cz */
+#else /* bad hack actually, just to avoid spacer lines on oook.cz (now angband.live) */
 		for (x = 0; x < DUMP_MAX_X; x++) {
 #endif
 			/* Get the attr/char */
@@ -1862,7 +1862,7 @@ errr file_character(cptr name, bool quiet) {
 		/* Dump each row */
 #if 0 /* this is actually correct */
 		for (x = 0; x < Term->wid; x++) {
-#else /* bad hack actually, just to avoid spacer lines on oook.cz */
+#else /* bad hack actually, just to avoid spacer lines on oook.cz (now angband.live) */
 		for (x = 0; x < DUMP_MAX_X; x++) {
 #endif
 			/* Get the attr/char */
@@ -1951,7 +1951,7 @@ errr file_character(cptr name, bool quiet) {
 	if (screen_icky) Term_switch(0);
 	/* skip top line, already in 'last messages' if any at all */
 	for (y = 1; y < Term->hgt; y++) {
-		for (x = 0; x < Term->wid - 1; x++) { /* -1: Hack for angband.oook.cz ladder: 80 chars would cause extra linebreaks there :/ So we just discard the final column.. */
+		for (x = 0; x < Term->wid - 1; x++) { /* -1: Hack for angband.oook.cz (now angband.live) ladder: 80 chars would cause extra linebreaks there :/ So we just discard the final column.. */
 			(void)(Term_what(x, y, &a, &c));
 			/* Characters above MAX_FONT_CHAR are graphical and will reported as MAX_FONT_CHAR. */
 			if (c > MAX_FONT_CHAR) c = MAX_FONT_CHAR;
