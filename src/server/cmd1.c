@@ -1744,8 +1744,12 @@ s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store
  #endif
 	}
 
-	if (forge_one.tval) o_ptr = o_ptr_tmp;
-	else
+	if (forge_one.tval) {
+		o_ptr = o_ptr_tmp;
+
+		/* If nothing got stowed, restore the 1 piece we 'divided off' in advance (right after 'divide_charged_item()') */
+		if (!stowed_some) o_ptr->number++;
+	} else
 	/* Unhack number */
 	if (pick_one) o_ptr->number += num - 1;
 
