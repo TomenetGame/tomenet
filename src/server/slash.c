@@ -8117,7 +8117,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_type forge;
 				object_type *o_ptr = &forge;
 				int exact = -1, prefix = -1, closest = -1, closest_dis = 9999;
-				char *s, *item;
+				char *s, *item, symbol = 0, *parms;
 				bool true_order = FALSE;
 
 				ego_item_type *e_ptr;
@@ -8129,16 +8129,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (!tk) {
 					//todo: allow specifying bpval/pval
-					msg_print(Ind, "\377oUsage:    /nwish [[<#skip>]:][#amount ][\\<prefix-ego>\\]<item name>[\\<postfix-ego>] [+<bpval>][^<pval>]");
+					msg_print(Ind, "\377oUsage:    /nwish [<object symbol>|<#skip>:][#amount ][\\<prefix-ego>\\]<item name>[\\<postfix-ego>] [+<bpval>][^<pval>]");
 					msg_print(Ind, "\377oExample:  /nwish 1:3 probing");
 					msg_print(Ind, "\377oExample:  /nwish :4 fire");
 					msg_print(Ind, "\377oExample:  /nwish 2 elven\\hard lea\\resis");
 					msg_print(Ind, "\377oExample:  /nwish doom +-9");
 					return;
 				}
+				parms = message3;
+				while (*parms == ' ') parms++;
+
+				/* Specified object symbol? */
+				if (!isalphanum(*parms)) symbol = *parms++;
 
 				/* First, eliminate pval/bpval strings */
-				if ((s = strchr(message3, '^'))) {
+				if ((s = strchr(parms, '^'))) {
 					pval = atoi(s + 1);
 					if (pval < -128 || pval > 127) {
 						msg_print(Ind, "pval and bpval must be between -128 and 127.");
@@ -8146,7 +8151,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 					*s = 0;
 				}
-				if ((s = strchr(message3, '+'))) {
+				if ((s = strchr(parms, '+'))) {
 					bpval = atoi(s + 1);
 					if (bpval < -128 || bpval > 127) {
 						msg_print(Ind, "pval and bpval must be between -128 and 127.");
@@ -8155,16 +8160,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					*s = 0;
 				}
 				/* Trim trailing space */
-				if (message3[strlen(message3) - 1] == ' ') message3[strlen(message3) - 1] = 0;
+				if (parms[strlen(parms) - 1] == ' ') parms[strlen(parms) - 1] = 0;
 
 				/* check for skips */
-				if ((s = strchr(message3, ':'))) {
-					k = atoi(message3);
+				if ((s = strchr(parms, ':'))) {
+					k = atoi(parms);
 					item = s + 1;
 					true_order = TRUE; //skipping won't make sense if the results are reordered anyway, it would always skip certain combos
 				} else {
 					k = 0;
-					item = message3;
+					item = parms;
 				}
 				/* check for amount */
 				if ((tk = atoi(item))) {
@@ -8229,6 +8234,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					k_ptr = &k_info[i];
 					if (k_ptr->tval == TV_PSEUDO_OBJ) continue; //only real objects
 					//if (!k_ptr->k_idx) continue;
+
+					if (symbol && k_ptr->k_char != symbol) continue;
 
 					s = my_strcasestr(k_name + k_ptr->name, item);
 					if (!s) continue;
