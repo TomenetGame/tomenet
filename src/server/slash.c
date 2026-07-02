@@ -8296,10 +8296,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_known(o_ptr);
 				o_ptr->level = 1;
 				o_ptr->number = tk;
-
 #ifdef NEW_MDEV_STACKING
 				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
 #endif
+				determine_level_req(1, o_ptr); // or 0? pft
+
 				k = inven_carry(Ind, o_ptr);
 				if (k >= 0) {
 					char o_name[ONAME_LEN];
@@ -8372,7 +8373,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				/* Complete generation, especially level requirements check */
 				apply_magic(&p_ptr->wpos, o_ptr, -2, FALSE, TRUE, FALSE, FALSE, RESF_NONE);
-				if (i == ART_GROND || i == ART_MORGOTH) o_ptr->level = 40; //consistent with xtra2.c
 
 				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, TRUE, TRUE, FALSE, RESF_NONE);
 				//apply_magic(&p_ptr->wpos, o_ptr, -1, !o_ptr->name2, o_ptr->name1 || o_ptr->name2, o_ptr->name1 || o_ptr->name2, FALSE, RESF_NONE);
@@ -8383,10 +8383,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				object_known(o_ptr);
 				//o_ptr->level = 1;
 				o_ptr->number = 1;
-
 #ifdef NEW_MDEV_STACKING
 				if (o_ptr->tval == TV_WAND || o_ptr->tval == TV_STAFF) o_ptr->pval *= o_ptr->number;
 #endif
+				determine_level_req(1, o_ptr); // or 0? pft
+				if (i == ART_GROND || i == ART_MORGOTH) o_ptr->level = 40; //consistent with xtra2.c
+
 				k = inven_carry(Ind, o_ptr);
 				if (k >= 0) {
 					char o_name[ONAME_LEN];
@@ -8570,7 +8572,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				o_ptr->owner = 0;
 				o_ptr->ident &= ~ID_NO_HIDDEN;
 				object_known(o_ptr);
-				o_ptr->level = 1;
+				//o_ptr->level = 1;
+				determine_level_req(1, o_ptr); // or 0? pft
 				o_ptr->number = tk;
 
 				k = inven_carry(Ind, o_ptr);
