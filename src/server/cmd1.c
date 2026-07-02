@@ -1747,6 +1747,7 @@ s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store
 
 	if (forge_one.tval) {
 		o_ptr = o_ptr_tmp;
+
 		if (!stowed_some) *o_ptr = forge_orig;
 	} else
 	/* Unhack number */
