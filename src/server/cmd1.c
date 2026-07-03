@@ -1714,7 +1714,7 @@ s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store
 		if ((!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr))
 		    && check_guard_inscription(s_ptr->note, 'I'))
  #ifdef SUBINVEN_LIMIT_GROUP
-			return(FALSE);
+			break;
  #else
 			continue;
  #endif
