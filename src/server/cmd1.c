@@ -1661,7 +1661,7 @@ s16b auto_stow_okay(int Ind, object_type *o_ptr, bool store_bought) {
     If o_stowed_ptr isn't NULL its reference will be set to the resulting stowed object. */
 s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store_bought, bool quiet, u32b cave_info) {
 	int i, num, slot, globalslot;
-	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr, forge_org = *o_ptr;
+	object_type *s_ptr, forge_one, *o_ptr_tmp = o_ptr, forge_org;
 	player_type *p_ptr = Players[Ind];
 	bool delete_it, fully_stowed = FALSE, stowed_some = FALSE, pick_all = FALSE;
 
@@ -1692,6 +1692,7 @@ s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store
 
 		/* for pick_one: need to divide wand/staff charges */
 		if (is_magic_device(o_ptr->tval) && num > 1) {
+			forge_org = *o_ptr;
 			forge_one = *o_ptr;
 			forge_one.number = 1;
 			divide_charged_item(&forge_one, o_ptr, 1);
