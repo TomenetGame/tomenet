@@ -8129,9 +8129,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (!tk) {
 					//todo: allow specifying bpval/pval
-					msg_print(Ind, "\377oUsage:    /nwish [<object symbol>|<#skip>:][#amount ][\\<prefix-ego>\\]<item name>[\\<postfix-ego>] [+<bpval>][^<pval>]");
+					msg_print(Ind, "\377oUsage:    /nwish [<object symbol>][<#skip>:][#amount ][\\<prefix-ego>\\]<item name>[\\<postfix-ego>] [+<bpval>][^<pval>]");
 					msg_print(Ind, "\377oExample:  /nwish 1:3 probing");
-					msg_print(Ind, "\377oExample:  /nwish :4 fire");
+					msg_print(Ind, "\377oExample:  /nwish -3 probing");
 					msg_print(Ind, "\377oExample:  /nwish 2 elven\\hard lea\\resis");
 					msg_print(Ind, "\377oExample:  /nwish doom +-9");
 					return;
@@ -8139,7 +8139,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				parms = message3;
 				while (*parms == ' ') parms++;
 
-				/* Specified object symbol? */
+				/* Specified object symbol? (Since we have no ':' objects, we could exempt the colon here to reenable ':name' syntax w/o need to specify a number) */
 				if (!isalphanum(*parms)) symbol = *parms++;
 
 				/* First, eliminate pval/bpval strings */
@@ -8323,21 +8323,28 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				artifact_type *a_ptr = NULL;
 				object_type forge, *o_ptr = &forge;
 				int kidx;
-				char o_name[ONAME_LEN], *s, *item;
+				char o_name[ONAME_LEN], *s, *item, symbol = 0, *parms;
 
 				WIPE(o_ptr, object_type);
 
 				if (!tk) {
-					msg_print(Ind, "\377oUsage:    /awish [<#skip>:]<artifact name>");
+					msg_print(Ind, "\377oUsage:    /awish [<object symbol>][<#skip>:][<#skip>:]<artifact name>");
 					msg_print(Ind, "\377oExample:  /awish 1:Dungeon Master");
+					msg_print(Ind, "\377oExample:  /awish ]Dungeon Master");
 					return;
 				}
-				if ((s = strchr(message3, ':'))) {
-					k = atoi(message3);
+				parms = message3;
+				while (*parms == ' ') parms++;
+
+				/* Specified object symbol? (Since we have no ':' objects, we could exempt the colon here to reenable ':name' syntax w/o need to specify a number) */
+				if (!isalphanum(*parms)) symbol = *parms++;
+
+				if ((s = strchr(parms, ':'))) {
+					k = atoi(parms);
 					item = s + 1;
 				} else {
 					k = 0;
-					item = message3;
+					item = parms;
 				}
 
 				/* Hack -- Guess at "correct" values for tval_to_char[] */
@@ -8345,6 +8352,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					a_ptr = &a_info[i];
 					kidx = lookup_kind(a_ptr->tval, a_ptr->sval);
 					if (!kidx) continue;
+
+					if (symbol && k_info[kidx].k_char != symbol) continue;
 
 					invcopy(o_ptr, kidx);
 					o_ptr->name1 = i;
