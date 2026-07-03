@@ -5551,7 +5551,7 @@ bool subinven_can_accept(int Ind, object_type *i_ptr, int sslot, bool store_boug
 	object_type *s_ptr = &p_ptr->inventory[sslot], *o_ptr;
 	int i, inum = i_ptr->number, xnum, Gnum, maxG;
 	bool new_stack = FALSE, allow_new_stack = FALSE;
-	int a, o, s;
+	int a, o, s, id;
 
 	/* Player disabled auto-stow via bag inscription? */
 	a = check_guard_inscription(s_ptr->note, 'A');
@@ -5559,6 +5559,13 @@ bool subinven_can_accept(int Ind, object_type *i_ptr, int sslot, bool store_boug
 	if (i_ptr->owner) o = 0; /* Allow again */
 	s = check_guard_inscription(s_ptr->note, 'S');
 	if (store_bought) s = 0; /* Allow again */
+	/* Player doesn't want to auto-stow unidentified items?
+	   (Note that unidentified rods can never be auto-stowed anyway, as they might be directional.) */
+	id = check_guard_inscription(s_ptr->note, 'I');
+	if (object_known_p(Ind, i_ptr) && object_aware_p(Ind, i_ptr)) id = 0;
+
+	/* !I refuses unidentified items outright, no stacking exception */
+	if (id) return(FALSE);
 
 	/* Assume it's not accepted to use multiple 'pure' (without 0/1 parm) !A, !O or !S inscriptions on the same item */
 

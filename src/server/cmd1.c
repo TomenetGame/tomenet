@@ -1709,16 +1709,6 @@ s16b auto_stow(int Ind, object_type *o_ptr, int o_idx, bool pick_one, bool store
 		/* Must fit the object type */
 		if (!item_matches_subinven(Ind, get_subinven_group(s_ptr->sval), o_ptr)) continue;
 
-		/* Player doesn't want to auto-stow unidentified items?
-		   (Note that unidentified rods can never be auto-stowed anyway, as they might be directional.) */
-		if ((!object_known_p(Ind, o_ptr) || !object_aware_p(Ind, o_ptr))
-		    && check_guard_inscription(s_ptr->note, 'I'))
- #ifdef SUBINVEN_LIMIT_GROUP
-			break;
- #else
-			continue;
- #endif
-
 		/* Player disabled auto-stow via bag inscription? */
 		if (!subinven_can_accept(Ind, o_ptr, i, store_bought)) {
  #ifdef SUBINVEN_LIMIT_GROUP
