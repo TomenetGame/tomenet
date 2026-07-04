@@ -2133,7 +2133,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				add_xorder(Ind, j, r, num, flags);
 			return;
 		}
-		else if (prefix(messagelc, "/feeling") || !strcmp(messagelc, "/fe")) {
+		else if (prefix(messagelc, "/feel") || !strcmp(messagelc, "/fe")) {
 			cave_type **zcave = getcave(&p_ptr->wpos);
 			bool no_tele = FALSE;
 
