@@ -543,3 +543,7 @@ extern void custom_lua_timer_parmstr_set(int i, char *str);
 
 extern int debug_drain_hp;
 extern int debug_drain_mp;
+
+extern s32b fake_waitpid_geo;
+extern s32b fake_waitpid_ping;
+extern s32b fake_waitpid_route;
