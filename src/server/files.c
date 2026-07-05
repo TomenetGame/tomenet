@@ -998,13 +998,14 @@ bool process_player_name(int Ind, bool sf) {
 
 	/* Cannot be too short? */
 	if (strlen(p_ptr->name) < CNAME_MIN_LEN || strlen(p_ptr->name) < ACC_CHAR_MIN_LEN) { /* (null terminator char at the end) */
+		int min_acc = ACC_CHAR_MIN_LEN > ACCNAME_MIN_LEN ? ACC_CHAR_MIN_LEN : ACCNAME_MIN_LEN;
+		int min_char = ACC_CHAR_MIN_LEN > CNAME_MIN_LEN ? ACC_CHAR_MIN_LEN : CNAME_MIN_LEN;
+
 		/* Character name too short */
-		if (ACC_CHAR_MIN_LEN >= CNAME_MIN_LEN && ACC_CHAR_MIN_LEN >= ACCNAME_MIN_LEN)
-			Destroy_connection(p_ptr->conn, format("Your account and character names must be at least %d characters long!", ACC_CHAR_MIN_LEN));
-		else if (CNAME_MIN_LEN == ACCNAME_MIN_LEN)
-			Destroy_connection(p_ptr->conn, format("Your account and character names must be at least %d characters long!", CNAME_MIN_LEN));
+		if (min_char == min_acc)
+			Destroy_connection(p_ptr->conn, format("Your account and character names must be at least %d characters long!", min_char));
 		else
-			Destroy_connection(p_ptr->conn, format("Your character name must be at least %d characters long!", CNAME_MIN_LEN));
+			Destroy_connection(p_ptr->conn, format("Your character name must be at least %d characters long!", min_char));
 
 		/* Abort */
 		return(FALSE);

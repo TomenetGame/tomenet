@@ -1366,6 +1366,7 @@ static void Contact(int fd, int arg) {
 	Reply(host_addr, fd);
 }
 
+/* 'nick' is account name, 'real' is network user name (always "PLAYER" on Windows OS) */
 static int Enter_player(char *real, char *nick, char *addr, char *host,
 			version_type *version, int port, int *login_port, int fd) {
 	//int status;
@@ -1388,7 +1389,7 @@ static int Enter_player(char *real, char *nick, char *addr, char *host,
 	   a second account login - it may be a subsequent resume.
 	   We can check duplicate account use on player entry
 	   (PKT_LOGIN) */
-	if ((status = Check_names(nick, real, host, addr, TRUE, FALSE)) != SUCCESS) {
+	if ((status = Check_names(nick, real, host, addr, TRUE, TRUE)) != SUCCESS) {
 		/*s_printf("Check_names failed with result %d.\n", status);*/
 		return(status);
 	}
@@ -5186,19 +5187,20 @@ static int Receive_login(int ind) {
 				Destroy_connection(ind, "A too similar name is already in use, or you made a typo in name or password (2).");
 				return(-1);
 			}
-			if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE, FALSE)) != SUCCESS) {
+			if ((res = Check_names(connp->nick, connp->real, connp->host, connp->addr, FALSE, TRUE)) != SUCCESS) {
 				int k;
 				char *accname = strdup(connp->nick);
 
 				if (res == E_LETTER)
 					Destroy_connection(ind, "Your accountname must start on a letter (A-Z).");
 				else if (res == E_LENGTH) { /* Account name too short */
-					if (ACC_CHAR_MIN_LEN >= ACCNAME_MIN_LEN && ACC_CHAR_MIN_LEN >= CNAME_MIN_LEN)
-						Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
-					else if (ACCNAME_MIN_LEN == CNAME_MIN_LEN)
-						Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACCNAME_MIN_LEN));
+					int min_acc = ACC_CHAR_MIN_LEN > ACCNAME_MIN_LEN ? ACC_CHAR_MIN_LEN : ACCNAME_MIN_LEN;
+					int min_char = ACC_CHAR_MIN_LEN > CNAME_MIN_LEN ? ACC_CHAR_MIN_LEN : CNAME_MIN_LEN;
+
+					if (min_acc == min_char)
+						Destroy_connection(ind, format("Account and character names must be at least %d characters long.", min_acc));
 					else
-						Destroy_connection(ind, format("Account names must be at least %d characters long.", ACCNAME_MIN_LEN));
+						Destroy_connection(ind, format("Account names must be at least %d characters long.", min_acc));
 				} else
 					Destroy_connection(ind, "Your accountname, username or hostname contains invalid characters");
 
@@ -5381,13 +5383,14 @@ static int Receive_login(int ind) {
 
 		/* Account/Character names must be at least of length 2 (For account names gives E_LENGTH, but we're treating character names here) */
 		if (strlen(choice) < ACC_CHAR_MIN_LEN || strlen(choice) < CNAME_MIN_LEN) {
+			int min_acc = ACC_CHAR_MIN_LEN > ACCNAME_MIN_LEN ? ACC_CHAR_MIN_LEN : ACCNAME_MIN_LEN;
+			int min_char = ACC_CHAR_MIN_LEN > CNAME_MIN_LEN ? ACC_CHAR_MIN_LEN : CNAME_MIN_LEN;
+
 			/* Character name too short */
-			if (ACC_CHAR_MIN_LEN >= CNAME_MIN_LEN && ACC_CHAR_MIN_LEN >= ACCNAME_MIN_LEN)
-				Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
-			else if (CNAME_MIN_LEN == ACCNAME_MIN_LEN)
-				Destroy_connection(ind, format("Account and character names must be at least %d characters long!", CNAME_MIN_LEN));
+			if (min_char == min_acc)
+				Destroy_connection(ind, format("Account and character names must be at least %d characters long.", min_char));
 			else
-				Destroy_connection(ind, format("Character names must be at least %d characters long.", CNAME_MIN_LEN));
+				Destroy_connection(ind, format("Character names must be at least %d characters long.", min_char));
 
 			return(-1);
 		}
@@ -5519,7 +5522,7 @@ static int Receive_login(int ind) {
 		}
 
 		/* Validate names/resume in proper place */
-		if ((res = Check_names(choice, connp->real, connp->host, connp->addr, TRUE, TRUE))) {
+		if ((res = Check_names(choice, connp->real, connp->host, connp->addr, TRUE, FALSE))) {
 			/* connp->real is _always_ 'PLAYER' - connp->nick is the account name, choice the c_name */
 			/* fail login here */
 			switch (res) {
@@ -5529,15 +5532,16 @@ static int Receive_login(int ind) {
 			case E_INVAL:
 				Destroy_connection(ind, "Your charactername contains invalid characters"); //user+host names have already been checked previously (on account login)
 				break;
-			case E_LENGTH: /* _character_ name too short (we passed 'choice' to Check_names, not connp->nick!) */
-				if (ACC_CHAR_MIN_LEN >= ACCNAME_MIN_LEN && ACC_CHAR_MIN_LEN >= CNAME_MIN_LEN)
-					Destroy_connection(ind, format("Account and character names must be at least %d characters long.", ACC_CHAR_MIN_LEN));
-				else if (CNAME_MIN_LEN == ACCNAME_MIN_LEN)
-					Destroy_connection(ind, format("Account and character names must be at least %d characters long!", CNAME_MIN_LEN));
-				else
-					Destroy_connection(ind, format("Character names must be at least %d characters long.", CNAME_MIN_LEN));
+			case E_LENGTH: { /* _character_ name too short (we passed 'choice' to Check_names, not connp->nick!) */
+				int min_acc = ACC_CHAR_MIN_LEN > ACCNAME_MIN_LEN ? ACC_CHAR_MIN_LEN : ACCNAME_MIN_LEN;
+				int min_char = ACC_CHAR_MIN_LEN > CNAME_MIN_LEN ? ACC_CHAR_MIN_LEN : CNAME_MIN_LEN;
 
-				break;
+				if (min_char == min_acc)
+					Destroy_connection(ind, format("Account and character names must be at least %d characters long.", min_char));
+				else
+					Destroy_connection(ind, format("Character names must be at least %d characters long.", min_char));
+
+				break; }
 			case E_IN_USE_PC:
 				Destroy_connection(ind, format("You are still logged in by another PC user. Please wait %d seconds and try again.", IDLE_TIMEOUT));
 				break;
