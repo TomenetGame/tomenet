@@ -6928,7 +6928,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					o_ptr->timeout_magic = 6000; //3000 + rand_int(3001);
 
 					p_ptr->body_monster = n;
-					s_printf("(%4d) L%3d, %6dXP, %-28s%c: %7d - %8d\n", n, r_ptr->level, r_ptr->mexp, r_name + r_ptr->name, item_tester_hook_wear(Ind, INVEN_RIGHT) ? ' ' : 'X', price_poly_ring(0, o_ptr, 0), price_poly_ring(0, o_ptr, 1));
+					s_printf("(%4d) L%3d, %6dXP, %-28s%c: %7u - %8u\n", n, r_ptr->level, r_ptr->mexp, r_name + r_ptr->name, item_tester_hook_wear(Ind, INVEN_RIGHT) ? ' ' : 'X', price_poly_ring(0, o_ptr, 0), price_poly_ring(0, o_ptr, 1));
 				}
 				p_ptr->body_monster = old_body;
 				s_printf("DONE, %d forms valid.\n", c);

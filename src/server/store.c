@@ -531,7 +531,6 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		int extra = 0, extra2 = 0, i, j;
 		bool wild_ok;
 #endif
-		bool find_easy = FALSE;
 
 		r_ptr = &r_info[r_idx];
 		xp = r_ptr->mexp;
@@ -563,25 +562,33 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		//polyring price debug
 		//if (Ind) msg_format(Ind,"x=%u, y=%u, z=%u, s=%u, z1=%u, z2=%u, rval=%u", x, y, z, s, 100 + (r_ptr->speed - 90) * 3, (50000 / ((50000 / (r_ptr->hdice * r_ptr->hside + r_ptr->hdice)) + 20)), r_val);
 
-
+#if 0
 		/* Lower price for lower level (starts already at rlev<60, but effect is small yet) + FRIENDS forms,
 		   but reduce reduction for very low forms <= level 10 and reach normal reduction at level 20+. */
-		if ((r_ptr->flags1 & RF1_FRIENDS) && (r_ptr->level < 60)) find_easy = TRUE;
-
-		/* TODO: Similar to RF1_FRIENDS, also accomodate for the predefined vault_aux_...() types that make it much easier to find certain monsters:
-			(for now ignoring the more generic ones: aquatic, jelly, animal, chapel, lesser_chapel, kennel, lesser_kennel, treasure, man)
-			check for the rather specific ones: undead, orc, orc_ogre, troll, giant, lesser_giant, dragon, demon. */
-		if (vault_aux_orc(r_idx) || vault_aux_orc_ogre(r_idx) ||
-		    vault_aux_troll(r_idx) || vault_aux_giant(r_idx) || vault_aux_lesser_giant(r_idx) ||
-		    vault_aux_undead(r_idx)  || vault_aux_dragon(r_idx) || vault_aux_demon(r_idx))
-			find_easy = TRUE;
-
-		if (find_easy) {
+		if ((r_ptr->flags1 & RF1_FRIENDS) && (r_ptr->level < 60)) {
 			x = (r_ptr->level > 20 ? 20 : (r_ptr->level < 10 ? 10 : r_ptr->level)) - 10;
 			z = r_val - (r_val * (10 + (r_ptr->level < 10 ? 10 : r_ptr->level))) / 70;
 			r_val = r_val - (z * x) / 10;
 		}
+#else
+		/* Similar to RF1_FRIENDS, also accomodate for the predefined vault_aux_...() types that make it much easier to find certain monsters:
+		   (for now ignoring the more generic ones: aquatic, jelly, animal, chapel, lesser_chapel, kennel, lesser_kennel, treasure, man)
+		   check for the rather specific ones: undead, orc, orc_ogre, troll, giant, lesser_giant, dragon, demon. */
+		if ((r_ptr->flags1 & RF1_FRIENDS) ||
+		    /* TODO: Actually handle duplicate monsters, eg Unbeliever (L20) vs Unbeliever-FRIENDS (L30).
+		             Currently always uses the lower-level version, but that one doesn't have FRIENDS, so price is 6251 instead of 1931! */
+		    vault_aux_orc(r_idx) || vault_aux_orc_ogre(r_idx) ||
+		    vault_aux_troll(r_idx) || vault_aux_giant(r_idx) || vault_aux_lesser_giant(r_idx) ||
+		    vault_aux_undead(r_idx)  || vault_aux_dragon(r_idx) || vault_aux_demon(r_idx)) {
+			z = r_val - (r_val * (10 + (r_ptr->level < 10 ? 10 : (r_ptr->level > 30 ? 30 : r_ptr->level)))) / 70;
 
+			//x = (r_ptr->level > 20 ? 20 : (r_ptr->level < 10 ? 10 : r_ptr->level)) - 10;
+			//r_val = r_val - (z * x) / 10;
+
+			x = (r_ptr->level > 20 ? 20 : (r_ptr->level < 5 ? 5 : r_ptr->level)) - 5;
+			r_val = r_val - (z * x) / 15;
+		}
+#endif
 
 		//polyring price debug
 		//if (Ind)msg_format(Ind,"x=%u,z=%u,rval=%u",x,z,r_val);
