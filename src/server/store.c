@@ -521,6 +521,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 	u64b price = 0;
 	monster_race *r_ptr = &r_info[0]; //slay (unfounded) compiler warning
 	u64b r_val = 0;
+	int r_idx = o_ptr->pval;
 
 	if (o_ptr->pval) {
 		u64b d, x, y, z, s, xp, rspd;
@@ -530,8 +531,9 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		int extra = 0, extra2 = 0, i, j;
 		bool wild_ok;
 #endif
+		bool find_easy = FALSE;
 
-		r_ptr = &r_info[o_ptr->pval];
+		r_ptr = &r_info[r_idx];
 		xp = r_ptr->mexp;
 
 		/* Supa experimental: Actually a lower level for a more powerful form is GOOD!? */
@@ -561,13 +563,25 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		//polyring price debug
 		//if (Ind) msg_format(Ind,"x=%u, y=%u, z=%u, s=%u, z1=%u, z2=%u, rval=%u", x, y, z, s, 100 + (r_ptr->speed - 90) * 3, (50000 / ((50000 / (r_ptr->hdice * r_ptr->hside + r_ptr->hdice)) + 20)), r_val);
 
+
 		/* Lower price for lower level (starts already at rlev<60, but effect is small yet) + FRIENDS forms,
 		   but reduce reduction for very low forms <= level 10 and reach normal reduction at level 20+. */
-		if ((r_ptr->flags1 & RF1_FRIENDS) && (r_ptr->level < 60)) {
+		if ((r_ptr->flags1 & RF1_FRIENDS) && (r_ptr->level < 60)) find_easy = TRUE;
+
+		/* TODO: Similar to RF1_FRIENDS, also accomodate for the predefined vault_aux_...() types that make it much easier to find certain monsters:
+			(for now ignoring the more generic ones: aquatic, jelly, animal, chapel, lesser_chapel, kennel, lesser_kennel, treasure, man)
+			check for the rather specific ones: undead, orc, orc_ogre, troll, giant, lesser_giant, dragon, demon. */
+		if (vault_aux_orc(r_idx) || vault_aux_orc_ogre(r_idx) ||
+		    vault_aux_troll(r_idx) || vault_aux_giant(r_idx) || vault_aux_lesser_giant(r_idx) ||
+		    vault_aux_undead(r_idx)  || vault_aux_dragon(r_idx) || vault_aux_demon(r_idx))
+			find_easy = TRUE;
+
+		if (find_easy) {
 			x = (r_ptr->level > 20 ? 20 : (r_ptr->level < 10 ? 10 : r_ptr->level)) - 10;
 			z = r_val - (r_val * (10 + (r_ptr->level < 10 ? 10 : r_ptr->level))) / 70;
 			r_val = r_val - (z * x) / 10;
 		}
+
 
 		//polyring price debug
 		//if (Ind)msg_format(Ind,"x=%u,z=%u,rval=%u",x,z,r_val);
@@ -579,7 +593,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		r_val -= 3000 + (!r_ptr->level ? 3000 : 0);
 
 		/* Greatly reduce value for rings that don't have usable limbs --- keep consistent with item_tester_hook_wear() / do_cmd_mimic() */
-		body_humanoid = (mimic_shaman(o_ptr->pval) && mimic_shaman_fulleq(r_ptr->d_char)) ||
+		body_humanoid = (mimic_shaman(r_idx) && mimic_shaman_fulleq(r_ptr->d_char)) ||
 		    (r_ptr->body_parts[BODY_HEAD] && r_ptr->body_parts[BODY_TORSO] && r_ptr->body_parts[BODY_ARMS] &&
 		    r_ptr->body_parts[BODY_LEGS] && (r_ptr->body_parts[BODY_FINGER] >= 2) && r_ptr->body_parts[BODY_WEAPON]);
 		if (!body_humanoid) {
@@ -741,7 +755,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 			if (!e_info[o_ptr->name2].cost) return(0);
 			price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
 		}
-		if (o_ptr->pval != 0) price += (((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) * 10) / (30 + 300 / (r_ptr->level + 5));
+		if (r_idx != 0) price += (((r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100) * 10) / (30 + 300 / (r_ptr->level + 5));
 
 		/* Apply discount (if any) */
 		if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
@@ -756,7 +770,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 			if (!e_info[o_ptr->name2].cost) return(0);
 			price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
 		}
-		if (o_ptr->pval != 0) price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
+		if (r_idx != 0) price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
 
 		/* Apply discount (if any) */
 		if (o_ptr->discount) price -= (price * o_ptr->discount / 100L);
@@ -777,7 +791,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 			if (!e_info[o_ptr->name2].cost) return(0);
 			price += e_info[o_ptr->name2].cost; /* 'Indestructible' ego, pft */
 		}
-		if (o_ptr->pval != 0) {
+		if (r_idx != 0) {
 			r_val /= 2; //half price of npc stores
 			price += (r_val >= r_ptr->level * 100) ? r_val : r_ptr->level * 100;
 		}
@@ -788,7 +802,7 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 	}
 
 	/* For non-player rings, charge determines price, no charge is worthless, rings can have 3000-6000 turns. */
-	if (o_ptr->pval) price = (price * (o_ptr->timeout_magic / 10)) / 600;
+	if (r_idx) price = (price * (o_ptr->timeout_magic / 10)) / 600;
 
 	/* Never drop to zero from rounding issues, not even at 0 turns left */
 	if (!price) price = 1;

@@ -1034,6 +1034,23 @@ extern void place_floor(worldpos *wpos, int y, int x);
 extern void place_floor_live(worldpos *wpos, int y, int x);
 extern int get_seasonal_tree(void);
 
+extern bool vault_aux_aquatic(int r_idx);
+extern bool vault_aux_jelly(int r_idx);
+extern bool vault_aux_animal(int r_idx);
+extern bool vault_aux_undead(int r_idx);
+extern bool vault_aux_chapel(int r_idx);
+extern bool vault_aux_lesser_chapel(int r_idx);
+extern bool vault_aux_kennel(int r_idx);
+extern bool vault_aux_lesser_kennel(int r_idx);
+extern bool vault_aux_treasure(int r_idx);
+extern bool vault_aux_orc(int r_idx);
+extern bool vault_aux_orc_ogre(int r_idx);
+extern bool vault_aux_troll(int r_idx);
+extern bool vault_aux_man(int r_idx);
+extern bool vault_aux_giant(int r_idx);
+extern bool vault_aux_lesser_giant(int r_idx);
+extern bool vault_aux_dragon(int r_idx);
+extern bool vault_aux_demon(int r_idx);
 
 /* wild.c */
 extern int world_index(int world_x, int world_y);
