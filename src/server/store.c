@@ -592,6 +592,15 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 			r_val = r_val - (z * x) / 15;
 		}
 #endif
+#if 1 /* Not totally sure about this: */
+		/* Also apply rarity - rarer monsters can be worth more? (max rarity we currently have in r_info is 10 btw) */
+		//r_val = (r_val * (150 - 100 / (1 + (r_ptr->rarity >= 1 ? r_ptr->rarity : 1)))) / 100; // theoretical max: +49% bonus; realistic: up to 41%,; often: +16...30%
+		//r_val = (r_val * (130 - 100 / (1 + (r_ptr->rarity >= 1 ? r_ptr->rarity : 1)))) / 100; // like above but calibrate centre by -20%, ie -20%...+29% instead of +0%...+49%
+		//r_val = (r_val * (135 - 100 / (1 + (r_ptr->rarity >= 1 ? r_ptr->rarity : 1)))) / 100; // like above but calibrate centre by -15%, ie -15%...+34% instead of +0%...+49%
+		//r_val = (r_val * (140 - 80 / (1 + (r_ptr->rarity >= 1 ? r_ptr->rarity : 1)))) / 100; // theoretical max: +39% bonus; realistic: up to 32%,; often: +13...24%
+		//r_val = (r_val * (130 - 60 / (1 + (r_ptr->rarity >= 1 ? r_ptr->rarity : 1)))) / 100; // theoretical max: +29% bonus; realistic: up to 24%,; often: +10...18%
+		r_val = (r_val * (123 - 60 / (1 + (r_ptr->rarity >= 1 ? r_ptr->rarity : 1)))) / 100; // like above but calibrate centre by -7%, ie -7%...+22% instead of +0%...+29%
+#endif
 
 		//polyring price debug
 		//if (Ind)msg_format(Ind,"x=%u,z=%u,rval=%u",x,z,r_val);
