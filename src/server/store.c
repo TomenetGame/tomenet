@@ -575,8 +575,11 @@ u32b price_poly_ring(int Ind, object_type *o_ptr, int shop_type) {
 		   (for now ignoring the more generic ones: aquatic, jelly, animal, chapel, lesser_chapel, kennel, lesser_kennel, treasure, man)
 		   check for the rather specific ones: undead, orc, orc_ogre, troll, giant, lesser_giant, dragon, demon. */
 		if ((r_ptr->flags1 & RF1_FRIENDS) ||
-		    /* TODO: Actually handle duplicate monsters, eg Unbeliever (L20) vs Unbeliever-FRIENDS (L30).
-		             Currently always uses the lower-level version, but that one doesn't have FRIENDS, so price is 6251 instead of 1931! */
+		    /* Handle duplicate monsters, eg Unbeliever (L20) vs Unbeliever-FRIENDS (L30).
+		       Before htis fix we always used the lower-level version, but that one doesn't have FRIENDS, so price is 6251 instead of 1931!
+		       "Handling" means taking care of FRIENDS vs non-FRIENDS version, assuming FRIENDS in any case in the calculation: */
+		    (r_ptr->dup_FRIENDS) ||
+		    /* Handle all the easy-because-specific pit-occuring monsters */
 		    vault_aux_orc(r_idx) || vault_aux_orc_ogre(r_idx) ||
 		    vault_aux_troll(r_idx) || vault_aux_giant(r_idx) || vault_aux_lesser_giant(r_idx) ||
 		    vault_aux_undead(r_idx)  || vault_aux_dragon(r_idx) || vault_aux_demon(r_idx)) {

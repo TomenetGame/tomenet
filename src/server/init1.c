@@ -4312,7 +4312,7 @@ static errr grab_one_spell_flag(monster_race *r_ptr, cptr what) {
  * Initialize the "r_info" array, by parsing an ascii "template" file
  */
 errr init_r_info_txt(FILE *fp, char *buf) {
-	int i, j;
+	int i, j, dup_idx = 0;
 	char *s, *t;
 #ifdef RACE_DIZ
 	char tmp[MSG_LEN];
@@ -4376,6 +4376,8 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 		/* Process 'N' for "New/Number/Name" */
 		if (buf[0] == 'N') {
+			dup_idx = 0; // (re-)init
+
 			/* Find the colon before the name */
 			s = strchr(buf + 2, ':');
 
@@ -4420,6 +4422,7 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 			for (j = 1; j < i; j++) {
 				if (strcmp(r_info[j].name + r_name, s)) continue;
 				r_ptr->dup_idx = j;
+				dup_idx = j;
 				break;
 			}
 
@@ -4697,6 +4700,9 @@ errr init_r_info_txt(FILE *fp, char *buf) {
 
 				/* Parse this entry */
 				if (0 != grab_one_basic_flag(r_ptr, s)) return(5);
+
+				/* Paranoia-level safety: If we have a duplicate monster, check if we just acquired the FRIENDS flag and memorize it for our duplicate version (for price_poly_ring()) */
+				if (dup_idx && (r_ptr->flags1 & RF1_FRIENDS)) r_info[dup_idx].dup_FRIENDS = TRUE;
 
 				/* Start the next entry */
 				s = t;

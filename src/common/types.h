@@ -400,6 +400,7 @@ struct monster_race {
 	u16b name;				/* Name (offset) */
 	u32b text;				/* Text (offset) */
 	u16b dup_idx;				/* For mimicry: Race idx of duplicate that differs only in FRIENDS flag */
+	bool dup_FRIENDS;			/* ^ for the _target_ r_idx of a dup_idx: Just to make *sure*: does the other version really have FRIENDS flag? (almost paranoia, as in, we currently only use duplicate monsters in r_info to differentiate between FRIENDS and non-FRIENDS versions) */
 
 	u16b hdice;				/* Creatures hit dice count */
 	u16b hside;				/* Creatures hit dice sides */
