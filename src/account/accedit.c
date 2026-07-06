@@ -765,7 +765,7 @@ static char *t_crypt(char *inbuf, const char *salt) {
  #if 0 /* doesn't do anything */
 	char setting[9];
 	setting[0] = '_';
-	snprintf(&setting[1], 9, "%s", salt);
+	snprintf(&setting[1], 8, "%s", salt);
  #endif
   #if 1 /* fix for len-1 names */
 	char setting[3];
