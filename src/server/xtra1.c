@@ -7053,7 +7053,10 @@ void calc_boni(int Ind) {
 	p_ptr->instakills = (o_ptr->tval && o_ptr->name1 == ART_SCYTHE_DM) ? ((o_ptr->note && strstr(quark_str(o_ptr->note), "IDDQD")) ? 2 : 1) : 0; //at doom's gate...
 
 #ifdef DARKVISION_SURFACE_BOOST
-	if (p_ptr->cur_darkvision && !p_ptr->wpos.wz && night_surface) {
+	if (p_ptr->cur_darkvision && !p_ptr->wpos.wz && night_surface
+	    && !(p_ptr->global_event_temp & PEVF_INDOORS_00)
+	    && !(in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_INDOORS))
+	    && !(l_ptr && (l_ptr->flags2 & LF2_INDOORS))) { // <- cannot really happen at !wz, but whatever...
 		//p_ptr->cur_darkvision = p_ptr->cur_darkvision * 2 + 1;
 		p_ptr->cur_darkvision += 4;
 		csheet_boni[14].lite = p_ptr->cur_darkvision;
