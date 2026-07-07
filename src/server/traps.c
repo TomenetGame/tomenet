@@ -5835,7 +5835,7 @@ bool mon_hit_trap(int m_idx) {
 			while (shots-- && !dead) {
 				/* Total hit probability */
 				chance = (kit_o_ptr->to_h + load_o_ptr->to_h + 20) * BTH_PLUS_ADJ;
-				hit_body = test_hit_fire(chance, m_ptr->ac, TRUE);
+				hit_body = test_hit_fire(chance, m_ptr->ac, TRUE, r_ptr->flagsA & RFA_AGILE);
 
 				/* Break ammo? */
 				break_chance = breakage_chance(load_o_ptr);

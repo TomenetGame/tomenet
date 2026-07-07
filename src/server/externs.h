@@ -670,8 +670,8 @@ extern int get_staircase_colour(dungeon_type *d_ptr, byte *c);
 extern byte cycle[], chome[];
 extern bool nothing_test(object_type *o_ptr, player_type *p_ptr, worldpos *wpos, int x, int y, int loc);
 extern bool nothing_test2(cave_type *c_ptr, int x, int y, struct worldpos *wpos, int marker);
-extern bool test_hit_fire(int chance, int ac, int vis);
-extern bool test_hit_melee(int chance, int ac, int vis);
+extern bool test_hit_fire(int chance, int ac, int vis, bool agile);
+extern bool test_hit_melee(int chance, int ac, int vis, bool agile);
 extern s16b critical_shot(int Ind, int weight, int plus, int dam, int o_crit, bool precision, bool shot);
 extern s16b critical_throw(int Ind, int weight, int plus, int dam, int o_crit);
 extern s16b critical_melee(int Ind, int weight, int plus, int dam, int o_crit, bool allow_skill_crits, bool weapon);
@@ -1212,7 +1212,7 @@ extern int place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int
 extern int custom_place_monster_ego(struct worldpos *wpos, int y, int x, int r_idx, int e_idx, bool slp, bool grp, int clo, int clone_summoning, s32b custom_xp,
     s16b custom_lua_death, s16b custom_lua_deletion, s16b custom_lua_awoke, s16b custom_lua_sighted, s16b custom_lua_spawned);
 #endif
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 extern bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx);
 #endif
 extern bool alloc_monster(struct worldpos *wpos, int dis, int slp);
@@ -1837,7 +1837,7 @@ extern void grow_trees(int Ind, int rad);
 extern bool heal_insanity(int Ind, int val);
 extern bool summon_cyber(int Ind, int s_clone, int clone_summoning);
 extern void golem_creation(int Ind, int max);
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 extern char pet_creation(int Ind);
 #endif
 extern s16b hp_player(int Ind, int num, bool quiet, bool autoeffect);

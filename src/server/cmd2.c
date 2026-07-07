@@ -7610,14 +7610,14 @@ void do_cmd_fire(int Ind, int dir) {
 
 						/* Did we hit it (penalize range) */
 #ifndef PVP_AC_REDUCTION
-						if ((test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)
+						if ((test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible, FALSE)
 						    || (p_ptr->ranged_precision && visible))
 						    && (!q_ptr->shadow_running || !rand_int(3))) {
 #else
-						//if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
+						//if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible, FALSE)) {
 						if ((test_hit_fire(chance - cur_dis,
 						    (q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a,
-						    visible) || (p_ptr->ranged_precision && visible))
+						    visible, FALSE) || (p_ptr->ranged_precision && visible))
 						    && (!q_ptr->shadow_running || !rand_int(3))) {
 #endif
 							bool dodged = FALSE;
@@ -7859,8 +7859,10 @@ void do_cmd_fire(int Ind, int dir) {
 					    (r_ptr->flags3 & RF3_NONLIVING) ||
 					    (strchr("EgvwlIFijmxszQX", r_ptr->d_char)));
 
+#ifdef PET_TESTING
 				/* Do not hit pets - the_sandman */
 				if (m_ptr->pet) break;
+#endif
 
 				p_ptr->test_attacks++;
 				/* Check the visibility */
@@ -7870,7 +7872,7 @@ void do_cmd_fire(int Ind, int dir) {
 				if (!(o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL)) hit_body = TRUE;
 
 				/* Did we hit it (penalize range) */
-				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible) || (p_ptr->ranged_precision && visible)) {
+				if (test_hit_fire(chance - cur_dis, m_ptr->ac, visible, r_ptr->flagsA & RFA_AGILE) || (p_ptr->ranged_precision && visible)) {
 					bool fear = FALSE;
 					char m_name[MNAME_LEN];
 
@@ -8543,8 +8545,10 @@ bool interfere(int Ind, int chance) {
 			/* Sleeping etc.. monsters don't interfere o_O - C. Blue */
 			if (m_ptr->csleep || m_ptr->monfear || m_ptr->stunned || m_ptr->confused)
 				continue;
+#ifdef PET_TESTING
 			/* Pet never interfere  - the_sandman */
 			if (m_ptr->pet) continue;
+#endif
 		} else {
 			q_ptr = Players[-i];
 			/* hostile player? */
@@ -9075,13 +9079,13 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 				/* Did we hit him (penalize range) */
 #ifndef PVP_AC_REDUCTION
-				if (instakills || test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible)) {
+				if (instakills || test_hit_fire(chance - cur_dis, q_ptr->ac + q_ptr->to_a, visible, FALSE)) {
 #else
-				//if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible)) {
+				//if (test_hit_fire(chance - cur_dis, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, visible, FALSE)) {
 				if (instakills || test_hit_fire(chance - cur_dis,
 				    /* Special perks: Heavy throwing weapons are efficient vs target's AC. Another halving happens if the target is fleeing from us. */
 				    (((q_ptr->ac + q_ptr->to_a > AC_CAP) ? AC_CAP : q_ptr->ac + q_ptr->to_a) * 10) / (throwing_weapon ? 10 + o_ptr->weight / 30 : 10) / (q_ptr->afraid ? 2 : 1),
-				    visible)) {
+				    visible, FALSE)) {
 #endif
 					char p_name[80];
 
@@ -9284,7 +9288,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 			if (instakills || test_hit_fire(chance - cur_dis,
 			    /* Special perks: Heavy throwing weapons are efficient vs target's AC. Another halving happens if the target is fleeing from us. */
 			    (m_ptr->ac * 10) / (throwing_weapon ? 10 + o_ptr->weight / 30 : 10) / (m_ptr->monfear ? 2 : 1),
-			    visible)) {
+			    visible, r_ptr->flagsA & RFA_AGILE)) {
 				bool fear = FALSE;
 				char m_name[MNAME_LEN];
 

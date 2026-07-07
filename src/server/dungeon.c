@@ -3981,9 +3981,9 @@ static int auto_retaliate(int Ind) {
 	if (m_target_ptr) {
 		/* set the target */
 		p_ptr->target_who = target;
-		if (m_target_ptr->pet) { //a pet?
-			return(0);
-		}
+#ifdef PET_TESTING
+		if (m_target_ptr->pet) return(0);
+#endif
 
 		/* Attack it */
 		//py_attack(Ind, m_target_ptr->fy, m_target_ptr->fx);
@@ -6243,7 +6243,7 @@ static bool process_player_end_aux(int Ind) {
 				if (r_info[m_ptr->r_idx].flags7 & (RF7_PET | RF7_NEUTRAL | RF7_FRIENDLY | RF7_NO_TARGET))
 					/* Panda, horses (horses are also FRIENDLY anyway ie don't seek out the player), Robin */
 					continue;
-				/* Spells cast by a player never hurt a friendly golem */
+				/* Spells cast by a player never hurt a friendly golem (or pet -- PET_TESTING) */
 				if (m_ptr->owner) {
 					int i;
 
@@ -6256,7 +6256,6 @@ static bool process_player_end_aux(int Ind) {
 					//if his owner is not online, assume friendly(!)
 					if (i == NumPlayers + 1) continue;
 				}
-				//if (m_ptr->pet) continue;
 			}
 			/* else: Hit a hostile player */
 

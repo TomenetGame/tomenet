@@ -6981,9 +6981,8 @@
 #define RF0_DRAIN_LIFE		0x00040000U		/* Mirror: Drain Life (Shadow/Necro) */
 #define RF0_BO_PSI		0x00080000U		/* Mirror: Psionic Blast [+Psi Storm] */
 //hole
-
-#define RF0_NONFAIL_LIMITER	24			/* note! RF0_OFFSET + this = Spells that cannot fail on casting, because they are not cast spells but 'skills'. */
-
+/* Spells that cannot fail (because they are skills rather than magic): */
+#define RF0_NONFAIL_LIMITER	24			/* note! Starting at RF0_OFFSET + this value: Spells that cannot fail on casting, because they are not cast spells but 'skills'. */
 #define RF0_BR_ICE		0x01000000U		/* For Bahamuth */
 #define RF0_BR_WATER		0x02000000U		/* Finally no more antimagic field vs water hounds :p */
 #define RF0_HEAL_PHYS		0x04000000U		/* Mirror: Heal by physical means, eg Potion of Healing */
@@ -7001,6 +7000,7 @@
 
 /* Additional basic flags (ie not spell-flags, 'S:') */
 #define RFA_DROP_USEFUL		0x00000001U		/* Drop "useful" items -- not implemented, unused (Dolphiner only) */
+#define RFA_AGILE		0x00000002U		/* Monster is dextrous/can dodge: Cats, rogues, martial artists (mystics/ninjas/monks), Dagashi */
 //#define RFA_NO_INTERCEPT	0x10000000U		/* Cannot intercept this monster */
 
 

@@ -6254,7 +6254,7 @@ bool probing(int Ind) {
 			else if (m_ptr->r_idx == RI_BLUE)
 				msg_format(Ind, "%^s (Lv \?\?\?) has unknown hp, %d ac and %d speed.", m_name, m_ptr->ac, m_ptr->mspeed - 110);
 			else
-				msg_format(Ind, "%^s (Lv %d) has %d hp, %d ac and %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110);
+				msg_format(Ind, "%^s (Lv %d) has %d hp, %d ac and %d speed.", m_name, m_ptr->level, m_ptr->hp, m_ptr->ac, m_ptr->mspeed - 110); //note: no incorporation of RFA_AGILE for now
 			/* include m_idx and ego for admins */
 			if (is_admin(p_ptr)) msg_format(Ind, " %^s (%d,%d) %s.", m_name, i, m_ptr->ego, buf);
 			else if (m_ptr->r_idx == RI_BLUE) msg_format(Ind, " %^s %s.", m_name, buf);
@@ -9377,7 +9377,7 @@ extern bool place_foe(int owner_id, struct worldpos *wpos, int y, int x, int r_i
 
 	return(TRUE);
 }
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 bool place_pet(int owner_id, struct worldpos *wpos, int y, int x, int r_idx) {
 	int		Ind, j;
 	cave_type	*c_ptr;

@@ -7310,9 +7310,12 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		/* Already charmed? - no effect then */
 		if (m_ptr->charmedignore) break;
 		/* Not a valid target */
-		if ((m_ptr->pet && m_ptr->owner == p_ptr->id)
-		    || (m_ptr->status & M_STATUS_FRIENDLY)
-		    || (r_ptr->flags9 & RF9_NO_REDUCE))
+		if (
+#ifdef PET_TESTING
+		    (m_ptr->pet && m_ptr->owner == p_ptr->id) ||
+#endif
+		    (m_ptr->status & M_STATUS_FRIENDLY) ||
+		    (r_ptr->flags9 & RF9_NO_REDUCE))
 			break;
 
 		/* Don't affect hurt monsters! */

@@ -8742,7 +8742,7 @@ static void get_moves_arc(int targy, int targx, int m_idx, int *mm) {
 }
 #endif
 
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 /*
  * Choose "logical" directions for pet movement
  * Returns TRUE to move, FALSE to stand still
@@ -10951,8 +10951,13 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				/* Hack -- get the empty monster */
 				y_ptr = &m_list[c_ptr->m_idx];
 			}
-			/* attack player's pet */
-			else if (m_list[c_ptr->m_idx].pet && !pfriend) {
+			/* attack player's golem */
+			else if (!pfriend && (m_list[c_ptr->m_idx].owner
+#ifdef PET_TESTING
+			    /* or attack player's pet */
+			    || m_list[c_ptr->m_idx].pet
+#endif
+			    )) {
 				/* Do the attack */
 				(void)monster_attack_normal(c_ptr->m_idx, m_idx);
 
@@ -10962,7 +10967,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				/* Do not move */
 				do_move = FALSE;
 			}
-			/* questor attacks monster? */
+			/* questor attacks monster or questor attacks 'hostile'-set questor? */
 			else if ((m_ptr->questor && !mfriend) ||
 			    /* monster attacks questor? */
 			    (y_ptr->questor && (y_ptr->questor_hostile & 0x2))) {
@@ -10986,8 +10991,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				did_move_body = TRUE;
 #endif
 				/* XXX XXX XXX Message */
+			}
 			/* Monster wants to move but is blocked by another monster */
-			} else {
+			else {
 				do_move = FALSE;
 
 				/* finally: 'stuck' monsters no longer retain full energy to retry casting in each frame. */
@@ -11404,7 +11410,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	}
 #endif
 }
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 /* the pet handler. note that at the moment it _may_ be almost
  * identical to the golem's handler, except for some little
  * stuff. but let's NOT merge the two and add pet check hacks to
@@ -11746,8 +11752,10 @@ static void process_monster_pet(int Ind, int m_idx) {
 			}
 		}
 
+		if (!m_ptr->owner) return; //optional return here: standby mode?
 		if (!find_player(m_ptr->owner)) return; //hack: the owner must be online please. taking this out -> panic()
-		/* the player is in the way.  attack him. */
+
+		/* A player is in the way. Attack him? */
 		if (do_move && (c_ptr->m_idx < 0) && (c_ptr->m_idx >= -NumPlayers)) {
 			player_type *p_ptr = Players[0 - c_ptr->m_idx];
 
@@ -11788,9 +11796,8 @@ static void process_monster_pet(int Ind, int m_idx) {
 		}
 		/* a monster is in the way */
 		else if (do_move && c_ptr->m_idx > 0) {
-			/* attack it ! */
-			if (m_ptr->owner != y_ptr->owner || (y_ptr->owner && check_hostile(find_player(m_ptr->owner), find_player(y_ptr->owner))))
-			//if (m_ptr->owner != y_ptr->owner || !(y_ptr->pet && y_ptr->owner && !check_hostile(find_player(m_ptr->owner), find_player(y_ptr->owner))))
+			/* attack it if it's a normal monster or hostile pet/golem */
+			if (!y_ptr->owner || !m_ptr->owner || (m_ptr->owner != y_ptr->owner && check_hostile(find_player(m_ptr->owner), find_player(y_ptr->owner))))
 				monster_attack_normal(c_ptr->m_idx, m_idx);
 
 			/* assume no movement */
@@ -12204,7 +12211,11 @@ static void process_monster_golem(int Ind, int m_idx) {
 			}
 		}
 
-		/* The player is in the way.  Attack him. */
+		//optional return here: standby mode?
+		if (!m_ptr->owner) return;
+		if (!find_player(m_ptr->owner)) return;
+
+		/* A player is in the way. Attack him? */
 		if (do_move && (c_ptr->m_idx < 0)
 		    && Ind_owner && check_hostile(0 - c_ptr->m_idx, Ind_owner)) {
 			/* Do the attack */
@@ -12217,10 +12228,11 @@ static void process_monster_golem(int Ind, int m_idx) {
 			do_turn = TRUE;
 		}
 
-		/* A monster is in the way */
+		/* A monster is in the way. Attack it? */
 		if (do_move && c_ptr->m_idx > 0) {
 			/* Attack it ! */
-			if (m_ptr->owner != y_ptr->owner) monster_attack_normal(c_ptr->m_idx, m_idx);
+			if (!y_ptr->owner || !m_ptr->owner || (m_ptr->owner != y_ptr->owner && check_hostile(find_player(m_ptr->owner), find_player(y_ptr->owner))))
+				monster_attack_normal(c_ptr->m_idx, m_idx);
 
 			/* Assume no movement */
 			do_move = FALSE;
@@ -13120,7 +13132,7 @@ void process_monsters(void) {
 
 		/* Process the monster */
 		if (!m_ptr->special
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 		    && !m_ptr->pet
 #endif
 		   )
@@ -13137,7 +13149,7 @@ void process_monsters(void) {
 
 			suppress_message = FALSE;
 		}
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 		else if (m_ptr->pet) { //pet
 			int p = find_player(m_ptr->owner);
 

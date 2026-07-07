@@ -2485,8 +2485,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 			return;
 		}
-#ifdef RPG_SERVER /* too dangerous on the pm server right now - mikaelh */
-/* Oops, meant to be on RPG only for now. forgot to add it. thanks - the_sandman */
+#ifdef PET_TESTING /* too dangerous on the pm server right now - mikaelh */
+/* Oops, meant to be on RPG_SERVER only for now. forgot to add it. thanks - the_sandman */
  #if 0 //moved the old code here.
 		else if (prefix(messagelc, "/pet")) {
 			if (tk && prefix(token[1], "force")) {
@@ -2523,7 +2523,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 #endif
 		else if (prefix(messagelc, "/unpet")) {
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 			if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
 				msg_print(Ind, "\377yYou cannot dismiss your pet while you cannot move.");
 				return;
@@ -7676,7 +7676,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					monster_type *m_ptr = &m_list[i];
 
 					if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
-					//if (m_ptr->pet || m_ptr->special || m_ptr->questor) continue;
+					//if (m_ptr->pet || m_ptr->special || m_ptr->questor) continue; //PET_TESTING
 					if (tk) {
 						if (r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE) continue;
 					} else {

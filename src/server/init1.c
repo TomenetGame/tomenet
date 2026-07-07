@@ -610,7 +610,7 @@ static cptr r_info_flags0[] = {
 };
 static cptr r_info_flagsA[] = {
 	"DROP_USEFUL",
-	"X00000002",
+	"AGILE",
 	"X00000004",
 	"X00000008",
 

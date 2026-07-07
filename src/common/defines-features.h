@@ -720,6 +720,9 @@
 
 /* Specific settings for rpg-server ("ironman server") only */
 #ifdef RPG_SERVER
+ /* The_sandman's pet testing stuff */
+ #define PET_TESTING
+
  /* Do we want to use Kurzel's PvE/P when mode 1 PK is configured? */
 //#define KURZEL_PK --disabled because it breaks chat highlighting
 

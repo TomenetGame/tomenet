@@ -3509,6 +3509,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
  */
 static int mon_check_hit(int m_idx, int power, int level) {
 	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
 
 	int i, k, ac;
 
@@ -3520,6 +3521,9 @@ static int mon_check_hit(int m_idx, int power, int level) {
 
 	/* Calculate the "attack quality" */
 	i = (power + (level * 3));
+
+	/* Especially 'Agile'? For now treat like a 'reflecting' flag just for melee attacks, aka 50% */
+	if ((r_ptr->flagsA & RFA_AGILE) && magik(50)) return(FALSE);
 
 	/* Total armor */
 	ac = m_ptr->ac;
@@ -3533,12 +3537,13 @@ static int mon_check_hit(int m_idx, int power, int level) {
 
 
 /*
- * Attack a monster via physical attacks.
+ * Monster m_idx attacks another monster tm_idx via physical attacks.
+ * Used for monsters attacking pets (PET_TESTING), golems, questors (and for 'hostile'-set questors attacking other questors)
  */
 bool monster_attack_normal(int tm_idx, int m_idx) {
 	/* Targer */
 	monster_type *tm_ptr = &m_list[tm_idx];
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 	monster_race *tr_ptr = race_inf(tm_ptr);
 	int exp_gain;
 #endif
@@ -3557,12 +3562,12 @@ bool monster_attack_normal(int tm_idx, int m_idx) {
 	/* Not allowed to attack */
 	if (r_ptr->flags2 & RF2_NEVER_BLOW) return(FALSE);
 
-	/* Total armor */
+	/* Total armor - only used for damage reduction here; we call mon_check_hit() for ac-hit test */
 	ac = tm_ptr->ac;
 
 	/* Extract the effective monster level */
 	rlev = ((r_ptr->level >= 1) ? r_ptr->level : 1);
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 	exp_gain = tr_ptr->mexp / 2;
 	//exp_gain = race_inf(tm_ptr)->level;
 #endif
@@ -3655,7 +3660,7 @@ bool monster_attack_normal(int tm_idx, int m_idx) {
 				/* Cancel stun */
 				else do_stun = 0;
 			}
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 			if (dead && m_ptr->pet) {
 				char monster_name[MNAME_LEN];
 				int Ind = find_player(m_ptr->owner);

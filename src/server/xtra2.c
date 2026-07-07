@@ -2195,6 +2195,7 @@ bool set_stopped(int Ind, int v) { /* bad status effect */
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return(FALSE);
+	if ((p_ptr->admin_invinc || p_ptr->admin_invuln) && v) return(FALSE); // as it cannot be prevented by other means, added it to invinc/invuln amulets instead
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -2355,6 +2356,7 @@ bool set_slow(int Ind, int v) { /* bad status effect */
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return(FALSE);
+	if ((p_ptr->admin_invinc || p_ptr->admin_invuln) && v) return(FALSE); // as it cannot be prevented by other means, added it to invinc/invuln amulets instead
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -3404,6 +3406,7 @@ bool set_stun_raw(int Ind, int v) { /* bad status effect */
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return(FALSE);
+	if ((p_ptr->admin_invinc || p_ptr->admin_invuln) && v) return(FALSE); // as it cannot be prevented by other means, added it to invinc/invuln amulets instead
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -3511,6 +3514,7 @@ bool set_stun(int Ind, int v) { /* bad status effect */
 	bool notice = FALSE;
 
 	if (p_ptr->martyr && v) return(FALSE);
+	if ((p_ptr->admin_invinc || p_ptr->admin_invuln) && v) return(FALSE); // as it cannot be prevented by other means, added it to invinc/invuln amulets instead
 
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
@@ -3648,6 +3652,7 @@ bool set_cut(int Ind, int v, int attacker, bool quiet) { /* bad status effect */
 
 	/* Martyr / ghosts never bleed */
 	if ((p_ptr->martyr || p_ptr->ghost) && v) return(FALSE);
+	if ((p_ptr->admin_invinc || p_ptr->admin_invuln) && v) return(FALSE);
 
 	/* SKILL_MIMIC:
 	   Do we apply intrinsic anti-cut powers? These are NO_CUT and Troll/Hydra-Regeenration.
@@ -6259,7 +6264,7 @@ static bool r_killed_creditable(int Ind, int m_idx) {
 	bool henc_cheezed = FALSE;
 
 
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 	if (m_ptr->pet) return(FALSE);
 #endif
 
@@ -6407,11 +6412,11 @@ bool monster_death(int Ind, int m_idx) {
 	if (m_ptr->custom_lua_death) exec_lua(0, format("custom_monster_death(%d,%d,%d)", Ind, m_idx, m_ptr->custom_lua_death));
 
 	if (m_ptr->special) s_printf("MONSTER_DEATH: Golem of '%s' by '%s'.\n", lookup_player_name(m_ptr->owner), p_ptr->name);
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 	else if (m_ptr->pet) s_printf("MONSTER_DEATH: Pet of '%s' by '%s'\n", lookup_player_name(m_ptr->owner), p_ptr->name);
 #endif
 
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 	/* Pet death. Update and inform the owner -the_sandman */
 	if (m_ptr->pet) {
 		for (i = NumPlayers; i > 0; i--) {
@@ -6431,6 +6436,15 @@ bool monster_death(int Ind, int m_idx) {
 		}
 	}
 #endif
+	/* Golem death. Update and inform the owner - copy/paste of pet code above */
+	if (m_ptr->special) {
+		for (i = NumPlayers; i > 0; i--) {
+			if (m_ptr->owner == Players[i]->id) {
+				msg_format(i, "\374\377R%s has killed your golem!", Players[Ind]->name);
+				break;
+			}
+		}
+	}
 
 	if (cfg.henc_strictness && !p_ptr->total_winner &&
 	    /* p_ptr->lev more logical but harsh: */
@@ -9818,7 +9832,7 @@ void player_death(int Ind) {
 	strcpy(logtitlebuf, titlebuf);
 	strcat(logtitlebuf, " ");
 
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 	if (p_ptr->wpos.wz != 0) {
 		for (i = m_top - 1; i >= 0; i--) {
 			monster_type *m_ptr = &m_list[i];
@@ -12944,7 +12958,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	return(FALSE);
 }
 
-/* NOTE: This function lacks all of the specialties of monster_death() still, such as conditioned drops. */
+/* NOTE: This function lacks all of the specialties of monster_death() still, such as conditioned drops.
+   Monster m_idx got killed by monster am_idx. */
 void monster_death_mon(int am_idx, int m_idx) {
 	int i, j, y, x, ny, nx;
 	int number = 0;
@@ -12953,6 +12968,7 @@ void monster_death_mon(int am_idx, int m_idx) {
 
 	monster_type *m_ptr = &m_list[m_idx];
 	monster_race *r_ptr = race_inf(m_ptr);
+	char m_name[MNAME_LEN];
 
 	bool good = (r_ptr->flags1 & RF1_DROP_GOOD) ? TRUE : FALSE;
 	bool great = (r_ptr->flags1 & RF1_DROP_GREAT) ? TRUE : FALSE;
@@ -12961,13 +12977,87 @@ void monster_death_mon(int am_idx, int m_idx) {
 	bool do_item = (!(r_ptr->flags1 & RF1_ONLY_GOLD));
 
 	int force_coin = get_coin_type(r_ptr);
-	struct worldpos *wpos;
+	struct worldpos *wpos = &m_ptr->wpos;
 	cave_type **zcave;
+
+
+	/* Message/log for pets/golems */
+	if (m_ptr->special) {
+		monster_desc(0, m_name, am_idx, 0);
+		s_printf("MONSTER_DEATH_MON: Golem of '%s' by %s.\n", lookup_player_name(m_ptr->owner), m_name);
+	}
+#ifdef PET_TESTING
+	else if (m_ptr->pet) {
+		monster_desc(0, m_name, am_idx, 0);
+		s_printf("MONSTER_DEATH_MON: Pet of '%s' by %s.\n", lookup_player_name(m_ptr->owner), m_name);
+	}
+#endif
+
+#ifdef PET_TESTING
+	/* Pet death. Update and inform the owner -the_sandman */
+	if (m_ptr->pet) {
+		for (i = NumPlayers; i > 0; i--) {
+			if (m_ptr->owner == Players[i]->id) {
+				monster_desc(i, m_name, am_idx, 0);
+				msg_format(i, "\374\377R%^s has killed your pet!", m_name);
+				Players[i]->has_pet = 0;
+				return;
+			}
+		}
+	}
+#endif
+	/* Golem death. Update and inform the owner - copy/paste of pet code above */
+	if (m_ptr->special) {
+		for (i = NumPlayers; i > 0; i--) {
+			if (m_ptr->owner == Players[i]->id) {
+				monster_desc(i, m_name, am_idx, 0);
+				msg_format(i, "\374\377R%^s has killed your golem!", m_name);
+#if 0
+				/* Or do we wanna drop anything, eg coins? ^^ */
+				switch (m_ptr->r_idx - 1) {
+				case SV_GOLEM_WOOD:
+				case SV_GOLEM_COPPER:
+				case SV_GOLEM_IRON:
+				case SV_GOLEM_ALUM:
+				case SV_GOLEM_SILVER:
+				case SV_GOLEM_GOLD:
+				case SV_GOLEM_MITHRIL:
+				case SV_GOLEM_ADAM:
+				}
+#endif
+				return;
+			}
+		}
+	}
+
+	/* for when a quest giver turned non-invincible */
+	if (m_ptr->questor) {
+		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
+#if 0 /* For now, no player->no specific drop - oops. Todo: Review and improve maybe. */
+			/* Drop a specific item? */
+			if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops & 0x2)
+				questor_drop_specific(Ind, m_ptr->quest, m_ptr->questor_idx, wpos, x, y);
+#endif
+			/* Quest progression/fail effect? */
+			questor_death(m_ptr->quest, m_ptr->questor_idx, wpos, 0);
+		} else {
+			s_printf("QUESTOR DEPRECATED (monster_dead2)\n");
+		}
+	}
+
+#if 1
+	/* Monsters killing other monsters does not yield any loot */
+	return;
+#else
+	/* Generate loot if not a clone (Side note: player golems are 100% clones too) */
+	if (m_ptr->clone) return;
+#endif
+
+	/* --- Generate loot. However, this function lacks all the distinct features of monster_death()! --- */
 
 	/* Get the location */
 	y = m_ptr->fy;
 	x = m_ptr->fx;
-	wpos = &m_ptr->wpos;
 	if (!(zcave = getcave(wpos))) return;
 
 	dlev = getlevel(wpos);
@@ -13062,35 +13152,14 @@ void monster_death_mon(int am_idx, int m_idx) {
 			break;
 		}
 	}
-
-	if (m_ptr->special) s_printf("MONSTER_DEATH_MON: Golem of '%s'.\n", lookup_player_name(m_ptr->owner));
-#ifdef RPG_SERVER
-	else if (m_ptr->pet) s_printf("MONSTER_DEATH_MON: Pet of '%s'.\n", lookup_player_name(m_ptr->owner));
-#endif
-
-	/* for when a quest giver turned non-invincible */
-	if (m_ptr->questor) {
-		if (q_info[m_ptr->quest].defined && q_info[m_ptr->quest].questors > m_ptr->questor_idx) {
-#if 0 /* For now, no player->no specific drop - oops. Todo: Review and improve maybe. */
-			/* Drop a specific item? */
-			if (q_info[m_ptr->quest].questor[m_ptr->questor_idx].drops & 0x2)
-				questor_drop_specific(Ind, m_ptr->quest, m_ptr->questor_idx, wpos, x, y);
-#endif
-			/* Quest progression/fail effect? */
-			questor_death(m_ptr->quest, m_ptr->questor_idx, wpos, 0);
-		} else {
-			s_printf("QUESTOR DEPRECATED (monster_dead2)\n");
-		}
-	}
-
-	FREE(m_ptr->r_ptr, monster_race);
 }
 
+/* Monster am_idx attacks (and maybe kills) monster m_idx */
 bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 	monster_type *am_ptr = &m_list[am_idx];
-	monster_type	*m_ptr = &m_list[m_idx];
-	monster_race    *r_ptr = race_inf(m_ptr);
-	s64b		new_exp;
+	monster_type *m_ptr = &m_list[m_idx];
+	monster_race *r_ptr = race_inf(m_ptr);
+	s64b new_exp;
 
 	if (m_ptr->r_idx == RI_MIRROR || m_ptr->r_idx == RI_BLUE) return(FALSE); /* Golem may not help here (maybe except as meat shield?) */
 
@@ -13128,20 +13197,9 @@ bool mon_take_hit_mon(int am_idx, int m_idx, int dam, bool *fear, cptr note) {
 				if (!m_ptr->special && !m_ptr->owner)
 					monster_gain_exp(am_idx, (new_exp * (100 - m_ptr->clone)) / 100, TRUE);
 		}
-/*
-switch (m_ptr->r_idx - 1) {
-case SV_GOLEM_WOOD:
-case SV_GOLEM_COPPER:
-case SV_GOLEM_IRON:
-case SV_GOLEM_ALUM:
-case SV_GOLEM_SILVER:
-case SV_GOLEM_GOLD:
-case SV_GOLEM_MITHRIL:
-case SV_GOLEM_ADAM:
-} */
 
-		/* Generate treasure */
-		if (!m_ptr->clone) monster_death_mon(am_idx, m_idx);
+		/* Generate treasure potentially */
+		monster_death_mon(am_idx, m_idx);
 
 		/* Delete the monster */
 		delete_monster_idx(m_idx, TRUE);
@@ -13155,7 +13213,6 @@ case SV_GOLEM_ADAM:
 
 
 #ifdef ALLOW_FEAR
-
 	/* Mega-Hack -- Pain cancels fear */
 	if (m_ptr->monfear && (dam > 0)) {
 		int tmp = randint(dam);
@@ -13205,7 +13262,6 @@ case SV_GOLEM_ADAM:
 			m_ptr->monfear_gone = 0;
 		}
 	}
-
 #endif
 
 	/* Not dead yet */

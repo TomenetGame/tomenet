@@ -389,7 +389,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 	for (Ind = 1; Ind <= NumPlayers; Ind++) {
 		/* Skip this player if he isn't playing */
 		if (Players[Ind]->conn == NOT_CONNECTED) continue;
-#ifdef RPG_SERVER
+#ifdef PET_TESTING
 		if (Players[Ind]->id == m_ptr->owner && m_ptr->pet) {
 			msg_print(Ind, "\377RYour pet has died! You feel sad.");
 			Players[Ind]->has_pet = 0;
@@ -6554,7 +6554,10 @@ s_printf("Mirror-update: hp %d\n", m_ptr->org_maxhp);
 #endif
 		i += 75;
 	/* Simply add to AC, although this won't help against magic bolt spells, exploiterino */
-	if ((m = get_skill(p_ptr, SKILL_DODGE))) i += (100 * m) / (p_ptr->max_plv >= 50 ? 50 : p_ptr->max_plv);
+	if ((m = get_skill(p_ptr, SKILL_DODGE))) {
+		i += (100 * m) / (p_ptr->max_plv >= 50 ? 50 : p_ptr->max_plv);
+		if (m >= p_ptr->max_plv / 2) r_ptr->flagsA |= RFA_AGILE; //hm
+	}
 #endif
 	if (m_ptr->org_ac < i) {
 		n = i - m_ptr->org_ac;

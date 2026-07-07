@@ -100,17 +100,21 @@ bool nothing_test2(cave_type *c_ptr, int x, int y, struct worldpos *wpos, int ma
 }
 
 /*
- * Determine if the player "hits" a monster (normal combat).
+ * Determine if the player "hits" a monster (ranged combat or missile trap).
  * Also used for PvP - for now not doing any adjustments in case TO_AC_CAP_30 is enabled, unlike check_hit().
  * Note -- Always miss 5%, always hit 5%, otherwise random.
+ * 'agile': Use only vs monsters, not vs players: Additional 'dodge' chance.
  */
-bool test_hit_fire(int chance, int ac, int vis) {
+bool test_hit_fire(int chance, int ac, int vis, bool agile) {
 	int k;
 
 	/* Percentile dice */
 	k = rand_int(100);
 	/* Hack -- Instant miss or hit */
 	if (k < 10) return(k < 5);
+
+	/* Especially 'Agile'? For now treat like a 'reflecting' flag just for melee attacks, aka 50% */
+	if (agile && magik(50)) return(FALSE);
 
 	/* Never hit */
 	if (chance <= 0) return(FALSE);
@@ -129,14 +133,18 @@ bool test_hit_fire(int chance, int ac, int vis) {
  * Determine if the player "hits" a monster (normal combat).
  * Also used for PvP - for now not doing any adjustments in case TO_AC_CAP_30 is enabled, unlike check_hit().
  * Note -- Always miss 5%, always hit 5%, otherwise random.
+ * 'agile': Use only vs monsters, not vs players: Additional 'dodge' chance.
  */
-bool test_hit_melee(int chance, int ac, int vis) {
+bool test_hit_melee(int chance, int ac, int vis, bool agile) {
 	int k;
 
 	/* Percentile dice */
 	k = rand_int(100);
 	/* Hack -- Instant miss or hit */
 	if (k < 10) return(k < 5);
+
+	/* Especially 'Agile'? For now treat like a 'reflecting' flag just for melee attacks, aka 50% */
+	if (agile && magik(50)) return(FALSE);
 
 	/* Wimpy attack never hits */
 	if (chance <= 0) return(FALSE);
@@ -3657,12 +3665,12 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 		/* Test for hit */
 		pierced = FALSE;
 #ifndef PVP_AC_REDUCTION
-		if (p_ptr->piercing || backstab || test_hit_melee(chance, q_ptr->ac + q_ptr->to_a, 1)) {
+		if (p_ptr->piercing || backstab || test_hit_melee(chance, q_ptr->ac + q_ptr->to_a, 1, FALSE)) {
 #else
-		//if (p_ptr->piercing || backstab || test_hit_melee(chance, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, 1)) {
+		//if (p_ptr->piercing || backstab || test_hit_melee(chance, ((q_ptr->ac + q_ptr->to_a) * 2) / 3, 1, FALSE)) {
 		if (p_ptr->piercing || backstab ||
 		    test_hit_melee(chance, (q_ptr->ac + q_ptr->to_a) > AC_CAP ?
-		    AC_CAP : q_ptr->ac + q_ptr->to_a, 1)) {
+		    AC_CAP : q_ptr->ac + q_ptr->to_a, 1, FALSE)) {
 #endif
 			/* handle 'piercing' countdown */
 			if (p_ptr->piercing) {
@@ -4727,11 +4735,16 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 
 #if 0 /* golems get attacked by other players */
 	if ((m_ptr->owner == p_ptr->id && !p_ptr->confused &&
-		p_ptr->mon_vis[c_ptr->m_idx]) ||
-		(m_ptr->owner != p_ptr->id && m_ptr->pet)) //dont kill pets either, meanie!
+	    p_ptr->mon_vis[c_ptr->m_idx]) ||
+ #ifdef PET_TESTING
+	    (m_ptr->owner != p_ptr->id && m_ptr->pet) //dont kill pets either, meanie!
+ #endif
+	    )
 #else /* prevent golems being attacked by other players */
 	if ((m_ptr->owner == p_ptr->id && !p_ptr->confused && p_ptr->mon_vis[c_ptr->m_idx]) ||
+ #ifdef PET_TESTING
 	    (m_ptr->owner == p_ptr->id && m_ptr->pet) || //dont kill pets either, meanie!
+ #endif
 	    //!owner_Ind || /* don't attack ownerless golems */
 	    (owner_Ind && !check_hostile(Ind, owner_Ind))) /* only attack if owner is hostile */
 #endif
@@ -4987,7 +5000,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		p_ptr->test_attacks++;
 		/* Test for hit */
 		if (p_ptr->instakills || backstab ||
-		    test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx]) ||
+		    test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx], r_ptr->flagsA & RFA_AGILE) ||
 		    (p_ptr->piercing && !block && !parry)) {
 			/* handle 'piercing' countdown */
 			if (p_ptr->piercing) {
@@ -6079,10 +6092,15 @@ void py_bash_mon(int Ind, int y, int x) {
 #if 0 /* golems get attacked by other players */
 	if ((m_ptr->owner == p_ptr->id && !p_ptr->confused &&
 		p_ptr->mon_vis[c_ptr->m_idx]) ||
-		(m_ptr->owner != p_ptr->id && m_ptr->pet)) //dont kill pets either, meanie!
+ #ifdef PET_TESTING
+		(m_ptr->owner != p_ptr->id && m_ptr->pet) //dont kill pets either, meanie!
+ #endif
+		)
 #else /* prevent golems being attacked by other players */
 	if ((m_ptr->owner == p_ptr->id && !p_ptr->confused && p_ptr->mon_vis[c_ptr->m_idx]) ||
+ #ifdef PET_TESTING
 	    (m_ptr->owner == p_ptr->id && m_ptr->pet) || //dont kill pets either, meanie!
+ #endif
 	    //!owner_Ind || /* don't attack ownerless golems */
 	    (owner_Ind && !check_hostile(Ind, owner_Ind))) /* only attack if owner is hostile */
 #endif
@@ -6213,7 +6231,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 	p_ptr->test_attacks++;
 	/* Test for hit */
 	if (p_ptr->instakills || !block ||
-	    test_hit_melee(chance, m_ptr->ac / 3, p_ptr->mon_vis[c_ptr->m_idx])) {
+	    test_hit_melee(chance, m_ptr->ac / 3, p_ptr->mon_vis[c_ptr->m_idx], r_ptr->flagsA & RFA_AGILE)) {
 #ifdef USE_SOUND_2010
 		if (p_ptr->sfx_combat) sound(Ind, "bash", "hit_blunt", SFX_TYPE_ATTACK, FALSE);
 #else
@@ -6602,7 +6620,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 
 	p_ptr->test_attacks++;
 	/* Test for hit */
-	if (p_ptr->instakills || test_hit_melee(chance, (q_ptr->ac + q_ptr->to_a) > AC_CAP ? AC_CAP : q_ptr->ac + q_ptr->to_a, 1)) {
+	if (p_ptr->instakills || test_hit_melee(chance, (q_ptr->ac + q_ptr->to_a) > AC_CAP ? AC_CAP : q_ptr->ac + q_ptr->to_a, 1, FALSE)) {
 #ifdef USE_SOUND_2010
 		if (p_ptr->sfx_combat) sound(Ind, "bash", "hit_blunt", SFX_TYPE_ATTACK, FALSE);
 #else
@@ -9027,9 +9045,11 @@ static bool run_test(int Ind) {
 		}
 
 		/* Visible monsters abort running */
-		if (c_ptr->m_idx > 0 &&
+		if (c_ptr->m_idx > 0
+#ifdef PET_TESTING
 		    /* Pets don't interrupt running */
-		    (!(m_list[c_ptr->m_idx].pet))
+		    && (!(m_list[c_ptr->m_idx].pet))
+#endif
 		    /* Even in Bree (despite of Santa Claus: Rogues in cloaking mode might want to not 'run him over' but wait for allies) - C. Blue */
 		    ) {
 			//dun_level *l_ptr = getfloor(&p_ptr->wpos);
