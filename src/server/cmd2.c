@@ -7905,7 +7905,7 @@ void do_cmd_fire(int Ind, int dir) {
 						break;
 					}
 
-//TODO: pseudo-"dodging", parrying
+//TODO: parrying
 #ifdef USE_BLOCKING
 					/* handle blocking (deflection) */
 					if (strchr("hHJkpPtyn", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
@@ -7914,12 +7914,25 @@ void do_cmd_fire(int Ind, int dir) {
 						if (visible) {
 							char hit_desc[MAX_CHARS + 12];
 
-							sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+							sprintf(hit_desc, "\377%c%s blocks your projectile.", COLOUR_BLOCK_MON, m_name);
 							hit_desc[2] = toupper(hit_desc[2]);
 							msg_print(Ind, hit_desc);
 						}
 						hit_body = 1;
 						if (!boomerang && !magic && o_ptr->pval) do_arrow_explode(Ind, o_ptr, wpos, y, x, tmul);
+						break;
+					}
+#endif
+#if 0 /* already handled above in test_hit_fire()! just w/o nice dodging message */
+					/* Pseudo-dodging via 'agile' flag - basically 'reflecting' likewise... */
+					if ((r_ptr->flagsA & RFA_AGILE) && magik(50)) {
+						if (visible) {
+							char hit_desc[MAX_CHARS + 12];
+
+							sprintf(hit_desc, "\377%c%s dodges your projectile.", COLOUR_BLOCK_MON, m_name);
+							hit_desc[2] = toupper(hit_desc[2]);
+							msg_print(Ind, hit_desc);
+						}
 						break;
 					}
 #endif
@@ -9316,7 +9329,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					break;
 				}
 
-//TODO: USE_PARRYING (maybe); monster dodging
+//TODO: USE_PARRYING (maybe)
 #ifdef USE_BLOCKING
 				/* handle blocking (deflection) */
 				if (strchr("hHJkpPtyn", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
@@ -9325,14 +9338,26 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					if (visible) {
 						char hit_desc[MAX_CHARS + 12];
 
-						sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+						sprintf(hit_desc, "\377%c%s blocks your attack.", COLOUR_BLOCK_MON, m_name);
 						hit_desc[2] = toupper(hit_desc[2]);
 						msg_print(Ind, hit_desc);
 					}
 					break;
 				}
 #endif
+#if 0 /* already handled above in test_hit_fire()! just w/o nice dodging message */
+				/* Pseudo-dodging via 'agile' flag - basically 'reflecting' likewise... */
+				if ((r_ptr->flagsA & RFA_AGILE) && magik(50)) {
+					if (visible) {
+						char hit_desc[MAX_CHARS + 12];
 
+						sprintf(hit_desc, "\377%c%s dodges your projectile.", COLOUR_BLOCK_MON, m_name);
+						hit_desc[2] = toupper(hit_desc[2]);
+						msg_print(Ind, hit_desc);
+					}
+					break;
+				}
+#endif
 
 				/* Handle unseen monster */
 				if (!visible) {

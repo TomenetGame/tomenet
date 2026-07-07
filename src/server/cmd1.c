@@ -5000,7 +5000,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		p_ptr->test_attacks++;
 		/* Test for hit */
 		if (p_ptr->instakills || backstab ||
-		    test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx], r_ptr->flagsA & RFA_AGILE) ||
+		    test_hit_melee(chance, m_ptr->ac, p_ptr->mon_vis[c_ptr->m_idx], r_ptr->flagsA & RFA_AGILE) || //a 'dodges your attack' msg would be nice for RFA_AGILE
 		    (p_ptr->piercing && !block && !parry)) {
 			/* handle 'piercing' countdown */
 			if (p_ptr->piercing) {
@@ -5921,16 +5921,15 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			backstab = stab_fleeing = FALSE;
 
 			/* Message */
-//TODO: dodges your attack? ninjas, cats!
 			if (block) {
-				sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+				sprintf(hit_desc, "\377%c%s blocks your attack.", COLOUR_BLOCK_MON, m_name);
 				hit_desc[2] = toupper(hit_desc[2]);
 				msg_print(Ind, hit_desc);
 #ifdef USE_SOUND_2010
 				if (sfx == 0 && p_ptr->sfx_defense) sound(Ind, "block_shield", NULL, SFX_TYPE_ATTACK, FALSE);
 #endif
 			} else if (parry) {
-				sprintf(hit_desc, "\377%c%s parries.", COLOUR_PARRY_MON, m_name);
+				sprintf(hit_desc, "\377%c%s parries your attack.", COLOUR_PARRY_MON, m_name);
 				hit_desc[2] = toupper(hit_desc[2]);
 				msg_print(Ind, hit_desc);
 #ifdef USE_SOUND_2010
@@ -6231,7 +6230,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 	p_ptr->test_attacks++;
 	/* Test for hit */
 	if (p_ptr->instakills || !block ||
-	    test_hit_melee(chance, m_ptr->ac / 3, p_ptr->mon_vis[c_ptr->m_idx], r_ptr->flagsA & RFA_AGILE)) {
+	    test_hit_melee(chance, m_ptr->ac / 3, p_ptr->mon_vis[c_ptr->m_idx], r_ptr->flagsA & RFA_AGILE)) { //a 'dodges your attack' msg would be nice for RFA_AGILE
 #ifdef USE_SOUND_2010
 		if (p_ptr->sfx_combat) sound(Ind, "bash", "hit_blunt", SFX_TYPE_ATTACK, FALSE);
 #else
@@ -6353,7 +6352,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 	else {
 		/* Message */
 		if (block) {
-			sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+			sprintf(hit_desc, "\377%c%s blocks your attack.", COLOUR_BLOCK_MON, m_name);
 			hit_desc[2] = toupper(hit_desc[2]);
 			msg_print(Ind, hit_desc);
 #ifdef USE_SOUND_2010
@@ -6597,6 +6596,7 @@ s_printf("TECHNIQUE_MELEE: %s - bash\n", p_ptr->name);
 	chance = 60 + 2 * (7 + adj_dex_th[p_ptr->stat_ind[A_STR]] - 128); //-7..+20
 	if (p_ptr->blind) chance >>= 1;
 
+//todo: dodging
 #ifdef USE_BLOCKING
 	if (q_ptr->shield_deflect && (!q_ptr->weapon_parry || magik(q_ptr->combat_stance == 1 ? 75 : 50))) {
 		if (magik(apply_block_chance(q_ptr, q_ptr->shield_deflect + 0))) {

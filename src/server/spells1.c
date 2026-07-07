@@ -7135,21 +7135,51 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 		return(TRUE); /* notice */
 	}
 
-//todo: dodging (not USE_PARRYING probably)
-#ifdef USE_BLOCKING
-	/* handle blocking (deflection) */
-	if (strchr("hHJkpPtyn", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
-	    !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) &&
-	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP | PROJECT_NODF)) /* only for fire_bolt() */
-	    && !rand_int(52 - r_ptr->level / 3)) { /* small chance to block spells */
+	/* Pseudo-dodging via 'agile' flag - basically 'reflecting' likewise... */
+	if ((r_ptr->flagsA & RFA_AGILE) &&
+	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP)) /* only for fire_bolt() */
+	    && magik(50)) {
 		if (seen) {
 			char hit_desc[MAX_CHARS + 12];
 
-			sprintf(hit_desc, "\377%c%s blocks.", COLOUR_BLOCK_MON, m_name);
+			sprintf(hit_desc, "\377%c%s dodges your attack.", COLOUR_BLOCK_MON, m_name);
 			hit_desc[2] = toupper(hit_desc[2]);
 			msg_print(Ind, hit_desc);
 		}
 		return(TRUE); /* notice */
+	}
+
+#ifdef USE_BLOCKING
+	/* handle blocking (deflection) */
+	if (strchr("hHJkpPtyn", r_ptr->d_char) && /* leaving out Yeeks (else Serpent Man 'J') */
+	    !(r_ptr->flags3 & RF3_ANIMAL) && !(r_ptr->flags8 & RF8_NO_BLOCK) && (flg & PROJECT_KILL) && !(flg & PROJECT_NODF)) {
+		/* Block bolt attacks */
+		if (!(flg & (PROJECT_NORF | PROJECT_JUMP)) /* only for fire_bolt() */
+		    && !rand_int(52 - r_ptr->level / 3)) { /* small chance to block spells */
+			if (seen) {
+				char hit_desc[MAX_CHARS + 12];
+
+				sprintf(hit_desc, "\377%c%s blocks your attack.", COLOUR_BLOCK_MON, m_name);
+				hit_desc[2] = toupper(hit_desc[2]);
+				msg_print(Ind, hit_desc);
+			}
+			return(TRUE); /* notice */
+		}
+		/* Ball attacks: Took cover behind a shield? requires USE_BLOCKING */
+		/* jump for LOS projecting, stay for clouds; !norf was already checked above -- not sure if fire_beam was covered (PROJECT_BEAM)! */
+		/* PROJECT_STAY to exempt 'cloud' spells! */
+		else if (strchr("hJkptyn", r_ptr->d_char) && /* slightly more restrictive: we just assume that H and P don't cover behind shields =p (Morgoth has NO_BLOCK anyway btw) */
+		    (flg & PROJECT_NORF) && !(flg & (PROJECT_JUMP | PROJECT_STAY))
+		    && !rand_int(52 - r_ptr->level / 3) && !rand_int((flg & PROJECT_LODF) ? 4 : 2)) { /* very small chance to block spells */
+			if (seen) {
+				char hit_desc[MAX_CHARS + 12];
+
+				sprintf(hit_desc, "\377%c%s covers behind a shield.", COLOUR_BLOCK_MON, m_name);
+				hit_desc[2] = toupper(hit_desc[2]);
+				msg_print(Ind, hit_desc);
+			}
+			return(TRUE); /* notice */
+		}
 	}
 #endif
 
