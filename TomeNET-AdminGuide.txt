@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                       TomeNET Administrator Guide                        |
 +==========================================================================+-
-| Latest update: 24. May 2026 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 7. July 2026 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -549,6 +549,10 @@ Various files influence the server configuration and the world.
 - lib/scpt/custom.lua
   LUA code in here can manage things such as starting scheduled events or
   season changes.
+  A schedule for the four seasons and the regular events 'Dungeon Keeper',
+  'Highlander Tournament' and 'Arena Monster Challenge' is predefined in
+  this file, so your server should have seasons and also daily events during
+  different hours out of the box.
   Any changes to LUA files can be put live instantly if a DM/DW issues the
   '/initlua' command, which reinitializes the LUA framework without the need
   for a server restart.
