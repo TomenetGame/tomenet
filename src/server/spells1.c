@@ -7138,7 +7138,7 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 	/* Pseudo-dodging via 'agile' flag - basically 'reflecting' likewise... */
 	if ((r_ptr->flagsA & RFA_AGILE) &&
 	    (flg & PROJECT_KILL) && !(flg & (PROJECT_NORF | PROJECT_JUMP)) /* only for fire_bolt() */
-	    && magik(50)) {
+	    && magik(33)) {
 		if (seen) {
 			char hit_desc[MAX_CHARS + 12];
 

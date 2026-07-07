@@ -114,7 +114,7 @@ bool test_hit_fire(int chance, int ac, int vis, bool agile) {
 	if (k < 10) return(k < 5);
 
 	/* Especially 'Agile'? For now treat like a 'reflecting' flag just for melee attacks, aka 50% */
-	if (agile && magik(50)) return(FALSE);
+	if (agile && magik(33)) return(FALSE);
 
 	/* Never hit */
 	if (chance <= 0) return(FALSE);
