@@ -592,6 +592,14 @@
 */
 //#define CRAFTING_2023
 
+
+/* (Experimental draft 2026) Allow Ents to attach a mushroom to themselves in symbiosis,
+   gaining the effect continuously in intervals, the faster the longer they have
+   the symbiosis or the higher level they are, perhaps? - C. Blue
+   Only one mushroom can be in symbiosis at a time. */
+//#define ENT_MUSHROOM_SYMBIOSIS
+
+
 /* Work in progress // debug code - do not enable this!
    cmd_mini_map(1) (1 = in world-map mode): Support initiating '2'/'8' map scrolling  while in 's'elector mode,
    by moving the X vertically out of the map
