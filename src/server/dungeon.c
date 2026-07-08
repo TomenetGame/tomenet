@@ -10654,7 +10654,7 @@ void dungeon(void) {
 		process_quests();
 	}
 
-	/* Process some things once each second.
+	/* Process some things once every second.
 	   NOTE: Some of these (global events) mustn't be handled _after_ a player got set to 'dead',
 	   or gameplay might in very rare occasions get screwed up (someone dying when he shouldn't) - C. Blue */
 	if (!(turn % cfg.fps)) {
@@ -10705,6 +10705,9 @@ void dungeon(void) {
 
 			/* CTRL+R spam control */
 			if (p_ptr->redraw_cooldown) p_ptr->redraw_cooldown--;
+
+			/* Temple priest healing ointment cooldown, in 5s steps (so it fits into one byte in savegame data) */
+			if (p_ptr->ointment_cooldown && !(turn % (cfg.fps * 5))) p_ptr->ointment_cooldown--;
 
 			/* Custom timer countdowns */
 			if (p_ptr->custom_timer) {

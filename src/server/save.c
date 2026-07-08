@@ -1148,7 +1148,7 @@ static void wr_extra(int Ind) {
 	wr_byte(p_ptr->combat_stance);
 	wr_byte(p_ptr->combat_stance_prev);
 	wr_byte(p_ptr->combat_stance_power);
-	wr_byte(0); //HOLE
+	wr_byte(p_ptr->ointment_cooldown);
 
 	wr_byte(p_ptr->cloaked);
 	wr_byte(p_ptr->shadow_running);

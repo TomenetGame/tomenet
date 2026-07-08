@@ -5494,35 +5494,134 @@ void do_cmd_store(int Ind) {
 	/* Temple cures some maladies and gives some bread if starving ;-o */
 	if (!p_ptr->ghost &&
 	    !p_ptr->tim_blacklist && (which == STORE_TEMPLE || which == STORE_TEMPLE_DUN) && !p_ptr->suscep_good) {
-		if (p_ptr->chp < p_ptr->mhp / 2 || p_ptr->cut) msg_print(Ind, "A temple priest applies a healing ointment."); /* Note: Doesn't make that much sense if HP loss was caused by poison */
-		if (p_ptr->chp < p_ptr->mhp / 2) hp_player(Ind, p_ptr->mhp / 3, TRUE, TRUE);
-		if (p_ptr->cut) set_cut(Ind, -10000, 0, FALSE);
+		bool priest_prayer = p_ptr->blind || p_ptr->confused;
+		bool priest_antidote = p_ptr->poisoned && !p_ptr->slow_poison;
+		bool priest_ointment = p_ptr->chp < p_ptr->mhp / 2 && !p_ptr->ointment_cooldown;
+		bool priest_bandage = p_ptr->cut && !p_ptr->cut_bandaged;
+		bool priest_food = p_ptr->food < PY_FOOD_ALERT;
+		bool priest_disease = p_ptr->diseased; //bad news at the end xD
 
-		if (p_ptr->blind || p_ptr->confused || p_ptr->poisoned || p_ptr->diseased) {
-			msg_print(Ind, "A temple priest speaks a prayer of curing.");
+		int priest_actions = (priest_prayer ? 1 : 0) + (priest_antidote ? 1 : 0) + (priest_disease ? 1 : 0) + (priest_ointment ? 1 : 0) + (priest_bandage ? 1 : 0);
+		    //separate bad news: + (priest_food ? 1 : 0);
+		int priest_action = 0;
+		//bool priest1_male = rand_int(2), priest2_male = rand_int(2), priest3_male = rand_int(2);
+		char priest_msg[6][MAX_CHARS] = { 0 }, priests_2nd_msg[MAX_CHARS] = { 0 }; //as disease is separate for now, we only really need 5 msgs in theory
+
+
+		// "A temple priest <...> ."
+		if (priest_prayer) strcpy(priest_msg[priest_action++], "speaks a prayer of curing");
+		if (priest_antidote) strcpy(priest_msg[priest_action++], "administers an antidote, slowing down the poison");
+		if (priest_ointment) strcpy(priest_msg[priest_action++], "applies a healing ointment");
+		if (priest_bandage) strcpy(priest_msg[priest_action++], "applies a bandage to your wound");
+		if (priest_food) strcpy(priest_msg[priest_action++], p_ptr->prace == RACE_ENT ? "hands you a bowl of water" : "hands you a slice of bread");
+		//if (priest_disease) strcpy(priest_msg[priest_action++], "says: \"\377sI'm sorry, but we cannot cure your disease.\377w\""); //moved to a separate message for bad news, at the end
+
+		/* Combine messages kinda meaningful instead of having 6 priests running across the room (1/2) */
+		switch (priest_actions) { // (as disease has been separated, we can only go as high as 5 now)
+		case 1:
+			msg_format(Ind, "A temple priest %s.", priest_msg[0]);
+			break;
+		case 2:
+			msg_format(Ind, "A temple priest %s and %s.", priest_msg[0], priest_msg[1]);
+			break;
+		case 3:
+			msg_format(Ind, "A temple priest %s, %s and %s.", priest_msg[0], priest_msg[1], priest_msg[2]);
+			break;
+		case 4:
+			msg_format(Ind, "A temple priest %s, %s and %s.", priest_msg[0], priest_msg[1], priest_msg[2]);
+			sprintf(priests_2nd_msg, "Another temple priest %s.", priest_msg[3]);
+			break;
+		case 5:
+			msg_format(Ind, "A temple priest %s, %s and %s.", priest_msg[0], priest_msg[1], priest_msg[2]);
+			sprintf(priests_2nd_msg, "Another temple priest %s and %s.", priest_msg[3], priest_msg[4]);
+			break;
+		case 6:
+			msg_format(Ind, "A temple priest %s, %s and %s.", priest_msg[0], priest_msg[1], priest_msg[2]);
+			sprintf(priests_2nd_msg, "Another temple priest %s, %s and %s.", priest_msg[3], priest_msg[4], priest_msg[5]);
+			break;
+		default: break; // zero actions to be taken
+		}
+
+		priest_action = 0;
+
+		/* Start messages and actions - after potentially 3 actions we need to check for displaying the 2nd-priest message */
+
+		if (priest_prayer) {
+			priest_action++;
+
 #ifdef USE_SOUND_2010
 			sound(Ind, "store_prayer", NULL, SFX_TYPE_MISC, FALSE);
 #endif
+			if (p_ptr->blind) set_blind(Ind, 0);
+			if (p_ptr->confused) set_confused(Ind, 0);
 		}
-		if (p_ptr->blind) set_blind(Ind, 0);
-		if (p_ptr->confused) set_confused(Ind, 0);
-		if (p_ptr->poisoned) set_poisoned(Ind, 0, 0);
-		if (p_ptr->diseased) set_diseased(Ind, 0, 0);
 
-		if (p_ptr->food < PY_FOOD_ALERT) {
+		// we cannot have displayed 3 msgs so far, so no need to check yet
+
+		if (priest_antidote) {
+			priest_action++;
+
+			p_ptr->slow_poison = 1;
+			p_ptr->redraw |= PR_POISONED;
+		}
+
+		// we cannot have displayed 3 msgs so far, so no need to check yet
+
+		if (priest_ointment) {
+			priest_action++;
+
+			p_ptr->ointment_cooldown = 60; // in 5s steps -> 5 min, so it cannot be abusable by repetition really
+#if 1
+			hp_player(Ind, p_ptr->mhp / 3, TRUE, TRUE); // effective for higher level chars too
+#else
+			hp_player(Ind, damroll(14, 8), TRUE, TRUE); // CCW potion effect
+#endif
+		}
+
+		// test whether it's 2nd-priest message time
+		if (priest_action == 3 && priest_actions > 3) msg_format(Ind, "%s", priests_2nd_msg);
+
+		if (priest_bandage) {
+			priest_action++;
+
+			/* Bandages can only lessen very bad cuts somewhat */
+			if (p_ptr->cut <= BANDAGE_CUT_HEAL) {
+				p_ptr->cut_bandaged = p_ptr->cut;
+				p_ptr->cut = 0;
+			} else {
+				p_ptr->cut_bandaged = BANDAGE_CUT_HEAL;
+				p_ptr->cut -= BANDAGE_CUT_HEAL;
+			}
+
+			p_ptr->update |= (PU_BONUS);
+			p_ptr->redraw |= (PR_CUT);
+			handle_stuff(Ind);
+		}
+
+		// test whether it's 2nd-priest message time
+		if (priest_action == 3 && priest_actions > 3) msg_format(Ind, "%s", priests_2nd_msg);
+
+		if (priest_food) {
+			priest_action++;
+
 			if (p_ptr->prace == RACE_ENT) {
-				msg_print(Ind, "A temple priest hands you a bowl of water.");
 				set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
 #ifdef USE_SOUND_2010
 				sound(Ind, "quaff_potion", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 			} else {
-				msg_print(Ind, "A temple priest hands you a slice of bread.");
 				set_food(Ind, (PY_FOOD_FULL - PY_FOOD_ALERT) / 2);
 #ifdef USE_SOUND_2010
 				sound(Ind, "eat", NULL, SFX_TYPE_MISC, FALSE);
 #endif
 			}
+		}
+
+		/* Finally bad news, separately, at the very end... */
+		if (priest_disease) {
+			// hm, two lines instead of one?
+			msg_print(Ind, "Eventually another temple priest steps up and says:");
+			msg_print(Ind, " \"\377WI'm sorry, but we cannot cure your disease.\377w\"");
 		}
 	}
 

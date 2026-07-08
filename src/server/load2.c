@@ -2554,7 +2554,7 @@ if (p_ptr->updated_savegame == 0) {
 		rd_byte(&p_ptr->combat_stance);
 		rd_byte(&p_ptr->combat_stance_prev);
 		rd_byte(&p_ptr->combat_stance_power);
-		strip_bytes(1); //HOLE
+		rd_byte(&p_ptr->ointment_cooldown); //4.9.3.0.0.3+
 	}
 	if (!older_than(4, 3, 4)) rd_byte(&p_ptr->cloaked);
 	if (!older_than(4, 3, 9)) rd_byte((byte *) &p_ptr->shadow_running);
