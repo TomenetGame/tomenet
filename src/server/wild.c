@@ -4936,14 +4936,17 @@ void wild_flags(int Ind, u32b flags) {
 void lively_wild(u32b flags) {
 	int x, y;
 
+	/* specific value? */
+	if (flags) {
+		for (x = 0; x < MAX_WILD_X; x++)
+		for (y = 0; y < MAX_WILD_Y; y++)
+			wild_info[y][x].flags &= ~flags;
+		return;
+	}
+
+	/* season-specific values? */
 	for (x = 0; x < MAX_WILD_X; x++)
 	for (y = 0; y < MAX_WILD_Y; y++) {
-		/* specific value? */
-		if (flags) {
-			wild_info[y][x].flags &= ~flags;
-			continue;
-		}
-
 		/* season-dependant? */
 		/* except for winter, regrow gardens.
 		   Maybe not very realistic timing, but looks nice.. */
