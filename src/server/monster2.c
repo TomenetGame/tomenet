@@ -3194,17 +3194,17 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 		if (wpos->wx == hallsofmandos_wpos_x && wpos->wy == hallsofmandos_wpos_y && !wpos->wz) return(11);
 	}
 
+	/* Can we summon onto walls (also count mountains as walls except for climbers -
+	   not sure why we don't just rely onto the SO_GRID_TERRAIN check below for mountains) */
 	if (!(summon_override_checks & SO_GRID_EMPTY)) {
-#if 1
-		if (!(r_ptr->flags2 & RF2_PASS_WALL) &&
-		    (!(cave_empty_bold(zcave, y, x) &&
-		    !(cave_empty_mountain(zcave, y, x) &&
-		     ((r_ptr->flags8 & RF8_WILD_MOUNTAIN) ||
-		     (r_ptr->flags8 & RF8_WILD_VOLCANO) ||
-		     (r_ptr->flags7 & RF7_CAN_CLIMB))
-		     ))))
-			return(12);
-#endif
+		if (!cave_empty_bold(zcave, y, x) && /* empty floor always ok */
+		    !(r_ptr->flags2 & RF2_PASS_WALL)) /* pass-wall always ok */ {
+			if (!((cave_empty_mountain(zcave, y, x) && /* exception from empty floors: Empty mountain would be ok if we can climb */
+			    ((r_ptr->flags8 & RF8_WILD_MOUNTAIN) ||
+			     (r_ptr->flags8 & RF8_WILD_VOLCANO) ||
+			     (r_ptr->flags7 & RF7_CAN_CLIMB)))))
+				return(12);
+		}
 	}
 
 	if (!(summon_override_checks & SO_GRID_TERRAIN)) {
