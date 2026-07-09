@@ -1115,7 +1115,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				msg_print(Ind, "You float gently down to the next level.");
 			} else {
 				/* Inventory damage (Hack - use 'cold' type) */
-				inven_damage(Ind, set_cold_destroy, damroll(2, iddc ? 3 : 8));
+				inven_destroy(Ind, set_cold_destroy, damroll(2, iddc ? 3 : 8));
 
 				//int dam = damroll(2, 8);
 				//take_hit(Ind, dam, name, 0);
@@ -2040,8 +2040,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				//take_hit(Ind, dam, name, 0);
 
 				/* Inventory damage (Hack - use 'cold' type) */
-				inven_damage(Ind, set_cold_destroy, (iddc ? 4: 15) * k);
-				inven_damage(Ind, set_all_destroy, (iddc ? 1 : 3) * k);
+				inven_destroy(Ind, set_cold_destroy, (iddc ? 4: 15) * k);
+				inven_destroy(Ind, set_all_destroy, (iddc ? 1 : 3) * k);
 
 				take_hit(Ind, l, "a chasm", 0);
 				//take_sanity_hit(Ind, 1U << k, "a chasm", 0);
@@ -2066,7 +2066,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				l = damroll(1, iddc ? 4 : 8);
 
 				/* Inventory damage */
-				inven_damage(Ind, set_impact_destroy, l);
+				inven_destroy(Ind, set_impact_destroy, l);
 
 				//take_hit(Ind, dam, name, 0);
 				take_hit(Ind, l, "a pit", 0);

@@ -5488,7 +5488,7 @@ static bool process_player_end_aux(int Ind) {
 					    && !magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900))) {
 						/* Apply water damage to inventory. If it has no effect (so we don't harm more than 1 slot at a time here),
 						   but we're in a freezing place, apply cold damage to inventory too. */
-						if (!inven_damage(Ind, set_water_destroy, 1) && cold) inven_damage(Ind, set_cold_destroy, 1);
+						if (!inven_destroy(Ind, set_water_destroy, 1) && cold) inven_destroy(Ind, set_cold_destroy, 1);
 					}
 					/* Can't prevent our body being inside the water though */
 					equip_damage(Ind, GF_WATER);
@@ -5609,7 +5609,7 @@ static bool process_player_end_aux(int Ind) {
 				bypass_invuln = FALSE; /* Disruption shield protects from this type of damage */
 				take_hit(Ind, dam, "freezing winds", 0);
 				bypass_invuln = TRUE;
-				if (destroy) inven_damage(Ind, set_cold_destroy, 1);
+				if (destroy) inven_destroy(Ind, set_cold_destroy, 1);
 			}
 #endif
 		}

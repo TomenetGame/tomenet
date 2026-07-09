@@ -3196,7 +3196,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 	    && !p_ptr->immune_water && !(p_ptr->resist_water && magik(50))) {
 		if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN
 		    && !magik(get_skill_scale(p_ptr, SKILL_SWIM, 4900)))
-			inven_damage(Ind, set_water_destroy, 1);
+			inven_destroy(Ind, set_water_destroy, 1);
 		equip_damage(Ind, GF_WATER);
 	}
 

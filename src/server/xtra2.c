@@ -9426,7 +9426,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 
 #ifdef DEATH_PACK_ITEM_LOST
 /* 'verbose': Tell the player about item destruction. */
-static void inven_death_damage(int Ind, int verbose) {
+static void inven_death_destroy(int Ind, int verbose) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
@@ -9565,7 +9565,7 @@ static void inven_death_damage(int Ind, int verbose) {
  */
 #define EQUIP_LOSS_METHOD 3
 #ifdef DEATH_EQ_ITEM_LOST
-static void equip_death_damage(int Ind, int verbose) {
+static void equip_death_destroy(int Ind, int verbose) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
@@ -10134,13 +10134,13 @@ void player_death(int Ind) {
 					/* Lose either inventory or equipment, less severe than normal death */
 #if 1
  #ifdef DEATH_PACK_ITEM_LOST
-					inven_death_damage(Ind, TRUE);
+					inven_death_destroy(Ind, TRUE);
  #endif
 #else
  #ifdef DEATH_EQ_ITEM_LOST
-					equip_death_damage(Ind, TRUE);
+					equip_death_destroy(Ind, TRUE);
  #elif DEATH_PACK_ITEM_LOST
-					inven_death_damage(Ind, TRUE);
+					inven_death_destroy(Ind, TRUE);
  #endif
 #endif
 					recall_player(Ind, "\377oYour mind is hazy.. you feel like you woke up from a dream!");
@@ -10399,10 +10399,10 @@ void player_death(int Ind) {
 
 			/* Lose inventory and equipment items as per normal death */
  #ifdef DEATH_PACK_ITEM_LOST
-			inven_death_damage(Ind, TRUE);
+			inven_death_destroy(Ind, TRUE);
  #endif
  #ifdef DEATH_EQ_ITEM_LOST
-			equip_death_damage(Ind, TRUE);
+			equip_death_destroy(Ind, TRUE);
  #endif
 
 			/* Remove wielded Morgul weapon(s) if not immune to Black Breath, to avoid death-cascade.
@@ -10657,23 +10657,23 @@ void player_death(int Ind) {
 
 	/* Don't "lose" items on suicide (they all poof anyway, except for true arts possibly) */
 #ifdef DEATH_PACK_ITEM_LOST
-	if (!p_ptr->suicided) inven_death_damage(Ind, TRUE);
+	if (!p_ptr->suicided) inven_death_destroy(Ind, TRUE);
 #endif
 #ifdef DEATH_EQ_ITEM_LOST
-	if (!p_ptr->suicided) equip_death_damage(Ind, TRUE);
+	if (!p_ptr->suicided) equip_death_destroy(Ind, TRUE);
 #endif
 	/* Soloists: Kill more items! Soloists are not really meant to interact with others much. */
 #ifdef DEATH_PACK_ITEM_LOST
-	if ((p_ptr->mode & MODE_SOLO) && !p_ptr->suicided) inven_death_damage(Ind, TRUE);
+	if ((p_ptr->mode & MODE_SOLO) && !p_ptr->suicided) inven_death_destroy(Ind, TRUE);
 #endif
 #ifdef DEATH_EQ_ITEM_LOST
 	if ((p_ptr->mode & MODE_SOLO) && !p_ptr->suicided) {
-		equip_death_damage(Ind, FALSE);
-		equip_death_damage(Ind, FALSE);
-		equip_death_damage(Ind, FALSE);
-		equip_death_damage(Ind, FALSE);
-		equip_death_damage(Ind, FALSE);
-		equip_death_damage(Ind, FALSE);
+		equip_death_destroy(Ind, FALSE);
+		equip_death_destroy(Ind, FALSE);
+		equip_death_destroy(Ind, FALSE);
+		equip_death_destroy(Ind, FALSE);
+		equip_death_destroy(Ind, FALSE);
+		equip_death_destroy(Ind, FALSE);
 	}
 #endif
 

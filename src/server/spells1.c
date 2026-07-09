@@ -3667,7 +3667,7 @@ int set_all_destroy(object_type *o_ptr) {
  * Destruction taken from "melee.c" code for "stealing".
  * Returns number of items destroyed.
  */
-int inven_damage(int Ind, inven_func typ, int perc) {
+int inven_destroy(int Ind, inven_func typ, int perc) {
 	player_type	*p_ptr = Players[Ind];
 	int		i, j, k, amt, amt_gone;
 	object_type	*o_ptr;
@@ -4132,9 +4132,9 @@ int acid_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 	/* Inventory damage */
 	if (!(p_ptr->oppose_acid && p_ptr->resist_acid) && breakable) {
 		if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN)
-			inven_damage(Ind, set_acid_destroy, inv);
+			inven_destroy(Ind, set_acid_destroy, inv);
 		else if (magik(100 - TARPAULIN_ACID_PROTECTION))
-			inven_damage(Ind, set_acid_destroy, inv);
+			inven_destroy(Ind, set_acid_destroy, inv);
 		else if (magik(TARPAULIN_ACID_DESTRUCTION)) {
 			msg_print(Ind, "\377oYour tarpaulin protected your inventory but was destroyed in the process!");
 			inven_item_increase(Ind, INVEN_TOOL, -1);
@@ -4180,7 +4180,7 @@ int elec_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 
 	/* Inventory damage */
 	if (!(p_ptr->oppose_elec && p_ptr->resist_elec) && breakable)
-		inven_damage(Ind, set_elec_destroy, inv);
+		inven_destroy(Ind, set_elec_destroy, inv);
 
 	return(dam);
 }
@@ -4254,7 +4254,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_fire && p_ptr->oppose_fire) && breakable)
-		inven_damage(Ind, set_fire_destroy, inv);
+		inven_destroy(Ind, set_fire_destroy, inv);
 
 	return(dam);
 }
@@ -4294,7 +4294,7 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_cold && p_ptr->oppose_cold) && breakable)
-		inven_damage(Ind, set_cold_destroy, inv);
+		inven_destroy(Ind, set_cold_destroy, inv);
 
 	return(dam);
 }
@@ -11878,10 +11878,10 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		/* Inventory damage */
 		if (inven_fire && inven_elec) break;
 		if (!inven_fire && !inven_elec) {
-			if (rand_int(3)) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-			else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-		} else if (inven_elec) inven_damage(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
-		else inven_damage(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			if (rand_int(3)) inven_destroy(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+			else inven_destroy(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+		} else if (inven_elec) inven_destroy(Ind, set_fire_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
+		else inven_destroy(Ind, set_elec_destroy, (dam < 30) ? 1 : (dam < 60) ? 2 : 3);
 
 		break; }
 
@@ -11959,7 +11959,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 				if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
 				if (breakable) {
-					if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_damage(Ind, set_water_destroy, 1);
+					if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_destroy(Ind, set_water_destroy, 1);
 					if (magik(50)) equip_damage(Ind, GF_WATER);
 				}
 			}
@@ -12372,7 +12372,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 					if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
 					if (breakable) {
-						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_damage(Ind, set_water_destroy, 1);
+						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_destroy(Ind, set_water_destroy, 1);
 						if (magik(50)) equip_damage(Ind, GF_WATER);
 					}
 				}
@@ -12415,7 +12415,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 					if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
 					if (breakable) {
-						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_damage(Ind, set_water_destroy, 1);
+						if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN) inven_destroy(Ind, set_water_destroy, 1);
 						if (magik(25)) equip_damage(Ind, GF_WATER);
 					}
 				}
@@ -13168,9 +13168,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
 			if (breakable) {
-				if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
-				else if (ignore_heat) inven_damage(Ind, set_impact_destroy, 3);
-				else inven_damage(Ind, set_rocket_destroy, 4);
+				if (p_ptr->resist_shard && p_ptr->resist_sound) inven_destroy(Ind, set_fire_destroy, 3);
+				else if (ignore_heat) inven_destroy(Ind, set_impact_destroy, 3);
+				else inven_destroy(Ind, set_rocket_destroy, 4);
 			}
 		}
 
@@ -13202,9 +13202,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 			if (IS_PVP && check_blood_bond(Ind, -who)) breakable = 0;
 			if (breakable) {
-				if (p_ptr->resist_shard && p_ptr->resist_sound) inven_damage(Ind, set_fire_destroy, 3);
-				else if (ignore_heat) inven_damage(Ind, set_impact_destroy, 3);
-				else inven_damage(Ind, set_rocket_destroy, 4);
+				if (p_ptr->resist_shard && p_ptr->resist_sound) inven_destroy(Ind, set_fire_destroy, 3);
+				else if (ignore_heat) inven_destroy(Ind, set_impact_destroy, 3);
+				else inven_destroy(Ind, set_rocket_destroy, 4);
 			}
 		}
 
@@ -13255,9 +13255,9 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 			if (magik(50)) equip_damage(Ind, GF_ACID);
 			/* Inventory damage */
 			if (TOOL_EQUIPPED(p_ptr) != SV_TOOL_TARPAULIN)
-				inven_damage(Ind, set_acid_destroy, 2);
+				inven_destroy(Ind, set_acid_destroy, 2);
 			else if (magik(100 - TARPAULIN_ACID_PROTECTION))
-				inven_damage(Ind, set_acid_destroy, 2);
+				inven_destroy(Ind, set_acid_destroy, 2);
 			else if (magik(TARPAULIN_ACID_DESTRUCTION)) {
 				msg_print(Ind, "\377oYour tarpaulin protected your inventory but was destroyed in the process!");
 				inven_item_increase(Ind, INVEN_TOOL, -1);
