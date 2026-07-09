@@ -2964,5 +2964,5 @@ extern char recent_deaths[RECENT_DEATHS_ENTRIES][MAX_CHARS_WIDE];
 extern int debug_drain_hp, debug_drain_mp;
 
 #ifdef ENABLE_SUBINVEN
-extern int inventory_max;
+extern int inventory_pack_max, inventory_total_max;
 #endif

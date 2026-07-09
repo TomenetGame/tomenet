@@ -9435,7 +9435,7 @@ static void inven_death_damage(int Ind, int verbose) {
 	int i, j, k;
  #ifdef ENABLE_SUBINVEN
 	int inv_add = 0, inv_complete = INVEN_PACK;
-	int shuffle[inventory_max], shuffle_sub[inventory_max]; //total amount of inventory plus possible bags times
+	int shuffle[inventory_pack_max], shuffle_sub[inventory_pack_max]; //total amount of inventory plus possible bags times
  #else
 	int shuffle[INVEN_PACK];
  #endif
@@ -9528,10 +9528,18 @@ static void inven_death_damage(int Ind, int verbose) {
 			object_desc(Ind, o_name, o_ptr, FALSE, 3);
 			s_printf("item_lost: %d/%d %s (slot %d)\n", k, o_ptr->number, o_name, j);
 			if (verbose) {
-				if (k == o_ptr->number)
-					msg_format(Ind, "\376\377oYour %s %s destroyed!", o_name, ((o_ptr->number > 1) ? "were" : "was"));
+ #ifdef ENABLE_SUBINVEN
+				if (j >= SUBINVEN_INVEN_MUL)
+					msg_format(Ind, "\376\377o%sour %s (%c)(%c) %s destroyed!",
+					    ((o_ptr->number > 1) ? ((k == o_ptr->number) ? "All of y" : (k > 1 ? "Some of y" : "One of y")) : "Y"),
+					    o_name, index_to_label(j / SUBINVEN_INVEN_MUL - 1), index_to_label(j % SUBINVEN_INVEN_MUL),
+					    ((k > 1) ? "were" : "was"));
 				else
-					msg_format(Ind, "\376\377o%s of your %s %s destroyed!", k == 1 ? "One" : "Some", o_name, ((k > 1) ? "were" : "was"));
+ #endif
+				msg_format(Ind, "\376\377o%sour %s (%c) %s destroyed!",
+				    ((o_ptr->number > 1) ? ((k == o_ptr->number) ? "All of y" : (k > 1 ? "Some of y" : "One of y")) : "Y"),
+				    o_name, index_to_label(j),
+				    ((k > 1) ? "were" : "was"));
 			}
 
 			if (true_artifact_p(o_ptr)) {

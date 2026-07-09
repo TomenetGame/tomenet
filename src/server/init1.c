@@ -3117,9 +3117,11 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 #ifdef ENABLE_SUBINVEN
 	/* Set maximum inventory size including items in bags */
  #ifdef SUBINVEN_LIMIT_GROUP
-	inventory_max = INVEN_PACK + subinven_add + subinven_max; // one of each normal bag + the biggest available chest
+	inventory_pack_max = INVEN_PACK + subinven_add + subinven_max; // one of each normal bag + the biggest available chest
+	inventory_total_max = INVEN_TOTAL + subinven_add + subinven_max; // one of each normal bag + the biggest available chest
  #else
-	inventory_max = INVEN_PACK + INVEN_PACK * subinven_max; // biggest available bag type times inventory slots
+	inventory_pack_max = INVEN_PACK + INVEN_PACK * subinven_max; // biggest available bag type times inventory slots
+	inventory_total_max = INVEN_TOTAL + INVEN_PACK * subinven_max; // biggest available bag type times inventory slots
  #endif
 #endif
 

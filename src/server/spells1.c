@@ -3669,25 +3669,82 @@ int set_all_destroy(object_type *o_ptr) {
  */
 int inven_damage(int Ind, inven_func typ, int perc) {
 	player_type	*p_ptr = Players[Ind];
-	int		i, j, k, amt;
+	int		i, j, k, amt, amt_gone;
 	object_type	*o_ptr;
 	char		o_name[ONAME_LEN];
+#ifdef ENABLE_SUBINVEN
+	int inv_add = 0, inv_complete = INVEN_TOTAL;
+	int shuffle[inventory_total_max], shuffle_sub[inventory_total_max]; //total amount of inventory plus possible bags times
+#else
+	int shuffle[INVEN_TOTAL];
+#endif
 
 	if (safe_area(Ind)) return(FALSE);
 	/* secret dungeon master is unaffected (potion shatter effects might be bad) */
 	if (p_ptr->admin_dm) return(FALSE);
 
 	/* Count the casualties */
-	k = 0;
+	amt_gone = 0;
 
-	/* Scan through the slots backwards */
+	/* Prepare the shuffle table; items beyond-normal-inventory for bags are set on the go when they are found to actually exist */
 	for (i = 0; i < INVEN_TOTAL; i++) {
-		/* Hack -- equipments are harder to be harmed */
-		if (i >= INVEN_PACK && i != INVEN_AMMO && !magik(HARM_EQUIP_CHANCE))
-			continue;
+		shuffle[i] = i;
 
-		/* Get the item in that slot */
+#ifdef ENABLE_SUBINVEN
+		/* Add any subinventory items to the list, appended at the end of the normal inventory */
 		o_ptr = &p_ptr->inventory[i];
+		if (o_ptr->tval == TV_SUBINVEN) {
+			for (k = 0; k < o_ptr->bpval; k++) {
+				o_ptr = &p_ptr->subinventory[i][k];
+				if (!o_ptr->tval) break;
+
+				/* Add bag items after the normal inventory -
+				   note that while normal inventory items can be 'empty', beyond INVEN_TOTAL we only add bag items that actually exist. */
+				shuffle[INVEN_TOTAL + inv_add] = INVEN_TOTAL + inv_add;
+				shuffle_sub[INVEN_TOTAL + inv_add] = (i + 1) * SUBINVEN_INVEN_MUL + k;
+				inv_add++;
+			}
+		}
+#endif
+	}
+	/* Shuffle all inventory items for fairness which might get destroyed first */
+#ifdef ENABLE_SUBINVEN
+	inv_complete = INVEN_TOTAL + inv_add;
+	intshuffle_dual(shuffle, shuffle_sub, inv_complete);
+#else
+	intshuffle(shuffle, INVEN_TOTAL);
+#endif
+
+	/* Destroy some items randomly */
+#ifdef ENABLE_SUBINVEN
+	for (i = 0; i < inv_complete; i++) {
+#else
+	for (i = 0; i < INVEN_TOTAL; i++) {
+#endif
+		j = shuffle[i];
+
+#ifdef ENABLE_SUBINVEN
+		/* It's an item inside a bag */
+		if (j >= INVEN_TOTAL) {
+			j = shuffle_sub[i];
+			o_ptr = &p_ptr->subinventory[j / SUBINVEN_INVEN_MUL - 1][j % SUBINVEN_INVEN_MUL];
+		} else
+#endif
+		{
+			/* Hack -- equipment items are harder to be harmed */
+			if (j >= INVEN_PACK && j != INVEN_AMMO && !magik(HARM_EQUIP_CHANCE)) continue;
+
+			o_ptr = &p_ptr->inventory[j];
+			if (!o_ptr->k_idx) continue;
+#ifdef ENABLE_SUBINVEN
+			/* Don't destroy subinventories with items in them - too annoying to drop everything from it */
+			if (o_ptr->tval == TV_SUBINVEN) {
+				/* Check if not empty - in that case, spare this bag */
+				if (o_ptr->bpval && p_ptr->subinventory[j][0].tval) continue; //spare this bag
+				/* It was empty, fall through to destroy the bag itself then. */
+			}
+#endif
+		}
 
 		/* Hack -- for now, skip artifacts */
 		if (artifact_p(o_ptr)) continue;
@@ -3695,9 +3752,8 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 		/* Give this item slot a shot at death */
 		if ((*typ)(o_ptr)) {
 			/* Count the casualties */
-			for (amt = j = 0; j < o_ptr->number; ++j) {
+			for (amt = amt_gone = 0; amt_gone < o_ptr->number; ++amt_gone)
 				if (rand_int(100) < perc) amt++;
-			}
 
 			/* Some casualities */
 			if (amt) {
@@ -3705,12 +3761,18 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 				object_desc(Ind, o_name, o_ptr, FALSE, 3);
 
 				/* Message */
+#ifdef ENABLE_SUBINVEN
+				if (j >= SUBINVEN_INVEN_MUL)
+					msg_format(Ind, "\376\377o%sour %s (%c)(%c) %s destroyed!",
+					    ((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" : (amt > 1 ? "Some of y" : "One of y")) : "Y"),
+					    o_name, index_to_label(j / SUBINVEN_INVEN_MUL - 1), index_to_label(j % SUBINVEN_INVEN_MUL),
+					    ((amt > 1) ? "were" : "was"));
+				else
+#endif
 				msg_format(Ind, "\376\377o%sour %s (%c) %s destroyed!",
-						   ((o_ptr->number > 1) ?
-							((amt == o_ptr->number) ? "All of y" :
-							 (amt > 1 ? "Some of y" : "One of y")) : "Y"),
-						   o_name, index_to_label(i),
-						   ((amt > 1) ? "were" : "was"));
+				    ((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" : (amt > 1 ? "Some of y" : "One of y")) : "Y"),
+				    o_name, index_to_label(j),
+				    ((amt > 1) ? "were" : "was"));
 
 				/* Potions smash open */
 				if (typ != set_water_destroy)	/* MEGAHACK */ //&& typ != set_cold_destroy)
@@ -3754,28 +3816,33 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 					}
 
 #ifdef ENABLE_SUBINVEN
- #if 1
+ /* Disabled this again as items inside bags can now be destroyed;
+    same as for inven_death_destroy(), bags get spared while they still have items inside. (See above.)
+    Currently bags do not hates_... elements anyway, so there is no difference really. */
+ #if 0
+  #if 1
 				/* If we lose a subinventory, remove all items and place them into the player's inventory */
-				if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, i, FALSE, FALSE);
- #else
+				if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, j, FALSE, FALSE);
+  #else
 				/* If we lose a subinventory, destroy the contents with it */
-				if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) erase_subinven(Ind, i);
+				if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) erase_subinven(Ind, j);
+  #endif
  #endif
 #endif
 
 				/* Destroy "amt" items */
 				if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, amt);
-				inven_item_increase(Ind, i, -amt);
-				inven_item_optimize(Ind, i);
+				inven_item_increase(Ind, j, -amt);
+				inven_item_optimize(Ind, j);
 
 				/* Count the casualties */
-				k += amt;
+				amt_gone += amt;
 			}
 		}
 	}
 
 	/* Return the casualty count */
-	return(k);
+	return(amt_gone);
 }
 
 
