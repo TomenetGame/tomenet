@@ -3749,71 +3749,74 @@ int inven_damage(int Ind, inven_func typ, int perc) {
 		/* Hack -- for now, skip artifacts */
 		if (artifact_p(o_ptr)) continue;
 
+		/* Item not affected by current damage type? */
+		if (!((*typ)(o_ptr))) continue;
+
 		/* Give this item slot a shot at death */
-		if ((*typ)(o_ptr)) {
-			/* Count the casualties */
-			for (amt = amt_gone = 0; amt_gone < o_ptr->number; ++amt_gone)
-				if (rand_int(100) < perc) amt++;
 
-			/* Some casualities */
-			if (amt) {
-				/* Get a description */
-				object_desc(Ind, o_name, o_ptr, FALSE, 3);
+		/* Count the casualties */
+		for (amt = amt_gone = 0; amt_gone < o_ptr->number; ++amt_gone)
+			if (rand_int(100) < perc) amt++;
 
-				/* Message */
+		/* Some casualities */
+		if (amt) {
+			/* Get a description */
+			object_desc(Ind, o_name, o_ptr, FALSE, 3);
+
+			/* Message */
 #ifdef ENABLE_SUBINVEN
-				if (j >= SUBINVEN_INVEN_MUL)
-					msg_format(Ind, "\376\377o%sour %s (%c)(%c) %s destroyed!",
-					    ((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" : (amt > 1 ? "Some of y" : "One of y")) : "Y"),
-					    o_name, index_to_label(j / SUBINVEN_INVEN_MUL - 1), index_to_label(j % SUBINVEN_INVEN_MUL),
-					    ((amt > 1) ? "were" : "was"));
-				else
-#endif
-				msg_format(Ind, "\376\377o%sour %s (%c) %s destroyed!",
+			if (j >= SUBINVEN_INVEN_MUL)
+				msg_format(Ind, "\376\377o%sour %s (%c)(%c) %s destroyed!",
 				    ((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" : (amt > 1 ? "Some of y" : "One of y")) : "Y"),
-				    o_name, index_to_label(j),
+				    o_name, index_to_label(j / SUBINVEN_INVEN_MUL - 1), index_to_label(j % SUBINVEN_INVEN_MUL),
 				    ((amt > 1) ? "were" : "was"));
+			else
+#endif
+			msg_format(Ind, "\376\377o%sour %s (%c) %s destroyed!",
+			    ((o_ptr->number > 1) ? ((amt == o_ptr->number) ? "All of y" : (amt > 1 ? "Some of y" : "One of y")) : "Y"),
+			    o_name, index_to_label(j),
+			    ((amt > 1) ? "were" : "was"));
 
-				/* Potions smash open */
-				if (typ != set_water_destroy)	/* MEGAHACK */ //&& typ != set_cold_destroy)
-					switch (o_ptr->tval) {
-					case TV_POTION:
-						//(void)potion_smash_effect(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
-						bypass_invuln = TRUE;
-						(void)potion_smash_effect(PROJECTOR_POTION, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
-						bypass_invuln = FALSE;
-						break;
-					case TV_FLASK:
-						bypass_invuln = TRUE;
-						(void)potion_smash_effect(PROJECTOR_POTION, &p_ptr->wpos, p_ptr->py, p_ptr->px, 200 + o_ptr->sval);
-						bypass_invuln = FALSE;
-						break;
-					}
+			/* Potions smash open */
+			if (typ != set_water_destroy)	/* MEGAHACK */ //&& typ != set_cold_destroy)
+				switch (o_ptr->tval) {
+				case TV_POTION:
+					//(void)potion_smash_effect(0, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
+					bypass_invuln = TRUE;
+					(void)potion_smash_effect(PROJECTOR_POTION, &p_ptr->wpos, p_ptr->py, p_ptr->px, o_ptr->sval);
+					bypass_invuln = FALSE;
+					break;
+				case TV_FLASK:
+					bypass_invuln = TRUE;
+					(void)potion_smash_effect(PROJECTOR_POTION, &p_ptr->wpos, p_ptr->py, p_ptr->px, 200 + o_ptr->sval);
+					bypass_invuln = FALSE;
+					break;
+				}
 
-				/* Fireworks and blast charges blow up */
-				if (typ == set_fire_destroy)
-					switch (o_ptr->tval) {
-					case TV_SCROLL:
-						if (o_ptr->sval != SV_SCROLL_FIREWORK) break;
-						cast_fireworks(&p_ptr->wpos, p_ptr->px, p_ptr->py, o_ptr->xtra1 * FIREWORK_COLOURS + o_ptr->xtra2); //size, colour
+			/* Fireworks and blast charges blow up */
+			if (typ == set_fire_destroy)
+				switch (o_ptr->tval) {
+				case TV_SCROLL:
+					if (o_ptr->sval != SV_SCROLL_FIREWORK) break;
+					cast_fireworks(&p_ptr->wpos, p_ptr->px, p_ptr->py, o_ptr->xtra1 * FIREWORK_COLOURS + o_ptr->xtra2); //size, colour
 #ifdef USE_SOUND_2010
-						sound_near_site_vol(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "fireworks_launch", "", SFX_TYPE_MISC, FALSE, 50);
+					sound_near_site_vol(p_ptr->py, p_ptr->px, &p_ptr->wpos, 0, "fireworks_launch", "", SFX_TYPE_MISC, FALSE, 50);
 #endif
-						break;
+					break;
 #ifdef ENABLE_DEMOLITIONIST
-					case TV_CHARGE:
-						bypass_invuln = TRUE;
-						/* Blow up?
-						   However, this seems like overkill. We can just assume that blast charges have a protective outer shell and don't
-						   just blow up randomly, except when explicitely lit by a fuse.
-						   So for now: -- Blast charges are safe! Nothing to see here! --
+				case TV_CHARGE:
+					bypass_invuln = TRUE;
+					/* Blow up?
+					   However, this seems like overkill. We can just assume that blast charges have a protective outer shell and don't
+					   just blow up randomly, except when explicitely lit by a fuse.
+					   So for now: -- Blast charges are safe! Nothing to see here! --
 
-						   detonate_charge_obj(o_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py);
-						*/
-						bypass_invuln = FALSE;
-						break;
+					   detonate_charge_obj(o_ptr, &p_ptr->wpos, p_ptr->px, p_ptr->py);
+					*/
+					bypass_invuln = FALSE;
+					break;
 #endif
-					}
+				}
 
 #ifdef ENABLE_SUBINVEN
  /* Disabled this again as items inside bags can now be destroyed;
@@ -3821,23 +3824,22 @@ int inven_damage(int Ind, inven_func typ, int perc) {
     Currently bags do not hates_... elements anyway, so there is no difference really. */
  #if 0
   #if 1
-				/* If we lose a subinventory, remove all items and place them into the player's inventory */
-				if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, j, FALSE, FALSE);
+			/* If we lose a subinventory, remove all items and place them into the player's inventory */
+			if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) empty_subinven(Ind, j, FALSE, FALSE);
   #else
-				/* If we lose a subinventory, destroy the contents with it */
-				if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) erase_subinven(Ind, j);
+			/* If we lose a subinventory, destroy the contents with it */
+			if (o_ptr->tval == TV_SUBINVEN && amt >= o_ptr->number) erase_subinven(Ind, j);
   #endif
  #endif
 #endif
 
-				/* Destroy "amt" items */
-				if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, amt);
-				inven_item_increase(Ind, j, -amt);
-				inven_item_optimize(Ind, j);
+			/* Destroy "amt" items */
+			if (is_magic_device(o_ptr->tval)) divide_charged_item(NULL, o_ptr, amt);
+			inven_item_increase(Ind, j, -amt);
+			inven_item_optimize(Ind, j);
 
-				/* Count the casualties */
-				amt_gone += amt;
-			}
+			/* Count the casualties */
+			amt_gone += amt;
 		}
 	}
 
