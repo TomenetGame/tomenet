@@ -8233,6 +8233,19 @@ void intshuffle(int *array, int size) {
 		array[j] = tmp;
 	}
 }
+void intshuffle_dual(int *array1, int *array2, int size) {
+	int i, j, tmp;
+
+	for (i = size - 1; i > 0; i--) {
+		j = randint0(i);
+		tmp = array1[i];
+		array1[i] = array1[j];
+		array1[j] = tmp;
+		tmp = array2[i];
+		array2[i] = array2[j];
+		array2[j] = tmp;
+	}
+}
 
 /* for all the dungeons/towers that are special, yet use the type 0 dungeon template - C. Blue
    todo: actually create own types for these. would also make DF3_JAIL_DUNGEON obsolete.

@@ -2343,6 +2343,7 @@ extern void set_dungeon_bonus(int id, bool reset);
 #endif
 
 extern void intshuffle(int *array, int size);
+extern void intshuffle_dual(int *array1, int *array2, int size);
 #if defined(TROLL_REGENERATION) || defined(HYDRA_REGENERATION)
 extern int troll_hydra_regen(player_type *p_ptr);
 #endif
@@ -2961,3 +2962,7 @@ extern u32b hack_sigil_f[7], hack_comboset_f[7]; //same as ego_granted_flags
 extern char recent_deaths[RECENT_DEATHS_ENTRIES][MAX_CHARS_WIDE];
 
 extern int debug_drain_hp, debug_drain_mp;
+
+#ifdef ENABLE_SUBINVEN
+extern int inventory_max;
+#endif

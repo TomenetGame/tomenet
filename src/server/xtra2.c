@@ -9425,46 +9425,77 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 }
 
 #ifdef DEATH_PACK_ITEM_LOST
+/* 'verbose': Tell the player about item destruction. */
 static void inven_death_damage(int Ind, int verbose) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-	int shuffle[INVEN_PACK];
 	char o_name[ONAME_LEN];
 	int inventory_loss = 0, inventory_loss_max = p_ptr->max_plv >= 30 ? 4 : (p_ptr->max_plv >= 20 ? 3 : (p_ptr->max_plv >= 10 ? 2 : 1));
 	bool inventory_loss_starteritems = (p_ptr->max_plv >= 10);
 	int i, j, k;
  #ifdef ENABLE_SUBINVEN
-	int l;
+	int inv_add = 0, inv_complete = INVEN_PACK;
+	int shuffle[inventory_max], shuffle_sub[inventory_max]; //total amount of inventory plus possible bags times
+ #else
+	int shuffle[INVEN_PACK];
  #endif
 
-	for (i = 0; i < INVEN_PACK; i++) shuffle[i] = i;
-	intshuffle(shuffle, INVEN_PACK);
-
-	/* Destroy some items randomly */
+	/* Prepare the shuffle table; items beyond-normal-inventory for bags are set on the go when they are found to actually exist */
 	for (i = 0; i < INVEN_PACK; i++) {
-		j = shuffle[i];
-		o_ptr = &p_ptr->inventory[j];
-		if (!o_ptr->k_idx) continue;
+		shuffle[i] = i;
 
  #ifdef ENABLE_SUBINVEN
-		/* Don't destroy subinventories with items in them - too annoying to drop everything from it */
+		/* Add any subinventory items to the list, appended at the end of the normal inventory */
+		o_ptr = &p_ptr->inventory[i];
 		if (o_ptr->tval == TV_SUBINVEN) {
-			/* Check if not empty */
-			k = o_ptr->bpval;
-			for (l = 0; l < k; l++) {
-				o_ptr = &p_ptr->subinventory[j][l];
+			for (k = 0; k < o_ptr->bpval; k++) {
+				o_ptr = &p_ptr->subinventory[i][k];
 				if (!o_ptr->tval) break;
+
+				/* Add bag items after the normal inventory -
+				   note that while normal inventory items can be 'empty', beyond INVEN_PACK we only add bag items that actually exist. */
+				shuffle[INVEN_PACK + inv_add] = INVEN_PACK + inv_add;
+				shuffle_sub[INVEN_PACK + inv_add] = (i + 1) * SUBINVEN_INVEN_MUL + k;
+				inv_add++;
 			}
-			/* Not empty? Destroy an item from within the subinventory */
-			if (l) {
-				l = rand_int(l);
-				o_ptr = &p_ptr->subinventory[j][l];
-				j = (j + 1) * SUBINVEN_INVEN_MUL + l;
-			}
-			/* It was empty ('else')? Destroy the bag itself then. */
-			else o_ptr = &p_ptr->inventory[j];
 		}
  #endif
+	}
+	/* Shuffle all inventory items for fairness which might get destroyed first */
+ #ifdef ENABLE_SUBINVEN
+	inv_complete = INVEN_PACK + inv_add;
+	intshuffle_dual(shuffle, shuffle_sub, inv_complete);
+ #else
+	intshuffle(shuffle, INVEN_PACK);
+ #endif
+
+	/* Destroy some items randomly */
+ #ifdef ENABLE_SUBINVEN
+	for (i = 0; i < inv_complete; i++) {
+ #else
+	for (i = 0; i < INVEN_PACK; i++) {
+ #endif
+		j = shuffle[i];
+ #ifdef ENABLE_SUBINVEN
+		/* It's an item inside a bag */
+		if (j >= INVEN_PACK) {
+			j = shuffle_sub[i];
+			o_ptr = &p_ptr->subinventory[j / SUBINVEN_INVEN_MUL - 1][j % SUBINVEN_INVEN_MUL];
+		} else
+ #endif
+		{
+			o_ptr = &p_ptr->inventory[j];
+			if (!o_ptr->k_idx) continue;
+ #ifdef ENABLE_SUBINVEN
+			/* Don't destroy subinventories with items in them - too annoying to drop everything from it */
+			if (o_ptr->tval == TV_SUBINVEN) {
+				/* Check if not empty - in that case, spare this bag */
+				if (o_ptr->bpval && p_ptr->subinventory[j][0].tval) continue; //spare this bag
+				/* It was empty, fall through to destroy the bag itself then. */
+			}
+ #endif
+		}
+
 		/* hack: don't discard his remaining gold - a penalty was already deducted from it */
 		if (o_ptr->tval == TV_GOLD) continue;
 		/* guild keys are supposedly indestructible, so whatever.. */
@@ -9522,6 +9553,7 @@ static void inven_death_damage(int Ind, int verbose) {
 /* Method 1: Go for 1 item at most, skip empty slots, try all slots in random order;
    Method 2: Go for 1 item at most, skip empty slots but use absolute chance;
    Method 3: Like 0, but don't skip empty slots.
+   'verbose': Tell the player about item destruction.
  */
 #define EQUIP_LOSS_METHOD 3
 #ifdef DEATH_EQ_ITEM_LOST

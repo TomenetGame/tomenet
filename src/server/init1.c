@@ -2722,6 +2722,12 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 #ifdef KIND_DIZ
 	char tmp[MSG_LEN];
 #endif
+#ifdef ENABLE_SUBINVEN
+ #ifdef SUBINVEN_LIMIT_GROUP
+	int subinven_add = 0;
+ #endif
+	int subinven_max = 0;
+#endif
 
 	/* Not ready yet */
 	bool okay = FALSE;
@@ -2934,6 +2940,22 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			k_ptr->sval = sval;
 			k_ptr->pval = pval;
 
+#ifdef ENABLE_SUBINVEN
+			if (tval == TV_SUBINVEN) {
+ #ifdef SUBINVEN_LIMIT_GROUP
+				/* handle chests - these count as the same type of bag ie are in the same 'bag group' */
+				if (sval >= SV_SI_GROUP_CHEST_MIN && sval <= SV_SI_GROUP_CHEST_MAX) {
+					if (subinven_max < pval) subinven_max = pval;
+				} else
+				/* handle normal bags - they are all separate types */
+				subinven_add += pval;
+ #else
+				/* remember the biggest bag there is, as the player might fill up his inventory with these */
+				if (subinven_max < pval) subinven_max = pval;
+ #endif
+			}
+#endif
+
 			/* Next... */
 			continue;
 		}
@@ -3091,6 +3113,15 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 #endif	// DEBUG_LEVEL
 
 	max_k_idx = ++idx;
+
+#ifdef ENABLE_SUBINVEN
+	/* Set maximum inventory size including items in bags */
+ #ifdef SUBINVEN_LIMIT_GROUP
+	inventory_max = INVEN_PACK + subinven_add + subinven_max; // one of each normal bag + the biggest available chest
+ #else
+	inventory_max = INVEN_PACK + INVEN_PACK * subinven_max; // biggest available bag type times inventory slots
+ #endif
+#endif
 
 	/* Success */
 	return(0);

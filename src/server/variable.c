@@ -1117,3 +1117,7 @@ u32b hack_sigil_f[7] = { 0 }, hack_comboset_f[7] = { 0 }; //same as ego_granted_
 char recent_deaths[RECENT_DEATHS_ENTRIES][MAX_CHARS_WIDE] = { 0 };
 
 int debug_drain_hp, debug_drain_mp;
+
+#ifdef ENABLE_SUBINVEN
+int inventory_max = 0; /* Normal inventory aka INVEN_PACK plus maximum amount of items we could carry with all possible bag types */
+#endif
