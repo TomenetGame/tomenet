@@ -4221,7 +4221,7 @@ int cold_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 		(void)do_dec_stat(Ind, A_STR, DAM_STAT_TYPE(inv));
 
 	/* Take damage */
-//	take_hit(Ind, dam, kb_str, Ind_attacker);
+	//take_hit(Ind, dam, kb_str, Ind_attacker);
 
 	/* Inventory damage */
 	if (!(p_ptr->resist_cold && p_ptr->oppose_cold) && breakable)
