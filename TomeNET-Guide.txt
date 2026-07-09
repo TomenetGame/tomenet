@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 7. July 2026 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 8. July 2026 - written by C. Blue (c_blue@gmx.net)        |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -27957,10 +27957,10 @@ Ammunition
         Vampiric life leech
         Exploding property. NOT AVAILABLE ON 'Magic' AMMO!
             The type of explosion damage is randomly picked from this list:
-            Acid, electricity, fire, cold, poison, light, dark, confusion,
-            plasma, sound, shards, force, inertia, mana, meteor, ice, chaos,
-            nether, nexus, time, gravity, stone-to-mud, teleport away,
-            scare monster, nuke, disintegration, hellfire.
+            Electricity, frost, fire, acid, poison, light, dark, shards, sound,
+            meteor, force, inertia, gravity, chaos, nether, nexus, mana, time,
+            ice, plasma, nuke (radiation), dispel undead, dispel demon,
+            holy fire, hellfire, stone-to-mud, disintegration, detonation.
         Extra +hit and +dam bonus, this caps at +12 hit and +6 dam.
         Either +1 extra damage die sides or +1 extra damage dice.
 Boots
