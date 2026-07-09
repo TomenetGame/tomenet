@@ -4400,16 +4400,16 @@ bool set_food(int Ind, int v) {
 			if (p_ptr->warning_hungry != 2) {
 				p_ptr->warning_hungry = 2;
 				if (p_ptr->prace == RACE_VAMPIRE) {
-					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Drink some blood by killing monsters");
+					msg_print(Ind, "\374\377RWARNING: You are 'starved' from hunger. Drink some blood by killing monsters");
 					msg_print(Ind, "\374\377R         in melee (close combat). Town creatures will work too.");
 				} else if (p_ptr->prace == RACE_ENT) {
-					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Find something to drink or rest");
+					msg_print(Ind, "\374\377RWARNING: You are 'starved' from hunger. Find something to drink or rest");
 					msg_print(Ind, "\374\377R         (\377oSHIFT+r\377R) on earth/dirt/grass/water floor tiles for a while.");
 				} else {
-					msg_print(Ind, "\374\377RWARNING: You are 'weak' from hunger. Press \377oSHIFT+e\377R to eat something");
+					msg_print(Ind, "\374\377RWARNING: You are 'starved' from hunger. Press \377oSHIFT+e\377R to eat something");
 					msg_print(Ind, "\374\377R         or read a 'scroll of satisfy hunger' if you have one.");
 				}
-				s_printf("warning_hungry(weak): %s\n", p_ptr->name);
+				s_printf("warning_hungry(starved): %s\n", p_ptr->name);
 			}
 			break;
 

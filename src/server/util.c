@@ -6426,7 +6426,7 @@ void toggle_afk(int Ind, char *msg)
 		/* still too many starvations, so give a warning - C. Blue */
 		if (p_ptr->food < PY_FOOD_ALERT) {
 			p_ptr->paging = 6; /* add some beeps, too - mikaelh */
-			msg_print(Ind, "\374\377RWARNING: Going AFK while hungry or weak can result in starvation! Eat first!");
+			msg_print(Ind, "\374\377RWARNING: Going AFK while hungry or starved can result in starvation! Eat first!");
 		}
 
 		/* Since Mark's mimic died in front of Minas XBM due to this.. - C. Blue */
