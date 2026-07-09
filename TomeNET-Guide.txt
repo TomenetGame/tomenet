@@ -27731,6 +27731,14 @@ DOESN'T WORK ON EGOS / ARTS:
  creation does not affect whether or not the resulting randart will actually be
  exploding or not, so it does not matter.
 
+MAGIC AMMUNITION CANNOT BECOME EXPLODING:
+
+-Ammo types that are 'magic' in name, ie auto-returning and non-enchantable,
+ (those are: 'Magic Shot', 'Magic Arrow', 'Magic Bolt',)
+ _can_ be turned into a randart, but they have a potentially significant
+ drawback:
+ They cannot obtain an 'exploding' property.
+
 THE BASE ITEM MATTERS, ENCHANTMENTS DO NOT (except for jewelry, see below):
 
 -You will want to use the cheapest base item version you can find, because
@@ -27947,13 +27955,12 @@ Ammunition
         All SLAY mods
         All KILL (*SLAY*) mods
         Vampiric life leech
-        Exploding property. The type of explosion damage is randomly picked
-                            from this list:
-                            Acid, electricity, fire, cold, poison,
-                            light, dark, confusion, plasma, sound, shards,
-                            force, inertia, mana, meteor, ice, chaos, nether,
-                            nexus, time, gravity, stone-to-mud, teleport away,
-                            scare monster, nuke, disintegration, hellfire.
+        Exploding property. NOT AVAILABLE ON 'Magic' AMMO!
+            The type of explosion damage is randomly picked from this list:
+            Acid, electricity, fire, cold, poison, light, dark, confusion,
+            plasma, sound, shards, force, inertia, mana, meteor, ice, chaos,
+            nether, nexus, time, gravity, stone-to-mud, teleport away,
+            scare monster, nuke, disintegration, hellfire.
         Extra +hit and +dam bonus, this caps at +12 hit and +6 dam.
         Either +1 extra damage die sides or +1 extra damage dice.
 Boots

@@ -8107,11 +8107,19 @@ static bool project_m(int Ind, int who, int y_origin, int x_origin, int r, struc
 				m_ptr->mspeed -= t;
 				if (m_ptr->mspeed < m_ptr->speed - 10) m_ptr->mspeed = m_ptr->speed - 10;
 
+ #if 0 /* Problem is: If player has already a speed spell up, its duration might be shortened this way - don't see a good solution atm :/ */
 				// incrementally haste player, obey +10 limit
 				t = p_ptr->fast_mod + t; // stackable
 				if (t > 10) t = 10; // +10 speed limit
 				if (t > dam / 5) t = dam / 5 + 1; // further limit low level runespells
 				set_fast(p_ptr->Ind, t + randint(5), t); // very short, but sustainable
+ #else /* Just apply the bonus if not already hasted: */
+				if (!p_ptr->fast) {
+					if (t > 10) t = 10; // +10 speed limit
+					if (t > dam / 5) t = dam / 5 + 1; // further limit low level runespells
+					set_fast(p_ptr->Ind, t + randint(5), t); // very short, but sustainable
+				}
+ #endif
 			}
 		}
 #endif

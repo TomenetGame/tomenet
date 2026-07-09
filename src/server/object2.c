@@ -5381,15 +5381,16 @@ void set_rod_cd(object_type *o_ptr, player_type *p_ptr) {
 
 
 s16b ammo_explosion[] = { /* Make sure to keep init_GF_names() consistent so it sets all the GF-names listed here! */
-    GF_ELEC,		GF_POIS,		GF_ACID,		GF_COLD,
-    GF_FIRE,		GF_PLASMA,		GF_LITE,		GF_DARK,
-    GF_SHARDS,		GF_SOUND,		GF_CONFUSION,		GF_FORCE,
-    GF_INERTIA,		GF_MANA,		GF_METEOR,		GF_ICE,
-    GF_CHAOS,		GF_NETHER,		GF_NEXUS,		GF_GRAVITY,
-    GF_KILL_WALL,	GF_DISP_UNDEAD,		GF_STUN,		GF_HOLY_FIRE,
-    GF_DISINTEGRATE,	GF_HELLFIRE,		GF_DETONATION,		GF_NUKE,
-    /*GF_BLIND,*/	GF_DISP_DEMON,		/*GF_STASIS,		GF_STOP,*/	/* Need to carefully test stasis and stop effects first */
-    /*GF_FLARE,*/	/*GF_ANNIHILATION*/		/* flare is too weak, annihilation doesn't use normal damage number, too odd to workaround */
+    GF_ELEC,		GF_COLD,		GF_FIRE,		GF_ACID,		GF_POIS,
+    GF_LITE,		GF_DARK,		GF_SHARDS,		GF_SOUND,
+    GF_METEOR,		GF_FORCE,		GF_INERTIA,		GF_GRAVITY,
+    GF_CHAOS,		GF_NETHER,		GF_NEXUS,		GF_MANA,		GF_TIME, /* Re-added time, not sure why it wasn't in the list anymore -  C. Blue */
+    GF_ICE,		GF_PLASMA,		GF_NUKE,
+    GF_DISP_UNDEAD,	GF_DISP_DEMON,		GF_HOLY_FIRE,		GF_HELLFIRE,
+    GF_KILL_WALL,	GF_DISINTEGRATE,	GF_DETONATION,
+    /*GF_CONFUSION,	GF_BLIND,		GF_STUN,*/	/* Seems odd to convey these status effects via ammo. Should rely on lite/dark/force effects to _cause_ these, instead. */
+    /*GF_STASIS,	GF_STOP,*/				/* Need to carefully test stasis and stop effects first */
+    /*GF_FLARE,		GF_ANNIHILATION*/			/* Flare is too weak, Annihilation doesn't use normal damage number, too odd to workaround */
 };
 /* Add random explosion-power to ammunition, via o_ptr or a_ptr */
 void ammo_add_explosion(s16b *pval) {
