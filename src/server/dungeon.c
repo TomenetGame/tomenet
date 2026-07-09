@@ -2895,12 +2895,18 @@ static void process_day_and_night() {
 	if (!(turn % HOUR)) {
 #endif
 		/* Day breaks - not during Halloween {>_>} or during NEW_YEARS_EVE (fireworks)! -- covered by IS_DAY now. */
-		if (sunrise)
+		if (sunrise) {
 			sun_rises();
+			/* Even if sun state was suppressed by Halloween, still regenerate wilderness monsters, for the day~ */
+			lively_wild(WILD_F_INHABITED);
+		}
 		/* Night falls - but only if it was actually day so far:
 		   During HALLOWEEN as well as NEW_YEARS_EVE it stays night all the time >:) (see above) */
-		else if (nightfall && !night_surface)
+		else if (nightfall && !night_surface) {
 			night_falls();
+			/* Regenerate wilderness monsters, for the night~ */
+			lively_wild(WILD_F_INHABITED);
+		}
 #ifdef EXTENDED_COLOURS_PALANIM
 	}
 
