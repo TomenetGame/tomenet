@@ -174,14 +174,14 @@ int ListAccounts(int fpos) {
 			case 'e':
 			case 'E':
 				getstring("New email: ", newmail, 80);
-				strncpy(c_acc.email, newmail, 79);
+				snprintf(c_acc.email, sizeof(c_acc.email), "%s", newmail);
 				change = 1;
 				break;
 			case 'h':
 			case 'H':
 				getstring("New password: ", newpass, 20);
 				crypass = t_crypt(newpass, c_acc.name);
-				strncpy(c_acc.pass, crypass, 19);
+				snprintf(c_acc.pass, sizeof(c_acc.pass), "%s", crypass);
 				change = 1;
 				break;
 			case 'l':
@@ -436,14 +436,14 @@ void editor() {
 				case 'e':
 				case 'E':
 					getstring("New email: ", newmail, 80);
-					strncpy(c_acc.email, newmail, 79);
+					snprintf(c_acc.email, sizeof(c_acc.email), "%s", newmail);
 					change = 1;
 					break;
 				case 'h':
 				case 'H':
 					getstring("New password: ", newpass, 20);
 					crypass = t_crypt(newpass, c_acc.name);
-					strncpy(c_acc.pass, crypass, 19);
+					snprintf(c_acc.pass, sizeof(c_acc.pass), "%s", crypass);
 					change = 1;
 					break;
 				case 'Q':
@@ -664,7 +664,7 @@ int findacc(bool next) {
 	if (!next) {
 		statinput("Find which name: ", sname, 30);
 #ifdef PARTIAL_ANYWHERE
-		strcpy(sname2, sname);
+		snprintf(sname2, sizeof(sname2), "%s", sname);
 #endif
 		/* its always upper, and admins can be lazy */
 		sname[0] = toupper(sname[0]);
@@ -765,7 +765,7 @@ static char *t_crypt(char *inbuf, const char *salt) {
  #if 0 /* doesn't do anything */
 	char setting[9];
 	setting[0] = '_';
-	strncpy(&setting[1], salt, 8);
+	snprintf(&setting[1], 8, "%s", salt);
  #endif
   #if 1 /* fix for len-1 names */
 	char setting[3];
