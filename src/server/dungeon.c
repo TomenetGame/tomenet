@@ -11654,7 +11654,7 @@ redo_world:
 	}
 
 	/* Initialize wilderness 'level' */
-	init_wild_info_aux(0,0);
+	init_wild_info_aux(0, 0);
 
 
 	/* Flash a message */
@@ -11726,6 +11726,22 @@ redo_world:
 #ifdef FIREWORK_DUNGEON
 	init_firework_dungeon();
 #endif
+
+	/* Log 'unfindable' uniques */
+	{
+		monster_race *r_ptr;
+		int i, found = 0;
+
+		for (i = 0; i < MAX_R_IDX - 1 ; i++) {
+			r_ptr = &r_info[i];
+			if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+			if (!r_ptr->max_num) {
+				s_printf(" max_num==0 for unique %d (%s)\n", i, r_name + r_ptr->name);
+				found++;
+			}
+		}
+		if (found) s_printf("%d uniques are 'unfindable'.\n", found);
+	}
 
 	cfg.runlevel = 6;		/* Server is running */
 
