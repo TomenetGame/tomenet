@@ -2562,7 +2562,7 @@ void update_mon(int m_idx, bool dist) {
 				/* Hack -- Count "fresh" sightings */
 				if (!is_admin(p_ptr)) {
 					if (!r_ptr->r_sights && (r_ptr->flags1 & RF1_UNIQUE)) s_printf("Unique 1st sight: %d by %s (%s).\n", m_ptr->r_idx, p_ptr->name, p_ptr->accountname);
-					r_ptr->r_sights++;
+					if (r_ptr->r_sights < 2000000000) r_ptr->r_sights++;
 				}
 
 				/* Disturb on appearance */
@@ -3563,6 +3563,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 9\n");
 		if ((r_ptr->cur_num >= r_ptr->max_num && !in_irondeepdive(wpos))
 		    || already_on_level) {
 			/* Cannot create */
+			if (!r_ptr->max_num) s_printf("place_monster_one() failed (47) and max_num was 0 for r_idx %d!\n", r_idx);
 			return(47);
 		}
 	}
@@ -4114,9 +4115,8 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool forbi
 
 	/* Place one monster, or fail */
 	if ((res = place_monster_one(wpos, y, x, r_idx, forbid_ego ? 0 : pick_ego_monster(r_idx, dlevel), 0, slp, clo, clone_summoning)) != 0) {
-		// DEBUG
-		/* s_printf("place_monster_one failed at (%d, %d, %d), y = %d, x = %d, r_idx = %d, feat = %d\n",
-			wpos->wx, wpos->wy, wpos->wz, y, x, r_idx, zcave[y][x].feat); */
+		/* s_printf("place_monster_one failed (%d) at (%d, %d, %d), y = %d, x = %d, r_idx = %d, feat = %d\n",
+			res, wpos->wx, wpos->wy, wpos->wz, y, x, r_idx, zcave[y][x].feat); // DEBUG */
 		/* Failure (!=0) */
 		return(res);
 	}
@@ -4962,7 +4962,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	if (!r_idx) return(FALSE);
 
 	/* Attempt to place the monster (awake, allow groups) */
-	if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, allow_sidekicks ? TRUE : FALSE, s_clone, clone_summoning) != 0) return(FALSE);
+	if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, allow_sidekicks ? TRUE : FALSE, s_clone, clone_summoning)) return(FALSE);
 
 	/* Success */
 	return(TRUE);
@@ -4971,7 +4971,7 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 /* summon a specific race near this location */
 /* summon until we can't find a location or we have summoned size */
 bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int s_clone, unsigned char size) {
-	int c, i, x, y;
+	int c, i, x, y, ret;
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -5004,9 +5004,11 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 		if (i == 20) return(FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
-		if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE,
-		    s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0) != 0)
+		if ((ret = place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, FALSE,
+		    s_clone == 101 ? 100 : s_clone, s_clone == 101 ? 1000 : 0))) {
+			s_printf("summon_specific_race() failed, place_monster_aux() returned %d\n", ret);
 			return(FALSE);
+		}
 
 	}
 
@@ -5049,7 +5051,7 @@ bool summon_detailed_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 		if (i == 20) return(FALSE);
 
 		/* Attempt to place the monster (awake, don't allow groups) */
-		if (place_monster_one(wpos, y, x, r_idx, e_idx,0,0,0,0) != 0) return(FALSE);
+		if (place_monster_one(wpos, y, x, r_idx, e_idx, 0, 0, 0, 0)) return(FALSE);
 
 	}
 

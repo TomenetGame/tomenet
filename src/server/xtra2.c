@@ -12919,7 +12919,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			/* Count kills in all lives */
 			if (!is_admin(p_ptr)) {
 				if (!r_ptr->r_tkills && (r_ptr->flags1 & RF1_UNIQUE)) s_printf("Unique 1st kill: %d by %s (%s).\n", m_ptr->r_idx, p_ptr->name, p_ptr->accountname);
-				r_ptr->r_tkills++;
+				if (r_ptr->r_tkills < 2000000000) r_ptr->r_tkills++;
 			}
 
 			/* Hack -- Auto-recall */

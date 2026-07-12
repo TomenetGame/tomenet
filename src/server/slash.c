@@ -7925,10 +7925,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
 					if (!r_ptr->r_sights && r_ptr->r_tkills) {
 						r_ptr->r_sights = 1;
+						msg_format(Ind, "Set sights=1 for unique %d (%s)", i, r_name + r_ptr->name);
 						fixed++;
 					}
 				}
 				msg_format(Ind, "%d uniques were fixed from being 'unseen' despite killed, now 'seen'.", fixed);
+
+				fixed = 0;
+				for (i = 0; i < MAX_R_IDX - 1 ; i++) {
+					r_ptr = &r_info[i];
+					if (!(r_ptr->flags1 & RF1_UNIQUE)) continue;
+					if (!r_ptr->max_num) {
+						r_ptr->max_num = 1;
+						msg_format(Ind, "Set max_num=1 for unique %d (%s)", i, r_name + r_ptr->name);
+						fixed++;
+					}
+				}
+				msg_format(Ind, "%d uniques were fixed from being 'unfindable' to 'findable'.", fixed);
 				return;
 			}
 			else if (prefix(messagelc, "/aunique")) {
@@ -8064,6 +8077,30 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				msg_format(Ind, "cur_num fields fixed for all %s.", uniques_only ? "uniques" : "monsters");
+				return;
+			}
+			else if (prefix(messagelc, "/finduni")) { /* locate a unique monster in the game world */
+				monster_type *m_ptr;
+
+				if (tk != 1) {
+					msg_print(Ind, "Usage: /finduni <r_idx of unique monster>");
+					return;
+				}
+				if (k < 1 || k >= max_r_idx) {
+					msg_format(Ind, "Error: r_idx must be within 1 and %d", max_r_idx - 1);
+					return;
+				}
+				if (!(r_info[k].flags1 & RF1_UNIQUE)) {
+					msg_format(Ind, "Error: Monster must have the UNIQUE flag.");
+					return;
+				}
+
+				for (i = m_max - 1; i >= 1; i--) {
+					if (m_list[i].r_idx != k) continue;
+					m_ptr = &m_list[i];
+
+					msg_format(Ind, "  (%d,%d,%d) [%d,%d]", m_ptr->wpos.wx, m_ptr->wpos.wy, m_ptr->wpos.wz, m_ptr->fx, m_ptr->fy);
+				}
 				return;
 			}
 			else if (prefix(messagelc, "/reload-config") || prefix(messagelc, "/cfg")) {
