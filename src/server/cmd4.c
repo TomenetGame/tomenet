@@ -644,7 +644,7 @@ void do_cmd_check_uniques(int Ind, int line, char *srcstr, int mode, int Ind2) {
 			if (!(pt_ptr->uniques_alive) && r_ptr->r_sights) {
 				if (!ok) {
 					if (r_ptr->r_tkills) fprintf(fff, " somebody.");
-					else fprintf(fff, " \377Dnobody.");
+					else fprintf(fff, " \377unobody.");
 				}
 			}
 
