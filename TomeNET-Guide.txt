@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. July 2026 - written by C. Blue (c_blue@gmx.net)        |
+| Latest update: 15. July 2026 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4605,6 +4605,32 @@ Compilation is straight-forward and similar to Linux:
   You can just pinch-zoom out the display, which will shrink the termux font!
   Or you can switch the on-screen keyboard to 'floating' mode, which means it
   no longer takes up screen estate at all, but hovers 'over' any content.
+
+- If there is no audio:
+  First, try exporting this environment variable:
+    export SDL_AUDIODRIVER=pulseaudio
+  Next, if you used to have sound and it stopped working after an Android
+  sytem update, this loss of sound in SDL via Termux usually stems from those
+  updates (e.g., One UI 6.1+) breaking PulseAudio's OpenSL ES backend (or proot
+  environments failing to hook into the local Termux audio server).
+  You can restore audio by forcing PulseAudio to use the AAudio backend and
+  properly configuring the environment:
+  1. Route PulseAudio to AAudio:
+    If you are on an Android device running newer OS versions,
+    the module-sles-sink backend often breaks. You can switch PulseAudio's
+    output to AAudio. Open Termux and edit your PulseAudio configuration,
+    eg via 'nano' editor:
+      nano $PREFIX/etc/pulse/default.pa
+    Scroll down to find the 'module-udev-detect' and 'module-detect' lines.
+    Below them, add the following line manually:
+      load-module module-aaudio-sink
+    Save and exit (in 'nano' that's Ctrl+O, Enter, then Ctrl+X).
+  2. Kill and Restart PulseAudio:
+    Ensure no hung sessions are interfering, run:
+      pulseaudio -k
+    to kill any active instances.
+    Now start it again by running:
+      pulseaudio --start --exit-idle-time=-1
 
 - Optionally enable big_map mode (double-size main screen):
   The GCU TomeNET client newer than 4.9.2 (get the latest github code if your
