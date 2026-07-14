@@ -13999,6 +13999,43 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				quest_deactivate(k);
 				return;
 			}
+			else if (prefix(messagelc, "/qrestart")) { /* stop and then activate a quest again */
+				if (tk != 1) {
+					msg_print(Ind, "Usage: /qrestart <q_idx|*>");
+					return;
+				}
+
+				/* 'qstop' */
+				if (token[1][0] == '*') {
+					for (i = 0; i < max_q_idx; i++) {
+						if (q_info[i].active) {
+							msg_format(Ind, "\377rDeactivating quest %d (%s).", i, q_info[i].codename);
+							quest_deactivate(i);
+						}
+					}
+				}
+				if (q_info[k].active) {
+					msg_format(Ind, "\377rDeactivating quest %d (%s).", k, q_info[k].codename);
+					quest_deactivate(k);
+				}
+
+				/* qstart */
+				if (token[1][0] == '*') {
+					for (i = 0; i < max_q_idx; i++) {
+						if (!q_info[i].active) {
+							msg_format(Ind, "\377GActivating quest %d (%s).", i, q_info[i].codename);
+							quest_activate(i);
+						}
+					}
+				}
+				if (!q_info[k].active) {
+					msg_format(Ind, "\377GActivating quest %d (%s).", k, q_info[k].codename);
+					if (!quest_activate(k)) msg_format(Ind, "\377oFailed!");
+					else msg_print(Ind, "\377gOk.");
+				}
+
+				return;
+			}
 			else if (prefix(messagelc, "/qstage")) { /* change a quest's stage */
 				if (tk != 2) {
 					msg_print(Ind, "Usage: /qstage <q_idx> <stage>");
