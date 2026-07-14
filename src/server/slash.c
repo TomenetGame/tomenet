@@ -8365,7 +8365,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				WIPE(o_ptr, object_type);
 
 				if (!tk) {
-					msg_print(Ind, "\377oUsage:    /awish [<object symbol>][<#skip>:][<#skip>:]<artifact name>");
+					msg_print(Ind, "\377oUsage:    /awish [<object symbol>][<#skip>:]<artifact name>");
 					msg_print(Ind, "\377oExample:  /awish 1:Dungeon Master");
 					msg_print(Ind, "\377oExample:  /awish ]Dungeon Master");
 					return;
