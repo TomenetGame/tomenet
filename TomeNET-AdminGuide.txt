@@ -124,7 +124,8 @@ immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
 /rec            The recall command works almost-instantly for admins and has no
                 range limit. Admins also do not need any recall items/spells,
                 they can use this command freely, at any time.
-                They can also use an extra syntax, adding '/x,y' for a specific
+                In addition to the normal syntax detailed in the TomeNET-Guide,
+                admins can also use extra syntax, adding '/x,y' for a specific
                 grid in the target worldmap sector, eg:
                 /rec 32,32/15,15
 
@@ -137,8 +138,8 @@ immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
                 recommend using this function anymore; I created three simpler,
                 yet also more powerful versions, these are:
 
-/nwish [[<#skip>]:][#amount ][\\<prefix-ego>\\]<item name>[\\<postfix-ego>]
-        [+<bpval>][^<pval>]
+/nwish [<object symbol>][<#skip>:][#amount ]
+       [\\<prefix-ego>\\]<item name>[\\<postfix-ego>] [+<bpval>][^<pval>]
                 Creates an item and puts it into your inventory.
 
                 Common usage examples for XP/stat potions:
@@ -153,27 +154,38 @@ immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
                 /nwish 17:cha     -- Potion of Charisma, lots of CHAin mail
                                      and stuff before it >:) - or:
                 /nwish 1:chari    -- still have to skip 'Amulet of Charisma'
+                /nwish !chari     -- force object type '!' aka potions only,
+                                     resulting in a Potion of Charisma again.
 
                 Or for multiple items:
                 /nwish 1:3 chari  -- creates 3 Potions of Charisma.
 
-/awish [<#skip>:]<artifact name>
+/awish [<object symbol>][<#skip>:]<artifact name>
                 Creates a static artifact (true artifact) and puts it into your
-                inventory.
+                inventory. Example:   /awish ]Dungeon Master
 
 /swish [<#skip>:][#amount ]<spell name>
                 Creates a specific spell scroll and puts it into your
-                inventory.
+                inventory. Example:   /swish obliteration
 
-/qinf           Prints information about all available quests. These are
-                defined in 'lib/game/q_info.txt' and optionally additionally in
-                'lib/scpt/quests.lua'.
+/qinf [quest index]
+                Prints information about all available quests or detailed info
+                about a specific quest.
+                Quests are defined in 'lib/game/q_info.txt' and optionally
+                additionally in 'lib/scpt/quests.lua'.
 
-/qstart         Starts (enables) a quest that is currently inactive.
+/qstart <quest index|*>
+                Starts (enables) a quest ('*' for all quests) that is currently
+                inactive.
 
-/qstop          Stops (disables) a quest that is currently active.
-                Chaining the two commands, first '/qstop' then '/qstart' will
-                therefore reset a quest, in case questors disappeared etc.
+/qstop <quest index|*>
+                Stops (disables) a quest ('*' for all quests) that is currently
+                active.
+
+/qrestart <quest index|*>
+                Same as chaining the two commands '/qstop' then '/qstart':
+                This will reset a quest ('*' for all quests); use eg in case a
+                questor disappeared or some other problem broke a quest.
 
 
 
@@ -204,14 +216,19 @@ many others- the properties 'pclass', 'prace', 'ptrait' and 'mode.
 With this knowledge you can manipulate online characters:
 
 Examples of an admin char using LUA scripting:
+
     / player.mode=8     -- sets the character mode of this character to 8,
                            which corresponds to MODE_EVERLASTING (compare file
                            'src/common/defines.h').
+
     / players("Gandalf").pclass=1     -- sets the class of the currently logged
                                          in character 'Gandalf' to 1, which
                                          corresponds to CLASS_MAGE aka 'Istar'
                                          (compare file 'src/common/defines.h'
                                          again).
+
+    / player.ghost=1    -- turns the character into a ghost. (Set to '0'
+                           instead of '1' to make the character alive.)
 
 Note that some LUA changes might not be 'refreshed' instantly in all aspects of
 the live game code in RAM, so sometimes it might be required to for example:
@@ -221,6 +238,12 @@ in order to see the changes.
 
 There is a quirk in LUA: Arrays start at index 1, not 0 (as in C).
 So if you manipulate array elements you might need to add +1 to the index.
+Reason quoted from the interwebs:
+"Lua is descended from Sol, a language designed for petroleum engineers with no
+formal training in computer programming. People not trained in computing think
+it is damned weird to start counting at zero. By adopting 1-based array and
+string indexing, the Lua designers avoided confounding the expectations of
+their first clients and sponsors." (-Reddit et al.)
 
 
 
@@ -230,7 +253,7 @@ Everyone who interacts with the server within the game world uses an 'account',
 defined by login name and login password.
 
 (1.1) The account editor 'accedit'
----------------------------------
+----------------------------------
 Accounts can be moderated and managed with the account editor 'accedit', which
 resides in 'src/account' folder. The compiled 'accedit' binary must be placed
 into the same folder where file 'tomenet.acc' resides, usually 'lib/save'.
@@ -252,7 +275,12 @@ automatically creates a new account for this player.
 These accounts start out as 'invalid', which means they are restricted in
 what they can do and how far they can level up, until they are 'validated'
 by a server administrator character (by using '/val' command, see (1.4))
-or via the 'accedit' program.
+or via the 'accedit' program. Invalid accounts, also called 'trial mode',
+are restricted in the following ways:
+    - no levelling beyond 25.
+    - no private chatting.
+    - no dropping items.
+    - cannot enter the score board.
 
 Only the first account ever created on a server is not automatically an
 invalid player account, instead it will become...
@@ -263,6 +291,8 @@ invalid player account, instead it will become...
 -------------------------------
 The very first account created on a server will automatically become the
 main administrative account: The "dungeon master" (DM) account.
+Admin accounts cannot enter the score board but they can actually log in with
+multiple characters at the same time, something players are not allowed to do.
 
 All characters on an administrative account will start out with different
 items than players, none of which will be equipped automatically:
@@ -283,8 +313,8 @@ items than players, none of which will be equipped automatically:
                                         die from it.
 - a Dwarven Lantern of Brightness
 - The Shadow Cloak of the Dungeon Master
-- The Goggles of the Dungeon Master     -- This allows a DW (or any char) to
-                                           actually see unseeable DM chars.
+- The Goggles of the Dungeon Master     -- This allows a character to actually
+                                           see otherwise unseeable DM chars.
 - The Scythe of the Dungeon Master      -- This deals monster's HP + 1 to any
                                            monster, thereby one-shotting them,
                                            except if they have NO_DEATH flag.
@@ -350,10 +380,7 @@ These commands can be used by DMs, DWs but also by normal players whose
 accounts were set to 'privileged mode' by an administrator.
 
 /val <name>     Validate a newly created player account, so it can be used for
-                normal gameplay without 'trial mode' restrictions, such as:
-                - no levelling beyond 25.
-                - no private chatting.
-                - no dropping items.
+                normal gameplay without 'trial mode' restrictions, see (1.2).
 
 /inval <name>   Invalidate a player account, reapplying 'trial mode'
                 restrictions. This is for example done on the official servers
@@ -367,23 +394,33 @@ Administrative commands
 -----------------------
 These commands can only be used by administrators (DMs and DWs).
 
-/privilege      Set a player account to 'privileged' mode, unlocking the 3
+Account-elevation commands:
+
+/privilege <account name>
+                Set a player account to 'privileged' mode, unlocking the 3
                 commands listed above. Sometimes, some quests in 'testing'
                 stage might be accessible to privileged players for early
                 testing.
 
-/vprivilege     Set a player account to 'very privileged' mode.
+/vprivilege <account name>
+                Set a player account to 'very privileged' mode.
                 Has no further benefits over privileged mode, but may sometimes
                 allow early testing of new features or commands if available.
 
-/unprivilege    Set a player's account back to non-privileged aka normal.
+/unprivilege <account name>
+                Set a player's account back to non-privileged aka normal.
 
-/makeadmin      Turns a player account into an administrative account
+/makeadmin <account name>
+                Turns a player account into an administrative account
                 (see (1.3) for administrative accounts). All its characters
                 will turn into DM (if same name as account) and DWs.
-                Use with care as this action cannot be undone; instead, you
-                will have to invoke the 'accedit' tool and 'D'elete the account
-                there, to get rid of it again.
+
+                Use with care as this action cannot be undone easily (you'd
+                need to manually change various flags in 'accedit');
+                the easiest way to remove administrator accounts that you don't
+                need anymore is to invoke the 'accedit' tool and just 'D'elete
+                the account there.
+
                 Alternatively to 'accedit' you can also use the admin menu
                 in-game, invoked with ']' key ->Player Commands ->Delete Player
                 which asks for an account name and will delete all characters
@@ -391,14 +428,38 @@ These commands can only be used by administrators (DMs and DWs).
 
 When logged in on an account you can check its status by pressing = A.
 
-/vinv <index>   Validate a specific entry of the list shown by '/linv' command.
+/vinv <index|*> Validate a specific entry of the list shown by '/linv' command.
+                Validates all entries if '*' is specified instead of an index.
 
-/dinv <index>   Discard a specific entry of the list shown by '/linv' command.
+/dinv <index|*> Discard a specific entry of the list shown by '/linv' command.
                 (The account will remain invalid, it's just no longer shown on
                 the 'newly created accounts' list. You can still validate it
                 by using the '/val' command anytime.)
+                Discards all entries if '*' is specified instead of an index.
 
 /clinv          Clears all entries from the list shown by '/linv' command.
+                Same as '/dinv *' except it won't give as much feedback info.
+
+Admin-character-specific commands:
+
+/dmpriv         Invisible Dungeon Masters cannot by chat with privately ie via
+                chat message '<admin name>:<text>'. This command toggles that,
+                so anyone can send private whispers to a DM.
+
+/ta             If used by a DM or DW, it will temporarily turn your character
+                into a normal player character, revoking all admin status.
+                Use the command for a second time to regain admin status.
+
+Level maintenance/building commands:
+
+/geno [*]       Removes all monsters from the current level, except for golems
+                and questors. Specify any parameter to wipe those too.
+
+/cli            Removes all items from the current level except for items in
+                houses, traps, monster inventories or questors.
+/xcli           Removes ALL items from the current level. Use with care!
+
+/untrap         Removes all traps from the current level.
 
 
 
@@ -466,7 +527,27 @@ Keys:
     I        admins can always inspect any item for full knowledge.
     k        admins can destroy any item, including artifacts.
     t   T    admins can take off any items, always.
-    @        admins can see additional info in the players list (location).
+    @        admins can see additional info in the players list, such as:
+             - player's exact location
+             - player's operating system class (Linux/Windows/Mac/Android...)
+             - a yellow 'I' for invalid players
+             - a dark grey 'O' for players using outdated clients; this is
+               actually visible to non-admins ie other players too!
+             - a light grey 'L' is shown for players using clients that still
+               count as 'latest' client even though there is a newer version
+               available already. Basically just means they are still
+               considered playable fine and not outdated. (This can happen if a
+               small maintenance update was released, that doesn't really fully
+               invalidate the previous main release version).
+             - an orange 't' or 'T' means the player is using a 'test client',
+               ie unofficial versions that are just meant for testing new code
+               and usually don't come with any guarantee to work correctly, so
+               use at your own risk.
+               The 't' means that the client's version is newer than the last
+               'latest' version (see light grey 'L' mentioned above),
+               while the 'T' means that the client's version is the latest
+               available version in the codebase (github) and then the 'test'
+               version of that, ie absolutely bleeding edge code.
 
 In shops:
     o        Dungeon Masters will receive item orders immediately on revisiting
