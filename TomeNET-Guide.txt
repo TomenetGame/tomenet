@@ -29625,4 +29625,7 @@ PROBLEM 80: Client compiles fine but crashes on startup with a message:
 Solution:   If your client uses SDL2, make sure you have the "normal" sdl2
             packages installed and NOT the 'sdl2-compat' ones.
 
+PROBLEM 81: On Android, audio stopped working after an Android sytem update.
+Solution:   Check (2.1e) for exporting SDL_AUDIODRIVER and "AAudio" fix.
+
 ===============================================================================
