@@ -3871,17 +3871,16 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
    In that case, the player won't get the enter-a-keyword-prompt. Instead, our
    caller function quest_interact() will prompt him to acquire the quest first.
 
-   'force_prompt' is set if we're called from quest_interact(), and will always
-   give us a keyword-prompt even though there are no valid ones.
-   Assumption is that if we're called from quest_interact() we bumped on purpose
-   into the questor because we wanted to try out a keyword (as a player, we don't
-   know that there maybe are none.. >:D). */
+   'force_prompt' is set if we're called from quest_interact(). If at least one
+   valid keyword exists, this gives us a keyword-prompt even if none is obvious.
+   This lets players intentionally bump a questor to try hidden keywords without
+   opening an input prompt for one-way dialogue. */
 static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire, bool force_prompt) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i, k, stage = quest_get_stage(Ind, q_idx);
+	int i, k, first_keyword = -1, stage = quest_get_stage(Ind, q_idx);
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage), *q_stage_talk = q_stage;
-	bool anything, obvious_keyword = FALSE, more_hack = FALSE, yn_hack = FALSE;
+	bool anything, has_keyword = FALSE, obvious_keyword = FALSE, more_hack = FALSE, yn_hack = FALSE;
 	char text[MAX_CHARS * 2];
 
 	/* hack: reuse another stage's dialogue for this stage too? */
@@ -3945,28 +3944,42 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	        So we leave it to the player to bump into the questor (->force_prompt) if he
 	        wants to try and find out secret keywords.. */
 
-	/* Also we scan here for "~" hack keywords. */
-	for (i = 0; i < q_ptr->keywords; i++)
-		if (q_ptr->keyword[i].stage_ok[stage] &&
-		    q_ptr->keyword[i].questor_ok[questor_idx]
-		    && !q_ptr->keyword[i].any_stage/* and it mustn't use a wildcard stage. that's not sufficient. */
-		    )
-			break;
-	if (q_ptr->keyword[i].keyword[0] == 'y' &&
-	    q_ptr->keyword[i].keyword[1] == 0)
+	/* Find keywords the current player can actually use here. Any-stage
+	   keywords do not prompt passively, but remain available on explicit bump. */
+	for (i = 0; i < q_ptr->keywords; i++) {
+		qi_keyword *q_key = &q_ptr->keyword[i];
+
+		if (q_key->admin_only && !is_admin(p_ptr)) continue;
+		if (!q_key->stage_ok[stage] || !q_key->questor_ok[questor_idx]) continue;
+		if ((q_key->flags & quest_get_flags(Ind, q_idx)) != q_key->flags) continue;
+
+		has_keyword = TRUE;
+		if (!q_key->any_stage && first_keyword == -1) first_keyword = i;
+	}
+
+	/* A W-only interaction ends after displaying the questor's text.
+	   Keep talk_focus: quest_set_stage() may hand out B-items after dialogue. */
+	if (!has_keyword) return;
+
+	if (first_keyword != -1 &&
+	    q_ptr->keyword[first_keyword].keyword[0] == 'y' &&
+	    q_ptr->keyword[first_keyword].keyword[1] == 0)
 		yn_hack = TRUE;
 
-	/* ..continue scanning, now for press-SPACEBAR-for-more hack */
-	for (; i < q_ptr->keywords; i++)
-		if (q_ptr->keyword[i].stage_ok[stage] &&
-		    q_ptr->keyword[i].questor_ok[questor_idx]
-		    && !q_ptr->keyword[i].any_stage/* and it mustn't use a wildcard stage. that's not sufficient. */
-		    && q_ptr->keyword[i].keyword[0] == 0) {
+	/* Scan for the press-SPACEBAR-for-more hack. */
+	for (i = 0; i < q_ptr->keywords; i++) {
+		qi_keyword *q_key = &q_ptr->keyword[i];
+
+		if (q_key->admin_only && !is_admin(p_ptr)) continue;
+		if (!q_key->stage_ok[stage] || !q_key->questor_ok[questor_idx]) continue;
+		if ((q_key->flags & quest_get_flags(Ind, q_idx)) != q_key->flags) continue;
+		if (!q_key->any_stage && q_key->keyword[0] == 0) {
 			more_hack = TRUE;
 			break;
 		}
+	}
 
-	if (force_prompt) { /* at least 1 keyword available? */
+	if (force_prompt) {
 		/* hack: if 1st keyword is "~", display a "more" prompt */
 		if (more_hack)
 			Send_delayed_request_str(Ind, RID_QUEST + q_idx, "? (blank for more)> ", "");
