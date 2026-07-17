@@ -92,6 +92,8 @@ V:1.0.0
 # optional target location where the player has to move after having cleared the goals, to get them credited.
 # This can also be specified without any kill/retrieve goals, in which case it becomes a simple 'travel-to' goal:
 # (optional) M:stage:goal#:deliver to questor (takes precedence, -1 for none):deliver to wpos wx:wy:wz:deliver to terrain type:deliver to pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
+# For questor delivery, the questor index must match the Q-line index of the questor being interacted with.
+# A value of -1 disables questor delivery and uses the configured location instead.
 
 # (optional) Z:stage:goal:changeflags (flags that get set/cleared when that goal is cleared)
 # (up to 5x) G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here) to progress to next stage
@@ -424,3 +426,86 @@ yR:-://quest_towneltalk("$$c", -2)
 
 #Talk to a roaming guard who patrols Menegroth
 #N5:menegguard:C. Blue:Menegroth Patrol:-1:3:1
+
+
+# Bree guard quest, rebuilt stage by stage.
+N:5:breeguard1:Svechnik:An Errand for the Guard:-1:2:0
+C:0
+I:0:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
+T:1:1:1:1:1:1:1:1:1:-1:-1
+
+# Questor 0, the guard who offers the quest in Bree.
+Q:1:1:863:0:0:863:C:-1:-1:the Bree guard:1
+L:0:0:0:32:32:0:0:117:41:0:-:0:0
+F:0:1:1:0:1:0:0
+
+# Questors 1 and 2, guards on the first floor of the Training Tower.
+# This server cannot safely process S-lines, so they are spawned with the quest
+# and only provide their relevant dialogue to players who reach stage 1.
+Q:1:1:863:0:0:863:C:-1:-1:the tower guard:1
+L:4:0:0:-1:-1:-1:0:40:20:5:-:0:0
+Ld:1:1:30
+F:0:0:1:0:1:0:0
+
+Q:1:1:863:0:0:863:C:-1:-1:the tower guard:1
+L:4:0:0:-1:-1:-1:0:42:20:5:-:0:0
+Ld:1:1:30
+F:0:0:1:0:1:0:0
+
+U:4:0:0
+
+# Stage 0, offer the quest. The first keyword is deliberately not "y", so the
+# server uses an escapable text prompt instead of its mandatory yes/no prompt.
+W:0:0:0:-:Hail, $$T. I could use your help.
+W:0:0:0:-:Two fellow guards left Bree to inspect the Training Tower.
+W:0:0:0:-:I need someone to carry a bundle of enchantment scrolls to them.
+W:0:0:0:-:Will you [[accept]] this task and take the scrolls to my colleagues?
+Y:0:0:-:*accept*:-:1
+Y:0:0:-:*yes*:-:1
+Y:0:0:-:*later*:-:255
+y:0:0:-:*accept*
+yY:*yes*
+yR:-:Good. Take this bundle and follow the south-eastern path from Bree.
+yR:-:The Training Tower entrance is marked by a green '<' symbol.
+y:0:0:-:*later*
+yR:-:Very well. Speak to me again if you change your mind.
+x:0:-:The Bree guard needs someone to carry enchantment scrolls to the Training Tower.
+
+# Stage 1, silently advance after acceptance so stage 2 dialogue is not repeated.
+A:1:-1:0:2:0:-1:0:1:-:-1:0:0
+
+# Stage 2, hand over the bundle to the first Training Tower guard.
+B:2:1:?:w:10:1:& Bundle~ of Enchantment Scrolls
+Bl:2:0:0:0:0:0:0:0:0:0:0:0:-:0:0
+r:2:1:0:1:0
+rI:2:1:127:2
+rV:2:1:1:-9999:-:-1:-1:-1
+M:2:2:1:-1:-1:-1:0:0:0:0:-:0:0
+G:2:3:2
+W:0:2:0:-:Please find my colleagues in the Training Tower and give them the bundle.
+W:1:2:0:-:Halt. Are those the supplies sent from Bree?
+W:1:2:0:-:Hand me the bundle and I will see it distributed.
+W:2:2:0:-:Speak with my companion. He is in charge of our supplies.
+x:2:-:Deliver the bundle of enchantment scrolls to the guards in the Training Tower.
+
+# Stage 3, return to the original Bree guard for the reward.
+W:1:3:0:-:Thank you for bringing the scrolls from Bree.
+W:1:3:0:-:We have everything we need now. Please return to the Bree guard and tell him the delivery is complete.
+M:3:1:0:-1:-1:-1:0:0:0:0:-:0:0
+G:3:4:1
+x:3:-:Return to the Bree guard to receive your reward.
+
+# Stage 4, final reward. Each R-line creates one item.
+W:0:4:0:-:You made it back. Thank you for delivering those scrolls.
+W:0:4:0:-:My colleagues sent word that the bundle reached them safely.
+W:0:4:0:-:I have more provisions than I need, so let me share some of my supplies.
+W:0:4:0:-:Take these potions and a little gold from my stores. You have earned them.
+R:4:71:34:0:0:0:0:0:0:0:0:0:0:0:0
+R:4:71:34:0:0:0:0:0:0:0:0:0:0:0:0
+R:4:71:34:0:0:0:0:0:0:0:0:0:0:0:0
+R:4:71:34:0:0:0:0:0:0:0:0:0:0:0:0
+R:4:71:34:0:0:0:0:0:0:0:0:0:0:0:0
+R:4:71:26:0:0:0:0:0:0:0:0:0:0:0:0
+R:4:71:26:0:0:0:0:0:0:0:0:0:0:0:0
+R:4:0:0:0:0:0:0:0:0:0:0:0:100:0:0
+x:4:-:You delivered the enchantment scrolls and received the Bree guard's reward.
