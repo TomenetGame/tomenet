@@ -541,6 +541,11 @@ void compact_objects(int size, bool purge) {
 			         the dungeon floor might've gotten deallocated already. */
 			if (o_ptr->questor) continue;
 
+#ifdef MONSTER_INVENTORY
+			/* Keep the inventory of a detached monster questor with it. */
+			if (o_ptr->held_m_idx && m_list[o_ptr->held_m_idx].questor) continue;
+#endif
+
 			/* If 'purge', remove all unowned items on unallocated world surface sectors that aren't marked as never-remove (ie admin-dropped): */
 			if ((!o_ptr->wpos.wz && (!purge || o_ptr->owner || o_ptr->marked2 == ITEM_REMOVAL_NEVER)) || getcave(&o_ptr->wpos))
 			    continue;
@@ -876,6 +881,14 @@ void wipe_o_list_special(struct worldpos *wpos) {
 		/* Skip objects not on this depth */
 		if (!inarea(&o_ptr->wpos, wpos))
 			continue;
+
+		/* Keep object questors detached while their floor is unallocated. */
+		if (o_ptr->questor) continue;
+
+#ifdef MONSTER_INVENTORY
+		/* Preserve the inventory and status of detached monster questors too. */
+		if (o_ptr->held_m_idx && m_list[o_ptr->held_m_idx].questor) continue;
+#endif
 
 		/* Mega-Hack -- preserve artifacts */
 		/* Hack -- Preserve unknown artifacts */

@@ -11996,8 +11996,8 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 		if (wpos->wz) wipe_o_list_special(wpos);
 		else wipe_o_list(wpos);//no reason not to protect house items here, is there?
 
-		/* Wipe the monsters */
-		wipe_m_list(wpos);
+		/* Wipe generated monsters, but keep detached questors intact. */
+		wipe_m_list_special(wpos);
 
 		/* Compact some objects, if necessary */
 		if (o_max >= MAX_O_IDX * 3 / 4)
@@ -12011,6 +12011,9 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 	/* Change features depending on season,
 	   and change lighting depending on daytime */
 	wpos_apply_season_daytime(wpos, zcave);
+
+	/* Restore persistent questors without recreating their state. */
+	if (wpos->wz) reattach_questors(wpos);
 
 	/* Dungeon level ready */
 	server_dungeon = TRUE;

@@ -774,6 +774,10 @@ void wipe_m_list_special(struct worldpos *wpos) {
 
 		if (!inarea(&m_ptr->wpos,wpos)) continue;
 
+		/* Keep questors detached while their floor is unallocated.
+		   generate_cave() will reattach the same monster instance. */
+		if (m_ptr->questor) continue;
+
 		if (season_halloween && m_ptr->r_idx == RI_PUMPKIN) {
 			great_pumpkin_duration = 0;
 			great_pumpkin_timer = rand_int(2); /* fast respawn if not killed! */
