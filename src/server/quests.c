@@ -1295,6 +1295,149 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	return(TRUE);
 }
 
+static bool questor_reattach_grid(cave_type **zcave, dun_level *l_ptr, int *x, int *y, int m_idx) {
+	int cx, cy, best_x = -1, best_y = -1, best_distance = 9999;
+
+	if (in_bounds_floor(l_ptr, *y, *x) &&
+	    cave_floor_bold(zcave, *y, *x) &&
+	    !(f_info[zcave[*y][*x].feat].flags1 & FF1_PERMANENT) &&
+	    (m_idx ? (zcave[*y][*x].m_idx == 0 || zcave[*y][*x].m_idx == m_idx) : TRUE))
+		return(TRUE);
+
+	for (cy = 1; cy < l_ptr->hgt - 1; cy++) {
+		for (cx = 1; cx < l_ptr->wid - 1; cx++) {
+			int d;
+
+			if (!cave_floor_bold(zcave, cy, cx)) continue;
+			if (f_info[zcave[cy][cx].feat].flags1 & FF1_PERMANENT) continue;
+			if (m_idx && zcave[cy][cx].m_idx) continue;
+
+			d = distance(cy, cx, *y, *x);
+			if (d >= best_distance) continue;
+
+			best_distance = d;
+			best_x = cx;
+			best_y = cy;
+		}
+	}
+
+	if (best_x < 0) return(FALSE);
+
+	*x = best_x;
+	*y = best_y;
+	return(TRUE);
+}
+
+static void questor_reattach_lite(qi_questor *q_questor, struct worldpos *wpos, int x, int y) {
+	cave_type **zcave = getcave(wpos);
+	byte lite_rad;
+	u32b lite_type = CAVE_LITE;
+	int cx, cy;
+
+	if (!q_questor->lite || !zcave) return;
+
+	lite_rad = q_questor->lite % 100;
+	if (q_questor->lite < 100) lite_type |= CAVE_GLOW_HACK_LAMP;
+	else lite_type |= CAVE_GLOW_HACK;
+
+	switch (q_questor->lite / 100) {
+	case 0: break;
+	case 1: lite_type |= CAVE_LITE_WHITE; break;
+	case 2: lite_type |= CAVE_LITE_VAMP; break;
+	}
+
+	for (cx = x - lite_rad; cx <= x + lite_rad; cx++)
+	for (cy = y - lite_rad; cy <= y + lite_rad; cy++) {
+		if (distance(cy, cx, y, x) > lite_rad) continue;
+		if (!in_bounds_array(cy, cx) || !los_zcave(zcave, y, x, cy, cx)) continue;
+		zcave[cy][cx].info |= lite_type;
+		everyone_lite_spot(wpos, cy, cx);
+	}
+}
+
+/* Reattach persistent questors after their dynamic floor has been generated.
+   Their monster/object records survive floor deallocation, preserving all state. */
+void reattach_questors(struct worldpos *wpos) {
+	cave_type **zcave = getcave(wpos);
+	dun_level *l_ptr = getfloor(wpos);
+	int i;
+
+	if (!zcave || !l_ptr) return;
+
+	for (i = 1; i < m_max; i++) {
+		monster_type *m_ptr = &m_list[i];
+		quest_info *q_ptr;
+		qi_questor *q_questor;
+		int x, y;
+
+		if (!m_ptr->r_idx || !m_ptr->questor || !inarea(&m_ptr->wpos, wpos)) continue;
+		if (m_ptr->quest < 0 || m_ptr->quest >= max_q_idx) continue;
+
+		q_ptr = &q_info[m_ptr->quest];
+		if (!q_ptr->defined || !q_ptr->active || m_ptr->questor_idx < 0 ||
+		    m_ptr->questor_idx >= q_ptr->questors)
+			continue;
+
+		q_questor = &q_ptr->questor[m_ptr->questor_idx];
+		x = m_ptr->fx;
+		y = m_ptr->fy;
+		if (!questor_reattach_grid(zcave, l_ptr, &x, &y, i)) {
+			s_printf("QUEST_REATTACH: No free grid for monster questor Q%d:%d at %d,%d,%d.\n",
+			    m_ptr->quest, m_ptr->questor_idx, wpos->wx, wpos->wy, wpos->wz);
+			continue;
+		}
+
+		m_ptr->fx = x;
+		m_ptr->fy = y;
+		zcave[y][x].m_idx = i;
+		q_questor->current_wpos = *wpos;
+		q_questor->current_x = x;
+		q_questor->current_y = y;
+		q_questor->mo_idx = i;
+		questor_reattach_lite(q_questor, wpos, x, y);
+	}
+
+	for (i = 1; i < o_max; i++) {
+		object_type *o_ptr = &o_list[i];
+		quest_info *q_ptr;
+		qi_questor *q_questor;
+		int q_idx, x, y;
+
+		if (!o_ptr->k_idx || !o_ptr->questor || o_ptr->held_m_idx ||
+		    !inarea(&o_ptr->wpos, wpos))
+			continue;
+
+		q_idx = o_ptr->quest - 1;
+		if (q_idx < 0 || q_idx >= max_q_idx) continue;
+
+		q_ptr = &q_info[q_idx];
+		if (!q_ptr->defined || !q_ptr->active || o_ptr->questor_idx < 0 ||
+		    o_ptr->questor_idx >= q_ptr->questors)
+			continue;
+
+		q_questor = &q_ptr->questor[o_ptr->questor_idx];
+		x = o_ptr->ix;
+		y = o_ptr->iy;
+		if (!questor_reattach_grid(zcave, l_ptr, &x, &y, 0)) {
+			s_printf("QUEST_REATTACH: No floor grid for object questor Q%d:%d at %d,%d,%d.\n",
+			    q_idx, o_ptr->questor_idx, wpos->wx, wpos->wy, wpos->wz);
+			continue;
+		}
+
+		o_ptr->ix = x;
+		o_ptr->iy = y;
+		if (zcave[y][x].o_idx != i) {
+			o_ptr->next_o_idx = zcave[y][x].o_idx;
+			zcave[y][x].o_idx = i;
+		}
+		q_questor->current_wpos = *wpos;
+		q_questor->current_x = x;
+		q_questor->current_y = y;
+		q_questor->mo_idx = i;
+		questor_reattach_lite(q_questor, wpos, x, y);
+	}
+}
+
 /* Helper function: Initialise and spawn a questor.
    Returns TRUE if succeeded to spawn. */
 static bool quest_spawn_questor(int q_idx, int questor_idx) {

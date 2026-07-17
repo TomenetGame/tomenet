@@ -2761,6 +2761,7 @@ extern qi_questor_act *init_quest_qact(int q_idx, int stage, int questor);
 extern qi_monsterspawn *init_quest_monsterspawn(int q_idx, int stage, int num);
 extern void quest_handle_disabled_on_startup(void);
 extern void fix_questors_on_startup(void);
+extern void reattach_questors(struct worldpos *wpos);
 extern void questitem_d(object_type *o_ptr, int num);
 /* Questor actions/reactions to 'external' effects in the game world */
 extern void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos *wpos, int x, int y);
