@@ -3537,7 +3537,7 @@ static bool quest_acquire(int Ind, int q_idx, bool quiet) {
 }
 
 /* Check if player completed a deliver goal to a questor. */
-static void quest_check_goal_deliver_questor(int Ind, int q_idx, int py_q_idx) {
+static void quest_check_goal_deliver_questor(int Ind, int q_idx, int questor_idx) {
 	player_type *p_ptr = Players[Ind];
 	int j, k, stage;
 	quest_info *q_ptr = &q_info[q_idx];
@@ -3588,8 +3588,9 @@ static void quest_check_goal_deliver_questor(int Ind, int q_idx, int py_q_idx) {
 		q_goal = &q_stage->goal[j];
 		if (!q_goal->deliver) continue;
 
-		/* handle only specific to-questor goals here */
-		if (q_goal->deliver->return_to_questor == 255) continue;
+		/* Handle only goals assigned to the questor being interacted with. */
+		if (q_goal->deliver->return_to_questor == 255 ||
+		    q_goal->deliver->return_to_questor != questor_idx) continue;
 #if QDEBUG > 3
 		s_printf(" FOUND return-to-questor GOAL %d.\n", j);
 #endif
@@ -3633,11 +3634,10 @@ static void quest_check_goal_deliver_questor(int Ind, int q_idx, int py_q_idx) {
 void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i, j, stage = quest_get_stage(Ind, q_idx);
+	int i, stage = quest_get_stage(Ind, q_idx);
 	bool not_acquired_yet = FALSE, may_acquire = FALSE;
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_questor *q_questor = &q_ptr->questor[questor_idx];
-	qi_goal *q_goal; //for return_to_questor check
 
 	/* quest is deactivated? */
 	if (!q_ptr->active) return;
@@ -3660,16 +3660,12 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	if (i == MAX_CONCURRENT_QUESTS) not_acquired_yet = TRUE;
 
 	/* check for deliver quest goals that require to return to a questor */
-	if (!not_acquired_yet)
-		for (j = 0; j < q_stage->goals; j++) {
-			q_goal = &q_stage->goal[j];
-			if (!q_goal->deliver || q_goal->deliver->return_to_questor == 255) continue;
-
-			q_ptr->dirty = FALSE;
-			quest_check_goal_deliver_questor(Ind, q_idx, j);
-			/* check for stage change/termination */
-			if (q_ptr->dirty) return;
-		}
+	if (!not_acquired_yet) {
+		q_ptr->dirty = FALSE;
+		quest_check_goal_deliver_questor(Ind, q_idx, questor_idx);
+		/* check for stage change/termination */
+		if (q_ptr->dirty) return;
+	}
 
 
 	/* cannot interact with the questor during this stage? */
