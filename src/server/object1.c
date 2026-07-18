@@ -3573,13 +3573,15 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 
 	/* Special case, ugly, but needed */
 	if (known && aware && (o_ptr->tval == TV_RING) && (o_ptr->sval == SV_RING_POLYMORPH)) {
-		t = object_desc_str(t, !(mode & 8) ? " of " : "-");
-		t = object_desc_str(t, r_info[o_ptr->pval].name + r_name);
+		if (o_ptr->pval) {
+			t = object_desc_str(t, !(mode & 8) ? " of " : "-");
+			t = object_desc_str(t, r_info[o_ptr->pval].name + r_name);
 
-		/* Polymorph rings that run out.. */
-		t = object_desc_str(t, !(mode & 8) ? " (" : "(");
-		t = object_desc_num(t, o_ptr->timeout_magic);
-		t = object_desc_str(t, !(mode & 8) ? " turns of energy)" : "t)");
+			/* Polymorph rings that run out.. */
+			t = object_desc_str(t, !(mode & 8) ? " (" : "(");
+			t = object_desc_num(t, o_ptr->timeout_magic);
+			t = object_desc_str(t, !(mode & 8) ? " turns of energy)" : "t)");
+		} else t = object_desc_str(t, " (pristine)");
 	}
 
 	/* Costumes */

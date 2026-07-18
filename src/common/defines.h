@@ -9748,6 +9748,9 @@ extern int PlayerUID;
 #define AT_VALINORX	12
 
 
+/* Disallow polymorph rings of level 0 forms aka Bree townies? (No real reason to not allow them though) - C. Blue */
+//#define MIMICRY_NO_L0_RINGS
+
 /* Masks for restricted mimicry */
 /*	Shaman: Animals, Giants, Dragon(rider)s, Elementals/Spirits, Ghosts.
 	No undead/nonliving material beings; no Invisible Stalker/Unmaker/Death Orb. */
