@@ -10908,7 +10908,54 @@ bool blindable_monster_chance(monster_race *r_ptr) {
 	return(magik(100 - (((r_ptr->flags1 & RF1_UNIQUE) | (r_ptr->flags3 & RF3_DRAGONRIDER)) ? 30 : 0) - r_ptr->level));
 }
 
+/* Warning about resistance/double-resistance, only triggered by 4 base elements */
+static void check_warning_res(int Ind, int dam, int typ) {
+	player_type *p_ptr = Players[Ind];
+	bool warn_double = FALSE;
 
+	if (dam < p_ptr->mhp / 4) return; /* immune (dam 0) or non-critical damage */
+
+	switch (typ) { /* high damage but not player's weakness? */
+	case GF_ELEC:
+		if (p_ptr->resist_elec) {
+			if (p_ptr->oppose_elec) return;
+			warn_double = TRUE;
+		}
+		break;
+	case GF_COLD:
+		if (p_ptr->resist_cold) {
+			if (p_ptr->oppose_cold) return;
+			warn_double = TRUE;
+		}
+		break;
+	case GF_FIRE:
+		if (p_ptr->resist_fire) {
+			if (p_ptr->oppose_fire) return;
+			warn_double = TRUE;
+		}
+		break;
+	case GF_ACID:
+		if (p_ptr->resist_acid) {
+			if (p_ptr->oppose_acid) return;
+			warn_double = TRUE;
+		}
+		break;
+	}
+
+	/* hint at weakness */
+	if (warn_double) {
+		if (p_ptr->warning_doubleres) return;
+		msg_print(Ind, "\377yHINT: You took excessive elemental damage. Acquire \377odouble resistance\377y, meaning");
+		msg_print(Ind, "\377y      \377opermanent+temporary resistance\377y eg an equipped item and resistance potion.");
+		s_printf("warning_doubleres: %s\n", p_ptr->name);
+		p_ptr->warning_doubleres = 1;
+	} else {
+		if (p_ptr->warning_res) return;
+		msg_print(Ind, "\377yHINT: You took excessive elemental damage. Acquire the matching \377oresistance\377y!");
+		s_printf("warning_res: %s\n", p_ptr->name);
+		p_ptr->warning_res = 1;
+	}
+}
 
 /*
  * Helper function for "project()" below.
@@ -11698,6 +11745,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (who == PROJECTOR_TERRAIN && dam == 0) ;
 		else if (fuzzy) msg_format(Ind, "You are hit by acid for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		check_warning_res(Ind, dam, typ);
 		take_hit(Ind, dam, killer, -who);
 		break;
 
@@ -11707,6 +11755,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (who == PROJECTOR_TERRAIN && dam == 0) ;
 		else if (fuzzy) msg_format(Ind, "You are hit by fire for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		check_warning_res(Ind, dam, typ);
 		take_hit(Ind, dam, killer, -who);
 		break;
 
@@ -11716,6 +11765,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (who == PROJECTOR_TERRAIN && dam == 0) ;
 		else if (fuzzy) msg_format(Ind, "You are hit by cold for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		check_warning_res(Ind, dam, typ);
 		take_hit(Ind, dam, killer, -who);
 		break;
 
@@ -11726,6 +11776,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (who == PROJECTOR_TERRAIN && dam == 0) ;
 		else if (fuzzy) msg_format(Ind, "You are hit by lightning for \377%c%d \377wdamage!", damcol, dam);
 		else msg_format(Ind, "%s \377%c%d \377wdamage!", attacker, damcol, dam);
+		check_warning_res(Ind, dam, typ);
 		take_hit(Ind, dam, killer, -who);
 		break;
 

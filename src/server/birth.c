@@ -2954,17 +2954,11 @@ static void do_bard_skill(int Ind)
 void disable_specific_warnings(player_type *p_ptr) {
 	/* disable ALL warnings? (client-side option) */
 	if (!p_ptr->newbie_hints) {
-		p_ptr->warning_bpr = 1;
-		p_ptr->warning_bpr2 = 1;
-		p_ptr->warning_bpr3 = 1;
-		p_ptr->warning_run = 3;//p_ptr->warning_run_steps = ;
-		p_ptr->warning_run_monlos = 1;
-		p_ptr->warning_run_lite = 10;
+		p_ptr->warning_bpr = p_ptr->warning_bpr2 = p_ptr->warning_bpr3 = 1;
+		p_ptr->warning_run = p_ptr->warning_run_monlos = p_ptr->warning_run_lite = 10; //p_ptr->warning_run_steps = ;
 		p_ptr->warning_wield = 1;
 		p_ptr->warning_chat = 1;
-		p_ptr->warning_lite = 1;
-		p_ptr->warning_lite_refill = 1;
-		p_ptr->warning_lamp_oil = 1;
+		p_ptr->warning_lite = p_ptr->warning_lite_refill = p_ptr->warning_lamp_oil = 1;
 		p_ptr->warning_wield_combat = 1;
 #if WARNING_REST_TIMES == 0
 		if (!p_ptr->warning_rest) p_ptr->warning_rest = 1;
@@ -2972,18 +2966,15 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_rest = WARNING_REST_TIMES;
 #endif
 		p_ptr->warning_mimic = 1;
-		p_ptr->warning_dual = 1;
-		p_ptr->warning_dual_mode = 1;
+		p_ptr->warning_dual = p_ptr->warning_dual_mode = 1;
 		p_ptr->warning_potions = 1;
-		p_ptr->warning_wor = 1;
-		p_ptr->warning_wor2 = 1;
+		p_ptr->warning_wor = p_ptr->warning_wor2 = 1;
 		p_ptr->warning_ghost = 1;
 		p_ptr->warning_instares = 1;
 		p_ptr->warning_autoret = 99;//p_ptr->warning_autoret_ok = ;
 		//p_ptr->warning_ma_weapon = 1; leave enabled
 		//p_ptr->warning_ma_shield = 1; leave enabled
-		p_ptr->warning_technique_melee = 1;
-		p_ptr->warning_technique_ranged = 1;
+		p_ptr->warning_technique_melee = p_ptr->warning_technique_ranged = 1;
 		p_ptr->warning_hungry = 2;
 		p_ptr->warning_autopickup = PY_MAX_LEVEL;
 		p_ptr->warning_ranged_autoret = 1;
@@ -2993,11 +2984,8 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_ammotype = 1;
 		p_ptr->warning_ai_annoy = 1;
 		p_ptr->warning_fountain = 1;
-		p_ptr->warning_voidjumpgate = 1;
-		p_ptr->warning_staircase = 1;
-		p_ptr->warning_staircase_oneway = 1;
-		p_ptr->warning_staircase_iddc = 1;
-		p_ptr->warning_staircase_mandos = 1;
+		p_ptr->warning_voidjumpgate = p_ptr->warning_staircase = 1;
+		p_ptr->warning_staircase_oneway = p_ptr->warning_staircase_iddc = p_ptr->warning_staircase_mandos = 1;
 		p_ptr->warning_worldmap = 1;
 		p_ptr->warning_dungeon = 1;
 		p_ptr->warning_tunnel = p_ptr->warning_tunnel2 = p_ptr->warning_tunnel3 = p_ptr->warning_tunnel4 = p_ptr->warning_tunnel_hidden = 1;
@@ -3032,6 +3020,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_away = 1;
 		p_ptr->warning_tss = 1;
 		p_ptr->warning_stdwager = 1;
+		p_ptr->warning_res = p_ptr->warning_doubleres = 1;
 		return;
 	}
 
@@ -3243,11 +3232,17 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_drop_town = 1;
 		p_ptr->warning_subinven = 1;
 	}
+	if (p_ptr->max_plv > 35) {
+		p_ptr->warning_res = 1;
+	}
 	if (p_ptr->max_plv > 40) {
 		p_ptr->warning_status_stun = 1;
 		//p_ptr->warning_sellunid = 1;
 		p_ptr->warning_stealing = p_ptr->warning_stealing_rha = 1;
 		p_ptr->warning_limitbottles = 1;
+	}
+	if (p_ptr->max_plv > 45) {
+		p_ptr->warning_doubleres = 1;
 	}
 	/* Note: We never 'outlevel' warning_away atm */
 }
