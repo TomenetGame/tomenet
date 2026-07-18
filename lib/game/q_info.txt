@@ -429,7 +429,7 @@ yR:-://quest_towneltalk("$$c", -2)
 
 
 # Bree guard quest, rebuilt stage by stage.
-N:5:breeguard1:Svechnik:An Errand for the Guard:-1:2:0
+N:5:breeguard1:Svechnik:An Errand for the Guard:0:2:0
 C:0
 I:0:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
 T:1:1:1:1:1:1:1:1:1:-1:-1
