@@ -11634,15 +11634,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #ifdef CLIENT_SIDE_WEATHER
 				if (tk) {
 					if (k) weather = 0;
-					else if (season == SEASON_WINTER) weather = 2;
-					else weather = 1;
+					else if (season == SEASON_WINTER) weather = WEATHER_TYPE_SNOW;
+					else weather = WEATHER_TYPE_RAIN;
 				}
 				weather_duration = 0;
 #else
 				if (tk >= 1) weather = k;
-				else if (weather == 1) weather = 0;
+				else if (weather == WEATHER_TYPE_RAIN) weather = 0;
 				else {
-					weather = 1;
+					weather = WEATHER_TYPE_RAIN;
 					weather_duration = 60 * 4; /* 4 minutes */
 				}
 #endif
@@ -11704,7 +11704,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 							/* send new situation to everyone */
 #if 0
-							wild_info[Players[k]->wpos.wy][Players[k]->wpos.wx].weather_type = (season == SEASON_WINTER ? 2 : 1);
+							wild_info[Players[k]->wpos.wy][Players[k]->wpos.wx].weather_type =
+							    (season == SEASON_WINTER ? WEATHER_TYPE_SNOW : WEATHER_TYPE_RAIN);
 							wild_info[Players[k]->wpos.wy][Players[k]->wpos.wx].weather_updated = TRUE;
 #else
 							Send_weather(Ind,
@@ -12703,7 +12704,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/seasonvars")) {
 				msg_format(Ind, "season (0..3): %d.", season);
 				msg_format(Ind, "season_halloween: %d, season_xmas: %d, season_newyearseve: %d.", season_halloween, season_xmas, season_newyearseve);
-				msg_format(Ind, "sector weather: %d, sector wind: %d, sector w-speed: %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type, wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind, wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_speed);
+				msg_format(Ind, "sector weather: %d, sector wind: %d, sector w-speed: %d",
+				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_type,
+				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_wind,
+				    wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].weather_speed);
 				msg_format(Ind, "server time: %s", showtime());
 				msg_format(Ind, "lua-seen current date: %d-%d-%d", exec_lua(0, "return cur_year"), exec_lua(0, "return cur_month"), exec_lua(0, "return cur_day"));
 				return;

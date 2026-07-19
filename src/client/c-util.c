@@ -14230,12 +14230,14 @@ void c_close_game(cptr reason) {
 	if (magik(50)) { //sometimes it rains or snows~ UwU
 		weather_panel_x = 0;
 		weather_panel_y = 0;
-		weather_type = 1 + rand_int(2) + 50;
-		weather_wind = rand_int(5);
+		weather_type = WEATHER_TYPE_RAIN + rand_int(2) + 50; //...WEATHER_TYPE_SNOW
+		weather_wind = rand_int(WEATHER_WIND_STATES);
 		if (weather_wind) wind_noticable = TRUE;
 		weather_gen_speed = WEATHER_GEN_TICKS;
-		weather_intensity = (weather_type % 10 == 2 && !(weather_wind || weather_wind >= 3) ? WEATHER_DENSITY_NORMAL : WEATHER_DENSITY_THICK);
-		weather_speed_snow = weather_speed_rain = (weather_type % 10 == 2) ? WEATHER_SPEED_SNOW * WEATHER_GEN_TICKS : (weather_wind ? WEATHER_SPEED_NORMAL * WEATHER_GEN_TICKS : WEATHER_GEN_TICKS_NORMRAIN);
+		weather_intensity = (weather_type % 10 == WEATHER_TYPE_SNOW && !(weather_wind || weather_wind == WEATHER_WIND_WEST_WINDY || weather_wind == WEATHER_WIND_EAST_WINDY) ?
+		    WEATHER_DENSITY_NORMAL : WEATHER_DENSITY_THICK);
+		weather_speed_snow = weather_speed_rain = (weather_type % 10 == WEATHER_TYPE_SNOW) ?
+		    WEATHER_SPEED_SNOW * WEATHER_GEN_TICKS : (weather_wind ? WEATHER_SPEED_NORMAL * WEATHER_GEN_TICKS : WEATHER_GEN_TICKS_NORMRAIN);
 		/* Set currently visible screen as 'weather background'. */
 		for (y = 0; y < screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM - 1; y++) {
 			scr_aa = Term->scr->a[y + 1]; //+1 : leave first line blank for message prompts
@@ -14256,11 +14258,11 @@ void c_close_game(cptr reason) {
 
  #ifdef USE_SOUND_2010
 		if (use_sound) {
-			if (weather_type % 10 == 1) { //rain
-				if (weather_wind >= 1 && weather_wind <= 2) sound_weather(rain2_sound_idx);
+			if (weather_type % 10 == WEATHER_TYPE_RAIN) {
+				if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather(rain2_sound_idx);
 				else sound_weather(rain1_sound_idx);
-			} else if (weather_type % 10 == 2) { //snow
-				if (weather_wind >= 1 && weather_wind <= 2) sound_weather(snow2_sound_idx);
+			} else if (weather_type % 10 == WEATHER_TYPE_SNOW) {
+				if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather(snow2_sound_idx);
 				else sound_weather(snow1_sound_idx);
 			}
 		}

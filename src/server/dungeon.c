@@ -12383,7 +12383,7 @@ static void process_weather_control() {
 	if (season == SEASON_WINTER) {
 		if (!weather) { /* not snowing? */
 			if (weather_duration <= 0 && weather_frequency > 0) { /* change weather? */
-				weather = 2; /* snowing now */
+				weather = WEATHER_TYPE_SNOW; /* snowing now */
 				players_weather();
 				weather_duration = weather_frequency * 60 * 4;
 			} else if (weather_duration > 0) {
@@ -12391,7 +12391,7 @@ static void process_weather_control() {
 			}
 		} else { /* it's currently snowing */
 			if (weather_duration <= 0 && (4 - weather_frequency) > 0) { /* change weather? */
-				weather = 0; /* stop snowing */
+				weather = WEATHER_TYPE_NONE; /* stop snowing */
 				players_weather();
 				weather_duration = (4 - weather_frequency) * 60 * 4;
 			} else if (weather_duration > 0) {
@@ -12400,16 +12400,19 @@ static void process_weather_control() {
 		}
 	/* during spring, summer and autumn, it rains: */
 	} else {
+
+	//TODO: FIX? Seems weather_duration checks are inverse, compare with SEASON_WINTER above?
+
 		if (weather) { /* it's currently raining */
 			if (weather_duration <= 0 && weather_frequency > 0) { /* change weather? */
-				weather = 0; /* stop raining */
+				weather = WEATHER_TYPE_NONE; /* stop raining */
 				players_weather();
 //s_printf("WEATHER: Stopping rain.\n");
 				weather_duration = rand_int(60 * 30 / weather_frequency) + 60 * 30 / weather_frequency;
 			} else weather_duration--;
 		} else { /* not raining at the moment */
 			if (weather_duration <= 0 && (4 - weather_frequency) > 0) { /* change weather? */
-				weather = 1; /* start raining */
+				weather = WEATHER_TYPE_RAIN; /* start raining */
 				players_weather();
 //s_printf("WEATHER: Starting rain.\n");
 				weather_duration = rand_int(60 * 9) + 60 * weather_frequency;
@@ -12832,14 +12835,14 @@ static void cloud_move(int i, bool newly_created) {
 				/* define weather situation accordingly */
 				switch (w_ptr->type) {
 				case WILD_ICE:
-					w_ptr->weather_type = 2; /* always snow in icy waste */
+					w_ptr->weather_type = WEATHER_TYPE_SNOW; /* always snow in icy waste */
 					break;
 				case WILD_DESERT:
-					w_ptr->weather_type = 3; /* always sandstorm in desert */
+					w_ptr->weather_type = WEATHER_TYPE_SAND; /* always sandstorm in desert */
 					break;
 				default:
 					/* depends on season */
-					w_ptr->weather_type = (season == SEASON_WINTER ? 2 : 1);
+					w_ptr->weather_type = (season == SEASON_WINTER ? WEATHER_TYPE_SNOW : WEATHER_TYPE_RAIN);
 				}
  #ifdef TEST_SERVER
 //s_printf("weather_type debug: wt=%d, x,y=%d,%d.\n", w_ptr->weather_type, x, y);
@@ -12895,15 +12898,17 @@ if (NumPlayers && Players[NumPlayers]->wpos.wx == x && Players[NumPlayers]->wpos
  #endif
 
 				w_ptr->weather_intensity =
-				    ((w_ptr->weather_type == 2 || w_ptr->weather_type == 3) && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
+				    ((w_ptr->weather_type == WEATHER_TYPE_SNOW || w_ptr->weather_type == WEATHER_TYPE_SAND) &&
+				    (!w_ptr->weather_wind || w_ptr->weather_wind == WEATHER_WIND_WEST_WINDY || w_ptr->weather_wind == WEATHER_WIND_EAST_WINDY)) ?
 				    WEATHER_DENSITY_NORMAL : WEATHER_DENSITY_THICK;
 				w_ptr->weather_speed =
  #if 1 /* correct! (this is a different principle than 'weather_intensity' above) */
-				    (w_ptr->weather_type == 2 || w_ptr->weather_type == 3) ? WEATHER_SPEED_SNOW * WEATHER_GEN_TICKS :
+				    (w_ptr->weather_type == WEATHER_TYPE_SNOW || w_ptr->weather_type == WEATHER_TYPE_SAND) ? WEATHER_SPEED_SNOW * WEATHER_GEN_TICKS :
 				    /* hack: for non-windy rainfall, accelerate raindrop falling speed by 1: */
 				    (w_ptr->weather_wind ? WEATHER_SPEED_NORMAL * WEATHER_GEN_TICKS : WEATHER_GEN_TICKS_NORMRAIN);
  #else /* just for testing stuff */
-				    ((w_ptr->weather_type == 2 || w_ptr->weather_type == 3) && (!w_ptr->weather_wind || w_ptr->weather_wind >= 3)) ?
+				    ((w_ptr->weather_type == WEATHER_TYPE_SNOW || w_ptr->weather_type == WEATHER_TYPE_SAND) &&
+				    (!w_ptr->weather_wind || w_ptr->weather_wind == WEATHER_WIND_WEST_WINDY || w_ptr->weather_wind == WEATHER_WIND_EAST_WINDY)) ?
 				    WEATHER_SPEED_SNOW * WEATHER_GEN_TICKS : WEATHER_SPEED_NORMAL * WEATHER_GEN_TICKS;
  #endif
 				break;
@@ -13103,7 +13108,7 @@ void local_weather_update(void) {
 		}
  #endif
 		if (thunderclap == 0 &&
-		    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type == 1 && /* no blizzards for now, just rainstorms */
+		    wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_type == WEATHER_TYPE_RAIN && /* no blizzards for now, just rainstorms */
 		    //wild_info[Players[i]->wpos.wy][Players[i]->wpos.wx].weather_wind &&
 		    ((Players[i]->wpos.wy + Players[i]->wpos.wx) / 5) % 6 == thunderstorm) {
  #ifdef USE_SOUND_2010

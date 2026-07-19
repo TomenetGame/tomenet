@@ -2313,7 +2313,7 @@
 
 /* --- Weather/season defines, for less hard-coding --- */
 
-/* Note that you can add n*10 (n=0,1,2...) to weather_type to cause n pregenerated weather particles, ie particles that appear instantly on the screen */
+/* Note that you can add n*10 (n=0,1,2...999) to weather_type to cause n pregenerated weather particles, ie particles that appear instantly on the screen */
 #define WEATHER_TYPE_HALT -1	/* hack: immediately erases all weather (eg for traveling from world surface into a dungeon) */
 #define WEATHER_TYPE_NONE 0		/* skies clear */
 #define WEATHER_TYPE_RAIN 1		/* rain or rainstorm */
@@ -2321,6 +2321,7 @@
 #define WEATHER_TYPE_SAND 3		/* sandstorm (always storm, no 'softer' version may exist for sand) */
 
 /* particle movement class, called the "wind" */
+#define WEATHER_WIND_STATES 5		/* The number of different wind definitions following here (0...4): */
 #define WEATHER_WIND_STILL 0		/* '|' */
 #define WEATHER_WIND_WEST_STORMY 1	/* '\' */
 #define WEATHER_WIND_EAST_STORMY 2	/* '\' */

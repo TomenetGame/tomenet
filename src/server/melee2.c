@@ -12623,7 +12623,7 @@ void process_monsters(void) {
 		/* Target dummy "snowiness" hack, checked once per second */
 		if (interval && !m_ptr->wpos.wz) {
 			if (((m_ptr->r_idx == RI_TARGET_DUMMY1) || (m_ptr->r_idx == RI_TARGET_DUMMY2)) &&
-			    (m_ptr->extra < 60) && (wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].weather_type == 2)) {
+			    (m_ptr->extra < 60) && (wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].weather_type == WEATHER_TYPE_SNOW)) {
 				m_ptr->extra++;
 				if ((m_ptr->r_idx == RI_TARGET_DUMMY1) && (m_ptr->extra == 30)) {
 					m_ptr->r_idx = RI_TARGET_DUMMY2;
@@ -12631,7 +12631,7 @@ void process_monsters(void) {
 				}
 			}
 			else if (((m_ptr->r_idx == RI_TARGET_DUMMYA1) || (m_ptr->r_idx == RI_TARGET_DUMMYA2)) &&
-			    (m_ptr->extra < 60) && (wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].weather_type == 2)) {
+			    (m_ptr->extra < 60) && (wild_info[m_ptr->wpos.wy][m_ptr->wpos.wx].weather_type == WEATHER_TYPE_SNOW)) {
 				m_ptr->extra++;
 				if ((m_ptr->r_idx == RI_TARGET_DUMMYA1) && (m_ptr->extra == 30)) {
 					m_ptr->r_idx = RI_TARGET_DUMMYA2;

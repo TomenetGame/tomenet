@@ -5494,7 +5494,7 @@ void do_weather(bool no_weather) {
 			    weather_element_x[i] < weather_panel_x + temp_wid &&
 			    weather_element_y[i] >= weather_panel_y &&
 			    weather_element_y[i] < weather_panel_y + temp_hgt) {
-				if (weather_element_type[i] == 1) {
+				if (weather_element_type[i] == WEATHER_TYPE_RAIN) {
 					/* display raindrop */
 #ifdef GRAPHICS_BG_MASK
 					if (use_graphics == 2 && kidx_po_rain_char && !c_cfg.ascii_weather && !c_cfg.no2mask_weather)
@@ -5514,7 +5514,7 @@ void do_weather(bool no_weather) {
 						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
-				} else if (weather_element_type[i] == 2) {
+				} else if (weather_element_type[i] == WEATHER_TYPE_SNOW) {
 					/* display snowflake */
 #ifdef GRAPHICS_BG_MASK
 					if (use_graphics == 2 && kidx_po_snow_char && !c_cfg.ascii_weather && !c_cfg.no2mask_weather)
@@ -5534,7 +5534,7 @@ void do_weather(bool no_weather) {
 						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
 						    col_snowflake, '*');
-				} else if (weather_element_type[i] == 3) {
+				} else if (weather_element_type[i] == WEATHER_TYPE_SAND) {
 					/* display sand grain */
 #ifdef GRAPHICS_BG_MASK
 					if (use_graphics == 2 && kidx_po_sand_char && !c_cfg.ascii_weather && !c_cfg.no2mask_weather)
@@ -5691,7 +5691,6 @@ void do_weather(bool no_weather) {
 				weather_element_x[weather_elements] = x;
 				weather_element_y[weather_elements] = y;
 
-				//weather_element_type[weather_elements] = (weather_type == 3 ? (rand_int(2) ? 1 : 2) : weather_type);   <-- 3 is sandstorm now
 				weather_element_type[weather_elements] = weather_type;
 				weather_element_ydest[weather_elements] = y + SKY_ALTITUDE;
 
@@ -5794,7 +5793,7 @@ void do_weather(bool no_weather) {
 			weather_particles_seen++;
 
 		/* advance raindrops */
-		if (weather_element_type[i] == 1) {
+		if (weather_element_type[i] == WEATHER_TYPE_RAIN) {
 			/* perform movement (y:speed, x:wind) */
 			if (gravity_effective_rain) weather_element_y[i]++;
 			if (wind_west_effective) weather_element_x[i]++;
@@ -5851,7 +5850,7 @@ void do_weather(bool no_weather) {
 		}
 		/* advance snowflakes - falling slowly (assumed weather_speed isn't
 		   set to silyl value 1 - well, maybe that could be a 'hail storm') */
-		else if (weather_element_type[i] == 2) {
+		else if (weather_element_type[i] == WEATHER_TYPE_SNOW) {
 			/* perform movement (y:speed, x:wind) */
 			if (gravity_effective_snow) weather_element_y[i]++;
 			if (wind_west_effective && !rand_int(weather_wind)) weather_element_x[i]++;
@@ -5907,7 +5906,7 @@ void do_weather(bool no_weather) {
 			}
 		}
 		/* advance sand grain - weather_speed should be high always for a sand storm */
-		else if (weather_element_type[i] == 3) {
+		else if (weather_element_type[i] == WEATHER_TYPE_SAND) {
 			/* perform movement (y:speed, x:wind) */
 			if (gravity_effective_sand) weather_element_y[i]++;
 			if (wind_west_effective && !rand_int(weather_wind)) weather_element_x[i]++;

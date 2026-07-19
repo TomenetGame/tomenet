@@ -6438,7 +6438,7 @@ int Receive_ping(void) {
 /* client-side weather, server-controlled - C. Blue
    Transmitted parameters:
    weather_type = -1, 0, 1, 2, 3: stop, none, rain, snow, sandstorm
-   weather_type +10 * n: pre-generate n steps
+   weather_type +10 * n: pre-generate n steps (0..999)
 */
 int Receive_weather(void) {
 	int n, i, clouds;
@@ -6508,9 +6508,11 @@ int Receive_weather(void) {
 	/* for mix of rain/snow in same sector:
 	   keep old rain/snow particles at their remembered speed */
 	if (weather_type != -1) {
-		if (weather_type % 10 == 3) weather_speed_sand = ws;
-		else if (weather_type % 10 == 2) weather_speed_snow = ws;
-		else if (weather_type % 10 == 1) weather_speed_rain = ws;
+		switch (weather_type % 10) {
+		case WEATHER_TYPE_SAND: weather_speed_sand = ws; break;
+		case WEATHER_TYPE_SNOW: weather_speed_snow = ws; break;
+		case WEATHER_TYPE_RAIN: weather_speed_rain = ws; break;
+		}
 	}
 
 	if (weather_type == -1) {
@@ -6520,7 +6522,7 @@ int Receive_weather(void) {
 		if (use_sound) sound_weather(-2); //stop
 //puts(format("read weather: type %d, wind %d.", weather_type, weather_wind));
 #endif
-	} else if (weather_type % 10 == 0) {
+	} else if (weather_type % 10 == WEATHER_TYPE_NONE) {
 		wind_noticable = FALSE;
 #ifdef USE_SOUND_2010
 		/* Play overlay sound (if enabled) */
@@ -6529,7 +6531,7 @@ int Receive_weather(void) {
 	}
 
 	/* hack: insta-erase all weather */
-	if (weather_type == -1 ||
+	if (weather_type == WEATHER_TYPE_HALT ||
 	    /* same for pregenerate command, it must include the "-1" effect: */
 	    (weather_type % 10000) / 10 != 0) {
 		/* if view panel was updated anyway, no need to restore */
@@ -8412,16 +8414,20 @@ void do_ping(void) {
 			//in case the below method is active code-wise, also add this hack here:
 			//weather_vol_smooth = cfg_audio_weather_volume;
 
-			if (weather_type != -1) {
-				if (weather_type % 10 == 1) { //rain
-					if (weather_wind >= 1 && weather_wind <= 2) sound_weather(rain2_sound_idx);
+			if (weather_type != WEATHER_TYPE_HALT) {
+				switch (weather_type % 10) {
+				case WEATHER_TYPE_RAIN:
+					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather(rain2_sound_idx);
 					else sound_weather(rain1_sound_idx);
-				} else if (weather_type % 10 == 2) { //snow
-					if (weather_wind >= 1 && weather_wind <= 2) sound_weather(snow2_sound_idx);
+					break;
+				case WEATHER_TYPE_SNOW:
+					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather(snow2_sound_idx);
 					else sound_weather(snow1_sound_idx);
-				} else if (weather_type % 10 == 3) { //sandstorm, uses same intensity as snowstorm basically, ie there is no 'light' sandstorm
-					if (weather_wind >= 1 && weather_wind <= 2) sound_weather(snow2_sound_idx);
-					else sound_weather(snow1_sound_idx);
+					break;
+				case WEATHER_TYPE_SAND: //sandstorm, always uses same intensity as snowstorm basically, ie there is no 'light' sandstorm
+					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather(snow2_sound_idx);
+					else sound_weather(snow1_sound_idx); //paranoia: should not exist
+					break;
 				}
 			}
  #endif
@@ -8444,15 +8450,19 @@ void do_ping(void) {
  #ifdef USE_SOUND_2010
 			weather_sound_change = 0; /* for delaying, and then fading out, further below */
 			if (weather_type != -1) {
-				if (weather_type % 10 == 1) { //rain
-					if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(rain2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+				switch (weather_type % 10) {
+				case 1: //rain
+					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather_vol(rain2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 					else sound_weather_vol(rain1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
-				} else if (weather_type % 10 == 2) { //snow
-					if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+					break;
+				case 2: //snow
+					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 					else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
-				} else if (weather_type % 10 == 3) { //sandstorm - we use snow intensity and sfx too
-					if (weather_wind >= 1 && weather_wind <= 2) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
-					else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+					break;
+				case 3: //sandstorm - we use snow intensity and sfx too
+					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+					else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4); //should never happen
+					break;
 				}
 			}
  #endif
