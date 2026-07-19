@@ -828,12 +828,6 @@
 #define MAX_LIST_INVALID	1024
 
 
-/* The four seasons - C. Blue */
-#define SEASON_SPRING 0
-#define SEASON_SUMMER 1
-#define SEASON_AUTUMN 2
-#define SEASON_WINTER 3
-
 
 /* ---------------------------------------------------------------- (Rather fundamental 'features')  ---------------------------------------------------------------- */
 
@@ -2272,6 +2266,13 @@
 #define DUN_TURN_56_0		((level_speeds[0] * 5) / 120)
 
 
+/* The four seasons - C. Blue */
+#define SEASON_SPRING 0
+#define SEASON_SUMMER 1
+#define SEASON_AUTUMN 2
+#define SEASON_WINTER 3
+
+
 /*
  * Misc constants ( see bst(), do_cmd_time() )
  */
@@ -2304,11 +2305,52 @@
  #define	IS_MIDNIGHT	(bst(HOUR, turn) == 0)
  #define	IS_DEEPNIGHT	((bst(HOUR, turn) >= 1) && (bst(HOUR, turn) < SUNRISE))
 
-
 /* More time macros */
 
 #define START_YEAR		2890			/* Bilbo birthday year */
 #define START_DAY		265			/* Bilbo birthday (22. Sept.) */
+
+
+/* --- Weather/season defines, for less hard-coding --- */
+
+/* Note that you can add n*10 (n=0,1,2...) to weather_type to cause n pregenerated weather particles, ie particles that appear instantly on the screen */
+#define WEATHER_TYPE_HALT -1	/* hack: immediately erases all weather (eg for traveling from world surface into a dungeon) */
+#define WEATHER_TYPE_NONE 0		/* skies clear */
+#define WEATHER_TYPE_RAIN 1		/* rain or rainstorm */
+#define WEATHER_TYPE_SNOW 2		/* snowing or snowstorm */
+#define WEATHER_TYPE_SAND 3		/* sandstorm (always storm, no 'softer' version may exist for sand) */
+
+/* particle movement class, called the "wind" */
+#define WEATHER_WIND_STILL 0		/* '|' */
+#define WEATHER_WIND_WEST_STORMY 1	/* '\' */
+#define WEATHER_WIND_EAST_STORMY 2	/* '\' */
+#define WEATHER_WIND_WEST_WINDY 3	/* '/' */
+#define WEATHER_WIND_EAST_WINDY 4	/* '/' */
+
+#if 1 /* make rain fall down slower? */
+ /* Global standard frequency at which weather particles are generated (at least 2, for WEATHER_GEN_TICKS_NORMRAIN) */
+ #define WEATHER_GEN_TICKS 3
+
+ /* how fast weather particles fall down to the ground, lower is faster */
+ #define WEATHER_SPEED_NORMAL 1		/* normal "gravity", used for rain and sand */
+ #define WEATHER_SPEED_SNOW 3		/* used for snow, which falls down much slower */
+#else /* make rain fall down faster? */
+ /* Global standard frequency at which weather particles are generated (at least 2, for WEATHER_GEN_TICKS_NORMRAIN) */
+ #define WEATHER_GEN_TICKS 2
+
+ /* how fast weather particles fall down to the ground, lower is faster */
+ #define WEATHER_SPEED_NORMAL 1		/* normal "gravity", used for rain and sand */
+ #define WEATHER_SPEED_SNOW 4		/* used for snow, which falls down much slower */
+#endif
+/* hack: for non-windy rainfall, accelerate raindrop falling speed by 1: */
+#define WEATHER_GEN_TICKS_NORMRAIN (WEATHER_GEN_TICKS - 1)
+
+/* particle drawing density - these constants are used in standard overworld weather, but you can use different values, starting from 1.
+   This gets factored together with WEATHER_GEN_TICKS, which in turn determines the frequency at which new weather particles are spawned,
+   to form the overall final rate of weather particles appearing. */
+#define WEATHER_DENSITY_NORMAL 5	/* only for snow/sand, and only if wind is either still or windy but not stormy */
+#define WEATHER_DENSITY_THICK 8		/* for all other cases */
+
 
 
 /*

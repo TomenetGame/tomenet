@@ -14225,8 +14225,6 @@ void c_close_game(cptr reason) {
 	Term->scr->cu = 1;
 
 #ifdef RAINY_TOMB
- #define WEATHER_GEN_TICKS 3
- #define WEATHER_SNOW_MULT 3
 	/* Bad weather today? */
 	weather_elements = 0;
 	if (magik(50)) { //sometimes it rains or snows~ UwU
@@ -14236,8 +14234,8 @@ void c_close_game(cptr reason) {
 		weather_wind = rand_int(5);
 		if (weather_wind) wind_noticable = TRUE;
 		weather_gen_speed = WEATHER_GEN_TICKS;
-		weather_intensity = (weather_type % 10 == 2 && !(weather_wind || weather_wind >= 3) ? 5 : 8);
-		weather_speed_snow = weather_speed_rain = (weather_type % 10 == 2) ? WEATHER_SNOW_MULT * WEATHER_GEN_TICKS : (weather_wind ? 1 * WEATHER_GEN_TICKS : WEATHER_GEN_TICKS - 1);
+		weather_intensity = (weather_type % 10 == 2 && !(weather_wind || weather_wind >= 3) ? WEATHER_DENSITY_NORMAL : WEATHER_DENSITY_THICK);
+		weather_speed_snow = weather_speed_rain = (weather_type % 10 == 2) ? WEATHER_SPEED_SNOW * WEATHER_GEN_TICKS : (weather_wind ? WEATHER_SPEED_NORMAL * WEATHER_GEN_TICKS : WEATHER_GEN_TICKS_NORMRAIN);
 		/* Set currently visible screen as 'weather background'. */
 		for (y = 0; y < screen_hgt + SCREEN_PAD_TOP + SCREEN_PAD_BOTTOM - 1; y++) {
 			scr_aa = Term->scr->a[y + 1]; //+1 : leave first line blank for message prompts
