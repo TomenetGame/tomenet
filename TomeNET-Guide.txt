@@ -22039,58 +22039,63 @@ Classes fare differently depending on their progress in the game. Here are some
 rough approximations of 'power levels', trying to give an idea how strong each
 class is at different progress stages of the game.
 
-Note: For some classes the power curve can depend heavily on the way you
-      distribute skill points so this is only a hand-picked estimate of the
-      most average builds (not necessarily the most interesting ones).
+Interpretation notes:
+---------------------
+For some classes the power curve can depend heavily on the way you distribute
+skill points so this is only a hand-picked estimate of the most average builds
+(not necessarily the most interesting ones).
 
-      Also, some classes and builds might shine in parties rather than solo,
-      and some might be more dependant on acquiring great items than others.
+Also, some classes and builds might shine in parties rather than solo, and some
+might be more dependant on acquiring great items than others.
 
-      If you train 'Martial Arts' skill you will be elevated to '+++' in
-      'Start' and 'Early' stages, no matter the class.
-
-      Istari lose their weakness aka their fragility when they acquire the
-      Mana school spell 'Disruption Shield' or if they train in the 'Nature'
-      school which grants a lot of extra hit points.
-      They are unmatched in terms of controlling almost any situation and
-      at the same time being able to focus on raw +speed accumulation while
-      maintaining very high survivability thanks to disruption shield.
-
-      Especially non-martial-arts melee-classes can reach '++++' in the
-      'Post-winning' stage if they are able to acquire a great set of equipment
-      which will take lots of effort.
-      The reason is that their damage output and damage mitigation depends on
-      gear mostly rather than on skills, unlike for spell-casting characters.
-
-      Archers and Runemasters can reach '++++' in 'Endgame' and 'Post-winning'
-      in terms of damage output if they can rely on a good party.
-
-      Shamans can reach '++++' in 'Late', 'Endgame' and 'Post-winning' in terms
-      of utility, as they may access all features of Istari, Priests and also
-      those of Mimicry and Runecraft without that much expense of skill points.
-
-      Mimics can reach '++++' in 'Late', 'Endgame' and 'Post-winning' in terms
-      of survivability/power balance if they obtain the most powerful forms.
-
-              Start     Early     Mid       Late      Endgame   Post-winning
+Class         Start     Early     Mid       Late      Endgame   Post-winning
               (Lv 1)    (10+)     (30+)     (40+)     (50)      (After Morgoth)
 -------------------------------------------------------------------------------
+<melee weapon>                                                  ++++ [1]
+<martial arts>+++  [2]  +++  [2]
+-------------------------------------------------------------------------------
 Warrior       +++       +++       +++       +++       +++       +++
-Istar         ++        ++        +         +++       ++++      ++++
+Istar         ++        ++        +         +++  [3]  ++++      ++++
 Priest        +         +         ++        +++       +++       +++
 Corrupted P.  +         ++        ++        +++       +++       +++
 Rogue         +++       +++       +++       +++       +++       +++
-Mimic         ++        ++        +++       +++.      +++.      +++.
-Archer        ++        ++        ++        +++       +++       +++
+Mimic         ++        ++        +++       +++. [4]  +++. [4]  +++. [4]
+Archer        ++        ++        ++        +++       +++  [5]  +++  [5]
 Paladin       ++        ++        +++       +++       +++       +++
 Death Knight  ++        +++       +++       +++       +++       +++
 Hell Knight   +++       +++       +++       +++       +++       +++
 Ranger        +++       +++       +++       +++       +++       +++
 Adventurer    +         +         ++        +++       +++       +++
 Druid         +++       ++++      ++++      +++       +++       +++
-Shaman        ++        ++        +++       +++.      +++.      +++.
-Runemaster    +         +++       +++       +++       +++       +++
+Shaman        ++        ++        +++       +++. [6]  +++. [6]  +++. [6]
+Runemaster    ++        +++       +++       +++       +++  [5]  +++  [5]
 Mindcrafter   +++       ++        +++       +++       +++       +++
+
+[1] Especially weapon-wielding melee-classes can reach '++++' in the
+'Post-winning' stage if they are able to acquire a great set of equipment
+which will take lots of effort.
+The reason is that their damage output and damage mitigation depends on gear
+mostly rather than on skills, unlike for spell-casting characters.
+
+[2] If you train 'Martial Arts' skill you will be elevated to '+++' in 'Start'
+and 'Early' stage, no matter the class.
+
+[3] Istari lose their weakness aka their fragility when they acquire the Mana
+school spell 'Disruption Shield' or if they train in the 'Nature' school which
+grants a lot of extra hit points.
+They are unmatched in terms of controlling almost any situation and at the same
+time being able to focus on raw +speed accumulation while maintaining very high
+survivability thanks to disruption shield.
+
+[4] Mimics can reach '++++' in 'Late', 'Endgame' and 'Post-winning' in terms of
+survivability/power balance if they obtain the most powerful forms.
+
+[5] Archers and Runemasters can reach '++++' in 'Endgame' and 'Post-winning' in
+terms of damage output if they can rely on a good party.
+
+[6] Shamans can reach '++++' in 'Late', 'Endgame' and 'Post-winning' in terms
+of utility, as they may access all features of Istari, Priests and also those
+of Mimicry and Runecraft without that much expense of skill points.
 
 
 
