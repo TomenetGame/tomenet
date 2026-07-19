@@ -431,7 +431,7 @@ yR:-://quest_towneltalk("$$c", -2)
 # Bree guard quest, rebuilt stage by stage.
 N:5:breeguard1:Svechnik:An Errand for the Guard:0:2:0
 C:0
-I:0:1:1:100:FFFFF:FFFF:1:1:1:0:0:1
+I:0:2:1:100:FFFFF:FFFF:1:1:1:0:0:1
 T:1:1:1:1:1:1:1:1:1:-1:-1
 
 # Questor 0, the guard who offers the quest in Bree.
