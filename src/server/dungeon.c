@@ -5251,8 +5251,14 @@ static bool process_player_end_aux(int Ind) {
 		if (!k) k = 1;
 
 		if (p_ptr->slow_poison) {
+#if 0
 			p_ptr->slow_poison = (p_ptr->slow_poison % 3) + 1; /* Take damage every n-th tick only [3] */
-			if (p_ptr->slow_poison == 1) {
+			if (p_ptr->slow_poison == 1)
+#else
+			p_ptr->slow_poison = (p_ptr->slow_poison % 5) + 1; /* Take damage every n-th and m-th tick only, alternating between [2] and [3] */
+			if (p_ptr->slow_poison == 1 || p_ptr->slow_poison == 3)
+#endif
+			{
 				p_ptr->died_from_ridx = 0;
 				take_hit(Ind, k, "poison", p_ptr->poisoned_attacker);
 			}
