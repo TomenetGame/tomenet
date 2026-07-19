@@ -8417,15 +8417,15 @@ void do_ping(void) {
 			if (weather_type != WEATHER_TYPE_HALT) {
 				switch (weather_type % 10) {
 				case WEATHER_TYPE_RAIN:
-					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather(rain2_sound_idx);
+					if (IS_STORMY_WEATHER(weather_wind)) sound_weather(rain2_sound_idx);
 					else sound_weather(rain1_sound_idx);
 					break;
 				case WEATHER_TYPE_SNOW:
-					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather(snow2_sound_idx);
+					if (IS_STORMY_WEATHER(weather_wind)) sound_weather(snow2_sound_idx);
 					else sound_weather(snow1_sound_idx);
 					break;
 				case WEATHER_TYPE_SAND: //sandstorm, always uses same intensity as snowstorm basically, ie there is no 'light' sandstorm
-					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather(snow2_sound_idx);
+					if (IS_STORMY_WEATHER(weather_wind)) sound_weather(snow2_sound_idx);
 					else sound_weather(snow1_sound_idx); //paranoia: should not exist
 					break;
 				}
@@ -8452,15 +8452,15 @@ void do_ping(void) {
 			if (weather_type != -1) {
 				switch (weather_type % 10) {
 				case 1: //rain
-					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather_vol(rain2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+					if (IS_STORMY_WEATHER(weather_wind)) sound_weather_vol(rain2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 					else sound_weather_vol(rain1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 					break;
 				case 2: //snow
-					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+					if (IS_STORMY_WEATHER(weather_wind)) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 					else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 					break;
 				case 3: //sandstorm - we use snow intensity and sfx too
-					if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
+					if (IS_STORMY_WEATHER(weather_wind)) sound_weather_vol(snow2_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4);
 					else sound_weather_vol(snow1_sound_idx, weather_particles_seen > 25 ? 100 : 0 + weather_particles_seen * 4); //should never happen
 					break;
 				}

@@ -1650,11 +1650,10 @@ void flicker(void) {
 	/* Handle TERM_LAMP preparations */
 	rand_term_lamp_ticks++;
 	if (rand_term_lamp_ticks == 1) {
-		int wind = weather_wind + (weather_wind % 2);
-
-		wind = (weather_wind && wind_noticable) ?
-		    (wind * 2 - 1) /* windy */
+		int wind = (weather_wind && wind_noticable) ?
+		    GET_WIND_SPEED(weather_wind) * 4 - 1 /* windy */
 		    : 20; /* no wind */
+
 		/* 3: busy, 5-8: normal, 15-20: relaxed */
 		rand_term_lamp = (rand_int(wind) != 0);
 		rand_term_lamp_ticks = 0;

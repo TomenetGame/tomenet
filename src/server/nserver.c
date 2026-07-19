@@ -11057,22 +11057,22 @@ int Send_weather(int Ind, int weather_type, int weather_wind, int weather_gen_sp
 //redundant, see above
 //	if (c > cloud_limit) c = cloud_limit;
 #ifdef TEST_SERVER
-if (weather_type > 0) s_printf("weather_type: %d\n", weather_type);
+if (weather_type > WEATHER_TYPE_NONE) s_printf("weather_type: %d\n", weather_type);
 #endif
 
 	/* Sandstorm hacks */
 	if (weather_type % 10 == WEATHER_TYPE_SAND) {
 		/* Outdated client? fall back to old rain in the desert, pft */
-		if (is_older_than(&connp->version, 4, 7, 4, 6, 0, 0)) weather_type = (weather_type / 10) * 10 + 1;
+		if (is_older_than(&connp->version, 4, 7, 4, 6, 0, 0)) weather_type = (weather_type / 10) * 10 + WEATHER_TYPE_RAIN;
 		/* No wind? No storm then */
-		else if (!weather_wind) weather_type = 0;
+		else if (!weather_wind) weather_type = WEATHER_TYPE_NONE;
 		/* Not enough wind? Turn it up (aka set it to either max west (1) or max east (2)) */
-		else if (weather_wind == WEATHER_WIND_WEST_WINDY || weather_wind == WEATHER_WIND_EAST_WINDY) weather_wind = (weather_wind - 1) % 2 + 1; //make it stormy instead of windy
+		else if (weather_wind == WEATHER_WIND_WEST_WINDY || weather_wind == WEATHER_WIND_EAST_WINDY) weather_wind = MAKE_STORMY_WEATHER(weather_wind);
 #ifdef IRRITATING_WEATHER
 		p_ptr->weather_influence = 3; /* Blinding sand storms */
-	} else if (weather_type % 10 == WEATHER_TYPE_SNOW && (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY)) /* Freezing snow storms */
+	} else if (weather_type % 10 == WEATHER_TYPE_SNOW && IS_STORMY_WEATHER(weather_wind)) /* Freezing snow storms */
 		p_ptr->weather_influence = 2;
-	else if (weather_type % 10 == WEATHER_TYPE_RAIN && (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY)) /* Rain storm? No effect atm. */
+	else if (weather_type % 10 == WEATHER_TYPE_RAIN && IS_STORMY_WEATHER(weather_wind)) /* Rain storm? No effect atm. */
 		p_ptr->weather_influence = 1;
 	else p_ptr->weather_influence = 0; /* No harsh weather conditions irritating us */
 #else

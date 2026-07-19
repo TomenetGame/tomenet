@@ -5500,7 +5500,10 @@ void do_weather(bool no_weather) {
 					if (use_graphics == 2 && kidx_po_rain_char && !c_cfg.ascii_weather && !c_cfg.no2mask_weather)
 						Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
-						    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)),
+						    col_raindrop,
+						    weather_wind == WEATHER_WIND_STILL ? kidx_po_rain_char :
+						    (IS_EAST_WIND(weather_wind) ? (weather_wind == WEATHER_WIND_EAST_WINDY ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) :
+						    (weather_wind == WEATHER_WIND_WEST_WINDY ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)),
 						    0, 0);
 					else
 #endif
@@ -5508,12 +5511,14 @@ void do_weather(bool no_weather) {
 					if (use_graphics && kidx_po_rain_char && !c_cfg.ascii_weather)
 						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
-						    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)));
+						    col_raindrop, weather_wind == WEATHER_WIND_STILL ? kidx_po_rain_char :
+						    (IS_EAST_WIND(weather_wind) ? (weather_wind == WEATHER_WIND_EAST_WINDY ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) :
+						    (weather_wind == WEATHER_WIND_WEST_WINDY ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)));
 					else
 #endif
 						Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 						    panel_y + weather_element_y[i] - weather_panel_y,
-						    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+						    col_raindrop, weather_wind == WEATHER_WIND_STILL ? '|' : (IS_EAST_WIND(weather_wind) ? '/' : '\\'));
 				} else if (weather_element_type[i] == WEATHER_TYPE_SNOW) {
 					/* display snowflake */
 #ifdef GRAPHICS_BG_MASK
@@ -5832,7 +5837,9 @@ void do_weather(bool no_weather) {
 				if (use_graphics == 2 && kidx_po_rain_char && !c_cfg.ascii_weather && !c_cfg.no2mask_weather)
 					Term_draw_2mask(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
-					    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)),
+					    col_raindrop, weather_wind == WEATHER_WIND_STILL ? kidx_po_rain_char :
+					    (IS_EAST_WIND(weather_wind) ? (weather_wind == WEATHER_WIND_EAST_WINDY ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) :
+					    (weather_wind == WEATHER_WIND_WEST_WINDY ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)),
 					    0, 0);
 				else
 #endif
@@ -5840,12 +5847,14 @@ void do_weather(bool no_weather) {
 				if (use_graphics && kidx_po_rain_char && !c_cfg.ascii_weather)
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
-					    col_raindrop, weather_wind == 0 ? kidx_po_rain_char : (weather_wind % 2 == 1 ? ((weather_wind - 1) / 2 ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) : ((weather_wind - 2) / 2 ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)));
+					    col_raindrop, weather_wind == WEATHER_WIND_STILL ? kidx_po_rain_char :
+					    (IS_EAST_WIND(weather_wind) ? (weather_wind == WEATHER_WIND_EAST_WINDY ? kidx_po_rain_e1_char : kidx_po_rain_e2_char) :
+					    (weather_wind == WEATHER_WIND_WEST_WINDY ? kidx_po_rain_w1_char : kidx_po_rain_w2_char)));
 				else
 #endif
 					Term_draw(panel_x + weather_element_x[i] - weather_panel_x,
 					    panel_y + weather_element_y[i] - weather_panel_y,
-					    col_raindrop, weather_wind == 0 ? '|' : (weather_wind % 2 == 1 ? '\\' : '/'));
+					    col_raindrop, weather_wind == WEATHER_WIND_STILL ? '|' : (IS_EAST_WIND(weather_wind) ? '/' : '\\'));
 			}
 		}
 		/* advance snowflakes - falling slowly (assumed weather_speed isn't

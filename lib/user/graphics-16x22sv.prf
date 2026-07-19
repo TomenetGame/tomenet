@@ -1505,10 +1505,10 @@ K:716:/3502 # Underground Charge
 ##### Weather particles (pseudo-objects, for direct use in c-xtra1.c) #####
 
 K:822:/3600 # rain drop
-K:823:/3601 # rain drop, east wind
-K:824:/3602 # rain drop, strong east wind
-K:825:/3603 # rain drop, west wind
-K:826:/3604 # rain drop, strong west wind
+K:823:/3601 # rain drop, west wind
+K:824:/3602 # rain drop, strong west wind
+K:825:/3603 # rain drop, east wind
+K:826:/3604 # rain drop, strong east wind
 K:827:/3605 # snow flake
 K:828:/3606 # sand grain
 

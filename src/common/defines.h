@@ -2323,10 +2323,26 @@
 /* particle movement class, called the "wind" */
 #define WEATHER_WIND_STATES 5		/* The number of different wind definitions following here (0...4): */
 #define WEATHER_WIND_STILL 0		/* '|' */
-#define WEATHER_WIND_WEST_STORMY 1	/* '\' */
-#define WEATHER_WIND_EAST_STORMY 2	/* '\' */
-#define WEATHER_WIND_WEST_WINDY 3	/* '/' */
-#define WEATHER_WIND_EAST_WINDY 4	/* '/' */
+#define WEATHER_WIND_EAST_STORMY 1	/* '/' */
+#define WEATHER_WIND_WEST_STORMY 2	/* '\' */
+#define WEATHER_WIND_EAST_WINDY 3	/* '/' */
+#define WEATHER_WIND_WEST_WINDY 4	/* '\' */
+
+#if 0 /* via logic */
+ #define IS_WINDY_WEATHER(w)		((w) == WEATHER_WIND_WEST_WINDY || (w) == WEATHER_WIND_EAST_WINDY)
+ #define IS_STORMY_WEATHER(w)		((w) == WEATHER_WIND_WEST_STORMY || (w) == WEATHER_WIND_EAST_STORMY)
+ #define MAKE_STORMY_WEATHER(w)		((w) == WEATHER_WIND_WEST_WINDY ? WEATHER_WIND_WEST_STORMY : ((w) == WEATHER_WIND_EAST_WINDY ? WEATHER_WIND_EAST_STORMY : WEATHER_WIND_STILL))
+ #define IS_WEST_WIND(w)		((w) == WEATHER_WIND_WEST_WINDY || (w) == WEATHER_WIND_WEST_STORMY)
+ #define IS_EAST_WIND(w)		((w) == WEATHER_WIND_EAST_WINDY || (w) == WEATHER_WIND_EAST_STORMY)
+ //#define GET_WIND_SPEED(w)		...	/* 0: no wind, 1: stormy, 2: windy */
+#else /* via calc */
+ #define IS_WINDY_WEATHER(w)		(((w) + 1) / 2 == 2)
+ #define IS_STORMY_WEATHER(w)		(((w) + 1) / 2 == 1)
+ #define MAKE_STORMY_WEATHER(w)		((w) ? (w) - 2 : 0)
+ #define IS_WEST_WIND(w)		((w) % 2 == 1)
+ #define IS_EAST_WIND(w)		((w) && (w) % 2 == 0)
+ #define GET_WIND_SPEED(w)		(((w) + (w) % 2) / 2)	/* 0: no wind, 1: stormy, 2: windy */
+#endif
 
 #if 1 /* make rain fall down slower? */
  /* Global standard frequency at which weather particles are generated (at least 2, for WEATHER_GEN_TICKS_NORMRAIN) */
@@ -5086,10 +5102,10 @@
 /* k_idx for TV_PSEUDO_OBJ -- for graphical tiles the svals actually don't matter, they are just defined for good measure but have no use;
    instead the k_idx values are used. Note that this works only on client-side! (On server-side, k_idx are renumbered, not taken from k_info.txt!) */
 #define KIDX_PO_RAIN	822
-#define KIDX_PO_RAIN_E1	823
-#define KIDX_PO_RAIN_E2	824
-#define KIDX_PO_RAIN_W1	825
-#define KIDX_PO_RAIN_W2	826
+#define KIDX_PO_RAIN_W1	823
+#define KIDX_PO_RAIN_W2	824
+#define KIDX_PO_RAIN_E1	825
+#define KIDX_PO_RAIN_E2	826
 #define KIDX_PO_SNOW	827
 #define KIDX_PO_SAND	828
 #define KIDX_PO_D10F_TL	833

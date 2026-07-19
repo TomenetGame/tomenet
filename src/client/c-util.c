@@ -14259,10 +14259,10 @@ void c_close_game(cptr reason) {
  #ifdef USE_SOUND_2010
 		if (use_sound) {
 			if (weather_type % 10 == WEATHER_TYPE_RAIN) {
-				if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather(rain2_sound_idx);
+				if (IS_STORMY_WEATHER(weather_wind)) sound_weather(rain2_sound_idx);
 				else sound_weather(rain1_sound_idx);
 			} else if (weather_type % 10 == WEATHER_TYPE_SNOW) {
-				if (weather_wind == WEATHER_WIND_WEST_STORMY || weather_wind == WEATHER_WIND_EAST_STORMY) sound_weather(snow2_sound_idx);
+				if (IS_STORMY_WEATHER(weather_wind)) sound_weather(snow2_sound_idx);
 				else sound_weather(snow1_sound_idx);
 			}
 		}
