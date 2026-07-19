@@ -100,7 +100,7 @@ Contents
     (3.9)   Macros with special keys
     (3.9a)  Creating a chat macro for your party
     (3.9b)  Alternative macros: Calling objects by their name
-    (3.9c)  Disabling or using CapsLock and NumLock as macro keys (POSIX only)
+    (3.9c)  Disabling/using CapsLock/NumLock as macro keys (POSIX only)
     (3.10)  Experience, level-ups and skill points
     (3.10a) Experience points table
     (3.11)  Death, ghosts and looting
@@ -8033,8 +8033,8 @@ unlock Manathrust II then it will automatically attempt to cast II (and fail
 the attempt if you don't have enough MP for it or are blinded etc!).
 
 
-(3.9c) Disabling or using CapsLock and NumLock as macro keys (POSIX only)
--------------------------------------------------------------------------
+(3.9c) Disabling/using CapsLock/NumLock as macro keys (POSIX only)
+------------------------------------------------------------------
 There might or might not be a way to do this on Windows too, but for now,
 here is a way on POSIX (Linux/Mac OS X) to use your CapsLock and NumLock keys
 as actual keys in TomeNET instead of it just being a useless modifier keys.
