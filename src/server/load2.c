@@ -625,7 +625,7 @@ static void rd_item(object_type *o_ptr) {
 		rd_byte(&o_ptr->comboset_flags);
 		rd_byte(&o_ptr->comboset_flags_cnt);
 
-		rd_u32b(&o_ptr->dummy1); //future use
+		rd_s32b(&o_ptr->id_original);
 	}
 
 

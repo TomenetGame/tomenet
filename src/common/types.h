@@ -826,7 +826,9 @@ struct object_type {
 	byte embed;			/* 1: Object is contained within a feat (trapkit/trapload in a monster trap); note that 'Object is held in a monster's inventory' is already indicated by held_m_idx instead. */
 
 	/* For item history tracking */
-	s32b id;			/* Item's unique ID (mhh) */
+	s32b id;			/* Item's unique ID (mhh) -- maybe also track if an item was 1:1 cloned? ie increase this id, but save 'reference id' to original item: */
+	s32b id_original;		/* For cloned items: Reference to original source item's id */
+
 	s32b f_id;			/* Original finder */
 	char f_name[CNAME_LEN];		/* Original finder's name */
 	s32b f_turn;			/* Found when, in-game? */
@@ -854,8 +856,6 @@ struct object_type {
 	s32b wId;			/* Player currently _wielding/wearing_ the item. -- deprecated, superceded by 'comboset_flags' method */
 	byte comboset_flags;		/* Flag array of all equipped items affecting this item too to create a comboset */
 	byte comboset_flags_cnt;	/* Flag array of all equipped items affecting this item too to create a comboset - flag count */
-
-	u32b dummy1;			/* For future use */
 };
 typedef struct object_type_v8 object_type_v8;
 struct object_type_v8 {

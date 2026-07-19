@@ -10011,7 +10011,7 @@ void restore_estate(int Ind) {
 				//convert:
 				o_ptr->mode = o_ptr_v8->mode; /* u32b = u16b */
 				o_ptr->wId = o_ptr->comboset_flags = 0;
-				o_ptr->dummy1 = 0; /* (future use) */
+				o_ptr->id_original = 0; /* (future use) */
 			}
 			if (r == 0) {
 				s_printf("  error: Failed to read object.\n");

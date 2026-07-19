@@ -301,7 +301,7 @@ static void wr_item(object_type *o_ptr) {
 	wr_byte(o_ptr->comboset_flags);
 	wr_byte(o_ptr->comboset_flags_cnt);
 
-	wr_u32b(o_ptr->dummy1); //future use
+	wr_s32b(o_ptr->id_original);
 }
 
 /*
