@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 18. July 2026 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 23. July 2026 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -15873,6 +15873,10 @@ The exact luck boni for those 'artifact sets' starting at two items are:
 you have equipped. Eg 2 artifacts -> 1+2 = 3. 4 artifacts -> 1+2+3+4 = 10.
 
 Multiple equipped sets don't stack, only the biggest set counts!
+
+Rumour has it that just a few select artifacts, not even always of the same
+name, but belonging either to the same entity or being sibling artifacts, would
+gain additional hidden powers, other than just luck, when equipped together.
 
 
 Artifact resets
