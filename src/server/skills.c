@@ -543,7 +543,7 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 	case SKILL_UDUN:
 		if (old_value < 400 && new_value >= 400
 		    && p_ptr->prace != RACE_VAMPIRE)
-			msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
+			msg_print(Ind, "\374\377GYou keep strong hold of your life force."); //hold_life
 		break;
 	case SKILL_META: /* + continuous effect */
 		break;
@@ -626,7 +626,7 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 	case SKILL_OSPIRIT:
 		if (old_value < 300 && new_value >= 300
 		    && p_ptr->prace != RACE_VAMPIRE) //Vampires obviously cannot train Spirit anyway, but w/e..
-			msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
+			msg_print(Ind, "\374\377GYou keep strong hold of your life force."); //hold_life
 		if (old_value < 400 && new_value >= 400)
 			msg_print(Ind, "\374\377GYou fight against undead with holy wrath.");
 		if (old_value < 500 && new_value >= 500)
@@ -648,14 +648,14 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
  #ifdef ENABLE_OUNLIFE
 	case SKILL_OUNLIFE:
 		if (old_value < 300 && new_value >= 300) {
-			if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "\374\377GYou keep strong hold of your life force.");
+			if (p_ptr->prace != RACE_VAMPIRE) msg_print(Ind, "\374\377GYou keep strong hold of your life force."); //hold_life
 			else msg_print(Ind, "\374\377GYour health regenerates especially fast.");
 		}
   #if 0
 		if (old_value < 450 && new_value >= 450 && p_ptr->prace != RACE_VAMPIRE)
 			msg_print(Ind, "\374\377GYou feel resistant against nether.");
   #endif
-		if (old_value < 500 && new_value >= 500 && get_skill(p_ptr, SKILL_NECROMANCY) >= 50) msg_print(Ind, "\374\377GYou gain ultimate hold of your life force.");
+		if (old_value < 500 && new_value >= 500 && get_skill(p_ptr, SKILL_NECROMANCY) >= 50) msg_print(Ind, "\374\377GYou gain ultimate hold of your life force."); //keep_life
  #endif
 		break;
 #endif
@@ -806,7 +806,7 @@ void msg_gained_abilities(int Ind, int old_value, int i, int old_value_fine) {
 	/* New odd combo traits, mostly for Necro/Trauma related things, for DK/HK */
 	switch (i) {
 	case SKILL_NECROMANCY:
-		if (old_value < 500 && new_value >= 500 && get_skill(p_ptr, SKILL_OUNLIFE) >= 50) msg_print(Ind, "\374\377GYou gain ultimate hold of your life force.");
+		if (old_value < 500 && new_value >= 500 && get_skill(p_ptr, SKILL_OUNLIFE) >= 50) msg_print(Ind, "\374\377GYou gain ultimate hold of your life force."); //keep_life
 		n = get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 500);
 		if (p_ptr->prace == RACE_VAMPIRE
 		    && new_value >= 250 && n >= 250 && new_value + n > 500
