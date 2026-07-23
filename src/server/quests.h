@@ -523,6 +523,9 @@ typedef struct quest_info {
 							   be activated until enabled again (eg for when something breaks during quest progression) */
 	bool disabled_on_load;				/* dynamic info for quests disabled via q_info */
 
+	s32b quest_id;					/* Added in 2026: Unique quest id that changes for any quest that starts,
+							   to keep track of quest-items on offline chars without loading all savegames in order to scan them for deprecated quest items. */
+
 	s16b cur_cooldown;				/* in seconds, minimum respawn time for the questor. 0 for 24h default. */
 	s32b turn_activated;				/* the turn when the quest became activated */
 	s32b turn_acquired;				/* for global quests: the turn when it was acquired */

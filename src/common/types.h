@@ -780,6 +780,173 @@ struct object_type {
 		//IMPORTAAAAAAANT:	   Hack: 0 = no quest; n = quest + 1. So we don't have to initialise all items to -1 here :-p */
 	byte questor_invincible;	/* invincible to players/monsters? */
 	bool quest_credited;		/* ugly hack for inven_carry() usage within carry(), to avoid double-crediting */
+	s32b quest_id;			/* Added in 2026: Unique quest id that changes for any quest that starts,
+					   to keep track of quest-items on offline chars without loading all savegames in order to scan them for deprecated quest items. */
+
+	u32b note;			/* Inscription index */
+	char note_utag;			/* Added for making pseudo-id overwrite unique loot tags */
+
+#if 0	/* from pernA.. consumes memory, but quick. shall we? */
+	u16b art_name;			/* Artifact name (random artifacts) */
+
+	u32b art_flags1;		/* Flags, set 1  Alas, these were necessary */
+	u32b art_flags2;		/* Flags, set 2  for the random artifacts of*/
+	u32b art_flags3;		/* Flags, set 3  Zangband */
+	u32b art_flags4;		/* Flags, set 4  PernAngband */
+	u32b art_flags5;		/* Flags, set 5  PernAngband */
+	u32b art_esp;			/* Flags, set esp  PernAngband */
+#endif	/* 0 */
+
+	byte inven_order;		/* Inventory position if held by a player,
+					   only use is in xtra2.c when pack is ang_sort'ed */
+
+	u16b next_o_idx;		/* Next object in stack (if any) */
+	u16b held_m_idx;		/* Monster holding us (if any) */
+	bool auto_insc;			/* Request client-side auto-inscription after item has changed? */
+	char stack_pos;			/* Position in stack: Use to limit stack size */
+
+	s16b cheeze_dlv, cheeze_plv, cheeze_plv_carry;	/* anti-cheeze */
+
+	u16b housed;			/* <house index + 1> or 0 for not currently inside a house */
+	bool changed;			/* dummy flag to refresh item if o_name changed, but memory copy didn't */
+	bool NR_tradable;		/* for ALLOW_NR_CROSS_ITEMS */
+	bool no_soloist;		/* item may not be picked up by Soloists. Used for "unpersonalized" event rewards eg Santa drops. */
+	byte temp;			/* any local hacks:
+					    0x01 is used to force-update an equipment slot (by simply causing memcmp to not match anymore due to the flipped bit!).
+					    0x02 is used for !W inscription to set the alarm for this object,
+					    0x04 too, for preventing the !W induced alarm if the object was dropped by the player.
+					    0x08 active steamblast charge (for chests)
+					    0x10 distinguish a trapkit-load-democharge from 'normal' planted demo charges.
+					*/
+
+	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */
+	s32b iron_trade;		/* Needed for the last survivor after a party was erased: Former party of the last player who picked it up */
+	/* ..and for IDDC_RESTRICTED_TRADING : */
+	s32b iron_turn;			/* Turn when it was picked up, to compare with player's party-join turn. */
+
+	/* For replacing the 255 - iy monster-trap hack, and also no more setting iy and ix to 0 for monster-inventory items */
+	byte embed;			/* 1: Object is contained within a feat (trapkit/trapload in a monster trap); note that 'Object is held in a monster's inventory' is already indicated by held_m_idx instead. */
+
+	/* For item history tracking */
+	s32b id;			/* Item's unique ID (mhh) -- maybe also track if an item was 1:1 cloned? ie increase this id, but save 'reference id' to original item: */
+	s32b id_original;		/* For cloned items: Reference to original source item's id */
+
+	s32b f_id;			/* Original finder */
+	char f_name[CNAME_LEN];		/* Original finder's name */
+	s32b f_turn;			/* Found when, in-game? */
+	time_t f_time;			/* Found when, real-time? */
+	struct worldpos f_wpos;		/* Found at this wpos */
+	char f_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	byte f_player;			/* Received from a player / taken from a player's death loot oO */
+	s32b f_player_turn;		/* ^ when? */
+	u16b f_ridx, f_reidx;		/* Found from this [ego] monster */
+	s16b f_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
+
+	/* not yet implemented, for future tracking */
+	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
+	u32b slain_orcs, slain_trolls, slain_giants, slain_animals, slain_dragons, slain_demons, slain_undead, slain_evil;
+	byte slain_bosses, slain_nazgul, slain_superuniques, slain_sauron, slain_morgoth, slain_zuaon; //these don't respawn, so byte is fine
+	u64b done_damage, done_healing;
+	u16b got_damaged, got_repaired, got_enchanted;
+
+	s16b custom_lua_carrystate;	/* Runs custom lua script on acquiring/losing it */
+	s16b custom_lua_equipstate;	/* Runs custom lua script on equipping/unequipping it */
+	s16b custom_lua_destruction;	/* Runs custom lua script on item destruction */
+	s16b custom_lua_usage;		/* Runs custom lua script on whatever this item can be used for via command: activation, quaff, read, eat.. */
+
+	s32b wId;			/* Player currently _wielding/wearing_ the item. -- deprecated, superceded by 'comboset_flags' method */
+	byte comboset_flags;		/* Flag array of all equipped items affecting this item too to create a comboset */
+	byte comboset_flags_cnt;	/* Flag array of all equipped items affecting this item too to create a comboset - flag count */
+
+	s32b dummy1, dummy2;		/* Future use (aka artificial hole ^^) */
+};
+typedef struct object_type_v9 object_type_v9;
+struct object_type_v9 {
+	s32b owner;			/* Player id that found it */
+	s32b killer;			/* Player id that killed the monster/opened the chest/etc causing the item to drop (for handling Soloist mode) */
+	s16b level;			/* Level req */
+
+	s16b k_idx;			/* Kind index (zero if "dead") */
+	s16b h_idx;			/* inside house? (-1 if not) */
+
+	struct worldpos wpos;		/* worldmap position (6 x s16b) */
+	byte iy;			/* Y-position on map, or zero */
+	byte ix;			/* X-position on map, or zero */
+
+	byte tval;			/* Item type (from kind) */
+	byte sval;			/* Item sub-type (from kind) */
+	byte tval2;			/* normally unused (except for item-invalid-seal and gifts) */
+	byte sval2;			/* normally unused (except for item-invalid-seal and gifts) */
+	byte number2;			/* normally unused (except for gifts) */
+	u32b note2;			/* Inscription index */
+	char note2_utag;		/* Added for making pseudo-id overwrite unique loot tags */
+
+	s32b bpval;			/* Base item extra-parameter */
+	s32b pval;			/* Extra enchantment item extra-parameter (name1 or name2) */
+	s32b pval2;			/* Item extra-parameter for some special items - this was only used in old, disabled code. Using it now for INVERSE_CURSED_RANDARTS */
+	s32b pval3;			/* Item extra-parameter for some special items - this was unused. Using it now for INVERSE_CURSED_RANDARTS - C. Blue */
+
+	/* VAMPIRES_INV_CURSED */
+	s32b pval_org, bpval_org;
+	s16b to_h_org, to_d_org, to_a_org;
+
+	/* Used for temporarily augmented equipment. (Runecraft) */
+	s32b sigil;			/* Element index (+1) for r_projection (common/tables.c) boni lookup. Zero if no sigil. */
+	s32b sseed;			/* RNG Seed used to determine the boni (if random). Zero if not randomized. */
+
+	byte discount;			/* Discount (if any) */
+	byte number;			/* Number of items */
+	s16b weight;			/* Item weight */
+
+	u16b name1;			/* Artifact type, if any */
+	u16b name2;			/* Ego-Item type, if any */
+	u16b name2b;			/* 2e Ego-Item type, if any */
+	u32b name3;			/* Randart seed, if any (now it's common with ego-items -Jir-) */
+	u16b name4;			/* Index of randart name in file 'randarts.txt', solely for fun set bonus - C. Blue */
+	byte attr;			/* colour in inventory (for client) */
+
+	u32b mode;			/* Mode of player who found it */
+
+	s16b xtra1;			/* Extra info type, for various purpose */
+	s16b xtra2;			/* Extra info index */
+	/* more info added for self-made spellbook feature Adam suggested - C. Blue */
+	s16b xtra3;			/* Extra info */
+	s16b xtra4;			/* Extra info */
+	s16b xtra5;			/* Extra info */
+	s16b xtra6;			/* Extra info */
+	s16b xtra7;			/* Extra info */
+	s16b xtra8;			/* Extra info */
+	s16b xtra9;			/* Extra info -- marks starter items as such. (This would collide if there ever existed a custom book with 9 spells in it.) */
+
+	char uses_dir;			/* Client-side: Uses a direction or not? (for rods) */
+
+#ifdef PLAYER_STORES
+	byte ps_idx_x;			/* Index or x-coordinate of player store item in the original house */
+	byte ps_idx_y;			/* y-coordinate of player store item in the original house */
+	s64b appraised_value;		/* HOME_APPRAISAL: object_value(Ind_seller, o_ptr); */
+#endif
+
+	s16b to_h;			/* Plusses to hit */
+	s16b to_d;			/* Plusses to damage */
+	s16b to_a;			/* Plusses to AC */
+
+	s16b ac;			/* Normal AC */
+	byte dd, ds;			/* Damage dice/sides */
+
+	u16b ident;			/* Special flags */
+	s32b timeout;			/* Timeout Counter: amount of fuel left until it is depleted. */
+	s32b timeout_magic;		/* Timeout Counter: amount of power left until it is depleted, can be discharged. */
+	s32b recharging;		/* Auto-recharge-state of auto-recharging items (rods and activatable items). */
+
+	s32b marked;			/* Object is marked (for deletion after a certain time) */
+	byte marked2;			/* additional parameters */
+	/* for new quest_info: */
+	bool questor;			/* further quest_info flags are referred to when required, no need to copy all of them here */
+	s16b quest, quest_stage, questor_idx;	/* It's an item for a quest (either the questor item or an item that needs to be retrieved for a quest goal).
+		//IMPORTAAAAAAANT:	   Hack: 0 = no quest; n = quest + 1. So we don't have to initialise all items to -1 here :-p */
+	byte questor_invincible;	/* invincible to players/monsters? */
+	bool quest_credited;		/* ugly hack for inven_carry() usage within carry(), to avoid double-crediting */
 
 	u32b note;			/* Inscription index */
 	char note_utag;			/* Added for making pseudo-id overwrite unique loot tags */
@@ -2252,6 +2419,8 @@ struct monster_type {
 	byte questor_invincible;	/* further quest_info flags are referred to when required, no need to copy all of them here */
 	byte questor_hostile;		/* hostility flags (0x1 = vs py, 0x2 = vs mon) */
 	byte questor_target;		/* can get targetted by monsters and stuff..? */
+	s32b quest_id;			/* Added in 2026: Unique quest id that changes for any quest that starts,
+					   to keep track of quest-items on offline chars without loading all savegames in order to scan them for deprecated quest items. */
 
 	bool no_esp_phase;		/* for WEIRD_MIND esp flickering */
 	s16b stuck;			/* energy to track spellcasting possibility after monster was just stuck in terrain or between other monsters */
@@ -2487,7 +2656,7 @@ struct store_type {
 };
 
 /*
- * Structure for the "quests"
+ * Structure for the extermination orders (originally called "quests", which are now a different beast).
  *
  * Hack -- currently, only the "level" parameter is set, with the
  * semantics that "one (QUEST) monster of that level" must be killed,
@@ -2511,15 +2680,15 @@ struct xorder {
 	int max_num;		/* Number required (unused) */
 };
 
-/* Quests, random or preset by the dungeon master */
+/* Extermination Orders (formerly called "Quests"), random or preset by the dungeon master */
 /* evileye - same as old quest type, but multiplayerized. */
 struct xorder_type {
-	u16b active;		/* quest is active? (num players) */
-	u16b id;		/* quest id */
+	u16b active;		/* Order is active? (num players) */
+	u16b id;		/* Order id */
 	s16b type;		/* Monster race or object type */
-	u16b flags;		/* Quest flags */
+	u16b flags;		/* Order flags */
 	s32b creator;		/* Player ID or 0L (DM, guildmaster only) */
-	s32b turn;		/* quest started */
+	s32b turn;		/* Order started */
 };
 
 /* Adding this structure so we can have different creatures generated
@@ -2585,7 +2754,11 @@ struct dungeon_type {
 #endif	/* 0 */
 	int store_timer;	/* control frequency of dungeon store generation (for misc iron stores mostly) */
 	byte theme;		/* inspired by IDDC themes - for 'wilderness' dungeons */
+
 	s16b quest, quest_stage;/* this dungeon was spawned by a quest? (for quest_info) quest==0 = no quest (it's q_idx + 1!) */
+	s32b quest_id;			/* Added in 2026: Unique quest id that changes for any quest that starts,
+					   to keep track of quest-items on offline chars without loading all savegames in order to scan them for deprecated quest items. */
+
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 	byte known;		/* optional: Bits: 0x1 seen, 0x2 mindepth, 0x4 maxdepth, 0x8 boss seen */
 #endif
@@ -4196,6 +4369,8 @@ struct player_type {
 
 	/* Had a quest running when he logged out or something? ->respawn/reactivate quest? todo//unclear yet..
 	   THIS IS NEW STUFF: quest_info. Don't confuse it with older quest_type/quest[]/plots[] code sketches in bldg.c. */
+	s32b quest_id[MAX_PQUESTS];	/* Added in 2026: Unique quest id that changes for any quest that starts,
+					   to keep track of quest-items on offline chars without loading all savegames in order to scan them for deprecated quest items. */
 	int interact_questor_idx;	/* id in QI_QUESTORS, which questor we just interacted with (bumped into) */
 	s16b quest_idx[MAX_PQUESTS];
 	char quest_codename[MAX_PQUESTS][10 + 1]; /* track up to 5 quests by their codename and roughly the current stage and goals */
