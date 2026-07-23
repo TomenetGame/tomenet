@@ -11407,7 +11407,10 @@ void handle_request_return_str(int Ind, int id, char *str) {
 
 		msg_format(Ind, "Thanks, %s! We have sent a package on its way.", p_ptr->male ? "sir" : "ma'am");
 		object_desc(0, o_name, &mail_forge[i], TRUE, 3);
-		s_printf("MERCHANT_MAIL:(SENT) <%s> to <%s> sent: %s.\n", p_ptr->name, mail_target[i], o_name);
+		if (!p_ptr->mail_COD)
+			s_printf("MERCHANT_MAIL:(SENT,FEE: %d) <%s> to <%s> sent: %s.\n", p_ptr->mail_fee, p_ptr->name, mail_target[i], o_name);
+		else
+			s_printf("MERCHANT_MAIL:(SENT,COD,FEE: %d) <%s> to <%s> sent: %s.\n", p_ptr->mail_fee, p_ptr->name, mail_target[i], o_name);
 		return; }
 
 	case RID_SEND_GOLD: {
@@ -11507,7 +11510,10 @@ void handle_request_return_str(int Ind, int id, char *str) {
 		mail_COD[i] = p_ptr->mail_COD;
 		mail_xfee[i] = 0;
 
-		s_printf("MERCHANT_MAIL:(SENT) <%s> to <%s> sent: %d Au.\n", p_ptr->name, mail_target[i], mail_forge[i].pval);
+		if (!p_ptr->mail_COD)
+			s_printf("MERCHANT_MAIL:(SENT,FEE: %d) <%s> to <%s> sent: %d Au.\n", mail_forge[i].pval / 20, p_ptr->name, mail_target[i], mail_forge[i].pval);
+		else
+			s_printf("MERCHANT_MAIL:(SENT,COD,FEE: %d) <%s> to <%s> sent: %d Au.\n", mail_forge[i].pval / 20, p_ptr->name, mail_target[i], mail_forge[i].pval);
 		return; }
 #endif
 
