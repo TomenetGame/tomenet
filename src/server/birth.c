@@ -3856,7 +3856,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	disable_specific_warnings(p_ptr);
 
 	/* No active quests */
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	for (i = 0; i < MAX_PQUESTS; i++) {
 		p_ptr->quest_codename[i][0] = 0;
 		p_ptr->quest_idx[i] = -1;
 	}

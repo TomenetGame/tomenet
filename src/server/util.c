@@ -8350,7 +8350,7 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 
 /* backup all house prices and contents for all players to lib/save/estate/.
    partial: don't stop with failure if a character files can't be read. */
-#define ESTATE_BACKUP_VERSION "v9"
+#define ESTATE_BACKUP_VERSION "v10"
 bool backup_estate(bool partial) {
 	FILE *fp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CNAME_LEN], c;
@@ -8709,6 +8709,7 @@ void restore_estate(int Ind) {
 	bool gained_anything = FALSE;
 
 	int conversion = 0;
+	object_type_v9 forge_v9, *o_ptr_v9 = &forge_v9;
 	object_type_v8 forge_v8, *o_ptr_v8 = &forge_v8;
 	object_type_v7 forge_v7, *o_ptr_v7 = &forge_v7;
 	object_type_v6 forge_v6, *o_ptr_v6 = &forge_v6;
@@ -8755,6 +8756,7 @@ void restore_estate(int Ind) {
 	else if (streq(version, "v6")) conversion = 7;
 	else if (streq(version, "v7")) conversion = 8;
 	else if (streq(version, "v8")) conversion = 9;
+	else if (streq(version, "v9")) conversion = 10;
 	else {
 		s_printf("  error: Invalid backup version.\nfailed.\n");
 		msg_print(Ind, "\377oAn error occurred, please contact an administrator.");
@@ -8911,7 +8913,7 @@ void restore_estate(int Ind) {
 				o_ptr->iron_turn = 0;
 				//convert: (3)
 				o_ptr->note = 0;
-				 //convert: (4)
+				//convert: (4)
 				o_ptr->embed = 0;
 				//convert: (5)
 				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
@@ -8956,6 +8958,11 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
 				o_ptr->mode = o_ptr_v2->mode; /* u16b = byte */
+				o_ptr->id_original = 0; /* (future use) */
+				o_ptr->wId = o_ptr->comboset_flags = 0;
+				//convert (9):
+				o_ptr->quest_id = 0;
+				o_ptr->dummy1 = o_ptr->dummy2 = o_ptr->dummy3 = 0;
 				break;
 			case 2: r = fread(o_ptr_v2a, sizeof(object_type_v2a), 1, fp);
 				o_ptr->owner = o_ptr_v2a->owner;
@@ -9038,12 +9045,12 @@ void restore_estate(int Ind) {
 				o_ptr->NR_tradable = o_ptr_v2a->NR_tradable;
 				o_ptr->temp = o_ptr_v2a->temp;
 				o_ptr->iron_trade = o_ptr_v2a->iron_trade;
-				//convert;
+				//convert (2?);
 				o_ptr->no_soloist = FALSE;
 				o_ptr->iron_turn = 0;
 				//convert: (3)
 				o_ptr->note = 0;
-				 //convert: (4)
+				//convert: (4)
 				o_ptr->embed = 0;
 				//convert: (5)
 				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
@@ -9088,6 +9095,11 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
 				o_ptr->mode = o_ptr_v2a->mode; /* u16b = byte */
+				o_ptr->id_original = 0; /* (future use) */
+				o_ptr->wId = o_ptr->comboset_flags = 0;
+				//convert (9):
+				o_ptr->quest_id = 0;
+				o_ptr->dummy1 = o_ptr->dummy2 = o_ptr->dummy3 = 0;
 				break;
 			case 3: r = fread(o_ptr_v2b, sizeof(object_type_v2b), 1, fp);
 				o_ptr->owner = o_ptr_v2b->owner;
@@ -9172,9 +9184,9 @@ void restore_estate(int Ind) {
 				o_ptr->temp = o_ptr_v2b->temp;
 				o_ptr->iron_trade = o_ptr_v2b->iron_trade;
 				o_ptr->iron_turn = o_ptr_v2b->iron_turn;
-				//convert:
+				//convert (3):
 				o_ptr->note = 0;
-				 //convert: (4)
+				//convert: (4)
 				o_ptr->embed = 0;
 				//convert: (5)
 				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
@@ -9219,6 +9231,11 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
 				o_ptr->mode = o_ptr_v2b->mode; /* u16b = byte */
+				o_ptr->id_original = 0; /* (future use) */
+				o_ptr->wId = o_ptr->comboset_flags = 0;
+				//convert (9):
+				o_ptr->quest_id = 0;
+				o_ptr->dummy1 = o_ptr->dummy2 = o_ptr->dummy3 = 0;
 				break;
 			case 4: r = fread(o_ptr_v3, sizeof(object_type_v3), 1, fp);
 				o_ptr->owner = o_ptr_v3->owner;
@@ -9304,7 +9321,7 @@ void restore_estate(int Ind) {
 				o_ptr->temp = o_ptr_v3->temp;
 				o_ptr->iron_trade = o_ptr_v3->iron_trade;
 				o_ptr->iron_turn = o_ptr_v3->iron_turn;
-				//convert:
+				//convert (4):
 				o_ptr->embed = 0;
 				//convert: (5)
 				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
@@ -9349,6 +9366,11 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
 				o_ptr->mode = o_ptr_v3->mode; /* u16b = byte */
+				o_ptr->id_original = 0; /* (future use) */
+				o_ptr->wId = o_ptr->comboset_flags = 0;
+				//convert (9):
+				o_ptr->quest_id = 0;
+				o_ptr->dummy1 = o_ptr->dummy2 = o_ptr->dummy3 = 0;
 				break;
 			case 5: r = fread(o_ptr_v4, sizeof(object_type_v4), 1, fp);
 				o_ptr->owner = o_ptr_v4->owner;
@@ -9435,7 +9457,7 @@ void restore_estate(int Ind) {
 				o_ptr->iron_trade = o_ptr_v4->iron_trade;
 				o_ptr->iron_turn = o_ptr_v4->iron_turn;
 				o_ptr->embed = o_ptr_v4->embed;
-				//convert:
+				//convert (5):
 				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
 				o_ptr->f_turn = o_ptr->f_time = 0;
 				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
@@ -9478,6 +9500,11 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
 				o_ptr->mode = o_ptr_v4->mode; /* u16b = byte */
+				o_ptr->id_original = 0; /* (future use) */
+				o_ptr->wId = o_ptr->comboset_flags = 0;
+				//convert (9):
+				o_ptr->quest_id = 0;
+				o_ptr->dummy1 = o_ptr->dummy2 = o_ptr->dummy3 = 0;
 				break;
 			case 6: r = fread(o_ptr_v5, sizeof(object_type_v5), 1, fp);
 				o_ptr->owner = o_ptr_v5->owner;
@@ -9577,7 +9604,7 @@ void restore_estate(int Ind) {
 				o_ptr->f_reidx = o_ptr_v5->f_reidx;
 				o_ptr->f_special = o_ptr_v5->f_special;
 				o_ptr->f_reward = o_ptr_v5->f_reward;
-				//convert:
+				//convert (6):
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
 				//convert: (7)
@@ -9612,6 +9639,11 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
 				o_ptr->mode = o_ptr_v5->mode; /* u16b = byte */
+				o_ptr->id_original = 0; /* (future use) */
+				o_ptr->wId = o_ptr->comboset_flags = 0;
+				//convert (9):
+				o_ptr->quest_id = 0;
+				o_ptr->dummy1 = o_ptr->dummy2 = o_ptr->dummy3 = 0;
 				break;
 			case 7: r = fread(o_ptr_v6, sizeof(object_type_v6), 1, fp);
 				o_ptr->owner = o_ptr_v6->owner;
@@ -9714,7 +9746,7 @@ void restore_estate(int Ind) {
 				o_ptr->number2 = o_ptr_v6->number2;
 				o_ptr->note2 = o_ptr_v6->note2;
 				o_ptr->note2_utag = o_ptr_v6->note2_utag;
-				//convert:
+				//convert (7):
 				o_ptr->slain_monsters = 0;
 				o_ptr->slain_uniques = 0;
 				o_ptr->slain_players = 0;
@@ -9746,6 +9778,11 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_usage = 0;
 				//convert (8):
 				o_ptr->mode = o_ptr_v6->mode; /* u16b = byte */
+				o_ptr->id_original = 0; /* (future use) */
+				o_ptr->wId = o_ptr->comboset_flags = 0;
+				//convert (9):
+				o_ptr->quest_id = 0;
+				o_ptr->dummy1 = o_ptr->dummy2 = o_ptr->dummy3 = 0;
 				break;
 			case 8: r = fread(o_ptr_v7, sizeof(object_type_v7), 1, fp);
 				o_ptr->owner = o_ptr_v7->owner;
@@ -9876,8 +9913,13 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_equipstate = o_ptr_v7->custom_lua_equipstate;
 				o_ptr->custom_lua_destruction = o_ptr_v7->custom_lua_destruction;
 				o_ptr->custom_lua_usage = o_ptr_v7->custom_lua_usage;
-				//convert:
+				//convert (8):
 				o_ptr->mode = o_ptr_v7->mode; /* u16b = byte */
+				o_ptr->id_original = 0; /* (future use) */
+				o_ptr->wId = o_ptr->comboset_flags = 0;
+				//convert (9):
+				o_ptr->quest_id = 0;
+				o_ptr->dummy1 = o_ptr->dummy2 = o_ptr->dummy3 = 0;
 				break;
 			case 9: r = fread(o_ptr_v8, sizeof(object_type_v8), 1, fp);
 				o_ptr->owner = o_ptr_v8->owner;
@@ -10008,10 +10050,151 @@ void restore_estate(int Ind) {
 				o_ptr->custom_lua_equipstate = o_ptr_v8->custom_lua_equipstate;
 				o_ptr->custom_lua_destruction = o_ptr_v8->custom_lua_destruction;
 				o_ptr->custom_lua_usage = o_ptr_v8->custom_lua_usage;
-				//convert:
 				o_ptr->mode = o_ptr_v8->mode; /* u32b = u16b */
+				//convert (?):
 				o_ptr->wId = o_ptr->comboset_flags = 0;
 				o_ptr->id_original = 0; /* (future use) */
+				//convert (9):
+				o_ptr->quest_id = 0;
+				o_ptr->dummy1 = o_ptr->dummy2 = o_ptr->dummy3 = 0;
+				break;
+			case 10: r = fread(o_ptr_v9, sizeof(object_type_v9), 1, fp);
+				o_ptr->owner = o_ptr_v9->owner;
+				o_ptr->killer = o_ptr_v9->killer;
+				o_ptr->level = o_ptr_v9->level;
+				o_ptr->k_idx = o_ptr_v9->k_idx;
+				o_ptr->h_idx = o_ptr_v9->h_idx;
+				o_ptr->wpos = o_ptr_v9->wpos;
+				o_ptr->iy = o_ptr_v9->iy;
+				o_ptr->ix = o_ptr_v9->ix;
+				o_ptr->tval = o_ptr_v9->tval;
+				o_ptr->sval = o_ptr_v9->sval;
+				o_ptr->tval2 = o_ptr_v9->tval2;
+				o_ptr->sval2 = o_ptr_v9->sval2;
+				o_ptr->bpval = o_ptr_v9->bpval;
+				o_ptr->pval = o_ptr_v9->pval;
+				o_ptr->pval2 = o_ptr_v9->pval2;
+				o_ptr->pval3 = o_ptr_v9->pval3;
+				o_ptr->pval_org = o_ptr_v9->pval_org;
+				o_ptr->bpval_org = o_ptr_v9->bpval_org;
+				o_ptr->to_h_org = o_ptr_v9->to_h_org;
+				o_ptr->to_d_org = o_ptr_v9->to_d_org;
+				o_ptr->to_a_org = o_ptr_v9->to_a_org;
+				o_ptr->sigil = o_ptr_v9->sigil;
+				o_ptr->sseed = o_ptr_v9->sseed;
+				o_ptr->discount = o_ptr_v9->discount;
+				o_ptr->number = o_ptr_v9->number;
+				o_ptr->weight = o_ptr_v9->weight;
+				o_ptr->name1 = o_ptr_v9->name1;
+				o_ptr->name2 = o_ptr_v9->name2;
+				o_ptr->name2b = o_ptr_v9->name2b;
+				o_ptr->name3 = o_ptr_v9->name3;
+				o_ptr->name4 = o_ptr_v9->name4;
+				o_ptr->attr = o_ptr_v9->attr;
+				o_ptr->mode = o_ptr_v9->mode;
+				o_ptr->xtra1 = o_ptr_v9->xtra1;
+				o_ptr->xtra2 = o_ptr_v9->xtra2;
+				o_ptr->xtra3 = o_ptr_v9->xtra3;
+				o_ptr->xtra4 = o_ptr_v9->xtra4;
+				o_ptr->xtra5 = o_ptr_v9->xtra5;
+				o_ptr->xtra6 = o_ptr_v9->xtra6;
+				o_ptr->xtra7 = o_ptr_v9->xtra7;
+				o_ptr->xtra8 = o_ptr_v9->xtra8;
+				o_ptr->xtra9 = o_ptr_v9->xtra9;
+				o_ptr->uses_dir = o_ptr_v9->uses_dir;
+#ifdef PLAYER_STORES
+				o_ptr->ps_idx_x = o_ptr_v9->ps_idx_x;
+				o_ptr->ps_idx_y = o_ptr_v9->ps_idx_y;
+				o_ptr->appraised_value = o_ptr_v9->appraised_value;
+#endif
+				o_ptr->to_h = o_ptr_v9->to_h;
+				o_ptr->to_d = o_ptr_v9->to_d;
+				o_ptr->to_a = o_ptr_v9->to_a;
+				o_ptr->ac = o_ptr_v9->ac;
+				o_ptr->dd = o_ptr_v9->dd;
+				o_ptr->ds = o_ptr_v9->ds;
+				o_ptr->ident = o_ptr_v9->ident;
+				o_ptr->timeout = o_ptr_v9->timeout;
+				o_ptr->timeout_magic = o_ptr_v9->timeout_magic;
+				o_ptr->recharging = o_ptr_v9->recharging;
+				o_ptr->marked = o_ptr_v9->marked;
+				o_ptr->marked2 = o_ptr_v9->marked2;
+				o_ptr->questor = o_ptr_v9->questor;
+				o_ptr->quest = o_ptr_v9->quest;
+				o_ptr->quest_stage = o_ptr_v9->quest_stage;
+				o_ptr->questor_idx = o_ptr_v9->questor_idx;
+				o_ptr->questor_invincible = o_ptr_v9->questor_invincible;
+				o_ptr->quest_credited = o_ptr_v9->quest_credited;
+				o_ptr->note = o_ptr_v9->note;
+				o_ptr->note_utag = o_ptr_v9->note_utag;
+				o_ptr->inven_order = o_ptr_v9->inven_order;
+				o_ptr->next_o_idx = o_ptr_v9->next_o_idx;
+				o_ptr->held_m_idx = o_ptr_v9->held_m_idx;
+				o_ptr->auto_insc = o_ptr_v9->auto_insc;
+				o_ptr->stack_pos = o_ptr_v9->stack_pos;
+				o_ptr->cheeze_dlv = o_ptr_v9->cheeze_dlv;
+				o_ptr->cheeze_plv = o_ptr_v9->cheeze_plv;
+				o_ptr->cheeze_plv_carry = o_ptr_v9->cheeze_plv_carry;
+				o_ptr->housed = o_ptr_v9->housed;
+				o_ptr->changed = o_ptr_v9->changed;
+				o_ptr->NR_tradable = o_ptr_v9->NR_tradable;
+				o_ptr->no_soloist = o_ptr_v9->no_soloist;
+				o_ptr->temp = o_ptr_v9->temp;
+				o_ptr->iron_trade = o_ptr_v9->iron_trade;
+				o_ptr->iron_turn = o_ptr_v9->iron_turn;
+				o_ptr->embed = o_ptr_v9->embed;
+				o_ptr->id = o_ptr_v9->id;
+				o_ptr->id_original = o_ptr_v9->id_original;
+				o_ptr->f_id = o_ptr_v9->f_id;
+				strcpy(o_ptr->f_name, o_ptr_v9->f_name);
+				o_ptr->f_turn = o_ptr_v9->f_turn;
+				o_ptr->f_time = o_ptr_v9->f_time;
+				o_ptr->f_wpos = o_ptr_v9->f_wpos;
+				o_ptr->f_dun = o_ptr_v9->f_dun;
+				o_ptr->f_player = o_ptr_v9->f_player;
+				o_ptr->f_player_turn = o_ptr_v9->f_player_turn;
+				o_ptr->f_ridx = o_ptr_v9->f_ridx;
+				o_ptr->f_reidx = o_ptr_v9->f_reidx;
+				o_ptr->f_special = o_ptr_v9->f_special;
+				o_ptr->f_reward = o_ptr_v9->f_reward;
+				o_ptr->number2 = o_ptr_v9->number2;
+				o_ptr->note2 = o_ptr_v9->note2;
+				o_ptr->note2_utag = o_ptr_v9->note2_utag;
+				o_ptr->slain_monsters = o_ptr_v9->slain_monsters;
+				o_ptr->slain_uniques = o_ptr_v9->slain_uniques;
+				o_ptr->slain_players = o_ptr_v9->slain_players;
+				o_ptr->times_activated = o_ptr_v9->times_activated;
+				o_ptr->time_equipped = o_ptr_v9->time_equipped;
+				o_ptr->time_carried = o_ptr_v9->time_carried;
+				o_ptr->slain_orcs = o_ptr_v9->slain_orcs;
+				o_ptr->slain_trolls = o_ptr_v9->slain_trolls;
+				o_ptr->slain_giants = o_ptr_v9->slain_giants;
+				o_ptr->slain_animals = o_ptr_v9->slain_animals;
+				o_ptr->slain_dragons = o_ptr_v9->slain_dragons;
+				o_ptr->slain_demons = o_ptr_v9->slain_demons;
+				o_ptr->slain_undead = o_ptr_v9->slain_undead;
+				o_ptr->slain_evil = o_ptr_v9->slain_evil;
+				o_ptr->slain_bosses = o_ptr_v9->slain_bosses;
+				o_ptr->slain_nazgul = o_ptr_v9->slain_nazgul;
+				o_ptr->slain_superuniques = o_ptr_v9->slain_superuniques;
+				o_ptr->slain_sauron = o_ptr_v9->slain_sauron;
+				o_ptr->slain_morgoth = o_ptr_v9->slain_morgoth;
+				o_ptr->slain_zuaon = o_ptr_v9->slain_zuaon;
+				o_ptr->done_damage = o_ptr_v9->done_damage;
+				o_ptr->done_healing = o_ptr_v9->done_healing;
+				o_ptr->got_damaged = o_ptr_v9->got_damaged;
+				o_ptr->got_repaired = o_ptr_v9->got_repaired;
+				o_ptr->got_enchanted = o_ptr_v9->got_enchanted;
+				o_ptr->custom_lua_carrystate = o_ptr_v9->custom_lua_carrystate;
+				o_ptr->custom_lua_equipstate = o_ptr_v9->custom_lua_equipstate;
+				o_ptr->custom_lua_destruction = o_ptr_v9->custom_lua_destruction;
+				o_ptr->custom_lua_usage = o_ptr_v9->custom_lua_usage;
+				o_ptr->wId = o_ptr_v9->wId;
+				o_ptr->comboset_flags = o_ptr_v9->comboset_flags;
+				//convert (9):
+				o_ptr->quest_id = 0;
+				o_ptr->dummy1 = o_ptr->dummy2 = o_ptr->dummy3 = 0; //future use
+				break;
 			}
 			if (r == 0) {
 				s_printf("  error: Failed to read object.\n");
@@ -10102,6 +10285,9 @@ void restore_estate(int Ind) {
 					case 9:
 						(void)fwrite(o_ptr_v8, sizeof(object_type_v8), 1, fp_tmp);
 						break;
+					case 10:
+						(void)fwrite(o_ptr_v9, sizeof(object_type_v9), 1, fp_tmp);
+						break;
 					}
 #endif
 
@@ -10159,6 +10345,9 @@ void restore_estate(int Ind) {
 					break;
 				case 9:
 					(void)fwrite(o_ptr_v8, sizeof(object_type_v8), 1, fp_tmp);
+					break;
+				case 10:
+					(void)fwrite(o_ptr_v9, sizeof(object_type_v9), 1, fp_tmp);
 					break;
 				}
 

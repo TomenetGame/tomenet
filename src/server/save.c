@@ -302,6 +302,11 @@ static void wr_item(object_type *o_ptr) {
 	wr_byte(o_ptr->comboset_flags_cnt);
 
 	wr_s32b(o_ptr->id_original);
+	wr_s32b(o_ptr->quest_id);
+
+	wr_s32b(o_ptr->dummy1);
+	wr_s32b(o_ptr->dummy2);
+	wr_s32b(o_ptr->dummy3);
 }
 
 /*
@@ -428,6 +433,7 @@ static void wr_monster(monster_type *m_ptr) {
 	wr_s32b(m_ptr->related);
 	wr_byte(m_ptr->related_type);
 	wr_s32b(m_ptr->custom_xp);
+	wr_s32b(m_ptr->quest_id);
 }
 
 /*
@@ -1705,7 +1711,7 @@ static bool wr_savefile_new(int Ind) {
 	wr_byte(p_ptr->quest_any_deliver_xy);
 	wr_byte(p_ptr->quest_any_deliver_xy_within_target);
 
-	for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	for (i = 0; i < MAX_PQUESTS; i++) {
 		wr_s16b(p_ptr->quest_idx[i]);
 		wr_string(p_ptr->quest_codename[i]);
 		wr_s16b(p_ptr->quest_stage[i]);
@@ -1744,6 +1750,9 @@ static bool wr_savefile_new(int Ind) {
 		wr_s16b(p_ptr->quest_cooldown[i]);
 	}
 
+	wr_byte(MAX_PQUESTS);
+	for (i = 0; i < MAX_PQUESTS; i++)
+		wr_s32b(p_ptr->quest_id[i]);
 
 	wr_byte(p_ptr->spell_project);
 
@@ -2701,6 +2710,7 @@ static void new_wr_wild() {
 				wr_byte(w_ptr->dungeon->theme);
 				wr_s16b(w_ptr->dungeon->quest);
 				wr_s16b(w_ptr->dungeon->quest_stage);
+				wr_s32b(w_ptr->dungeon->quest_id);
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 				wr_byte(w_ptr->dungeon->known);
 #else
@@ -3212,6 +3222,7 @@ static bool save_quests_file(void) {
 #else
 		wr_byte(0);
 #endif
+		wr_s32b(q_ptr->quest_id);
 
 		wr_s16b(q_ptr->cur_cooldown);
 		wr_s32b(q_ptr->turn_activated);

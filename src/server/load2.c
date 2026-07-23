@@ -628,6 +628,15 @@ static void rd_item(object_type *o_ptr) {
 		rd_s32b(&o_ptr->id_original);
 	}
 
+	if (!older_than(4, 9, 25)) {
+		rd_s32b(&o_ptr->quest_id);
+
+		/* for any future use (hole): */
+		rd_s32b(&o_ptr->dummy1);
+		rd_s32b(&o_ptr->dummy2);
+		rd_s32b(&o_ptr->dummy3);
+	}
+
 
 	/* --- Process/verify the item --- */
 
@@ -1179,6 +1188,7 @@ static void rd_monster(monster_type *m_ptr) {
 		rd_byte(&m_ptr->related_type);
 		rd_s32b(&m_ptr->custom_xp);
 	}
+	if (!s_older_than(4, 9, 25)) rd_s32b(&m_ptr->quest_id);
 }
 
 
@@ -3454,7 +3464,12 @@ static errr rd_savefile_new_aux(int Ind) {
 	}
 
 	if (!older_than(4, 5, 19)) {
-		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+		int x;
+
+		if (!older_than(4, 9, 25)) x = MAX_PQUESTS;
+		else x = MAX_CONCURRENT_QUESTS;
+
+		for (i = 0; i < x; i++) {
 			rd_s16b(&p_ptr->quest_idx[i]);
 			rd_string(p_ptr->quest_codename[i], 10);
 			if (older_than(4, 5, 21)) {
@@ -3512,11 +3527,32 @@ static errr rd_savefile_new_aux(int Ind) {
 			rd_s16b(&p_ptr->quest_done[i]);
 			if (!older_than(4, 5, 22)) rd_s16b(&p_ptr->quest_cooldown[i]);
 		}
-	} else
-		for (i = 0; i < MAX_CONCURRENT_QUESTS; i++) {
+	} else {
+		int x;
+
+		if (!older_than(4, 9, 25)) x = MAX_PQUESTS;
+		else x = MAX_CONCURRENT_QUESTS;
+
+		for (i = 0; i < x; i++) {
 			p_ptr->quest_idx[i] = -1;
 			p_ptr->quest_codename[i][0] = 0;
 		}
+	}
+
+	j = 0;
+	if (!older_than(4, 9, 25)) {
+		rd_byte(&tmp8u);
+		j = (int)tmp8u;
+
+		for (i = 0; i < j; i++) {
+			if (i >= MAX_PQUESTS) {
+				p_ptr->quest_id[i] = 0;
+				continue;
+			}
+			rd_s32b(&p_ptr->quest_id[i]);
+		}
+	}
+	for (i = j; i < MAX_PQUESTS; i++) p_ptr->quest_id[i] = 0;
 
 
 	if (!older_than(4, 0, 1)) rd_byte(&p_ptr->spell_project);
@@ -4300,6 +4336,8 @@ void new_rd_wild() {
 					rd_s16b(&d_ptr->quest);
 					rd_s16b(&d_ptr->quest_stage);
 				}
+				if (!s_older_than(4, 9, 25)) rd_s32b(&d_ptr->quest_id);
+				else d_ptr->quest_id = 0;
 
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 				if (!s_older_than(4, 6, 7)) rd_byte(&d_ptr->known);
@@ -4971,6 +5009,9 @@ static errr load_quests_file() {
 		/* Quest was disabled in q_info.txt? Then set 'disabled_on_load' marker. */
 		if (q_ptr->disabled) q_ptr->disabled_on_load = TRUE;
 #endif
+
+		if (!q_older_than(1, 0, 2)) rd_s32b(&q_ptr->quest_id);
+		else q_ptr->quest_id = 0;
 
 		rd_s16b(&q_ptr->cur_cooldown);
 		rd_s32b(&q_ptr->turn_activated);

@@ -859,7 +859,7 @@ struct object_type {
 	byte comboset_flags;		/* Flag array of all equipped items affecting this item too to create a comboset */
 	byte comboset_flags_cnt;	/* Flag array of all equipped items affecting this item too to create a comboset - flag count */
 
-	s32b dummy1, dummy2;		/* Future use (aka artificial hole ^^) */
+	s32b dummy1, dummy2, dummy3;	/* (Future use) */
 };
 typedef struct object_type_v9 object_type_v9;
 struct object_type_v9 {

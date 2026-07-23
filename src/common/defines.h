@@ -105,13 +105,13 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	24
+#define SF_VERSION_PATCH	25
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
 #define QUEST_SF_VERSION_MAJOR	1
 #define QUEST_SF_VERSION_MINOR	0
-#define QUEST_SF_VERSION_PATCH	1
+#define QUEST_SF_VERSION_PATCH	2
 #define QUEST_SF_VERSION_EXTRA	0
 
 
