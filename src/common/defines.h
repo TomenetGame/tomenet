@@ -112,7 +112,7 @@
 #define QUEST_SF_VERSION_MAJOR	1
 #define QUEST_SF_VERSION_MINOR	0
 #define QUEST_SF_VERSION_PATCH	2
-#define QUEST_SF_VERSION_EXTRA	0
+#define QUEST_SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 
 /* version_os constants, set by gcc flags - C. Blue */
