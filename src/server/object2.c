@@ -1044,6 +1044,10 @@ int o_pop(void) {
 		/* Update "o_fast" */
 		o_fast[o_top++] = i;
 
+		/* Imprint unique id (note: currently just gets wiped again right away by any following invcopy() ^^)*/
+		o_list[i].id = (u32b)rand_int(0xFFFF) << 16;
+		o_list[i].id += rand_int(0xFFFE) + 1; //avoid zero!
+
 		/* Use this object */
 		return(i);
 	}
