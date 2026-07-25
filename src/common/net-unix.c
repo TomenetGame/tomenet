@@ -578,9 +578,15 @@ int	port;
 	return (-1);
     }
 
+#ifdef CLIENT_SIDE
+    /* More leeway, whatever... */
+    timeout.tv_sec = 10;
+    timeout.tv_usec = 0;
+#else
     /* Actually don't freeze the server indefinitely in case of failing to connect to world server */
     timeout.tv_sec = 4;
     timeout.tv_usec = 0;
+#endif
     if (setsockopt(fd, SOL_SOCKET, SO_SNDTIMEO, &timeout, sizeof timeout) < 0)
 	printf("CreateClientSocket() ERROR: setsockopt failed\n");
 
