@@ -595,14 +595,14 @@ static int get_filedescriptor_limit(void) {
 	limit.rlim_cur = 65535;
 	limit.rlim_max = 65535;
 	if (setrlimit(RLIMIT_NOFILE, &limit) != 0) {
-		printf("setrlimit() failed with errno=%d\n", errno);
+		logprint(format("setrlimit() failed with errno=%d\n", errno));
 		return(0);
 	}
  #endif
 
 	/* Get max number of files. */
 	if (getrlimit(RLIMIT_NOFILE, &limit) != 0) {
-		printf("getrlimit() failed with errno=%d\n", errno);
+		logprint(format("getrlimit() failed with errno=%d\n", errno));
 		return(1024); //assume default
 	}
 
