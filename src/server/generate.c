@@ -11636,6 +11636,8 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 	d_ptr->theme = theme;
 	d_ptr->quest = quest;
 	d_ptr->quest_stage = quest_stage;
+	if (quest) d_ptr->quest_id = q_info[quest - 1].quest_id;
+	else d_ptr->quest_id = 0;
 
 #ifdef DUNGEON_VISIT_BONUS
 	d_ptr->id = ++dungeon_id_max;
@@ -11758,6 +11760,8 @@ void verify_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags
 	d_ptr->theme = theme;
 	d_ptr->quest = quest;
 	d_ptr->quest_stage = quest_stage;
+	if (quest) d_ptr->quest_id = q_info[quest - 1].quest_id;
+	else d_ptr->quest_id = 0;
 
 	if (type) {
 		/* XXX: flags1, flags2 can be affected if specified so? */

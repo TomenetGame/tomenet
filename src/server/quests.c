@@ -1093,6 +1093,7 @@ static bool questor_monster(int q_idx, qi_questor *q_questor, int questor_idx) {
 	}
 
 	q_questor->talk_focus = 0;
+	m_ptr->quest_id = q_ptr->quest_id;
 	return(TRUE);
 }
 
@@ -1292,6 +1293,7 @@ static bool questor_object(int q_idx, qi_questor *q_questor, int questor_idx) {
 	}
 
 	q_questor->talk_focus = 0;
+	o_ptr->quest_id = q_ptr->quest_id;
 	return(TRUE);
 }
 
@@ -1493,6 +1495,9 @@ bool quest_activate(int q_idx) {
 	s_printf("%s QUEST_ACTIVATE: '%s'(%d,%s) by %s\n", showtime(), q_name + q_ptr->name, q_idx, q_ptr->codename, q_ptr->creator);
 #endif
 	q_ptr->active = TRUE;
+	/* Imprint unique id */
+	q_ptr->quest_id = (u32b)rand_int(0xFFFF) << 16;
+	q_ptr->quest_id += rand_int(0xFFFE) + 1; //avoid zero!
 
 	/* This needs to be initialised before spawning questors,
 	   because object-type questors count for this too. */
@@ -1537,8 +1542,8 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 	int i, j;
 	object_type *o_ptr;
 
-	int slot;
-	hash_entry *ptr;
+	//int slot;
+	//hash_entry *ptr;
 	player_type *p_ptr;
 
 	/* Is the quest even missing any objects? */
@@ -1612,7 +1617,11 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 		return;
 	}
 
-	/* hack */
+#if 0 /* Too much effort to scan whole savegame base for quest objects.
+	 Instead, just check players' inventory when they actually log on,
+	 and compare the new items' "quest_id", to decide to erase them on loading. */
+
+	/* hack - add virtual player who is used to scan the whole savegame base */
 	NumPlayers++;
 	MAKE(Players[NumPlayers], player_type);
 	p_ptr = Players[NumPlayers];
@@ -1670,6 +1679,7 @@ static void quest_erase_objects(int q_idx, byte individual, s32b p_id) {
 	C_FREE(p_ptr->inventory, INVEN_TOTAL, object_type);
 	KILL(p_ptr, player_type);
 	NumPlayers--;
+#endif
 
 #if QDEBUG > 1
 	s_printf("OBJECT_QUEST_ERASE: done. (registered: %d)\n", q_info[q_idx].objects_registered);
@@ -1899,6 +1909,8 @@ void quest_deactivate(int q_idx) {
 
 	/* remove quest dungeons */
 	quest_remove_dungeons(q_idx);
+
+	q_ptr->quest_id = 0;
 }
 
 /* return a current quest's cooldown. Either just uses q_ptr->cur_cooldown directly for global
@@ -3526,6 +3538,7 @@ void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 	}
 
 	p_ptr->quest_idx[i] = q_idx;
+	p_ptr->quest_id[i] = q_ptr->quest_id;
 	strcpy(p_ptr->quest_codename[i], q_ptr->codename);
 #if QDEBUG > 1
 	s_printf("%s QUEST_ACQUIRED: (%d,%d,%d;%d,%d) %s (%d) has quest '%s'(%d,%s) (slot %d).\n",

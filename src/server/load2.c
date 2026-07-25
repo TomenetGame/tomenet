@@ -308,6 +308,7 @@ static void rd_item(object_type *o_ptr) {
 	byte tmpbyte;
 	s32b tmp32s;
 	u16b tmp16u;
+	bool erase = FALSE; // quest items
 
 	/* VAMPIRES_INV_CURSED */
 	bool flipped = FALSE;
@@ -631,6 +632,26 @@ static void rd_item(object_type *o_ptr) {
 	if (!older_than(4, 9, 25)) {
 		rd_s32b(&o_ptr->quest_id);
 
+		/* Check quest item for being deprecated because the quest is no longer active -> erase it if deprecated */
+		if (o_ptr->quest_id) {
+			int i;
+
+			/* scan active quests for matching this id */
+			for (i = 0; i < max_q_idx; i++) {
+				if (!q_info[i].defined || !q_info[i].active) continue;
+				if (q_info[i].quest_id == o_ptr->quest_id && o_ptr->quest == i + 1
+				    /* && (!q_info[i].individual || o_ptr->owner == p_id) -- we have no Ind knowledge */
+				    ) break;
+			}
+			if (i == max_q_idx) {
+				char o_name[80];
+
+				object_desc(0, o_name, o_ptr, TRUE, 3);
+				s_printf("QUEST_OBJECT_ERASE_LOAD: quest '%s' : %s\n", q_name + q_info[i].name, o_name);
+				erase = TRUE;
+			}
+		}
+
 		/* for any future use (hole): */
 		rd_s32b(&o_ptr->dummy1);
 		rd_s32b(&o_ptr->dummy2);
@@ -675,6 +696,13 @@ static void rd_item(object_type *o_ptr) {
 		else if (o_ptr->sval >= 32 && o_ptr->sval < 100) o_ptr->sval += 170; //food
 	}
 #endif
+
+	if (erase) {
+		o_ptr->tval = o_ptr->sval = o_ptr->k_idx = 0;
+		o_ptr->questor = FALSE;
+		o_ptr->quest = 0; //paranoia, just to make sure to prevent questitem_d() check from triggering when deleting it!
+		return;
+	}
 
 	/* Obtain k_idx from tval/sval instead :) */
 	if (o_ptr->k_idx) /* zero is cipher :) */
