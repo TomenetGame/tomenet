@@ -561,25 +561,25 @@ static void rd_item(object_type *o_ptr) {
 		u32b t32;
 
 		rd_s32b(&o_ptr->id);
-		rd_s32b(&o_ptr->f_id);
-		rd_string(o_ptr->f_name, CNAME_LEN);
-		rd_s32b(&o_ptr->f_turn);
+		rd_s32b(&o_ptr->find_id);
+		rd_string(o_ptr->find_name, CNAME_LEN);
+		rd_s32b(&o_ptr->find_turn);
 		rd_u32b(&t32);
-		o_ptr->f_time = (time_t)t32;
+		o_ptr->find_time = (time_t)t32;
 		rd_u32b(&t32);
-		if (sizeof(time_t) >= 8) o_ptr->f_time |= (time_t)(((u64b)t32) << 32); //outlast heavier red dwarfs
-		rd_s16b(&o_ptr->f_wpos.wx);
-		rd_s16b(&o_ptr->f_wpos.wy);
-		rd_s16b(&o_ptr->f_wpos.wz);
+		if (sizeof(time_t) >= 8) o_ptr->find_time |= (time_t)(((u64b)t32) << 32); //outlast heavier red dwarfs
+		rd_s16b(&o_ptr->find_wpos.wx);
+		rd_s16b(&o_ptr->find_wpos.wy);
+		rd_s16b(&o_ptr->find_wpos.wz);
 		rd_byte(&tmpbyte);
-		o_ptr->f_dun = (char)tmpbyte;
-		rd_byte(&o_ptr->f_player);
-		rd_s32b(&o_ptr->f_player_turn);
-		rd_u16b(&o_ptr->f_ridx);
-		rd_u16b(&o_ptr->f_reidx);
-		rd_s16b(&o_ptr->f_special);
+		o_ptr->find_dun = (char)tmpbyte;
+		rd_byte(&o_ptr->find_player);
+		rd_s32b(&o_ptr->find_player_turn);
+		rd_u16b(&o_ptr->find_ridx);
+		rd_u16b(&o_ptr->find_reidx);
+		rd_s16b(&o_ptr->find_special);
 		rd_byte(&tmpbyte);
-		o_ptr->f_reward = (char)tmpbyte;
+		o_ptr->find_reward = (char)tmpbyte;
 	}
 
 	if (!older_than(4, 9, 10)) {

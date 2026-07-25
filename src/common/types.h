@@ -831,17 +831,17 @@ struct object_type {
 	s32b id;			/* Item's unique ID (mhh) -- maybe also track if an item was 1:1 cloned? ie increase this id, but save 'reference id' to original item: */
 	s32b id_original;		/* For cloned items: Reference to original source item's id */
 
-	s32b f_id;			/* Original finder */
-	char f_name[CNAME_LEN];		/* Original finder's name */
-	s32b f_turn;			/* Found when, in-game? */
-	time_t f_time;			/* Found when, real-time? */
-	struct worldpos f_wpos;		/* Found at this wpos */
-	char f_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
-	byte f_player;			/* Received from a player / taken from a player's death loot oO */
-	s32b f_player_turn;		/* ^ when? */
-	u16b f_ridx, f_reidx;		/* Found from this [ego] monster */
-	s16b f_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
-	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
+	s32b find_id;			/* Original finder */
+	char find_name[CNAME_LEN];	/* Original finder's name */
+	s32b find_turn;			/* Found when, in-game? */
+	time_t find_time;		/* Found when, real-time? */
+	struct worldpos find_wpos;	/* Found at this wpos */
+	char find_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	byte find_player;		/* Received from a player / taken from a player's death loot oO */
+	s32b find_player_turn;		/* ^ when? */
+	u16b find_ridx, find_reidx;	/* Found from this [ego] monster */
+	s16b find_special;		/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	char find_reward;		/* Received as event(>0)/quest(<0) reward? */
 
 	/* not yet implemented, for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
@@ -996,17 +996,17 @@ struct object_type_v9 {
 	s32b id;			/* Item's unique ID (mhh) -- maybe also track if an item was 1:1 cloned? ie increase this id, but save 'reference id' to original item: */
 	s32b id_original;		/* For cloned items: Reference to original source item's id */
 
-	s32b f_id;			/* Original finder */
-	char f_name[CNAME_LEN];		/* Original finder's name */
-	s32b f_turn;			/* Found when, in-game? */
-	time_t f_time;			/* Found when, real-time? */
-	struct worldpos f_wpos;		/* Found at this wpos */
-	char f_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
-	byte f_player;			/* Received from a player / taken from a player's death loot oO */
-	s32b f_player_turn;		/* ^ when? */
-	u16b f_ridx, f_reidx;		/* Found from this [ego] monster */
-	s16b f_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
-	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
+	s32b find_id;			/* Original finder */
+	char find_name[CNAME_LEN];		/* Original finder's name */
+	s32b find_turn;			/* Found when, in-game? */
+	time_t find_time;			/* Found when, real-time? */
+	struct worldpos find_wpos;		/* Found at this wpos */
+	char find_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	byte find_player;			/* Received from a player / taken from a player's death loot oO */
+	s32b find_player_turn;		/* ^ when? */
+	u16b find_ridx, find_reidx;		/* Found from this [ego] monster */
+	s16b find_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	char find_reward;			/* Received as event(>0)/quest(<0) reward? */
 
 	/* not yet implemented, for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
@@ -1156,17 +1156,17 @@ struct object_type_v8 {
 
 	/* For item history tracking */
 	s32b id;			/* Item's unique ID (mhh) */
-	s32b f_id;			/* Original finder */
-	char f_name[CNAME_LEN];		/* Original finder's name */
-	s32b f_turn;			/* Found when, in-game? */
-	time_t f_time;			/* Found when, real-time? */
-	struct worldpos f_wpos;		/* Found at this wpos */
-	char f_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
-	byte f_player;			/* Received from a player / taken from a player's death loot oO */
-	s32b f_player_turn;		/* ^ when? */
-	u16b f_ridx, f_reidx;		/* Found from this [ego] monster */
-	s16b f_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
-	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
+	s32b find_id;			/* Original finder */
+	char find_name[CNAME_LEN];		/* Original finder's name */
+	s32b find_turn;			/* Found when, in-game? */
+	time_t find_time;			/* Found when, real-time? */
+	struct worldpos find_wpos;		/* Found at this wpos */
+	char find_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	byte find_player;			/* Received from a player / taken from a player's death loot oO */
+	s32b find_player_turn;		/* ^ when? */
+	u16b find_ridx, find_reidx;		/* Found from this [ego] monster */
+	s16b find_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	char find_reward;			/* Received as event(>0)/quest(<0) reward? */
 
 	/* not yet implemented, for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
@@ -1310,17 +1310,17 @@ struct object_type_v7 {
 
 	/* For item history tracking */
 	s32b id;			/* Item's unique ID (mhh) */
-	s32b f_id;			/* Original finder */
-	char f_name[CNAME_LEN];		/* Original finder's name */
-	s32b f_turn;			/* Found when, in-game? */
-	time_t f_time;			/* Found when, real-time? */
-	struct worldpos f_wpos;		/* Found at this wpos */
-	char f_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
-	byte f_player;			/* Received from a player / taken from a player's death loot oO */
-	s32b f_player_turn;		/* ^ when? */
-	u16b f_ridx, f_reidx;		/* Found from this [ego] monster */
-	s16b f_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
-	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
+	s32b find_id;			/* Original finder */
+	char find_name[CNAME_LEN];		/* Original finder's name */
+	s32b find_turn;			/* Found when, in-game? */
+	time_t find_time;			/* Found when, real-time? */
+	struct worldpos find_wpos;		/* Found at this wpos */
+	char find_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	byte find_player;			/* Received from a player / taken from a player's death loot oO */
+	s32b find_player_turn;		/* ^ when? */
+	u16b find_ridx, find_reidx;		/* Found from this [ego] monster */
+	s16b find_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	char find_reward;			/* Received as event(>0)/quest(<0) reward? */
 
 	/* not yet implemented, for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
@@ -1464,17 +1464,17 @@ struct object_type_v6 {
 
 	/* For item history tracking */
 	s32b id;			/* Item's unique ID (mhh) */
-	s32b f_id;			/* Original finder */
-	char f_name[CNAME_LEN];		/* Original finder's name */
-	s32b f_turn;			/* Found when, in-game? */
-	time_t f_time;			/* Found when, real-time? */
-	struct worldpos f_wpos;		/* Found at this wpos */
-	char f_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
-	byte f_player;			/* Received from a player / taken from a player's death loot oO */
-	s32b f_player_turn;		/* ^ when? */
-	u16b f_ridx, f_reidx;		/* Found from this [ego] monster */
-	s16b f_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
-	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
+	s32b find_id;			/* Original finder */
+	char find_name[CNAME_LEN];		/* Original finder's name */
+	s32b find_turn;			/* Found when, in-game? */
+	time_t find_time;			/* Found when, real-time? */
+	struct worldpos find_wpos;		/* Found at this wpos */
+	char find_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	byte find_player;			/* Received from a player / taken from a player's death loot oO */
+	s32b find_player_turn;		/* ^ when? */
+	u16b find_ridx, find_reidx;		/* Found from this [ego] monster */
+	s16b find_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	char find_reward;			/* Received as event(>0)/quest(<0) reward? */
 #if 0 /* for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
 	u32b slain_orcs, slain_trolls, slain_giants, slain_animals, slain_dragons, slain_demons, slain_undead, slain_evil;
@@ -1611,17 +1611,17 @@ struct object_type_v5 {
 
 	/* For item history tracking */
 	s32b id;			/* Item's unique ID (mhh) */
-	s32b f_id;			/* Original finder */
-	char f_name[CNAME_LEN];		/* Original finder's name */
-	s32b f_turn;			/* Found when, in-game? */
-	time_t f_time;			/* Found when, real-time? */
-	struct worldpos f_wpos;		/* Found at this wpos */
-	char f_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
-	byte f_player;			/* Received from a player / taken from a player's death loot oO */
-	s32b f_player_turn;		/* ^ when? */
-	u16b f_ridx, f_reidx;		/* Found from this [ego] monster */
-	s16b f_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
-	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
+	s32b find_id;			/* Original finder */
+	char find_name[CNAME_LEN];		/* Original finder's name */
+	s32b find_turn;			/* Found when, in-game? */
+	time_t find_time;			/* Found when, real-time? */
+	struct worldpos find_wpos;		/* Found at this wpos */
+	char find_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	byte find_player;			/* Received from a player / taken from a player's death loot oO */
+	s32b find_player_turn;		/* ^ when? */
+	u16b find_ridx, find_reidx;		/* Found from this [ego] monster */
+	s16b find_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	char find_reward;			/* Received as event(>0)/quest(<0) reward? */
 #if 0 /* for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
 	u32b slain_orcs, slain_trolls, slain_giants, slain_animals, slain_dragons, slain_demons, slain_undead, slain_evil;

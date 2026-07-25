@@ -8916,13 +8916,13 @@ void restore_estate(int Ind) {
 				//convert: (4)
 				o_ptr->embed = 0;
 				//convert: (5)
-				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
-				o_ptr->f_turn = o_ptr->f_time = 0;
-				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
-				o_ptr->f_dun = 0;
-				o_ptr->f_player = o_ptr->f_player_turn = 0;
-				o_ptr->f_ridx = o_ptr->f_reidx = 0;
-				o_ptr->f_special = o_ptr->f_reward = 0;
+				o_ptr->id = o_ptr->find_id = o_ptr->find_name[0] = 0; //don't generate an id here, whatever
+				o_ptr->find_turn = o_ptr->find_time = 0;
+				o_ptr->find_wpos = (struct worldpos){ 0, 0, 0 };
+				o_ptr->find_dun = 0;
+				o_ptr->find_player = o_ptr->find_player_turn = 0;
+				o_ptr->find_ridx = o_ptr->find_reidx = 0;
+				o_ptr->find_special = o_ptr->find_reward = 0;
 				//convert: (6)
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
@@ -9053,13 +9053,13 @@ void restore_estate(int Ind) {
 				//convert: (4)
 				o_ptr->embed = 0;
 				//convert: (5)
-				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
-				o_ptr->f_turn = o_ptr->f_time = 0;
-				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
-				o_ptr->f_dun = 0;
-				o_ptr->f_player = o_ptr->f_player_turn = 0;
-				o_ptr->f_ridx = o_ptr->f_reidx = 0;
-				o_ptr->f_special = o_ptr->f_reward = 0;
+				o_ptr->id = o_ptr->find_id = o_ptr->find_name[0] = 0; //don't generate an id here, whatever
+				o_ptr->find_turn = o_ptr->find_time = 0;
+				o_ptr->find_wpos = (struct worldpos){ 0, 0, 0 };
+				o_ptr->find_dun = 0;
+				o_ptr->find_player = o_ptr->find_player_turn = 0;
+				o_ptr->find_ridx = o_ptr->find_reidx = 0;
+				o_ptr->find_special = o_ptr->find_reward = 0;
 				//convert: (6)
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
@@ -9189,13 +9189,13 @@ void restore_estate(int Ind) {
 				//convert: (4)
 				o_ptr->embed = 0;
 				//convert: (5)
-				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
-				o_ptr->f_turn = o_ptr->f_time = 0;
-				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
-				o_ptr->f_dun = 0;
-				o_ptr->f_player = o_ptr->f_player_turn = 0;
-				o_ptr->f_ridx = o_ptr->f_reidx = 0;
-				o_ptr->f_special = o_ptr->f_reward = 0;
+				o_ptr->id = o_ptr->find_id = o_ptr->find_name[0] = 0; //don't generate an id here, whatever
+				o_ptr->find_turn = o_ptr->find_time = 0;
+				o_ptr->find_wpos = (struct worldpos){ 0, 0, 0 };
+				o_ptr->find_dun = 0;
+				o_ptr->find_player = o_ptr->find_player_turn = 0;
+				o_ptr->find_ridx = o_ptr->find_reidx = 0;
+				o_ptr->find_special = o_ptr->find_reward = 0;
 				//convert: (6)
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
@@ -9324,13 +9324,13 @@ void restore_estate(int Ind) {
 				//convert (4):
 				o_ptr->embed = 0;
 				//convert: (5)
-				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
-				o_ptr->f_turn = o_ptr->f_time = 0;
-				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
-				o_ptr->f_dun = 0;
-				o_ptr->f_player = o_ptr->f_player_turn = 0;
-				o_ptr->f_ridx = o_ptr->f_reidx = 0;
-				o_ptr->f_special = o_ptr->f_reward = 0;
+				o_ptr->id = o_ptr->find_id = o_ptr->find_name[0] = 0; //don't generate an id here, whatever
+				o_ptr->find_turn = o_ptr->find_time = 0;
+				o_ptr->find_wpos = (struct worldpos){ 0, 0, 0 };
+				o_ptr->find_dun = 0;
+				o_ptr->find_player = o_ptr->find_player_turn = 0;
+				o_ptr->find_ridx = o_ptr->find_reidx = 0;
+				o_ptr->find_special = o_ptr->find_reward = 0;
 				//convert: (6)
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
@@ -9458,13 +9458,13 @@ void restore_estate(int Ind) {
 				o_ptr->iron_turn = o_ptr_v4->iron_turn;
 				o_ptr->embed = o_ptr_v4->embed;
 				//convert (5):
-				o_ptr->id = o_ptr->f_id = o_ptr->f_name[0] = 0; //don't generate an id here, whatever
-				o_ptr->f_turn = o_ptr->f_time = 0;
-				o_ptr->f_wpos = (struct worldpos){ 0, 0, 0 };
-				o_ptr->f_dun = 0;
-				o_ptr->f_player = o_ptr->f_player_turn = 0;
-				o_ptr->f_ridx = o_ptr->f_reidx = 0;
-				o_ptr->f_special = o_ptr->f_reward = 0;
+				o_ptr->id = o_ptr->find_id = o_ptr->find_name[0] = 0; //don't generate an id here, whatever
+				o_ptr->find_turn = o_ptr->find_time = 0;
+				o_ptr->find_wpos = (struct worldpos){ 0, 0, 0 };
+				o_ptr->find_dun = 0;
+				o_ptr->find_player = o_ptr->find_player_turn = 0;
+				o_ptr->find_ridx = o_ptr->find_reidx = 0;
+				o_ptr->find_special = o_ptr->find_reward = 0;
 				//convert: (6)
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
@@ -9592,18 +9592,18 @@ void restore_estate(int Ind) {
 				o_ptr->iron_turn = o_ptr_v5->iron_turn;
 				o_ptr->embed = o_ptr_v5->embed;
 				o_ptr->id = o_ptr_v5->id;
-				o_ptr->f_id = o_ptr_v5->f_id;
-				strcpy(o_ptr->f_name, o_ptr_v5->f_name);
-				o_ptr->f_turn = o_ptr_v5->f_turn;
-				o_ptr->f_time = o_ptr_v5->f_time;
-				o_ptr->f_wpos = o_ptr_v5->f_wpos;
-				o_ptr->f_dun = o_ptr_v5->f_dun;
-				o_ptr->f_player = o_ptr_v5->f_player;
-				o_ptr->f_player_turn = o_ptr_v5->f_player_turn;
-				o_ptr->f_ridx = o_ptr_v5->f_ridx;
-				o_ptr->f_reidx = o_ptr_v5->f_reidx;
-				o_ptr->f_special = o_ptr_v5->f_special;
-				o_ptr->f_reward = o_ptr_v5->f_reward;
+				o_ptr->find_id = o_ptr_v5->find_id;
+				strcpy(o_ptr->find_name, o_ptr_v5->find_name);
+				o_ptr->find_turn = o_ptr_v5->find_turn;
+				o_ptr->find_time = o_ptr_v5->find_time;
+				o_ptr->find_wpos = o_ptr_v5->find_wpos;
+				o_ptr->find_dun = o_ptr_v5->find_dun;
+				o_ptr->find_player = o_ptr_v5->find_player;
+				o_ptr->find_player_turn = o_ptr_v5->find_player_turn;
+				o_ptr->find_ridx = o_ptr_v5->find_ridx;
+				o_ptr->find_reidx = o_ptr_v5->find_reidx;
+				o_ptr->find_special = o_ptr_v5->find_special;
+				o_ptr->find_reward = o_ptr_v5->find_reward;
 				//convert (6):
 				o_ptr->number2 = 0;
 				o_ptr->note2 = o_ptr->note2_utag = 0;
@@ -9731,18 +9731,18 @@ void restore_estate(int Ind) {
 				o_ptr->iron_turn = o_ptr_v6->iron_turn;
 				o_ptr->embed = o_ptr_v6->embed;
 				o_ptr->id = o_ptr_v6->id;
-				o_ptr->f_id = o_ptr_v6->f_id;
-				strcpy(o_ptr->f_name, o_ptr_v6->f_name);
-				o_ptr->f_turn = o_ptr_v6->f_turn;
-				o_ptr->f_time = o_ptr_v6->f_time;
-				o_ptr->f_wpos = o_ptr_v6->f_wpos;
-				o_ptr->f_dun = o_ptr_v6->f_dun;
-				o_ptr->f_player = o_ptr_v6->f_player;
-				o_ptr->f_player_turn = o_ptr_v6->f_player_turn;
-				o_ptr->f_ridx = o_ptr_v6->f_ridx;
-				o_ptr->f_reidx = o_ptr_v6->f_reidx;
-				o_ptr->f_special = o_ptr_v6->f_special;
-				o_ptr->f_reward = o_ptr_v6->f_reward;
+				o_ptr->find_id = o_ptr_v6->find_id;
+				strcpy(o_ptr->find_name, o_ptr_v6->find_name);
+				o_ptr->find_turn = o_ptr_v6->find_turn;
+				o_ptr->find_time = o_ptr_v6->find_time;
+				o_ptr->find_wpos = o_ptr_v6->find_wpos;
+				o_ptr->find_dun = o_ptr_v6->find_dun;
+				o_ptr->find_player = o_ptr_v6->find_player;
+				o_ptr->find_player_turn = o_ptr_v6->find_player_turn;
+				o_ptr->find_ridx = o_ptr_v6->find_ridx;
+				o_ptr->find_reidx = o_ptr_v6->find_reidx;
+				o_ptr->find_special = o_ptr_v6->find_special;
+				o_ptr->find_reward = o_ptr_v6->find_reward;
 				o_ptr->number2 = o_ptr_v6->number2;
 				o_ptr->note2 = o_ptr_v6->note2;
 				o_ptr->note2_utag = o_ptr_v6->note2_utag;
@@ -9869,18 +9869,18 @@ void restore_estate(int Ind) {
 				o_ptr->iron_turn = o_ptr_v7->iron_turn;
 				o_ptr->embed = o_ptr_v7->embed;
 				o_ptr->id = o_ptr_v7->id;
-				o_ptr->f_id = o_ptr_v7->f_id;
-				strcpy(o_ptr->f_name, o_ptr_v7->f_name);
-				o_ptr->f_turn = o_ptr_v7->f_turn;
-				o_ptr->f_time = o_ptr_v7->f_time;
-				o_ptr->f_wpos = o_ptr_v7->f_wpos;
-				o_ptr->f_dun = o_ptr_v7->f_dun;
-				o_ptr->f_player = o_ptr_v7->f_player;
-				o_ptr->f_player_turn = o_ptr_v7->f_player_turn;
-				o_ptr->f_ridx = o_ptr_v7->f_ridx;
-				o_ptr->f_reidx = o_ptr_v7->f_reidx;
-				o_ptr->f_special = o_ptr_v7->f_special;
-				o_ptr->f_reward = o_ptr_v7->f_reward;
+				o_ptr->find_id = o_ptr_v7->find_id;
+				strcpy(o_ptr->find_name, o_ptr_v7->find_name);
+				o_ptr->find_turn = o_ptr_v7->find_turn;
+				o_ptr->find_time = o_ptr_v7->find_time;
+				o_ptr->find_wpos = o_ptr_v7->find_wpos;
+				o_ptr->find_dun = o_ptr_v7->find_dun;
+				o_ptr->find_player = o_ptr_v7->find_player;
+				o_ptr->find_player_turn = o_ptr_v7->find_player_turn;
+				o_ptr->find_ridx = o_ptr_v7->find_ridx;
+				o_ptr->find_reidx = o_ptr_v7->find_reidx;
+				o_ptr->find_special = o_ptr_v7->find_special;
+				o_ptr->find_reward = o_ptr_v7->find_reward;
 				o_ptr->number2 = o_ptr_v7->number2;
 				o_ptr->note2 = o_ptr_v7->note2;
 				o_ptr->note2_utag = o_ptr_v7->note2_utag;
@@ -10006,18 +10006,18 @@ void restore_estate(int Ind) {
 				o_ptr->iron_turn = o_ptr_v8->iron_turn;
 				o_ptr->embed = o_ptr_v8->embed;
 				o_ptr->id = o_ptr_v8->id;
-				o_ptr->f_id = o_ptr_v8->f_id;
-				strcpy(o_ptr->f_name, o_ptr_v8->f_name);
-				o_ptr->f_turn = o_ptr_v8->f_turn;
-				o_ptr->f_time = o_ptr_v8->f_time;
-				o_ptr->f_wpos = o_ptr_v8->f_wpos;
-				o_ptr->f_dun = o_ptr_v8->f_dun;
-				o_ptr->f_player = o_ptr_v8->f_player;
-				o_ptr->f_player_turn = o_ptr_v8->f_player_turn;
-				o_ptr->f_ridx = o_ptr_v8->f_ridx;
-				o_ptr->f_reidx = o_ptr_v8->f_reidx;
-				o_ptr->f_special = o_ptr_v8->f_special;
-				o_ptr->f_reward = o_ptr_v8->f_reward;
+				o_ptr->find_id = o_ptr_v8->find_id;
+				strcpy(o_ptr->find_name, o_ptr_v8->find_name);
+				o_ptr->find_turn = o_ptr_v8->find_turn;
+				o_ptr->find_time = o_ptr_v8->find_time;
+				o_ptr->find_wpos = o_ptr_v8->find_wpos;
+				o_ptr->find_dun = o_ptr_v8->find_dun;
+				o_ptr->find_player = o_ptr_v8->find_player;
+				o_ptr->find_player_turn = o_ptr_v8->find_player_turn;
+				o_ptr->find_ridx = o_ptr_v8->find_ridx;
+				o_ptr->find_reidx = o_ptr_v8->find_reidx;
+				o_ptr->find_special = o_ptr_v8->find_special;
+				o_ptr->find_reward = o_ptr_v8->find_reward;
 				o_ptr->number2 = o_ptr_v8->number2;
 				o_ptr->note2 = o_ptr_v8->note2;
 				o_ptr->note2_utag = o_ptr_v8->note2_utag;
@@ -10145,18 +10145,18 @@ void restore_estate(int Ind) {
 				o_ptr->embed = o_ptr_v9->embed;
 				o_ptr->id = o_ptr_v9->id;
 				o_ptr->id_original = o_ptr_v9->id_original;
-				o_ptr->f_id = o_ptr_v9->f_id;
-				strcpy(o_ptr->f_name, o_ptr_v9->f_name);
-				o_ptr->f_turn = o_ptr_v9->f_turn;
-				o_ptr->f_time = o_ptr_v9->f_time;
-				o_ptr->f_wpos = o_ptr_v9->f_wpos;
-				o_ptr->f_dun = o_ptr_v9->f_dun;
-				o_ptr->f_player = o_ptr_v9->f_player;
-				o_ptr->f_player_turn = o_ptr_v9->f_player_turn;
-				o_ptr->f_ridx = o_ptr_v9->f_ridx;
-				o_ptr->f_reidx = o_ptr_v9->f_reidx;
-				o_ptr->f_special = o_ptr_v9->f_special;
-				o_ptr->f_reward = o_ptr_v9->f_reward;
+				o_ptr->find_id = o_ptr_v9->find_id;
+				strcpy(o_ptr->find_name, o_ptr_v9->find_name);
+				o_ptr->find_turn = o_ptr_v9->find_turn;
+				o_ptr->find_time = o_ptr_v9->find_time;
+				o_ptr->find_wpos = o_ptr_v9->find_wpos;
+				o_ptr->find_dun = o_ptr_v9->find_dun;
+				o_ptr->find_player = o_ptr_v9->find_player;
+				o_ptr->find_player_turn = o_ptr_v9->find_player_turn;
+				o_ptr->find_ridx = o_ptr_v9->find_ridx;
+				o_ptr->find_reidx = o_ptr_v9->find_reidx;
+				o_ptr->find_special = o_ptr_v9->find_special;
+				o_ptr->find_reward = o_ptr_v9->find_reward;
 				o_ptr->number2 = o_ptr_v9->number2;
 				o_ptr->note2 = o_ptr_v9->note2;
 				o_ptr->note2_utag = o_ptr_v9->note2_utag;
