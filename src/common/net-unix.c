@@ -585,9 +585,10 @@ int	port;
 	printf("CreateClientSocket() ERROR: setsockopt failed\n");
 
     if (connect(fd, (struct sockaddr *)&peer, sizeof(peer)) < 0) {
+	/* Note regarding 'errno' being set from connect(): Timing out results not in ETIMEDOUT (110) but EINPROGRESS(115). */
 	sl_errno = SL_ECONNECT;
-	(void) close(fd);
-	return (-1);
+	(void)close(fd);
+	return(-1);
     }
 
     return (fd);
