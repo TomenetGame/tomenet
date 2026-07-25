@@ -8627,8 +8627,9 @@ Starting in 4.9.3 there is an option 'new_retaliator' that toggles the
 behaviour of auto-retaliation and of fire-till-kill, in Gameplay Options 1.
 The recommended and standard setting is 'on':
 
-- If on, autoretaliation will grant an almost instant manual teleport/walk/run
-  action while auto-retaliating or FTK'ing (fire-till-kill).
+- If on, autoretaliation will grant an almost instant manual escape action
+  (that is phase/blink, teleport, take staircases) while auto-retaliating
+  or FTK'ing (fire-till-kill).
   This allows especially classes who cannot split their turn energy over
   multiple attacks per turn, ie all spell-casters, to qickly escape dangerous
   situations.
@@ -8654,7 +8655,7 @@ The recommended and standard setting is 'on':
    As soon as a character has completed at least one turn of auto-retaliation
    or of firing-till-kill, it will gain an internal extra turn of energy for
    free, which is reserved solely for the purpose of performing a movement
-   action, specifically teleport, walk or run.
+   action, specifically phase/blink/teleport or taking staircases.
    This means that no matter which fraction of a turn has passed after casting
    a spell, the character will always be able to trigger such an action
    basically instantly, getting out of trouble as easily or even more easily
