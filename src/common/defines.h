@@ -1282,6 +1282,16 @@
 #ifdef NEW_AUTORET_2_ENERGY
 /* We're able to discern via packet analysis whether player wants to use an escape mechanism or not? */
  #define NEW_AUTORET_2_DEEPCHECK
+ #ifdef NEW_AUTORET_2_DEEPCHECK
+  /* Problem: If 1 turn of auto-ret already grants us 1 turn of reserve energy for escape actions,
+     we could choose 'walk' as escape action, which opens up two scenarios:
+     1) easy kiting melee monsters who can never hit back if their speed isn't greater than ours
+     2) walking (or running) into the monster (aka force-attacking) every 2nd turn to increase our damage tremendously.
+     To remedy this, we have two ways:
+     a) grant reserve energy only after at least 2 turns of auto-ret, but this would still be cheezy, just less the more turns we require :(
+     b) exempt local movement (walk, run) from counting as "escape action" and thereby utilizing the reserve energy. Seems the only "correct" way? */
+  #define NEW_AUTORET_2_DEEPCHECK_NOLOCALMOVEMENT /* exempt local movement to prevent kite/force-attack cheeze */
+ #endif
 
 /* Fix having stored up double energy (2 turns) for any actions besides moving:
    1) Walking aka 'hopping' over a grid using the double energy.

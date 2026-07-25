@@ -4233,8 +4233,10 @@ void process_pending_commands(int ind) {
 			   but others such as healing will not!
 			   Since we cannot check for 'teleportation' effects here specifically, that is done in teleport_player...() routines instead. */
 			if (p_ptr->reserve_energy) switch (type) { //also check if our p_ptr->energy is < level speed actually?
+  #ifndef NEW_AUTORET_2_DEEPCHECK_NOLOCALMOVEMENT
 			case PKT_WALK:
 			case PKT_RUN:
+  #endif
 			case PKT_GO_UP:
 			case PKT_GO_DOWN:
 				p_ptr->reserve_flag = TRUE;
@@ -4244,7 +4246,9 @@ void process_pending_commands(int ind) {
 			case PKT_READ:
 			case PKT_USE:
 			case PKT_ACTIVATE_SKILL:
-			//todo: add activatable items (code '4')
+			/* And PKT_ACTIVATE for artifacts/activatable equipment items */
+			case PKT_ACTIVATE:
+			//omiting PKT_ACTIVATE_DIR, as it has no movement-related activations (except ART_WARPSPEAR has GF_TELE_TO, but that doesn't move the player but the monster)
 				p_ptr->reserve_flag = TRUE;
 				break;
 			}
@@ -13395,6 +13399,14 @@ static int Receive_activate(int ind) {
 		return(0);
 	}
 	if (p_ptr && p_ptr->command_rep != PKT_ACTIVATE) p_ptr->command_rep = -1;
+
+#ifdef NEW_AUTORET_2_ENERGY
+ #ifdef NEW_AUTORET_2_DEEPCHECK
+	if (p_ptr->reserve_flag) {
+		if (reserve_flag_item_relocate(4, player, item)) p_ptr->energy += p_ptr->reserve_energy;
+	}
+ #endif
+#endif
 
 	if (p_ptr && p_ptr->energy >= level_speed(&p_ptr->wpos)) {
 		item = replay_inven_changes(player, item);
