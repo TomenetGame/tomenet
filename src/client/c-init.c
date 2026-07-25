@@ -3766,7 +3766,7 @@ void client_init(char *argv1, bool skip) {
 
 	/* Create the net socket and make the TCP connection */
 	if ((Socket = CreateClientSocket(server_name, cfg_game_port)) == -1)
-		quit("That server either isn't up, or you mistyped the hostname.\n");
+		quit("That server either isn't up, or timed out or you mistyped the hostname.\n");
 
 	{
 #if defined (USE_X11) || defined(USE_GCU)
