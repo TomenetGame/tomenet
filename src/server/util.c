@@ -8962,7 +8962,6 @@ void restore_estate(int Ind) {
 				o_ptr->wId = o_ptr->comboset_flags = 0;
 				//convert (9):
 				o_ptr->quest_id = 0;
-				o_ptr->find_shop = 0;
 				break;
 			case 2: r = fread(o_ptr_v2a, sizeof(object_type_v2a), 1, fp);
 				o_ptr->owner = o_ptr_v2a->owner;
@@ -9099,7 +9098,6 @@ void restore_estate(int Ind) {
 				o_ptr->wId = o_ptr->comboset_flags = 0;
 				//convert (9):
 				o_ptr->quest_id = 0;
-				o_ptr->find_shop = 0;
 				break;
 			case 3: r = fread(o_ptr_v2b, sizeof(object_type_v2b), 1, fp);
 				o_ptr->owner = o_ptr_v2b->owner;
@@ -9235,7 +9233,6 @@ void restore_estate(int Ind) {
 				o_ptr->wId = o_ptr->comboset_flags = 0;
 				//convert (9):
 				o_ptr->quest_id = 0;
-				o_ptr->find_shop = 0;
 				break;
 			case 4: r = fread(o_ptr_v3, sizeof(object_type_v3), 1, fp);
 				o_ptr->owner = o_ptr_v3->owner;
@@ -9370,7 +9367,6 @@ void restore_estate(int Ind) {
 				o_ptr->wId = o_ptr->comboset_flags = 0;
 				//convert (9):
 				o_ptr->quest_id = 0;
-				o_ptr->find_shop = 0;
 				break;
 			case 5: r = fread(o_ptr_v4, sizeof(object_type_v4), 1, fp);
 				o_ptr->owner = o_ptr_v4->owner;
@@ -9504,7 +9500,6 @@ void restore_estate(int Ind) {
 				o_ptr->wId = o_ptr->comboset_flags = 0;
 				//convert (9):
 				o_ptr->quest_id = 0;
-				o_ptr->find_shop = 0;
 				break;
 			case 6: r = fread(o_ptr_v5, sizeof(object_type_v5), 1, fp);
 				o_ptr->owner = o_ptr_v5->owner;
@@ -9643,7 +9638,6 @@ void restore_estate(int Ind) {
 				o_ptr->wId = o_ptr->comboset_flags = 0;
 				//convert (9):
 				o_ptr->quest_id = 0;
-				o_ptr->find_shop = 0;
 				break;
 			case 7: r = fread(o_ptr_v6, sizeof(object_type_v6), 1, fp);
 				o_ptr->owner = o_ptr_v6->owner;
@@ -9782,7 +9776,6 @@ void restore_estate(int Ind) {
 				o_ptr->wId = o_ptr->comboset_flags = 0;
 				//convert (9):
 				o_ptr->quest_id = 0;
-				o_ptr->find_shop = 0;
 				break;
 			case 8: r = fread(o_ptr_v7, sizeof(object_type_v7), 1, fp);
 				o_ptr->owner = o_ptr_v7->owner;
@@ -9919,7 +9912,6 @@ void restore_estate(int Ind) {
 				o_ptr->wId = o_ptr->comboset_flags = 0;
 				//convert (9):
 				o_ptr->quest_id = 0;
-				o_ptr->find_shop = 0;
 				break;
 			case 9: r = fread(o_ptr_v8, sizeof(object_type_v8), 1, fp);
 				o_ptr->owner = o_ptr_v8->owner;
@@ -10056,7 +10048,6 @@ void restore_estate(int Ind) {
 				o_ptr->id_original = 0; /* (future use) */
 				//convert (9):
 				o_ptr->quest_id = 0;
-				o_ptr->find_shop = 0;
 				break;
 			case 10: r = fread(o_ptr_v9, sizeof(object_type_v9), 1, fp);
 				o_ptr->owner = o_ptr_v9->owner;
@@ -10193,7 +10184,6 @@ void restore_estate(int Ind) {
 				o_ptr->comboset_flags = o_ptr_v9->comboset_flags;
 				//convert (9):
 				o_ptr->quest_id = 0;
-				o_ptr->find_shop = 0;
 				break;
 			}
 			if (r == 0) {
