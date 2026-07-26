@@ -9575,9 +9575,7 @@ static void process_global_event(int ge_id) {
 					o_ptr->level = 0;
 					o_ptr->discount = 0;
 					o_ptr->ident |= ID_MENTAL;
-					o_ptr->owner = o_ptr->find_id = p_ptr->id;
-					strcpy(o_ptr->find_name, p_ptr->name);
-					o_ptr->mode = p_ptr->mode;
+					imprint_object(o_ptr, p_ptr);
 					object_aware(i, o_ptr);
 					object_known(o_ptr);
 					inven_carry(i, o_ptr);

@@ -10416,3 +10416,18 @@ extern int PlayerUID;
   #define WORLD_INFO(p_ptr)	(format("%2d %s%s", (p_ptr)->lev, get_prace2(p_ptr), get_ptitle((p_ptr), FALSE)))
  #endif
 #endif
+
+/* Imprint a so far unowned object with player info */
+#define imprint_object(o_ptr, p_ptr) \
+	(o_ptr)->owner = (o_ptr)->find_id = (p_ptr)->id; \
+	strcpy((o_ptr)->find_name, p_ptr->name); \
+	(o_ptr)->find_turn = turn; \
+	(o_ptr)->mode = (p_ptr)->mode;
+
+#define imprint_object_fully(o_ptr, p_ptr) \
+	(o_ptr)->owner = (o_ptr)->find_id = (p_ptr)->id; \
+	strcpy((o_ptr)->find_name, p_ptr->name); \
+	(o_ptr)->find_turn = turn; \
+	(o_ptr)->mode = (p_ptr)->mode; \
+	(o_ptr)->iron_trade = (p_ptr)->iron_trade; \
+	(o_ptr)->iron_turn = turn;

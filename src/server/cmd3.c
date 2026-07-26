@@ -5397,9 +5397,7 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool 
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
 			if (!o_ptr->owner) {// && !p_ptr->admin_dm) {
-				o_ptr->owner = o_ptr->find_id = p_ptr->id;
-				strcpy(o_ptr->find_name, p_ptr->name);
-				o_ptr->mode = p_ptr->mode;
+				imprint_object_fully(o_ptr, p_ptr);
 				if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 
 				/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
@@ -5470,9 +5468,7 @@ s16b subinven_stow_aux(int Ind, object_type *i_ptr, int sslot, bool quiet, bool 
 			o_ptr->marked2 = ITEM_REMOVAL_NORMAL;
 
 			if (!o_ptr->owner && !p_ptr->admin_dm) {
-				o_ptr->owner = o_ptr->find_id = p_ptr->id;
-				strcpy(o_ptr->find_name, p_ptr->name);
-				o_ptr->mode = p_ptr->mode;
+				imprint_object_fully(o_ptr, p_ptr);
 				if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 
 				/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */

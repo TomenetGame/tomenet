@@ -208,11 +208,7 @@ static bool do_player_trap_garbage(int Ind, int times) {
 		object_flags(o_ptr, &f1, &f2, &f3, &f4, &f5, &f6, &esp);
 		if (f3 & TR3_INSTA_ART) continue;
 
-		o_ptr->owner = o_ptr->find_id = p_ptr->id;
-		strcpy(o_ptr->find_name, p_ptr->name);
-		o_ptr->mode = p_ptr->mode;
-		o_ptr->iron_trade = p_ptr->iron_trade;
-		o_ptr->iron_turn = turn;
+		imprint_object_fully(o_ptr, p_ptr);
 
 		ident = TRUE;
 		if (inven_carry(Ind, o_ptr) < 0)
@@ -2297,23 +2293,15 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_AUGMENTATION));
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
-			o_ptr->owner = o_ptr->find_id = p_ptr->id;
-			strcpy(o_ptr->find_name, p_ptr->name);
-			o_ptr->mode = p_ptr->mode;
+			imprint_object_fully(o_ptr, p_ptr);
 			o_ptr->level = 0;
-			o_ptr->iron_trade = p_ptr->iron_trade;
-			o_ptr->iron_turn = turn;
 			(void)inven_carry(Ind, o_ptr);
 
 			invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
-			o_ptr->owner = o_ptr->find_id = p_ptr->id;
-			strcpy(o_ptr->find_name, p_ptr->name);
-			o_ptr->mode = p_ptr->mode;
+			imprint_object_fully(o_ptr, p_ptr);
 			o_ptr->level = 0;
-			o_ptr->iron_trade = p_ptr->iron_trade;
-			o_ptr->iron_turn = turn;
 			(void)inven_carry(Ind, o_ptr);
 
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);
@@ -2329,15 +2317,11 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			invcopy(o_ptr, lookup_kind(TV_BOOK, rand_range(0, 17)));
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
-			o_ptr->owner = o_ptr->find_id = p_ptr->id;
-			strcpy(o_ptr->find_name, p_ptr->name);
+			imprint_object_fully(o_ptr, p_ptr);
 			o_ptr->ident |= ID_NO_HIDDEN;
-			o_ptr->mode = p_ptr->mode;
 			//o_ptr->level = 0; --too often pointless if level 0, leeway needed for moar fun
 			o_ptr->level = 25; //standard level in BMs is 19..21 mostly
 			o_ptr->note = quark_add("!*");
-			o_ptr->iron_trade = p_ptr->iron_trade;
-			o_ptr->iron_turn = turn;
 			(void)inven_carry(Ind, o_ptr);
 
 			p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);

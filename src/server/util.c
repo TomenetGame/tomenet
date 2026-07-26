@@ -10137,6 +10137,7 @@ void restore_estate(int Ind) {
 				o_ptr->id = o_ptr_v9->id;
 				o_ptr->id_original = o_ptr_v9->id_original;
 				o_ptr->find_id = o_ptr_v9->find_id;
+				o_ptr->find_turn = o_ptr_v9->find_turn;
 				strcpy(o_ptr->find_name, o_ptr_v9->find_name);
 				o_ptr->find_turn = o_ptr_v9->find_turn;
 				o_ptr->find_time = o_ptr_v9->find_time;

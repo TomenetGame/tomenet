@@ -7542,9 +7542,7 @@ bool can_use(int Ind, object_type *o_ptr) {
 	   automatically own unowned items this way, that's why the admin_dm
 	   is exempt, for when he /wished for items. - C. Blue */
 	if (!o_ptr->owner && !p_ptr->admin_dm) {
-		o_ptr->owner = o_ptr->find_id = p_ptr->id;
-		strcpy(o_ptr->find_name, p_ptr->name);
-		o_ptr->mode = p_ptr->mode;
+		imprint_object(o_ptr, p_ptr);
 		if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 	}
 
@@ -7618,10 +7616,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 	if ((p_ptr->lev >= o_ptr->level || in_irondeepdive(&p_ptr->wpos))
 	    && !p_ptr->admin_dm) {
 		if (!o_ptr->owner && true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
-		if (!o_ptr->owner) {
-			o_ptr->find_id = p_ptr->id;
-			strcpy(o_ptr->find_name, p_ptr->name);
-		}
+		if (!o_ptr->owner) imprint_object_fully(o_ptr, p_ptr);
 		o_ptr->owner = p_ptr->id;
 		return(TRUE);
 	} else {
@@ -7637,10 +7632,7 @@ bool can_use_verbose(int Ind, object_type *o_ptr) {
 
 	/* we are the new owner */
 	if (!o_ptr->owner && true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
-	if (!o_ptr->owner) {
-		o_ptr->find_id = p_ptr->id;
-		strcpy(o_ptr->find_name, p_ptr->name);
-	}
+	if (!o_ptr->owner) imprint_object(o_ptr, p_ptr);
 	o_ptr->owner = p_ptr->id;
 	o_ptr->mode = p_ptr->mode;
 
