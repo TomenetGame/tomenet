@@ -10419,15 +10419,15 @@ extern int PlayerUID;
 
 /* Imprint a so far unowned object with player info */
 #define imprint_object(o_ptr, p_ptr) \
-	(o_ptr)->owner = (o_ptr)->find_id = (p_ptr)->id; \
-	strcpy((o_ptr)->find_name, p_ptr->name); \
-	(o_ptr)->find_turn = turn; \
-	(o_ptr)->mode = (p_ptr)->mode;
+	{ (o_ptr)->owner = (o_ptr)->find_id = (p_ptr)->id; \
+	  strcpy((o_ptr)->find_name, p_ptr->name); \
+	  (o_ptr)->find_turn = turn; \
+	  (o_ptr)->mode = (p_ptr)->mode; }
 
 #define imprint_object_fully(o_ptr, p_ptr) \
-	(o_ptr)->owner = (o_ptr)->find_id = (p_ptr)->id; \
-	strcpy((o_ptr)->find_name, p_ptr->name); \
-	(o_ptr)->find_turn = turn; \
-	(o_ptr)->mode = (p_ptr)->mode; \
-	(o_ptr)->iron_trade = (p_ptr)->iron_trade; \
-	(o_ptr)->iron_turn = turn;
+	{ (o_ptr)->owner = (o_ptr)->find_id = (p_ptr)->id; \
+	  strcpy((o_ptr)->find_name, p_ptr->name); \
+	  (o_ptr)->find_turn = turn; \
+	  (o_ptr)->mode = (p_ptr)->mode; \
+	  (o_ptr)->iron_trade = (p_ptr)->iron_trade; \
+	  (o_ptr)->iron_turn = turn; }
