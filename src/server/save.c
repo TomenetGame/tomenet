@@ -304,9 +304,10 @@ static void wr_item(object_type *o_ptr) {
 	wr_s32b(o_ptr->id_original);
 	wr_s32b(o_ptr->quest_id);
 
-	wr_s32b(o_ptr->dummy1);
-	wr_s32b(o_ptr->dummy2);
-	wr_s32b(o_ptr->dummy3);
+	/* Future use (hole): */
+	wr_s32b(o_ptr->dummyL1);
+	wr_s32b(o_ptr->dummyL2);
+	wr_s32b(o_ptr->dummyL3);
 }
 
 /*

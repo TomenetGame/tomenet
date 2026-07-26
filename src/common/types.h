@@ -836,12 +836,12 @@ struct object_type {
 	s32b find_turn;			/* Found when, in-game? */
 	time_t find_time;		/* Found when, real-time? */
 	struct worldpos find_wpos;	/* Found at this wpos */
-	char find_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	signed char find_dun;		/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
 	byte find_player;		/* Received from a player / taken from a player's death loot oO */
 	s32b find_player_turn;		/* ^ when? */
 	u16b find_ridx, find_reidx;	/* Found from this [ego] monster */
 	s16b find_special;		/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
-	char find_reward;		/* Received as event(>0)/quest(<0) reward? */
+	signed char find_reward;	/* Received as event(>0)/quest(<0) reward? */
 
 	/* not yet implemented, for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
@@ -859,7 +859,8 @@ struct object_type {
 	byte comboset_flags;		/* Flag array of all equipped items affecting this item too to create a comboset */
 	byte comboset_flags_cnt;	/* Flag array of all equipped items affecting this item too to create a comboset - flag count */
 
-	s32b dummy1, dummy2, dummy3;	/* (Future use) */
+	/* (Future use) */
+	s32b dummyL1, dummyL2, dummyL3;
 };
 typedef struct object_type_v9 object_type_v9;
 struct object_type_v9 {

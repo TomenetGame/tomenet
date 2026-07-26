@@ -653,9 +653,9 @@ static void rd_item(object_type *o_ptr) {
 		}
 
 		/* for any future use (hole): */
-		rd_s32b(&o_ptr->dummy1);
-		rd_s32b(&o_ptr->dummy2);
-		rd_s32b(&o_ptr->dummy3);
+		rd_s32b(&o_ptr->dummyL1);
+		rd_s32b(&o_ptr->dummyL2);
+		rd_s32b(&o_ptr->dummyL3);
 	}
 
 
