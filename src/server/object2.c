@@ -12221,8 +12221,8 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 	if (p_ptr->quest_any_r_within_target && !o_ptr->quest_credited) quest_check_goal_r(Ind, o_ptr);
 
 	if (!o_ptr->owner && !p_ptr->admin_dm) {
-		o_ptr->owner = p_ptr->id;
-		o_ptr->find_id = p_ptr->id;
+		o_ptr->owner = o_ptr->find_id = p_ptr->id;
+		strcpy(o_ptr->find_name, p_ptr->name);
 		o_ptr->mode = p_ptr->mode;
 		if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 

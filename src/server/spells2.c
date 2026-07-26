@@ -4034,6 +4034,7 @@ bool create_artifact_aux(int Ind, int item) {
 	   apply_magic() is used to set level requirements, and copy the a_ptr to o_ptr. */
 	apply_magic(&p_ptr->wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
 	o_ptr->owner = o_ptr->find_id = old_owner;
+	strcpy(o_ptr->find_name, p_ptr->name);
 
 	/* Hack - lose discount on item, looks bad/silly */
 	o_ptr->discount = 0;

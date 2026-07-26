@@ -840,7 +840,7 @@ struct object_type {
 	byte find_player;		/* Received from a player / taken from a player's death loot oO */
 	s32b find_player_turn;		/* ^ when? */
 	u16b find_ridx, find_reidx;	/* Found from this [ego] monster */
-	s16b find_special;		/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	s16b find_special;		/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-stidx-1), stolen from store (-stidx-1000) player store(-2000).. */
 	signed char find_reward;	/* Received as event(>0)/quest(<0) reward? */
 
 	/* not yet implemented, for future tracking */

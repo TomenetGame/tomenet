@@ -11376,6 +11376,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				o_ptr = &p_ptr->inventory[k];
 				o_ptr->owner = o_ptr->find_id = 0;
+				o_ptr->find_name[0] = 0;
 				o_ptr->ident &= ~ID_NO_HIDDEN;
 				o_ptr->mode = 0;
 				p_ptr->window |= PW_INVEN;

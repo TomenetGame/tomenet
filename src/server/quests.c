@@ -2387,6 +2387,7 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 			msg_format(py, "\374\377GYou have received %s.", name); //for now. This might need some fine tuning
 			/* own it */
 			o_ptr->owner = o_ptr->find_id = Players[py]->id;
+			o_ptr->find_reward = -1 - q_idx; //well, not a reward really, it's just a quest item
 			o_ptr->mode = Players[py]->mode;
 			o_ptr->iron_trade = Players[py]->iron_trade;
 			o_ptr->iron_turn = turn;
@@ -5335,6 +5336,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					o_ptr->level = 0;
 					if (pInd) {
 						o_ptr->owner = o_ptr->find_id = Players[pInd]->id;
+						o_ptr->find_reward = -1 - q_idx;
 						o_ptr->mode = Players[pInd]->mode;
 						o_ptr->iron_trade = Players[pInd]->iron_trade;
 						o_ptr->iron_turn = turn;
@@ -5353,6 +5355,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					o_ptr->level = 0;
 					if (pInd) {
 						o_ptr->owner = o_ptr->find_id = Players[pInd]->id;
+						o_ptr->find_reward = -1 - q_idx;
 						o_ptr->mode = Players[pInd]->mode;
 						o_ptr->iron_trade = Players[pInd]->iron_trade;
 						o_ptr->iron_turn = turn;
@@ -6273,6 +6276,9 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 	qi_questor *q_questor = &q_info[q_idx].questor[questor_idx];
 	object_type forge, *o_ptr = &forge;
 	u64b resf = RESF_NOTRUEART;
+#ifdef PRE_OWN_DROP_CHOSEN
+	player_type *p_ptr = Players[Ind];
+#endif
 
 	/* specific reward */
 	if (q_questor->drops_tval) {
@@ -6296,9 +6302,10 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
 			o_ptr->level = 0;
-			o_ptr->owner = o_ptr->find_id = Players[Ind]->id;
-			o_ptr->mode = Players[Ind]->mode;
-			o_ptr->iron_trade = Players[Ind]->iron_trade;
+			o_ptr->owner = o_ptr->find_id = p_ptr->id;
+			o_ptr->find_reward = -1 - q_idx;
+			o_ptr->mode = p_ptr->mode;
+			o_ptr->iron_trade = p_ptr->iron_trade;
 			o_ptr->iron_turn = turn;
 			if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, wpos);
 #endif
@@ -6312,9 +6319,11 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
 			o_ptr->level = 0;
-			o_ptr->owner = o_ptr->find_id = Players[Ind]->id;
-			o_ptr->mode = Players[Ind]->mode;
-			o_ptr->iron_trade = Players[Ind]->iron_trade;
+			o_ptr->owner = o_ptr->find_id = p_ptr->id;
+			o_ptr->find_reward = -1 - q_idx;
+			strcpy(o_ptr->find_name, p_ptr->name);
+			o_ptr->mode = p_ptr->mode;
+			o_ptr->iron_trade = p_ptr->iron_trade;
 			o_ptr->iron_turn = turn;
 			if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, wpos);
 #endif

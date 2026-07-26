@@ -1819,6 +1819,7 @@ void handle_pickup_item(int Ind, object_type *o_ptr, u32b cave_info) {
 		int min_value = (dlev <= 10 ? 10000 : (dlev < 30 ? dlev * 1000 : (dlev < 50 ? (dlev - 10) * 1500 : (dlev - 20) * 2000)));
 
 		o_ptr->owner = o_ptr->find_id = p_ptr->id;
+		strcpy(o_ptr->find_name, p_ptr->name);
 		o_ptr->mode = p_ptr->mode;
 
 		/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */

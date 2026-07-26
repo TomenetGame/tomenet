@@ -4061,6 +4061,7 @@ VAL=200; ST=7; DEX=14; calc -p "57000/((10000 / sqrt($VAL)) + 50) / (2 + $ST/50*
 #endif
 
 		/* Let the player carry it (as if he picked it up) */
+		if (!sell_obj.owner) sell_obj.find_special = -1000 - st_ptr->st_idx;
 		can_use(Ind, &sell_obj);//##UNH
 		sell_obj.iron_trade = p_ptr->iron_trade;
 #ifndef IDDC_UNRESTRICTED_SHOPITEMS /* not tradeable within iddc party */
@@ -4628,6 +4629,7 @@ if (sell_obj.tval == TV_SCROLL && sell_obj.sval == SV_SCROLL_ARTIFACT_CREATION)
 
 				/* Let the player carry it (as if he picked it up) */
 				//note regarding quests: The item here gets owned first, then inven-carried, so it doesn't give credit!
+				if (!sell_obj.owner) sell_obj.find_special = -st_ptr->st_idx - 1;
 				can_use(Ind, &sell_obj);//##UNH
 				sell_obj.iron_trade = p_ptr->iron_trade;
 #ifndef IDDC_UNRESTRICTED_SHOPITEMS /* not tradeable within iddc party */

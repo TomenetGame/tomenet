@@ -209,6 +209,7 @@ static bool do_player_trap_garbage(int Ind, int times) {
 		if (f3 & TR3_INSTA_ART) continue;
 
 		o_ptr->owner = o_ptr->find_id = p_ptr->id;
+		strcpy(o_ptr->find_name, p_ptr->name);
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->iron_trade = p_ptr->iron_trade;
 		o_ptr->iron_turn = turn;
@@ -2297,6 +2298,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = o_ptr->find_id = p_ptr->id;
+			strcpy(o_ptr->find_name, p_ptr->name);
 			o_ptr->mode = p_ptr->mode;
 			o_ptr->level = 0;
 			o_ptr->iron_trade = p_ptr->iron_trade;
@@ -2307,6 +2309,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = o_ptr->find_id = p_ptr->id;
+			strcpy(o_ptr->find_name, p_ptr->name);
 			o_ptr->mode = p_ptr->mode;
 			o_ptr->level = 0;
 			o_ptr->iron_trade = p_ptr->iron_trade;
@@ -2327,6 +2330,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			o_ptr->number = 1;
 			o_ptr->discount = 100;
 			o_ptr->owner = o_ptr->find_id = p_ptr->id;
+			strcpy(o_ptr->find_name, p_ptr->name);
 			o_ptr->ident |= ID_NO_HIDDEN;
 			o_ptr->mode = p_ptr->mode;
 			//o_ptr->level = 0; --too often pointless if level 0, leeway needed for moar fun
