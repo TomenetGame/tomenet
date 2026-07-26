@@ -8920,7 +8920,7 @@ void restore_estate(int Ind) {
 				o_ptr->find_turn = o_ptr->find_time = 0;
 				o_ptr->find_wpos = (struct worldpos){ 0, 0, 0 };
 				o_ptr->find_dun = 0;
-				o_ptr->find_player = o_ptr->find_player_turn = 0;
+				o_ptr->find_player = o_ptr->find_player_turndiff = 0;
 				o_ptr->find_ridx = o_ptr->find_reidx = 0;
 				o_ptr->find_special = o_ptr->find_reward = 0;
 				//convert: (6)
@@ -9056,7 +9056,7 @@ void restore_estate(int Ind) {
 				o_ptr->find_turn = o_ptr->find_time = 0;
 				o_ptr->find_wpos = (struct worldpos){ 0, 0, 0 };
 				o_ptr->find_dun = 0;
-				o_ptr->find_player = o_ptr->find_player_turn = 0;
+				o_ptr->find_player = o_ptr->find_player_turndiff = 0;
 				o_ptr->find_ridx = o_ptr->find_reidx = 0;
 				o_ptr->find_special = o_ptr->find_reward = 0;
 				//convert: (6)
@@ -9191,7 +9191,7 @@ void restore_estate(int Ind) {
 				o_ptr->find_turn = o_ptr->find_time = 0;
 				o_ptr->find_wpos = (struct worldpos){ 0, 0, 0 };
 				o_ptr->find_dun = 0;
-				o_ptr->find_player = o_ptr->find_player_turn = 0;
+				o_ptr->find_player = o_ptr->find_player_turndiff = 0;
 				o_ptr->find_ridx = o_ptr->find_reidx = 0;
 				o_ptr->find_special = o_ptr->find_reward = 0;
 				//convert: (6)
@@ -9325,7 +9325,7 @@ void restore_estate(int Ind) {
 				o_ptr->find_turn = o_ptr->find_time = 0;
 				o_ptr->find_wpos = (struct worldpos){ 0, 0, 0 };
 				o_ptr->find_dun = 0;
-				o_ptr->find_player = o_ptr->find_player_turn = 0;
+				o_ptr->find_player = o_ptr->find_player_turndiff = 0;
 				o_ptr->find_ridx = o_ptr->find_reidx = 0;
 				o_ptr->find_special = o_ptr->find_reward = 0;
 				//convert: (6)
@@ -9458,7 +9458,7 @@ void restore_estate(int Ind) {
 				o_ptr->find_turn = o_ptr->find_time = 0;
 				o_ptr->find_wpos = (struct worldpos){ 0, 0, 0 };
 				o_ptr->find_dun = 0;
-				o_ptr->find_player = o_ptr->find_player_turn = 0;
+				o_ptr->find_player = o_ptr->find_player_turndiff = 0;
 				o_ptr->find_ridx = o_ptr->find_reidx = 0;
 				o_ptr->find_special = o_ptr->find_reward = 0;
 				//convert: (6)
@@ -9594,7 +9594,7 @@ void restore_estate(int Ind) {
 				o_ptr->find_wpos = o_ptr_v5->find_wpos;
 				o_ptr->find_dun = o_ptr_v5->find_dun;
 				o_ptr->find_player = o_ptr_v5->find_player;
-				o_ptr->find_player_turn = o_ptr_v5->find_player_turn;
+				o_ptr->find_player_turndiff = o_ptr_v5->find_player_turndiff;
 				o_ptr->find_ridx = o_ptr_v5->find_ridx;
 				o_ptr->find_reidx = o_ptr_v5->find_reidx;
 				o_ptr->find_special = o_ptr_v5->find_special;
@@ -9732,7 +9732,7 @@ void restore_estate(int Ind) {
 				o_ptr->find_wpos = o_ptr_v6->find_wpos;
 				o_ptr->find_dun = o_ptr_v6->find_dun;
 				o_ptr->find_player = o_ptr_v6->find_player;
-				o_ptr->find_player_turn = o_ptr_v6->find_player_turn;
+				o_ptr->find_player_turndiff = o_ptr_v6->find_player_turndiff;
 				o_ptr->find_ridx = o_ptr_v6->find_ridx;
 				o_ptr->find_reidx = o_ptr_v6->find_reidx;
 				o_ptr->find_special = o_ptr_v6->find_special;
@@ -9869,7 +9869,7 @@ void restore_estate(int Ind) {
 				o_ptr->find_wpos = o_ptr_v7->find_wpos;
 				o_ptr->find_dun = o_ptr_v7->find_dun;
 				o_ptr->find_player = o_ptr_v7->find_player;
-				o_ptr->find_player_turn = o_ptr_v7->find_player_turn;
+				o_ptr->find_player_turndiff = o_ptr_v7->find_player_turndiff;
 				o_ptr->find_ridx = o_ptr_v7->find_ridx;
 				o_ptr->find_reidx = o_ptr_v7->find_reidx;
 				o_ptr->find_special = o_ptr_v7->find_special;
@@ -10005,7 +10005,7 @@ void restore_estate(int Ind) {
 				o_ptr->find_wpos = o_ptr_v8->find_wpos;
 				o_ptr->find_dun = o_ptr_v8->find_dun;
 				o_ptr->find_player = o_ptr_v8->find_player;
-				o_ptr->find_player_turn = o_ptr_v8->find_player_turn;
+				o_ptr->find_player_turndiff = o_ptr_v8->find_player_turndiff;
 				o_ptr->find_ridx = o_ptr_v8->find_ridx;
 				o_ptr->find_reidx = o_ptr_v8->find_reidx;
 				o_ptr->find_special = o_ptr_v8->find_special;
@@ -10144,7 +10144,7 @@ void restore_estate(int Ind) {
 				o_ptr->find_wpos = o_ptr_v9->find_wpos;
 				o_ptr->find_dun = o_ptr_v9->find_dun;
 				o_ptr->find_player = o_ptr_v9->find_player;
-				o_ptr->find_player_turn = o_ptr_v9->find_player_turn;
+				o_ptr->find_player_turndiff = o_ptr_v9->find_player_turndiff;
 				o_ptr->find_ridx = o_ptr_v9->find_ridx;
 				o_ptr->find_reidx = o_ptr_v9->find_reidx;
 				o_ptr->find_special = o_ptr_v9->find_special;

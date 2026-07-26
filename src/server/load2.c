@@ -574,7 +574,7 @@ static void rd_item(object_type *o_ptr) {
 		rd_byte(&tmpbyte);
 		o_ptr->find_dun = (char)tmpbyte;
 		rd_byte(&o_ptr->find_player);
-		rd_s32b(&o_ptr->find_player_turn);
+		rd_s32b(&o_ptr->find_player_turndiff);
 		rd_u16b(&o_ptr->find_ridx);
 		rd_u16b(&o_ptr->find_reidx);
 		rd_s16b(&o_ptr->find_special);

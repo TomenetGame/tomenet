@@ -109,17 +109,17 @@ struct object_type {
 	s32b id_original;
 
 	s32b find_id;			/* Original finder */
-	char find_name[CNAME_LEN];		/* Original finder's name */
+	char find_name[CNAME_LEN];	/* Original finder's name */
 	s32b find_turn;			/* Found when, in-game? */
-	time_t find_time;			/* Found when, real-time? */
-	struct worldpos find_wpos;		/* Found at this wpos */
+	time_t find_time;		/* Found when, real-time? */
+	struct worldpos find_wpos;	/* Found at this wpos */
 	char find_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
-	byte find_player;			/* Received from a player / taken from a player's death loot oO */
-	s32b find_player_turn;		/* ^ when? */
+	byte find_player;		/* Received from a player / taken from a player's death loot oO */
+	s32b find_player_turndiff;	/* ^ when? */
 	u16b find_ridx;			/* Found from this [ego] monster */
 	u16b find_reidx;
-	s16b find_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
-	char find_reward;			/* Received as event(>0)/quest(<0) reward? */
+	s16b find_special;		/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	char find_reward;		/* Received as event(>0)/quest(<0) reward? */
 
 	u32b slain_monsters;
 	u32b slain_uniques;

@@ -255,7 +255,7 @@ static void wr_item(object_type *o_ptr) {
 	wr_s16b(o_ptr->find_wpos.wz);
 	wr_byte((unsigned char)o_ptr->find_dun);
 	wr_byte(o_ptr->find_player);
-	wr_s32b(o_ptr->find_player_turn);
+	wr_s32b(o_ptr->find_player_turndiff);
 	wr_u16b(o_ptr->find_ridx);
 	wr_u16b(o_ptr->find_reidx);
 	wr_s16b(o_ptr->find_special);
