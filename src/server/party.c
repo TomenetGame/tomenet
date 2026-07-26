@@ -1556,7 +1556,7 @@ static bool guild_name_legal(int Ind, char *name) {
 			o_ptr->number = 1;
 			o_ptr->pval = index;
 			o_ptr->level = 1;
-			o_ptr->owner = p_ptr->id;
+			o_ptr->owner = o_ptr->find_id = p_ptr->id;
 			o_ptr->ident |= ID_NO_HIDDEN;
 			o_ptr->mode = p_ptr->mode;
 			object_known(o_ptr);
@@ -1727,7 +1727,7 @@ int guild_create(int Ind, cptr name) {
 	o_ptr->number = 1;
 	o_ptr->pval = index;
 	o_ptr->level = 1;
-	o_ptr->owner = p_ptr->id;
+	o_ptr->owner = o_ptr->find_id = p_ptr->id;
 	o_ptr->ident |= ID_NO_HIDDEN;
 	o_ptr->mode = p_ptr->mode;
 	o_ptr->iron_trade = p_ptr->iron_trade;
@@ -1742,7 +1742,7 @@ int guild_create(int Ind, cptr name) {
 	invcopy(o_ptr, lookup_kind(TV_SCROLL, SV_SCROLL_HOUSE));
 	o_ptr->number = 6;
 	o_ptr->level = p_ptr->lev;
-	o_ptr->owner = p_ptr->id;
+	o_ptr->owner = o_ptr->find_id = p_ptr->id;
 	o_ptr->mode = p_ptr->mode;
 	o_ptr->discount = 50;
 	object_known(o_ptr);

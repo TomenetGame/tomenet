@@ -11294,7 +11294,7 @@ void player_death(int Ind) {
 		invcopy(o_ptr, lookup_kind(TV_SKELETON, i ? SV_BROKEN_BONE : SV_BROKEN_SKULL));
 		object_known(o_ptr);
 		object_aware(Ind, o_ptr);
-		o_ptr->owner = p_ptr->id;
+		o_ptr->owner = o_ptr->find_id = p_ptr->id;
 		o_ptr->ident |= ID_NO_HIDDEN;
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->iron_trade = p_ptr->iron_trade;
@@ -11327,7 +11327,7 @@ void player_death(int Ind) {
 		invcopy(o_ptr, lookup_kind(TV_PARCHMENT, SV_PARCHMENT_DEATH));
 		object_known(o_ptr);
 		object_aware(Ind, o_ptr);
-		o_ptr->owner = p_ptr->id;
+		o_ptr->owner = o_ptr->find_id = p_ptr->id;
 		o_ptr->ident |= ID_NO_HIDDEN;
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->iron_trade = p_ptr->iron_trade;
@@ -12616,7 +12616,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 					leg++;
 				invcopy(o_ptr, lookup_kind(TV_SKELETON, part));
 				object_known(o_ptr);
-				o_ptr->owner = p_ptr->id;
+				o_ptr->owner = o_ptr->find_id = p_ptr->id;
 				o_ptr->mode = p_ptr->mode;
 				o_ptr->level = 1;
 				o_ptr->marked2 = ITEM_REMOVAL_NORMAL;

@@ -2386,7 +2386,7 @@ static void quest_spawn_questitems(int q_idx, int stage) {
 			object_desc(0, name, o_ptr, TRUE, 256);
 			msg_format(py, "\374\377GYou have received %s.", name); //for now. This might need some fine tuning
 			/* own it */
-			o_ptr->owner = Players[py]->id;
+			o_ptr->owner = o_ptr->find_id = Players[py]->id;
 			o_ptr->mode = Players[py]->mode;
 			o_ptr->iron_trade = Players[py]->iron_trade;
 			o_ptr->iron_turn = turn;
@@ -5334,7 +5334,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 #ifdef PRE_OWN_DROP_CHOSEN
 					o_ptr->level = 0;
 					if (pInd) {
-						o_ptr->owner = Players[pInd]->id;
+						o_ptr->owner = o_ptr->find_id = Players[pInd]->id;
 						o_ptr->mode = Players[pInd]->mode;
 						o_ptr->iron_trade = Players[pInd]->iron_trade;
 						o_ptr->iron_turn = turn;
@@ -5352,7 +5352,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 #ifdef PRE_OWN_DROP_CHOSEN
 					o_ptr->level = 0;
 					if (pInd) {
-						o_ptr->owner = Players[pInd]->id;
+						o_ptr->owner = o_ptr->find_id = Players[pInd]->id;
 						o_ptr->mode = Players[pInd]->mode;
 						o_ptr->iron_trade = Players[pInd]->iron_trade;
 						o_ptr->iron_turn = turn;
@@ -6296,7 +6296,7 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
 			o_ptr->level = 0;
-			o_ptr->owner = Players[Ind]->id;
+			o_ptr->owner = o_ptr->find_id = Players[Ind]->id;
 			o_ptr->mode = Players[Ind]->mode;
 			o_ptr->iron_trade = Players[Ind]->iron_trade;
 			o_ptr->iron_turn = turn;
@@ -6312,7 +6312,7 @@ void questor_drop_specific(int Ind, int q_idx, int questor_idx, struct worldpos 
 			o_ptr->note_utag = 0;
 #ifdef PRE_OWN_DROP_CHOSEN
 			o_ptr->level = 0;
-			o_ptr->owner = Players[Ind]->id;
+			o_ptr->owner = o_ptr->find_id = Players[Ind]->id;
 			o_ptr->mode = Players[Ind]->mode;
 			o_ptr->iron_trade = Players[Ind]->iron_trade;
 			o_ptr->iron_turn = turn;

@@ -1697,7 +1697,7 @@ void admin_outfit(int Ind, int realm) {
 	object_aware(Ind, o_ptr); \
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
-	o_ptr->owner = p_ptr->id; \
+	o_ptr->owner = o_ptr->find_id = p_ptr->id; \
 	o_ptr->mode = p_ptr->mode | MODE_STARTER_ITEM; \
 	o_ptr->level = 1; \
 	(void)inven_carry_equip(Ind, o_ptr);
@@ -1707,7 +1707,7 @@ void admin_outfit(int Ind, int realm) {
 	object_aware(Ind, o_ptr); \
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
-	o_ptr->owner = p_ptr->id; \
+	o_ptr->owner = o_ptr->find_id = p_ptr->id; \
 	o_ptr->mode = p_ptr->mode | MODE_STARTER_ITEM; \
 	o_ptr->level = 0; \
 	(void)inven_carry_equip(Ind, o_ptr);
@@ -1716,7 +1716,7 @@ void admin_outfit(int Ind, int realm) {
 	object_aware(Ind, o_ptr); \
 	object_known(o_ptr); \
 	o_ptr->ident |= ID_MENTAL; \
-	o_ptr->owner = p_ptr->id; \
+	o_ptr->owner = o_ptr->find_id = p_ptr->id; \
 	o_ptr->mode = p_ptr->mode | MODE_STARTER_ITEM; \
 	o_ptr->level = 0; \
 	(void)inven_carry_equip(Ind, o_ptr);
@@ -2099,7 +2099,7 @@ static void player_outfit(int Ind) {
 		o_ptr->number = 9;
 		apply_magic_depth(0, o_ptr, -1, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
 		o_ptr->discount = 72;
-		o_ptr->owner = p_ptr->id;
+		o_ptr->owner = o_ptr->find_id = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
 		o_ptr->level = 1;
 		object_known(o_ptr);
@@ -2112,7 +2112,7 @@ static void player_outfit(int Ind) {
  #ifdef TEST_SERVER
 	invcopy(o_ptr, lookup_kind(TV_POTION, SV_POTION_DEATH));
 	o_ptr->discount = 100;
-	o_ptr->owner = p_ptr->id;
+	o_ptr->owner = o_ptr->find_id = p_ptr->id;
 	o_ptr->mode = p_ptr->mode;
 	o_ptr->level = 0;
 	object_known(o_ptr);

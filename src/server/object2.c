@@ -12222,6 +12222,7 @@ s16b inven_carry(int Ind, object_type *o_ptr) {
 
 	if (!o_ptr->owner && !p_ptr->admin_dm) {
 		o_ptr->owner = p_ptr->id;
+		o_ptr->find_id = p_ptr->id;
 		o_ptr->mode = p_ptr->mode;
 		if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &o_ptr->wpos); /* paranoia? */
 
