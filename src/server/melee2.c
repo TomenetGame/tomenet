@@ -9937,7 +9937,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 	/* Handle "sleep" */
 	if (m_ptr->csleep) {
-		u32b pnotice = 0, pnoise, dist, num = 0, pwake = 0;
+		u32b pnotice = 0, pnoise, dist, pwake = 0;
 		bool aggravated = FALSE;
 
 		pnotice = rand_int(1024);
@@ -9952,12 +9952,10 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			/* Skip players not on this depth */
 			if (!inarea(&q_ptr->wpos, wpos)) continue;
 
-			dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
-
 			/* Any aggravating player within aggr-range immediately wakes the monster up */
 			if (q_ptr->aggravate) {
 				/* Compute distance */
-				/* XXX value is same with that in process_monsters */
+				dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
 #ifndef REDUCED_AGGRAVATION
 				if (dist < 100)
 #else
@@ -9970,7 +9968,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				}
 			}
 
-			/* Remember player with the worst (lowest) stealth, if close enough */
+			/* Remember player with the worst (lowest) stealth */
 			if (skill_stl > q_ptr->skill_stl) skill_stl = q_ptr->skill_stl;
 		}
 		if (!aggravated) {
@@ -9985,7 +9983,6 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
 
 				/* Amount of "waking" - wake up faster near the player: */
-				num++;
 				if (!dist) dist = 1;
 				if (dist > 50) pwake += 1 * (31 - q_ptr->skill_stl) / (31 - skill_stl);
 				else pwake += (100 / dist) * (31 - q_ptr->skill_stl) / (31 - skill_stl);
