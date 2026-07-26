@@ -106,18 +106,50 @@ struct object_type {
 
 	/* For item history tracking */
 	s32b id;			/* Item's unique ID (mhh) */
-	s32b f_id;			/* Original finder */
-	char f_name[CNAME_LEN];		/* Original finder's name */
-	s32b f_turn;			/* Found when, in-game? */
-	time_t f_time;			/* Found when, real-time? */
-	struct worldpos f_wpos;		/* Found at this wpos */
-	char f_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
-	byte f_player;			/* Received from a player / taken from a player's death loot oO */
-	s32b f_player_turn;		/* ^ when? */
-	u16b f_ridx;			/* Found from this [ego] monster */
-	u16b f_reidx;
-	s16b f_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
-	char f_reward;			/* Received as event(>0)/quest(<0) reward? */
+	s32b id_original;
+
+	s32b find_id;			/* Original finder */
+	char find_name[CNAME_LEN];		/* Original finder's name */
+	s32b find_turn;			/* Found when, in-game? */
+	time_t find_time;			/* Found when, real-time? */
+	struct worldpos find_wpos;		/* Found at this wpos */
+	char find_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	byte find_player;			/* Received from a player / taken from a player's death loot oO */
+	s32b find_player_turn;		/* ^ when? */
+	u16b find_ridx;			/* Found from this [ego] monster */
+	u16b find_reidx;
+	s16b find_special;			/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-idx), player store(-1000).. */
+	char find_reward;			/* Received as event(>0)/quest(<0) reward? */
+
+	u32b slain_monsters;
+	u32b slain_uniques;
+	u32b slain_players;
+	u32b times_activated;
+	u32b time_equipped;
+	u32b time_carried; //time in seconds is enough for ~130+ years
+
+	u32b slain_orcs;
+	u32b slain_trolls;
+	u32b slain_giants;
+	u32b slain_animals;
+	u32b slain_dragons;
+	u32b slain_demons;
+	u32b slain_undead;
+	u32b slain_evil;
+
+	byte slain_bosses;
+	byte slain_nazgul;
+	byte slain_superuniques;
+	byte slain_sauron;
+	byte slain_morgoth;
+	byte slain_zuaon; //these don't respawn, so byte is fine
+
+	u64b done_damage;
+	u64b done_healing;
+
+	u16b got_damaged;
+	u16b got_repaired;
+	u16b got_enchanted;
 };
 
 /*
