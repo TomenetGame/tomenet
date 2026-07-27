@@ -10788,6 +10788,14 @@ void dungeon(void) {
 				parties[p_ptr->party].attr = ++k;
 				k = k % TERM_MULTI;
 			}
+
+			/* Might be more efficient this way: Just ignore non-existant items and increment everything anyway, even empty slots? */
+			/* Note: We don't handle integer overflow. (Range in seconds should cover ~130+ years.) */
+			for (k = 0; k < INVEN_PACK; k++) p_ptr->inventory[k].time_carried++;
+			for (k = INVEN_WIELD; k < INVEN_TOTAL; k++) {
+				p_ptr->inventory[k].time_equipped++;
+				p_ptr->inventory[k].time_carried++;
+			}
 		}
 
 		/* Free firework drops sometimes, in the inn in Bree :o (inn size is 5x5) */
