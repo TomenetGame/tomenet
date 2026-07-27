@@ -1329,14 +1329,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				/* Limit to items with specified strings, if any */
 				if (tk) {
-					if (!o_ptr->note || !strstr(quark_str(o_ptr->note), token[1]))
+					if (!o_ptr->note || !strstr(quark_str(o_ptr->note), token[1]) ||
+					    cursed_p(o_ptr))
 						continue;
 				} else {
 					/* skip inscribed items */
 					/* skip non-matching tags */
-					if ((check_guard_inscription(o_ptr->note, 't')) ||
-						(check_guard_inscription(o_ptr->note, 'T')) ||
-						(cursed_p(o_ptr))) continue;
+					if (check_guard_inscription(o_ptr->note, 't') ||
+					    check_guard_inscription(o_ptr->note, 'T') ||
+					    cursed_p(o_ptr))
+						continue;
 				}
 				inven_takeoff(Ind, i, 255, FALSE, FALSE);
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
