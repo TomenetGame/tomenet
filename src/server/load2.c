@@ -573,7 +573,7 @@ static void rd_item(object_type *o_ptr) {
 		rd_s16b(&o_ptr->find_wpos.wz);
 		rd_byte(&tmpbyte);
 		o_ptr->find_dun = (char)tmpbyte;
-		rd_byte(&o_ptr->find_player);
+		rd_byte(&o_ptr->dummyB1); //hole
 		rd_s32b(&o_ptr->find_player_turndiff);
 		rd_u16b(&o_ptr->find_ridx);
 		rd_u16b(&o_ptr->find_reidx);
@@ -652,10 +652,11 @@ static void rd_item(object_type *o_ptr) {
 			}
 		}
 
+		rd_s32b(&o_ptr->find_player_id);
+
 		/* for any future use (hole): */
 		rd_s32b(&o_ptr->dummyL1);
 		rd_s32b(&o_ptr->dummyL2);
-		rd_s32b(&o_ptr->dummyL3);
 	}
 
 

@@ -10422,12 +10422,16 @@ extern int PlayerUID;
 	{ (o_ptr)->owner = (o_ptr)->find_id = (p_ptr)->id; \
 	  strcpy((o_ptr)->find_name, p_ptr->name); \
 	  (o_ptr)->find_turn = turn; \
+	  (o_ptr)->find_time = time(NULL); \
+	  (o_ptr)->find_wpos = (p_ptr)->wpos; \
 	  (o_ptr)->mode = (p_ptr)->mode; }
 
 #define imprint_object_fully(o_ptr, p_ptr) \
 	{ (o_ptr)->owner = (o_ptr)->find_id = (p_ptr)->id; \
 	  strcpy((o_ptr)->find_name, p_ptr->name); \
 	  (o_ptr)->find_turn = turn; \
+	  (o_ptr)->find_time = time(NULL); \
+	  (o_ptr)->find_wpos = (p_ptr)->wpos; \
 	  (o_ptr)->mode = (p_ptr)->mode; \
 	  (o_ptr)->iron_trade = (p_ptr)->iron_trade; \
 	  (o_ptr)->iron_turn = turn; }

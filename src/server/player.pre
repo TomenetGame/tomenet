@@ -114,7 +114,7 @@ struct object_type {
 	time_t find_time;		/* Found when, real-time? */
 	struct worldpos find_wpos;	/* Found at this wpos */
 	char find_dun;			/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
-	byte find_player;		/* Received from a player / taken from a player's death loot oO */
+	s32b find_player_id;		/* Received from a player / taken from a player's death loot oO */
 	s32b find_player_turndiff;	/* ^ when? */
 	u16b find_ridx;			/* Found from this [ego] monster */
 	u16b find_reidx;
