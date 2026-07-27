@@ -11064,6 +11064,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (ge->announcement_time) {
 					s32b elapsed_time = turn - ge->start_turn - ge->paused_turns;
 					s32b diff = ge->announcement_time * cfg.fps - elapsed_time - 1;
+
 					msg_format(Ind, "forwarding %d turns", diff);
 					global_event[i].start_turn -= diff;
 					if (ge->end_turn) global_event[i].end_turn -= diff;
