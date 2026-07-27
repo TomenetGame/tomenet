@@ -3533,6 +3533,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			char ppl[75];
 			bool found = FALSE;
 
+			p_ptr->warning_AMC = 1;
+
 			if (tk < 1) {
 				int at;
 
@@ -3641,6 +3643,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		}
 		else if (prefix(messagelc, "/evsign")) { /* sign up for a global event */
 			int k0 = k - 1;
+
+			p_ptr->warning_AMC = 1;
 
 			/* get some 'real' event index number for our example ;) */
 			for (i = 0; i < MAX_GLOBAL_EVENTS; i++)

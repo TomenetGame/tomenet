@@ -10254,6 +10254,13 @@ void process_player_change_wpos(int Ind) {
 		}
 	}
 
+	if (!p_ptr->warning_AMC && ge_special_sector && in_arena(&p_ptr->wpos)) {
+		msg_print(Ind, "\374\377yHINT: This upper floor of the tower currently hosts the 'AMC' event for 30 min.");
+		//msg_print(Ind, "\374\377y      You can enter the '\377o/evinfo\377y' command in chat to find out more."); --already printed by AMC-related event message on entering the AMC
+		s_printf("warning_AMC: %s\n", p_ptr->name);
+		p_ptr->warning_AMC = 1;
+	}
+
 	/* Hack -- jail her/him */
 	if (!p_ptr->wpos.wz && p_ptr->tim_susp
 #ifdef JAIL_TOWN_AREA

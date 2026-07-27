@@ -3019,6 +3019,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_tss = 1;
 		p_ptr->warning_stdwager = 1;
 		p_ptr->warning_res = p_ptr->warning_doubleres = 1;
+		p_ptr->warning_AMC = 1;
 		return;
 	}
 
@@ -3189,6 +3190,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 	if (p_ptr->max_plv > 7) {
 		p_ptr->warning_trap = 1;
 		p_ptr->warning_fountain = 1;
+		p_ptr->warning_AMC = 1;
 	}
 	if (p_ptr->max_plv > 10) {
 		//p_ptr->warning_dual = 1; -- to dangerous, should remain active
