@@ -167,7 +167,7 @@
    to a different character which he chooses on next login! - C. Blue
 */
 static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
-	int i, j;
+	int i, j, n, m;
 
 	for (i = 0; i < MAX_CONTENDER_BUFFERS; i++)
 		if (ge_contender_buffer_ID[i] == 0) break;
@@ -208,6 +208,20 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_DUNGEONKEEPER;
 			s_printf("GE_DUNGEON_KEEPER(%d)\n", i);
+			/* extra: if this player is the last one on the level, taunt staircases (Thanks @ The_sandman!) */
+			n = 0;
+			for (m = 1; m <= NumPlayers; m++)
+				if (!Players[m]->admin_dm && in_sector000(&Players[m]->wpos)) n++;
+			if (n == 1) {
+				dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
+				if (l_ptr) l_ptr->flags1 &= ~LF1_NO_MAGIC_MAP;
+				sector000flags1 &= ~LF1_NO_MAGIC_MAP;
+				wiz_lite_extra(p_ptr->Ind);
+				handle_stuff(p_ptr->Ind);
+				sector000flags1 |= LF1_NO_MAGIC_MAP; //pft, not needed
+				if (l_ptr) l_ptr->flags1 |= LF1_NO_MAGIC_MAP; //^dito
+			}
 			return;
 		case GE_ADVENTURE:
 			s_printf("GE_ADVENTURE(%d)\n", i);
