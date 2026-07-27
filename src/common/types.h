@@ -2437,6 +2437,7 @@ struct monster_type {
 	//add status effects too, eg slept/feared/...?
 
 	s32b custom_xp;			/* Force specific XP reward (0 = disabled ie grant standard XP; use -1 to give 0 XP) */
+	byte killed_by_item;		/* 0: not an item, just Killed By Death; 1: melee weapon; 2: ranged weapon (; 3: trap); (we ignore devices, thrown inventory, REFLECT/aura items and everything else for now^^) */
 };
 
 typedef struct monster_ego monster_ego;

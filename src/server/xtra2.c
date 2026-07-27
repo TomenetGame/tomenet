@@ -6400,70 +6400,182 @@ bool monster_death(int Ind, int m_idx) {
 	/* Avoid getting projected on by smash effect of our own dropped potions */
 	m_ptr->dead = TRUE;
 
-	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+	switch(m_ptr->killed_by_item) {
+	case 1:	p_ptr->inventory[INVEN_WIELD].slain_monsters++;
+		p_ptr->inventory[INVEN_ARM].slain_monsters++;
+		break;
+	case 2:	p_ptr->inventory[INVEN_BOW].slain_monsters++;
+		break;
+	}
+	for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 		p_ptr->inventory[i].slain_monsters++;
 
 	switch(m_ptr->r_idx) {
 	case RI_SAURON:
-		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+		switch(m_ptr->killed_by_item) {
+		case 1:	p_ptr->inventory[INVEN_WIELD].slain_sauron++;
+			p_ptr->inventory[INVEN_ARM].slain_sauron++;
+			break;
+		case 2:	p_ptr->inventory[INVEN_BOW].slain_sauron++;
+			break;
+		}
+		for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 			if (p_ptr->inventory[i].slain_sauron < 250) p_ptr->inventory[i].slain_sauron++;
 		break;
 	case RI_MORGOTH:
-		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+		switch(m_ptr->killed_by_item) {
+		case 1:	p_ptr->inventory[INVEN_WIELD].slain_morgoth++;
+			p_ptr->inventory[INVEN_ARM].slain_morgoth++;
+			break;
+		case 2:	p_ptr->inventory[INVEN_BOW].slain_morgoth++;
+			break;
+		}
+		for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 			if (p_ptr->inventory[i].slain_morgoth < 250) p_ptr->inventory[i].slain_morgoth++;
 		break;
 	case RI_ZU_AON:
-		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+		switch(m_ptr->killed_by_item) {
+		case 1:	p_ptr->inventory[INVEN_WIELD].slain_zuaon++;
+			p_ptr->inventory[INVEN_ARM].slain_zuaon++;
+			break;
+		case 2:	p_ptr->inventory[INVEN_BOW].slain_zuaon++;
+			break;
+		}
+		for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 			if (p_ptr->inventory[i].slain_zuaon < 250) p_ptr->inventory[i].slain_zuaon++; // xD
 		break;
 	default:
 		if (r_ptr->flags7 & RF7_NAZGUL) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_nazgul++;
+				p_ptr->inventory[INVEN_ARM].slain_nazgul++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_nazgul++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 				if (p_ptr->inventory[i].slain_nazgul < 250) p_ptr->inventory[i].slain_nazgul++;
 		}
 		if (is_superunique(m_ptr->r_idx)) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-				if (p_ptr->inventory[i].slain_nazgul < 250) p_ptr->inventory[i].slain_superuniques++;
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_superuniques++;
+				p_ptr->inventory[INVEN_ARM].slain_superuniques++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_superuniques++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
+				if (p_ptr->inventory[i].slain_superuniques < 250) p_ptr->inventory[i].slain_superuniques++;
 		}
 		if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
-				if (p_ptr->inventory[i].slain_nazgul < 250) p_ptr->inventory[i].slain_bosses++;
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_bosses++;
+				p_ptr->inventory[INVEN_ARM].slain_bosses++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_bosses++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
+				if (p_ptr->inventory[i].slain_bosses < 250) p_ptr->inventory[i].slain_bosses++;
 		}
 
 		if (r_ptr->flags1 & RF1_UNIQUE) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_uniques++;
+				p_ptr->inventory[INVEN_ARM].slain_uniques++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_uniques++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 				p_ptr->inventory[i].slain_uniques++;
 		}
 		if (r_ptr->flags3 & RF3_ANIMAL) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_animals++;
+				p_ptr->inventory[INVEN_ARM].slain_animals++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_animals++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 				p_ptr->inventory[i].slain_animals++;
 		}
 		if (r_ptr->flags3 & RF3_ORC) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_orcs++;
+				p_ptr->inventory[INVEN_ARM].slain_orcs++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_orcs++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 				p_ptr->inventory[i].slain_orcs++;
 		}
 		if (r_ptr->flags3 & RF3_TROLL) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_trolls++;
+				p_ptr->inventory[INVEN_ARM].slain_trolls++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_trolls++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 				p_ptr->inventory[i].slain_trolls++;
 		}
 		if (r_ptr->flags3 & RF3_GIANT) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_giants++;
+				p_ptr->inventory[INVEN_ARM].slain_giants++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_giants++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 				p_ptr->inventory[i].slain_giants++;
 		}
 		if (r_ptr->flags3 & RF3_DRAGON) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_dragons++;
+				p_ptr->inventory[INVEN_ARM].slain_dragons++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_dragons++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 				p_ptr->inventory[i].slain_dragons++;
 		}
 		if (r_ptr->flags3 & RF3_DEMON) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_demons++;
+				p_ptr->inventory[INVEN_ARM].slain_demons++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_demons++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 				p_ptr->inventory[i].slain_demons++;
 		}
 		if (r_ptr->flags3 & RF3_UNDEAD) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_undead++;
+				p_ptr->inventory[INVEN_ARM].slain_undead++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_undead++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 				p_ptr->inventory[i].slain_undead++;
 		}
 		if (r_ptr->flags3 & RF3_EVIL) {
-			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			switch(m_ptr->killed_by_item) {
+			case 1:	p_ptr->inventory[INVEN_WIELD].slain_evil++;
+				p_ptr->inventory[INVEN_ARM].slain_evil++;
+				break;
+			case 2:	p_ptr->inventory[INVEN_BOW].slain_evil++;
+				break;
+			}
+			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
 				p_ptr->inventory[i].slain_evil++;
 		}
 	}
@@ -12439,6 +12551,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 	int skill_trauma = (p_ptr->anti_magic || get_skill(p_ptr, SKILL_ANTIMAGIC)) ? 0 : get_skill_scale(p_ptr, SKILL_TRAUMATURGY, 100);
 	bool old_tacit = suppress_message;
 	int apply_exp_Ind[MAX_PLAYERS + 1] = { 0 }, i;
+	byte killed_by_item = m_ptr->killed_by_item;
 
 	//int dun_level2 = getlevel(&p_ptr->wpos);
 	dungeon_type *dt_ptr2 = getdungeon(&p_ptr->wpos);
@@ -12450,6 +12563,8 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		d_ptr2 = &d_info[dun_type2];
 	}
 #endif
+
+	m_ptr->killed_by_item = 0; //clear!
 
 	if (m_ptr->status & M_STATUS_FRIENDLY) return(FALSE);
 
@@ -12633,6 +12748,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 #else
 		sound(Ind, SOUND_KILL);
 #endif
+		m_ptr->killed_by_item = killed_by_item; //Restore for death!
 		monster_death(Ind, m_idx); /* override NO_DEATH! but without any credit (xp/form), just loot */
 		suppress_message = old_tacit;
 		delete_monster_idx(m_idx, FALSE);
@@ -12877,6 +12993,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 		while (apply_exp_Ind[++i]) apply_exp(apply_exp_Ind[i]);
 
 #ifdef SOLO_REKING
+		m_ptr->killed_by_item = killed_by_item; //Restore for death!
 		/* Generate treasure and give kill credit */
 		if (monster_death(Ind, m_idx) &&
 		/* note: only our own killing blows count, not party exp! */
@@ -12890,6 +13007,7 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 			if (p_ptr->solo_reking < 0) p_ptr->solo_reking = 0;
 		}
 #else
+		m_ptr->killed_by_item = killed_by_item; //Restore for death!
 		/* Generate treasure and give kill credit */
 		monster_death(Ind, m_idx);
 #endif

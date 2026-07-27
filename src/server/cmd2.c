@@ -8092,6 +8092,7 @@ void do_cmd_fire(int Ind, int dir) {
 #endif
 
 					/* Hit the monster, check for death */
+					m_list[c_ptr->m_idx].killed_by_item = 2;
 					if (mon_take_hit(Ind, c_ptr->m_idx, tdam, &fear, note_dies)) {
 						/* note: if the monster we hit wasn't the one targetted, then continue shooting.
 							 It can only mean that this monster was invisible to us, hence the

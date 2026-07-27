@@ -5894,7 +5894,30 @@ bool mon_hit_trap(int m_idx) {
 					}
 #endif
 
-					/* If another monster did the damage, hurt the monster by hand */
+					// 'killed_by_item = 3':
+					if (dam > m_ptr->hp) {
+						kit_o_ptr->slain_monsters++;
+						switch(m_ptr->r_idx) {
+						case RI_SAURON: if (kit_o_ptr->slain_sauron < 250) kit_o_ptr->slain_sauron++; break;
+						case RI_MORGOTH: if (kit_o_ptr->slain_morgoth < 250) kit_o_ptr->slain_morgoth++; break;
+						case RI_ZU_AON: if (kit_o_ptr->slain_zuaon < 250) kit_o_ptr->slain_zuaon++; break;
+						default:
+							if ((r_ptr->flags7 & RF7_NAZGUL) && kit_o_ptr->slain_nazgul < 250) kit_o_ptr->slain_nazgul++;
+							if (is_superunique(m_ptr->r_idx) && kit_o_ptr->slain_superuniques < 250) kit_o_ptr->slain_superuniques++;
+							if ((r_ptr->flags8 & RF8_FINAL_GUARDIAN) && kit_o_ptr->slain_bosses < 250) kit_o_ptr->slain_bosses++;
+							if (r_ptr->flags1 & RF1_UNIQUE) kit_o_ptr->slain_uniques++;
+							if (r_ptr->flags3 & RF3_ANIMAL) kit_o_ptr->slain_animals++;
+							if (r_ptr->flags3 & RF3_ORC) kit_o_ptr->slain_orcs++;
+							if (r_ptr->flags3 & RF3_TROLL) kit_o_ptr->slain_trolls++;
+							if (r_ptr->flags3 & RF3_GIANT) kit_o_ptr->slain_giants++;
+							if (r_ptr->flags3 & RF3_DRAGON) kit_o_ptr->slain_dragons++;
+							if (r_ptr->flags3 & RF3_DEMON) kit_o_ptr->slain_demons++;
+							if (r_ptr->flags3 & RF3_UNDEAD) kit_o_ptr->slain_undead++;
+							if (r_ptr->flags3 & RF3_EVIL) kit_o_ptr->slain_evil++;
+						}
+					}
+
+					/* If another monster did the damage, hurt the monster by hand -- impossible for traps though, except some special projector after player logged off? */
 					if (who <= 0) {
 						/* Redraw (later) if needed */
 						update_health(c_ptr->m_idx);

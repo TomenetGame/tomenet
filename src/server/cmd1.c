@@ -5591,6 +5591,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			/* Damage, check for fear and death */
 			feed = m_ptr->maxhp + 100;
 			p_ptr->vamp_fed_midx = c_ptr->m_idx;
+			m_ptr->killed_by_item = 1;
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) {
 
 				/* Vampires feed off the life force! (if any) */
