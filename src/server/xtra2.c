@@ -16126,7 +16126,8 @@ bool master_level(int Ind, char * parms) {
 	case 'B': {
 		int W = (&parms[1])[0] - 48; // '1' -> 1
 		int H = (&parms[1])[2] - 48; // '1' -> 1
-		generate_cave_blank(&p_ptr->wpos, 5-W, 5-H, 0);
+
+		generate_cave_blank(&p_ptr->wpos, 5 - W, 5 - H, 0);
 	break; }
 	/* Place entrance location from <, > or random entry (eg. WoR) */
 	case '>': {
@@ -16479,6 +16480,7 @@ bool master_summon(int Ind, char * parms) {
 #endif
 	unsigned char size = 0;  /* how many monsters to actually summon */
 
+
 	if (!is_admin(p_ptr) && (!player_is_king(Ind))) return(FALSE);
 
 	summon_override_checks = SO_ALL; /* set admin summoning flag for overriding all validity checks */
@@ -16729,6 +16731,7 @@ bool imprison(int Ind, u16b time, char *reason) {
 	i = TRUE;
 	for (j = 0; j < INVEN_WIELD; j++) {
 		object_type *j_ptr;
+
 		if (!p_ptr->inventory[j].k_idx) continue;
 		j_ptr = &p_ptr->inventory[j];
 		if ((j_ptr->tval == TV_SCROLL) && (j_ptr->sval == SV_SCROLL_WORD_OF_RECALL)) {
@@ -16929,26 +16932,24 @@ bool master_generate(int Ind, char * parms) {
 	if (!is_admin(p_ptr)) return(FALSE);
 
 	switch (parms[0]) {
-		/* generate a vault */
-		case 'v':
-		{
-			vault_type *v_ptr = NULL;
+	/* generate a vault */
+	case 'v': {
+		vault_type *v_ptr = NULL;
 
-			switch (parms[1]) {
-			case '#':
-				v_ptr = &v_info[parms[2] + 127];
-				break;
-			case 'n':
-				v_ptr = get_vault(&parms[2]);
-			}
-
-			if (!v_ptr || !v_ptr->wid) return(FALSE);
-
-			//build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
-			build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr, p_ptr);
-
+		switch (parms[1]) {
+		case '#':
+			v_ptr = &v_info[parms[2] + 127];
 			break;
+		case 'n':
+			v_ptr = get_vault(&parms[2]);
 		}
+
+		if (!v_ptr || !v_ptr->wid) return(FALSE);
+
+		//build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr->hgt, v_ptr->wid, v_text + v_ptr->text);
+		build_vault(&p_ptr->wpos, p_ptr->py, p_ptr->px, v_ptr, p_ptr);
+
+		break; }
 	}
 	return(TRUE);
 }
@@ -16970,8 +16971,7 @@ bool establish_esp_link(int Ind, int Ind2, byte type, u16b flags, u16b end) {
 			esp_ptr->end = end;
 		}
 		else return(FALSE);
-	}
-	else {
+	} else {
 		MAKE(esp_ptr, esp_link_type);
 
 		esp_ptr->id = p2_ptr->id;
