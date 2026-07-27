@@ -1324,22 +1324,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			//for (i=INVEN_WIELD;i<INVEN_TOTAL;i++)
 			for (i = start; i < end; i++) {
-				o_ptr = &(p_ptr->inventory[i]);
+				o_ptr = &p_ptr->inventory[i];
 				if (!o_ptr->k_idx) continue;
+				if (cursed_p(o_ptr)) continue;
 
 				/* Limit to items with specified strings, if any */
 				if (tk) {
-					if (!o_ptr->note || !strstr(quark_str(o_ptr->note), token[1]) ||
-					    cursed_p(o_ptr))
-						continue;
+					if (!o_ptr->note || !strstr(quark_str(o_ptr->note), token[1])) continue;
 				} else {
 					/* skip inscribed items */
 					/* skip non-matching tags */
 					if (check_guard_inscription(o_ptr->note, 't') ||
-					    check_guard_inscription(o_ptr->note, 'T') ||
-					    cursed_p(o_ptr))
+					    check_guard_inscription(o_ptr->note, 'T'))
 						continue;
 				}
+
 				inven_takeoff(Ind, i, 255, FALSE, FALSE);
 				p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 			}
