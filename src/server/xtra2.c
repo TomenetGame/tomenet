@@ -9253,7 +9253,7 @@ static void erase_player(int Ind, int death_type, bool static_floor) {
 	int *id_list, ids, pid = p_ptr->id;
 	global_event_type *ge;
 
-	s_printf("Called erase_player(%d) = '%s' (%s)\n", Ind, p_ptr->name, p_ptr->accountname);
+	s_printf("Called erase_player(%d) = '%s' (%d(%d), %s <%d>)\n", Ind, p_ptr->name, p_ptr->lev, p_ptr->max_plv, p_ptr->accountname, p_ptr->id);
 
 	/* Remove ID from any ongoing events in case a new/same player takes ID */
 	for (i = 0; i < MAX_GLOBAL_EVENTS; i++) {

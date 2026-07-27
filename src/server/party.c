@@ -5423,7 +5423,7 @@ void erase_player_hash(int slot, hash_entry **p_pptr, hash_entry **p_ptr) {
 	if (!acc) acc = "(no account)";
 	else accok = TRUE;
 
-	s_printf("Removing player: %s (%d(%d), %s)\n", ptr->name, ptr->level, ptr->max_plv, acc);
+	s_printf("Removing player: %s (%d(%d), %s <%d>)\n", ptr->name, ptr->level, ptr->max_plv, acc, ptr->id);
 
 #ifdef SAFETY_BACKUP_PLAYER
 	/* Not sure if hash table level is already updated to live player level, so double check here: */
