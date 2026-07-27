@@ -3913,6 +3913,7 @@ int equip_damage(int Ind, int typ) {
 
 	/* Damage the item */
 	o_ptr->to_a--;
+	o_ptr->got_damaged++;
 
 	if (!p_ptr->warning_repair && o_ptr->to_a < 0) {
 		msg_print(Ind, "\377yYou can get it repaired at the armoury in town.");
@@ -3984,6 +3985,7 @@ int shield_takes_damage(int Ind, int typ) {
 
 	/* Damage the item */
 	o_ptr->to_a--;
+	o_ptr->got_damaged++;
 
 	if (!p_ptr->warning_repair && o_ptr->to_a < 0) {
 		msg_print(Ind, "\377yYou can get it repaired at the armoury in town.");
@@ -4064,6 +4066,7 @@ int weapon_takes_damage(int Ind, int typ, int slot) {
 
 	/* Damage the item */
 	o_ptr->to_d--;
+	o_ptr->got_damaged++;
 
 	if (!p_ptr->warning_repair && o_ptr->to_d < 0) {
 		msg_print(Ind, "\377yYou can get it repaired at the weaponsmith in town.");
@@ -4241,6 +4244,7 @@ int fire_dam(int Ind, int dam, cptr kb_str, int Ind_attacker) {
 
 					/* Damage the item */
 					o_ptr->to_a--;
+					o_ptr->got_damaged++;
 
 					p_ptr->update |= (PU_BONUS);
 					p_ptr->window |= (PW_INVEN | PW_EQUIP | PW_PLAYER);

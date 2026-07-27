@@ -2026,6 +2026,7 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 			}
 			p_ptr->au -= cost;
 			p_ptr->redraw |= PR_GOLD;
+			o_ptr->got_repaired++;
 
 #ifdef USE_SOUND_2010
 			sound(Ind, "store_repair", NULL, SFX_TYPE_MISC, FALSE);
@@ -2108,6 +2109,7 @@ bool repair_item_aux(int Ind, int i, bool iac) {
 	}
 	p_ptr->au -= cost;
 	p_ptr->redraw |= PR_GOLD;
+	o_ptr->got_repaired++;
 
 	if (iac) o_ptr->to_a = 0;
 	else o_ptr->to_d = 0;

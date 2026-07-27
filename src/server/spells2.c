@@ -4221,10 +4221,11 @@ bool enchant_spell_aux(int Ind, int item, int num_hit, int num_dam, int num_ac, 
 	//if (artifact_p(o_ptr)) msg_format(Ind, "Your %s %s unaffected.",o_name,((o_ptr->number != 1) ? "are" : "is"));
 
 	/* Failure */
-	if (!okay) {
-		/* Message */
-		msg_print(Ind, "The enchantment failed.");
-	} else Send_item_newest_2nd(Ind, item);
+	if (!okay) msg_print(Ind, "The enchantment failed.");
+	else { /* Success */
+		o_ptr->got_enchanted++;
+		Send_item_newest_2nd(Ind, item);
+	}
 
 #if 0
 	/* Anti-cheeze */
