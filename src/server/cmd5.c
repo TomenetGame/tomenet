@@ -1964,6 +1964,13 @@ bool cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 	/* Cast the spell, handle FTK */
 	u32b u = ((u32b)lo) | ((u32b)hi << 16);
 	if (u) {
+		if (!p_ptr->warning_macros && dir != 5 && dir < 10) {
+			msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to draw runes with a single keypress!");
+			msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
+			p_ptr->warning_macros = 1;
+			s_printf("warning_macros (runes): %s\n", p_ptr->name);
+		}
+
 		ftk_maybe = exec_lua(Ind, format("return cast_rune_spell(%d, %d, %d)", Ind, dir, u));
 		ftk_type = exec_lua(Ind, format("return rcraft_ftk(%d)", u));
 		if (p_ptr->shooty_till_kill && ftk_maybe) {
@@ -1974,13 +1981,6 @@ bool cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 			if (ftk_type == 1 && !projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return(FALSE);
 #endif
 			if (dir != 5 || !target_okay(Ind)) return(FALSE);
-
-			if (!p_ptr->warning_macros && dir != 5 && dir < 10) {
-				msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to draw runes with a single keypress!");
-				msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
-				p_ptr->warning_macros = 1;
-				s_printf("warning_macros (runes): %s\n", p_ptr->name);
-			}
 
 			p_ptr->shooting_till_kill = TRUE;
 			p_ptr->shoot_till_kill_rcraft = TRUE;
