@@ -1900,6 +1900,10 @@
 #define RE_RUNEMASTER		62
 
 
+#define is_superunique(ridx) \
+    ((ridx) == RI_MICHAEL || (ridx) == RI_TIK_SRVZLLAT || (ridx) == RI_BAHAMUT || (ridx) == RI_HELLRAISER || (ridx) == RI_DOR)
+
+
 /* Use normal monster abilities instead of truly mirrored abilities?
    (This is basically a placeholder until a true mirror image is eventually implemented..) */
 #define SIMPLE_RI_MIRROR

@@ -6400,6 +6400,74 @@ bool monster_death(int Ind, int m_idx) {
 	/* Avoid getting projected on by smash effect of our own dropped potions */
 	m_ptr->dead = TRUE;
 
+	for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+		p_ptr->inventory[i].slain_monsters++;
+
+	switch(m_ptr->r_idx) {
+	case RI_SAURON:
+		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			if (p_ptr->inventory[i].slain_sauron < 250) p_ptr->inventory[i].slain_sauron++;
+		break;
+	case RI_MORGOTH:
+		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			if (p_ptr->inventory[i].slain_morgoth < 250) p_ptr->inventory[i].slain_morgoth++;
+		break;
+	case RI_ZU_AON:
+		for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+			if (p_ptr->inventory[i].slain_zuaon < 250) p_ptr->inventory[i].slain_zuaon++; // xD
+		break;
+	default:
+		if (r_ptr->flags7 & RF7_NAZGUL) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				if (p_ptr->inventory[i].slain_nazgul < 250) p_ptr->inventory[i].slain_nazgul++;
+		}
+		if (is_superunique(m_ptr->r_idx)) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				if (p_ptr->inventory[i].slain_nazgul < 250) p_ptr->inventory[i].slain_superuniques++;
+		}
+		if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				if (p_ptr->inventory[i].slain_nazgul < 250) p_ptr->inventory[i].slain_bosses++;
+		}
+
+		if (r_ptr->flags1 & RF1_UNIQUE) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				p_ptr->inventory[i].slain_uniques++;
+		}
+		if (r_ptr->flags3 & RF3_ANIMAL) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				p_ptr->inventory[i].slain_animals++;
+		}
+		if (r_ptr->flags3 & RF3_ORC) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				p_ptr->inventory[i].slain_orcs++;
+		}
+		if (r_ptr->flags3 & RF3_TROLL) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				p_ptr->inventory[i].slain_trolls++;
+		}
+		if (r_ptr->flags3 & RF3_GIANT) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				p_ptr->inventory[i].slain_giants++;
+		}
+		if (r_ptr->flags3 & RF3_DRAGON) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				p_ptr->inventory[i].slain_dragons++;
+		}
+		if (r_ptr->flags3 & RF3_DEMON) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				p_ptr->inventory[i].slain_demons++;
+		}
+		if (r_ptr->flags3 & RF3_UNDEAD) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				p_ptr->inventory[i].slain_undead++;
+		}
+		if (r_ptr->flags3 & RF3_EVIL) {
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++)
+				p_ptr->inventory[i].slain_evil++;
+		}
+	}
+
 	/* experimental: Zu-Aon drops only randarts */
 	if (is_ZuAon || r_idx == RI_BAD_LUCK_BAT)
 		resf_drops |= (RESF_FORCERANDART | RESF_NOTRUEART);
@@ -10916,36 +10984,42 @@ void player_death(int Ind) {
 				buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MAX);
 
 			if (killer) {
-				if (Players[killer]->max_plv > p_ptr->max_plv) Players[killer]->kills_lower++;
-				else if (Players[killer]->max_plv < p_ptr->max_plv) Players[killer]->kills_higher++;
-				else Players[killer]->kills_equal++;
+				int e;
+				player_type *pk_ptr = Players[killer];
+
+				if (pk_ptr->max_plv > p_ptr->max_plv) pk_ptr->kills_lower++;
+				else if (pk_ptr->max_plv < p_ptr->max_plv) pk_ptr->kills_higher++;
+				else pk_ptr->kills_equal++;
+
+				for (e = INVEN_WIELD; e < INVEN_TOTAL; e++)
+					pk_ptr->inventory[e].slain_players++;
 
 				//TODO?: SHOW_XP_GAIN
 #if 0 /* only reward exp for killing same level or higher players */
-				if (Players[killer]->max_plv <= p_ptr->max_plv) {
+				if (pk_ptr->max_plv <= p_ptr->max_plv) {
 					/* note how expfact isn't multiplied, so a difference between the races remains :) */
-					gain_exp(killer, (player_exp[Players[killer]->lev - 1] - player_exp[Players[killer]->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (Players[killer]->lev - 5)));
+					gain_exp(killer, (player_exp[pk_ptr->lev - 1] - player_exp[pk_ptr->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (pk_ptr->lev - 5)));
 				}
 #else /* reward exp for all player-kills, but less for killing lower level chars */
-				if (Players[killer]->max_plv <= p_ptr->max_plv) {
+				if (pk_ptr->max_plv <= p_ptr->max_plv) {
 					/* note how expfact isn't multiplied, so a difference between the races/classes remains, as usual */
-					gain_exp(killer, (player_exp[Players[killer]->lev - 1] - player_exp[Players[killer]->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (Players[killer]->lev - 5)));
+					gain_exp(killer, (player_exp[pk_ptr->lev - 1] - player_exp[pk_ptr->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (pk_ptr->lev - 5)));
 				} else {
 					/* get less exp if player was lower than killer, dropping rapidly */
-					k = 2 + Players[killer]->lev - p_ptr->max_plv;//2+k; k*k+0; *12/
-					gain_exp(killer, ((player_exp[Players[killer]->lev - 1] - player_exp[Players[killer]->lev - 2]) * 10) / ((k * k) - 2));
+					k = 2 + pk_ptr->lev - p_ptr->max_plv;//2+k; k*k+0; *12/
+					gain_exp(killer, ((player_exp[pk_ptr->lev - 1] - player_exp[pk_ptr->lev - 2]) * 10) / ((k * k) - 2));
 				}
 #endif
 
 				/* get victim's kills credited as own ones >:) */
-//wrong code: used for rewards	Players[killer]->kills += p_ptr->kills;
+//wrong code: used for rewards	pk_ptr->kills += p_ptr->kills;
 #if 0 /* disabled since it doesn't make much sense */
-				Players[killer]->kills_lower += p_ptr->kills_lower;
-				Players[killer]->kills_equal += p_ptr->kills_equal;
-				Players[killer]->kills_higher += p_ptr->kills_higher;
+				pk_ptr->kills_lower += p_ptr->kills_lower;
+				pk_ptr->kills_equal += p_ptr->kills_equal;
+				pk_ptr->kills_higher += p_ptr->kills_higher;
 #endif
-				Players[killer]->kills++;
-				Players[killer]->kills_own++;
+				pk_ptr->kills++;
+				pk_ptr->kills_own++;
 
 				check_killing_reward(killer);
 			} else { /* killed by monster/trap? still reward nearby pvp players! */
@@ -10989,17 +11063,19 @@ void player_death(int Ind) {
 			int killer = name_lookup(Ind, p_ptr->really_died_from, FALSE, FALSE, TRUE);
 
 			if (killer) {
-				if (Players[killer]->max_plv > p_ptr->max_plv) Players[killer]->kills_lower++;
-				else if (Players[killer]->max_plv < p_ptr->max_plv) Players[killer]->kills_higher++;
-				else Players[killer]->kills_equal++;
-				//wrong code (rewards)	Players[killer]->kills += p_ptr->kills;
+				player_type *pk_ptr = Players[killer];
+
+				if (pk_ptr->max_plv > p_ptr->max_plv) pk_ptr->kills_lower++;
+				else if (pk_ptr->max_plv < p_ptr->max_plv) pk_ptr->kills_higher++;
+				else pk_ptr->kills_equal++;
+				//wrong code (rewards)	pk_ptr->kills += p_ptr->kills;
 #if 0 /* not much sense */
-				Players[killer]->kills_lower += p_ptr->kills_lower;
-				Players[killer]->kills_equal += p_ptr->kills_equal;
-				Players[killer]->kills_higher += p_ptr->kills_higher;
+				pk_ptr->kills_lower += p_ptr->kills_lower;
+				pk_ptr->kills_equal += p_ptr->kills_equal;
+				pk_ptr->kills_higher += p_ptr->kills_higher;
 #endif
-				Players[killer]->kills++;
-				Players[killer]->kills_own++;
+				pk_ptr->kills++;
+				pk_ptr->kills_own++;
 
 				/* no reward outside of PvP xD */
 			}
