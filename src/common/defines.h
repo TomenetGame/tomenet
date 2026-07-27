@@ -10435,3 +10435,12 @@ extern int PlayerUID;
 	  (o_ptr)->mode = (p_ptr)->mode; \
 	  (o_ptr)->iron_trade = (p_ptr)->iron_trade; \
 	  (o_ptr)->iron_turn = turn; }
+/* Note: find_player_turndiff requires valid find_turn being already set */  // TODO: adjust below stuff
+#define imprint_object_extra(o_ptr, dun, pid, ptdiff, ridx, reidx, special, reward) \
+	{ (o_ptr)->find_dun = dun; \
+	  (o_ptr)->find_player_id = pid; \
+	  (o_ptr)->find_player_turndiff = ptdiff; \
+	  (o_ptr)->find_idx = ridx; \
+	  (o_ptr)->find_reidx = reidx; \
+	  (o_ptr)->find_special = special; \
+	  (o_ptr)->find_reward = reward; }
