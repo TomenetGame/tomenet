@@ -6479,6 +6479,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 		}
 	}
 
+	o_ptr->times_activated++; /* Note: Activation can still fail for some items further below, but these probably don't matter. */
+
 	// -------------------- special basic items that can't vary -------------------- //
 	//(could be moved down to 'base items' for less efficiency but better sort order)
 
@@ -7937,6 +7939,8 @@ void do_cmd_activate_dir(int Ind, int dir) {
 		//&& !(o_ptr->xtra3 & 0x00C0))
 		return;
 	}
+
+	o_ptr->times_activated++;
 
 	// -------------------- artifacts -------------------- //
 
