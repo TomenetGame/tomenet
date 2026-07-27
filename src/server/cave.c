@@ -8272,12 +8272,12 @@ void wiz_lite(int Ind) {
 	struct worldpos *wpos = &p_ptr->wpos;
 	cave_type **zcave;
 
-	//bool mood = (wpos->wz == 0 && (season_halloween || season_newyearseve));
+	//bool mood = (wpos->wz == 0 && !(sector000separation && in_sector000(wpos)) && (season_halloween || season_newyearseve));
 
 
 	/* don't ruin the mood ^^ */
 	// ...fall back to normal magic mapping, but for the whole town/sector, during mood-events */
-	if (wpos->wz == 0 && (season_halloween || season_newyearseve)) {
+	if (wpos->wz == 0 && !(sector000separation && in_sector000(wpos)) && (season_halloween || season_newyearseve)) {
 		map_area(Ind, TRUE);
 		return;
 	}
@@ -8371,7 +8371,7 @@ void wiz_lite_extra(int Ind) {
 	cave_type **zcave;
 
 	/* don't ruin the mood ^^ */
-	bool mood = (wpos->wz == 0 && (season_halloween || season_newyearseve));
+	bool mood = (wpos->wz == 0 && !(sector000separation && in_sector000(wpos)) && (season_halloween || season_newyearseve));
 
 
 	if (!(zcave = getcave(wpos))) return;
