@@ -3144,6 +3144,17 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_death = 1;
 	}
 
+	switch (p_ptr->pclass) { /* Not or often not using custom books */
+	case CLASS_WARRIOR:
+	case CLASS_ROGUE:
+	case CLASS_MIMIC:
+	case CLASS_ARCHER:
+	case CLASS_ADVENTURER:
+	case CLASS_RUNEMASTER:
+		p_ptr->warning_powins = 1;
+		break;
+	}
+
 	/* Some warnings cease at certain levels */
 	disable_lowlevel_warnings(p_ptr);
 }
