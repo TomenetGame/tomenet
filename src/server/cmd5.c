@@ -519,6 +519,13 @@ static void do_mimic_power(int Ind, int power, int dir) {
 	/* Clients > 4.4.5.10 can already send a dir != 0 here, for directed spells */
 	/* Clients >= 4.4.6.2 can also use '+' (dir==11) fallback to manual mode here: */
 	} else if (dir != 0 && dir != 11) {
+		if (!p_ptr->warning_macros && dir != 5 && dir < 10) {
+			msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to use a power with a single keypress!");
+			msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
+			p_ptr->warning_macros = 1;
+			s_printf("warning_macros (power): %s\n", p_ptr->name);
+		}
+
 		p_ptr->current_spell = j;
 		do_mimic_power_aux(Ind, dir);
 		return;
@@ -529,9 +536,15 @@ static void do_mimic_power(int Ind, int power, int dir) {
 		/* Hack -- preserve current 'realm' */
 		p_ptr->current_realm = REALM_MIMIC;
 
+		if (!p_ptr->warning_macros && dir != 5 && dir < 10) {
+			msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to use a power with a single keypress!");
+			msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
+			p_ptr->warning_macros = 1;
+			s_printf("warning_macros (power): %s\n", p_ptr->name);
+		}
+
   /* 0-31 = RF4, 32-63 = RF5, 64-95 = RF6 */
   switch (j) {
-
 
 /* RF_4 ------------------------------------------------------------------------------------------------- */
 
@@ -1961,6 +1974,14 @@ bool cast_rune_spell(int Ind, u16b lo, u16b hi, int dir) {
 			if (ftk_type == 1 && !projectable_wall_real(Ind, p_ptr->py, p_ptr->px, p_ptr->target_row, p_ptr->target_col, MAX_RANGE)) return(FALSE);
 #endif
 			if (dir != 5 || !target_okay(Ind)) return(FALSE);
+
+			if (!p_ptr->warning_macros && dir != 5 && dir < 10) {
+				msg_print(Ind, "\374\377oHINT: Create a '\377Rmacro\377o' aka hotkey to draw runes with a single keypress!");
+				msg_print(Ind, "\374\377o      Press '\377R%\377o' and then '\377Rz\377o' to invoke the macro wizard.");
+				p_ptr->warning_macros = 1;
+				s_printf("warning_macros (runes): %s\n", p_ptr->name);
+			}
+
 			p_ptr->shooting_till_kill = TRUE;
 			p_ptr->shoot_till_kill_rcraft = TRUE;
 			p_ptr->FTK_e_flags = lo;
