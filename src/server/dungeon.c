@@ -7788,6 +7788,7 @@ static void scan_houses() {
 /*
  * Deallocate all non static levels. (evileye)
  */
+/* - We get called every frame (ie 1/fps). - */
 static void purge_old() {
 	int x, y, i;
 	struct wilderness_type *w_ptr;
