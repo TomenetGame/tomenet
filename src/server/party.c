@@ -5610,14 +5610,14 @@ void account_checkexpiry(int Ind) {
 			expire = CHARACTER_EXPIRY_DAYS * 86400 - now + ptr->laston;
 			if (expire < 86400) {
 				if (cfg.admins_never_expire && ptr->admin)
-					msg_format(Ind, "\374\377y(Your character %s would be removed \377rvery soon\377y if it wasn't an admin.)", ptr->name, expire / 86400);
+					msg_format(Ind, "\374\377y(Your character %s would be removed \377Rvery soon\377y if it wasn't an admin.)", ptr->name, expire / 86400);
 				else
-					msg_format(Ind, "\374\377yYour character %s will be removed \377rvery soon\377y!", ptr->name, expire / 86400);
+					msg_format(Ind, "\374\377oYour character %s will be removed \377Rvery soon\377o!", ptr->name, expire / 86400);
 			} else if (expire < 60 * 86400) {
 				if (cfg.admins_never_expire && ptr->admin)
-					msg_format(Ind, "\374\377y(Your character %s would be removed in %d days if it wasn't an admin.)", ptr->name, expire / 86400);
+					msg_format(Ind, "\374\377y(Your character %s would be removed in \377r%d\377y days if it wasn't an admin.)", ptr->name, expire / 86400);
 				else
-					msg_format(Ind, "\374\377yYour character %s will be removed in %d days.", ptr->name, expire / 86400);
+					msg_format(Ind, "\374\377oYour character %s will be removed in \377r%d\377o days.", ptr->name, expire / 86400);
 			}
 		}
 	}
