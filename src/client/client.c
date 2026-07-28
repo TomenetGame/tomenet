@@ -38,12 +38,14 @@ static void read_mangrc_aux(int t, char *sec_name) {
 
 	if (t != 0) { /* exempt main window */
 		if ((val = strstr(sec_name, "_Title"))) {
-			strncpy(ang_term_name[t], val + 6, sizeof(ang_term_name[t]));
-			ang_term_name[t][sizeof(ang_term_name[t]) - 1] = '\0';
+			if (t) { // Main Window is always titled 'TomeNET'
+				strncpy(ang_term_name[t], val + 6, sizeof(ang_term_name[t]));
+				ang_term_name[t][sizeof(ang_term_name[t]) - 1] = '\0';
+			}
 		}
 	}
 
-	if ((val = strstr(sec_name, "_Visible")))
+	if ((val = strstr(sec_name, "_Visible")) && t) // Main Window is always visible
 		term_prefs[t].visible = (atoi(val + 8) != 0);
 
 	if ((val = strstr(sec_name, "_X")))
@@ -52,8 +54,10 @@ static void read_mangrc_aux(int t, char *sec_name) {
 		term_prefs[t].y = atoi(val + 2);
 
 	if ((val = strstr(sec_name, "_Columns"))) {
-		term_prefs[t].columns = atoi(val + 8);
-		if (!term_prefs[t].columns) term_prefs[t].columns = DEFAULT_TERM_WID;
+		if (t) {
+			term_prefs[t].columns = atoi(val + 8);
+			if (!term_prefs[t].columns) term_prefs[t].columns = DEFAULT_TERM_WID;
+		} else term_prefs[t].columns = DEFAULT_TERM_WID; // Main Window is always 80 wide
 	}
 	if ((val = strstr(sec_name, "_Lines"))) {
 		term_prefs[t].lines = atoi(val + 6);
@@ -442,27 +446,49 @@ retry_mangrc:
 #endif
 
 ///LINUX_TERM_CFG
-			if (!strncmp(buf, use_term_names[0], strlen(use_term_names[0])))
+
+			if (!strncmp(buf, use_term_names[0], strlen(use_term_names[0])) ||
+			    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+			    (convert_rc && !strncmp(buf, term_names[0], strlen(term_names[0]))))
 				read_mangrc_aux(0, buf);
-			if (!strncmp(buf, use_term_names[1], strlen(use_term_names[1])))
+			if (!strncmp(buf, use_term_names[1], strlen(use_term_names[1])) ||
+			    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+			    (convert_rc && !strncmp(buf, term_names[1], strlen(term_names[1]))))
 				read_mangrc_aux(1, buf);
-			if (!strncmp(buf, use_term_names[2], strlen(use_term_names[2])))
+			if (!strncmp(buf, use_term_names[2], strlen(use_term_names[2])) ||
+			    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+			    (convert_rc && !strncmp(buf, term_names[2], strlen(term_names[2]))))
 				read_mangrc_aux(2, buf);
-			if (!strncmp(buf, use_term_names[3], strlen(use_term_names[3])))
+			if (!strncmp(buf, use_term_names[3], strlen(use_term_names[3])) ||
+			    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+			    (convert_rc && !strncmp(buf, term_names[3], strlen(term_names[3]))))
 				read_mangrc_aux(3, buf);
-			if (!strncmp(buf, use_term_names[4], strlen(use_term_names[4])))
+			if (!strncmp(buf, use_term_names[4], strlen(use_term_names[4])) ||
+			    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+			    (convert_rc && !strncmp(buf, term_names[4], strlen(term_names[4]))))
 				read_mangrc_aux(4, buf);
-			if (!strncmp(buf, use_term_names[5], strlen(use_term_names[5])))
+			if (!strncmp(buf, use_term_names[5], strlen(use_term_names[5])) ||
+			    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+			    (convert_rc && !strncmp(buf, term_names[5], strlen(term_names[5]))))
 				read_mangrc_aux(5, buf);
-			if (!strncmp(buf, use_term_names[6], strlen(use_term_names[6])))
+			if (!strncmp(buf, use_term_names[6], strlen(use_term_names[6])) ||
+			    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+			    (convert_rc && !strncmp(buf, term_names[6], strlen(term_names[6]))))
 				read_mangrc_aux(6, buf);
-			if (!strncmp(buf, use_term_names[7], strlen(use_term_names[7])))
+			if (!strncmp(buf, use_term_names[7], strlen(use_term_names[7])) ||
+			    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+			    (convert_rc && !strncmp(buf, term_names[7], strlen(term_names[7]))))
 				read_mangrc_aux(7, buf);
-			if (!strncmp(buf, use_term_names[8], strlen(use_term_names[8])))
+			if (!strncmp(buf, use_term_names[8], strlen(use_term_names[8])) ||
+			    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+			    (convert_rc && !strncmp(buf, term_names[8], strlen(term_names[8]))))
 				read_mangrc_aux(8, buf);
-			if (!strncmp(buf, use_term_names[9], strlen(use_term_names[9])))
+			if (!strncmp(buf, use_term_names[9], strlen(use_term_names[9])) ||
+			    /* paranoia kind of, except if .rc file was really broken: Even if we detected an old version, check for the new strings too. */
+			    (convert_rc && !strncmp(buf, term_names[9], strlen(term_names[9]))))
 				read_mangrc_aux(9, buf);
-			convert_rc = FALSE; /* In case we did an automatic ini-file conversion, reset this state after all has been converted now. */
+			//No, don't reset it, as we now also understand the new term_names[] so there is no need and it would be more prone to errors:
+			//convert_rc = FALSE; /* In case we did an automatic ini-file conversion, reset this state after all has been converted now. */
 
 			/* big_map hint */
 			if (!strncmp(buf, "hintBigmap", 10)) {
@@ -546,18 +572,21 @@ static void write_mangrc_aux_line(int t, cptr sec_name_write, cptr sec_name, cha
 	if (!strncmp(ter_name, "_Title", 6)) {
 		if (t != 0)
 			sprintf(buf, "%s_Title\t%s\n", sec_name_write, ang_term_name[t]);
+		else buf[0] = 0; //discard deprecated config line
 	} else if (!strncmp(ter_name, "_Visible", 8)) {
 		if (t != 0)
 			sprintf(buf, "%s_Visible\t%c\n", sec_name_write, term_prefs[t].visible ? '1' : '0');
+		else buf[0] = 0; //discard deprecated config line
 	} else if (!strncmp(ter_name, "_X", 2)) {
 		if (term_prefs[t].x != -32000) /* don't save windows in minimized state */
-			sprintf(buf, "%s_X\t\t%d\n", sec_name_write, term_prefs[t].x);
+			sprintf(buf, "%s_X\t%d\n", sec_name_write, term_prefs[t].x);
 	} else if (!strncmp(ter_name, "_Y", 2)) {
 		if (term_prefs[t].y != -32000) /* don't save windows in minimized state */
-			sprintf(buf, "%s_Y\t\t%d\n", sec_name_write, term_prefs[t].y);
+			sprintf(buf, "%s_Y\t%d\n", sec_name_write, term_prefs[t].y);
 	} else if (!strncmp(ter_name, "_Columns", 8)) {
 		if (t != 0)
 			sprintf(buf, "%s_Columns\t%d\n", sec_name_write, term_prefs[t].columns);
+		else buf[0] = 0; //discard deprecated config line
 	} else if (!strncmp(ter_name, "_Lines", 6)) {
 			sprintf(buf, "%s_Lines\t%d\n", sec_name_write, term_prefs[t].lines);
 	} else if (!strncmp(ter_name, "_Font", 5) && term_prefs[t].font[0] != '\0') {
@@ -565,7 +594,8 @@ static void write_mangrc_aux_line(int t, cptr sec_name_write, cptr sec_name, cha
 			snprintf(buf, 1024, "%s_Font\t%s\n", sec_name_write, term_prefs[t].font);
 		else
 			/* one more tab, or formatting looks bad ;) */
-			snprintf(buf, 1024, "%s_Font\t\t%s\n", sec_name_write, term_prefs[t].font);
+			//snprintf(buf, 1024, "%s_Font\t\t%s\n", sec_name_write, term_prefs[t].font);
+			snprintf(buf, 1024, "%s_Font\t%s\n", sec_name_write, term_prefs[t].font);
 	}
 
 	strcpy(buf_org, buf);
@@ -742,8 +772,10 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 								    (convert_rc && !strncmp(buf, term_names[i], strlen(term_names[i])))) {
 									write_mangrc_aux_line(i, term_names[i], use_term_names[i], buf);
 									win = found_window[i] = TRUE;
+									break;
 								}
 							}
+							if (buf[0] == 0) continue;
 
 							/* save current graphical tileset state */
 							if (win) ;
