@@ -825,7 +825,7 @@ static void key_autoconvert(char *tmp, byte fmt) {
  * value, otherwise is 0. This will be usefull, if the MAX_FONT_CHAR constant
  * changes, there will be no need to update the graphical .prf files.
  */
-errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
+errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool *outdated) {
 	int i, j, k;
 	int n1, n2;
 
@@ -868,28 +868,28 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 	switch(buf[0]) {
 	case 'X': case 'Y':
 		if (streq(buf + 2, "recall_flicker")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'subterm_flicker'.\n", buf));
 			strcpy(buf + 2, "subterm_flicker");
 		}
 		if (streq(buf + 2, "instant_retaliator")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'new_retaliator' inverted.\n", buf));
 			strcpy(buf + 2, "new_retaliator");
 			buf[0] = buf[0] == 'X' ? 'Y' : 'X'; //invert the value
 		}
 		if (streq(buf + 2, "autoloot_depth")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'autoloot_dunonly'.\n", buf));
 			strcpy(buf + 2, "autoloot_dunonly");
 		}
 		if (streq(buf + 2, "autoloot_off")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'autoloot_dunonly'.\n", buf));
 			strcpy(buf + 2, "autoloot_dunonly");
 		}
 		if (streq(buf + 2, "basic_players") || streq(buf + 2, "consistent_players")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'basic_players_symb'/'basic_players_col'.\n", buf));
 			strcpy(buf + 2, "basic_players_symb");
 			/* Also take care of basic_players_col: */
@@ -904,56 +904,62 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 			}
 		}
 		if (streq(buf + 2, "kind_diz")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'add_kind_diz'.\n", buf));
 			strcpy(buf + 2, "add_kind_diz");
 		}
 		if (streq(buf + 2, "auto_inscribe")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'auto_inscr_server'.\n", buf));
 			strcpy(buf + 2, "auto_inscr_server");
 		}
 
 		if (streq(buf + 2, "hilite_chat")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'highlight_chat'.\n", buf));
 			strcpy(buf + 2, "highlight_chat");
 		}
 		if (streq(buf + 2, "hibeep_chat")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'highbeep_chat'.\n", buf));
 			strcpy(buf + 2, "highbeep_chat");
 		}
 		if (streq(buf + 2, "view_animated_lite")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'view_animated_light'.\n", buf));
 			strcpy(buf + 2, "view_animated_light");
 		}
 		if (streq(buf + 2, "view_lite_extra")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'view_light_extra'.\n", buf));
 			strcpy(buf + 2, "view_light_extra");
 		}
 		if (streq(buf + 2, "no_lite_fainting")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'no_light_fainting'.\n", buf));
 			strcpy(buf + 2, "no_light_fainting");
 		}
 		if (streq(buf + 2, "hilite_player")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'highlight_player'.\n", buf));
 			strcpy(buf + 2, "highlight_player");
 		}
 
 		if (streq(buf + 2, "colourize_prices")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'colourize_bignum'.\n", buf));
 			strcpy(buf + 2, "colourize_bignum");
 		}
 		if (streq(buf + 2, "sp_huge_bar")) {
-			convert_prf = TRUE;
+			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'sn_huge_bar'.\n", buf));
 			strcpy(buf + 2, "sn_huge_bar");
+		}
+
+		if (streq(buf + 2, "view_reduce_lite")) {
+			*outdated = TRUE;
+			logprint(format("Outdated option '%s': No longer exists.\n", buf));
+			return(0);
 		}
 	}
 
@@ -1370,6 +1376,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	byte fmt;
 	//bool errors = FALSE;
 	int subtileset = -1;
+	bool outdated = FALSE;
 
 	fp = my_fopen(buf, "r");
 	if (!fp) {
@@ -1400,7 +1407,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	/* Process the file */
 	while (0 == (err = my_fgets2(fp, &buf2, &n, &fmt))) {
 		/* Process the line */
-		if (process_pref_file_aux_aux(buf2, fmt, subtileset)) {
+		if (process_pref_file_aux_aux(buf2, fmt, subtileset, &outdated)) {
 			/* Useful error message */
 			if (rl_connection_state == 1) c_msg_format("\377yError in '%s' parsing '%s'.", buf2, name);
 			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Error in '%s' parsing '%s'.\n", buf2, name));
@@ -1431,6 +1438,10 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 		bad_solid_mapping = FALSE;
 	}
 #endif
+	if (outdated) {
+		if (rl_connection_state == 1) c_msg_format("\377yFile '%s' has outdated option names. It is recommended to overwrite it.", name);
+		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' has outdated option names. It is recommended to overwrite it.\n", name));
+	}
 	if (err == 2) {
 		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Grave error: Couldn't allocate memory when parsing '%s'.\n", name));
 		//plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name)); //might be deadly if it happens in live game ^^' so instead just:
@@ -1464,19 +1475,11 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
  */
 errr process_pref_file(cptr name) {
 	char buf[1024];
-	errr res;
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
 	if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Processing prf file '%s'.\n", name)); //in GCU-only client this lands across the curses terminals instead of the console, pointless
-	res = process_pref_file_aux(buf, name, TRUE);
-	if (convert_prf) {
-		if (rl_connection_state == 1) c_msg_format("\377yFile '%s' has outdated option names. It is recommended to overwrite it.", name);
-		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' has outdated option names. It is recommended to overwrite it.\n", name));
-		convert_prf = FALSE;
-	}
-	return(res);
-
+	return(process_pref_file_aux(buf, name, TRUE));
 }
 errr process_pref_file_manual(cptr name) {
 	char buf[1024];

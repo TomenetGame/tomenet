@@ -610,7 +610,7 @@ extern void init_file_paths(char *path);
 extern errr process_pref_file(cptr buf);
 extern errr process_pref_file_manual(cptr buf);
 extern errr process_pref_file_aux(char *buf, cptr name, bool quiet);
-extern errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset);
+extern errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool *outdated);
 extern errr load_charspec_macros(cptr cname);
 extern void show_motd(int delay);
 extern void peruse_file(void);
@@ -1381,4 +1381,3 @@ extern bool screenshot_silent_dump;
 extern int screenshotting;
 extern char screenshotting_filename[MAX_CHARS];
 #endif
-extern bool convert_prf;
