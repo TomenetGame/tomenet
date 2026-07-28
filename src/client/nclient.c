@@ -2866,6 +2866,8 @@ int Receive_char_info(void) {
 	return(1);
 }
 
+/* Side note: We're called by Send/Receive_screen_dimensions, which is NOT called again on relog to different characters!
+   This means we're called once on first char login but not specifically on subsequent char relogs. */
 int Receive_various(void) {
 	int n;
 	char ch, buf[MAX_CHARS];
