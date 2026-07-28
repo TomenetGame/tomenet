@@ -1441,6 +1441,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	if (outdated) {
 		if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yFile '%s' has outdated option names. It is recommended to overwrite it.", name);
 		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' has outdated option names. It is recommended to overwrite it.\n", name));
+		cfg_outdated = 1;
 	}
 	if (err == 2) {
 		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Grave error: Couldn't allocate memory when parsing '%s'.\n", name));

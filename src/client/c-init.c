@@ -324,6 +324,9 @@ void initialize_player_pref_files(void) {
 		sprintf(buf, "arcade-%s.prf", ANGBAND_SYS);
 		process_pref_file(buf);
 	}
+
+	/* Finally give the actual info how to check the tomenet log for details */
+	if (cfg_outdated == 1) cfg_outdated = 2;
 }
 
 /* handle auto-loading of auto-inscription files (*.ins) on logon */
@@ -3147,6 +3150,12 @@ static void Input_loop(void) {
 		do_xfers();
 		do_ping();
 
+		/* Give a hint how to find out details about outdated opt/prf files */
+		if (cfg_outdated == 2) {
+			cfg_outdated = 0;
+			c_msg_print("\377yFor details about outdated option names view the file '\377otomenet-stdout.log\377y'!");
+		}
+
 		if (Net_flush() == -1) {
 #ifdef RETRY_LOGIN
 			/* if player got ghost-killed, we won't have a connection anymore. But that's not an error, so skip.. */
@@ -4381,6 +4390,7 @@ again:
 #ifdef RETRY_LOGIN
 	rl_connection_state = 1;
 #endif
+
 	Input_loop();
 
 	/* Cleanup network stuff */

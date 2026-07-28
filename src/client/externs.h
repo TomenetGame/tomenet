@@ -1382,3 +1382,4 @@ extern bool screenshot_silent_dump;
 extern int screenshotting;
 extern char screenshotting_filename[MAX_CHARS];
 #endif
+extern char cfg_outdated;

@@ -5981,6 +5981,7 @@ void interact_macros(void) {
 
 			/* Process the given filename */
 			(void)process_pref_file_manual(tmp);
+			if (cfg_outdated == 1) cfg_outdated = 2;
 
 			/* Pref files may change settings, so reload the keymap - mikaelh */
 			keymap_init();
@@ -6001,6 +6002,7 @@ void interact_macros(void) {
 
 			/* Process the given filename */
 			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read pref file '%s'!", tmp);
+			if (cfg_outdated == 1) cfg_outdated = 2;
 
 			/* Pref files may change settings, so reload the keymap - mikaelh */
 			keymap_init();
@@ -13710,6 +13712,7 @@ void do_cmd_options(void) {
 
 			/* Process the given filename */
 			if (process_pref_file(tmp) == -1) c_msg_format("\377yError: Can't read options file '%s'!", tmp);
+			if (cfg_outdated == 1) cfg_outdated = 2;
 		}
 
 		/* Account options */
