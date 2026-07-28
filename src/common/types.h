@@ -836,18 +836,19 @@ struct object_type {
 	s32b find_turn;			/* Found when, in-game? */
 	time_t find_time;		/* Found when, real-time? */
 	struct worldpos find_wpos;	/* Found at this wpos */
-	signed char find_dun;		/* Found in this dungeon type (d_ptr->type ie d_info index; negative for d_ptr->theme eg IRONDEEPDIVE_MIXED_TYPES; -127 encodes 0 aka Wilderness dungeons) */
-	s32b find_player_id;		/* Received from a player / taken from a player's death loot oO */
-	s32b find_player_turndiff;	/* ^ when? just use the diff to 'find_turn'! */
+	signed char find_dun;		/* Found in this dungeon type (d_ptr->type ie d_info index; negative for d_ptr->theme eg IRONDEEPDIVE_MIXED_TYPES; -128 encodes 0 aka Wilderness dungeons) */
+	s32b find_player_id;		/* not implemented -- Received from a player / taken from a player's death loot oO */
+	s32b find_player_turndiff;	/* not implemented -- ^ when? just use the diff to 'find_turn'! */
 	u16b find_ridx, find_reidx;	/* Found from this [ego] monster */
-	s16b find_special;		/* Found from digging (10000+feat), disarming (11000+trap_idx), in a chest (sval*1000+lev), bought from store(-stidx-1), stolen from store (-stidx-1000), bought from player store(-2000).. */
-	signed char find_reward;	/* Received as event(>0)/quest(<0) reward? */
+	s16b find_special;		/* Found from digging (10000+feat), disarming (11000+trap_idx), in a chest (sval*1000+lev)...
+					   Maybe not, as this would overwrite the interesting origins above: bought from store(-stidx-1), stolen from store (-stidx-1000), bought from player store(-2000). */
+	signed char find_reward;	/* Received as pvp(121-127), event(0<n<124)/quest(<0) reward? */
 
 	/* not yet implemented, for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
 	u32b slain_orcs, slain_trolls, slain_giants, slain_animals, slain_dragons, slain_demons, slain_undead, slain_evil;
 	byte slain_bosses, slain_nazgul, slain_superuniques, slain_sauron, slain_morgoth, slain_zuaon; //these don't respawn, so byte is fine
-	u64b done_damage, done_healing;
+	u64b done_damage, done_healing; //done_healing is not implemented
 	u16b got_damaged, got_repaired, got_enchanted;
 
 	s16b custom_lua_carrystate;	/* Runs custom lua script on acquiring/losing it */
@@ -2437,7 +2438,7 @@ struct monster_type {
 	//add status effects too, eg slept/feared/...?
 
 	s32b custom_xp;			/* Force specific XP reward (0 = disabled ie grant standard XP; use -1 to give 0 XP) */
-	byte killed_by_item;		/* 0: not an item, just Killed By Death; 1: melee weapon; 2: ranged weapon (; 3: trap); (we ignore devices, thrown inventory, REFLECT/aura items and everything else for now^^) */
+	byte killed_by_item;		/* 0: not an item, just Killed By Death; 1: main melee weapon; 2: off melee weapon; 3 : ranged weapon (; 4: trap); (we ignore devices, thrown inventory, REFLECT/aura items and everything else for now^^) */
 };
 
 typedef struct monster_ego monster_ego;

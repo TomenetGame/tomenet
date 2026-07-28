@@ -263,6 +263,7 @@ extern bool inkey_flag;
 extern s16b coin_type;
 extern s32b opening_chest;
 extern int opening_chest_sval, opening_chest_lev;
+extern int monster_death_ridx, monster_death_reidx;
 extern bool scan_monsters;
 extern bool scan_objects;
 extern bool scan_do_dist;
@@ -1514,7 +1515,7 @@ extern void generate_object(int Ind, object_type *o_ptr, struct worldpos *wpos, 
 extern void acquirement(int Ind, struct worldpos *wpos, int y1, int x1, int num, bool great, bool verygreat, u64b resf);
 extern void acquirement_direct(int Ind, object_type *o_ptr, struct worldpos *wpos, bool great, bool verygreat, u64b resf);
 extern void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool great, bool verygreat, u64b resf, long int treshold);
-extern void give_reward(int Ind, u64b resf, cptr quark, int level, int discount);
+extern void give_reward(int Ind, u64b resf, cptr quark, int level, int discount, int find_reward);
 extern void place_gold(int Ind, struct worldpos *wpos, int y, int x, int mult, int bonus);
 extern int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct worldpos *wpos, int y, int x);
 extern void trap_found(struct worldpos *wpos, int y, int x);

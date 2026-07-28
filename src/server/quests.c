@@ -5067,6 +5067,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
 		o_ptr->iron_trade = Players[pInd]->iron_trade;
 		o_ptr->iron_turn = turn;
+		o_ptr->find_reward = -q_idx;
 		inven_carry(pInd, o_ptr);
 		return;
 	}
@@ -5092,6 +5093,7 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 		/* hand him out the reward too */
 		o_ptr->iron_trade = Players[i]->iron_trade;
 		o_ptr->iron_turn = turn;
+		o_ptr->find_reward = -q_idx;
 		inven_carry(i, o_ptr);
 	}
 }
@@ -5103,7 +5105,7 @@ static void quest_reward_create(int pInd, int q_idx, u64b resf) {
 	int i, j;
 
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
-		give_reward(pInd, resf, q_name + q_ptr->name, 0, 0);
+		give_reward(pInd, resf, q_name + q_ptr->name, 0, 0, -q_idx);
 		return;
 	}
 
@@ -5126,7 +5128,7 @@ static void quest_reward_create(int pInd, int q_idx, u64b resf) {
 		if (j == q_ptr->questors) continue;
 
 		/* hand him out the reward too */
-		give_reward(i, resf, q_name + q_ptr->name, 0, 0);
+		give_reward(i, resf, q_name + q_ptr->name, 0, 0, -q_idx);
 	}
 }
 

@@ -10279,7 +10279,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 }
 
 /* shorten the process of creating a standard-parm reward */
-void give_reward(int Ind, u64b resf, cptr quark, int level, int discount) {
+void give_reward(int Ind, u64b resf, cptr quark, int level, int discount, int find_reward) {
 	object_type forge, *o_ptr = &forge;
 
 	create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, resf, 3000);
@@ -10289,6 +10289,7 @@ void give_reward(int Ind, u64b resf, cptr quark, int level, int discount) {
 	o_ptr->level = level;
 	o_ptr->ident |= ID_MENTAL;
 	if (quark && !o_ptr->note) o_ptr->note = quark_add(quark);
+	o_ptr->find_reward = find_reward;
 	inven_carry(Ind, o_ptr);
 }
 
@@ -11178,7 +11179,11 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 	else if (!o_ptr->find_id && wpos->wz) { /* check 'find_id' instead of 'owner' to detect 'unowned' state despite maybe being 'force-preowned' */
 		dungeon_type *d_ptr = getdungeon(wpos);
 
-		o_ptr->find_dun = d_ptr->type ? d_ptr->type : (d_ptr->theme ? -d_ptr->theme : -127); //-127 encodes 0 aka 'Wilderness' dungeon
+		o_ptr->find_dun = d_ptr->type ? d_ptr->type : (d_ptr->theme ? -d_ptr->theme : -128); //-128 encodes 0 aka 'Wilderness' dungeon
+	}
+	if (monster_death_ridx) {
+		o_ptr->find_ridx = monster_death_ridx;
+		o_ptr->find_reidx = monster_death_reidx;
 	}
 
 	/* Result */

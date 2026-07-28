@@ -5894,7 +5894,7 @@ bool mon_hit_trap(int m_idx) {
 					}
 #endif
 
-					// 'killed_by_item = 3':
+					// 'killed_by_item = 4':
 					if (dam > m_ptr->hp) {
 						kit_o_ptr->slain_monsters++;
 						switch(m_ptr->r_idx) {

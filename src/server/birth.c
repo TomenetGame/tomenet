@@ -1586,6 +1586,7 @@ void init_player_outfits(void) {
 /*	o_ptr->owner = p_ptr->id; */ \
 /*	o_ptr->mode = p_ptr->mode; */ \
 	o_ptr->level = 1; \
+	imprint_object_fluff(o_ptr, p_ptr); \
 	(void)inven_carry(Ind, o_ptr);
 
 /*
@@ -3653,7 +3654,7 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 
 		/* a good starter item since we're not going from level 1 */
 #if 0
-		give_reward(Ind, RESF_MASK_LOW2, "", 1, 0);
+		give_reward(Ind, RESF_MASK_LOW2, "", 1, 0, 127);
 #else
 		i = lookup_kind(TV_PARCHMENT, SV_DEED_PVP_START);
 		invcopy(o_ptr, i);

@@ -4593,7 +4593,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 //note: we assume that p_ptr->num_blow isn't 0 (div/0)
 static void py_attack_mon(int Ind, int y, int x, byte old) {
 	player_type	*p_ptr = Players[Ind];
-	int		num = 0, bonus, chance, slot, owner_Ind = 0;
+	int		num = 0, bonus, chance, slot, killed_by_item = 0, owner_Ind = 0;
 #ifdef USE_SOUND_2010
 	int		sfx = 0;
 #endif
@@ -4890,6 +4890,8 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		did_knee = FALSE;
 		did_slow = FALSE;
 
+		killed_by_item = 0;
+
 #ifdef USE_SOUND_2010
 		if (p_ptr->cut_sfx_attack) {
 			sfx = (extract_energy[p_ptr->pspeed] / 10) * p_ptr->num_blow;
@@ -4912,20 +4914,32 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		   Only use secondary weapon if we're not in main-hand mode!
 		   This is to prevent bad Nazgul accidents where both weapons go poof
 		   although character wasn't in dual-mode. - C. Blue */
-		if (!primary_wield && secondary_wield && p_ptr->dual_mode) slot = INVEN_ARM;
-		else slot = INVEN_WIELD;
+		if (!primary_wield && secondary_wield && p_ptr->dual_mode) {
+			slot = INVEN_ARM;
+			killed_by_item = 2;
+		} else {
+			slot = INVEN_WIELD;
+			killed_by_item = 1;
+		}
 
 		if (dual_wield) {
 			switch (dual_stab) {
-			case 0: if (magik(50)) slot = INVEN_ARM; break; /* not in a situation to dual-stab */
+			case 0:
+				if (magik(50)) {
+					slot = INVEN_ARM;
+					killed_by_item = 2;
+				}
+				break; /* not in a situation to dual-stab */
 			case 1:	if (magik(50)) { /* we may dual-stab, randomly pick 1st or 2nd weapon.. */
 					slot = INVEN_ARM;
+					killed_by_item = 2;
 					dual_stab = 3;
 				} else {
 					dual_stab = 2;
 				}
 				break;
 			case 2: slot = INVEN_ARM; /* and switch to opposite weapon in the second attack.. */
+				killed_by_item = 2;
 			/* Fall through */
 			case 3: dual_stab = 4; break; /* becomes 0 at end of attack, disabling further dual-stabs */
 			}
@@ -4936,7 +4950,10 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 		/* We _are_ wielding an item, but it does _not_ count in any way for melee attacking?
 		   (Unlike for exaple a Mage Staff, which does count; it has dice and can be enchanted even.)
 		   Then hack it to point to an empty item (same as an empty wield slot): */
-		if (!primary_wield && slot == INVEN_WIELD && o_ptr->tval) o_ptr = &forge_zero;
+		if (!primary_wield && slot == INVEN_WIELD && o_ptr->tval) {
+			o_ptr = &forge_zero;
+			killed_by_item = 0;
+		}
 #endif
 
 		/* Manage backstabbing and 'flee-stabbing' */
@@ -5591,7 +5608,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 			/* Damage, check for fear and death */
 			feed = m_ptr->maxhp + 100;
 			p_ptr->vamp_fed_midx = c_ptr->m_idx;
-			m_ptr->killed_by_item = 1;
+			m_ptr->killed_by_item = killed_by_item;
 			if (mon_take_hit(Ind, c_ptr->m_idx, k, &fear, NULL)) {
 
 				/* Vampires feed off the life force! (if any) */

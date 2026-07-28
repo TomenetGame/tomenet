@@ -5696,7 +5696,7 @@ void check_experience(int Ind) {
 			msg_print(Ind, "\375\377G* You have raised quite a bit in ranks of PvP characters!         *");
 			msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
 			msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
-			give_reward(Ind, RESF_MASK_MID, "Gladiator's reward", 1, 0);
+			give_reward(Ind, RESF_MASK_MID, "Gladiator's reward", 1, 0, 123);
 		}
 		if (p_ptr->lev == MAX_PVP_LEVEL) {
 			msg_broadcast_format(Ind, "\374\377G* %s has reached the highest level available to PvP characters! *", p_ptr->name);
@@ -5704,7 +5704,7 @@ void check_experience(int Ind) {
 			msg_print(Ind, "\375\377G*   For that, you just received a reward, and if you die you will *");
 			msg_print(Ind, "\375\377G*   also receive a deed on the next character you log in with.    *");
 			//buffer_account_for_achievement_deed(p_ptr, ACHV_PVP_MAX);
-			give_reward(Ind, RESF_MASK_HIGH, "Gladiator's reward", 1, 0);
+			give_reward(Ind, RESF_MASK_HIGH, "Gladiator's reward", 1, 0, 122);
 		}
 	}
 
@@ -6400,12 +6400,13 @@ bool monster_death(int Ind, int m_idx) {
 	/* Avoid getting projected on by smash effect of our own dropped potions */
 	m_ptr->dead = TRUE;
 
+	monster_death_ridx = m_ptr->r_idx;
+	monster_death_reidx = m_ptr->ego;
+
 	switch(m_ptr->killed_by_item) {
-	case 1:	p_ptr->inventory[INVEN_WIELD].slain_monsters++;
-		p_ptr->inventory[INVEN_ARM].slain_monsters++;
-		break;
-	case 2:	p_ptr->inventory[INVEN_BOW].slain_monsters++;
-		break;
+	case 1: p_ptr->inventory[INVEN_WIELD].slain_monsters++; break;
+	case 2: p_ptr->inventory[INVEN_ARM].slain_monsters++; break;
+	case 3: p_ptr->inventory[INVEN_BOW].slain_monsters++; break;
 	}
 #if 0
 	for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6415,11 +6416,9 @@ bool monster_death(int Ind, int m_idx) {
 	switch(m_ptr->r_idx) {
 	case RI_SAURON:
 		switch(m_ptr->killed_by_item) {
-		case 1:	p_ptr->inventory[INVEN_WIELD].slain_sauron++;
-			p_ptr->inventory[INVEN_ARM].slain_sauron++;
-			break;
-		case 2:	p_ptr->inventory[INVEN_BOW].slain_sauron++;
-			break;
+		case 1: p_ptr->inventory[INVEN_WIELD].slain_sauron++; break;
+		case 2: p_ptr->inventory[INVEN_ARM].slain_sauron++; break;
+		case 3: p_ptr->inventory[INVEN_BOW].slain_sauron++; break;
 		}
 #if 0
 		for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6428,11 +6427,9 @@ bool monster_death(int Ind, int m_idx) {
 		break;
 	case RI_MORGOTH:
 		switch(m_ptr->killed_by_item) {
-		case 1:	p_ptr->inventory[INVEN_WIELD].slain_morgoth++;
-			p_ptr->inventory[INVEN_ARM].slain_morgoth++;
-			break;
-		case 2:	p_ptr->inventory[INVEN_BOW].slain_morgoth++;
-			break;
+		case 1: p_ptr->inventory[INVEN_WIELD].slain_morgoth++; break;
+		case 2: p_ptr->inventory[INVEN_ARM].slain_morgoth++; break;
+		case 3: p_ptr->inventory[INVEN_BOW].slain_morgoth++; break;
 		}
 #if 0
 		for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6441,11 +6438,9 @@ bool monster_death(int Ind, int m_idx) {
 		break;
 	case RI_ZU_AON:
 		switch(m_ptr->killed_by_item) {
-		case 1:	p_ptr->inventory[INVEN_WIELD].slain_zuaon++;
-			p_ptr->inventory[INVEN_ARM].slain_zuaon++;
-			break;
-		case 2:	p_ptr->inventory[INVEN_BOW].slain_zuaon++;
-			break;
+		case 1: p_ptr->inventory[INVEN_WIELD].slain_zuaon++; break;
+		case 2: p_ptr->inventory[INVEN_ARM].slain_zuaon++; break;
+		case 3: p_ptr->inventory[INVEN_BOW].slain_zuaon++; break;
 		}
 #if 0
 		for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6455,11 +6450,9 @@ bool monster_death(int Ind, int m_idx) {
 	default:
 		if (r_ptr->flags7 & RF7_NAZGUL) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_nazgul++;
-				p_ptr->inventory[INVEN_ARM].slain_nazgul++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_nazgul++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_nazgul++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_nazgul++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_nazgul++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6468,11 +6461,9 @@ bool monster_death(int Ind, int m_idx) {
 		}
 		if (is_superunique(m_ptr->r_idx)) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_superuniques++;
-				p_ptr->inventory[INVEN_ARM].slain_superuniques++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_superuniques++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_superuniques++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_superuniques++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_superuniques++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6481,11 +6472,9 @@ bool monster_death(int Ind, int m_idx) {
 		}
 		if (r_ptr->flags8 & RF8_FINAL_GUARDIAN) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_bosses++;
-				p_ptr->inventory[INVEN_ARM].slain_bosses++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_bosses++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_bosses++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_bosses++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_bosses++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6495,11 +6484,9 @@ bool monster_death(int Ind, int m_idx) {
 
 		if (r_ptr->flags1 & RF1_UNIQUE) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_uniques++;
-				p_ptr->inventory[INVEN_ARM].slain_uniques++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_uniques++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_uniques++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_uniques++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_uniques++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6508,11 +6495,9 @@ bool monster_death(int Ind, int m_idx) {
 		}
 		if (r_ptr->flags3 & RF3_ANIMAL) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_animals++;
-				p_ptr->inventory[INVEN_ARM].slain_animals++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_animals++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_animals++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_animals++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_animals++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6521,11 +6506,9 @@ bool monster_death(int Ind, int m_idx) {
 		}
 		if (r_ptr->flags3 & RF3_ORC) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_orcs++;
-				p_ptr->inventory[INVEN_ARM].slain_orcs++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_orcs++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_orcs++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_orcs++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_orcs++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6534,11 +6517,9 @@ bool monster_death(int Ind, int m_idx) {
 		}
 		if (r_ptr->flags3 & RF3_TROLL) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_trolls++;
-				p_ptr->inventory[INVEN_ARM].slain_trolls++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_trolls++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_trolls++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_trolls++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_trolls++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6547,11 +6528,9 @@ bool monster_death(int Ind, int m_idx) {
 		}
 		if (r_ptr->flags3 & RF3_GIANT) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_giants++;
-				p_ptr->inventory[INVEN_ARM].slain_giants++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_giants++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_giants++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_giants++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_giants++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6560,11 +6539,9 @@ bool monster_death(int Ind, int m_idx) {
 		}
 		if (r_ptr->flags3 & RF3_DRAGON) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_dragons++;
-				p_ptr->inventory[INVEN_ARM].slain_dragons++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_dragons++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_dragons++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_dragons++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_dragons++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6573,11 +6550,9 @@ bool monster_death(int Ind, int m_idx) {
 		}
 		if (r_ptr->flags3 & RF3_DEMON) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_demons++;
-				p_ptr->inventory[INVEN_ARM].slain_demons++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_demons++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_demons++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_demons++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_demons++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6586,11 +6561,9 @@ bool monster_death(int Ind, int m_idx) {
 		}
 		if (r_ptr->flags3 & RF3_UNDEAD) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_undead++;
-				p_ptr->inventory[INVEN_ARM].slain_undead++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_undead++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_undead++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_undead++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_undead++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6599,11 +6572,9 @@ bool monster_death(int Ind, int m_idx) {
 		}
 		if (r_ptr->flags3 & RF3_EVIL) {
 			switch(m_ptr->killed_by_item) {
-			case 1:	p_ptr->inventory[INVEN_WIELD].slain_evil++;
-				p_ptr->inventory[INVEN_ARM].slain_evil++;
-				break;
-			case 2:	p_ptr->inventory[INVEN_BOW].slain_evil++;
-				break;
+			case 1: p_ptr->inventory[INVEN_WIELD].slain_evil++; break;
+			case 2: p_ptr->inventory[INVEN_ARM].slain_evil++; break;
+			case 3: p_ptr->inventory[INVEN_BOW].slain_evil++; break;
 			}
 #if 0
 			for (i = INVEN_LEFT; i < INVEN_TOTAL; i++)
@@ -6657,6 +6628,7 @@ bool monster_death(int Ind, int m_idx) {
 				}
 				Players[i]->has_pet = 0;
 				FREE(m_ptr->r_ptr, monster_race); //no drop, no exp.
+				monster_death_ridx = monster_death_reidx = 0;
 				return(FALSE);
 			}
 		}
@@ -6687,7 +6659,10 @@ bool monster_death(int Ind, int m_idx) {
 	wpos = &m_ptr->wpos;
 	in_iddc = in_irondeepdive(wpos);
 	in_mandos = in_hallsofmandos(wpos);
-	if (!(zcave = getcave(wpos))) return(FALSE);
+	if (!(zcave = getcave(wpos))) {
+		monster_death_ridx = monster_death_reidx = 0;
+		return(FALSE);
+	}
 
 	if (ge_special_sector && /* training tower event running? and we are there? */
 	    in_arena(wpos)) {
@@ -6868,7 +6843,7 @@ bool monster_death(int Ind, int m_idx) {
 			sprintf(tmp, "\374\377c**\377s%s %s has defeated a lost vault's guardian.\377c**", get_ptitle(q_ptr, FALSE), p_ptr->name);
 #endif
 		else
-			sprintf(tmp, "\374\377c**\377s%s has defeated a lost guardian.\377c**", p_ptr->name);
+			sprintf(tmp, "\374\377c**\377s%s has defeated a lost vault's guardian.\377c**", p_ptr->name);
 
 		if (!p_ptr->admin_dm || !cfg.secret_dungeon_master) {
 			msg_broadcast(0, tmp);
@@ -6959,15 +6934,20 @@ bool monster_death(int Ind, int m_idx) {
 	}
 
 	/* Log-scumming in IDDC is like fighting clones */
-	if (p_ptr->IDDC_logscum) return(FALSE);
+	if (p_ptr->IDDC_logscum) {
+		monster_death_ridx = monster_death_reidx = 0;
+		return(FALSE);
+	}
 
 	/* enforce dedicated Ironman Deep Dive Challenge character slot usage */
 	if ((p_ptr->mode & MODE_DED_IDDC) && !in_iddc
 #ifdef DED_IDDC_MANDOS
 	    && !in_mandos
 #endif
-	    && r_ptr->mexp) /* Allow normal townie kills in Bree */
+	    && r_ptr->mexp) { /* Allow normal townie kills in Bree */
+		monster_death_ridx = monster_death_reidx = 0;
 		return(FALSE);
+	}
 
 	/* clones don't drop treasure or complete quests.. */
 	if (m_ptr->clone) {
@@ -6981,6 +6961,7 @@ bool monster_death(int Ind, int m_idx) {
 		}
 
 		/* no credit/loot for clones */
+		monster_death_ridx = monster_death_reidx = 0;
 		return(FALSE);
 	}
 
@@ -6993,8 +6974,10 @@ bool monster_death(int Ind, int m_idx) {
 	    /* ..however, never have henc'ed unique monsters drop loot, since kill credit won't be given for them, so could repeatedly loot them */
 	    && (m_ptr->questor || (r_ptr->flags1 & RF1_UNIQUE))
 #endif
-	    )
+	    ) {
+		monster_death_ridx = monster_death_reidx = 0;
 		return(FALSE);
+	}
 
 	/* --- Ok, monster may drop l00t --- */
 
@@ -7542,8 +7525,10 @@ bool monster_death(int Ind, int m_idx) {
 #ifdef NO_HENC_CHEEZED_LOOT /* we allowed loot (but we still disallow exp/credit) */
 	if (henc_cheezed &&
 	    !is_Morgoth && /* make exception for Morgoth, so hi-lvl fallen kings can re-king */
-	    !is_Pumpkin) /* allow a mixed hunting group */
+	    !is_Pumpkin) { /* allow a mixed hunting group */
+		monster_death_ridx = monster_death_reidx = 0;
 		return(FALSE);
+	}
 #endif
 
 	/* Check whether a quest requested this monster dead */
@@ -8358,6 +8343,7 @@ bool monster_death(int Ind, int m_idx) {
 			}
 
 			FREE(m_ptr->r_ptr, monster_race);
+			monster_death_ridx = monster_death_reidx = 0;
 			return(TRUE);
 
 		} else if (r_idx == RI_SMEAGOL) {
@@ -9171,6 +9157,8 @@ bool monster_death(int Ind, int m_idx) {
 
 	//if ((!force_coin) && (randint(100) < 50)) place_corpse(m_ptr);
 
+	monster_death_ridx = monster_death_reidx = 0;
+
 #if 1
 	return(TRUE); //removed RF1_QUESTOR
 #else
@@ -9400,7 +9388,7 @@ static void check_killing_reward(int Ind) {
 		msg_broadcast_format(Ind, "\374\377y** %s vanquished 10 opponents! **", p_ptr->name);
 		msg_print(Ind, "\375\377G* Another 10 aggressors have fallen by your hands! *");
 		msg_print(Ind, "\375\377G* You received a reward! *");
-		give_reward(Ind, RESF_MASK_MID, "Gladiator's reward", 1, 0);
+		give_reward(Ind, RESF_MASK_MID, "Gladiator's reward", 1, 0, 121);
 	}
 }
 
@@ -12597,6 +12585,15 @@ bool mon_take_hit(int Ind, int m_idx, int dam, bool *fear, cptr note) {
 #endif
 
 	m_ptr->killed_by_item = 0; //clear!
+	switch(killed_by_item) {
+	case 1: p_ptr->inventory[INVEN_WIELD].done_damage += (m_ptr->hp + 1 <= dam) ? m_ptr->hp + 1 : dam;
+		break;
+	case 2: p_ptr->inventory[INVEN_ARM].done_damage += (m_ptr->hp + 1 <= dam) ? m_ptr->hp + 1 : dam;
+		break;
+	case 3: p_ptr->inventory[INVEN_BOW].done_damage += (m_ptr->hp + 1 <= dam) ? m_ptr->hp + 1 : dam;
+		break;
+	/* case 4: traps - handled in traps.c */
+	}
 
 	if (m_ptr->status & M_STATUS_FRIENDLY) return(FALSE);
 

@@ -11577,7 +11577,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_print(j, "\377GYou have been rewarded by the gods!");
 
 //				create_reward(j, o_ptr, 1, 100, TRUE, TRUE, make_resf(Players[j]) | RESF_NOHIDSM, 5000);
-				give_reward(j, RESF_MASK_LOW2, NULL, 0, 100);
+				give_reward(j, RESF_MASK_LOW2, NULL, 0, 100, 0);
 				return;
 			}
 			else if (prefix(messagelc, "/debug1")) { /* debug an issue at hand */

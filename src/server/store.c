@@ -8097,12 +8097,14 @@ void reward_deed_item(int Ind, int item) {
 	case SV_DEED_HIGHLANDER: /* winner's deed */
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_MID2, 3000); /* 95 is default depth for highlander tournament */
 		if (!o_ptr->note) o_ptr->note = quark_add("Highlander reward");
+		o_ptr->find_reward = GE_HIGHLANDER;
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		break;
 	case SV_DEED_DUNGEONKEEPER: /* winner's deed */
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_MID, 3000);
 		if (!o_ptr->note) o_ptr->note = quark_add("Dungeon Keeper reward");
+		o_ptr->find_reward = GE_DUNGEON_KEEPER;
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		break;
@@ -8114,6 +8116,7 @@ void reward_deed_item(int Ind, int item) {
 	case SV_DEED_PVP_MAX:
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_HIGH, 3000);
 		if (!o_ptr->note) o_ptr->note = quark_add("PvP reward");
+		o_ptr->find_reward = 124;
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		dis = 0;
@@ -8121,6 +8124,7 @@ void reward_deed_item(int Ind, int item) {
 	case SV_DEED_PVP_MID:
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_MID2, 3000);
 		if (!o_ptr->note) o_ptr->note = quark_add("PvP reward");
+		o_ptr->find_reward = 125;
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		dis = 0;
@@ -8128,6 +8132,7 @@ void reward_deed_item(int Ind, int item) {
 	case SV_DEED_PVP_MASS:
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_MID, 3000);
 		if (!o_ptr->note) o_ptr->note = quark_add("PvP reward");
+		o_ptr->find_reward = 126;
 		msg_print(Ind, "\377GThe mayor's secretary hands you a reward, while everyone applauds!");
 		msg_print_near(Ind, "You hear some applause coming out of the mayor's office!");
 		dis = 0;
@@ -8135,6 +8140,7 @@ void reward_deed_item(int Ind, int item) {
 	case SV_DEED_PVP_START:
 		create_reward(Ind, o_ptr, 95, 95, TRUE, TRUE, RESF_MASK_LOW2, 3000);
 		//if (!o_ptr->note) o_ptr->note = quark_add("");
+		o_ptr->find_reward = 127;
 		msg_print(Ind, "\377GThe mayor's secretary hands you an item and gives you a supportive pat.");
 		lev = 1; dis = 0;
 		break;
