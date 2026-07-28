@@ -813,3 +813,4 @@ bool screenshot_silent_dump = FALSE;
 int screenshotting = 0;
 char screenshotting_filename[MAX_CHARS];
 #endif
+bool convert_prf = FALSE;

@@ -1381,3 +1381,4 @@ extern bool screenshot_silent_dump;
 extern int screenshotting;
 extern char screenshotting_filename[MAX_CHARS];
 #endif
+extern bool convert_prf;
