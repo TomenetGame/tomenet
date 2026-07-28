@@ -836,11 +836,11 @@ struct object_type {
 	s32b find_turn;			/* Found when, in-game? */
 	time_t find_time;		/* Found when, real-time? */
 	struct worldpos find_wpos;	/* Found at this wpos */
-	signed char find_dun;		/* Found in this dungeon type (d_info index, negative for IRONDEEPDIVE_MIXED_TYPES) */
+	signed char find_dun;		/* Found in this dungeon type (d_ptr->type ie d_info index; negative for d_ptr->theme eg IRONDEEPDIVE_MIXED_TYPES; -127 encodes 0 aka Wilderness dungeons) */
 	s32b find_player_id;		/* Received from a player / taken from a player's death loot oO */
 	s32b find_player_turndiff;	/* ^ when? just use the diff to 'find_turn'! */
 	u16b find_ridx, find_reidx;	/* Found from this [ego] monster */
-	s16b find_special;		/* Found from digging (1000+feat), or in a chest (sval), bought from a store(-stidx-1), stolen from store (-stidx-1000) player store(-2000).. */
+	s16b find_special;		/* Found from digging (10000+feat), disarming (11000+trap_idx), in a chest (sval*1000+lev), bought from store(-stidx-1), stolen from store (-stidx-1000), bought from player store(-2000).. */
 	signed char find_reward;	/* Received as event(>0)/quest(<0) reward? */
 
 	/* not yet implemented, for future tracking */

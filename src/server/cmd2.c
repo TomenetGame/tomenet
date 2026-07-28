@@ -1881,6 +1881,8 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 		/* Opening a chest -- this hack makes sure we don't find a chest in a chest, even though yo like chests */
 		if (!o_ptr->iron_turn) opening_chest = turn; //by now all existing chests should long have iron_turn set to something, so this check might not be needed anymore
 		else opening_chest = o_ptr->iron_turn;
+		opening_chest_sval = o_ptr->sval;
+		opening_chest_lev = o_ptr->level;
 
 		/* Determine the "value" of the items */
 		//object_level = ABS(o_ptr->pval) + 10;
@@ -3830,6 +3832,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 					//forge.level = ;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					if (!quiet_full) msg_print(Ind, "You have found something!");
+					forge.find_special = 10000 + cfeat; /* Object memory fluff */
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					if (tval == TV_CHEST)
 						s_printf("DIGGING: %s found a chest.\n", Ind ? p_ptr->name : "<noone>");
@@ -3849,12 +3852,14 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 						s_printf("DIGGING: %s eradicated item: %s.\n", Ind ? p_ptr->name : "<noone>", o_name);
 					} else {
 						s_printf("DIGGING: %s found item: %s.\n", Ind ? p_ptr->name : "<noone>", o_name);
+						forge.find_special = 10000 + cfeat; /* Object memory fluff */
 						drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					}
 #else //TODO if reenabled: TV_RUNE must be prevented in case of quiet_borer, via new RESF_ flag
 					object_level = find_level_base;
 					place_object(Ind, wpos, y, x, magik(mining), magik(mining / 10), FALSE, make_resf(p_ptr) | RESF_MASK_MID,
 						default_obj_theme, p_ptr->luck, ITEM_REMOVAL_NORMAL, FALSE);
+					//TODO: imprint afterwards somehow (but object might have been placed not at y,x?): find_special = 10000 + cfeat; /* Object memory fluff */
 					s_printf("DIGGING: %s found a random item.\n", Ind ? p_ptr->name : "<noone>");
 					object_level = old_object_level;
 #endif
@@ -3905,6 +3910,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 				forge.number = 1;
 				//forge.level = ;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				forge.find_special = 10000 + cfeat; /* Object memory fluff */
 				if (!quiet_full) msg_print(Ind, "You have found something!");
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				s_printf("DIGGING: %s found a massive wood piece.\n", Ind ? p_ptr->name : "<noone>");
@@ -3916,6 +3922,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 				//forge.level = ;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
 				if (!quiet_full) msg_print(Ind, "You have found something!");
+				forge.find_special = 10000 + cfeat; /* Object memory fluff */
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				s_printf("DIGGING: %s found a wood piece.\n", Ind ? p_ptr->name : "<noone>");
 			}
@@ -3939,6 +3946,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				forge.find_special = 10000 + cfeat; /* Object memory fluff */
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -4002,6 +4010,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				forge.find_special = 10000 + cfeat; /* Object memory fluff */
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -4094,6 +4103,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				forge.find_special = 10000 + cfeat; /* Object memory fluff */
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -4238,6 +4248,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 					forge.number = 1;
 					//forge.level = ;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
+					forge.find_special = 10000 + cfeat; /* Object memory fluff */
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					s_printf("DIGGING: %s found a %s.\n", p_ptr->name, tval == TV_GOLEM ? "metal piece" : "rune");
 				} else {
@@ -4293,6 +4304,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 					//forge.level = ;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					if (Ind && !quiet_full)  msg_print(Ind, "You have found something!");
+					forge.find_special = 10000 + cfeat; /* Object memory fluff */
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					s_printf("DIGGING: %s found a rune.\n", Ind ? p_ptr->name : "<noone>");
 			}
@@ -4316,6 +4328,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				forge.find_special = 10000 + cfeat; /* Object memory fluff */
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -4345,6 +4358,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				forge.find_special = 10000 + cfeat; /* Object memory fluff */
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -4373,6 +4387,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 				forge.number = 1;
 				forge.weight = k_info[forge.k_idx].weight;
 				forge.marked2 = ITEM_REMOVAL_NORMAL;
+				forge.find_special = 10000 + cfeat; /* Object memory fluff */
 				drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 				if (!p_ptr->warning_ingredients) {
 					msg_print(Ind, "\374\377yHINT: You sometimes find ingredients in addition to normal loot because of your");
@@ -4614,6 +4629,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 					//forge.level = ;
 					forge.marked2 = ITEM_REMOVAL_NORMAL;
 					if (Ind && !quiet_full) msg_print(Ind, "You have found something!");
+					forge.find_special = 10000 + cfeat; /* Object memory fluff */
 					drop_near(TRUE, 0, &forge, -1, wpos, y, x);
 					s_printf("DIGGING: %s found a rune.\n", Ind ? p_ptr->name : "<noone>");
 				}
@@ -5634,10 +5650,12 @@ void do_cmd_disarm(int Ind, int dir) {
 					   the total chance for this is about 3% */
 					if (magik((sdis / 10) + 1)) {
 						apply_magic(&p_ptr->wpos, yay, -2, TRUE, TRUE, TRUE, FALSE, make_resf(p_ptr));
+						yay->find_special = 11000 + t_idx; /* Object memory fluff */
 						drop_near(TRUE, 0, yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 						msg_print(Ind, "You have created a wonderful trapkit using pieces of the disarmed trap.");
 					} else {
 						apply_magic(&p_ptr->wpos, yay, -2, TRUE, FALSE, FALSE, FALSE, make_resf(p_ptr));
+						yay->find_special = 11000 + t_idx; /* Object memory fluff */
 						drop_near(TRUE, 0, yay, 0, &p_ptr->wpos, p_ptr->py, p_ptr->px);
 						msg_print(Ind, "You have fashioned a trapkit of a sort from the disarmed trap.");
 					}

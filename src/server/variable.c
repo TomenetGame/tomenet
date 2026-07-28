@@ -118,6 +118,7 @@ s16b signal_count = 0;          /* Hack -- Count interupts */
 s16b coin_type;                 /* Hack -- force coin type */
 
 s32b opening_chest;             /* Hack -- prevent chest generation, preown cash, and imprint timestamp for IDDC (iron_turn) */
+int opening_chest_sval, opening_chest_lev;	//fluff only: object memory
 
 bool scan_monsters;             /* Hack -- optimize multi-hued code, etc */
 bool scan_objects;              /* Hack -- optimize multi-hued code, etc */
