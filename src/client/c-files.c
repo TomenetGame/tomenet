@@ -867,24 +867,94 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset) {
 	/* Auto-convert old option names maybe */
 	switch(buf[0]) {
 	case 'X': case 'Y':
-		if (streq(buf + 2, "recall_flicker")) { convert_prf = TRUE; strcpy(buf + 2, "subterm_flicker"); }
-		if (streq(buf + 2, "instant_retaliator")) { convert_prf = TRUE; strcpy(buf + 2, "new_retaliator"); buf[0] = buf[0] == 'X' ? 'Y' : 'X'; } //invert the value!
-		if (streq(buf + 2, "autoloot_depth")) { convert_prf = TRUE; strcpy(buf + 2, "autoloot_dunonly"); }
-		if (streq(buf + 2, "autoloot_off")) { convert_prf = TRUE; strcpy(buf + 2, "autoloot_dunonly"); }
-		if (streq(buf + 2, "basic_players")) { convert_prf = TRUE; strcpy(buf + 2, "basic_players_symb"); } //missing: basic_players_col
-		if (streq(buf + 2, "consistent_players")) { convert_prf = TRUE; strcpy(buf + 2, "basic_players_symb"); } //^dito
-		if (streq(buf + 2, "kind_diz")) { convert_prf = TRUE; strcpy(buf + 2, "add_kind_diz"); }
-		if (streq(buf + 2, "auto_inscribe")) { convert_prf = TRUE; strcpy(buf + 2, "auto_inscr_server"); }
+		if (streq(buf + 2, "recall_flicker")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'subterm_flicker'.\n", buf));
+			strcpy(buf + 2, "subterm_flicker");
+		}
+		if (streq(buf + 2, "instant_retaliator")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'new_retaliator' inverted.\n", buf));
+			strcpy(buf + 2, "new_retaliator");
+			buf[0] = buf[0] == 'X' ? 'Y' : 'X'; //invert the value
+		}
+		if (streq(buf + 2, "autoloot_depth")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'autoloot_dunonly'.\n", buf));
+			strcpy(buf + 2, "autoloot_dunonly");
+		}
+		if (streq(buf + 2, "autoloot_off")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'autoloot_dunonly'.\n", buf));
+			strcpy(buf + 2, "autoloot_dunonly");
+		}
+		if (streq(buf + 2, "basic_players") || streq(buf + 2, "consistent_players")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'basic_players_symb'/'basic_players_col'.\n", buf));
+			strcpy(buf + 2, "basic_players_symb");
+			/* Also take care of basic_players_col: */
+			for (i = 0; option_info[i].o_desc; i++) {
+				if (option_info[i].o_var &&
+				    option_info[i].o_text &&
+				    streq(option_info[i].o_text, "basic_players_col")) {
+					(*option_info[i].o_var) = FALSE;
+					Client_setup.options[i] = FALSE;
+					check_immediate_options(i, FALSE, in_game);
+				}
+			}
+		}
+		if (streq(buf + 2, "kind_diz")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'add_kind_diz'.\n", buf));
+			strcpy(buf + 2, "add_kind_diz");
+		}
+		if (streq(buf + 2, "auto_inscribe")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'auto_inscr_server'.\n", buf));
+			strcpy(buf + 2, "auto_inscr_server");
+		}
 
-		if (streq(buf + 2, "hilite_chat")) { convert_prf = TRUE; strcpy(buf + 2, "highlight_chat"); }
-		if (streq(buf + 2, "hibeep_chat")) { convert_prf = TRUE; strcpy(buf + 2, "highbeep_chat"); }
-		if (streq(buf + 2, "view_animated_lite")) { convert_prf = TRUE; strcpy(buf + 2, "view_animated_light"); }
-		if (streq(buf + 2, "view_lite_extra")) { convert_prf = TRUE; strcpy(buf + 2, "view_light_extra"); }
-		if (streq(buf + 2, "no_lite_fainting")) { convert_prf = TRUE; strcpy(buf + 2, "no_light_fainting"); }
-		if (streq(buf + 2, "hilite_player")) { convert_prf = TRUE; strcpy(buf + 2, "highlight_player"); }
+		if (streq(buf + 2, "hilite_chat")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'highlight_chat'.\n", buf));
+			strcpy(buf + 2, "highlight_chat");
+		}
+		if (streq(buf + 2, "hibeep_chat")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'highbeep_chat'.\n", buf));
+			strcpy(buf + 2, "highbeep_chat");
+		}
+		if (streq(buf + 2, "view_animated_lite")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'view_animated_light'.\n", buf));
+			strcpy(buf + 2, "view_animated_light");
+		}
+		if (streq(buf + 2, "view_lite_extra")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'view_light_extra'.\n", buf));
+			strcpy(buf + 2, "view_light_extra");
+		}
+		if (streq(buf + 2, "no_lite_fainting")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'no_light_fainting'.\n", buf));
+			strcpy(buf + 2, "no_light_fainting");
+		}
+		if (streq(buf + 2, "hilite_player")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'highlight_player'.\n", buf));
+			strcpy(buf + 2, "highlight_player");
+		}
 
-		if (streq(buf + 2, "colourize_prices")) { convert_prf = TRUE; strcpy(buf + 2, "colourize_bignum"); }
-		if (streq(buf + 2, "sp_huge_bar")) { convert_prf = TRUE; strcpy(buf + 2, "sn_huge_bar"); }
+		if (streq(buf + 2, "colourize_prices")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'colourize_bignum'.\n", buf));
+			strcpy(buf + 2, "colourize_bignum");
+		}
+		if (streq(buf + 2, "sp_huge_bar")) {
+			convert_prf = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'sn_huge_bar'.\n", buf));
+			strcpy(buf + 2, "sn_huge_bar");
+		}
 	}
 
 	/* For all kinds of visual mappings (R/K/F/U/@/Z/r):
