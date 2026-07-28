@@ -702,6 +702,7 @@ bool is_client_side = TRUE;
 #ifdef RETRY_LOGIN
 bool rl_connection_destructible = FALSE, rl_connection_destroyed = FALSE, rl_password = FALSE;
 byte rl_connection_state = 0;
+bool rl_msg_output = FALSE;
 bool player_pref_files_loaded = FALSE;
 char relogin_host[40] = { 0 }, relogin_accname[ACCNAME_LEN], relogin_accpass[PASSWORD_LEN], relogin_charname[CNAME_LEN]; //max length of IPv6 addr is 39
 #endif

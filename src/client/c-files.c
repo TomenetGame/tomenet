@@ -1381,7 +1381,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	fp = my_fopen(buf, "r");
 	if (!fp) {
 		if (!quiet) {
-			if (rl_connection_state == 1) c_message_add(format("\377yCould not open file %s", buf));
+			if (rl_connection_state == 1 || rl_msg_output) c_message_add(format("\377yCould not open file %s", buf));
 			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Could not open file %s.\n", buf));
 		}
 		return(-1);
@@ -1409,19 +1409,19 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 		/* Process the line */
 		if (process_pref_file_aux_aux(buf2, fmt, subtileset, &outdated)) {
 			/* Useful error message */
-			if (rl_connection_state == 1) c_msg_format("\377yError in '%s' parsing '%s'.", buf2, name);
+			if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yError in '%s' parsing '%s'.", buf2, name);
 			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Error in '%s' parsing '%s'.\n", buf2, name));
-			//else if (rl_connection_state != 1) plog_fmt("Error in '%s' parsing '%s'.\n", buf2, name); //too annoying if prf file contains a bunch of outdated options as residue from older game versions
+			//else if (rl_connection_state != 1 && !rl_msg_output) plog_fmt("Error in '%s' parsing '%s'.\n", buf2, name); //too annoying if prf file contains a bunch of outdated options as residue from older game versions
 			//errors = TRUE;
 		}
 #ifndef BAD_MAPPING_BUNDLE /* Warn for every bad mapping-line? */
 		if (bad_solid_mapping) {
-			if (rl_connection_state == 1) {
+			if (rl_connection_state == 1 || rl_msg_output) {
 				c_msg_format("\377yThe mapping '%s' in '%s' maps non-wall feat", buf2, name);
 				c_msg_print("\377y to solid wall symbols (either 2 or 127), indicating that the mapping is broken!");
 			}
 			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("The mapping '%s' in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", buf2, name));
-			else if (rl_connection_state != 1) plog_fmt("The mapping '%s' in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", buf2, name);
+			else if (rl_connection_state != 1 && !rl_msg_output) plog_fmt("The mapping '%s' in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", buf2, name);
 			bad_solid_mapping = FALSE;
 		}
 #endif
@@ -1429,17 +1429,17 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	}
 #ifdef BAD_MAPPING_BUNDLE /* Warn for every bad mapping-line? */
 	if (bad_solid_mapping) {
-		if (rl_connection_state == 1) {
+		if (rl_connection_state == 1 || rl_msg_output) {
 			c_msg_format("\377yThe mapping in '%s' maps non-wall feats to", name);
 			c_msg_print("\377y solid wall symbols (either 2 or 127), indicating that the mapping is broken!");
 		}
 		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("The mapping in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", name));
-		else if (rl_connection_state != 1) plog_fmt("The mapping in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", name);
+		else if (rl_connection_state != 1 && !rl_msg_output) plog_fmt("The mapping in '%s' maps non-wall feats to solid wall symbols (either 2 or 127), indicating that the mapping is broken!\n", name);
 		bad_solid_mapping = FALSE;
 	}
 #endif
 	if (outdated) {
-		if (rl_connection_state == 1) c_msg_format("\377yFile '%s' has outdated option names. It is recommended to overwrite it.", name);
+		if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yFile '%s' has outdated option names. It is recommended to overwrite it.", name);
 		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' has outdated option names. It is recommended to overwrite it.\n", name));
 	}
 	if (err == 2) {

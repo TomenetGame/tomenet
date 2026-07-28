@@ -4259,7 +4259,13 @@ again:
 #endif
 
 	/* Initialize the pref files */
+#ifdef RETRY_LOGIN
+	rl_msg_output = TRUE; //hack: allow msg output about prf/opt file problems
+#endif
 	initialize_main_pref_files();
+#ifdef RETRY_LOGIN
+	rl_msg_output = FALSE; //unhack
+#endif
 
 	/* Pre-initialize character-specific options, just for sending early censor_swearing to the server,
 	   so we can receive private/party/guild notes in the desired format. */
