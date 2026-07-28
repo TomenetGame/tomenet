@@ -5126,6 +5126,11 @@ void store_confirm(int Ind) {
 		object_desc(0, o_name, o_ptr, TRUE, 3);
 		s_printf("SOLD_EXPENSIVE: <%s> (<%s>, %d) sold '%s' for %lldAu, worth %lld\n", p_ptr->name, p_ptr->accountname,  p_ptr->max_lev, o_name, price, value);
 	}
+	if (o_ptr->tval == TV_RING && o_ptr->sval == SV_RING_POLYMORPH)
+		s_printf("POLYRING_SOLD: %s -> %s (%d/%d, %d) for %lld Au.\n",
+		    p_ptr->name, r_info[o_ptr->pval].name + r_name,
+		    o_ptr->level, r_info[o_ptr->pval].level,
+		    o_ptr->timeout_magic, price);
 
 	if (p_ptr->store_num > -2) { /* Never become aware of player store items */
 		/* Become "aware" of the item */
