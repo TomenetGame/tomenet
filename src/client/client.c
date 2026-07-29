@@ -1327,6 +1327,7 @@ int main(int argc, char **argv) {
 		case 'v': save_chat = 1; break;
 		case 'V': save_chat = 2; break;
 		case 'x': save_chat = 3; break;
+		case 'X': quit_no_prompt = TRUE;
 		case 'e': {
 			/* Since ALSA might spam underrun errors.. */
 			FILE *fr = freopen("tomenet.log", "w", stderr);
@@ -1385,6 +1386,7 @@ int main(int argc, char **argv) {
 		puts("  -v                 Save chat log on exit, don't prompt");
 		puts("  -V                 Save complete message log on exit, don't prompt");
 		puts("  -x                 Don't save chat/message log on exit (don't prompt)");
+		puts("  -X                 Don't wait for keypress when client terminates");
 		puts("  -a/-g/-G           Switch to ASCII/gfx/dualmask-gfx mode");
 		puts("  -t                 Don't cache graphical tilesets on disk");
 		puts("  -T                 Don't cache graphical tile drawing");

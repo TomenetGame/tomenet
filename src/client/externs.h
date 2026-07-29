@@ -391,6 +391,7 @@ extern bool noweather_mode;
 extern bool no_lua_updates;
 extern bool skip_motd;
 extern byte save_chat;
+extern bool quit_no_prompt;
 
 
 extern client_opts c_cfg;

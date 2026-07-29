@@ -5617,8 +5617,10 @@ static void hack_plog(cptr str) {
  * Quit with error message -- See "z-util.c"
  */
 static void hack_quit(cptr str) {
-	/* Give a warning */
-	if (str) MessageBox(NULL, str, "Quitting", MB_OK | MB_ICONSTOP);
+	if (!quit_no_prompt) {
+		/* Give a warning */
+		if (str) MessageBox(NULL, str, "Quitting", MB_OK | MB_ICONSTOP);
+	}
 
 	/* Unregister the classes */
 	UnregisterClass(AppName, hInstance);
@@ -5639,8 +5641,10 @@ static void hack_quit(cptr str) {
  * Fatal error (see "z-util.c")
  */
 static void hack_core(cptr str) {
-	/* Give a warning */
-	if (str) MessageBox(NULL, str, "Error", MB_OK | MB_ICONSTOP);
+	if (!quit_no_prompt) {
+		/* Give a warning */
+		if (str) MessageBox(NULL, str, "Error", MB_OK | MB_ICONSTOP);
+	}
 
 	/* Quit */
 	quit(NULL);
@@ -5702,7 +5706,9 @@ static void hook_quit(cptr str) {
 	c_quit = 1;
 
 	/* Give a warning */
-	if (str && *str) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
+	if (!quit_no_prompt) {
+		if (str && *str) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
+	}
 
 	if (save_chat != 3) {
 		/* Copied from quit_hook in c-init.c - mikaelh */
@@ -6200,14 +6206,15 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    "  -R<name>       char name, auto-reincarnate",
 					    "  -p<num>         change game Port number",
 					    "  -P<path>        set the lib directory Path",
-					    "  -k              don't disable numlock on startup",
+					    //"  -k              don't disable numlock on startup", /* Windows only */
 					    "  -m             skip message of the day window",
 					    "  -q              disable all audio ('quiet mode')",
 					    /* "  -u              disable automatic lua updates", */
 					    "  -w             disable client-side weather effects",
-					    "  -v              save chat log on exit",
+					    /* "  -v              save chat log on exit", */
 					    "  -V              save chat+message log on exit",
 					    "  -x              don't save chat/message log on exit",
+					    "  -X              Don't wait for keypress when client terminates",
 					    "  -a/-g/-G       switch to ASCII/gfx/dualgfx mode"));
 					    //"  -t                 Don't cache graphical tilesets on disk",
 					    //"  -T                 Don't cache graphical tile drawing",
@@ -6238,6 +6245,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 					    "  -v              save chat log on exit",
 					    "  -V              save chat+message log on exit",
 					    "  -x              don't save chat/message log on exit",
+					    "  -X              Don't wait for keypress when client terminates",
 					    "  -a/-g/-G        switch to ASCII/gfx/dualgfx mode",
 					    "  -t                 Don't cache graphical tilesets on disk",
 					    "  -T                 Don't cache graphical tile drawing"));
@@ -6273,6 +6281,7 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 			case 'v': save_chat = 1; break;
 			case 'V': save_chat = 2; break;
 			case 'x': save_chat = 3; break;
+			case 'X': quit_no_prompt = TRUE; break;
 			case 'a': override_graphics = UG_NONE; ask_for_graphics = FALSE; break; // ASCII
 			case 'g': override_graphics = UG_NORMAL; ask_for_graphics = FALSE; break; // graphics
 			case 'G': override_graphics = UG_2MASK; ask_for_graphics = FALSE; break; // dual-mask graphics

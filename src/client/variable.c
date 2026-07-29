@@ -245,6 +245,7 @@ bool noweather_mode = FALSE;
 bool no_lua_updates = FALSE;
 bool skip_motd = FALSE;
 byte save_chat = 0;
+bool quit_no_prompt = FALSE;
 
 
 client_opts c_cfg;

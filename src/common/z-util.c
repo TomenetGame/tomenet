@@ -262,11 +262,18 @@ extern bool rl_connection_destructible, rl_connection_destroyed;
 extern byte rl_connection_state;
 #ifdef CLIENT_SIDE
 extern void logprint(const char *out); /* client/c-util.c */
+extern bool quit_no_prompt;
 #endif
 void quit(cptr str) {
 	char buf[1024];
 
-	if (is_client_side && str && streq(str, "Not a reply packet after play (3,0,0)")) plog("You were disconnected, probably because a server update happened meanwhile.\nPlease log in again.");
+#ifdef CLIENT_SIDE
+	if (!quit_no_prompt)
+#endif
+	{
+		if (is_client_side && str && streq(str, "Not a reply packet after play (3,0,0)"))
+			plog("You were disconnected, probably because a server update happened meanwhile.\nPlease log in again.");
+	}
 
 #ifdef CLIENT_SIDE
 	logprint(format("quit('%s')\n", str ? str : "NULL"));

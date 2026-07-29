@@ -3297,11 +3297,13 @@ static void display_message(cptr msg, cptr title) {
 	else usleep(1500000); //default: wait for 1.5s
 #endif
 
-	/* Print the good old "Press any key to continue..." message */
-	c_prt(TERM_L_BLUE, "Press any key to continue...", row++, 0);
+	if (!quit_no_prompt) {
+		/* Print the good old "Press any key to continue..." message */
+		c_prt(TERM_L_BLUE, "Press any key to continue...", row++, 0);
 
-	/* Wait for the key */
-	(void) inkey();
+		/* Wait for the key */
+		(void)inkey();
+	}
 
 	/* Reload the screen */
 	Term_load();
