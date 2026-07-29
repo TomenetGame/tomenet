@@ -600,8 +600,8 @@ static errr Term_xtra_gcu_event(int v) {
 		for (k = 0; (k < 10) && (i == ERR); k++) i = getch();
 
 		/* Broken input is special */
-		if (i == ERR) exit(0);
-		if (i == EOF) exit(0);
+		if (i == ERR) exit(10);
+		if (i == EOF) exit(11);
 	}
 
 	/* Do not wait */
@@ -643,7 +643,7 @@ static errr Term_xtra_gcu_event(int v) {
 		i = read(0, buf, 1);
 
 		/* Hack -- Handle bizarre "errors" */
-		if ((i <= 0) && (errno != EINTR)) exit(1);
+		if ((i <= 0) && (errno != EINTR)) exit(12);
 	}
 
 	/* Do not wait */

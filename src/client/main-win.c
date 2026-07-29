@@ -5632,7 +5632,7 @@ static void hack_quit(cptr str) {
 	WSACleanup();
 
 	/* Exit */
-	if (str) exit(-1);
+	if (str) exit(-10);
 	exit(0);
 }
 
@@ -5848,7 +5848,7 @@ static void hook_quit(cptr str) {
 
 	WSACleanup();
 
-	if (str) exit(-1);
+	if (str) exit(-11);
 	exit(0);
 }
 

@@ -310,7 +310,7 @@ void quit(cptr str) {
 	/* Success */
 	if (!str) (void)(exit(0));
 
-	/* Extract a "special error code" */
+	/* Extract a "special error code" --- apparently unused (take care not to collide with the already existing, static ones) */
 	if ((buf[0] == '-') || (buf[0] == '+')) (void)(exit(atoi(buf)));
 
 	/* Send the string to plog() */
@@ -319,9 +319,9 @@ void quit(cptr str) {
 
 	/* Failure */
 	if (!strcmp(str, "Terminating")) {
-		(void)(exit(-2));
+		(void)(exit(-3));
 	} else {
-		(void)(exit(-1));
+		(void)(exit(-2));
 	}
 }
 
