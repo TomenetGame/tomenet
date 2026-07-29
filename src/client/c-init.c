@@ -4192,7 +4192,7 @@ again:
 			quit(format("Connection failed with status %d.", status));
 			break;
 			// Just in case
-			exit(-1);
+			exit(1);
 		}
 	}
 

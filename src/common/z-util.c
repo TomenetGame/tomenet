@@ -318,10 +318,13 @@ void quit(cptr str) {
 	plog("Quitting!");
 
 	/* Failure */
-	if (!strcmp(str, "Terminating")) {
-		(void)(exit(-3));
+	if (!strcmp(str, "Terminating") || /* Server-side */
+	    strstr(str, "maintenance")) { /* Client-side */
+		(void)(exit(4));
+	} else if (strstr(str, "updated")) {
+		(void)(exit(3));
 	} else {
-		(void)(exit(-2));
+		(void)(exit(2));
 	}
 }
 

@@ -1480,7 +1480,7 @@ int main(int argc, char **argv) {
 	if (!done) {
 		Net_cleanup();
 		logprint("Unable to initialize a display module!\n");
-		exit(1);
+		exit(20);
 	}
 
 	{

@@ -278,7 +278,7 @@ void console_init(void) {
 	if (!done) {
 		Net_cleanup();
 		printf("Unable to initialize a display module!\n");
-		exit(1);
+		exit(20);
 	}
 
 	/* Set the "quit hook" */

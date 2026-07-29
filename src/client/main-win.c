@@ -5632,7 +5632,7 @@ static void hack_quit(cptr str) {
 	WSACleanup();
 
 	/* Exit */
-	if (str) exit(-10);
+	if (str) exit(10);
 	exit(0);
 }
 
@@ -5848,7 +5848,7 @@ static void hook_quit(cptr str) {
 
 	WSACleanup();
 
-	if (str) exit(-11);
+	if (str) exit(11);
 	exit(0);
 }
 
@@ -6320,13 +6320,13 @@ int FAR PASCAL WinMain(HINSTANCE hInst, HINSTANCE hPrevInst, LPSTR lpCmdLine, in
 		wc.lpszMenuName  = AppName;
 		wc.lpszClassName = AppName;
 
-		if (!RegisterClass(&wc)) exit(1);
+		if (!RegisterClass(&wc)) exit(20);
 
 		wc.lpfnWndProc   = AngbandListProc;
 		wc.lpszMenuName  = NULL;
 		wc.lpszClassName = AngList;
 
-		if (!RegisterClass(&wc)) exit(2);
+		if (!RegisterClass(&wc)) exit(21);
 	}
 
 	/* Set hooks */

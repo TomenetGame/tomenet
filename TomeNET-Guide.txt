@@ -4986,23 +4986,25 @@ following return values on exit:
 
 All systems:
    0: On successful run, the player quits the game.
-  -1: Server returned an unknown error in the process of logging in.
-  -2: Client quits with any error message.
-  -3: Unlike normal server shutdowns which just apply updates and have the
+   1: Server returned an unknown error in the process of logging in.
+   2: Client quits with any error message
+      (eg server timeout on connection attempt or server shutdown).
+   3: Server quit to apply updates and should be back online within seconds.
+   4: Unlike normal server shutdowns which just apply updates and have the
      server back up and running within seconds, this code means that the
      server reported that it is actually 'Terminating', which means the server
      will be down for an extended maintenance period (rare case, usually only
      happens for critical problems or version updates).
 POSIX only:
-   1: Startup failed - cannot initialize display, ie GCU or X11.
-  10: GCU event processing failed (ERR) when waiting.
-  11: GCU event processing failed (EOF) when waiting.
-  12: GCU event processing failed (any other error).
+  20: Startup failed - cannot initialize display, ie GCU or X11.
+  30: GCU event processing failed (ERR) when waiting.
+  31: GCU event processing failed (EOF) when waiting.
+  32: GCU event processing failed (any other error).
 Windows only:
- -10: Quit with various errors (before windows initialization).
- -11: Quit with various errors (after windows initialization).
-   1: Startup failed - cannot register window class.
-   2: Startup failed - cannot register window class.
+  10: Quit with various errors (before windows initialization).
+  11: Quit with various errors (after windows initialization).
+  20: Startup failed - cannot register window class.
+  21: Startup failed - cannot register window class.
 
 
 
