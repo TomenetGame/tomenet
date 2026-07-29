@@ -1439,8 +1439,8 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	}
 #endif
 	if (outdated) {
-		if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yFile '%s' has outdated option names. Overwrite it to fix.", name);
-		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' has outdated option names. Overwrite it to fix.\n", name));
+		if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yFile '%s' has outdated option names. Overwrite/delete it to fix.", name);
+		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' has outdated option names. Overwrite/delete it to fix.\n", name));
 		cfg_outdated = 1;
 	}
 	if (err == 2) {
