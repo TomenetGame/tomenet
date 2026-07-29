@@ -7788,10 +7788,10 @@ void do_cmd_activate(int Ind, int item, int dir) {
 						object_known(o_ptr);
 
 						/* log it */
-						s_printf("POLYRING_CREATE: %s -> %s (%d/%d, %d).\n",
+						s_printf("POLYRING_CREATE: %s -> %s (L%d/%d, %dt, %d Au).\n",
 						    p_ptr->name, r_info[o_ptr->pval].name + r_name,
 						    o_ptr->level, r_info[o_ptr->pval].level,
-						    o_ptr->timeout_magic);
+						    o_ptr->timeout_magic, price_poly_ring(0, o_ptr, 0));
 					}
 				}
 				/* activate the ring to change into its form! */
