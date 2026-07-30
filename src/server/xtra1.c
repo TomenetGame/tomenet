@@ -3808,7 +3808,7 @@ void calc_boni(int Ind) {
 				p_ptr->resist_pois = TRUE; csheet_boni[14].cb[1] |= CB2_RPOIS;
 				p_ptr->immune_fire = TRUE; csheet_boni[14].cb[0] |= CB1_IFIRE;
 				p_ptr->sh_fire = p_ptr->sh_fire_fix = TRUE; csheet_boni[14].cb[10] |= CB11_AFIRE;
-				/* 'fiery' light from the sh_fire aura (Hell Knight!): */
+				/* 'fiery' light from the SH_FIRE-like aura (Hell Knight!): */
 				p_ptr->cur_lite++;
 				csheet_boni[14].lite++;
 				csheet_boni[14].cb[12] |= CB13_XLITE;
