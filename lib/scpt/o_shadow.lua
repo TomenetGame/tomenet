@@ -281,13 +281,13 @@ SHADOWGATE = add_spell {
 	["fail"] = 	-50,
 	["spell"] = 	function()
 		--begin at ANNOY_DISTANCE as a minimum, to overcome
-		do_shadow_gate(Ind, 4 + get_level(Ind, SHADOWGATE, 12))
+		do_shadow_gate(Ind, 7 + get_level(Ind, SHADOWGATE, 12))
 		end,
 	["info"] = 	function()
 		if players(Ind).s_info[SKILL_CONVEYANCE + 1].value < 10000 then
 			return "REQ: Conveyance 10.000"
 		else
-			return "range "..(4 + get_level(Ind, SHADOWGATE, 12))
+			return "range "..(7 + get_level(Ind, SHADOWGATE, 12))
 		end
 	end,
 	["desc"] = 	{
