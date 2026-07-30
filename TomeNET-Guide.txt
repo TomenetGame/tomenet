@@ -175,6 +175,7 @@ Contents
     (6.1)  Monsters
     (6.1a) Normal, boss & unique monsters and how they spawn
     (6.2)  Monster flags
+    (6.2a) Unusual monster spells
     (6.3)  Loot tables, treasure classes
     (6.3a) Special item drops of monsters
     (6.4)  Monster attack mechanism, armour class, damage caps
@@ -17419,33 +17420,48 @@ actual file r_info.txt with a text editor or use Mikael's monster search, you
 can invoke that one via ~R ) are self-explanatory. Here is an explanation of
 some flags that are important but might not be obvious:
 
+DISBELIEVE      Monster has an anti-magic field, the strength depending on its
+                level.
+
 FORCE_MAXHP     The monster always gets rolled at maximum hit points.
                 For example if the monster has 3d6 hit points aka 3 dice with
                 6 sides each, it could have anything between 3 and 18 hp.
                 But if it has this flag, when you encounter this type of
                 monster it will always have 18 hp.
+
 FORCE_DEPTH     You cannot meet this monster out of depth. It will never appear
                 on a floor of lesser level that itself.
+
 FORCE_SLEEP     Deprecated, has no actual effect in-game.
                 A note about monster sleep in general: Check monster lore (~7)
                 to see which monsters start out asleep and which are awake.
                 Note that monsters inside a pit (see (4.6)) are never asleep.
+
 OOD_xx          The monster cannot occur more than xx levels out of depth.
                 All unique monsters actually have an intrinsic OOD_20 flag even
                 if it's not shown in the monster lore spoilers.
+
 FRIENDS         This monster comes in a pack. Makes life easier for mimics.
+
 RAND_xxx        This monster has random movement. The xxx number is the chance
                 in percent. Several of these flags will stack.
+
 NO_SLEEP        This does not mean that the monster cannot be asleep when you
                 meet it, but that you cannot use sleep spells (et al) on it.
                 (Compare (4.12).)
+
 NEVER_BLOW      This monster will never attack in melee.
+
 NEVER_ACT       This monster will never move or perform any action at all.
                 So this means it is completely harmless.
 
+
 NO_TARGET       This monster cannot be targetted with target command.
+
 NO_DEATH        This entity can never die.
+
 NO_AUTORET      You won't use auto-retaliation against this entity.
+
 
 REFLECTING      The monster can deflect shots, arrows and bolts, physical and
                 magical projectiles, prolonging the fight (flat 50% chance).
@@ -17457,25 +17473,23 @@ REFLECTING      The monster can deflect shots, arrows and bolts, physical and
                 greatly, not just attacks in bolt form.
                 Reflected attacks will not hurt you or other players or any
                 other entities/monsters but simply disappear harmlessly.
+
 HURT_LITE       This monster is susceptible to light attacks.
+
 HURT_ROCK       This monster is susceptible to stone-to-mud attacks.
 
+
 COLD_BLOOD      You cannot spot this monster with infra-vision.
+
 WEIRD_MIND      The monster flickers on ESP.
+
 EMPTY_MIND      The monster does not show up on ESP.
 
+
 SHAPECHANGER    The monster changes its appearance randomly and quickly.
+
 CHAR_CLEAR      The monster has no visible appearance, not even if you can see
                 invisible.
-
-UNMAGIC         Will cancel all temporary magical effects on the player,
-                except for mimic form (from polymorph ring) and martyr.
-HOLD            Paralyzes you from afar.
-FORGET          Blanks your mind, makes you forget the dungeon map and details
-                of your items (unidentifies items).
-TRAPS           Can place traps around you (from afar).
-DISBELIEVE      Monster has an anti-magic field, the strength depending on its
-                level.
 
                 Like training the 'Anti-magic' skill, having intrinsic anti-
                 magic from the DISBELIEVE flag will also shorten the duration
@@ -17486,6 +17500,7 @@ DISBELIEVE      Monster has an anti-magic field, the strength depending on its
                 (5.9).
 
 DROP_GOOD       The monster usually drops enchanted items.
+
 DROP_GREAT      The monster usually drops items with ego powers or artifacts.
                 Tip: Usually monsters that have this flag are pretty powerful,
                 but there are actually some low-to-mid-level monsters that have
@@ -17499,10 +17514,13 @@ DROP_GREAT      The monster usually drops items with ego powers or artifacts.
                 of their respective dungeon.
                 (For details on monster stats and flags, press ~ 7 in the game
                 to invoke the monster lore browser.)
+
 DROP_60         The monster has a 60%/90% chance to drop something (an item or
  DROP_90        a gold pile).
+
 ONLY_GOLD       The monster drops only gold (and no items) or only items (and
  ONLY_ITEM      no gold).
+
 DROP_CHOSEN     This monster drops additional, very specific loot.
                 See (6.3a) further below, for details.
 
@@ -17515,11 +17533,64 @@ POWERFUL        Harder to taunt, charm or silence. Cannot be blinded.
                 Cannot be slowed by martial arts slowing techniques.
                 Harder to repel by kinetic shield or to affect by aura of fear.
 
-TPORT           This is a spell flag rather than a normal flag. However, it is
-                noteworthy in that this not only allows a monster to teleport
-                at will, but also will cause it to try and teleport-follow the
-                player whenever he teleports away from it from within melee
-                range!
+
+(6.2a) Unusual monster spells
+-----------------------------
+Further, monsters may have one or more spells they can cast. Breathing elements
+and shooting or throwing boulders belong to those too (but aren't affected by
+anti-magic fields since they aren't 'real spells' but rather physical actions).
+
+Among the monster spells, such as casting bolt or ball spells, teleporting,
+healing, trying to blind/scare/confuse/paralyze/slow the player, summoning
+other monsters for help, or speeding itself up with a haste-self spell, there
+are some particularly special spells that will be explained here in more
+detail:
+
+SHRIEK          Not a real spell but a physical action, some monsters can emit
+                an aggravating noise that will wake up all nearby monsters and
+                even haste those within line-of-sight of the shrieker.
+                This can be extremely dangerous and you'll see a light red
+                message in the combat message log when a monster shrieks.
+                If you have the sound pack installed, you'll also clearly hear
+                it, which can help further to react quickly: On shallow levels
+                shrieking might not be that bad, but on deep levels it might
+                well be reason enough to teleport out instantly.
+                The haste effect is permanent, but most non-unique monsters can
+                be slowed down again by using any slowing magic.
+
+TRAPS           Again not a spell but nasty nevertheless. The monster casts a
+                3x3 'circle' of traps around you, watch where you step.
+
+UNMAGIC         This can be extremely nasty for istari. Unmagic cancels nearly
+                all kind of magic effects your character is currently under,
+                such as speed from a speed potion and even Disruption Shield.
+                This won't affect classes much such as warriors and archers but
+                is life-threatening if it neutralizes the Disruption Shield
+                of an Istar.
+                'Holy Martyr' and mimicry-forms either native or temporarily
+                gained from a ring of polymorphing are unaffected though.
+
+MIND_BLAST      A psionic attack spell that hurts your sanity and can cause
+                confusion and hallucinations.
+
+BRAIN_SMASH     A powerful psionic attack spell that hurts your sanity and can
+                cause blindness, confusion, paralysis and slowness.
+
+FORGET          Aka "Amnesia". This mind blanking spell will create darkness
+                around you, erase your map knowledge and makes you forget about
+                some or all of the items you are carrying, effectively
+                un-identifying them (you won't lose flavour knowledge though).
+                Saving throw, 'Willpower' spell and being a Mindcrafter help.
+
+HOLD            Although not so special and already mentioned further above
+                this spell is listed because it's a ranged paralysis spell.
+                Ghouls can do this for example, so make sure that you get
+                Free Action as early as possible, definitely before venturing
+                into Mordor though.
+
+TPORT           Not only allows a monster to teleport at will, but also will
+                cause it to try and teleport-follow the player whenever they
+                teleport away from it from within melee range!
 
                 To teleport-follow, when the player initiates teleportation,
                 the monster must stand adjacent to player (ie in melee range)
@@ -18074,48 +18145,7 @@ Last but not least the Black Breath is contagious and can be transmitted by an
 infected player bumping into another player (Bree and the Training Tower are
 safe zones though).
 
-
-Further, monsters may have one or more spells they can cast. Breathing elements
-and shooting or throwing boulders belong to those too (but aren't affected by
-anti-magic fields since they aren't 'real spells' but rather physical actions).
-
-Among the monster spells, such as casting bolt or ball spells, teleporting,
-healing, trying to blind/scare/confuse/paralyze/slow the player, summoning
-other monsters for help, or speeding itself up with a haste-self spell, there
-are some particularly special spells that will be explained here in more
-detail:
-
-SHRIEK          Not a real spell but a physical action, some monsters can emit
-                an aggravating noise that will wake up all nearby monsters and
-                even haste those within line-of-sight of the shrieker.
-                This can be extremely dangerous and you'll see a light red
-                message in the combat message log when a monster shrieks.
-                If you have the sound pack installed, you'll also clearly hear
-                it, which can help further to react quickly: On shallow levels
-                shrieking might not be that bad, but on deep levels it might
-                well be reason enough to teleport out instantly.
-                The haste effect is permanent, but most non-unique monsters can
-                be slowed down again by using any slowing magic.
-TRAPS           Again not a spell but nasty nevertheless. The monster casts a
-                3x3 'circle' of traps around you, watch where you step.
-UNMAGIC         This can be extremely nasty for istari. Unmagic cancels nearly
-                all kind of magic effects your character is currently under,
-                such as speed from a speed potion and even Disruption Shield.
-                This won't affect classes much such as warriors and archers but
-                is life-threatening if it neutralizes the Disruption Shield
-                of an Istar. (Note: Holy Martyr cannot be cancelled.)
-MIND_BLAST      A psionic attack spell that hurts your sanity and can cause
-                confusion and hallucinations.
-BRAIN_SMASH     A powerful psionic attack spell that hurts your sanity and can
-                cause blindness, confusion, paralysis and slowness.
-FORGET          This mind blanking spell will create darkness around you and
-                make you forget about some or all of the items you are carrying
-                effectively un-identifying them (except for flavoured items).
-HOLD            Although not so special and already mentioned in the text above
-                this spell is listed because it's a ranged paralysis spell.
-                Ghouls can do this for example, so make sure that you get
-                Free Action as early as possible, definitely before venturing
-                into Mordor though.
+For details on some monster spells that aren't self-explanatory, see (6.2a).
 
 
 
