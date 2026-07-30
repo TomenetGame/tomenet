@@ -1792,8 +1792,10 @@ bool lose_all_info(int Ind) {
 		if (!o_ptr->k_idx) continue;
 #endif
 
+#if 0 /* prob: Cannot *id* items that don't have hidden powers, and why should *id*ing help anyway */
 		/* Allow "protection" by the MENTAL flag */
 		if (o_ptr->ident & ID_MENTAL) continue;
+#endif
 
 		/* Remove "default inscriptions" */
 		if (o_ptr->note && (o_ptr->ident & ID_SENSE)) {
