@@ -4988,6 +4988,8 @@ following return values on exit:
 All systems:
    0: On successful run, the player quits the game.
    1: Server returned an unknown error in the process of logging in.
+      Note that this is also returned if you quit the game via ALT+F4 or by
+      clicking the main window's close-button (usually the 'x' button).
    2: Client quits with any error message
       (eg server timeout on connection attempt or server shutdown).
    3: Server quit to apply updates and should be back online within seconds.
