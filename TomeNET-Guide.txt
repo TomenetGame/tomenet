@@ -4986,10 +4986,10 @@ The executable binary 'tomenet' (POSIX) or 'TomeNET.exe' (Windows) gives the
 following return values on exit:
 
 All systems:
-   0: On successful run, the player quits the game.
-   1: Server returned an unknown error in the process of logging in.
+   0: On successful run, the player quits the game (usually via CTRL+Q).
       Note that this is also returned if you quit the game via ALT+F4 or by
       clicking the main window's close-button (usually the 'x' button).
+   1: Server returned an unknown error in the process of logging in.
    2: Client quits with any error message
       (eg server timeout on connection attempt or server shutdown).
    3: Server quit to apply updates and should be back online within seconds.
@@ -5003,6 +5003,10 @@ POSIX only:
   30: GCU event processing failed (ERR) when waiting.
   31: GCU event processing failed (EOF) when waiting.
   32: GCU event processing failed (any other error).
+ 128+ (signal-induced termination):
+      128 plus the signal number is returned for signal deaths,
+      eg 137 if TomeNET is forcibly killed ('kill -9' command) since SIGKILL is
+      signal 9, so 128 + 9 = 137.
 Windows only:
   10: Quit with various errors (before windows initialization).
   11: Quit with various errors (after windows initialization).

@@ -56,6 +56,8 @@
  *   is not necessarily either black or white.
  */
 
+/* Intercept ALT+F4 */
+static Atom wm_delete_window;
 
 /**** Available Types ****/
 
@@ -948,6 +950,11 @@ static errr Infowin_map (void) {
 	/* Execute the Mapping */
 	XMapWindow(Metadpy->dpy, Infowin->win);
 
+	/* Intercept ALT+F4 */
+	XMapWindow(Metadpy->dpy, Infowin->win);
+	wm_delete_window = XInternAtom(Metadpy->dpy, "WM_DELETE_WINDOW", False);
+	XSetWMProtocols(Metadpy->dpy, Infowin->win, &wm_delete_window, 1);
+
 	/* Success */
 	return(0);
 }
@@ -1548,6 +1555,23 @@ static errr CheckEvent(bool wait) {
 	/* Load the Event */
 	XNextEvent(Metadpy->dpy, xev);
 
+	/* Intercept ALT+F4 */
+	if (xev->type == ClientMessage) {
+		if ((Atom)xev->xclient.data.l[0] == wm_delete_window) {
+			/* Actually try to save window positions etc */
+			if (strcmp(ANGBAND_SYS, "gcu")) {
+#ifdef WINDOWS
+				save_term_data_to_term_prefs();
+#elif USE_X11
+				all_term_data_to_term_prefs();
+				write_mangrc(FALSE, FALSE, FALSE);
+#endif
+			}
+
+			/* Exit gracefully as intended */
+			exit(0);
+		}
+	}
 
 	/* Notice new keymaps */
 	if (xev->type == MappingNotify) {
