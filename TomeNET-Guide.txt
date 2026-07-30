@@ -14231,7 +14231,7 @@ powerful, rings of power dropped by Nazgul especially. Also, heavily cursed
 items, including artifacts (and excluding weapons of nothingness) will flip
 their negative values into positive ones when equipped by a true vampire (ie
 excluding mimicked ones) or hell knight (again excluding mimicry forms), or
-by a corrupted priest who has Blood Sacrifice active.
+by a corrupted priest who has Blood Sacrifice active, see (5.12) for details.
 Note that this flipping can sometimes fail for random artifacts though!
 
 Again - if you want to look up what certain special items can/cannot do, see
@@ -16361,8 +16361,9 @@ items may exert, making for example Morgul weapons and some heavily cursed
 true artifacts quite useful.
 Look up the Vampire race description in (7.4) for more information.
 
-Randarts however will not get 'flipped' but rather rerolled completely! This
-follows three rules:
+Randarts however will not get 'flipped' but rather rerolled completely, but
+only if its base item type isn't cursed per se (eg Amulet of Teleportation)!
+This follows three rules:
 a) the resulting randart won't be cursed,
 b) the resulting randart won't drain hitpoints of undead or demon users,
 c) the resulting randart keeps all 'good' abilities it might have had.
