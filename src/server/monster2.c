@@ -2225,8 +2225,9 @@ static void sanity_blast(int Ind, int m_idx, bool necro) {
 	}
 
 
-	if (randint(power)<p_ptr->skill_sav && /* Amnesia */
-	    !(p_ptr->pclass == CLASS_MINDCRAFTER && magik(50))) {
+	if (randint(power) > p_ptr->skill_sav && /* Amnesia */
+	    !(p_ptr->mindboost && magik(p_ptr->mindboost_power)) &&
+	    !(p_ptr->pclass == CLASS_MINDCRAFTER && magik(20))) {
 		if (lose_all_info(Ind)) msg_print(Ind, "You forget everything in your utmost terror!");
 		return;
 	}

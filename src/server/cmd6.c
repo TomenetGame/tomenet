@@ -789,19 +789,22 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 				if (set_paralyzed(Ind, p_ptr->paralyzed + rand_int(4) + 4)) ident = TRUE;
 			break;
 		case SV_POTION_LOSE_MEMORIES:
-			if (!p_ptr->hold_life && p_ptr->exp > 0) {
-				if (p_ptr->keep_life) {
-					if (lose_all_info(Ind)) msg_print(Ind, "Your memories fade.");
-					else msg_print(Ind, "You resist the effect.");
-					//msg_print(Ind, "You are unaffected!");
-				} else {
+			if (randint(100) > p_ptr->skill_sav / 2 && /* Amnesia */
+			    !(p_ptr->mindboost && magik(p_ptr->mindboost_power / 2)) &&
+			    !(p_ptr->pclass == CLASS_MINDCRAFTER && magik(20))) {
+				if (lose_all_info(Ind)) {
 					msg_print(Ind, "Your memories fade.");
-					lose_exp(Ind, p_ptr->exp / 6);
-					lose_all_info(Ind);
 					ident = TRUE;
 				}
-			} else if (lose_all_info(Ind)) msg_print(Ind, "Your memories fade.");
-			else msg_print(Ind, "You resist the effect.");
+			}
+			i = p_ptr->keep_life ? 0 : (p_ptr->exp / (p_ptr->hold_life ? 12 : 6));
+			if (!i) {
+				if (!ident) msg_print(Ind, "You resist the effect.");
+				break;
+			}
+			if (!ident) msg_print(Ind, "Your memories fade.");
+			lose_exp(Ind, i);
+			ident = TRUE;
 			break;
 		case SV_POTION_RUINATION:
 			msg_print(Ind, "Your nerves and muscles feel weak and lifeless!");

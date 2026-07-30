@@ -1931,7 +1931,8 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 		/* Trap of amnesia (and not lose_memory) */
 		case TRAP_OF_AMNESIA:
 			if (rand_int(100) < p_ptr->skill_sav ||
-			    (p_ptr->pclass == CLASS_MINDCRAFTER && magik(75)))
+			    (p_ptr->mindboost && magik(p_ptr->mindboost_power)) ||
+			    (p_ptr->pclass == CLASS_MINDCRAFTER && magik(20)))
 				msg_print(Ind, "You resist the effects!");
 			else if (lose_all_info(Ind)) {
 				msg_print(Ind, "Your memories fade away.");

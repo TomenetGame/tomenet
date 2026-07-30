@@ -3765,7 +3765,8 @@ bool make_attack_spell(int Ind, int m_idx) {
 #endif
 
 		if ((rand_int(100) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) /* An open mind invites psi attacks */
-		    || (p_ptr->pclass == CLASS_MINDCRAFTER && magik(75)))
+		    || (p_ptr->mindboost && magik(p_ptr->mindboost_power))
+		    || (p_ptr->pclass == CLASS_MINDCRAFTER && magik(20)))
 			msg_print(Ind, "You resist the effects!");
 		else if (lose_all_info(Ind))
 			msg_print(Ind, "Your memories fade away.");
@@ -6005,7 +6006,8 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 #endif
 
 		if ((rand_int(100) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) /* An open mind invites psi attacks */
-		    || (p_ptr->pclass == CLASS_MINDCRAFTER && magik(75)))
+		    || (p_ptr->mindboost && magik(p_ptr->mindboost_power))
+		    || (p_ptr->pclass == CLASS_MINDCRAFTER && magik(20)))
 			msg_print(Ind, "You resist the effects!");
 		else if (lose_all_info(Ind))
 			msg_print(Ind, "Your memories fade away.");
