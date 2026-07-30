@@ -1560,12 +1560,8 @@ static errr CheckEvent(bool wait) {
 		if ((Atom)xev->xclient.data.l[0] == wm_delete_window) {
 			/* Actually try to save window positions etc */
 			if (strcmp(ANGBAND_SYS, "gcu")) {
-#ifdef WINDOWS
-				save_term_data_to_term_prefs();
-#elif USE_X11
 				all_term_data_to_term_prefs();
 				write_mangrc(FALSE, FALSE, FALSE);
-#endif
 			}
 
 			/* Exit gracefully as intended */
