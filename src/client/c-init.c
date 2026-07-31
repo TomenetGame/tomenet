@@ -4380,7 +4380,7 @@ again:
 	path_build(buf, 1024, ANGBAND_DIR_USER, "bookmarks.tmp");
 	fp = fopen(buf, "r");
 	temp = 0;
-	while (fp && temp < GUIDE_BOOKMARKS && fscanf(fp, "%d,%s\n", &bookmark_line[temp], bookmark_name[temp]) != EOF) temp++;
+	while (fp && temp < GUIDE_BOOKMARKS && fscanf(fp, "%d,%[^\n]s\n", &bookmark_line[temp], bookmark_name[temp]) != EOF) temp++;
 	if (fp) fclose(fp);
 #endif
 
