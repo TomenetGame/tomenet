@@ -9293,26 +9293,27 @@ Chain_Macro:
 								fileset_stage_selected = f;
 								break;
 
-							case 'G': //write current macros to active stage
+							case 'G': { //write current macros to active stage
 								// get comment (optional)
-								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter a comment (optional): ");
-								tmpbuf[0] = 0;
-								if (!askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) fileset[fileset_selected].stage_comment[fileset_stage_selected][0] = 0;
-								else {
-									FILE *fp;
+								FILE *fp;
 
+								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter a new comment (optional): ");
+								strcpy(tmpbuf, fileset[fileset_selected].stage_comment[fileset_stage_selected]);
+								if (askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) /* change comment? (ENTER to clear comment, ESC to keep it as it is) */
 									strcpy(fileset[fileset_selected].stage_comment[fileset_stage_selected], tmpbuf);
+								//store comment in a separate file '<macroset-stage>.comment', otherwise hard to handle...
+								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.comment",
+								    fileset[fileset_selected].basefilename, fileset_stage_selected + 1));
+								fp = fopen(tmpbuf, "w");
+								if (fp) {
+									fprintf(fp, "%s", fileset[fileset_selected].stage_comment[fileset_stage_selected]);
+									fclose(fp);
+								} else c_msg_format("\377oError: couldn't write file '%s-FS%d.comment'.", fileset[fileset_selected].basefilename, fileset_stage_selected + 1);
 
-									//store comment in a separate file '<macroset-stage>.comment', otherwise hard to handle...
-									path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.comment",
-									    fileset[fileset_selected].basefilename, fileset_stage_selected + 1));
-									fp = fopen(tmpbuf, "w");
-									if (fp) {
-										fprintf(fp, "%s", fileset[fileset_selected].stage_comment[fileset_stage_selected]);
-										fclose(fp);
-									} else c_msg_format("\377oError: couldn't write file '%s-FS%d.comment'.", fileset[fileset_selected].basefilename, fileset_stage_selected + 1);
-								}
-								break;
+								/* Write all active macros to active set/stage: */
+								//...
+
+								break; }
 							}
 
 							/* Restart mw_fileset menu */
