@@ -9014,16 +9014,23 @@ Chain_Macro:
  #if 1
 								// get type (switching method)
 								Term_putstr(1, l, -1, TERM_L_GREEN, "Set the set type aka switching method (1 cyclic, 2 free-switch, 3 both): ");
-								n = -1;
 								while (TRUE) {
-									tmpbuf[0] = 0;
 									Term_gotoxy(74, l);
-									if (!askfor_aux(tmpbuf, 1, 0)) break;
-									n = atoi(tmpbuf);
+									n = inkey();
+									if (n == '\e') {
+										n = -1;
+										break;
+									}
+									n -= '0';
 									if (n < 1 || n > 3) continue;
 									break;
 								}
-								if (n == -1) continue;
+								if (n == -1) {
+									/* Abort: Erase newly started set-in-the-making again */
+									fileset[f].basefilename[0] = 0;
+									f = --filesets_found;
+									continue;
+								}
 								fileset[f].style_cyclic = (n % 2 != 0);
 								fileset[f].style_free = (n / 2 != 0);
  #else
@@ -9036,16 +9043,23 @@ Chain_Macro:
 
 								// get type (switching method)
 								Term_putstr(1, l++, -1, TERM_L_GREEN, "Set the set type aka switching method (1 cyclic, 2 free-switch, 3 both): ");
-								n = -1;
 								while (TRUE) {
-									tmpbuf[0] = 0;
 									Term_gotoxy(74, l);
-									if (!askfor_aux(tmpbuf, 1, 0)) break;
-									n = atoi(tmpbuf);
+									n = inkey();
+									if (n == '\e') {
+										n = -1;
+										break;
+									}
+									n -= '0';
 									if (n < 1 || n > 3) continue;
 									break;
 								}
-								if (n == -1) continue;
+								if (n == -1) {
+									/* Abort: Erase newly started set-in-the-making again */
+									fileset[f].basefilename[0] = 0;
+									f = --filesets_found;
+									continue;
+								}
 								fileset[f].style_cyclic = (n % 2 != 0);
 								fileset[f].style_free = (n / 2 != 0);
 								if (fileset[f].style_cyclic) {
@@ -9073,6 +9087,7 @@ Chain_Macro:
 
 								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/1+2)
 								if (fileset[f].style_cyclic) { //ask for set-global cycling-key
+									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
 										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as macro-cycling trigger: ");
 										tmpbuf[0] = 0;
@@ -9094,8 +9109,10 @@ Chain_Macro:
 									strcpy(fileset[k].macro__patbuf__cycle, buftxt_pat);
 
 									/* Forge macro action (in human-readable format) */
-									sprintf(tmpbuf, ":%%:TEST-CYCLIC\r");
-									//"\e):%:Cycling\sto\sset\sTESTSET\r\e)%ldummyset-FS3.prf\r\e"
+
+									/* Start with meaningless placeholder stages, ie ourself: 'cycle from stage 1 to stage 1 of 1' ^^
+									   - to be replaced later with the addition of more stages... */
+									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> Cycling\\sto\\sstage\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e", fileset[f].basefilename, fileset[f].basefilename);
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
@@ -9109,6 +9126,7 @@ Chain_Macro:
 									macro_add(buf_pat, buf_act, FALSE, FALSE);
 								}
 								if (fileset[f].style_free) { //ask for stage-specific switching-key
+									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
 										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as stage 1-specific trigger: ");
 										tmpbuf[0] = 0;
@@ -9130,8 +9148,10 @@ Chain_Macro:
 									strcpy(fileset[k].macro__patbuf__switch[fileset_stage_selected], buftxt_pat);
 
 									/* Forge macro action (in human-readable format) */
-									sprintf(tmpbuf, ":%%:TEST-FREESW\r");
-									//"\e):%:Switching\sto\sset\sTESTSET\r\e)%ldummyset-FS3.prf\r\e"
+
+									/* Start with meaningless placeholder stages, ie ourself: 'switch from stage 1 to stage 1 of 1' ^^
+									   - to be replaced later with the addition of more stages... */
+									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> Switching\\sto\\sstage\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e", fileset[f].basefilename, fileset[f].basefilename);
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
