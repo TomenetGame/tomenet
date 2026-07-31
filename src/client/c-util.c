@@ -9267,15 +9267,23 @@ Chain_Macro:
 								break;
 
 							case 'G': //write current macros to active stage
- #if 0
-								// get comment
+								// get comment (optional)
 								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter a comment (optional): ");
 								tmpbuf[0] = 0;
-								if (!askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) fileset[f].comment[0] = 0;
-								strcpy(fileset[f].comment, tmpbuf);
-								//store comment in a separate file '<macroset-stage>.comment', otherwise hard to handle...
- #endif
+								if (!askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) fileset[fileset_selected].stage_comment[fileset_stage_selected][0] = 0;
+								else {
+									FILE *fp;
 
+									strcpy(fileset[fileset_selected].stage_comment[fileset_stage_selected], tmpbuf);
+
+									//store comment in a separate file '<macroset-stage>.comment', otherwise hard to handle...
+									path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.comment", fileset[fileset_selected].basefilename, fileset_stage_selected + 1));
+									fp = fopen(tmpbuf, "w");
+									if (fp) {
+										fprintf(fp, "%s", fileset[fileset_selected].stage_comment[fileset_stage_selected]);
+										fclose(fp);
+									} else c_msg_format("\377oError: couldn't write file '%s-FS%d.comment'.", fileset[fileset_selected].basefilename, fileset_stage_selected + 1);
+								}
 								break;
 							}
 
