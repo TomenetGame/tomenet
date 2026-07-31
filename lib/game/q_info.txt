@@ -435,7 +435,7 @@ I:0:2:1:100:FFFFF:FFFF:1:1:1:0:0:1
 T:1:1:1:1:1:1:1:1:1:-1:-1
 
 # Questor 0, the guard who offers the quest in Bree.
-Q:1:1:863:0:0:863:C:-1:-1:the Bree guard:1
+Q:1:1:863:0:0:863:U:-1:-1:the Bree guard:1
 L:0:0:0:32:32:0:0:117:41:0:-:0:0
 F:0:1:1:0:1:0:0
 
