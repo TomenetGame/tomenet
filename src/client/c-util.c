@@ -5780,6 +5780,7 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 				/* Set is purely from disk, not referenced by loaded macros in memory */
 				fileset[k].currently_referenced = FALSE;
 
+
 				/* One more registered macroset */
 				filesets_found++;
 			}
@@ -5840,6 +5841,11 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 			c_msg_format("\377y            has no files for these stages: %s.", tmpbuf);
 		}
 	}
+
+	/* Lastly, for all macro sets and their stages, scan for optional stage comment of each stage (separate file for easiest handling) */
+	//...
+	//path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.comment", fileset[fileset_selected].basefilename, fileset_stage_selected + 1));
+	//...
 
 	/* all done, return # of sets found */
 	return(filesets_found);
@@ -8986,7 +8992,7 @@ Chain_Macro:
 							/* Perform selected action */
 							if (screen_hgt == MAX_SCREEN_HGT) Term_putstr(40, l++, -1, TERM_GREEN, format("(%c)", choice));
 							switch (choice) {
-/* 	#define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset" #define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
+/* 	#define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sstage" #define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sstage"
 	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles) bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
 	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended
 	char macro__pat__cycle[32]; char macro__patbuf__cycle[32]; char macro__act__cycle[160]; char macro__actbuf__cycle[160];
@@ -9112,7 +9118,8 @@ Chain_Macro:
 
 									/* Start with meaningless placeholder stages, ie ourself: 'cycle from stage 1 to stage 1 of 1' ^^
 									   - to be replaced later with the addition of more stages... */
-									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> Cycling\\sto\\sstage\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e", fileset[f].basefilename, fileset[f].basefilename);
+									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e",
+									    fileset[f].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[f].basefilename);
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
@@ -9151,7 +9158,8 @@ Chain_Macro:
 
 									/* Start with meaningless placeholder stages, ie ourself: 'switch from stage 1 to stage 1 of 1' ^^
 									   - to be replaced later with the addition of more stages... */
-									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> Switching\\sto\\sstage\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e", fileset[f].basefilename, fileset[f].basefilename);
+									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e",
+									    fileset[f].basefilename, MACROFILESET_MARKER_SWITCH, fileset[f].basefilename);
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
@@ -9186,8 +9194,6 @@ Chain_Macro:
 										ascii_to_text(buftxt_act, buf_act);
 
 										/* Scan macro for marker text, indicating that it's a set-switch */
-										// (note: MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset")
-										// (note: MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset")
 										if ((cc = strstr(buftxt_act, MACROFILESET_MARKER_CYCLIC))) style_cyclic = TRUE;
 										if ((cf = strstr(buftxt_act, MACROFILESET_MARKER_SWITCH))) style_free = TRUE;
 
@@ -9277,7 +9283,8 @@ Chain_Macro:
 									strcpy(fileset[fileset_selected].stage_comment[fileset_stage_selected], tmpbuf);
 
 									//store comment in a separate file '<macroset-stage>.comment', otherwise hard to handle...
-									path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.comment", fileset[fileset_selected].basefilename, fileset_stage_selected + 1));
+									path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.comment",
+									    fileset[fileset_selected].basefilename, fileset_stage_selected + 1));
 									fp = fopen(tmpbuf, "w");
 									if (fp) {
 										fprintf(fp, "%s", fileset[fileset_selected].stage_comment[fileset_stage_selected]);
