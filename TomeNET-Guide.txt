@@ -3590,9 +3590,9 @@ Wormy       Wormtongue, Agent of Saruman. He drops great items.
 (1.1) What is TomeNET? (Where can I get the latest sources?)
 ------------------------------------------------------------
 TomeNET is an online multiplayer rogue-like role-playing game, derived from
-MAngband (Multiplayer-Angband). It's based on the stories of J.R.R. Tolkien
-mainly, hence the name "the Troubles of Middle Earth" or alternatively also
-spelled out "the Tales of Middle Earth".
+the original 'Angband' via 'MAngband' (Multiplayer-Angband). It's based on the
+stories of J.R.R. Tolkien mainly, hence the name "the Troubles of Middle Earth"
+or alternatively also spelled out "the Tales of Middle Earth".
 The final goal in TomeNET is to destroy the fallen god Melkor who is known by
 the name of Morgoth, Lord of Darkness. The official websites are mentioned in
 the first couple of lines of this guide.
