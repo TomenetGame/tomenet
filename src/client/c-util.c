@@ -9207,6 +9207,7 @@ Chain_Macro:
 										   Assume filename has this format "basename-FSn.prf" where n is the stage number: 0...MACROFILESETS_STAGES_MAX */
 										/* If this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
 										   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
+										   -- actually, store 'comment' in a separate '<macrosetname-stage>.comment' file instead! Hard to handle otherwise. --
 										   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
 										if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
 
@@ -9272,6 +9273,7 @@ Chain_Macro:
 								tmpbuf[0] = 0;
 								if (!askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) fileset[f].comment[0] = 0;
 								strcpy(fileset[f].comment, tmpbuf);
+								//store comment in a separate file '<macroset-stage>.comment', otherwise hard to handle...
  #endif
 
 								break;
