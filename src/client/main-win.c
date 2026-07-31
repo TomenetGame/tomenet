@@ -5690,51 +5690,18 @@ void save_term_data_to_term_prefs(void) {
 static void hook_quit(cptr str) {
 	RECT rc;
 	int i, res = save_chat;
-	char buf[1024];
 
-#if 0
-#ifdef USE_SOUND_2010
-	/* let the sound fade out, also helps the user to realize
-	   he's been disconnected or something - C. Blue */
- #ifdef SOUND_SDL
-	mixer_fadeall();
- #endif
-#endif
-#endif
 	Net_cleanup();
 
 	c_quit = 1;
 
 	/* Give a warning */
 	if (!quit_no_prompt) {
-		if (str && *str) MessageBox(data[0].w, str, "Error", MB_OK | MB_ICONSTOP);
+		if (str && *str) MessageBox(data[0].w, str, "Quitting", MB_OK | MB_ICONSTOP);
 	}
 
-	if (save_chat != 3) {
-		/* Copied from quit_hook in c-init.c - mikaelh */
-		if (message_num() && (res || (res = get_3way("Save chat log/all messages?", TRUE)))) {
-			FILE *fp;
-			char buf[80], buf2[1024];
-			time_t ct = time(NULL);
-			struct tm* ctl = localtime(&ct);
-
-			if (res == 1) strcpy(buf, "tomenet-chat_");
-			else strcpy(buf, "tomenet-messages_");
-			strcat(buf, format("%04d-%02d-%02d_%02d-%02d-%02d",
-			    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
-			    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
-			strcat(buf, ".txt");
-
-			i = message_num();
-			if (!save_chat) get_string("Filename:", buf, 79);
-			path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
-			fp = my_fopen(buf2, "w");
-			if (fp != (FILE*)NULL) {
-				dump_messages_aux(fp, i, 2 - res, FALSE);
-				fclose(fp);
-			}
-		}
-	}
+	if (save_chat != 3 && message_num() && (res || (!quit_no_prompt && (res = get_3way("Save chat log/all messages?", TRUE)))))
+		do_save_chat(res, !save_chat && !quit_no_prompt);
 
 #if 1
 #ifdef USE_SOUND_2010
@@ -5746,25 +5713,16 @@ static void hook_quit(cptr str) {
 #endif
 #endif
 
-	/* Remember chat input history across logins */
-	/* Only write history if we have at least one line though */
-	if (hist_chat_end || hist_chat_looped) {
-		FILE *fp;
-		path_build(buf, 1024, ANGBAND_DIR_USER, format("chathist-%s.tmp", nick));
-		fp = fopen(buf, "w");
-		if (!hist_chat_looped) {
-			for (i = 0; i < hist_chat_end; i++) {
-				if (!message_history_chat[i][0]) continue;
-				fprintf(fp, "%s\n", message_history_chat[i]);
-			}
-		} else {
-			for (i = hist_chat_end; i < hist_chat_end + MSG_HISTORY_MAX; i++) {
-				if (!message_history_chat[i % MSG_HISTORY_MAX][0]) continue;
-				fprintf(fp, "%s\n", message_history_chat[i % MSG_HISTORY_MAX]);
-			}
-		}
-		fclose(fp);
-	}
+	do_save_chatinput();
+
+#ifdef GUIDE_BOOKMARKS
+	do_save_guidebookmarks();
+#endif
+
+#ifdef RETRY_LOGIN
+	/* don't kill the windows and all */
+	if (rl_connection_state >= 2) return;
+#endif
 
 	/* Hack - Save the window positions before destroying them - mikaelh */
 	/* Main window */
@@ -5783,11 +5741,6 @@ static void hook_quit(cptr str) {
 	         which can be modified with new '=f' option - C. Blue */
 	/* Note: This takes time with anti-virus on */
 	save_prefs();
-
-#ifdef RETRY_LOGIN
-	/* don't kill the windows and all */
-	if (rl_connection_state >= 2) return;
-#endif
 
 	/* Destroy the windows */
 	/* Sub-Windows */
@@ -5848,8 +5801,18 @@ static void hook_quit(cptr str) {
 
 	WSACleanup();
 
-	if (str) exit(11);
-	exit(0);
+	/* User-intended quitting */
+	if (!str) exit(0);
+
+	/* Something happened to force quitting */
+	/* Catch server termination/update to return specific value for each */
+	if (!strcmp(str, "Terminating") || /* Server-side */
+	    strstr(str, "maintenance")) /* Client-side */
+		(void)(exit(4));
+	else if (strstr(str, "updated"))
+		(void)(exit(3));
+	/* Any error, eg server timeout */
+	exit(2);
 }
 
 

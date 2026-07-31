@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 29. July 2026 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 31. July 2026 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -4991,7 +4991,7 @@ All systems:
       clicking the main window's close-button (usually the 'x' button).
    1: Server returned an unknown error in the process of logging in.
    2: Client quits with any error message
-      (eg server timeout on connection attempt or server shutdown).
+      (eg server timeout on connection attempt).
    3: Server quit to apply updates and should be back online within seconds.
    4: Unlike normal server shutdowns which just apply updates and have the
      server back up and running within seconds, this code means that the

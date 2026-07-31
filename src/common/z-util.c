@@ -307,7 +307,7 @@ void quit(cptr str) {
 		return;
 	}
 
-	/* Success */
+	/* User-intended quitting */
 	if (!str) (void)(exit(0));
 
 	/* Extract a "special error code" --- apparently unused (take care not to collide with the already existing, static ones) */
@@ -317,15 +317,14 @@ void quit(cptr str) {
 	if (str) plog(buf);
 	plog("Quitting!");
 
-	/* Failure */
+	/* Something happened to force quitting */
 	if (!strcmp(str, "Terminating") || /* Server-side */
-	    strstr(str, "maintenance")) { /* Client-side */
+	    strstr(str, "maintenance")) /* Client-side */
 		(void)(exit(4));
-	} else if (strstr(str, "updated")) {
+	else if (strstr(str, "updated"))
 		(void)(exit(3));
-	} else {
-		(void)(exit(2));
-	}
+	/* Any error, eg server timeout */
+	(void)(exit(2));
 }
 
 

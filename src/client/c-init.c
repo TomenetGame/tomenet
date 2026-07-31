@@ -3402,16 +3402,6 @@ void do_save_guidebookmarks(void) {
 static void quit_hook(cptr s) {
 	int res = save_chat, j;
 
-#if 0
-#ifdef USE_SOUND_2010
-	/* let the sound fade out, also helps the user to realize
-	   he's been disconnected or something - C. Blue */
- #ifdef SOUND_SDL
-	mixer_fadeall();
- #endif
-#endif
-#endif
-
 	Net_cleanup();
 
 	c_quit = 1;
@@ -3452,6 +3442,10 @@ static void quit_hook(cptr s) {
 	if (!strcmp(ANGBAND_SYS, "gcu")) gcu_restore_colours();
 #endif
 
+#ifndef WINDOWS
+	write_mangrc(FALSE, FALSE, FALSE);
+#endif
+
 	/* Nuke each term */
 	for (j = ANGBAND_TERM_MAX - 1; j >= 0; j--) {
 		/* Unused */
@@ -3463,10 +3457,6 @@ static void quit_hook(cptr s) {
 
 	/* plog_hook must not be called anymore because the terminal is gone */
 	plog_aux = NULL;
-
-#ifndef WINDOWS
-	write_mangrc(FALSE, FALSE, FALSE);
-#endif
 }
 
 
