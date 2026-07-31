@@ -9011,7 +9011,7 @@ Chain_Macro:
 								f = filesets_found++;
 								strcpy(fileset[f].basefilename, tmpbuf);
 
-#if 1
+ #if 1
 								// get type (switching method)
 								Term_putstr(1, l, -1, TERM_L_GREEN, "Set the set type aka switching method (1 cyclic, 2 free-switch, 3 both): ");
 								n = -1;
@@ -9026,7 +9026,7 @@ Chain_Macro:
 								if (n == -1) continue;
 								fileset[f].style_cyclic = (n % 2 != 0);
 								fileset[f].style_free = (n / 2 != 0);
-#else
+ #else
 								/* --- do the rest in a new, cleared screen perhaps, so there is room for explanations --- */
 
 								l = 0;
@@ -9056,7 +9056,7 @@ Chain_Macro:
 								} else if (fileset[f].style_free) Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377sFreeSw");
 								else Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377s------");
 								l++;
-#endif
+ #endif
 								// auto-select set and its first stage
 								fileset_selected = f;
 								fileset[f].stages = 1;
@@ -9246,13 +9246,13 @@ Chain_Macro:
 								break;
 
 							case 'G': //write current macros to active stage
-#if 0
+ #if 0
 								// get comment
 								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter a comment (optional): ");
 								tmpbuf[0] = 0;
 								if (!askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) fileset[f].comment[0] = 0;
 								strcpy(fileset[f].comment, tmpbuf);
-#endif
+ #endif
 
 								break;
 							}
