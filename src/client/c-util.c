@@ -9297,7 +9297,7 @@ Chain_Macro:
 								// get comment (optional)
 								FILE *fp;
 
-								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter a new comment (optional): ");
+								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter new comment (ESC to skip): ");
 								strcpy(tmpbuf, fileset[fileset_selected].stage_comment[fileset_stage_selected]);
 								if (askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) /* change comment? (ENTER to clear comment, ESC to keep it as it is) */
 									strcpy(fileset[fileset_selected].stage_comment[fileset_stage_selected], tmpbuf);
