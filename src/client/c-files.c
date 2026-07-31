@@ -1890,7 +1890,7 @@ errr file_character(cptr name, bool quiet) {
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
-	/* File type is "TEXT" */
+	/* File type is "TEXT" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_TEXT);
 
 	/* Open the non-existing file */

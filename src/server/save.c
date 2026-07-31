@@ -1792,7 +1792,7 @@ static bool save_player_aux(int Ind, char *name) {
 	/* No file yet */
 	fff = NULL;
 
-	/* File type is "SAVE" */
+	/* File type is "SAVE" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_SAVE);
 
 	/* Create the savefile */
@@ -1843,7 +1843,7 @@ static bool save_player_activitytime(int Ind, char *pname) {
 	/* No file yet */
 	fff = NULL;
 
-	/* File type is "SAVE" */
+	/* File type is "SAVE" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_SAVE);
 
 	strcpy(name, format("%s.activitytime", pname));
@@ -2014,7 +2014,7 @@ static void verify_player_activitytime(int Ind) {
 	/* No file yet */
 	fff = NULL;
 
-	/* File type is "SAVE" */
+	/* File type is "SAVE" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_SAVE);
 
 	strcpy(pname, p_ptr->name);
@@ -2823,7 +2823,7 @@ static bool save_server_aux(char *name) {
 	/* No file yet */
 	fff = NULL;
 
-	/* File type is "SAVE" */
+	/* File type is "SAVE" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_SAVE);
 
 	/* Create the savefile */
@@ -3303,7 +3303,10 @@ static bool save_quests_aux(char *name) {
 	int	mode = 0644;
 
 	fff = NULL;
+
+	/* File type is "SAVE" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_SAVE);
+
 	fd = fd_make(name, mode);
 	if (fd >= 0) {
 		(void)fd_close(fd);

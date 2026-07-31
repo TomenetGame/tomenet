@@ -3337,8 +3337,10 @@ void do_save_chat(int res, bool ask_to_confirm_filename) {
 
 	i = message_num();
 	if (ask_to_confirm_filename) get_string("Filename:", buf, 79);
-	/* maybe one day we'll get a Mac client */
+
+	/* maybe one day we'll get a Mac client -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_TEXT);
+
 	path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
 	fp = my_fopen(buf2, "w");
 	if (fp != (FILE*)NULL) {

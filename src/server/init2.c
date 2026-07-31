@@ -262,7 +262,7 @@ void show_news(void) {
 
 	/* Failure */
 	if (fd < 0) {
-		/* File type is "DATA" */
+		/* File type is "DATA" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 		FILE_TYPE(FILE_TYPE_DATA);
 
 		/* Create a new high score file */
@@ -760,7 +760,7 @@ static errr init_s_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	/*** Dump the binary image file ***/
 
-	/* File type is "DATA" */
+	/* File type is "DATA" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_DATA);
 
 	/* Build the filename */
@@ -1357,7 +1357,7 @@ static errr init_d_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	/*** Dump the binary image file ***/
 
-	/* File type is "DATA" */
+	/* File type is "DATA" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_DATA);
 
 	/* Build the filename */
@@ -1763,7 +1763,7 @@ static errr init_st_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	/*** Dump the binary image file ***/
 
-	/* File type is "DATA" */
+	/* File type is "DATA" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_DATA);
 
 	/* Build the filename */
@@ -1988,7 +1988,7 @@ static errr init_ow_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	/*** Dump the binary image file ***/
 
-	/* File type is "DATA" */
+	/* File type is "DATA" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_DATA);
 
 	/* Build the filename */
@@ -2209,7 +2209,7 @@ static errr init_ba_info(void) {
 #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	/*** Dump the binary image file ***/
 
-	/* File type is "DATA" */
+	/* File type is "DATA" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_DATA);
 
 	/* Build the filename */
@@ -2413,8 +2413,9 @@ static errr init_q_info(void) {
  #ifdef USE_RAW_FILES	/* Don't delete it or I'LL SCORCH YOU!	- Jir - */
 	/*** Dump the binary image file ***/
 
-	/* File type is "DATA" */
+	/* File type is "DATA" -- only for ancient MACINTOSH/applec, so actually dead code (void(0)), as modern MacOS is POSIX */
 	FILE_TYPE(FILE_TYPE_DATA);
+
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_DATA, "q_info.raw");
 	/* Grab permission */
