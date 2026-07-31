@@ -5843,9 +5843,22 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	}
 
 	/* Lastly, for all macro sets and their stages, scan for optional stage comment of each stage (separate file for easiest handling) */
-	//...
-	//path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.comment", fileset[fileset_selected].basefilename, fileset_stage_selected + 1));
-	//...
+	for (k = 0; k < filesets_found; k++) {
+		for (f = 0; f < fileset[k].stages; f++) {
+			if (!fileset[k].stage_file_exists[f]) continue;
+			path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.comment", fileset[k].basefilename, f + 1));
+			if (my_fexists(tmpbuf)) {
+				FILE *fp;
+
+				fp = fopen(tmpbuf, "r");
+				if (fp) {
+					fgets(fileset[k].stage_comment[f], MACROSET_COMMENT_LEN, fp);
+					fileset[k].stage_comment[f][MACROSET_COMMENT_LEN - 1] = 0;
+					fclose(fp);
+				} else c_msg_format("\377oError: couldn't read file '%s-FS%d.comment'.", fileset[k].basefilename, f + 1);
+			}
+		}
+	}
 
 	/* all done, return # of sets found */
 	return(filesets_found);
@@ -8883,6 +8896,12 @@ Chain_Macro:
 								if (fileset_selected != -1) {
 									l++;
 									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("And with the currently selected fileset (\377v%d\377-) you may...", fileset_selected + 1));
+
+									/* urgh, low on space, we somehow squeeze the stage comment in there */
+									if (fileset_stage_selected != -1)
+										Term_putstr(xoffset1 + 55, l - 1, -1, TERM_GREEN,
+										    format("\377g('\377s%s\377g')", fileset[fileset_selected].stage_comment[fileset_stage_selected]));
+
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GA\377-) Modify its switching keys");
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GB\377-) Change its switching method");
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, ok_swap_stages ? "\377GC\377-) Swap two stages" : "\377DC) Swap two stages");
@@ -8940,6 +8959,12 @@ Chain_Macro:
 
 								if (fileset_selected != -1) {
 									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("With the currently selected fileset (\377v%d\377-) you may...", fileset_selected + 1));
+
+									/* urgh, low on space, we somehow squeeze the stage comment in there */
+									if (fileset_stage_selected != -1)
+										Term_putstr(xoffset1 + 51, l - 1, -1, TERM_GREEN,
+										    format("\377g('\377s%s\377g')", fileset[fileset_selected].stage_comment[fileset_stage_selected]));
+
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GA\377-) Modify its switching keys");
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GB\377-) Change its switching method");
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, ok_swap_stages ? "\377GC\377-) Swap two stages" : "\377DC) Swap two stages");
