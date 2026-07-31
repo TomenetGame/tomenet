@@ -1558,11 +1558,26 @@ static errr CheckEvent(bool wait) {
 	/* Intercept ALT+F4 */
 	if (xev->type == ClientMessage) {
 		if ((Atom)xev->xclient.data.l[0] == wm_delete_window) {
+			int res = save_chat;
+
 			/* Actually try to save window positions etc */
 			if (strcmp(ANGBAND_SYS, "gcu")) {
 				all_term_data_to_term_prefs();
 				write_mangrc(FALSE, FALSE, FALSE);
 			}
+
+			/* Also auto-save chat in case we gave that command-line arg */
+
+			if (save_chat != 3 && message_num() && (res || (!quit_no_prompt && (res = get_3way("Save chat log/all messages?", TRUE)))))
+				do_save_chat(res, !save_chat && !quit_no_prompt);
+
+			/* In any case, save chat input and guide bookmarks */
+
+			do_save_chatinput();
+
+#ifdef GUIDE_BOOKMARKS
+			do_save_guidebookmarks();
+#endif
 
 			/* Exit gracefully as intended */
 			exit(0);

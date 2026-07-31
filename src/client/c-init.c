@@ -3309,70 +3309,47 @@ static void display_message(cptr msg, cptr title) {
 	Term_load();
 }
 
+/* Save our chat or messages+chat history to text file.
+   'res':
+   0 - don't save chat
+   1 - save chat only
+   2 - save both chat and messages */
+void do_save_chat(int res, bool ask_to_confirm_filename) {
+	FILE *fp;
+	char buf[80], buf2[1024];
+	int i;
+	time_t ct = time(NULL);
+	struct tm* ctl = localtime(&ct);
 
-/*
- * A hook for "quit()".
- *
- * Close down, then fall back into "quit()".
- */
-static void quit_hook(cptr s) {
-	int j, res = save_chat;
+	/* We don't want to save? */
+	if (!res) return;
+	/* We don't have any messages at all (including chat)? */
+	if (!message_num()) return;
+	/* We want to save only chat, but we don't have any 'important-scrollback messages'? (Chat is always of this category.) */
+	if (res == 1 && !message_num_impscroll()) return;
+
+	if (res == 1) strcpy(buf, "tomenet-chat_");
+	else strcpy(buf, "tomenet-messages_");
+	strcat(buf, format("%04d-%02d-%02d_%02d-%02d-%02d",
+	    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
+	    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
+	strcat(buf, ".txt");
+
+	i = message_num();
+	if (ask_to_confirm_filename) get_string("Filename:", buf, 79);
+	/* maybe one day we'll get a Mac client */
+	FILE_TYPE(FILE_TYPE_TEXT);
+	path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
+	fp = my_fopen(buf2, "w");
+	if (fp != (FILE*)NULL) {
+		dump_messages_aux(fp, i, 2 - res, FALSE);//FALSE
+		fclose(fp);
+	} else logprint(format("Error: Cannot save chat/message history to %s.\n", buf2));
+}
+
+void do_save_chatinput(void) {
+	int j;
 	char buf[1024];
-
-#if 0
-#ifdef USE_SOUND_2010
-	/* let the sound fade out, also helps the user to realize
-	   he's been disconnected or something - C. Blue */
- #ifdef SOUND_SDL
-	mixer_fadeall();
- #endif
-#endif
-#endif
-
-	Net_cleanup();
-
-	c_quit = 1;
-
-	/* Display the quit reason */
-	if (s && *s) display_message(s, "Quitting");
-
-	if (save_chat != 3) {
-		if (message_num() && (res || (res = get_3way("Save chat log/all messages?", TRUE)))) {
-			FILE *fp;
-			char buf[80], buf2[1024];
-			int i;
-			time_t ct = time(NULL);
-			struct tm* ctl = localtime(&ct);
-
-			if (res == 1) strcpy(buf, "tomenet-chat_");
-			else strcpy(buf, "tomenet-messages_");
-			strcat(buf, format("%04d-%02d-%02d_%02d-%02d-%02d",
-			    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday,
-			    ctl->tm_hour, ctl->tm_min, ctl->tm_sec));
-			strcat(buf, ".txt");
-
-			i = message_num();
-			if (!save_chat) get_string("Filename:", buf, 79);
-			/* maybe one day we'll get a Mac client */
-			FILE_TYPE(FILE_TYPE_TEXT);
-			path_build(buf2, 1024, ANGBAND_DIR_USER, buf);
-			fp = my_fopen(buf2, "w");
-			if (fp != (FILE*)NULL) {
-				dump_messages_aux(fp, i, 2 - res, FALSE);//FALSE
-				fclose(fp);
-			} else logprint(format("Error: Cannot save chat/message history to %s.\n", buf2));
-		}
-	}
-
-#if 1
-#ifdef USE_SOUND_2010
-	/* let the sound fade out, also helps the user to realize
-	   he's been disconnected or something - C. Blue */
- #ifdef SOUND_SDL
-	mixer_fadeall();
- #endif
-#endif
-#endif
 
 	/* Remember chat input history across logins */
 	/* Only write history if we have at least one line though */
@@ -3396,22 +3373,69 @@ static void quit_hook(cptr s) {
 			fclose(fp);
 		} else logprint(format("Error: Cannot save chat history to chathist-%s.tmp.\n", nick));
 	}
+}
 
 #ifdef GUIDE_BOOKMARKS
-	/* Save guide bookmarks */
-	{
-		FILE *fp;
+/* Save guide bookmarks */
+void do_save_guidebookmarks(void) {
+	int j;
+	char buf[1024];
+	FILE *fp;
 
-		path_build(buf, 1024, ANGBAND_DIR_USER, "bookmarks.tmp");
-		fp = fopen(buf, "w");
-		if (fp) {
-			for (j = 0; j < GUIDE_BOOKMARKS; j++) {
-				if (!bookmark_line[j]) continue;
-				fprintf(fp, "%d,%s\n", bookmark_line[j], bookmark_name[j]);
-			}
-			fclose(fp);
-		} else logprint("Error: Cannot save guide bookmarks to bookmarks.tmp.\n");
-	}
+	path_build(buf, 1024, ANGBAND_DIR_USER, "bookmarks.tmp");
+	fp = fopen(buf, "w");
+	if (fp) {
+		for (j = 0; j < GUIDE_BOOKMARKS; j++) {
+			if (!bookmark_line[j]) continue;
+			fprintf(fp, "%d,%s\n", bookmark_line[j], bookmark_name[j]);
+		}
+		fclose(fp);
+	} else logprint("Error: Cannot save guide bookmarks to bookmarks.tmp.\n");
+}
+#endif
+
+/*
+ * A hook for "quit()".
+ *
+ * Close down, then fall back into "quit()".
+ */
+static void quit_hook(cptr s) {
+	int res = save_chat, j;
+
+#if 0
+#ifdef USE_SOUND_2010
+	/* let the sound fade out, also helps the user to realize
+	   he's been disconnected or something - C. Blue */
+ #ifdef SOUND_SDL
+	mixer_fadeall();
+ #endif
+#endif
+#endif
+
+	Net_cleanup();
+
+	c_quit = 1;
+
+	/* Display the quit reason */
+	if (s && *s) display_message(s, "Quitting");
+
+	if (save_chat != 3 && message_num() && (res || (!quit_no_prompt && (res = get_3way("Save chat log/all messages?", TRUE)))))
+		do_save_chat(res, !save_chat && !quit_no_prompt);
+
+#if 1
+#ifdef USE_SOUND_2010
+	/* let the sound fade out, also helps the user to realize
+	   he's been disconnected or something - C. Blue */
+ #ifdef SOUND_SDL
+	mixer_fadeall();
+ #endif
+#endif
+#endif
+
+	do_save_chatinput();
+
+#ifdef GUIDE_BOOKMARKS
+	do_save_guidebookmarks();
 #endif
 
 #ifdef RETRY_LOGIN
