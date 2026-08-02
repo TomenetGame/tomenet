@@ -272,7 +272,8 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, HEAL_CUT(p_ptr, 50), p_ptr->cut_attacker, FALSE)) ident = TRUE;
 		//(void)set_poisoned(Ind, 0, 0);
 		//(void)set_image(Ind, 0);	// ok?
-		if (hp_player(Ind, damroll(6, 8), FALSE, FALSE)) ident = TRUE;
+		/* NULL check: Hack - from mycorrhiza the effect is greatly reduced oO */
+		if (hp_player(Ind, damroll(6, keep == NULL ? 2 : 8), FALSE, FALSE)) ident = TRUE;
 		break;
 
 	case SV_FOOD_RESTORE_STR:
