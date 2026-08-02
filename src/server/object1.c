@@ -2169,8 +2169,9 @@ static char *object_desc_lnum(char *t, uint n) {
  *        used in store inventory in case STORE_SHOWS_SINGLE_WAND_CHARGES isn't defined;
  *        (not used in player/home inventory, but used in player stores again.) - C. Blue
  *  +128 - Don't prefix "The"
- *  +256 - Short name: Only the purely textual name, no stats/level/owner/status.
+ *  +256 - Short name: Only the purely textual name, no flavour/stats/level/owner/status.
  *  +512 - Don't suppress flavour for flavoured true arts or hacked-base-name items (insta-arts, ie rings and amulets) (for ~4 list)
+ *         (Note that this can be combined with +256 to show flavour again for flavoured items!)
  * +1024 - Assume that no flavours are known by the player (added for exporting player store item list)
  *         ONLY works with Ind == 0.
  * +2048 - Do not display anything referring to the base item (for seals and wrapped gifts). Add +32 too when using this.

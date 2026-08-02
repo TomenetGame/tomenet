@@ -2341,6 +2341,10 @@ int Receive_inven(void) {
 	inventory[pos - 'a'].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
 	inventory[pos - 'a'].iron_trade = uses_dir & 0x8;
 
+	/* Mycorrhiza: For non-aware food flavours: Do we know it's a mushroom, at least? */
+	inventory[pos - 'a'].is_mushroom = FALSE;
+	if (tval == TV_FOOD && sval == 255 && strstr(name, "ushroom")) inventory[pos - 'a'].is_mushroom = TRUE;
+
 #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
 	/* Strip "@&" markers, as these are a purely server-side thing */
 	while ((insc = strstr(name, "@&"))) {
@@ -2421,6 +2425,10 @@ int Receive_subinven(void) {
 	subinventory[ipos][pos - 'a'].uses_dir = uses_dir & 0x1;
 	subinventory[ipos][pos - 'a'].ident = uses_dir & 0x6; //new hack in 4.7.1.2+ for ITH_ID/ITH_STARID
 	subinventory[ipos][pos - 'a'].iron_trade = uses_dir & 0x8;
+
+	/* Mycorrhiza: For non-aware food flavours: Do we know it's a mushroom, at least? */
+	subinventory[ipos][pos - 'a'].is_mushroom = FALSE;
+	if (tval == TV_FOOD && sval == 255 && strstr(name, "ushroom")) subinventory[ipos][pos - 'a'].is_mushroom = TRUE;
 
  #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
 	/* Strip "@&" markers, as these are a purely server-side thing */
@@ -2544,6 +2552,10 @@ int Receive_inven_wide(void) {
 	inventory[pos - 'a'].xtra7 = xtra7;
 	inventory[pos - 'a'].xtra8 = xtra8;
 	inventory[pos - 'a'].xtra9 = xtra9;
+
+	/* Mycorrhiza: For non-aware food flavours: Do we know it's a mushroom, at least? --- paranoia, shrooms aren't sent via inven_wide */
+	inventory[pos - 'a'].is_mushroom = FALSE;
+	if (tval == TV_FOOD && sval == 255 && strstr(name, "ushroom")) inventory[pos - 'a'].is_mushroom = TRUE;
 
 #if defined(POWINS_DYNAMIC) && defined(POWINS_DYNAMIC_CLIENTSIDE)
 	/* Strip "@&" markers, as these are a purely server-side thing */

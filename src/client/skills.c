@@ -828,6 +828,59 @@ bool item_tester_hook_chemical(object_type *o_ptr) {
 	    || o_ptr->tval == TV_FLASK);
 }
 
+//ENABLE_MYCORRHIZA
+bool item_tester_hook_mushroom(object_type *o_ptr) {
+	if (o_ptr->tval != TV_FOOD) return(FALSE);
+
+	/* For unknown flavours, yet we can know it's a mushroom: */
+	if (o_ptr->sval == 255 /* Send_inven() uses this for unknown-flavour items */
+	    && o_ptr->is_mushroom) return(TRUE);
+
+	if (o_ptr->sval > SV_FOOD_MUSHROOMS_MAX) return(FALSE);
+	return(TRUE);
+}
+
+/* Ent: Enter/leave Mycorrhiza. - C. Blue */
+void do_mycorrhiza(int item) {
+	object_type *o_ptr = NULL;
+
+	/* Leave an existing mycorrhiza? */
+	if (item == -2) {
+		Send_activate_skill(MKEY_MYCORRHIZA, 0, 0, 0, -1, 0);
+		return;
+	}
+
+	if (item < 0) {
+		item_tester_tval = TV_FOOD;
+		get_item_hook_find_obj_what = "Mushroom name? ";
+		get_item_extra_hook = get_item_hook_find_obj;
+		item_tester_hook = item_tester_hook_mushroom;
+#ifdef ENABLE_SUBINVEN
+		if (!c_get_item(&item, "Use which Mushroom? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG | USE_SUBINVEN))) {
+			if (item == -2) c_msg_print("You have no mushrooms.");
+			if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
+			return;
+		}
+#else
+		if (!c_get_item(&item, "Use which Mushroom? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+			if (item == -2) c_msg_print("You have no mushrooms.");
+			if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
+			return;
+		}
+#endif
+	}
+
+#ifdef ENABLE_SUBINVEN
+	if (item >= SUBINVEN_INVEN_MUL) o_ptr = &subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL];
+	else
+#endif
+	if (!o_ptr) o_ptr = &inventory[item];
+
+	/* Send it */
+	Send_activate_skill(MKEY_MYCORRHIZA, 0, 0, 0, item, 0);
+}
+
+
 /*
  * set a trap .. it's out of place somewhat.	- Jir -
  * (item_kit is -1 when called normally via m skills menu.)
@@ -911,6 +964,7 @@ void do_trap(int item_kit) {
 /*
  * Handle the mkey according to the types.
  * if item is less than zero, ask for an item if needed.
+ * NOTE: Currently, item is always -1 aka unset when we get called, it's our job to prompt the player for the item.
  */
 void do_activate_skill(int x_idx, int item) {
 	char out_val[160];
@@ -924,6 +978,12 @@ void do_activate_skill(int x_idx, int item) {
 			break;
 		case MKEY_TRAP:
 			do_trap(item);
+			break;
+		case MKEY_MYCORRHIZA:
+			do_mycorrhiza(-1); //'item' is always -1 atm anyway
+			break;
+		case MKEY_STOP_MYCORRHIZA:
+			do_mycorrhiza(-2);
 			break;
 		case MKEY_RCRAFT:
 			do_runecraft();

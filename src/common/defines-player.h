@@ -247,6 +247,9 @@
 #define SKILL_SUMMONING		103
 #define SKILL_TAMING		104
 
+#define SKILL_MYCORRHIZA	107
+#define SKILL_STOP_MYCORRHIZA	108
+
 #define SKILL_BLOOD_MAGIC	109 /* dummy */
 
 /* For Draconians */

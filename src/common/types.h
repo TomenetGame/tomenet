@@ -860,6 +860,8 @@ struct object_type {
 	byte comboset_flags;		/* Flag array of all equipped items affecting this item too to create a comboset */
 	byte comboset_flags_cnt;	/* Flag array of all equipped items affecting this item too to create a comboset - flag count */
 
+	byte is_mushroom;		/* If server sends us the info that this is a mushroom, save that knowledge for do_mycorrhiza(). */
+
 	/* (Future use/hole) */
 	byte dummyB1;
 	s32b dummyL1, dummyL2;
@@ -4712,6 +4714,8 @@ struct player_type {
 	bool ts_sleeping;
 	int custom_timer, custom_timer_notification_interval, custom_timer_notification_timer;
 	byte ointment_cooldown;
+
+	byte mycorrhiza; //For Ents only: ENABLE_MYCORRHIZA
 };
 
 /* For Monk martial arts */

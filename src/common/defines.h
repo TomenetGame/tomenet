@@ -105,7 +105,7 @@
 /* For savefile purpose only */
 #define SF_VERSION_MAJOR	4
 #define SF_VERSION_MINOR	9
-#define SF_VERSION_PATCH	25
+#define SF_VERSION_PATCH	26
 #define SF_VERSION_EXTRA	0 /* <- not used in version checks! */
 
 /* For quests savefile purpose only */
@@ -9347,14 +9347,14 @@ extern int PlayerUID;
  #define MKEY_PRAY		7	/* unused */
 #endif
 
+//#define MKEY_UNUSED		0	/*pft*/
 #define MKEY_DUAL_MODE		1	/* dual-wield mode: mainhand vs dualhand */
-//#define MKEY_UNUSED		2	/*pft*/
-
+//hole
 #define MKEY_MIMICRY		3
 #define MKEY_SHOOT_TILL_KILL	4	/* toggle this firing mode */
 #define MKEY_MELEE		5	/* new fighter abilities */
 #define MKEY_RANGED		6	/* not "Hunting" anymore, but new archer abilities */
-
+//hole
 #define MKEY_DODGE		8
 //#define MKEY_FLETCHERY	9	/* constant to be unused when fletchery becomes subskill of archer abilities -- replaced by: */
 #define MKEY_INTERCEPT		9
@@ -9372,6 +9372,9 @@ extern int PlayerUID;
 
 #define MKEY_BREATH		18
 #define MKEY_PICK_BREATH	19
+
+#define MKEY_MYCORRHIZA		20
+#define MKEY_STOP_MYCORRHIZA	21
 
 
 /*
@@ -9540,7 +9543,9 @@ extern int PlayerUID;
 #define SKILL_SUMMONING		103
 #define SKILL_TAMING		104
 
-//hole 105-108
+//hole 105-106
+#define SKILL_STOP_MYCORRHIZA	107
+#define SKILL_MYCORRHIZA	108
 
 #define SKILL_BLOOD_MAGIC	109 /* dummy */
 

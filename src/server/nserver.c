@@ -12378,11 +12378,18 @@ static int Receive_activate_skill(int ind) {
 	/* Not by class nor by item; by skill */
 	if (p_ptr &&
 	    (p_ptr->energy >= level_speed(&p_ptr->wpos) ||
-	    /* some abilities don't require energy: */
+	    /* some abilities (check knowledge/set behaviour) don't require energy: */
 	    mkey == MKEY_DODGE || mkey == MKEY_PARRYBLOCK || mkey == MKEY_INTERCEPT ||
 	    mkey == MKEY_SHOOT_TILL_KILL || mkey == MKEY_DUAL_MODE)) {
 		/* Ability-dependant sanity checking */
 		switch (mkey) {
+		case MKEY_MYCORRHIZA:
+#ifndef ENABLE_MYCORRHIZA
+			return(1);
+#else
+			if (p_ptr->prace != RACE_ENT || p_ptr->lev < ENABLE_MYCORRHIZA) return(1);
+			break;
+#endif
 		case MKEY_DUAL_MODE:
 		//case MKEY_UNUSED:
 		case MKEY_MIMICRY:
@@ -12613,6 +12620,7 @@ static int Receive_activate_skill(int ind) {
 		case MKEY_RANGED:
 			do_cmd_ranged_technique(player, spell);
 			break;
+
 		case MKEY_SHOOT_TILL_KILL:
 			toggle_shoot_till_kill(player);
 			break;
@@ -12621,6 +12629,11 @@ static int Receive_activate_skill(int ind) {
 			toggle_dual_mode(player);
 			break;
 #endif
+
+		case MKEY_MYCORRHIZA:
+			do_set_mycorrhiza(player, item);
+			break;
+
 		case MKEY_BREATH:
 			/* Sanity check #2 */
 			if (dir == -1) dir = 5;

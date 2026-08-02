@@ -892,6 +892,7 @@ extern void create_sling_ammo_aux(int Ind);
 extern bool create_snowball(int Ind, cave_type *c_ptr);
 extern void do_steamblast(int Ind, int x, int y, bool door);
 extern void use_stamina(player_type *p_ptr, byte st);
+extern void do_set_mycorrhiza(int Ind, int item);
 
 /* control.c */
 extern void SGWHit(int fd, int arg);

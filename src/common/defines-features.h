@@ -593,11 +593,11 @@
 //#define CRAFTING_2023
 
 
-/* (Experimental draft 2026) Allow Ents to attach a mushroom to themselves in symbiosis,
+/* Allow Ents starting at this level [10] to attach a mushroom to themselves in symbiosis,
    gaining the effect continuously in intervals, the faster the longer they have
    the symbiosis or the higher level they are, perhaps? - C. Blue
    Only one mushroom can be in symbiosis at a time. */
-//#define ENT_MUSHROOM_SYMBIOSIS
+#define ENABLE_MYCORRHIZA 10
 
 
 /* Work in progress // debug code - do not enable this!

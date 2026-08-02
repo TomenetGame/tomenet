@@ -1954,6 +1954,14 @@ player_race race_info[MAX_RACE] = {
 		{ SKILL_SWIM, /* has intrinsic pass_water ability instead, cannot propel the way swimmers do anyway :p */
 			'+', 0,
 			'%', 0, },
+#ifdef ENABLE_MYCORRHIZA
+		{ SKILL_MYCORRHIZA,
+			'+', 1000,
+			'+', 0, },
+		{ SKILL_STOP_MYCORRHIZA,
+			'+', 1000,
+			'+', 0, },
+#endif
 		{ SKILL_SHOOT_TILL_KILL,
 			'+', 1000,
 			'+', 0, },

@@ -1264,6 +1264,8 @@ static void wr_extra(int Ind) {
 	wr_u16b(p_ptr->melee_brand2_t);
 	wr_byte(p_ptr->melee_brand2_flags); //uchar
 	wr_byte(p_ptr->melee_brand_ma); //bool
+
+	wr_byte(p_ptr->mycorrhiza);
 }
 
 /*

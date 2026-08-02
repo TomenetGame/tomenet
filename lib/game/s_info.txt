@@ -114,6 +114,17 @@ I:1000:0
 #F:MKEY_HARDCODE
 #F:HIDDEN
 
+$ENABLE_MYCORRHIZA$N:107:Enter mycorrhiza
+$ENABLE_MYCORRHIZA$D:Hidden ability for Ents.
+$ENABLE_MYCORRHIZA$A:20:Enter Mycorrhiza
+$ENABLE_MYCORRHIZA$F:MKEY_HARDCODE
+$ENABLE_MYCORRHIZA$I:1000:0
+$ENABLE_MYCORRHIZA$N:108:Leave mycorrhiza
+$ENABLE_MYCORRHIZA$D:Hidden ability for Ents.
+$ENABLE_MYCORRHIZA$A:21:Leave Mycorrhiza
+$ENABLE_MYCORRHIZA$F:MKEY_HARDCODE
+$ENABLE_MYCORRHIZA$I:1000:0
+
 # This is like that of ToME2 now
 N:14:Sorcery
 #D:Ability to cast sorcery spells, beware it reduces hp

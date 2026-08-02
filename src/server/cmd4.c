@@ -4246,6 +4246,15 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 #endif
 	}
 
+	if (p_ptr->prace == RACE_ENT && p_ptr->mycorrhiza) { //object_aware_p(Ind, o_ptr)
+		object_type forge;
+		char o_name[ONAME_LEN];
+
+		invcopy(&forge, lookup_kind(TV_FOOD, p_ptr->mycorrhiza - 1));
+		object_desc(Ind, o_name, &forge, FALSE, 256+512);
+		msg_format(Ind, "\377GYou are currently in mycorrhiza with a %s.", o_name);
+	}
+
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
 	if (!p_ptr->max_exp && EVENT_TOWNIE_GOLD_LIMIT != -1) {
 		if (EVENT_TOWNIE_GOLD_LIMIT - p_ptr->gold_picked_up)

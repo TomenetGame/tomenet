@@ -10256,6 +10256,45 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 	}
 }
 
+void do_set_mycorrhiza(int Ind, int item) {
+	player_type *p_ptr = Players[Ind];
+	object_type *o_ptr;
+
+#ifndef ENABLE_MYCORRHIZA
+	return;
+#else
+	/* Paranoia checks */
+	if (p_ptr->prace != RACE_ENT || p_ptr->lev < ENABLE_MYCORRHIZA) return;
+#endif
+
+	/* Leave existing mycorrhiza? */
+	if (item == -1) {
+		if (!p_ptr->mycorrhiza) {
+			msg_print(Ind, "\377yYou are not currently in a mycorrhiza.");
+			return;
+		}
+		msg_print(Ind, "You end your current mycorrhiza and the mushroom decays.");
+		p_ptr->mycorrhiza = 0;
+		return;
+	}
+
+	if (!get_inven_item(Ind, item, &o_ptr)) return; /* item doesn't exist */
+	if (o_ptr->tval != TV_FOOD || o_ptr->sval > SV_FOOD_MUSHROOMS_MAX) return; /* not a mushroom */
+
+	/* Are we already in a mycorrhiza? Imply ending it first then. */
+	msg_print(Ind, "You end your current mycorrhiza and the previous mushroom decays.");
+
+	/* Enter mycorrhiza! */
+	p_ptr->mycorrhiza = o_ptr->sval + 1;
+
+	/* Lose the shroom, optimize. */
+	inven_item_increase(Ind, item, -1);
+	inven_item_describe(Ind, item);
+	inven_item_optimize(Ind, item);
+
+	msg_format(Ind, "\377GYou plant the mushroom on your bark, to enter a new mycorrhiza...");
+}
+
 bool create_snowball(int Ind, cave_type *c_ptr) {
 	player_type *p_ptr = Players[Ind];
 	struct worldpos *wpos = &p_ptr->wpos;

@@ -1010,6 +1010,8 @@ struct player_type {
 	bool new_retaliator;
 	bool sunburn_msg;
 	byte ointment_cooldown;
+
+	byte mycorrhiza;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */

@@ -1743,6 +1743,12 @@ if (!season_newyearseve) {
 #else
 		if (streq(m, "WIELD_STAFF_RGM") && negation) invalid = TRUE;
 #endif
+#ifndef ENABLE_MYCORRHIZA
+		if (streq(m, "ENABLE_MYCORRHIZA") && !negation) invalid = TRUE;
+#else
+		if (streq(m, "ENABLE_MYCORRHIZA") && negation) invalid = TRUE;
+#endif
+
 		/* List all known flags. If we hit an unknown flag, ignore the line by default! */
 		if (strcmp(m, "MAIN_SERVER") &&
 		    strcmp(m, "RPG_SERVER") &&
@@ -1771,6 +1777,7 @@ if (!season_newyearseve) {
 		    strcmp(m, "ENABLE_SUBINVEN") &&
 		    strcmp(m, "TOOL_NOTHEFT_COMBO") &&
 		    strcmp(m, "WIELD_STAFF_RGM") &&
+		    strcmp(m, "ENABLE_MYCORRHIZA") &&
 			TRUE)
 			invalid = TRUE;
 	}
