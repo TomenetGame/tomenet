@@ -1893,7 +1893,7 @@ player_race race_info[MAX_RACE] = {
 	{ "Ent",
 		{ 8, -4, +2, -4,  8, -4 },
 		-4, 0, 15, -6, 5, 4, 5, -20,
-		14, 280,//320
+		14, 270,//320
 		255, 70,
 		240,  12, 255, 30, //dnd Treant: 30ft, 4500 lbs, luls. But can also be 15-25 ft. Wgt still silyl, even 5-digits.
 		180,  10, 255, 25, //...also: byte limits -_-
