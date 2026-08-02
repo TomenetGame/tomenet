@@ -5356,14 +5356,6 @@ void check_experience(int Ind) {
 		if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn to climb mountains easily!");
 		break;
 	case RACE_ENT:
-		if (old_lev < 4 && p_ptr->lev >= 4) msg_print(Ind, "\374\377GYou learn to see the invisible!");
-		if (old_lev < 10 && p_ptr->lev >= 10) msg_print(Ind, "\374\377GYou learn to telepathically sense animals!");
-		if (old_lev < 15 && p_ptr->lev >= 15) msg_print(Ind, "\374\377GYou learn to telepathically sense orcs!");
-		if (old_lev < 20 && p_ptr->lev >= 20) msg_print(Ind, "\374\377GYou learn to telepathically sense trolls!");
-	if (old_lev < 25 && p_ptr->lev >= 25) msg_print(Ind, "\374\377GYou learn to telepathically sense giants!");
-		if (old_lev < 30 && p_ptr->lev >= 30) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
-		if (old_lev < 40 && p_ptr->lev >= 40) msg_print(Ind, "\374\377GYou learn to telepathically sense demons!");
-		if (old_lev < 50 && p_ptr->lev >= 50) msg_print(Ind, "\374\377GYou learn to telepathically sense evil!");
 	break;
 	case RACE_DRACONIAN:
 		if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
@@ -5579,7 +5571,7 @@ void check_experience(int Ind) {
 		break;
 	case CLASS_SHAMAN:
 		if (old_lev < 20 && p_ptr->lev >= 20
-		    && p_ptr->prace != RACE_ENT && p_ptr->prace != RACE_DARK_ELF
+		    && p_ptr->prace != RACE_DARK_ELF
 		    && (p_ptr->prace != RACE_MAIA || p_ptr->ptrait != TRAIT_ENLIGHTENED))
 			msg_print(Ind, "\374\377GYou learn to see the invisible!");
 		break;

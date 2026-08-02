@@ -3663,15 +3663,6 @@ void calc_boni(int Ind) {
 			p_ptr->dis_to_a += 3;
 		} else { p_ptr->pspeed -= 1; csheet_boni[14].spd -= 1; } /* it's cost of ent's power, isn't it? */
 
-		if (p_ptr->lev >= 4) { p_ptr->see_inv = TRUE; csheet_boni[14].cb[4] |= CB5_RSINV; }
-
-		if (p_ptr->lev >= 10) { p_ptr->telepathy |= ESP_ANIMAL; csheet_boni[14].cb[7] |= CB8_EANIM; }
-		if (p_ptr->lev >= 15) { p_ptr->telepathy |= ESP_ORC; csheet_boni[14].cb[7] |= CB8_EORCS; }
-		if (p_ptr->lev >= 20) { p_ptr->telepathy |= ESP_TROLL; csheet_boni[14].cb[7] |= CB8_ETROL; }
-		if (p_ptr->lev >= 25) { p_ptr->telepathy |= ESP_GIANT; csheet_boni[14].cb[7] |= CB8_EGIAN; }
-		if (p_ptr->lev >= 30) { p_ptr->telepathy |= ESP_DRAGON; csheet_boni[14].cb[8] |= CB9_EDRGN; }
-		if (p_ptr->lev >= 40) { p_ptr->telepathy |= ESP_DEMON; csheet_boni[14].cb[8] |= CB9_EDEMN; }
-		if (p_ptr->lev >= 50) { p_ptr->telepathy |= ESP_EVIL; csheet_boni[14].cb[9] |= CB10_EEVIL; }
 		break;
 
 	/* Draconian (former Dragonrider, Thunderlord) */
