@@ -10284,6 +10284,7 @@ void do_set_mycorrhiza(int Ind, int item) {
 			msg_print(Ind, "\377yYou are not currently in a mycorrhiza.");
 			return;
 		}
+		s_printf("MYCORRHIZA: %s : end.\n", p_ptr->name);
 		msg_print(Ind, "You end your current mycorrhiza and the mushroom decays.");
 		p_ptr->mycorrhiza = 0;
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -10305,6 +10306,12 @@ void do_set_mycorrhiza(int Ind, int item) {
 	/* Enter mycorrhiza! */
 	p_ptr->mycorrhiza = o_ptr->sval + 1;
 	p_ptr->mycorrhiza_dur = 5000;
+	{
+		char o_name[ONAME_LEN];
+
+		object_desc(0, o_name, o_ptr, FALSE, 3);
+		s_printf("MYCORRHIZA: %s : %d (%s)\n", p_ptr->name, p_ptr->mycorrhiza, o_name);
+	}
 
 	/* Lose the shroom, optimize. */
 	inven_item_increase(Ind, item, -1);
