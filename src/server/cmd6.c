@@ -10286,6 +10286,7 @@ void do_set_mycorrhiza(int Ind, int item) {
 
 	/* Enter mycorrhiza! */
 	p_ptr->mycorrhiza = o_ptr->sval + 1;
+	p_ptr->mycorrhiza_dur = 5000;
 
 	/* Lose the shroom, optimize. */
 	inven_item_increase(Ind, item, -1);

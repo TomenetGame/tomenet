@@ -5298,6 +5298,19 @@ static bool process_player_end_aux(int Ind) {
 		take_hit(Ind, i * k, "a fatal wound", p_ptr->cut_attacker);
 	}
 
+	/* Ents: Symbiotic mycorrhiza */
+	if (p_ptr->mycorrhiza) {
+		if (p_ptr->mycorrhiza_dur) {
+			p_ptr->mycorrhiza_dur--;
+			if (!p_ptr->mycorrhiza_dur) msg_print(Ind, "\376\377GYour state of mycorrhiza has reached perfect symbiosis.");
+		}
+		if (!rand_int(3 + (p_ptr->mycorrhiza_dur + 99) / 100)) {
+			/* Actually trigger the mushroom's effect! */
+			eat_food(Ind, p_ptr->mycorrhiza - 1, NULL, NULL);
+			//msg_format(Ind, "MYCORRHIZA: %d", 3 + (p_ptr->mycorrhiza_dur + 99) / 100); //DEBUG
+		}
+	}
+
 	/* Misc. terrain effects */
 	if (!p_ptr->ghost) { /* Spare dead players, even though levitation usually does NOT fully protect eg from lava fire damage? */
 		/* Generic terrain effects */

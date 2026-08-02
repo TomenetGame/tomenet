@@ -1266,6 +1266,7 @@ static void wr_extra(int Ind) {
 	wr_byte(p_ptr->melee_brand_ma); //bool
 
 	wr_byte(p_ptr->mycorrhiza);
+	wr_u16b(p_ptr->mycorrhiza_dur);
 }
 
 /*

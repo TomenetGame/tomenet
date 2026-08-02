@@ -2828,7 +2828,10 @@ if (p_ptr->updated_savegame == 0) {
 		p_ptr->melee_brand_ma = (tmp8u != 0);
 	}
 
-	if (!older_than(4, 9, 26)) rd_byte(&p_ptr->mycorrhiza);
+	if (!older_than(4, 9, 26)) {
+		rd_byte(&p_ptr->mycorrhiza);
+		rd_u16b(&p_ptr->mycorrhiza_dur);
+	}
 #ifndef ENABLE_MYCORRHIZA
 	p_ptr->mycorrhiza = 0; //remove existing mycorrhiza if not allowed
 #endif

@@ -4716,6 +4716,7 @@ struct player_type {
 	byte ointment_cooldown;
 
 	byte mycorrhiza; //For Ents only: ENABLE_MYCORRHIZA
+	u16b mycorrhiza_dur;
 };
 
 /* For Monk martial arts */

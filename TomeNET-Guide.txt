@@ -20583,16 +20583,22 @@ create a character!):
     grass and plants close around them in great detail, noticing creatures that
     approach as long as they tread on or fly over floor with greenery. The
     radius expands as the Ent gains levels, up to 50.
+    Also, trees will slightly bend aside to let ents pass through.
     In general, they accumulate experience very slowly and they do not eat
     normal food but they are able to consume liquids.
-    Trees will slightly bend aside to let ents pass through.
     Ents are able to slowly replenish their nourishment by rooting themselves
     into the ground by entering 'R'esting mode, provided it's natural ground
     such as grass, earth, mud or water. Their food state will go up to 'Full'
     that way. They cannot eat normal food but will feed greatly from drinking
     potions that provide nourishment. They can never be gorged though.
-    Ents intrinsically resist the force of unleashed water and their bark skin
-    provides a small bonus to armour class.
+    Starting at level 10, Ents can enter a special symbiotic relationship with
+    any mushroom of their choice: Mycorrhiza. The mushroom will get implanted
+    into the Ent's bark and provide periodic effects depending on its type.
+    The effect will not happen frequently at first, but more often the longer
+    the symbiosis is active (up to 5000 turns of symbiosis existance).
+    (Press 'm' to begin or end a mycorrhiza. Only one mushroom can be active.)
+    Ents also intrinsically resist the force of unleashed water and their bark
+    skin even provides a small bonus to armour class.
     They get bonus to 'Health', a slight bonus to 'Spirit' and a large bonus on
     'Calmness' and on the magic schools 'Earth', 'Water' and 'Nature'. They
     receive a huge penalty on 'Fire' school, a large penalty on 'Axe-mastery'

@@ -1012,6 +1012,7 @@ struct player_type {
 	byte ointment_cooldown;
 
 	byte mycorrhiza;
+	u16b mycorrhiza_dur;
 };
 
 //extern int hack_force_spell_level; /* LIMIT_SPELLS client-side */
