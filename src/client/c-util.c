@@ -9016,13 +9016,16 @@ Chain_Macro:
 
 							/* Perform selected action */
 							if (screen_hgt == MAX_SCREEN_HGT) Term_putstr(40, l++, -1, TERM_GREEN, format("(%c)", choice));
+
 							switch (choice) {
 							/* Fileset actions: */
+
 							case 'a': // wipe memory list and rescan
 								/* Init filesets */
 								rescan = TRUE;
 								i = -4;
 								break;
+
 							case 'b': //init new fileset (implies initialization+activation of a 1st stage too)
 								if (!ok_new_set) continue;
 								// new set index, gets appended to existing ones
@@ -9050,7 +9053,7 @@ Chain_Macro:
 								if (n == -1) {
 									/* Abort: Erase newly started set-in-the-making again */
 									fileset[f].basefilename[0] = 0;
-									f = --filesets_found;
+									filesets_found--;
 									continue;
 								}
 								fileset[f].style_cyclic = (n % 2 != 0);
@@ -9079,7 +9082,7 @@ Chain_Macro:
 								if (n == -1) {
 									/* Abort: Erase newly started set-in-the-making again */
 									fileset[f].basefilename[0] = 0;
-									f = --filesets_found;
+									filesets_found--;
 									continue;
 								}
 								fileset[f].style_cyclic = (n % 2 != 0);
@@ -9094,7 +9097,6 @@ Chain_Macro:
 								l++;
  #endif
 								// auto-select set and its first stage
-								fileset_selected = f;
 								fileset[f].stages = 1;
 								fileset_stage_selected = 0;
 
@@ -9121,7 +9123,12 @@ Chain_Macro:
 										}
 										break;
 									}
-									if (!strcmp(buf, "\e")) continue; //abort
+									if (!strcmp(buf, "\e")) {
+										/* Abort: Erase newly started set-in-the-making again */
+										fileset[f].basefilename[0] = 0;
+										filesets_found--;
+										continue;
+									}
 
 									/* Set macro trigger */
 									strcpy(buf_pat, tmpbuf);
@@ -9161,7 +9168,12 @@ Chain_Macro:
 										}
 										break;
 									}
-									if (!strcmp(buf, "\e")) continue; //abort
+									if (!strcmp(buf, "\e")) {
+										/* Abort: Erase newly started set-in-the-making again */
+										fileset[f].basefilename[0] = 0;
+										filesets_found--;
+										continue;
+									}
 
 									/* Set macro trigger */
 									strcpy(buf_pat, tmpbuf);
@@ -9189,6 +9201,8 @@ Chain_Macro:
 									macro_add(buf_pat, buf_act, FALSE, FALSE);
 								}
 
+								/* Auto-select the newly added set */
+								fileset_selected = f;
 								break;
 
 							case 'c': //select a set
