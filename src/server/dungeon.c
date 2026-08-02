@@ -5055,8 +5055,7 @@ int food_consumption_legacy(int Ind) {
 		j = 15 - 7500 / (r_info[p_ptr->body_monster].weight + 320);//180:0, 260:2, 500:~5, 1000:~9, 5000:14, 7270:15
 
 	/* Draconian and Half-Troll take more food */
-	if (p_ptr->prace == RACE_DRACONIAN
-	    || p_ptr->prace == RACE_HALF_TROLL) j = 15;
+	if (p_ptr->prace == RACE_DRACONIAN || p_ptr->prace == RACE_HALF_TROLL) j = 15;
 
 	/* Use either mimic form induced food consumption increase,
 	   or intrinsic one, depending on which is higher. */
