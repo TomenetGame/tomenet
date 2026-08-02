@@ -9125,10 +9125,10 @@ Chain_Macro:
 
 									/* Set macro trigger */
 									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[k].macro__pat__cycle, buf_pat);
+									strcpy(fileset[f].macro__pat__cycle, buf_pat);
 									/* Set macro trigger in human-readable format */
 									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[k].macro__patbuf__cycle, buftxt_pat);
+									strcpy(fileset[f].macro__patbuf__cycle, buftxt_pat);
 
 									/* Forge macro action (in human-readable format) */
 
@@ -9139,10 +9139,10 @@ Chain_Macro:
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[k].macro__actbuf__cycle, buftxt_act);
+									strcpy(fileset[f].macro__actbuf__cycle, buftxt_act);
 									/* Set macro action */
 									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[k].macro__act__cycle, buf_act);
+									strcpy(fileset[f].macro__act__cycle, buf_act);
 
 									/* Also add it to the currently loaded macros */
 									//key_autoconvert(tmp, fmt);
@@ -9165,10 +9165,10 @@ Chain_Macro:
 
 									/* Set macro trigger */
 									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[k].macro__pat__switch[fileset_stage_selected], buf_pat);
+									strcpy(fileset[f].macro__pat__switch[fileset_stage_selected], buf_pat);
 									/* Set macro trigger in human-readable format */
 									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[k].macro__patbuf__switch[fileset_stage_selected], buftxt_pat);
+									strcpy(fileset[f].macro__patbuf__switch[fileset_stage_selected], buftxt_pat);
 
 									/* Forge macro action (in human-readable format) */
 
@@ -9179,10 +9179,10 @@ Chain_Macro:
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[k].macro__actbuf__switch[fileset_stage_selected], buftxt_act);
+									strcpy(fileset[f].macro__actbuf__switch[fileset_stage_selected], buftxt_act);
 									/* Set macro action */
 									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[k].macro__act__switch[fileset_stage_selected], buf_act);
+									strcpy(fileset[f].macro__act__switch[fileset_stage_selected], buf_act);
 
 									/* Also add it to the currently loaded macros */
 									//key_autoconvert(tmp, fmt);
