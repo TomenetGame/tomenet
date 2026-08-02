@@ -9512,12 +9512,12 @@ static void process_global_event(int ge_id) {
 					s_printf("EVENT_LAYOUT: Adding dungeon (no entry).\n");
 					add_dungeon(&wpos, 1, 50, DF1_UNLISTED | DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 					    DF2_NO_ENTRY_MASK | DF2_RANDOM,
-					    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20 | DF3_NOT_WATERY, FALSE, 0, 0, 0, 0);
+					    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20 | DF3_NOT_WATERY | DF3_VMANY_MONSTERS, FALSE, 0, 0, 0, 0);
 				} else {
 					s_printf("EVENT_LAYOUT: Adding dungeon (entry ok).\n");
 					add_dungeon(&wpos, 1, 50, DF1_UNLISTED | DF1_NO_RECALL, DF2_IRON | DF2_NO_EXIT_MASK |
 					    DF2_NO_ENTRY_WOR | DF2_NO_ENTRY_PROB | DF2_NO_ENTRY_FLOAT | DF2_RANDOM,
-					    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20 | DF3_NOT_WATERY, FALSE, 0, 0, 0, 0);
+					    DF3_NO_SIMPLE_STORES | DF3_NO_DUNGEON_BONUS | DF3_EXP_20 | DF3_NOT_WATERY | DF3_VMANY_MONSTERS, FALSE, 0, 0, 0, 0);
 
 					/* place staircase on an empty accessible grid */
 					do {

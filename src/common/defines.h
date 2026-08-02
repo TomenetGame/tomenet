@@ -7621,9 +7621,9 @@
 #define DF3_NO_SIMPLE_STORES	0x00000004U	/* disallow generation misc ironman helper stores and of low-level dungeon stores (was herbalist, but excluded it for now, so it may actually spawn in IDDC) (should be set for IDDC) */
 #define DF3_NO_DUNGEON_BONUS	0x00000008U	/* This dungeon never yields bonus experience from dungeon_bonus[] (rare exploration) (should be set for IDDC) */
 
-#define DF3_EXP_5		0x00000010U	/* Add +5% bonus to experience gains while inside this dungeon */
-#define DF3_EXP_10		0x00000020U	/* Add +10% bonus to experience gains while inside this dungeon */
-#define DF3_EXP_20		0x00000040U	/* Add +20% bonus to experience gains while inside this dungeon */
+#define DF3_EXP_5		0x00000010U	/* Add +5% bonus to experience gains while inside this dungeon (stacks with EXP_10 and EXP_20) */
+#define DF3_EXP_10		0x00000020U	/* Add +10% bonus to experience gains while inside this dungeon (stacks with EXP_5 and EXP_20) */
+#define DF3_EXP_20		0x00000040U	/* Add +20% bonus to experience gains while inside this dungeon (stacks with EXP_5 and EXP_10) ^^ */
 #define DF3_LUCK_1		0x00000080U	/* Add +1 luck while inside this dungeon */
 
 #define DF3_LUCK_5		0x00000100U	/* Add +5 luck while inside this dungeon */
@@ -7632,8 +7632,8 @@
 #define DF3_SHORT_IDDC		0x00000800U	/* As theme in IDDC, this dungeon only has half as many floors as usual */
 
 #define DF3_DERARE_MONSTERS	0x00001000U	/* Treat rarity of all monsters as '1' aka most common */
-#define DF3_MANY_MONSTERS	0x00002000U	/* Spawn 1.5x as many monsters as usual */
-#define DF3_VMANY_MONSTERS	0x00004000U	/* Spawn twice as many monsters as usual */
+#define DF3_MANY_MONSTERS	0x00002000U	/* Spawn 1.5x as many monsters as usual (stacks with VMANY for 3x total) */
+#define DF3_VMANY_MONSTERS	0x00004000U	/* Spawn twice as many monsters as usual (stacks with MANY for 3x total) */
 #define DF3_DEEPSUPPLY		0x00008000U	/* allow generation of dungeon stores offering supplies, on deep floors (added for IDDC) (overrides DF3_NO_SIMPLE_STORES) */
 
 #define DF3_WALL_STREAMERS	0x00010000U	/* Wall-type streamers (if of type Quartz, Magma, Sandwall, then they hold treasure veins) */

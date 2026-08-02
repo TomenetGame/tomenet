@@ -9770,8 +9770,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	i = i * dun->ratio / 100 + 1;
 
 	/* dungeon has especially many monsters? */
-	if ((d_ptr->flags3 & DF3_MANY_MONSTERS)) i = (i * 3) / 2;
 	if ((d_ptr->flags3 & DF3_VMANY_MONSTERS)) i *= 2;
+	if ((d_ptr->flags3 & DF3_MANY_MONSTERS)) i = (i * 3) / 2;
 
 	/* Put some monsters in the dungeon */
 	for (i = i + k; i > 0; i--)
