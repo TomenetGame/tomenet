@@ -367,7 +367,7 @@ function quest_towneltalk(Ind, msg, topic)
 			end
 			if z == 1 and znum < 6 then
 				if hinted == 1 then
-					if hintsub == 1 then msg_print(Ind, "\252\255USame goes for your supply of speed potins!")
+					if hintsub == 1 then msg_print(Ind, "\252\255USame goes for your supply of speed potions!")
 					else msg_print(Ind, "\252\255UYour supply of speed potions is running dangerously low, you should buy more!")
 					end
 				else msg_print(Ind, "\252\255UOh "..msg..", your supply of speed potions is running dangerously low, you should buy more!")
