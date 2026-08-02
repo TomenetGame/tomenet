@@ -2074,7 +2074,7 @@ static int weight_limit(int Ind) /* max. 3000 atm */ {
 	return(i);
 }
 
-/* Allow very lowspeed forms (still >110 though) to still give a slight +1 bonus, eg Kamikaze Yeek/Gold Ant which move at +3 speed naturally. 0 to disable. */
+/* Allow very lowspeed forms (still >110 though) to still give a slight +1 bonus, eg Kamikaze Yeek/Gold Ant which move at +3 speed naturally. 0 to disable. [1] */
 #define MIMIC_LOWSPEED_BONUS 1
 /* intrinsic +attribute boni from forms */
 #define FORM_STAT_BONUS_SMALL 1
@@ -2263,12 +2263,10 @@ static void calc_body_bonus(int Ind, boni_col * csheet_boni) {
 		//Pfft, include the -speed into the calculation, too. Seems lame how -speed is counted for 100% but not + bonus.
 		//But really, if physical-race-intrinsic boni/mali are counted in mimicry, then dwarves
 		//should be able to keep their climbing ability past 30 when mimicked, TLs could fly, etc etc =/
-		p_ptr->pspeed = (((r_ptr->speed + MIMIC_LOWSPEED_BONUS - 110 - (p_ptr->prace == RACE_ENT ? 2 : 0) ) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
+		p_ptr->pspeed = (((r_ptr->speed + MIMIC_LOWSPEED_BONUS - 110) * 30) / 100) + 110;//was 50%, 30% for RPG_SERVER originally
 	}
 	/* Reduce for pvp, or mimicry is too good */
-	if (p_ptr->mode & MODE_PVP) {
-		p_ptr->pspeed = 110 + (p_ptr->pspeed - 110 + 1) / 2;
-	}
+	if (p_ptr->mode & MODE_PVP) p_ptr->pspeed = 110 + (p_ptr->pspeed - 110 + 1) / 2;
 	csheet_boni->spd = p_ptr->pspeed - 110;
 
 #if 0 /* Should forms affect your searching/perception skills? Probably not. */
@@ -3649,19 +3647,19 @@ void calc_boni(int Ind) {
 	case RACE_ENT:
 		/* always a bit slowish */
 		p_ptr->slow_digest = TRUE; csheet_boni[14].cb[6] |= CB7_RFOOD;
+		p_ptr->pspeed -= 2; csheet_boni[14].spd -= 2;
 		/* even while in different form? */
 		p_ptr->suscep_fire = TRUE; csheet_boni[14].cb[0] |= CB1_SFIRE;
 		p_ptr->resist_water = TRUE; csheet_boni[14].cb[3] |= CB4_RWATR;
 
 		/* not while in mimicried form */
 		if (!p_ptr->body_monster) {
-			p_ptr->pspeed -= 2; csheet_boni[14].spd -= 2;
 			p_ptr->can_swim = TRUE; csheet_boni[14].cb[12] |= CB13_XSWIM; /* wood? */
 			p_ptr->pass_trees = TRUE; csheet_boni[14].cb[12] |= CB13_XTREE;
 			/* tree bark is  harder than skin */
 			p_ptr->to_a += 3;
 			p_ptr->dis_to_a += 3;
-		} else { p_ptr->pspeed -= 1; csheet_boni[14].spd -= 1; } /* it's cost of ent's power, isn't it? */
+		}
 
 		break;
 
