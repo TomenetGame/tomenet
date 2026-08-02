@@ -126,6 +126,9 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 	/* Analyze the food */
 	switch (sval) {
+
+	/* --- Mushrooms --- */
+
 	case SV_FOOD_POISON:
 		if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison)) {
 			if (set_poisoned(Ind, p_ptr->poisoned + rand_int(10) + 10, 0))
@@ -302,6 +305,8 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 	case SV_FOOD_REGEN:
 		if (set_tim_regen(Ind, 20 + rand_int(10), 15 + (p_ptr->max_lev < 20 ? p_ptr->max_lev / 2 : 10), 1)) ident = TRUE;
 		break;
+
+	/* --- Non-mushrooms: --- */
 
 	case SV_FOOD_FORTUNE_COOKIE:
 		if (!p_ptr->suscep_life)
