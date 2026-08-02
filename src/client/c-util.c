@@ -9296,6 +9296,7 @@ Chain_Macro:
 								if (fileset[fileset_selected].style_free) {
 									for (f = 0; f < fileset[fileset_selected].stages; f++) {
 										if (!fileset[fileset_selected].stage_file_exists[f]) continue;
+										if (fileset[fileset_selected].stage_disabled[f]) continue;
 
 										//key_autoconvert(tmp, fmt);
 										macro_add(fileset[fileset_selected].macro__pat__switch[f], fileset[fileset_selected].macro__act__switch[f], FALSE, FALSE);
