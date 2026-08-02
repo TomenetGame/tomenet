@@ -122,6 +122,7 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 	player_type *p_ptr = Players[Ind];
 	bool ident = FALSE;
 	int dam;
+	bool mycorrhiza = (keep == NULL); //hack: Adjust/buff/nerf some effects maybe
 
 	/* Analyze the food */
 	switch (sval) {
@@ -267,13 +268,13 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 		break;
 
 	case SV_FOOD_CURE_SERIOUS:
+		/* Mycorrhiza healing reduction:
+		   The idea is that while the healing is only 60% of fast-meta, we also get things that fast-meta doesn't provide:
+		   Cut-healing effect, cure blind, cure conf! */
 		if (set_blind(Ind, 0)) ident = TRUE;
 		if (set_confused(Ind, 0)) ident = TRUE;
 		if (p_ptr->cut < CUT_MORTAL_WOUND && set_cut(Ind, HEAL_CUT(p_ptr, 50), p_ptr->cut_attacker, FALSE)) ident = TRUE;
-		//(void)set_poisoned(Ind, 0, 0);
-		//(void)set_image(Ind, 0);	// ok?
-		/* NULL check: Hack - from mycorrhiza the effect is greatly reduced oO */
-		if (hp_player(Ind, damroll(6, keep == NULL ? 2 : 8), FALSE, FALSE)) ident = TRUE;
+		if (hp_player(Ind, damroll(mycorrhiza ? 1 : 6, 8), FALSE, FALSE)) ident = TRUE;
 		break;
 
 	case SV_FOOD_RESTORE_STR:
