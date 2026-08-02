@@ -4252,7 +4252,9 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 
 		invcopy(&forge, lookup_kind(TV_FOOD, p_ptr->mycorrhiza - 1));
 		object_desc(Ind, o_name, &forge, FALSE, 256+512);
-		msg_format(Ind, "\377GYou are currently in mycorrhiza with a %s.", o_name);
+		msg_format(Ind, "\377GYou are currently in %s mycorrhiza with a %s.",
+		    p_ptr->mycorrhiza_dur >= 3000 ? "weak" : (p_ptr->mycorrhiza_dur >= 1500 ? "ripening" : (p_ptr->mycorrhiza_dur >= 500 ? "mature" : (p_ptr->mycorrhiza_dur ? "strong" : "perfect"))),
+		    o_name);
 	}
 
 #ifdef EVENT_TOWNIE_GOLD_LIMIT
