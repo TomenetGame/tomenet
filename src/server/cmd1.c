@@ -504,6 +504,9 @@ s16b brand_dam_aux(int Ind, object_type *o_ptr, int slot, int tdam, monster_type
 	/* Draconian traits, skills, enlighted slay.. */
 	if (p_ptr) f1 |= p_ptr->slay | p_ptr->slay_equip;
 
+	/* Disease is 'contagious' on touch */
+	if (p_ptr && p_ptr->diseased && !o_ptr) f1 |= TR1_BRAND_POIS;
+
 	/* Extra melee branding */
 	if (p_ptr && melee) {
 		/* holy curing only so far? */
@@ -1048,6 +1051,9 @@ s16b brand_dam_aux_player(int Ind, object_type *o_ptr, int slot, int tdam, playe
 		/* Modify damage */
 		if (apply_monster_brands) f1 |= monster_brand_chosen;
 	}
+
+	/* Disease is 'contagious' on touch */
+	if (p_ptr && p_ptr->diseased && !o_ptr) f1 |= TR1_BRAND_POIS;
 
 	/* Add bow branding on correct ammo types */
 	if (p_ptr && o_ptr) {
