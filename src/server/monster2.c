@@ -2384,16 +2384,8 @@ void update_mon(int m_idx, bool dist) {
 	for (Ind = 1, n = NumPlayers; Ind <= n; Ind++) {
 		p_ptr = _Players[Ind];
 
-		/* Reset the flags */
-		flag = easy = hard = FALSE;
-#ifdef OLD_MONSTER_LORE
-		do_no_esp = do_empty_mind = do_weird_mind = FALSE;
-#endif
-		do_invisible = do_cold_blood = FALSE;
-
 		/* If he's not playing, skip him */
-		if (p_ptr->conn == NOT_CONNECTED)
-			continue;
+		if (p_ptr->conn == NOT_CONNECTED) continue;
 
 		/* If he's not on this depth, skip him */
 		if (!inarea(wpos, &p_ptr->wpos)) {
@@ -2403,10 +2395,15 @@ void update_mon(int m_idx, bool dist) {
 		}
 
 		/* If our wilderness level has been deallocated, stop here...
-		 * we are "detatched" monsters.
-		 */
-
+		 * we are "detatched" monsters. */
 		if (!(zcave = getcave(wpos))) continue;
+
+		/* Reset the flags */
+		flag = easy = hard = FALSE;
+#ifdef OLD_MONSTER_LORE
+		do_no_esp = do_empty_mind = do_weird_mind = FALSE;
+#endif
+		do_invisible = do_cold_blood = FALSE;
 
 		/* Calculate distance */
 		if (dist) {
@@ -2470,15 +2467,16 @@ void update_mon(int m_idx, bool dist) {
 			}
 
 			/* Telepathy can see all "nearby" monsters with "minds" */
-			if ((p_ptr->telepathy || (p_ptr->prace == RACE_DRACONIAN)) &&
+			if ((p_ptr->telepathy || p_ptr->prace == RACE_DRACONIAN || p_ptr->prace == RACE_ENT) &&
 			    !(in_sector000(wpos) && (sector000flags2 & LF2_NO_ESP)) &&
 			    !(l_ptr && (l_ptr->flags2 & LF2_NO_ESP)) &&
 			    !(l_ptr && (l_ptr->flags2 & LF2_LIMIT_ESP) && d > 10)
 			    ) {
-				bool see = FALSE, drsee = FALSE;
+				bool see = FALSE, drsee = FALSE, entsee = FALSE;
 
 				/* Different ESP */
 				if (p_ptr->prace == RACE_DRACONIAN) drsee = TRUE;
+				if (p_ptr->prace == RACE_ENT) entsee = TRUE;
 				if ((p_ptr->telepathy & ESP_ORC) && (r_ptr->flags3 & RF3_ORC)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_SPIDER) && (r_ptr->flags7 & RF7_SPIDER)) see = TRUE;
 				if ((p_ptr->telepathy & ESP_TROLL) && (r_ptr->flags3 & RF3_TROLL)) see = TRUE;
@@ -2495,11 +2493,19 @@ void update_mon(int m_idx, bool dist) {
 				if ((p_ptr->telepathy & ESP_UNIQUE) && (r_ptr->flags1 & RF1_UNIQUE)) see = TRUE;
 				if (p_ptr->telepathy & ESP_ALL) see = TRUE;
 
-				if (see && (p_ptr->mode & MODE_HARD) && (m_ptr->cdis > MAX_SIGHT)) see = FALSE;
 				/* Draconian ESP */
 				if (drsee && !see &&
-				    p_ptr->lev >= 6 && m_ptr->cdis <= (5 + p_ptr->lev / 2))
+				    p_ptr->lev >= 6 && m_ptr->cdis <= (5 + (p_ptr->lev <= 50 ? p_ptr->lev : 50) / 2))
 					see = TRUE;// 3+lev/3
+
+				/* Ent sensing movements of plants */
+				if (entsee && !see &&
+				    /* must have 'greenery-LoS to monster' */
+				    logreenery(wpos, m_ptr->fy, m_ptr->fx, p_ptr->py, p_ptr->px) &&
+				    m_ptr->cdis <= (1 + (p_ptr->lev <= 50 ? p_ptr->lev : 50) / 2))
+					see = TRUE;
+
+				if (see && (p_ptr->mode & MODE_HARD) && (m_ptr->cdis > MAX_SIGHT)) see = FALSE;
 
 				if (see) {
 					/* Empty mind, no telepathy */

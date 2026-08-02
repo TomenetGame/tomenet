@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 31. July 2026 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 2. August 2026 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -20579,13 +20579,13 @@ create a character!):
     Being much like trees they are very slow but strong and do not have
     to feed as often. Because they consist of wood, they are quite
     susceptible to fire and they don't drown in water.
-    As the Shepherds of the Trees, they can learn to sense the presence of
-    others, such as animals at level 10, orcs at 15, trolls at 20, giants
-    at 25, dragons at 30, demons at 40 and all evil-minded creatures at
-    level 50.
-    At level 4 Ents learn to see invisible things. In general, they accumulate
-    experience very slowly and they do not eat normal food but they are able to
-    consume liquids. Trees will slightly bend aside to let ents pass through.
+    As the Shepherds of the Trees, they are able to perceive the movements of
+    grass and plants close around them in great detail, noticing creatures that
+    approach as long as they tread on or fly over floor with greenery. The
+    radius expands as the Ent gains levels, up to 50.
+    In general, they accumulate experience very slowly and they do not eat
+    normal food but they are able to consume liquids.
+    Trees will slightly bend aside to let ents pass through.
     Ents are able to slowly replenish their nourishment by rooting themselves
     into the ground by entering 'R'esting mode, provided it's natural ground
     such as grass, earth, mud or water. Their food state will go up to 'Full'
@@ -20605,11 +20605,12 @@ create a character!):
     dragons, they can eat firestones to temporarily boost their powers.
     (See (5.9) for firestone details.)
     Draconians need a very long time to gain further experience and need to eat
-    often. They have feather falling instrinsically from birth.
+    often. They have feather falling instrinsically from birth and at level 30
+    they learn how to levitate completely.
     At level 5 they gain intrinsic telepathic powers (ESP) to spot dragons
     anywhere on the level. At level 6 this power advances to additionally being
     able to notice all nearby creatures that have a mind and the radius expands
-    as the Draconian gains levels. At level 30 they learn how to levitate.
+    as the Draconian gains levels, up to 50.
     Unlike other races, draconians are susceptible to the void connecting
     void jump gates and may get hurt by it when they travel through it,
     perceiving it as "cold" even if they resist or are immune to normal frost.
