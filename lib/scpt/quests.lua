@@ -483,6 +483,10 @@ function quest_towneltalk(Ind, msg, topic)
 				msg_print(Ind, "\252\255UYou should really make sure you have Free Action, or you might get paralzyed by a monster and become unable to defend yourself or flee!")
 				hinted = 1
 			end
+			if player.resist_blind == 0 then
+				msg_print(Ind, "\252\255UConsider that scrolls and most spells cannot be used while blinded, so blindness resistance might be important!")
+				hinted = 1
+			end
 			if player.resist_nexus == 0 then
 				msg_print(Ind, "\252\255UYou probably want nexus resistance soon, because nexus can swap two of your attributes randomly, which can mean very, very serious trouble.")
 				hinted = 1
