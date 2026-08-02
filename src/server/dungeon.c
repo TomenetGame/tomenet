@@ -10679,6 +10679,7 @@ void dungeon(void) {
 	   or gameplay might in very rare occasions get screwed up (someone dying when he shouldn't) - C. Blue */
 	if (!(turn % cfg.fps)) {
 		player_type *p_ptr;
+		int pcol = 0; //party-colourization
 
 		/* Process global_events */
 		process_global_events();
@@ -10719,7 +10720,6 @@ void dungeon(void) {
 		}
 
 		/* process certain player-related timers */
-		k = 0; //party-colourization
 		for (i = 1; i <= NumPlayers; i++) {
 			p_ptr = Players[i];
 
@@ -10781,12 +10781,12 @@ void dungeon(void) {
 			/* Party-colorization (admins only): not player-specific, but iterates over all online players anyway */
 			if (p_ptr->party && parties[p_ptr->party].set_attr == TRUE) {
 				parties[p_ptr->party].set_attr = FALSE;
-				if (k == TERM_L_DARK - 1) k++; //reserved for iron teams
-				if (k == TERM_SLATE - 1) k++; //skip too similar white tone maybe, QoL
-				//if (k == TERM_ORANGE - 1) k++; //slightly cluttery with orange-coloured depths
-				if (k == TERM_L_WHITE - 1) k++; //skip too similar white tone maybe, QoL
-				parties[p_ptr->party].attr = ++k;
-				k = k % TERM_MULTI;
+				if (pcol == TERM_L_DARK - 1) pcol++; //reserved for iron teams
+				if (pcol == TERM_SLATE - 1) pcol++; //skip too similar white tone maybe, QoL
+				//if (pcol == TERM_ORANGE - 1) pcol++; //slightly cluttery with orange-coloured depths
+				if (pcol == TERM_L_WHITE - 1) pcol++; //skip too similar white tone maybe, QoL
+				parties[p_ptr->party].attr = ++pcol;
+				pcol = pcol % TERM_MULTI;
 			}
 
 			/* Might be more efficient this way: Just ignore non-existant items and increment everything anyway, even empty slots? */

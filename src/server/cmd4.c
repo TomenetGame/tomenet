@@ -888,14 +888,29 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 			if (q_ptr->guild)
 				fprintf(fff, " \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 			if (q_ptr->party) {
-				if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
-					fprintf(fff, " \377D<%s%s\377D>\377U",
-					    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-					    parties[q_ptr->party].name);
-				else
-					fprintf(fff, " '%s%s\377U'",
-					    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-					    parties[q_ptr->party].name);
+				if (admin) { /* colourize (non-iron) party names for admins, for easy visual overview */
+					char pcol[3];
+
+					pcol[0] = '\377'; pcol[2] = 0;
+					pcol[1] = color_attr_to_char(parties[q_ptr->party].attr);
+					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+						fprintf(fff, " \377D<%s%s\377D>\377U",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : pcol,
+						    parties[q_ptr->party].name);
+					else
+						fprintf(fff, " '%s%s\377U'",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : pcol,
+						    parties[q_ptr->party].name);
+				} else {
+					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+						fprintf(fff, " \377D<%s%s\377D>\377U",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+						    parties[q_ptr->party].name);
+					else
+						fprintf(fff, " '%s%s\377U'",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+						    parties[q_ptr->party].name);
+				}
 			}
   #ifdef SHOW_SOLOIST_TAG
 			if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
@@ -1025,14 +1040,29 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 				fprintf(fff, ", \377y[\377%c%s\377y]\377U", COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 			if (q_ptr->party) {
 				if (!q_ptr->guild) fprintf(fff, ", Party:");
-				if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
-					fprintf(fff, " \377D<%s%s\377D>\377U",
-					    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-					    parties[q_ptr->party].name);
-				else
-					fprintf(fff, " '%s%s\377U'",
-					    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-					    parties[q_ptr->party].name);
+				if (admin) { /* colourize (non-iron) party names for admins, for easy visual overview */
+					char pcol[3];
+
+					pcol[0] = '\377'; pcol[2] = 0;
+					pcol[1] = color_attr_to_char(parties[q_ptr->party].attr);
+					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+						fprintf(fff, " \377D<%s%s\377D>\377U",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : pcol,
+						    parties[q_ptr->party].name);
+					else
+						fprintf(fff, " '%s%s\377U'",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : pcol,
+						    parties[q_ptr->party].name);
+				} else {
+					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+						fprintf(fff, " \377D<%s%s\377D>\377U",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+						    parties[q_ptr->party].name);
+					else
+						fprintf(fff, " '%s%s\377U'",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+						    parties[q_ptr->party].name);
+				}
 			}
   #ifdef SHOW_SOLOIST_TAG
 			if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
@@ -1478,15 +1508,30 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 				fprintf(fff, ", \377y[\377%c%s\377y]\377U",
 				    COLOUR_CHAT_GUILD, guilds[q_ptr->guild].name);
 			if (q_ptr->party) {
-				if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
-					fprintf(fff, " \377D<%s%s\377D>\377U",
-					    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-					    parties[q_ptr->party].name);
-				else
-					fprintf(fff, "%s '%s%s\377U'",
-					    q_ptr->guild ? "" : ", Party:",
-					    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
-					    parties[q_ptr->party].name);
+				if (admin) { /* colourize (non-iron) party names for admins, for easy visual overview */
+					char pcol[3];
+
+					pcol[0] = '\377'; pcol[2] = 0;
+					pcol[1] = color_attr_to_char(parties[q_ptr->party].attr);
+					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+						fprintf(fff, " \377D<%s%s\377D>\377U",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : pcol,
+						    parties[q_ptr->party].name);
+					else
+						fprintf(fff, " '%s%s\377U'",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : pcol,
+						    parties[q_ptr->party].name);
+				} else {
+					if (parties[q_ptr->party].mode & PA_IRONTEAM_CLOSED)
+						fprintf(fff, " \377D<%s%s\377D>\377U",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+						    parties[q_ptr->party].name);
+					else
+						fprintf(fff, "%s '%s%s\377U'",
+						    q_ptr->guild ? "" : ", Party:",
+						    (parties[q_ptr->party].mode & PA_IRONTEAM) ? "\377s" : "",
+						    parties[q_ptr->party].name);
+				}
 			}
    #ifdef SHOW_SOLOIST_TAG
 			if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
