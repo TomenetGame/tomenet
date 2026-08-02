@@ -8832,6 +8832,7 @@ Chain_Macro:
 
 					case mw_fileset: {
 #ifdef TEST_CLIENT
+						FILE *fp;
 						int xoffset1 = 1, xoffset2 = 3;
 						int f, k, m, n, found;
 						char *cc, *cf, *cfile;
@@ -8878,7 +8879,7 @@ Chain_Macro:
 										    //format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g, active: %s; \377s%s\377-; \"\377s%s\377-\"",
 										    format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g [%s]; \377s%s\377-; \"\377s%s\377-\"",
 										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", "",//fileset[k].all_stage_files_exist ? "" : "\377y",
-										    tmpbuf, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
+										    tmpbuf, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377B%d\377-", fileset_stage_selected + 1),
 										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : (fileset[k].style_free ? "FreeSw" : "------")),
 										    fileset[k].basefilename));
 									} else
@@ -8886,33 +8887,38 @@ Chain_Macro:
 
 								l++;
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "\377gWith the filesets listed above, you may...");
-								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377Ga\377-) Clear list and rescan (discards any unsaved macro set)");
-								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_set ? "\377Gb\377-" : "\377Db", ") Initialise a new set (it will also get selected automatically)"));
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GC\377-) Clear list and rescan (discards any unsaved macro set)");
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_set ? "\377GI\377-" : "\377DI", ") Initialise a new set (it will also get selected automatically)"));
 								if (filesets_found) {
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gc\377-" : "\377Dc", ") Select a set to work with (persists through leaving this menu)"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gd\377-" : "\377Dd", ") Forget a set (forgets all loaded reference keys to that set)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377GS\377-" : "\377DS", ") Select a set to work with (persists through leaving this menu)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377GF\377-" : "\377DF", ") Forget a set (forgets all loaded reference keys to that set)"));
 								} else l += 2;
 
 								if (fileset_selected != -1) {
 									l++;
 									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("And with the currently selected fileset (\377v%d\377-) you may...", fileset_selected + 1));
 
+#if 1 //todo: adjust to the correct position for this big screen
 									/* urgh, low on space, we somehow squeeze the stage comment in there */
 									if (fileset_stage_selected != -1)
 										Term_putstr(xoffset1 + 55, l - 1, -1, TERM_GREEN,
-										    format("\377g('\377s%s\377g')", fileset[fileset_selected].stage_comment[fileset_stage_selected]));
+										    fileset[fileset_selected].stage_comment[fileset_stage_selected][0] ?
+										    format("\377g('\377s%s\377g')", fileset[fileset_selected].stage_comment[fileset_stage_selected]) :
+										    "\377g(no comment)");
+#endif
 
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GA\377-) Modify its switching keys");
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GB\377-) Change its switching method");
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, ok_swap_stages ? "\377GC\377-) Swap two stages" : "\377DC) Swap two stages");
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Purge one of the set stage files (purges its reference keys) (1-%d)",
-									    fileset[fileset_selected].stages ? "\377GD\377-" : "\377DD", fileset[fileset_selected].stages));
+									Term_putstr(xoffset2, l, -1, TERM_GREEN, "\377Gk\377-) Modify its switching keys");
+									Term_putstr(xoffset2 + 35, l++, -1, TERM_GREEN, "\377Gm\377-) Change its switching method");
+									Term_putstr(xoffset2, l, -1, TERM_GREEN, ok_swap_stages ? "\377Gs\377-) Swap two stages" : "\377Ds) Swap two stages");
+									Term_putstr(xoffset2 + 35, l++, -1, TERM_GREEN, "\377Gc\377-) Change a stage's comment");
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Purge one of the set's stage files (purges its reference keys) (1-%d)",
+									    fileset[fileset_selected].stages ? "\377Gp\377-" : "\377Dp", fileset[fileset_selected].stages));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
-									    "\377GE\377-" : "\377DE", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
+									    "\377Gi\377-" : "\377Di", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (\377oforgets active macros\377- & loads stage macrofile) (1-%d)",
-									    fileset[fileset_selected].stages ? "\377GF\377-" : "\377DF", fileset[fileset_selected].stages));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377GG\377-) Write all currently active macros to the activated stage file%s",
-									    fileset_stage_selected == -1 ? "" : format(" (\377v%d\377-)", fileset_stage_selected + 1)));
+									    fileset[fileset_selected].stages ? "\377Ga\377-" : "\377Da", fileset[fileset_selected].stages));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377Gw\377-) Write all currently active macros to the activated stage file%s",
+									    fileset_stage_selected == -1 ? "" : format(" (\377B%d\377-)", fileset_stage_selected + 1)));
 								}
 
 								l++;
@@ -8944,38 +8950,39 @@ Chain_Macro:
 										    //format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g, active: %s; \377s%s\377-; \"\377s%s\377-\"",
 										    format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g [%s]; \377s%s\377-; \"\377s%s\377-\"",
 										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", "",//fileset[k].all_stage_files_exist ? "" : "\377y",
-										    tmpbuf, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377v%d\377-", fileset_stage_selected + 1),
+										    tmpbuf, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377B%d\377-", fileset_stage_selected + 1),
 										    (fileset[k].style_cyclic && fileset[k].style_free) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : (fileset[k].style_free ? "FreeSw" : "------")),
 										    fileset[k].basefilename));
 									} else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 
-								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377Ga\377-) Clear list and rescan (discards any unsaved macro set)");
-								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_set ? "\377Gb\377-" : "\377Db", ") Initialise a new set (it will also get selected automatically)"));
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GC\377-) Clear list and rescan (discards any unsaved macro set)");
+								Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_set ? "\377GI\377-" : "\377DI", ") Initialise a new set (it will also get selected automatically)"));
 								if (filesets_found) {
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gc\377-" : "\377Dc", ") Select a set to work with (persists through leaving this menu)"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377Gd\377-" : "\377Dd", ") Forget a set (forgets all loaded reference keys to that set)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377GS\377-" : "\377DS", ") Select a set to work with (persists through leaving this menu)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", filesets_found ? "\377GF\377-" : "\377DF", ") Forget a set (forgets all loaded reference keys to that set)"));
 								} else l += 2;
 
 								if (fileset_selected != -1) {
-									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("With the currently selected fileset (\377v%d\377-) you may...", fileset_selected + 1));
+									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("With the selected set (\377v%d\377-%s) you may...",
+										    fileset_selected + 1,
+										    fileset_stage_selected == -1 ? ", no stage activated" :
+										    (fileset[fileset_selected].stage_comment[fileset_stage_selected][0] ?
+										    format(", stage '\377s%s\377-'", fileset[fileset_selected].stage_comment[fileset_stage_selected]) :
+										    ", no stage comment")));
 
-									/* urgh, low on space, we somehow squeeze the stage comment in there */
-									if (fileset_stage_selected != -1)
-										Term_putstr(xoffset1 + 51, l - 1, -1, TERM_GREEN,
-										    format("\377g('\377s%s\377g')", fileset[fileset_selected].stage_comment[fileset_stage_selected]));
-
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GA\377-) Modify its switching keys");
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GB\377-) Change its switching method");
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, ok_swap_stages ? "\377GC\377-) Swap two stages" : "\377DC) Swap two stages");
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Purge one of the set stage files (purges its reference keys) (1-%d)",
-									    fileset[fileset_selected].stages ? "\377GD\377-" : "\377DD", fileset[fileset_selected].stages));
+									Term_putstr(xoffset2, l, -1, TERM_GREEN, "\377Gk\377-) Modify its switching keys");
+									Term_putstr(xoffset2 + 35, l++, -1, TERM_GREEN, "\377Gm\377-) Change its switching method");
+									Term_putstr(xoffset2, l, -1, TERM_GREEN, ok_swap_stages ? "\377Gs\377-) Swap two stages" : "\377Ds) Swap two stages");
+									Term_putstr(xoffset2 + 35, l++, -1, TERM_GREEN, "\377Gc\377-) Change a stage's comment");
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Purge one of the set's stage files (purges its reference keys)",
+									    fileset[fileset_selected].stages ? "\377Gp\377-" : "\377Dp"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
-									    "\377GE\377-" : "\377DE", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (\377oforgets active macros\377- & loads stage macrofile) (1-%d)",
-									    fileset[fileset_selected].stages ? "\377GF\377-" : "\377DF", fileset[fileset_selected].stages));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377GG\377-) Write all currently active macros to the activated stage file%s",
-									    fileset_stage_selected == -1 ? "" : format(" (\377v%d\377-)", fileset_stage_selected + 1)));
+									    "\377Gi\377-" : "\377Di", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (\377oforgets active macros\377- & loads stage macrofile)",
+									    fileset[fileset_selected].stages ? "\377Ga\377-" : "\377Da"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377Gw\377-) Write all currently active macros to the activated stage file%s",
+									    fileset_stage_selected == -1 ? "" : format(" (\377B%d\377-)", fileset_stage_selected + 1)));
 								}
 
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "After selecting a set (and stage), you can leave this menu with \377GESC\377- to work");
@@ -8990,7 +8997,7 @@ Chain_Macro:
 							while (TRUE) {
 								switch (choice = inkey()) {
 								case ESCAPE:
-								case 'p':
+								//case 'p':
 								case '\010': /* backspace */
 									i = -2; /* leave */
 									break;
@@ -9003,9 +9010,14 @@ Chain_Macro:
 									xhtml_screenshot("screenshot????", 2);
 									i = -3;
 									break;
+								case 'C': case 'I': case 'S': case 'F':
+									break; //accepted commands
+								case 'c': case 'k': case 'm': case 's': case 'p': case 'i': case 'a': case 'w':
+									//if (fileset_selected == -1) continue;
+									break; //accepted commands
 								default:
-									/* invalid action? */
-									if ((choice < 'a' || choice > 'd') && (fileset_selected == -1 || choice < 'A' || choice > 'G')) continue;
+									/* invalid action */
+									continue;
 								}
 								break;
 							}
@@ -9020,13 +9032,13 @@ Chain_Macro:
 							switch (choice) {
 							/* Fileset actions: */
 
-							case 'a': // wipe memory list and rescan
+							case 'C': // wipe memory list and rescan
 								/* Init filesets */
 								rescan = TRUE;
 								i = -4;
 								break;
 
-							case 'b': //init new fileset (implies initialization+activation of a 1st stage too)
+							case 'I': //init new fileset (implies initialization+activation of a 1st stage too)
 								if (!ok_new_set) continue;
 								// new set index, gets appended to existing ones
 								// get name
@@ -9205,12 +9217,13 @@ Chain_Macro:
 								fileset_selected = f;
 								break;
 
-							case 'c': //select a set
+							case 'S': //select a set
 								GET_MACROFILESET
 								fileset_selected = f;
+								fileset_stage_selected = -1;
 								break;
 
-							case 'd': //forget a set
+							case 'F': //forget a set
 								GET_MACROFILESET
 								if (fileset_selected == f) fileset_selected = -1; //unselect it if it was selected
 								//scan all macros
@@ -9277,40 +9290,59 @@ Chain_Macro:
 								fileset[k].stages = 0;
 								break;
 
-/*	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles) bool style_free; // Style: free-switching (at last one trigger key was found that switches freely)
-	char macro__pat__cycle[32]; char macro__patbuf__cycle[32]; char macro__act__cycle[160]; char macro__actbuf__cycle[160];
-	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32]; char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
-	char macro__act__switch[MACROFILESETS_STAGES_MAX][160]; char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160]; */
-
 							/* Note: If a fileset is activated, a stage of it will also be activated automatically. If it's a new set, it'll be stage #1 (still empty). */
 							/* Fileset-stage actions (required 'fileset_selected != -1' condition was already checked directly after inkey() read) : */
-							case 'A': //modify switching keys
+							case 'k': //modify switching keys
+								//todo..
 								break;
 
-							case 'B': //modify switching method
+							case 'm': //modify switching method
+								//todo..
 								break;
 
-							case 'C': //swap two stages
+							case 's': //swap two stages
 								if (!ok_swap_stages) continue;
+								//todo..
 								break;
 
-							case 'D': //purge a stage
-								if (!fileset[fileset_selected].stages) continue;
+							case 'p': //purge a stage
+								GET_MACROFILESET_STAGE
+								//todo..
 								break;
 
-							case 'E': //init additional stage; append it to or insert it into the current stages list
+							case 'i': //init additional stage; append it to or insert it into the current stages list
 								if (!ok_new_stage) continue;
+								//todo..
 								break;
 
-							case 'F': //activate a stage
+							case 'a': //activate a stage
 								GET_MACROFILESET_STAGE
 								fileset_stage_selected = f;
 								break;
 
-							case 'G': { //write current macros to active stage
-								// get comment (optional)
-								FILE *fp;
+							case 'c': // change stage comment
+								GET_MACROFILESET_STAGE
+								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter new comment (ESC to skip): ");
+								strcpy(tmpbuf, fileset[fileset_selected].stage_comment[f]);
+								if (askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) /* change comment? (ENTER to clear comment, ESC to keep it as it is) */
+									strcpy(fileset[fileset_selected].stage_comment[f], tmpbuf);
+								//store comment in a separate file '<macroset-stage>.comment', otherwise hard to handle...
+								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.comment",
+								    fileset[fileset_selected].basefilename, f + 1));
+								fp = fopen(tmpbuf, "w");
+								if (fp) {
+									fprintf(fp, "%s", fileset[fileset_selected].stage_comment[f]);
+									fclose(fp);
+								} else c_msg_format("\377oError: couldn't write file '%s-FS%d.comment'.", fileset[fileset_selected].basefilename, f + 1);
+								break;
 
+							case 'w': //write current macros to active stage
+								if (fileset_stage_selected == -1) {
+									c_msg_print("\377yCurrently there isn't an active stage, 'a'ctivate a stage first.");
+									continue;
+								}
+
+								// get stage comment text (optional)
 								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter new comment (ESC to skip): ");
 								strcpy(tmpbuf, fileset[fileset_selected].stage_comment[fileset_stage_selected]);
 								if (askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) /* change comment? (ENTER to clear comment, ESC to keep it as it is) */
@@ -9325,9 +9357,9 @@ Chain_Macro:
 								} else c_msg_format("\377oError: couldn't write file '%s-FS%d.comment'.", fileset[fileset_selected].basefilename, fileset_stage_selected + 1);
 
 								/* Write all active macros to active set/stage: */
-								//...
-
-								break; }
+								sprintf(tmpbuf, "%s-FS%d.prf", fileset[fileset_selected].basefilename, fileset_stage_selected + 1);
+								(void)macro_dump(tmpbuf);
+								break;
 							}
 
 							/* Restart mw_fileset menu */
