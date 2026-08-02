@@ -10292,6 +10292,7 @@ void do_set_mycorrhiza(int Ind, int item) {
 		}
 		s_printf("MYCORRHIZA: %s : end.\n", p_ptr->name);
 		msg_print(Ind, "You end your current mycorrhiza and the mushroom decays.");
+		if (p_ptr->mycorrhiza - 1 == SV_FOOD_PARANOIA) p_ptr->update |= PU_BONUS;
 		p_ptr->mycorrhiza = 0;
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
@@ -10308,10 +10309,14 @@ void do_set_mycorrhiza(int Ind, int item) {
 
 	/* Are we already in a mycorrhiza? Imply ending it first then. */
 	msg_print(Ind, "You end your current mycorrhiza and the previous mushroom decays.");
+	if (p_ptr->mycorrhiza - 1 == SV_FOOD_PARANOIA) p_ptr->update |= PU_BONUS;
 
 	/* Enter mycorrhiza! */
 	p_ptr->mycorrhiza = o_ptr->sval + 1;
 	p_ptr->mycorrhiza_dur = 5000;
+	/* Hack: Positive side effect of harmful mushroom */
+	if (o_ptr->sval == SV_FOOD_PARANOIA) p_ptr->update |= PU_BONUS;
+	/* Log */
 	{
 		char o_name[ONAME_LEN];
 
