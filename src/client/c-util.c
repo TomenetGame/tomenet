@@ -9282,6 +9282,7 @@ Chain_Macro:
 								break;
 
 							case 'A': //add the currently selected set's trigger keys to the currently loaded macros in memory (opposite of 'F')
+								//...so the player can then save all macros to <charname.prf> or <global.prf> or whatever he prefers
 								if (fileset_selected == -1) {
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
@@ -9303,6 +9304,7 @@ Chain_Macro:
 								break;
 
 							case 'F': //forget a set (opposite of 'A')
+								//...so the player then has to save all macros to <charname.prf> or <global.prf> or whatever he prefers, again, to erase the traces of that set
 								GET_MACROFILESET
 								if (fileset_selected == f) fileset_selected = -1; //unselect it if it was selected
 								//scan all macros
@@ -9388,6 +9390,9 @@ Chain_Macro:
 								GET_MACROFILESET_STAGE
 								fileset[fileset_selected].stage_disabled[f] = !fileset[fileset_selected].stage_disabled[f];
 								WRITE_MACROFILESET_STAGE_META
+
+								/* Also delete the trigger keys for this stage from all the other stages - which means also crop them out of the '-FS' disk files! */
+							    //...todo
 								break;
 
 							case 'i': //init additional stage; append it to or insert it into the current stages list
