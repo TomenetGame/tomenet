@@ -79,7 +79,7 @@ static void cmd_all_in_one(void) {
 #endif
 	if (item >= INVEN_WIELD) {
 #if defined(WIELD_BOOKS) || defined(WIELD_DEVICES)
-	tval = inventory[item].tval;
+		tval = inventory[item].tval;
 #endif
 #ifdef WIELD_BOOKS
 		if (tval == TV_BOOK) {
