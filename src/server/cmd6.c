@@ -10261,11 +10261,21 @@ void do_set_mycorrhiza(int Ind, int item) {
 	object_type *o_ptr;
 
 #ifndef ENABLE_MYCORRHIZA
+	msg_print(Ind, "\377yMycorrhiza is not an available gameplay function.");
 	return;
 #else
 	/* Paranoia checks */
-	if (p_ptr->prace != RACE_ENT || p_ptr->lev < ENABLE_MYCORRHIZA) return;
+	if (p_ptr->prace != RACE_ENT || p_ptr->lev < ENABLE_MYCORRHIZA) {
+		if (p_ptr->prace != RACE_ENT) msg_print(Ind, "\377yYou cannot undergo mycorrhiza.");
+		else msg_format(Ind, "\377yYou cannot undergo mycorrhiza before level %d.", ENABLE_MYCORRHIZA);
+		return;
+	}
 #endif
+
+	if (p_ptr->paralyzed || p_ptr->stun > 100 || p_ptr->suspended) {
+		msg_print(Ind, "\377yYou cannot undergo or leave mycorrhiza while you cannot move.");
+		return;
+	}
 
 	/* Leave existing mycorrhiza? */
 	if (item == -1) {
@@ -10275,11 +10285,18 @@ void do_set_mycorrhiza(int Ind, int item) {
 		}
 		msg_print(Ind, "You end your current mycorrhiza and the mushroom decays.");
 		p_ptr->mycorrhiza = 0;
+		p_ptr->energy -= level_speed(&p_ptr->wpos);
 		return;
 	}
 
-	if (!get_inven_item(Ind, item, &o_ptr)) return; /* item doesn't exist */
-	if (o_ptr->tval != TV_FOOD || o_ptr->sval > SV_FOOD_MUSHROOMS_MAX) return; /* not a mushroom */
+	if (!get_inven_item(Ind, item, &o_ptr)) {
+		msg_print(Ind, "\377yYou must select a mushroom for mycorrhiza.");
+		return; /* item doesn't exist */
+	}
+	if (o_ptr->tval != TV_FOOD || o_ptr->sval > SV_FOOD_MUSHROOMS_MAX) {
+		msg_print(Ind, "\377yYou must select a mushroom for mycorrhiza.");
+		return; /* not a mushroom */
+	}
 
 	/* Are we already in a mycorrhiza? Imply ending it first then. */
 	msg_print(Ind, "You end your current mycorrhiza and the previous mushroom decays.");
@@ -10294,6 +10311,7 @@ void do_set_mycorrhiza(int Ind, int item) {
 	inven_item_optimize(Ind, item);
 
 	msg_format(Ind, "\377GYou plant the mushroom on your bark, to enter a new mycorrhiza...");
+	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
 
 bool create_snowball(int Ind, cave_type *c_ptr) {

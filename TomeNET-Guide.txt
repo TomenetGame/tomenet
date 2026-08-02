@@ -20596,7 +20596,9 @@ create a character!):
     into the Ent's bark and provide periodic effects depending on its type.
     The effect will not happen frequently at first, but more often the longer
     the symbiosis is active (up to 5000 turns of symbiosis existance).
-    (Press 'm' to begin or end a mycorrhiza. Only one mushroom can be active.)
+    (Press 'm' to begin or end a mycorrhiza. Only one mushroom can be active.
+    You can also use the '/myc' command instead. Also, the '/ex' command will
+    display a currently active symbiosis in light green colour.)
     Ents also intrinsically resist the force of unleashed water and their bark
     skin even provides a small bonus to armour class.
     They get bonus to 'Health', a slight bonus to 'Spirit' and a large bonus on
