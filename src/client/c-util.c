@@ -5880,9 +5880,8 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 #define GET_MACROFILESET \
 	{ if (!filesets_found) continue; \
 	Term_putstr(15, l, -1, TERM_L_GREEN, format("Enter number of set to select (1-%d): ", filesets_found)); \
-	tmpbuf[0] = 0; \
-	if (!askfor_aux(tmpbuf, 3, 0)) continue; \
-	f = atoi(tmpbuf) - 1; \
+	tmpbuf[0] = inkey(); if (!tmpbuf[0] || tmpbuf[0] == '\e') continue; \
+	f = tmpbuf[0] - '1'; /* (user enters index+1) */ \
 	if (f < 0 || f >= filesets_found) { \
 		c_msg_format("\377oError: Invalid number entered (%d).", f + 1); \
 		continue; \
@@ -5892,9 +5891,8 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 #define GET_MACROFILESET_STAGE \
 	{ if (fileset_selected == -1 || !fileset[fileset_selected].stages) continue; \
 	Term_putstr(15, l, -1, TERM_L_GREEN, format("Enter number of stage to select (1-%d): ", fileset[fileset_selected].stages)); \
-	tmpbuf[0] = 0; \
-	if (!askfor_aux(tmpbuf, 3, 0)) continue; \
-	f = atoi(tmpbuf) - 1; \
+	tmpbuf[0] = inkey(); if (!tmpbuf[0] || tmpbuf[0] == '\e') continue; \
+	f = tmpbuf[0] - '1'; /* (user enters index+1) */ \
 	if (f < 0 || f >= fileset[fileset_selected].stages) { \
 		c_msg_format("\377oError: Invalid number entered (%d).", f + 1); \
 		continue; \
@@ -9283,7 +9281,7 @@ Chain_Macro:
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
 								break;
 
-							case 'A': //add the currently selected set's trigger keys to the currently loaded macros in memory
+							case 'A': //add the currently selected set's trigger keys to the currently loaded macros in memory (opposite of 'F')
 								if (fileset_selected == -1) {
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
@@ -9304,7 +9302,7 @@ Chain_Macro:
 								}
 								break;
 
-							case 'F': //forget a set
+							case 'F': //forget a set (opposite of 'A')
 								GET_MACROFILESET
 								if (fileset_selected == f) fileset_selected = -1; //unselect it if it was selected
 								//scan all macros
