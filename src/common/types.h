@@ -863,7 +863,6 @@ struct object_type {
 	byte is_mushroom;		/* If server sends us the info that this is a mushroom, save that knowledge for do_mycorrhiza(). */
 
 	/* (Future use/hole) */
-	byte dummyB1;
 	s32b dummyL1, dummyL2;
 };
 typedef struct object_type_v9 object_type_v9;
