@@ -6620,6 +6620,13 @@ void calc_boni(int Ind) {
 
 
 
+	/* Hack: Mycorrhiza positive side effect of harmful mushroom - Thanks, Virus. */
+	switch (p_ptr->mycorrhiza - 1) {
+	case SV_FOOD_PARANOIA: p_ptr->skill_fos += 30; break;
+	}
+
+
+
 	/* Knowledge in magic schools can give permanent extra boni */
 	/* - SKILL_EARTH gives resistance in earthquake() */
 	if (get_skill(p_ptr, SKILL_AIR) >= 30) { p_ptr->feather_fall = TRUE; csheet_boni[14].cb[5] |= CB6_RFFAL; }
