@@ -573,7 +573,7 @@ static void rd_item(object_type *o_ptr) {
 		rd_s16b(&o_ptr->find_wpos.wz);
 		rd_byte(&tmpbyte);
 		o_ptr->find_dun = (char)tmpbyte;
-		rd_byte(&o_ptr->is_mushroom); //pointless, cause client-side only. Just used it to save work by keeping v10 estate format compatible for now, lol. Todo: Change estate item save procedure to same as here in load/save
+		rd_byte(&o_ptr->dummyB1); //hole
 		rd_s32b(&o_ptr->find_player_turndiff);
 		rd_u16b(&o_ptr->find_ridx);
 		rd_u16b(&o_ptr->find_reidx);
