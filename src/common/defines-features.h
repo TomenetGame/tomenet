@@ -597,7 +597,7 @@
    gaining the effect continuously in intervals, the faster the longer they have
    the symbiosis or the higher level they are, perhaps? - C. Blue
    Only one mushroom can be in symbiosis at a time. */
-#define ENABLE_MYCORRHIZA 10
+#define ENABLE_MYCORRHIZA 7
 
 
 /* Work in progress // debug code - do not enable this!

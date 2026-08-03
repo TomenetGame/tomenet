@@ -20591,7 +20591,7 @@ create a character!):
     such as grass, earth, mud or water. Their food state will go up to 'Full'
     that way. They cannot eat normal food but will feed greatly from drinking
     potions that provide nourishment. They can never be gorged though.
-    Starting at level 10, Ents can enter a special symbiotic relationship with
+    Starting at level 7, Ents can enter a special symbiotic relationship with
     any mushroom of their choice: Mycorrhiza. The mushroom will get implanted
     into the Ent's bark and provide periodic effects depending on its type.
     The effect will not happen frequently at first, but more often the longer
