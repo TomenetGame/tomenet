@@ -6809,7 +6809,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			/* need to specify one parm: the mushroom */
 			if (tk != 1 || k < -1 || k >= INVEN_PACK) {
-				msg_print(Ind, "\377oUsage:     /myc <inventory slot with mushroom | '-')");
+				msg_print(Ind, "\377oUsage:     /myc <inventory slot with fungus | '-')");
 				msg_print(Ind, "\377o           ('-' means: End currently active symbiosis)");
 				msg_print(Ind, "\377oExamples:  /myc d");
 				msg_print(Ind, "\377oExamples:  /myc -");

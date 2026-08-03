@@ -373,9 +373,12 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 	case SV_FOOD_BISCUIT:
 	case SV_FOOD_JERKY:
 	case SV_FOOD_SLIME_MOLD:
-		if (!p_ptr->suscep_life || sval == SV_FOOD_SLIME_MOLD)
-			msg_print(Ind, "That tastes good.");
-		ident = TRUE;
+		if (mycorrhiza) set_food(Ind, p_ptr->food + 1); //tba
+		else {
+			if (!p_ptr->suscep_life || sval == SV_FOOD_SLIME_MOLD)
+				msg_print(Ind, "That tastes good.");
+			ident = TRUE;
+		}
 		break;
 
 	case SV_FOOD_WAYBREAD:
@@ -10296,7 +10299,7 @@ void do_set_mycorrhiza(int Ind, int item) {
 			return;
 		}
 		s_printf("MYCORRHIZA: %s : end.\n", p_ptr->name);
-		msg_print(Ind, "You end your current mycorrhiza and the mushroom decays.");
+		msg_print(Ind, "You end your current mycorrhiza and the fungus decays.");
 		if (p_ptr->mycorrhiza - 1 == SV_FOOD_PARANOIA) p_ptr->update |= PU_BONUS;
 		p_ptr->mycorrhiza = 0;
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -10304,16 +10307,16 @@ void do_set_mycorrhiza(int Ind, int item) {
 	}
 
 	if (!get_inven_item(Ind, item, &o_ptr)) {
-		msg_print(Ind, "\377yYou must select a mushroom for mycorrhiza.");
+		msg_print(Ind, "\377yYou must select a fungus for mycorrhiza.");
 		return; /* item doesn't exist */
 	}
-	if (o_ptr->tval != TV_FOOD || o_ptr->sval > SV_FOOD_MUSHROOMS_MAX) {
-		msg_print(Ind, "\377yYou must select a mushroom for mycorrhiza.");
+	if (o_ptr->tval != TV_FOOD || (o_ptr->sval > SV_FOOD_MUSHROOMS_MAX && o_ptr->sval != SV_FOOD_SLIME_MOLD)) {
+		msg_print(Ind, "\377yYou must select a fungus for mycorrhiza.");
 		return; /* not a mushroom */
 	}
 
 	/* Are we already in a mycorrhiza? Imply ending it first then. */
-	msg_print(Ind, "You end your current mycorrhiza and the previous mushroom decays.");
+	msg_print(Ind, "You end your current mycorrhiza and the previous fungus decays.");
 	if (p_ptr->mycorrhiza - 1 == SV_FOOD_PARANOIA) p_ptr->update |= PU_BONUS;
 
 	/* Enter mycorrhiza! */
@@ -10334,7 +10337,9 @@ void do_set_mycorrhiza(int Ind, int item) {
 	inven_item_describe(Ind, item);
 	inven_item_optimize(Ind, item);
 
-	msg_format(Ind, "\377GYou plant the mushroom on your bark, to enter a new mycorrhiza...");
+	msg_format(Ind, "\377GYou plant the fungus on your bark, to enter a new mycorrhiza...");
+	if (o_ptr->sval == SV_FOOD_SLIME_MOLD)
+		msg_format(Ind, "The slime mold seems to collect moisture from the air and share it with you.");
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
 

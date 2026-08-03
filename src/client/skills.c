@@ -836,6 +836,9 @@ bool item_tester_hook_mushroom(object_type *o_ptr) {
 	if (o_ptr->sval == 255 /* Send_inven() uses this for unknown-flavour items */
 	    && o_ptr->is_mushroom) return(TRUE);
 
+	/* Exception, it's shroomage too... */
+	if (o_ptr->sval == SV_FOOD_SLIME_MOLD) return(TRUE);
+
 	if (o_ptr->sval > SV_FOOD_MUSHROOMS_MAX) return(FALSE);
 	return(TRUE);
 }
@@ -857,13 +860,13 @@ void do_mycorrhiza(int item) {
 		item_tester_hook = item_tester_hook_mushroom;
 #ifdef ENABLE_SUBINVEN
 		if (!c_get_item(&item, "Use which Mushroom? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG | USE_SUBINVEN))) {
-			if (item == -2) c_msg_print("You have no mushrooms.");
+			if (item == -2) c_msg_print("You have no fungus.");
 			if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
 			return;
 		}
 #else
 		if (!c_get_item(&item, "Use which Mushroom? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
-			if (item == -2) c_msg_print("You have no mushrooms.");
+			if (item == -2) c_msg_print("You have no fungus.");
 			if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
 			return;
 		}
