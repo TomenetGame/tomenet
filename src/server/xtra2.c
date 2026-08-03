@@ -5357,7 +5357,7 @@ void check_experience(int Ind) {
 		break;
 	case RACE_ENT:
 		if (old_lev < ENABLE_MYCORRHIZA && p_ptr->lev >= ENABLE_MYCORRHIZA) msg_print(Ind, "\374\377GYou learn to enter mycorrhiza (press '\377gm\377G')!");
-	break;
+		break;
 	case RACE_DRACONIAN:
 		if (old_lev < 5 && p_ptr->lev >= 5) msg_print(Ind, "\374\377GYou learn to telepathically sense dragons!");
 #ifndef ENABLE_DRACONIAN_TRAITS
