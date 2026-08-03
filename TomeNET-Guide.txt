@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 2. August 2026 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 3. August 2026 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -20592,11 +20592,11 @@ create a character!):
     that way. They cannot eat normal food but will feed greatly from drinking
     potions that provide nourishment. They can never be gorged though.
     Starting at level 7, Ents can enter a special symbiotic relationship with
-    any mushroom of their choice: Mycorrhiza. The mushroom will get implanted
+    any fungus of their choice: Mycorrhiza. The fungus will get implanted
     into the Ent's bark and provide periodic effects depending on its type.
     The effect will not happen frequently at first, but more often the longer
     the symbiosis is active (up to 5000 turns of symbiosis existance).
-    (Press 'm' to begin or end a mycorrhiza. Only one mushroom can be active.
+    (Press 'm' to begin or end a mycorrhiza. Only one fungus can be active.
     You can also use the '/myc' command instead. Also, the '/ex' command will
     display a currently active symbiosis in light green colour.)
     Ents also intrinsically resist the force of unleashed water and their bark
