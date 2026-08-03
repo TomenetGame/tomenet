@@ -30,16 +30,17 @@ static void copy_to_clipboard_multiline(char message_array[MAX_WINDOW_HGT][MSG_L
 		int j;
 		char xmsg[MSG_LEN], xmsg_reverse[MSG_LEN];
 		const char *c;
+		char *cx;
 		bool end = FALSE;
 		char formatted_and_not_chat;
 
 		c = msg_raw;
-		if (*c == '\377') c += 2;
+		if (*c == '\376') c++;
+		while (*c == '\377') c += 2;
 		while (*c == ' ') c++;
-		strcpy(xmsg, " ");
+		strcpy(xmsg, "\371");
 		strcat(xmsg, c);
-		/* avoid duplicate ' ' */
-		if (xmsg[strlen(xmsg) - 1] == ' ') xmsg[strlen(xmsg) - 1] = 0;
+		//while (*xmsg && xmsg[strlen(xmsg) - 1] == ' ') xmsg[strlen(xmsg) - 1] = 0;
 
 		for (j = 1; j < size; j++) {
 			c = message_array[j];
@@ -54,20 +55,19 @@ static void copy_to_clipboard_multiline(char message_array[MAX_WINDOW_HGT][MSG_L
 
 			formatted_and_not_chat = 0;
 			if (!end) {
-				if (*c == '\377') c += 2;
+				while (*c == '\377') c += 2;
 				while (*c == ' ') {
 					formatted_and_not_chat++;
 					c++;
 				}
-				strcpy(xmsg_reverse, " ");
+				strcpy(xmsg_reverse, "\371");
 			} else xmsg_reverse[0] = 0;
 
 			strcat(xmsg_reverse, c);
-			/* avoid duplicate ' ' */
-			if (xmsg_reverse[strlen(xmsg_reverse) - 1] == ' ') xmsg_reverse[strlen(xmsg_reverse) - 1] = 0;
+			//while (*xmsg && xmsg[strlen(xmsg) - 1] == ' ') xmsg[strlen(xmsg) - 1] = 0;
 
 			/* For multi-line messages that aren't chat, but some sort of - probably formatted - server info output (/tym!) */
-			if (formatted_and_not_chat >= 2) strcat(xmsg_reverse, " ");
+			if (formatted_and_not_chat >= 2) strcat(xmsg_reverse, "\371");
 
 			/* Multiline chat messages will fix into MSG_LEN.
 			   But this could also be a multiline status output message from the server, eg from the /tym command,
@@ -81,6 +81,28 @@ static void copy_to_clipboard_multiline(char message_array[MAX_WINDOW_HGT][MSG_L
 			if (end) break;
 		}
 
+		/* Post-process for URLs: They don't like to get spaces inserted on chat-linebreaks... */
+		if ((c = strstr(xmsg, "http")) || (c = strstr(xmsg, "www."))) {
+			char tmpbuf[MSG_LEN], *ct;
+
+			/* Strip spaces within URL */
+			strncpy(tmpbuf, xmsg, c - xmsg);
+			ct = &tmpbuf[c - xmsg];
+			while (*c) {
+				if (*c != '\371') *ct++ = *c;
+				c++;
+			}
+			*ct = 0;
+			strcpy(xmsg, tmpbuf);
+		}
+
+		/* 'Real' spaces outside an URL? */
+		cx = xmsg;
+		while (*cx) {
+			if (*cx == '\371') *cx = ' ';
+			cx++;
+		}
+
 		/* Post-process: No duplicate spaces (oh laziness) */
 		{
 			char tmpbuf[MSG_LEN], *ct = tmpbuf;
@@ -92,20 +114,6 @@ static void copy_to_clipboard_multiline(char message_array[MAX_WINDOW_HGT][MSG_L
 					continue;
 				}
 				*ct++ = *c++;
-			}
-			*ct = 0;
-			strcpy(xmsg, tmpbuf);
-		}
-
-		/* Post-process for URLs: They don't like to get spaces inserted on chat-linebreaks... */
-		if ((c = strstr(xmsg, "http")) || (c = strstr(xmsg, "www."))) {
-			char tmpbuf[MSG_LEN], *ct;
-
-			strncpy(tmpbuf, xmsg, c - xmsg);
-			ct = &tmpbuf[c - xmsg];
-			while (*c) {
-				if (*c != ' ') *ct++ = *c;
-				c++;
 			}
 			*ct = 0;
 			strcpy(xmsg, tmpbuf);
