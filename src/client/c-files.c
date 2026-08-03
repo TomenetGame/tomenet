@@ -2584,8 +2584,8 @@ void save_auto_inscriptions(cptr name) {
 	}
 
 	/* write header (1 line) */
-	fprintf(fp, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n",
-		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, CLIENT_VERSION_TAG);
+	fprintf(fp, "Auto-Inscriptions file for TomeNET v%d.%d.%d.%d.%d.%d%s\n",
+		VERSION_MAJOR, VERSION_MINOR, VERSION_PATCH, VERSION_EXTRA, VERSION_BRANCH, VERSION_BUILD, CLIENT_VERSION_TAG);
 
 	fprintf(fp, "### This file may contain comment lines, these, must start on '##' but will NOT be saved.\n");
 	fprintf(fp, "### Note that empty lines do count as data lines and hence cannot be inserted for the purpose of visual formatting.\n");
@@ -2637,8 +2637,8 @@ bool load_auto_inscriptions(cptr name) {
 	FILE *fp;
 	char buf[1024], *bufptr;
 	char file_name[256], vtag[7];
-	int i, c, j, c_eff, version, vmaj, vmin, vpatch, tmp;
-	bool replaced, force, loaded_something = FALSE;
+	int i, c, j, c_eff, version, vmaj, vmin, vpatch, vextra, vbranch, vbuild, tmp;
+	bool replaced, force, loaded_something = FALSE, compat = FALSE;
 #ifdef REGEX_SEARCH
 	int ires = -999;
 	regex_t re_src;
@@ -2673,9 +2673,16 @@ bool load_auto_inscriptions(cptr name) {
 	}
 
 	/* extract version */
-	i = sscanf(buf, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n", &vmaj, &vmin, &vpatch, vtag);
-	if (i < 4) vtag[0] = 0;
+	i = sscanf(buf, "Auto-Inscriptions file for TomeNET v%d.%d.%d.%d.%d.%d%s\n", &vmaj, &vmin, &vpatch, &vextra, &vbranch, &vbuild, vtag);
+	if (i < 6) {
+		compat = TRUE;
+		vextra = vbranch = vbuild = 0;
+		//rescan in compat mode
+		i = sscanf(buf, "Auto-Inscriptions file for TomeNET v%d.%d.%d%s\n", &vmaj, &vmin, &vpatch, vtag);
+		if (i < 4) vtag[0] = 0;
+	} else if (i < 7) vtag[0] = 0;
 
+	/* Old format, v.v.v[tag], dubbed 'compat' */
 	if (vmaj < 4 || /* at most 4.7.1a */
 	    (vmaj == 4 && (vmin < 7 ||
 	    (vmin == 7 && (vpatch < 1 ||
@@ -2686,14 +2693,17 @@ bool load_auto_inscriptions(cptr name) {
 	else if (vmaj == 4 && (vmin < 9 ||
 	    (vmin == 9 && (vpatch < 1 || (vpatch == 1 && (!vtag[0] || vtag[0] == '-')))))) // '-Test' client tag; at most 4.9.1-test
 		version = 3;
-	else if (vmaj == 4 && vmin == 9 && (vpatch < 3 || (vpatch == 3 && !vtag[0]))) /* at most 4.9.3 */
-		version = 4;
-	else //starting at 4.9.3a/test
-		version = 5;
+	else if (compat) {
+		if (vmaj == 4 && vmin == 9 && (vpatch < 3 || (vpatch == 3 && !vtag[0]))) /* at most 4.9.3 */
+			version = 4;
+		if (compat) //starting at 4.9.3a/test
+			version = 5;
+	/* New format v.v.v.v.v.v[tag], starting at 4.9.3.0.0.3 from 2026-08-03 (in preparation for 4.9.4) */
+	} else version = 5;
 
 #ifdef TEST_CLIENT
-	logprint(format("Read a v%d.%d.%d <%s><%c%c> .ins file, version %d.\n", vmaj, vmin, vpatch, vtag, vtag[0], vtag[1], version));
-	c_msg_format("Read a v%d.%d.%d <%s><%c%c> .ins file, version %d.", vmaj, vmin, vpatch, vtag, vtag[0], vtag[1], version);
+	logprint(format("Read a v%d.%d.%d.%d.%d.%d <%s> .ins file, version %d [%d%s]: %s", vmaj, vmin, vpatch, vextra, vbranch, vbuild, vtag, version, i, compat ? "-compat":"", name));
+	c_msg_format("Read a v%d.%d.%d.%d.%d.%d <%s> .ins file, version %d [%d%s]: %s", vmaj, vmin, vpatch, vextra, vbranch, vbuild, vtag, version, i, compat ? "-compat":"", name);
 #endif
 
 	/* attempt to merge current auto-inscriptions, and give priority to those we want to load here */
