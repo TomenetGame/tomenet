@@ -10570,6 +10570,7 @@ void auto_inscriptions(void) {
 
 			/* Process the given filename */
 			if (load_auto_inscriptions(tmp)) apply_auto_inscriptions(-1);
+			else c_msg_format("\377yCouldn't open file '%s'.", tmp);
 			break;
 		case 'L':
 			/* Prompt */
@@ -10586,6 +10587,7 @@ void auto_inscriptions(void) {
 
 			/* Process the given filename */
 			if (load_auto_inscriptions(tmp)) apply_auto_inscriptions(-1);
+			else c_msg_format("\377yCouldn't open file '%s'.", tmp);
 			break;
 		case 's':
 			/* Prompt */
