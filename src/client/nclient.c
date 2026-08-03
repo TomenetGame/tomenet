@@ -58,13 +58,14 @@
 #define HUGE_BAR_SIZE 16
 
 
-/* Test rawpict_hook for Casino client-side animations */
-#ifdef TEST_CLIENT
- /* - WiP - C. Blue
+/* Test rawpict_hook for Casino client-side animations - C. Blue */
+//for now I enabled this even for non-test 4.9.4 client, but it needs work as described in the comment below...
+//#ifdef TEST_CLIENT
+ /* - WiP -
     visuals do not scale if font size isn't identical to tile size (results in blackness usually)
-    and visuals get erased after animation finishes: */
+    and visuals get [partially] erased after animation finishes, as they count as 'empty space' as the client has no memory of them being there: */
 #define TEST_RAWPICT
-#endif
+//#endif
 
 
 extern void flicker(void);
@@ -4716,7 +4717,9 @@ int Receive_store_special_clr(void) {
 #define CARD_STACK2_COL		TERM_L_UMBER	/* Generic cover colour for card stack '#2' (feasible: TERM_L_UMBER, TERM_ORANGE, TERM_GREEN, TERM_SLATE) */
 #define RAWPICT_OFFSET_CARDS 10	/* First indices (6 + future reservations) are dice slot symbols, after that come the cards */
 static void display_card(int col, int row, int card_colour, int card_value) {
+#ifdef TEST_RAWPICT
 	int card = card_colour * 14 + card_value; //joker,2-10,j,q,k
+#endif
 	byte attr = TERM_WHITE;
 
 #ifdef USE_GRAPHICS
