@@ -5310,6 +5310,11 @@ static bool process_player_end_aux(int Ind) {
 			//msg_format(Ind, "MYCORRHIZA: %d", 3 + (p_ptr->mycorrhiza_dur + 99) / 100); //DEBUG
 		}
 	}
+	/* Just ate a shroom of paranoia? */
+	if (p_ptr->skill_fos_inc) {
+		p_ptr->skill_fos_inc--;
+		if (!p_ptr->skill_fos_inc) p_ptr->update |= PU_BONUS;
+	}
 
 	/* Misc. terrain effects */
 	if (!p_ptr->ghost) { /* Spare dead players, even though levitation usually does NOT fully protect eg from lava fire damage? */

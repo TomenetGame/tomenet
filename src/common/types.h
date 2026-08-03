@@ -4159,6 +4159,7 @@ struct player_type {
 	s16b skill_stl;			/* Skill: Stealth factor */
 	s16b skill_srh;			/* Skill: Searching ability */
 	s16b skill_fos;			/* Skill: Searching frequency */
+	s16b skill_fos_inc;		/* Skill: Searching frequency temporary increase via Paranoia */
 	s16b skill_thn;			/* Skill: To hit (normal) */
 	s16b skill_thb;			/* Skill: To hit (shooting) */
 	s16b skill_tht;			/* Skill: To hit (throwing) */

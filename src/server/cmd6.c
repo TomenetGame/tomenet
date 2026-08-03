@@ -145,9 +145,14 @@ bool eat_food(int Ind, int sval, object_type *o_ptr, bool *keep) {
 
 	case SV_FOOD_PARANOIA:
 		if (!p_ptr->resist_fear) {
-			if (set_afraid(Ind, p_ptr->afraid + rand_int(10) + 10) ||
-			    set_image(Ind, p_ptr->image + 20))
+			if (set_afraid(Ind, p_ptr->afraid + rand_int(10) + 10) +
+			    set_image(Ind, p_ptr->image + 20)) //maybe todo: add set_image_weak() !
 				ident = TRUE;
+			/* No duplicate increase, mycorrhiza already grants permanent increase */
+			if (p_ptr->mycorrhiza - 1 != SV_FOOD_PARANOIA) {
+				p_ptr->skill_fos_inc = 15 + rand_int(10); // look around you more often <_>
+				p_ptr->update |= PU_BONUS;
+			}
 		}
 		break;
 

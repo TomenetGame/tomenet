@@ -6624,6 +6624,8 @@ void calc_boni(int Ind) {
 	switch (p_ptr->mycorrhiza - 1) {
 	case SV_FOOD_PARANOIA: p_ptr->skill_fos += 30; break;
 	}
+	/* Just eating the shroom instead: */
+	if (p_ptr->skill_fos_inc) p_ptr->skill_fos += 30;
 
 
 
