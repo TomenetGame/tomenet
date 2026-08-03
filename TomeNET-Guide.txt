@@ -10257,7 +10257,7 @@ Erebor                        | Smaug                | Arkenstone of Thrain
 Dol Guldur            (E)     | Shadow of Dol Guldur | Ring of Durin
 Mount Doom            (E)     | Sauron, the Sorcerer | -
 The Cloud Planes              | The Living Lightning | - (Lightning items)
-Nether Realm                  | Zu-Aon  (F)          | Ring of Phasing
+Nether Realm                  | Zu-Aon  (F)          | Ring of Phasing (G)
 
 (A) In the Training Tower, you cannot die for real (except for PvP mode chars).
 
@@ -10291,6 +10291,10 @@ by saving throw or teleportation resistance either.
 It can however be defeated regularly by holy martyr or by anti-magic fields
 which -as usual- can prevent the spell from coming into existance in the first
 place.
+
+(G) The Ring of Phasing has no timeout but instead will reset immediately
+when Zu-Aon is killed, meaning it will always drop. It can be activated to
+open the last remaining gate to Valinor.
 
 Last but not least there are rumours that some adventurers have encountered
 their own mirror image that suddenly came alive and attacked them! As so often
