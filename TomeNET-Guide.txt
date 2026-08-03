@@ -17825,8 +17825,11 @@ generated completely randomly, independent of depth.
 (6.3a) Special item drops of monsters
 -------------------------------------
 Some monsters have the DROP_CHOSEN flag. This means that in addition to the
-normal loot (see (6.3) for loot tables) they may drop specific extra loot.
-At the time of writing this entails:
+normal loot (see (6.3) for loot tables) and dungeon boss special drop, they
+may drop specific extra loot. At the time of writing this entails:
+
+Halloween townies (only during Halloween seasonal event)
+    Fortune cookies.
 
 Smeagol
     A ring of stealth.
@@ -17836,12 +17839,12 @@ Dragonriders
     Firestones, normal or small.
 Raal's Tomes
     (Rarely) a tome of udun or an elementalist's or destroyer's handboook.
-Gorlim
-    His accursed helmet.
 The Stormbringer
     Drops itself as (random-artifact-like) ego weapon, ie usable item.
+Gorlim
+    His accursed helmet.
 Eol
-    The Claymore 'Anguirel'.
+    The Claymore 'Anguirel' or the Gauntlets of Eol.
 Artsi
     The set of cesti 'Fist of Chaos'.
 Kronos
@@ -17850,19 +17853,17 @@ Gothmog
     His terrible, fiery whip.
 Mardra
     Her dragonrider coat.
-
 Great Wyrms
     The amulet of Grom, the Wyrm Hunter...
-
 Vlad Dracula and Mephistopheles
     Drop a random, heavily cursed true artifact if available.
-
 Saruman of Many Colours
-    The Star of Elendil and a mage staff of wizardry (+10).
+    The Star of Elendil and a Mage Staff of Wizardry (+10).
+
 Nazgul
-    Their specific (yet randomly generated) ring of power each.
+    Their specific (yet randomly generated) Ring of Power each.
 Morgoth
-    His two-handed hammer Grond and his massive crown.
+    His two-handed hammer Grond and his massive iron crown.
 
 Bahamut
     A rod of healing of the istari.
@@ -17877,6 +17878,7 @@ Dor
 Zu-Aon
     A potion of learning and a scroll of artifact creation.
 
+There might also be unexpected drops that are not listed, of very special foes.
 
 Further, even without any flags and independent of their r_info.txt loot table
 monsters may tend towards item drops that fit their appearance and style.
