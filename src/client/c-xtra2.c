@@ -75,18 +75,40 @@ static void copy_to_clipboard_multiline(char message_array[MAX_WINDOW_HGT][MSG_L
 			   Catch that here: */
 			if (strlen(xmsg) + strlen(xmsg_reverse) >= MSG_LEN) break;
 
-#if 0
-			/* remove the first space too if the previous line didn't end on an alphanum char, to avoid breaking URLs.
-			   Note that this can still break URLs because words might get broken down inbetween instead of at a hyphen (would need fixing in util.c) */
-			if (xmsg[0] == ' ' && !isalphanum(xmsg_reverse[strlen(xmsg_reverse) - 1])) strcat(xmsg_reverse, xmsg + 1);
-#else
-			/* never insert spaces? (we do, but we delete it here again) - URLs are perfectly safe this way, but words might get concatinated wrongly */
-			if (xmsg[0] == ' ') strcat(xmsg_reverse, xmsg + 1);
-#endif
 			else strcat(xmsg_reverse, xmsg);
 			strcpy(xmsg, xmsg_reverse);
 
 			if (end) break;
+		}
+
+		/* Post-process: No duplicate spaces (oh laziness) */
+		{
+			char tmpbuf[MSG_LEN], *ct = tmpbuf;
+
+			c = xmsg;
+			while (*c) {
+				if (*c == ' ' && *(c + 1) == ' ') {
+					c++;
+					continue;
+				}
+				*ct++ = *c++;
+			}
+			*ct = 0;
+			strcpy(xmsg, tmpbuf);
+		}
+
+		/* Post-process for URLs: They don't like to get spaces inserted on chat-linebreaks... */
+		if ((c = strstr(xmsg, "http")) || (c = strstr(xmsg, "www."))) {
+			char tmpbuf[MSG_LEN], *ct;
+
+			strncpy(tmpbuf, xmsg, c - xmsg);
+			ct = &tmpbuf[c - xmsg];
+			while (*c) {
+				if (*c != ' ') *ct++ = *c;
+				c++;
+			}
+			*ct = 0;
+			strcpy(xmsg, tmpbuf);
 		}
 
 		(void)copy_to_clipboard(xmsg, FALSE);
