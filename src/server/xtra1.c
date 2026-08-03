@@ -1233,7 +1233,7 @@ static void calc_sanity(int Ind) {
 					   but they can be dug free again for the purpose of looting so np :) */
 					if (zcave && cave_floor_basic(zcave, p_ptr->py, p_ptr->px)) {
 						s_printf("ok to become a tree.\n");
-						cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, FEAT_TREE);
+						cave_set_feat_live(&p_ptr->wpos, p_ptr->py, p_ptr->px, p_ptr->max_plv >= 10 ? FEAT_TREE : FEAT_BUSH);
 					} else s_printf("failed to become a tree.\n");
 				}
 			} else {
