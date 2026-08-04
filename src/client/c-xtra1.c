@@ -172,10 +172,13 @@ void prt_title(cptr title) {
 /*
  * Prints level and experience
  */
+
 /* Display exp bar in 5% steps instead of 10%? (Uses 2 colours to disgtinguish) */
 #define EXP_BAR_FINESCALE
 /* Fill rest of exp bar up with dark colour instead of leaving it blank? */
 #define EXP_BAR_FILLDARK
+/* Show amount of drained XP within same level (2026)? (Note: Currently only implemented for EXP_BAR_FILLDARK.) */
+#define EXP_BAR_EXACTDRAINED
 
 #if 1 /* draw exp bar in blue? */
  #define EXP_BAR_HI TERM_L_BLUE
@@ -253,6 +256,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #ifdef EXP_BAR_FINESCALE
 		int got_org = 0;
 #endif
+
 #ifdef WINDOWS
 		if (!force_cui && c_cfg.solid_bars) exp_bar_char = FONT_MAP_SOLID_WIN; /* :-p hack */
 		else
@@ -317,6 +321,7 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 
 			for (i = 0; i < got / 2; i++) tmp[i] = exp_bar_char;
 			tmp[i] = 0;
+
 		//}
  #if 0
 		else {
@@ -343,11 +348,29 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 #ifdef EXP_BAR_FILLDARK
 		/* Paint dark base ;) */
 		if (cur >= max) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "---------");
+ #ifndef EXP_BAR_EXACTDRAINED /* Old way: Drained exp xp just paints the whole XP bar in yellow */
 		else Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO_DRAINED, "---------");
-#else
-		if (cur >= max) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "         ");//just erase any previous '-' or exp bar possibly
+ #else /* New (2026): Also count how many '-' are there up to 'max' xp and only paint those (and full symbols before those) yellow, so we can see how much we got drained roughtly: */
+		else if (level < max_lev) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO_DRAINED, "---------");
+		else  {
+			/* Amount of remaining-before-levelup XP in current bar to be painted in 'drained' colour: */
+			int got_drained = ((max - cur) * 20 + half_exp) / scale, i;
+			char tmp_drained[32];
+
+			Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "---------");
+
+			for (i = 0; i < got_drained / 2; i++) tmp_drained[i] = '-';
+			tmp_drained[i] = 0;
+			Term_putstr(COL_EXP + 3 + strlen(tmp), ROW_EXP, -1, EXP_BAR_NO_DRAINED, tmp_drained);
+		}
+ #endif
+#else /* TODO: Implement EXP_BAR_EXACTDRAINED for this branch */
+		//just erase any previous '-' or exp bar possibly
+		if (cur >= max) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "         ");
 		else Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO_DRAINED, "-");
 #endif
+
+		/* Paint 'filled out' XP symbols for the XP we do have */
 		if (cur >= max) {
 			Term_putstr(0, ROW_EXP, -1, TERM_WHITE, "XP ");
 
