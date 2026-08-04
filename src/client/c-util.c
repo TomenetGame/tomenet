@@ -5536,8 +5536,6 @@ int macroset_scan(void) {
 			   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
 			if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
 
-			//TODO: Extract 'stage_comment' (eg 'water/cold spells' that is part of the switching-message)
-
 			/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
 
 			if (k >= MACROFILESETS_MAX) {
@@ -5563,7 +5561,7 @@ int macroset_scan(void) {
 			}
 
 			/* Scan already known filesets for same basename,
-			to either add the found key to an existing one or add a new fileset */
+			   to either add the found key to an existing one or add a new fileset */
 			for (f = 0; f < k; f++) {
 				if (strcmp(fileset[f].basefilename, buf_basename)) continue;
 
@@ -5636,7 +5634,9 @@ int macroset_scan(void) {
 	   Also, for free-switch sets we can use this anyway, just to verify whether a stage's file does actually exist or if there is a 'hole' (eg stage files 1,2,4 exist but 3 doesn't). */
 	for (k = 0; k < filesets_found; k++) {
 #ifndef WINDOWS
+ #ifdef TEST_CLIENT
 c_msg_format("(1)scan disk for set (%d) <%s>", k, fileset[k].basefilename);
+ #endif
 		glob(format("%s-FS?.prf", fileset[k].basefilename), 0, 0, &glob_res);
 		glob_size = glob_res.gl_pathc;
 		if (glob_size < 1) { /* No macro files found at all, ew. */
@@ -5644,7 +5644,9 @@ c_msg_format("(1)scan disk for set (%d) <%s>", k, fileset[k].basefilename);
 			c_msg_format("\377yWarning: Currently loaded macros refer to macroset \"%s\"", fileset[k].basefilename);
 			c_msg_format("\377y         but there were no macro files \"%s-FS?.prf\" found of that name!", fileset[k].basefilename);
 			*/
+ #ifdef TEST_CLIENT
 c_msg_print("(1)nothing");
+ #endif
 		} else { /* Found 'n' macro files */
 			fileset[k].any_stage_file_exists = TRUE;
 
@@ -5654,7 +5656,9 @@ c_msg_print("(1)nothing");
 #else
 		hFind = FindFirstFile("*-FS?.prf", &FindFileData);
 		if (hFind == INVALID_HANDLE_VALUE) //;
+ #ifdef TEST_CLIENT
 c_msg_format("(2)FindFirstFile failed (%ld)", GetLastError());
+ #endif
 		else {
 			strcpy(buf_basename, FindFileData.cFileName);
 			n = 0;
@@ -5675,8 +5679,9 @@ c_msg_format("(2)FindFirstFile failed (%ld)", GetLastError());
 					c_msg_format("\377y            for macroset '%s'.", buf_basename);
 					continue;
 				}
+ #ifdef TEST_CLIENT
 c_msg_format("(1)set (%d) <%s> registered stage %d", k, fileset[k].basefilename, stage);
-
+ #endif
 				/* Register that there is an existing file to back up this stage's existance */
 				fileset[k].stage_file_exists[stage] = TRUE;
 
@@ -5698,7 +5703,9 @@ c_msg_format("(1)set (%d) <%s> registered stage %d", k, fileset[k].basefilename,
 	glob("*-FS?.prf", 0, 0, &glob_res);
 	glob_size = glob_res.gl_pathc;
 	if (glob_size < 1) //; /* No macro files found at all */
+ #ifdef TEST_CLIENT
 c_msg_print("(2)nothing");
+ #endif
 	else { /* Found 'n' macro files */
 		for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 			/* Acquire base name and stage */
@@ -5721,7 +5728,9 @@ c_msg_print("(2)nothing");
 			/* Extract base name */
 			buf_basename[strlen(buf_basename) - 8] = 0;
 
+ #ifdef TEST_CLIENT
 c_msg_format("(2)set <%s> / stage %d found", buf_basename, stage);
+ #endif
 			/* Too many stages? */
 			if (stage >= MACROFILESETS_STAGES_MAX) {
 				c_msg_format("\377yWarning(2): Discarding excess stage file %d (maximum stage is %d)", stage + 1, MACROFILESETS_STAGES_MAX);
@@ -5745,7 +5754,9 @@ c_msg_format("(2)set <%s> / stage %d found", buf_basename, stage);
 				if (fileset[k].currently_referenced) continue;
 
 				/* It's a new stage of a set we have registered already */
+ #ifdef TEST_CLIENT
 c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basefilename, stage);
+ #endif
 
 				/* Register that there is an existing file to back up this stage's existance */
 				fileset[k].stage_file_exists[stage] = TRUE;
@@ -8860,7 +8871,7 @@ Chain_Macro:
 						char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
 						char buf_basename[1024], tmpbuf[1024];
 						bool style_cyclic, style_free;
-						bool ok_new_set, ok_new_stage, ok_swap_stages;
+						bool ok_new_set, ok_new_stage, ok_swap_stages, cancel;
 
 						if (rescan) { /* (Is statically TRUE on first invocation of mw_fileset, to ensure an initial scan) */
 							rescan = FALSE;
@@ -9098,9 +9109,30 @@ Chain_Macro:
 
 								// new set index, gets appended to existing ones
 								// get name
-								Term_putstr(1, l, -1, TERM_L_GREEN, "Enter a name for the new set: ");
-								tmpbuf[0] = 0;
-								if (!askfor_aux(tmpbuf, MACROSET_NAME_LEN, 0) || !tmpbuf[0]) continue;
+								cancel = FALSE;
+								while (!cancel) {
+									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                               ");
+									Term_putstr(1, l, -1, TERM_L_GREEN, "Enter a name for the new set: ");
+									tmpbuf[0] = 0;
+									if (askfor_aux(tmpbuf, MACROSET_NAME_LEN, 0) || !tmpbuf[0]) {
+										if (my_strcasestr(tmpbuf, "-FS")) {
+											c_msg_print("\377ySet names must not contain the character sequence '-FS'!");
+											continue;
+										}
+										if (my_strcasestr(tmpbuf, MACROFILESET_MARKER_CYCLIC)) {
+											c_msg_format("\377yStage comments must not contain the character sequence '%s'!", MACROFILESET_MARKER_CYCLIC);
+											continue;
+										}
+										if (my_strcasestr(tmpbuf, MACROFILESET_MARKER_SWITCH)) {
+											c_msg_format("\377yStage comments must not contain the character sequence '%s'!", MACROFILESET_MARKER_SWITCH);
+											continue;
+										}
+										break;
+									}
+									cancel = TRUE;
+								}
+								if (cancel) continue;
+
 								f = filesets_found++;
 								strcpy(fileset[f].basefilename, tmpbuf);
 
@@ -9408,10 +9440,30 @@ Chain_Macro:
 
 							case 'c': // change a stage's comment
 								GET_MACROFILESET_STAGE
-								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter new comment (ESC to skip): ");
-								strcpy(tmpbuf, fileset[fileset_selected].stage_comment[f]);
-								if (askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) /* change comment? (ENTER to clear comment, ESC to keep it as it is) */
-									strcpy(fileset[fileset_selected].stage_comment[f], tmpbuf);
+								cancel = FALSE;
+								while (!cancel) {
+									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                               ");
+									Term_putstr(15, l, -1, TERM_L_GREEN, "Enter new comment (ESC to skip): ");
+									strcpy(tmpbuf, fileset[fileset_selected].stage_comment[f]);
+									if (askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) { /* change comment? (ENTER to clear comment, ESC to keep it as it is) */
+										if (my_strcasestr(tmpbuf, "-FS")) {
+											c_msg_print("\377yStage comments must not contain the character sequence '-FS'!");
+											continue;
+										}
+										if (my_strcasestr(tmpbuf, MACROFILESET_MARKER_CYCLIC)) {
+											c_msg_format("\377yStage comments must not contain the character sequence '%s'!", MACROFILESET_MARKER_CYCLIC);
+											continue;
+										}
+										if (my_strcasestr(tmpbuf, MACROFILESET_MARKER_SWITCH)) {
+											c_msg_format("\377yStage comments must not contain the character sequence '%s'!", MACROFILESET_MARKER_SWITCH);
+											continue;
+										}
+										break;
+									}
+									cancel = TRUE;
+								}
+								if (cancel) break;
+								strcpy(fileset[fileset_selected].stage_comment[f], tmpbuf);
 								WRITE_MACROFILESET_STAGE_META
 								break;
 
@@ -9420,12 +9472,6 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there isn't an active stage, 'a'ctivate a stage first.");
 									continue;
 								}
-
-								// get stage comment text (optional)
-								Term_putstr(15, l, -1, TERM_L_GREEN, "Enter new comment (ESC to skip): ");
-								strcpy(tmpbuf, fileset[fileset_selected].stage_comment[fileset_stage_selected]);
-								if (askfor_aux(tmpbuf, MACROSET_COMMENT_LEN, 0)) /* change comment? (ENTER to clear comment, ESC to keep it as it is) */
-									strcpy(fileset[fileset_selected].stage_comment[fileset_stage_selected], tmpbuf);
 
 								f = fileset_stage_selected;
 								WRITE_MACROFILESET_STAGE_META
