@@ -9422,20 +9422,10 @@ Chain_Macro:
 							/* Note: If a fileset is activated, a stage of it will also be activated automatically. If it's a new set, it'll be stage #1 (still empty). */
 							/* Fileset-stage actions (required 'fileset_selected != -1' condition was already checked directly after inkey() read) : */
 							case 'k': //modify switching keys
-
-
-break;
-								// auto-select set and 'init' its first stage (ie just select the first stage as 'active' and imprint its trigger keys)
-								fileset[f].stages = 1;
-
-								/* Init cycle keys */
-								fileset[f].macro__pat__cycle[0] = 0;
-								fileset[f].macro__patbuf__cycle[0] = 0;
-								/* Init switch keys */
-								fileset[f].macro__pat__switch[0][0] = 0;
-								fileset[f].macro__patbuf__switch[0][0] = 0;
-								fileset[f].macro__act__switch[0][0] = 0;
-								fileset[f].macro__actbuf__switch[0][0] = 0;
+								if (fileset_selected == -1) {
+									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
+									continue;
+								}
 
 								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/12)
 								if (fileset[f].style_cyclic) { //ask for set-global cycling-key
@@ -9451,12 +9441,7 @@ break;
 										}
 										break;
 									}
-									if (!strcmp(buf, "\e")) {
-										/* Abort: Erase newly started set-in-the-making again */
-										fileset[f].basefilename[0] = 0;
-										filesets_found--;
-										continue;
-									}
+									if (!strcmp(buf, "\e")) continue; //abort
 
 									/* Set macro trigger */
 									strcpy(buf_pat, tmpbuf);
@@ -9522,24 +9507,44 @@ break;
 								}
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
 
-								/* Auto-select the newly added set */
-								fileset_selected = f;
-								fileset_stage_selected = 0;
 
+								// auto-select set and 'init' its first stage (ie just select the first stage as 'active' and imprint its trigger keys)
+								fileset[f].stages = 1;
+
+								/* Init cycle keys */
+								fileset[f].macro__pat__cycle[0] = 0;
+								fileset[f].macro__patbuf__cycle[0] = 0;
+								/* Init switch keys */
+								fileset[f].macro__pat__switch[0][0] = 0;
+								fileset[f].macro__patbuf__switch[0][0] = 0;
+								fileset[f].macro__act__switch[0][0] = 0;
+								fileset[f].macro__actbuf__switch[0][0] = 0;
 
 
 								break;
 
 							case 'm': //modify switching method
+								if (fileset_selected == -1) {
+									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
+									continue;
+								}
 								//todo..
 								break;
 
 							case 's': //swap two stages
+								if (fileset_selected == -1) {
+									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
+									continue;
+								}
 								if (!ok_swap_stages) continue;
 								//todo..
 								break;
 
 							case 't': //toggle a stage (available vs unavailabe (aka getting skipped) from switching keys from the other stages)
+								if (fileset_selected == -1) {
+									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
+									continue;
+								}
 								GET_MACROFILESET_STAGE
 								fileset[fileset_selected].stage_disabled[f] = !fileset[fileset_selected].stage_disabled[f];
 								WRITE_MACROFILESET_STAGE_META
@@ -9549,16 +9554,28 @@ break;
 								break;
 
 							case 'i': //init additional stage; append it to or insert it into the current stages list
+								if (fileset_selected == -1) {
+									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
+									continue;
+								}
 								if (!ok_new_stage) continue;
 								//todo..
 								break;
 
 							case 'a': //activate a stage
+								if (fileset_selected == -1) {
+									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
+									continue;
+								}
 								GET_MACROFILESET_STAGE
 								fileset_stage_selected = f;
 								break;
 
 							case 'c': // change a stage's comment
+								if (fileset_selected == -1) {
+									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
+									continue;
+								}
 								GET_MACROFILESET_STAGE
 								cancel = FALSE;
 								while (!cancel) {
@@ -9588,6 +9605,10 @@ break;
 								break;
 
 							case 'w': //write current macros to active stage
+								if (fileset_selected == -1) {
+									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
+									continue;
+								}
 								if (fileset_stage_selected == -1) {
 									c_msg_print("\377yCurrently there isn't an active stage, 'a'ctivate a stage first.");
 									continue;
