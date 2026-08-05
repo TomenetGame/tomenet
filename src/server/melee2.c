@@ -237,8 +237,9 @@
 /* Hack to make monsters that can summon high uniques do so more often instead of using other summoning spells they may have (Chance: 1 in n, [4]) */
 #define PRIORITY_S_HI_UNIQUE 4
 
-/* Experimental draft 2026 (disabled by default) - if they have LoS, player noise wakes monsters even outside of their AAF. */
-//#define LOS_WAKES_MONSTER_OUTSIDE_AAF
+/* Experimental draft 2026 (disabled by default) - if they have LoS, player noise wakes monsters even outside of their AAF.
+   Note that if the radius is chosen short, most higher level monsters won't be affected by this anyway as their AAF is usually 40+/30+ and even for high undead 20+. */
+#define LOS_WAKES_MONSTER_OUTSIDE_AAF
 
 
 /*
@@ -13116,7 +13117,7 @@ void process_monsters(void) {
 #endif
 #ifdef LOS_WAKES_MONSTER_OUTSIDE_AAF
 		/* Sleeping monster loses sleep even if player is outside of its aaf radius, as long as there is LoS and player isn't too far */
-		else if (blos && m_ptr->csleep && m_ptr->cdis <= MAX_HEAR)
+		else if (blos && m_ptr->csleep && m_ptr->cdis <= MAX_SIGHT) //MAX_HEAR) //will virtually not affect higher level monsters as those have usually aaf>20 or even >30
 			/* Monster won't get processed ('test') so we 'manually' reduce sleep here. */
 			player_wakes_monster(p_ptr->Ind, i);
 #endif
