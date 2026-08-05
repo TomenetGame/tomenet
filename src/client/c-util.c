@@ -9424,16 +9424,20 @@ Chain_Macro:
 								}
 								if (fileset[fileset_selected].style_freesw) {
 									for (f = 0; f < fileset[fileset_selected].stages; f++) {
-										if (!fileset[fileset_selected].stage_file_exists[f]) continue;
-										if (fileset[fileset_selected].stage_disabled[f]) continue;
+										//if (!fileset[fileset_selected].stage_file_exists[f]) continue;
+										if (fileset[fileset_selected].stage_disabled[f]) {
+											c_msg_format("Skipping free-switch macro for disabled stage %d.", f + 1);
+											continue;
+										}
 
 										//key_autoconvert(tmp, fmt);
 										macro_add(fileset[fileset_selected].macro__pat__freesw[f], fileset[fileset_selected].macro__act__freesw[f], FALSE, FALSE);
 									}
 								}
+								c_msg_print("Set-trigger macros added to active macros in memory.");
 								break;
 
-							case 'F': //forget a set (opposite of 'A')
+							case 'F': //forget a set (opposite of 'A', but also removes it from our scanned-list, requires rescan to reload it from disk)
 								//...so the player then has to save all macros to <charname.prf> or <global.prf> or whatever he prefers, again, to erase the traces of that set
 								GET_MACROFILESET
 								if (fileset_selected == f) fileset_selected = -1; //unselect it if it was selected
@@ -9443,6 +9447,8 @@ Chain_Macro:
 
 								if (!found) c_msg_print("No references to the macroset were found within currently loaded macros.");
 								c_msg_format("%d reference%s to the macroset were cleared within currently loaded macros.", found, found == 1 ? "" : "s");
+
+								/* --- And actually purge the set from our list - to regain access, press 'C' to rescan from disk! --- */
 
 								/* Slide the rest of the sets list one up */
 								filesets_found--; /* One less registered macroset */
@@ -9464,7 +9470,7 @@ Chain_Macro:
 									continue;
 								}
 
-								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/12)
+								// ask for cycling-key / stage switching key depending on selected type (1/2/12)
 								if (fileset[fileset_selected].style_cyclic) { //ask for set-global cycling-key
 									/* Get trigger in human-readable format */
 									macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__cyclic, tmpbuf);
@@ -9504,14 +9510,14 @@ Chain_Macro:
 									text_to_ascii(buf_act, buftxt_act);
 									strcpy(fileset[fileset_selected].macro__act__cyclic, buf_act);
 								}
-								for (f = 0; f < fileset[fileset_selected].stages; f++) {
-									if (fileset[fileset_selected].style_freesw) { //ask for stage-specific switching-key
+								if (fileset[fileset_selected].style_freesw) { //ask for stage-specific switching-key
+									for (f = 0; f < fileset[fileset_selected].stages; f++) {
 										/* Get trigger in human-readable format */
 										macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__freesw[f], tmpbuf);
 
 										Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 										while (TRUE) {
-											Term_putstr(1, l, -1, TERM_L_GREEN, format("Stage %d trigger key was <%s>. Press new key or ESC: ", f, tmpbuf));
+											Term_putstr(1, l, -1, TERM_L_GREEN, format("Stage %d trigger key was <%s>. Press new key or ESC: ", f + 1, tmpbuf));
 											tmpbuf[0] = 0;
 											get_macro_trigger(tmpbuf);
 											if (!strcmp(tmpbuf, "\e") || !strcmp(buf, "%")) {
@@ -9547,8 +9553,8 @@ Chain_Macro:
 										text_to_ascii(buf_act, buftxt_act);
 										strcpy(fileset[fileset_selected].macro__act__freesw[f], buf_act);
 									}
-									/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
 								}
+								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
 								break;
 
 							case 'm': //modify switching method
