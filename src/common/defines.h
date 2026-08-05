@@ -733,6 +733,24 @@
    At 64x64 = 4096 worldmap sectors, the value should be able to index all generated mushroom 'gardens'. */
 #define MAX_MUSHROOM_FIELDS	1024
 
+
+/*
+ * More maximum values
+ */
+#define MAX_SIGHT	20	/* Maximum view distance */
+#define MAX_RANGE	18	/* Maximum range (spells, etc) */
+#define MAX_HEAR	(MAX_SIGHT + 10)	/* For monster csleep vs stealth/aggravation (gradual) wake-up influences */
+
+/* max range of arrows in do_cmd_fire.
+ * the aim is to prevent 'out-of-range attack' abuse.
+ * [MAX_RANGE] */
+/* commented out due to monster AI improvements.
+ * activate it if STUPID_MONSTER_SPELLS is defined!
+ * --actually this should always be enabled and set to MAX_RANGE, that limit is also used for spellcasting.
+ */
+#define ARROW_DIST_LIMIT MAX_RANGE
+
+
 /*
  * Maximum size of the "lite" array (see "cave.c")
  * Note that the "lite radius" will NEVER exceed 5, and even if the "lite"
@@ -1336,6 +1354,12 @@
 /* Reduce the effect of aggravating equipment on the player
    and especially fellow players? - C. Blue */
 #define REDUCED_AGGRAVATION
+#ifdef REDUCED_AGGRAVATION
+ #define AGGRAVATION_DIST MAX_HEAR
+#else
+ #define AGGRAVATION_DIST 100	/* Basically covers the whole floor if player is standing in the center =p */
+#endif
+
 
 /* How do polymorph rings work? - C. Blue    [1]
    0 = wear ring to keep the form, ring has timeout until it desintegrates
@@ -2231,22 +2255,6 @@
  */
 #define FUEL_TORCH	5000	/* Maximum amount of fuel in a torch */
 #define FUEL_LAMP	15000   /* Maximum amount of fuel in a lantern */
-
-
-/*
- * More maximum values
- */
-#define MAX_SIGHT	20	/* Maximum view distance */
-#define MAX_RANGE	18	/* Maximum range (spells, etc) */
-
-/* max range of arrows in do_cmd_fire.
- * the aim is to prevent 'out-of-range attack' abuse.
- * [MAX_RANGE] */
-/* commented out due to monster AI improvements.
- * activate it if STUPID_MONSTER_SPELLS is defined!
- * --actually this should always be enabled and set to MAX_RANGE, that limit is also used for spellcasting.
- */
-#define ARROW_DIST_LIMIT MAX_RANGE
 
 
 

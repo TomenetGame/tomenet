@@ -9737,12 +9737,7 @@ void player_wakes_monster(int Ind, int m_idx) {
 		if (q_ptr->aggravate) {
 			/* Compute distance */
 			dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
-#ifndef REDUCED_AGGRAVATION
-			if (dist < 100)
-#else
-			if (dist < 50)
-#endif
-			{
+			if (dist < AGGRAVATION_DIST) {
 				pnotice = 0;
 				aggravated = TRUE;
 				break;
@@ -13098,34 +13093,21 @@ void process_monsters(void) {
 		/* Assume no move */
 		test = FALSE;
 
-		/* Handle "sensing radius" */
-		if (m_ptr->cdis <= r_ptr->aaf || (blos && !m_ptr->csleep)) {
+		/* Handle "sensing radius" and LoS if awake -> monster will get processed. */
+		if (m_ptr->cdis <= r_ptr->aaf || (blos && !m_ptr->csleep))
 			/* We can "sense" the player -
 			   note that sleeping monsters won't lose sleep either if the player is outside their sensing radius(!) */
 			test = TRUE;
-		}
-		/* Handle "sight" and "aggravation" */
-#if 0
-		else if ((m_ptr->cdis <= MAX_SIGHT) &&
-		    (player_has_los_bold(closest, fy, fx) ||
-		    p_ptr->aggravate))
-#else
-		else if (
-		    //(player_has_los_bold(closest, fy, fx)) ||
- #ifndef REDUCED_AGGRAVATION
-		    (p_ptr->aggravate && m_ptr->cdis <= MAX_SIGHT))
- #else
-		    (p_ptr->aggravate && m_ptr->cdis <= 50))
- #endif
-
-#endif	// 0
-		{
+		/* Handle "aggravation", overrding monster's aaf max radius.
+		   (Note that we don't use MAX_SIGHT here anymore for an alternative non-aggr case.) */
+		else if (p_ptr->aggravate && m_ptr->cdis <= AGGRAVATION_DIST)
 			/* We can "see" or "feel" the player */
 			test = TRUE;
-		}
 #ifdef LOS_WAKES_MONSTER_OUTSIDE_AAF
-		/* Sleeping monsters also lose sleep if player is outside of its aaf radius, as long as there is LoS: */
-		if (blos && m_ptr->csleep) player_wakes_monster(p_ptr->Ind, i);
+		/* Sleeping monster loses sleep even if player is outside of its aaf radius, as long as there is LoS and player isn't too far */
+		else if (blos && m_ptr->csleep && m_ptr->cdis <= MAX_HEAR)
+			/* Monster won't get processed ('test') so we 'manually' reduce sleep here. */
+			player_wakes_monster(p_ptr->Ind, i);
 #endif
 
 #ifdef MONSTER_FLOW
