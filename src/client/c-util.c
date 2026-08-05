@@ -5984,11 +5984,360 @@ int macrofileset_mempurge(int f) {
 
 #endif /* TEST_CLIENT */
 
+/* Make a macro trigger human-readable.
+   Either accepts a macro index 'i' for all the macros in memory, or a string 'macropat'.
+   Set 'macro_idx' to -1 if using string, set string to NULL if using 'macro_idx'.
+   'macroact': NULL or append action to string. */
+void macroinfo_ascii(int macro_idx, char *macropat, char *fff) {
+	bool m_ctrl = FALSE, m_alt = FALSE, m_shift = FALSE;
+	bool t_hyb = FALSE, t_com = FALSE;
+	char buf[1024] = { 0 }, buf2[1024] = { 0 }, *bptr;
+	char t_key[10] = { 0 };
+
+	fff[0] = 0;
+
+	if (macro_idx != -1) {
+		/* Also get macro action in parsable format */
+		strncpy(buf, macro__act[macro_idx], 159);
+		buf[159] = '\0';
+		ascii_to_text(buf2, buf);
+
+		/* Get trigger in parsable format */
+		ascii_to_text(buf, macro__pat[macro_idx]);
+	} else if (macropat != NULL)
+		/* Get only the trigger in parsable format */
+		ascii_to_text(buf, macropat);
+	/* error */
+	else return;
+
+#if 0 /* not a glitch maybe, just treat them @ len>2 clause.. */
+#ifdef WINDOWS
+	/* 'Glitch': Macros read from file have a trailing \r linefeed -_- */
+	if (strlen(buf) > 2 && buf[strlen(buf) - 2] == '\\' && buf[strlen(buf) - 1] == 'r') buf[strlen(buf) - 2] = 0; //trim it
+#endif
+#endif
+
+#if 0 /* For debugging only: Code exclusion */
+	if (TRUE) {
+		sprintf(t_key, "%-9.9s", buf);
+		/* ensure termination (in paranoid case of overflow) */
+		t_key[9] = '\0';
+	} else
+#endif
+	if (strlen(buf) == 1) {
+		/* just a simple key */
+		sprintf(t_key, "%c        ", buf[0]);
+	} else if (strlen(buf) == 2) {
+		bool is_simple = FALSE;
+
+		/* ctrl + a simple key ('^%c' uppercase) or a special key ('\%c' or '^%c' lowercase) keypress
+		 *
+		 * special keys are represented by \+<normal letter> (lowercase) combo
+		 * but comment from previous dev states:
+		 * "special keys are represented by ^+<normal letter> combo.. >_>"
+		 * so the code tries to consider both */
+		m_ctrl = FALSE;
+
+		switch (buf[1]) {
+			/* a lowercase letter indicates special key */
+			case 'b': sprintf(t_key, "Bsp/Del  "); break; // 'Backspace' and also 'Del' key! why?
+			case 'r': sprintf(t_key, "Enter    "); break;
+			case 's': sprintf(t_key, "Space    "); break;
+			case 't': sprintf(t_key, "Tab      "); break;
+			case 'w': sprintf(t_key, "`        "); break; // a grave (`) on en_US keyboard
+			default: is_simple = TRUE;
+		}
+		if (is_simple) {
+			if (buf[0] != '\\') {
+				/* ctrl + a simple key */
+				m_ctrl = TRUE;
+				sprintf(t_key, "%c        ", buf[1]);
+			} else sprintf(t_key, "\\%c       ", buf[1]); /* an unknown special key */
+		}
+	} else {
+		/* special key, possibly with shift and/or ctrl */
+		int keycode;
+
+		bptr = buf + 2;
+		/* Linux */
+		if (*bptr == 'N') { m_ctrl = TRUE; bptr++; }
+		if (*bptr == 'S') { m_shift = TRUE; bptr++; }
+		if (*bptr == 'O') { m_alt = TRUE; bptr++; }
+		/* Windows */
+		if (*bptr == 'C') { m_ctrl = TRUE; bptr++; }
+		if (*bptr == 'S') { m_shift = TRUE; bptr++; }
+		if (*bptr == 'A') { m_alt = TRUE; bptr++; }
+		bptr++;
+
+		/* Translate keycode to some human-readable key (keyboard-layout-dependant hit or miss tho...) */
+#ifdef WINDOWS
+		/* Windows keycode */
+		if (bptr[0] == 'F' && bptr[1] == 'F') {
+			bptr[4] = 0;
+			keycode = strtol(bptr + 2, NULL, 16);
+
+			switch (keycode) {
+			case 0xBE: strcpy(bptr,  "F1"); break;
+			case 0xBF: strcpy(bptr,  "F2"); break;
+			case 0xC0: strcpy(bptr,  "F3"); break;
+			case 0xC1: strcpy(bptr,  "F4"); break;
+			case 0xC2: strcpy(bptr,  "F5"); break;
+			case 0xC3: strcpy(bptr,  "F6"); break;
+			case 0xC4: strcpy(bptr,  "F7"); break;
+			case 0xC5: strcpy(bptr,  "F8"); break;
+			case 0xC6: strcpy(bptr,  "F9"); break;
+			case 0xC7: strcpy(bptr,  "F10"); break;
+			case 0xC8: strcpy(bptr,  "F11"); break;
+			case 0xC9: strcpy(bptr,  "F12"); break;
+
+			case 0x61: strcpy(bptr,  "PrtScr"); break;
+			case 0x14: strcpy(bptr,  "Scroll"); break;
+			case 0x13: strcpy(bptr,  "Pause"); break;
+
+			/* Arrow keys et al, also number pad at numlock off */
+			case 0x52: strcpy(bptr,  "Up"); break;
+			case 0x54: strcpy(bptr,  "Down"); break;
+			case 0x51: strcpy(bptr,  "Left"); break;
+			case 0x53: strcpy(bptr,  "Right"); break;
+			case 0x63: strcpy(bptr,  "Ins"); break; // 'Del' is ctrl+b!
+			case 0x55: strcpy(bptr,  "PageUp"); break;
+			case 0x56: strcpy(bptr,  "PageDn"); break;
+			case 0x50: strcpy(bptr,  "Home"); break;
+			case 0x57: strcpy(bptr,  "End"); break;
+
+			/* Number pad (Numlock independant) */
+			case 0xAF: strcpy(bptr,  "Num/"); break;
+			case 0xAA: strcpy(bptr,  "Num*"); break;
+			case 0xAD: strcpy(bptr,  "Num-"); break;
+			case 0xAB: strcpy(bptr,  "Num+"); break;
+			case 0x8D: strcpy(bptr,  "NumRet"); break;
+
+			/* Number pad (Numlock off) */
+			case 0x9F: strcpy(bptr,  "num."); break;
+			case 0x9E: strcpy(bptr,  "num0"); break;
+			case 0x9C: strcpy(bptr,  "num1"); break;
+			case 0x99: strcpy(bptr,  "num2"); break;
+			case 0x9B: strcpy(bptr,  "num3"); break;
+			case 0x96: strcpy(bptr,  "num4"); break;
+			case 0x9D: strcpy(bptr,  "num5"); break;
+			case 0x98: strcpy(bptr,  "num6"); break;
+			case 0x95: strcpy(bptr,  "num7"); break;
+			case 0x97: strcpy(bptr,  "num8"); break;
+			case 0x9A: strcpy(bptr,  "num9"); break;
+
+			/* Number pad (Numlock off) */
+			case 0xAC: strcpy(bptr,  "NUM."); break;
+			case 0xB0: strcpy(bptr,  "NUM0"); break;
+			case 0xB1: strcpy(bptr,  "NUM1"); break;
+			case 0xB2: strcpy(bptr,  "NUM2"); break;
+			case 0xB3: strcpy(bptr,  "NUM3"); break;
+			case 0xB4: strcpy(bptr,  "NUM4"); break;
+			case 0xB5: strcpy(bptr,  "NUM5"); break;
+			case 0xB6: strcpy(bptr,  "NUM6"); break;
+			case 0xB7: strcpy(bptr,  "NUM7"); break;
+			case 0xB8: strcpy(bptr,  "NUM8"); break;
+			case 0xB9: strcpy(bptr,  "NUM9"); break;
+
+			/* Number pad duplicate, apparently numbers only, no idea.. */
+			case 0xD8: strcpy(bptr,  "Num7"); break;
+			case 0xD9: strcpy(bptr,  "Num8"); break;
+			case 0xDA: strcpy(bptr,  "Num9"); break;
+			case 0xDB: strcpy(bptr,  "Num4"); break;
+			case 0xDC: strcpy(bptr,  "Num5"); break;
+			case 0xDD: strcpy(bptr,  "Num6"); break;
+			case 0xDE: strcpy(bptr,  "Num1"); break;
+			case 0xDF: strcpy(bptr,  "Num2"); break;
+			case 0xE0: strcpy(bptr,  "Num3"); break;
+			}
+		} else if (*(bptr - 1) == 'x') {
+			bptr[2] = 0;
+			keycode = strtol(bptr, NULL, 16);
+
+			switch (keycode) {
+			case 0x3B: strcpy(bptr,  "F1"); break;
+			case 0x3C: strcpy(bptr,  "F2"); break;
+			case 0x3D: strcpy(bptr,  "F3"); break;
+			case 0x3E: strcpy(bptr,  "F4"); break;
+			case 0x3F: strcpy(bptr,  "F5"); break;
+			case 0x40: strcpy(bptr,  "F6"); break;
+			case 0x41: strcpy(bptr,  "F7"); break;
+			case 0x42: strcpy(bptr,  "F8"); break;
+			case 0x43: strcpy(bptr,  "F9"); break;
+			case 0x44: strcpy(bptr,  "F10"); break;
+			case 0x57: strcpy(bptr,  "F11"); break;
+			case 0x58: strcpy(bptr,  "F12"); break;
+
+			//? case 0x61: strcpy(bptr,  "PrtScr"); break;
+			//? case 0x14: strcpy(bptr,  "Scroll"); break;
+			//? case 0x13: strcpy(bptr,  "Pause"); break;
+
+			/* Arrow keys et al, also number pad at numlock off */
+			case 0x48: strcpy(bptr,  "Up"); break;
+			case 0x50: strcpy(bptr,  "Down"); break;
+			case 0x4A: strcpy(bptr,  "num-"); break;
+			case 0x4B: strcpy(bptr,  "Left"); break;
+			case 0x4C: strcpy(bptr,  "num5"); break;
+			case 0x4D: strcpy(bptr,  "Right"); break;
+			case 0x4E: strcpy(bptr,  "num+"); break;
+			case 0x52: strcpy(bptr,  "Ins"); break;
+			case 0x53: strcpy(bptr,  "Del"); break;
+			case 0x49: strcpy(bptr,  "PageUp"); break;
+			case 0x51: strcpy(bptr,  "PageDn"); break;
+			case 0x47: strcpy(bptr,  "Home"); break;
+			case 0x4F: strcpy(bptr,  "End"); break;
+
+			/* Number pad (Numlock off) */
+			/* -- duplicates of the normal keyboard key block listed above, while numlock is off! --
+			case 0x53: strcpy(bptr,  "num."); break;
+			case 0x52: strcpy(bptr,  "num0"); break;
+			case 0x4F: strcpy(bptr,  "num1"); break;
+			case 0x50: strcpy(bptr,  "num2"); break;
+			case 0x51: strcpy(bptr,  "num3"); break;
+			case 0x4B: strcpy(bptr,  "num4"); break;
+			//(unusable with numlock off) case 0x: strcpy(bptr,  "num5"); break;
+			case 0x4D: strcpy(bptr,  "num6"); break;
+			case 0x47: strcpy(bptr,  "num7"); break;
+			case 0x48: strcpy(bptr,  "num8"); break;
+			case 0x49: strcpy(bptr,  "num9"); break;
+			---- */
+
+			/* Number pad (Numlock on)
+			   - same as the normal keyboard keys with corresponding symbols! - */
+
+			/* Strange codes left over.. looking like numpad */
+			case 0x77: strcpy(bptr,  "Num7"); break;
+			case 0x8D: strcpy(bptr,  "Num8"); break;
+			case 0x84: strcpy(bptr,  "Num9"); break;
+			case 0x8E: strcpy(bptr,  "Num-"); break;
+			case 0x73: strcpy(bptr,  "Num4"); break;
+			case 0x8F: strcpy(bptr,  "Num5"); break;
+			case 0x74: strcpy(bptr,  "Num6"); break;
+			case 0x90: strcpy(bptr,  "Num+"); break;
+			case 0x75: strcpy(bptr,  "Num1"); break;
+			case 0x91: strcpy(bptr,  "Num2"); break;
+			case 0x76: strcpy(bptr,  "Num3"); break;
+			case 0x92: strcpy(bptr,  "Num0"); break;
+			case 0x93: strcpy(bptr,  "Num."); break;
+			}
+		} else if (bptr[0] == '_') {
+			//???
+		}
+#else
+		/* Linux keycode */
+		if (bptr[0] == 'F' && bptr[1] == 'F') {
+			bptr[4] = 0;
+			keycode = strtol(bptr + 2, NULL, 16);
+
+			switch (keycode) {
+			case 0xBE: strcpy(bptr,  "F1"); break;
+			case 0xBF: strcpy(bptr,  "F2"); break;
+			case 0xC0: strcpy(bptr,  "F3"); break;
+			case 0xC1: strcpy(bptr,  "F4"); break;
+			case 0xC2: strcpy(bptr,  "F5"); break;
+			case 0xC3: strcpy(bptr,  "F6"); break;
+			case 0xC4: strcpy(bptr,  "F7"); break;
+			case 0xC5: strcpy(bptr,  "F8"); break;
+			case 0xC6: strcpy(bptr,  "F9"); break;
+			case 0xC7: strcpy(bptr,  "F10"); break;
+			case 0xC8: strcpy(bptr,  "F11"); break;
+			case 0xC9: strcpy(bptr,  "F12"); break;
+
+			case 0x61: strcpy(bptr,  "PrtScr"); break;
+			case 0x14: strcpy(bptr,  "Scroll"); break;
+			case 0x13: strcpy(bptr,  "Pause"); break;
+
+			/* Arrow keys et al, also number pad at numlock off */
+			case 0x52: strcpy(bptr,  "Up"); break;
+			case 0x54: strcpy(bptr,  "Down"); break;
+			case 0x51: strcpy(bptr,  "Left"); break;
+			case 0x53: strcpy(bptr,  "Right"); break;
+			case 0x63: strcpy(bptr,  "Ins"); break; // 'Del' is ctrl+b!
+			case 0x55: strcpy(bptr,  "PageUp"); break;
+			case 0x56: strcpy(bptr,  "PageDn"); break;
+			case 0x50: strcpy(bptr,  "Home"); break;
+			case 0x57: strcpy(bptr,  "End"); break;
+
+			/* Number pad (Numlock independant) */
+			case 0xAF: strcpy(bptr,  "Num/"); break;
+			case 0xAA: strcpy(bptr,  "Num*"); break;
+			case 0xAD: strcpy(bptr,  "Num-"); break;
+			case 0xAB: strcpy(bptr,  "Num+"); break;
+			case 0x8D: strcpy(bptr,  "NumRet"); break;
+
+			/* Number pad (Numlock off) */
+			case 0x9F: strcpy(bptr,  "num."); break;
+			case 0x9E: strcpy(bptr,  "num0"); break;
+			case 0x9C: strcpy(bptr,  "num1"); break;
+			case 0x99: strcpy(bptr,  "num2"); break;
+			case 0x9B: strcpy(bptr,  "num3"); break;
+			case 0x96: strcpy(bptr,  "num4"); break;
+			case 0x9D: strcpy(bptr,  "num5"); break;
+			case 0x98: strcpy(bptr,  "num6"); break;
+			case 0x95: strcpy(bptr,  "num7"); break;
+			case 0x97: strcpy(bptr,  "num8"); break;
+			case 0x9A: strcpy(bptr,  "num9"); break;
+
+			/* Number pad (Numlock off) */
+			case 0xAC: strcpy(bptr,  "NUM."); break;
+			case 0xB0: strcpy(bptr,  "NUM0"); break;
+			case 0xB1: strcpy(bptr,  "NUM1"); break;
+			case 0xB2: strcpy(bptr,  "NUM2"); break;
+			case 0xB3: strcpy(bptr,  "NUM3"); break;
+			case 0xB4: strcpy(bptr,  "NUM4"); break;
+			case 0xB5: strcpy(bptr,  "NUM5"); break;
+			case 0xB6: strcpy(bptr,  "NUM6"); break;
+			case 0xB7: strcpy(bptr,  "NUM7"); break;
+			case 0xB8: strcpy(bptr,  "NUM8"); break;
+			case 0xB9: strcpy(bptr,  "NUM9"); break;
+
+			/* Number pad duplicate, apparently numbers only, no idea.. */
+			case 0xD8: strcpy(bptr,  "Num7"); break;
+			case 0xD9: strcpy(bptr,  "Num8"); break;
+			case 0xDA: strcpy(bptr,  "Num9"); break;
+			case 0xDB: strcpy(bptr,  "Num4"); break;
+			case 0xDC: strcpy(bptr,  "Num5"); break;
+			case 0xDD: strcpy(bptr,  "Num6"); break;
+			case 0xDE: strcpy(bptr,  "Num1"); break;
+			case 0xDF: strcpy(bptr,  "Num2"); break;
+			case 0xE0: strcpy(bptr,  "Num3"); break;
+			}
+		} else if (bptr[0] == '_') {
+			//???
+		}
+#endif
+
+		sprintf(t_key, "%-9.9s", bptr);
+		/* ensure termination (in paranoid case of overflow) */
+		t_key[9] = '\0';
+	}
+
+	/* determine trigger type */
+	if (macro_idx != -1) {
+		if (macro__hyb[macro_idx]) t_hyb = TRUE;
+		else if (macro__cmd[macro_idx]) t_com = TRUE;
+	} else {
+#if 0
+		if (macrohyb) t_hyb = TRUE;
+		else if (macrocmd) t_com = TRUE;
+#else /* assume hybrid macros (for macroset switching keys) */
+		t_hyb = TRUE;
+#endif
+	}
+
+	/* build a whole line */
+	if (macro_idx != -1)
+		sprintf(fff, "%s %s %s %s [%s]  %-49.49s", m_shift ? "SHF" : "   ", m_ctrl ? "CTL" : "   ", m_alt ? "ALT" : "   ",
+		    t_key, t_hyb ? "HY" : t_com ? "C " : "  ", buf2);
+	else /* shortened format and no macro type nor action shown */
+		sprintf(fff, "%s%s%s%s", m_shift ? "SHF+" : "", m_ctrl ? "CTL+" : "", m_alt ? "ALT+" : "",
+		    t_key);
+}
+
+
 void interact_macros(void) {
 	int i, j = 0, l, l2, chain_type;
 	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024];
-	char fff[1024], t_key[10], choice;
-	bool m_ctrl, m_alt, m_shift, t_hyb, t_com;
+	char fff[1024], choice;
 	bool were_recording = FALSE;
 	bool inkey_msg_old = inkey_msg; //just for cmd_message().. probably redundant and we could just remove the inkey_msg = TRUE at cmd_message() instead of doing these extra checks...
 #ifdef TEST_CLIENT
@@ -6535,325 +6884,8 @@ void interact_macros(void) {
 					Term_putstr(0, 22, -1, TERM_L_UMBER, "  [Press any key to continue, 'p' for previous, ESC to exit]");
 				}
 
-				/* Get trigger in parsable format */
-				ascii_to_text(buf, macro__pat[i]);
-
-				/* Get macro in parsable format */
-				strncpy(macro__buf, macro__act[i], 159);
-				macro__buf[159] = '\0';
-				ascii_to_text(buf2, macro__buf);
-
-#if 0 /* not a glitch maybe, just treat them @ len>2 clause.. */
-#ifdef WINDOWS
-				/* 'Glitch': Macros read from file have a trailing \r linefeed -_- */
-				if (strlen(buf) > 2 && buf[strlen(buf) - 2] == '\\' && buf[strlen(buf) - 1] == 'r') buf[strlen(buf) - 2] = 0; //trim it
-#endif
-#endif
-
-				/* Make the trigger human-readable */
-				m_ctrl = m_alt = m_shift = FALSE;
-#if 0 /* For debugging only: Code exclusion */
-				if (TRUE) {
-					sprintf(t_key, "%-9.9s", buf);
-					/* ensure termination (in paranoid case of overflow) */
-					t_key[9] = '\0';
-				} else
-#endif
-				if (strlen(buf) == 1) {
-					/* just a simple key */
-					sprintf(t_key, "%c        ", buf[0]);
-				} else if (strlen(buf) == 2) {
-					/* ctrl + a simple key ('^%c' uppercase) or a special key ('\%c' or '^%c' lowercase) keypress
-					 *
-					 * special keys are represented by \+<normal letter> (lowercase) combo
-					 * but comment from previous dev states:
-					 * "special keys are represented by ^+<normal letter> combo.. >_>"
-					 * so the code tries to consider both */
-					m_ctrl = FALSE;
-					bool is_simple = FALSE;
-
-					switch (buf[1]) {
-						/* a lowercase letter indicates special key */
-						case 'b': sprintf(t_key, "Bsp/Del  "); break; // 'Backspace' and also 'Del' key! why?
-						case 'r': sprintf(t_key, "Enter    "); break;
-						case 's': sprintf(t_key, "Space    "); break;
-						case 't': sprintf(t_key, "Tab      "); break;
-						case 'w': sprintf(t_key, "`        "); break; // a grave (`) on en_US keyboard
-						default: is_simple = TRUE;
-					}
-					if (is_simple) {
-						if (buf[0] != '\\') {
-							/* ctrl + a simple key */
-							m_ctrl = TRUE;
-							sprintf(t_key, "%c        ", buf[1]);
-						} else sprintf(t_key, "\\%c       ", buf[1]); /* an unknown special key */
-					}
-				} else {
-					/* special key, possibly with shift and/or ctrl */
-					int keycode;
-
-					bptr = buf + 2;
-					/* Linux */
-					if (*bptr == 'N') { m_ctrl = TRUE; bptr++; }
-					if (*bptr == 'S') { m_shift = TRUE; bptr++; }
-					if (*bptr == 'O') { m_alt = TRUE; bptr++; }
-					/* Windows */
-					if (*bptr == 'C') { m_ctrl = TRUE; bptr++; }
-					if (*bptr == 'S') { m_shift = TRUE; bptr++; }
-					if (*bptr == 'A') { m_alt = TRUE; bptr++; }
-					bptr++;
-
-					/* Translate keycode to some human-readable key (keyboard-layout-dependant hit or miss tho...) */
-#ifdef WINDOWS
-					/* Windows keycode */
-					if (bptr[0] == 'F' && bptr[1] == 'F') {
-						bptr[4] = 0;
-						keycode = strtol(bptr + 2, NULL, 16);
-
-						switch (keycode) {
-						case 0xBE: strcpy(bptr,  "F1"); break;
-						case 0xBF: strcpy(bptr,  "F2"); break;
-						case 0xC0: strcpy(bptr,  "F3"); break;
-						case 0xC1: strcpy(bptr,  "F4"); break;
-						case 0xC2: strcpy(bptr,  "F5"); break;
-						case 0xC3: strcpy(bptr,  "F6"); break;
-						case 0xC4: strcpy(bptr,  "F7"); break;
-						case 0xC5: strcpy(bptr,  "F8"); break;
-						case 0xC6: strcpy(bptr,  "F9"); break;
-						case 0xC7: strcpy(bptr,  "F10"); break;
-						case 0xC8: strcpy(bptr,  "F11"); break;
-						case 0xC9: strcpy(bptr,  "F12"); break;
-
-						case 0x61: strcpy(bptr,  "PrtScr"); break;
-						case 0x14: strcpy(bptr,  "Scroll"); break;
-						case 0x13: strcpy(bptr,  "Pause"); break;
-
-						/* Arrow keys et al, also number pad at numlock off */
-						case 0x52: strcpy(bptr,  "Up"); break;
-						case 0x54: strcpy(bptr,  "Down"); break;
-						case 0x51: strcpy(bptr,  "Left"); break;
-						case 0x53: strcpy(bptr,  "Right"); break;
-						case 0x63: strcpy(bptr,  "Ins"); break; // 'Del' is ctrl+b!
-						case 0x55: strcpy(bptr,  "PageUp"); break;
-						case 0x56: strcpy(bptr,  "PageDn"); break;
-						case 0x50: strcpy(bptr,  "Home"); break;
-						case 0x57: strcpy(bptr,  "End"); break;
-
-						/* Number pad (Numlock independant) */
-						case 0xAF: strcpy(bptr,  "Num/"); break;
-						case 0xAA: strcpy(bptr,  "Num*"); break;
-						case 0xAD: strcpy(bptr,  "Num-"); break;
-						case 0xAB: strcpy(bptr,  "Num+"); break;
-						case 0x8D: strcpy(bptr,  "NumRet"); break;
-
-						/* Number pad (Numlock off) */
-						case 0x9F: strcpy(bptr,  "num."); break;
-						case 0x9E: strcpy(bptr,  "num0"); break;
-						case 0x9C: strcpy(bptr,  "num1"); break;
-						case 0x99: strcpy(bptr,  "num2"); break;
-						case 0x9B: strcpy(bptr,  "num3"); break;
-						case 0x96: strcpy(bptr,  "num4"); break;
-						case 0x9D: strcpy(bptr,  "num5"); break;
-						case 0x98: strcpy(bptr,  "num6"); break;
-						case 0x95: strcpy(bptr,  "num7"); break;
-						case 0x97: strcpy(bptr,  "num8"); break;
-						case 0x9A: strcpy(bptr,  "num9"); break;
-
-						/* Number pad (Numlock off) */
-						case 0xAC: strcpy(bptr,  "NUM."); break;
-						case 0xB0: strcpy(bptr,  "NUM0"); break;
-						case 0xB1: strcpy(bptr,  "NUM1"); break;
-						case 0xB2: strcpy(bptr,  "NUM2"); break;
-						case 0xB3: strcpy(bptr,  "NUM3"); break;
-						case 0xB4: strcpy(bptr,  "NUM4"); break;
-						case 0xB5: strcpy(bptr,  "NUM5"); break;
-						case 0xB6: strcpy(bptr,  "NUM6"); break;
-						case 0xB7: strcpy(bptr,  "NUM7"); break;
-						case 0xB8: strcpy(bptr,  "NUM8"); break;
-						case 0xB9: strcpy(bptr,  "NUM9"); break;
-
-						/* Number pad duplicate, apparently numbers only, no idea.. */
-						case 0xD8: strcpy(bptr,  "Num7"); break;
-						case 0xD9: strcpy(bptr,  "Num8"); break;
-						case 0xDA: strcpy(bptr,  "Num9"); break;
-						case 0xDB: strcpy(bptr,  "Num4"); break;
-						case 0xDC: strcpy(bptr,  "Num5"); break;
-						case 0xDD: strcpy(bptr,  "Num6"); break;
-						case 0xDE: strcpy(bptr,  "Num1"); break;
-						case 0xDF: strcpy(bptr,  "Num2"); break;
-						case 0xE0: strcpy(bptr,  "Num3"); break;
-						}
-					} else if (*(bptr - 1) == 'x') {
-						bptr[2] = 0;
-						keycode = strtol(bptr, NULL, 16);
-
-						switch (keycode) {
-						case 0x3B: strcpy(bptr,  "F1"); break;
-						case 0x3C: strcpy(bptr,  "F2"); break;
-						case 0x3D: strcpy(bptr,  "F3"); break;
-						case 0x3E: strcpy(bptr,  "F4"); break;
-						case 0x3F: strcpy(bptr,  "F5"); break;
-						case 0x40: strcpy(bptr,  "F6"); break;
-						case 0x41: strcpy(bptr,  "F7"); break;
-						case 0x42: strcpy(bptr,  "F8"); break;
-						case 0x43: strcpy(bptr,  "F9"); break;
-						case 0x44: strcpy(bptr,  "F10"); break;
-						case 0x57: strcpy(bptr,  "F11"); break;
-						case 0x58: strcpy(bptr,  "F12"); break;
-
-						//? case 0x61: strcpy(bptr,  "PrtScr"); break;
-						//? case 0x14: strcpy(bptr,  "Scroll"); break;
-						//? case 0x13: strcpy(bptr,  "Pause"); break;
-
-						/* Arrow keys et al, also number pad at numlock off */
-						case 0x48: strcpy(bptr,  "Up"); break;
-						case 0x50: strcpy(bptr,  "Down"); break;
-						case 0x4A: strcpy(bptr,  "num-"); break;
-						case 0x4B: strcpy(bptr,  "Left"); break;
-						case 0x4C: strcpy(bptr,  "num5"); break;
-						case 0x4D: strcpy(bptr,  "Right"); break;
-						case 0x4E: strcpy(bptr,  "num+"); break;
-						case 0x52: strcpy(bptr,  "Ins"); break;
-						case 0x53: strcpy(bptr,  "Del"); break;
-						case 0x49: strcpy(bptr,  "PageUp"); break;
-						case 0x51: strcpy(bptr,  "PageDn"); break;
-						case 0x47: strcpy(bptr,  "Home"); break;
-						case 0x4F: strcpy(bptr,  "End"); break;
-
-						/* Number pad (Numlock off) */
-						/* -- duplicates of the normal keyboard key block listed above, while numlock is off! --
-						case 0x53: strcpy(bptr,  "num."); break;
-						case 0x52: strcpy(bptr,  "num0"); break;
-						case 0x4F: strcpy(bptr,  "num1"); break;
-						case 0x50: strcpy(bptr,  "num2"); break;
-						case 0x51: strcpy(bptr,  "num3"); break;
-						case 0x4B: strcpy(bptr,  "num4"); break;
-						//(unusable with numlock off) case 0x: strcpy(bptr,  "num5"); break;
-						case 0x4D: strcpy(bptr,  "num6"); break;
-						case 0x47: strcpy(bptr,  "num7"); break;
-						case 0x48: strcpy(bptr,  "num8"); break;
-						case 0x49: strcpy(bptr,  "num9"); break;
-						---- */
-
-						/* Number pad (Numlock on)
-						   - same as the normal keyboard keys with corresponding symbols! - */
-
-						/* Strange codes left over.. looking like numpad */
-						case 0x77: strcpy(bptr,  "Num7"); break;
-						case 0x8D: strcpy(bptr,  "Num8"); break;
-						case 0x84: strcpy(bptr,  "Num9"); break;
-						case 0x8E: strcpy(bptr,  "Num-"); break;
-						case 0x73: strcpy(bptr,  "Num4"); break;
-						case 0x8F: strcpy(bptr,  "Num5"); break;
-						case 0x74: strcpy(bptr,  "Num6"); break;
-						case 0x90: strcpy(bptr,  "Num+"); break;
-						case 0x75: strcpy(bptr,  "Num1"); break;
-						case 0x91: strcpy(bptr,  "Num2"); break;
-						case 0x76: strcpy(bptr,  "Num3"); break;
-						case 0x92: strcpy(bptr,  "Num0"); break;
-						case 0x93: strcpy(bptr,  "Num."); break;
-						}
-					} else if (bptr[0] == '_') {
-						//???
-					}
-#else
-					/* Linux keycode */
-					if (bptr[0] == 'F' && bptr[1] == 'F') {
-						bptr[4] = 0;
-						keycode = strtol(bptr + 2, NULL, 16);
-
-						switch (keycode) {
-						case 0xBE: strcpy(bptr,  "F1"); break;
-						case 0xBF: strcpy(bptr,  "F2"); break;
-						case 0xC0: strcpy(bptr,  "F3"); break;
-						case 0xC1: strcpy(bptr,  "F4"); break;
-						case 0xC2: strcpy(bptr,  "F5"); break;
-						case 0xC3: strcpy(bptr,  "F6"); break;
-						case 0xC4: strcpy(bptr,  "F7"); break;
-						case 0xC5: strcpy(bptr,  "F8"); break;
-						case 0xC6: strcpy(bptr,  "F9"); break;
-						case 0xC7: strcpy(bptr,  "F10"); break;
-						case 0xC8: strcpy(bptr,  "F11"); break;
-						case 0xC9: strcpy(bptr,  "F12"); break;
-
-						case 0x61: strcpy(bptr,  "PrtScr"); break;
-						case 0x14: strcpy(bptr,  "Scroll"); break;
-						case 0x13: strcpy(bptr,  "Pause"); break;
-
-						/* Arrow keys et al, also number pad at numlock off */
-						case 0x52: strcpy(bptr,  "Up"); break;
-						case 0x54: strcpy(bptr,  "Down"); break;
-						case 0x51: strcpy(bptr,  "Left"); break;
-						case 0x53: strcpy(bptr,  "Right"); break;
-						case 0x63: strcpy(bptr,  "Ins"); break; // 'Del' is ctrl+b!
-						case 0x55: strcpy(bptr,  "PageUp"); break;
-						case 0x56: strcpy(bptr,  "PageDn"); break;
-						case 0x50: strcpy(bptr,  "Home"); break;
-						case 0x57: strcpy(bptr,  "End"); break;
-
-						/* Number pad (Numlock independant) */
-						case 0xAF: strcpy(bptr,  "Num/"); break;
-						case 0xAA: strcpy(bptr,  "Num*"); break;
-						case 0xAD: strcpy(bptr,  "Num-"); break;
-						case 0xAB: strcpy(bptr,  "Num+"); break;
-						case 0x8D: strcpy(bptr,  "NumRet"); break;
-
-						/* Number pad (Numlock off) */
-						case 0x9F: strcpy(bptr,  "num."); break;
-						case 0x9E: strcpy(bptr,  "num0"); break;
-						case 0x9C: strcpy(bptr,  "num1"); break;
-						case 0x99: strcpy(bptr,  "num2"); break;
-						case 0x9B: strcpy(bptr,  "num3"); break;
-						case 0x96: strcpy(bptr,  "num4"); break;
-						case 0x9D: strcpy(bptr,  "num5"); break;
-						case 0x98: strcpy(bptr,  "num6"); break;
-						case 0x95: strcpy(bptr,  "num7"); break;
-						case 0x97: strcpy(bptr,  "num8"); break;
-						case 0x9A: strcpy(bptr,  "num9"); break;
-
-						/* Number pad (Numlock off) */
-						case 0xAC: strcpy(bptr,  "NUM."); break;
-						case 0xB0: strcpy(bptr,  "NUM0"); break;
-						case 0xB1: strcpy(bptr,  "NUM1"); break;
-						case 0xB2: strcpy(bptr,  "NUM2"); break;
-						case 0xB3: strcpy(bptr,  "NUM3"); break;
-						case 0xB4: strcpy(bptr,  "NUM4"); break;
-						case 0xB5: strcpy(bptr,  "NUM5"); break;
-						case 0xB6: strcpy(bptr,  "NUM6"); break;
-						case 0xB7: strcpy(bptr,  "NUM7"); break;
-						case 0xB8: strcpy(bptr,  "NUM8"); break;
-						case 0xB9: strcpy(bptr,  "NUM9"); break;
-
-						/* Number pad duplicate, apparently numbers only, no idea.. */
-						case 0xD8: strcpy(bptr,  "Num7"); break;
-						case 0xD9: strcpy(bptr,  "Num8"); break;
-						case 0xDA: strcpy(bptr,  "Num9"); break;
-						case 0xDB: strcpy(bptr,  "Num4"); break;
-						case 0xDC: strcpy(bptr,  "Num5"); break;
-						case 0xDD: strcpy(bptr,  "Num6"); break;
-						case 0xDE: strcpy(bptr,  "Num1"); break;
-						case 0xDF: strcpy(bptr,  "Num2"); break;
-						case 0xE0: strcpy(bptr,  "Num3"); break;
-						}
-					} else if (bptr[0] == '_') {
-						//???
-					}
-#endif
-
-					sprintf(t_key, "%-9.9s", bptr);
-					/* ensure termination (in paranoid case of overflow) */
-					t_key[9] = '\0';
-				}
-
-				/* determine trigger type */
-				t_hyb = t_com = FALSE;
-				if (macro__hyb[i]) t_hyb = TRUE;
-				else if (macro__cmd[i]) t_com = TRUE;
-
-				/* build a whole line */
-				sprintf(fff, "%s %s %s %s [%s]  %-49.49s", m_shift ? "SHF" : "   ", m_ctrl ? "CTL" : "   ", m_alt ? "ALT" : "   ",
-				    t_key, t_hyb ? "HY" : t_com ? "C " : "  ", buf2);
-
+				/* Get human-readanble macro info */
+				macroinfo_ascii(i, NULL, fff);
 				Term_putstr(0, i % 20 + 2, -1, TERM_WHITE, fff);
 
 				/* Wait for keypress before displaying more */
@@ -8932,6 +8964,7 @@ Chain_Macro:
 						char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
 						char tmpbuf[1024];
 						bool ok_new_set, ok_new_stage, ok_swap_stages, cancel;
+						bool style_cyclic, style_free;
 
 						if (rescan) { /* (Is statically TRUE on first invocation of mw_fileset, to ensure an initial scan) */
 							rescan = FALSE;
@@ -9426,12 +9459,19 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
+								if (!fileset[fileset_selected].style_cyclic && !fileset[fileset_selected].style_free) {
+									c_msg_print("\377yFileset is neither set to cyclic nor to free-switching. Set it with 'm' first.");
+									continue;
+								}
 
 								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/12)
-								if (fileset[f].style_cyclic) { //ask for set-global cycling-key
+								if (fileset[fileset_selected].style_cyclic) { //ask for set-global cycling-key
+									/* Get trigger in human-readable format */
+									macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__cycle, tmpbuf);
+
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
-										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as macro-cycling trigger: ");
+										Term_putstr(1, l, -1, TERM_L_GREEN, format("Cyclic trigger key was <%s>. Press new key or ESC: ", tmpbuf));
 										tmpbuf[0] = 0;
 										get_macro_trigger(tmpbuf);
 										if (!strcmp(tmpbuf, "\e") || !strcmp(buf, "%")) {
@@ -9445,82 +9485,70 @@ Chain_Macro:
 
 									/* Set macro trigger */
 									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[f].macro__pat__cycle, buf_pat);
+									strcpy(fileset[fileset_selected].macro__pat__cycle, buf_pat);
 									/* Set macro trigger in human-readable format */
 									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[f].macro__patbuf__cycle, buftxt_pat);
+									strcpy(fileset[fileset_selected].macro__patbuf__cycle, buftxt_pat);
 
 									/* Forge macro action (in human-readable format) */
 
 									/* Start with meaningless placeholder stages, ie ourself: 'cycle from stage 1 to stage 1 of 1' ^^
 									  - to be replaced later with the addition of more stages... */
 									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e",
-									   fileset[f].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[f].basefilename);
+									   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[fileset_selected].basefilename);
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[f].macro__actbuf__cycle, buftxt_act);
+									strcpy(fileset[fileset_selected].macro__actbuf__cycle, buftxt_act);
 									/* Set macro action */
 									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[f].macro__act__cycle, buf_act);
+									strcpy(fileset[fileset_selected].macro__act__cycle, buf_act);
 								}
-								if (fileset[f].style_free) { //ask for stage-specific switching-key
-									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
-									while (TRUE) {
-										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as stage 1-specific trigger: ");
-										tmpbuf[0] = 0;
-										get_macro_trigger(tmpbuf);
-										if (!strcmp(tmpbuf, "\e") || !strcmp(buf, "%")) {
-											c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
-											if (!strcmp(buf, "\e")) break;
-											continue;
+								for (f = 0; f < fileset[fileset_selected].stages; f++) {
+									if (fileset[fileset_selected].style_free) { //ask for stage-specific switching-key
+										/* Get trigger in human-readable format */
+										macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__switch[f], tmpbuf);
+
+										Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
+										while (TRUE) {
+											Term_putstr(1, l, -1, TERM_L_GREEN, format("Stage %d trigger key was <%s>. Press new key or ESC: ", f, tmpbuf));
+											tmpbuf[0] = 0;
+											get_macro_trigger(tmpbuf);
+											if (!strcmp(tmpbuf, "\e") || !strcmp(buf, "%")) {
+												c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
+												if (!strcmp(buf, "\e")) break;
+												continue;
+											}
+											break;
 										}
-										break;
+										if (!strcmp(buf, "\e")) continue; // abort
+
+										/* Set macro trigger */
+										strcpy(buf_pat, tmpbuf);
+										strcpy(fileset[fileset_selected].macro__pat__switch[f], buf_pat);
+										/* Set macro trigger in human-readable format */
+										ascii_to_text(buftxt_pat, buf_pat);
+										strcpy(fileset[fileset_selected].macro__patbuf__switch[f], buftxt_pat);
+
+										/* Forge macro action (in human-readable format) */
+
+										/* Start with meaningless placeholder stages, ie ourself: 'switch from stage 1 to stage 1 of 1' ^^
+										  - to be replaced later with the addition of more stages... */
+										sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
+										   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH,
+										   f + 1, fileset[fileset_selected].stages,
+										   fileset[fileset_selected].basefilename,
+										   f + 1);
+
+										/* Set macro action in human-readable format */
+										strcpy(buftxt_act, tmpbuf);
+										strcpy(fileset[fileset_selected].macro__actbuf__switch[f], buftxt_act);
+										/* Set macro action */
+										text_to_ascii(buf_act, buftxt_act);
+										strcpy(fileset[fileset_selected].macro__act__switch[f], buf_act);
 									}
-									if (!strcmp(buf, "\e")) {
-										/* Abort: Erase newly started set-in-the-making again */
-										fileset[f].basefilename[0] = 0;
-										filesets_found--;
-										continue;
-									}
-
-									/* Set macro trigger */
-									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[f].macro__pat__switch[0], buf_pat);
-									/* Set macro trigger in human-readable format */
-									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[f].macro__patbuf__switch[0], buftxt_pat);
-
-									/* Forge macro action (in human-readable format) */
-
-									/* Start with meaningless placeholder stages, ie ourself: 'switch from stage 1 to stage 1 of 1' ^^
-									  - to be replaced later with the addition of more stages... */
-									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e",
-									   fileset[f].basefilename, MACROFILESET_MARKER_SWITCH, fileset[f].basefilename);
-
-									/* Set macro action in human-readable format */
-									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[f].macro__actbuf__switch[0], buftxt_act);
-									/* Set macro action */
-									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[f].macro__act__switch[0], buf_act);
+									/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
 								}
-								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
-
-
-								// auto-select set and 'init' its first stage (ie just select the first stage as 'active' and imprint its trigger keys)
-								fileset[f].stages = 1;
-
-								/* Init cycle keys */
-								fileset[f].macro__pat__cycle[0] = 0;
-								fileset[f].macro__patbuf__cycle[0] = 0;
-								/* Init switch keys */
-								fileset[f].macro__pat__switch[0][0] = 0;
-								fileset[f].macro__patbuf__switch[0][0] = 0;
-								fileset[f].macro__act__switch[0][0] = 0;
-								fileset[f].macro__actbuf__switch[0][0] = 0;
-
-
 								break;
 
 							case 'm': //modify switching method
@@ -9528,7 +9556,42 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
-								//todo..
+								style_cyclic = fileset[fileset_selected].style_cyclic;
+								style_free = fileset[fileset_selected].style_free;
+
+								// get type (switching method)
+								Term_putstr(1, l, -1, TERM_L_GREEN, "Set the set type aka switching method (1 cyclic, 2 free-switch, 3 both): ");
+								while (TRUE) {
+									Term_gotoxy(74, l);
+									n = inkey();
+									if (n == '\e') {
+										n = -1;
+										break;
+									}
+									n -= '0';
+									if (n < 1 || n > 3) continue;
+									break;
+								}
+								if (n == -1) continue; // abort
+								fileset[fileset_selected].style_cyclic = (n % 2 != 0);
+								fileset[fileset_selected].style_free = (n / 2 != 0);
+
+								/* Clear now deprecated cycle keys */
+								if (style_cyclic && !fileset[fileset_selected].style_cyclic) {
+									fileset[fileset_selected].macro__pat__cycle[0] = 0;
+									fileset[fileset_selected].macro__patbuf__cycle[0] = 0;
+									c_msg_print("Cleared deprecated cyclic key.");
+								}
+								/* Clear now deprecated switch keys */
+								if (style_free && !fileset[fileset_selected].style_free) {
+									for (f = 0; f < fileset[fileset_selected].stages; f++) {
+										fileset[fileset_selected].macro__pat__switch[f][0] = 0;
+										fileset[fileset_selected].macro__patbuf__switch[f][0] = 0;
+										fileset[fileset_selected].macro__act__switch[f][0] = 0;
+										fileset[fileset_selected].macro__actbuf__switch[f][0] = 0;
+									}
+									c_msg_print("Cleared deprecated free-switch keys.");
+								}
 								break;
 
 							case 's': //swap two stages
@@ -9537,7 +9600,7 @@ Chain_Macro:
 									continue;
 								}
 								if (!ok_swap_stages) continue;
-								//todo..
+							    //todo..
 								break;
 
 							case 't': //toggle a stage (available vs unavailabe (aka getting skipped) from switching keys from the other stages)
@@ -9559,7 +9622,7 @@ Chain_Macro:
 									continue;
 								}
 								if (!ok_new_stage) continue;
-								//todo..
+							    //todo..
 								break;
 
 							case 'a': //activate a stage
