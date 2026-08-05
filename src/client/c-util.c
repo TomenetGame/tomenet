@@ -5437,10 +5437,10 @@ struct macro_fileset_type {
 	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles)
 	bool style_freesw; // Style: free-switching (at last one trigger key was found that switches freely)
 	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended
-	char macro__pat__cycle[32];
-	char macro__patbuf__cycle[32];
-	char macro__act__cycle[160];
-	char macro__actbuf__cycle[160];
+	char macro__pat__cyclic[32];
+	char macro__patbuf__cyclic[32];
+	char macro__act__cyclic[160];
+	char macro__actbuf__cyclic[160];
 	int stages; // Amount of stages to cyclic/switch between
 	bool any_stage_file_exists; // just QoL shortcut derived from at least one of 'stage_file_exists[]' being TRUE
 	bool all_stage_files_exist; // just QoL shortcut
@@ -5582,9 +5582,9 @@ int macroset_scan(void) {
 				fileset[k].stages = stage + 1; // We have at least this many stages, apparently
 				strcpy(fileset[k].basefilename, buf_basename);
 
-				/* Init cycle keys */
-				fileset[k].macro__pat__cycle[0] = 0;
-				fileset[k].macro__patbuf__cycle[0] = 0;
+				/* Init cycle key */
+				fileset[k].macro__pat__cyclic[0] = 0;
+				fileset[k].macro__patbuf__cyclic[0] = 0;
 
 				/* Set is referenced by loaded macros in memory */
 				fileset[k].currently_referenced = TRUE;
@@ -5605,8 +5605,8 @@ int macroset_scan(void) {
 			fileset[k].macro__actbuf__freesw[stage][0] = 0;
 			/* Macro-set specific: */
 			if (style_cyclic) {
-				strcpy(fileset[k].macro__pat__cycle, buf_pat);
-				strcpy(fileset[k].macro__patbuf__cycle, buftxt_pat);
+				strcpy(fileset[k].macro__pat__cyclic, buf_pat);
+				strcpy(fileset[k].macro__patbuf__cyclic, buftxt_pat);
 			}
 			/* Macro-set-stage specific: */
 			if (style_freesw) {
@@ -5785,9 +5785,9 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 				fileset[k].style_cyclic = FALSE;//todo:find out- style_cyclic;
 				fileset[k].style_freesw = FALSE;//todo:find out- style_freesw;
 
-				/* Init cycle keys */
-				fileset[k].macro__pat__cycle[0] = 0;
-				fileset[k].macro__patbuf__cycle[0] = 0;
+				/* Init cycle key */
+				fileset[k].macro__pat__cyclic[0] = 0;
+				fileset[k].macro__patbuf__cyclic[0] = 0;
 
 				/* Set is purely from disk, not referenced by loaded macros in memory */
 				fileset[k].currently_referenced = FALSE;
@@ -9286,9 +9286,9 @@ Chain_Macro:
 								// auto-select set and 'init' its first stage (ie just select the first stage as 'active' and imprint its trigger keys)
 								fileset[f].stages = 1;
 
-								/* Init cycle keys */
-								fileset[f].macro__pat__cycle[0] = 0;
-								fileset[f].macro__patbuf__cycle[0] = 0;
+								/* Init cycle key */
+								fileset[f].macro__pat__cyclic[0] = 0;
+								fileset[f].macro__patbuf__cyclic[0] = 0;
 								/* Init switch keys */
 								fileset[f].macro__pat__freesw[0][0] = 0;
 								fileset[f].macro__patbuf__freesw[0][0] = 0;
@@ -9318,10 +9318,10 @@ Chain_Macro:
 
 									/* Set macro trigger */
 									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[f].macro__pat__cycle, buf_pat);
+									strcpy(fileset[f].macro__pat__cyclic, buf_pat);
 									/* Set macro trigger in human-readable format */
 									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[f].macro__patbuf__cycle, buftxt_pat);
+									strcpy(fileset[f].macro__patbuf__cyclic, buftxt_pat);
 
 									/* Forge macro action (in human-readable format) */
 
@@ -9332,10 +9332,10 @@ Chain_Macro:
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[f].macro__actbuf__cycle, buftxt_act);
+									strcpy(fileset[f].macro__actbuf__cyclic, buftxt_act);
 									/* Set macro action */
 									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[f].macro__act__cycle, buf_act);
+									strcpy(fileset[f].macro__act__cyclic, buf_act);
 								}
 								if (fileset[f].style_freesw) { //ask for stage-specific switching-key
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
@@ -9420,7 +9420,7 @@ Chain_Macro:
 								/* Add the trigger macros to currently loaded macros */
 								if (fileset[fileset_selected].style_cyclic) {
 									//key_autoconvert(tmp, fmt);
-									macro_add(fileset[fileset_selected].macro__pat__cycle, fileset[fileset_selected].macro__act__cycle, FALSE, FALSE);
+									macro_add(fileset[fileset_selected].macro__pat__cyclic, fileset[fileset_selected].macro__act__cyclic, FALSE, FALSE);
 								}
 								if (fileset[fileset_selected].style_freesw) {
 									for (f = 0; f < fileset[fileset_selected].stages; f++) {
@@ -9467,7 +9467,7 @@ Chain_Macro:
 								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/12)
 								if (fileset[fileset_selected].style_cyclic) { //ask for set-global cycling-key
 									/* Get trigger in human-readable format */
-									macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__cycle, tmpbuf);
+									macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__cyclic, tmpbuf);
 
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
@@ -9485,10 +9485,10 @@ Chain_Macro:
 
 									/* Set macro trigger */
 									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[fileset_selected].macro__pat__cycle, buf_pat);
+									strcpy(fileset[fileset_selected].macro__pat__cyclic, buf_pat);
 									/* Set macro trigger in human-readable format */
 									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[fileset_selected].macro__patbuf__cycle, buftxt_pat);
+									strcpy(fileset[fileset_selected].macro__patbuf__cyclic, buftxt_pat);
 
 									/* Forge macro action (in human-readable format) */
 
@@ -9499,10 +9499,10 @@ Chain_Macro:
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[fileset_selected].macro__actbuf__cycle, buftxt_act);
+									strcpy(fileset[fileset_selected].macro__actbuf__cyclic, buftxt_act);
 									/* Set macro action */
 									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[fileset_selected].macro__act__cycle, buf_act);
+									strcpy(fileset[fileset_selected].macro__act__cyclic, buf_act);
 								}
 								for (f = 0; f < fileset[fileset_selected].stages; f++) {
 									if (fileset[fileset_selected].style_freesw) { //ask for stage-specific switching-key
@@ -9576,11 +9576,11 @@ Chain_Macro:
 								fileset[fileset_selected].style_cyclic = (n % 2 != 0);
 								fileset[fileset_selected].style_freesw = (n / 2 != 0);
 
-								/* Clear now deprecated cycle keys */
+								/* Clear now deprecated cycle key */
 								if (style_cyclic && !fileset[fileset_selected].style_cyclic) {
-									fileset[fileset_selected].macro__pat__cycle[0] = 0;
-									fileset[fileset_selected].macro__patbuf__cycle[0] = 0;
-									c_msg_print("Cleared deprecated cyclic key.");
+									fileset[fileset_selected].macro__pat__cyclic[0] = 0;
+									fileset[fileset_selected].macro__patbuf__cyclic[0] = 0;
+									c_msg_print("Cleared deprecated cycle key.");
 								}
 								/* Clear now deprecated switch keys */
 								if (style_freesw && !fileset[fileset_selected].style_freesw) {
