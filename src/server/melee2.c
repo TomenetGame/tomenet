@@ -237,6 +237,9 @@
 /* Hack to make monsters that can summon high uniques do so more often instead of using other summoning spells they may have (Chance: 1 in n, [4]) */
 #define PRIORITY_S_HI_UNIQUE 4
 
+/* Experimental draft 2026 (disabled by default) - if they have LoS, player noise wakes monsters even outside of their AAF. */
+//#define LOS_WAKES_MONSTER_OUTSIDE_AAF
+
 
 /*
  * DRS_SMART_OPTIONS is not available for now.
@@ -9706,6 +9709,115 @@ static player_type *get_melee_target(monster_race *r_ptr, monster_type *m_ptr, c
 	return(p_idx_target ? Players[p_idx_target] : NULL);
 }
 
+/* Due to noise, player currently set to 'main target' by the monster
+   wakes up the monster via noise or at least reduces its sleep state gradually,
+   and so do all other players on the level partially,
+   depending on their distance and relative noise level. - C. Blue */
+void player_wakes_monster(int Ind, int m_idx) {
+	player_type *p_ptr = Players[Ind], *q_ptr;
+	monster_type *m_ptr = &m_list[m_idx];
+	u32b pnotice = 0, pnoise, dist, pwake = 0;
+	bool aggravated = FALSE;
+	int i, skill_stl = p_ptr->skill_stl;
+	struct worldpos *wpos = &p_ptr->wpos;
+
+	pnotice = rand_int(1024);
+
+	/* Handle stealth and aggravation of all players around */
+
+	/* check everyone on the floor */
+	for (i = 1; i <= NumPlayers; i++) {
+		q_ptr = Players[i];
+		/* Skip disconnected players */
+		if (q_ptr->conn == NOT_CONNECTED) continue;
+		/* Skip players not on this depth */
+		if (!inarea(&q_ptr->wpos, wpos)) continue;
+
+		/* Any aggravating player within aggr-range immediately wakes the monster up */
+		if (q_ptr->aggravate) {
+			/* Compute distance */
+			dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
+#ifndef REDUCED_AGGRAVATION
+			if (dist < 100)
+#else
+			if (dist < 50)
+#endif
+			{
+				pnotice = 0;
+				aggravated = TRUE;
+				break;
+			}
+		}
+
+		/* Remember player with the worst (lowest) stealth */
+		if (skill_stl > q_ptr->skill_stl) skill_stl = q_ptr->skill_stl;
+	}
+	if (!aggravated) {
+		/* check everyone on the floor */
+		for (i = 1; i <= NumPlayers; i++) {
+			q_ptr = Players[i];
+			/* Skip disconnected players */
+			if (q_ptr->conn == NOT_CONNECTED) continue;
+			/* Skip players not on this depth */
+			if (!inarea(&q_ptr->wpos, wpos)) continue;
+
+			dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
+
+			/* Amount of "waking" - wake up faster near the player: */
+			if (!dist) dist = 1;
+			if (dist > 50) pwake += 1 * (31 - q_ptr->skill_stl) / (31 - skill_stl);
+			else pwake += (100 / dist) * (31 - q_ptr->skill_stl) / (31 - skill_stl);
+		}
+
+		/* Calculate the "player pnoise" */
+		pnoise = (1U << (30 - skill_stl));
+	}
+
+	/* In general, use the closest player (calculated in process_monsters()) - except for aggravation/noise application below. */
+	p_ptr = Players[m_ptr->closest_player];
+
+	/* See if monster "notices" player */
+	if (aggravated || (pnotice * pnotice * pnotice) <= pnoise) {
+		/* Handle aggravation: Instantly wakes up */
+		if (aggravated) pwake = m_ptr->csleep;
+
+		/* Still asleep */
+		if (m_ptr->csleep > pwake) {
+			/* Monster wakes up "a little bit" */
+			m_ptr->csleep -= pwake;
+
+#ifdef OLD_MONSTER_LORE
+			/* Notice the "not waking up" */
+			if (p_ptr->mon_vis[m_idx]) {
+				/* Hack -- Count the ignores */
+				r_ptr->r_ignore++; //unused
+			}
+#endif
+		}
+		/* Just woke up */
+		else {
+			/* Reset sleep counter */
+			m_ptr->csleep = 0;
+			if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, m_idx, m_ptr->custom_lua_awoke));
+
+			/* Notice the "waking up" */
+			msg_print_near_monster(m_idx, "wakes up.");
+
+#if 0
+			if (p_ptr->mon_vis[m_idx]) {
+				char m_name[MNAME_LEN];
+
+				monster_desc(Ind, m_name, m_idx, 0);
+				msg_format(Ind, "%^s wakes up.", m_name);
+
+				/* Hack -- Count the wakings */
+				r_ptr->r_wake++; //unused
+			}
+#endif
+		}
+	}
+}
+
 /*
  * Process a monster
  * Called by process_monsters() at same frequency, but only when we have enough
@@ -9747,7 +9859,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	monster_race	*r_ptr = race_inf(m_ptr);
 	monster_race	*base_r_ptr = &r_info[m_ptr->r_idx];
 
-	int		i, d, oy, ox, ny, nx, skill_stl = p_ptr->skill_stl;
+	int		i, d, oy, ox, ny, nx;
 #ifdef ARCADE_SERVER
 	int n;
 #endif
@@ -9811,7 +9923,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 			if (m_ptr->extra == 10) {
 				floor_msg_format(0, wpos, "\377BThe guy in blue robes mumbles something about having a \377ccold \377Lcave brew\377B..");
 				for (i = 1; i <= NumPlayers; i++) {
-					player_type *q_ptr = Players[i];
+					q_ptr = Players[i];
 
 					/* Skip disconnected players */
 					if (q_ptr->conn == NOT_CONNECTED) continue;
@@ -9937,106 +10049,11 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 	if (m_ptr->r_idx == RI_SAURON && m_ptr->extra) m_ptr->extra--;
 #endif
 
-	/* Handle "sleep" */
+	/* Handle "sleep".
+	   Note that sleeping monsters won't lose sleep if the player is outside their sensing radius
+	    (r_ptr->aaf), see 'test = TRUE' in process_monsters(). */
 	if (m_ptr->csleep) {
-		u32b pnotice = 0, pnoise, dist, pwake = 0;
-		bool aggravated = FALSE;
-
-		pnotice = rand_int(1024);
-
-		/* Handle stealth and aggravation of all players around */
-
-		/* check everyone on the floor */
-		for (i = 1; i <= NumPlayers; i++) {
-			q_ptr = Players[i];
-			/* Skip disconnected players */
-			if (q_ptr->conn == NOT_CONNECTED) continue;
-			/* Skip players not on this depth */
-			if (!inarea(&q_ptr->wpos, wpos)) continue;
-
-			/* Any aggravating player within aggr-range immediately wakes the monster up */
-			if (q_ptr->aggravate) {
-				/* Compute distance */
-				dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
-#ifndef REDUCED_AGGRAVATION
-				if (dist < 100)
-#else
-				if (dist < 50)
-#endif
-				{
-					pnotice = 0;
-					aggravated = TRUE;
-					break;
-				}
-			}
-
-			/* Remember player with the worst (lowest) stealth */
-			if (skill_stl > q_ptr->skill_stl) skill_stl = q_ptr->skill_stl;
-		}
-		if (!aggravated) {
-			/* check everyone on the floor */
-			for (i = 1; i <= NumPlayers; i++) {
-				q_ptr = Players[i];
-				/* Skip disconnected players */
-				if (q_ptr->conn == NOT_CONNECTED) continue;
-				/* Skip players not on this depth */
-				if (!inarea(&q_ptr->wpos, wpos)) continue;
-
-				dist = distance(m_ptr->fy, m_ptr->fx, q_ptr->py, q_ptr->px);
-
-				/* Amount of "waking" - wake up faster near the player: */
-				if (!dist) dist = 1;
-				if (dist > 50) pwake += 1 * (31 - q_ptr->skill_stl) / (31 - skill_stl);
-				else pwake += (100 / dist) * (31 - q_ptr->skill_stl) / (31 - skill_stl);
-			}
-
-			/* Calculate the "player pnoise" */
-			pnoise = (1U << (30 - skill_stl));
-		}
-
-		/* In general, use the closest player (calculated in process_monsters()) - except for aggravation/noise application below. */
-		p_ptr = Players[m_ptr->closest_player];
-
-		/* See if monster "notices" player */
-		if (aggravated || (pnotice * pnotice * pnotice) <= pnoise) {
-			/* Handle aggravation: Instantly wakes up */
-			if (aggravated) pwake = m_ptr->csleep;
-
-			/* Still asleep */
-			if (m_ptr->csleep > pwake) {
-				/* Monster wakes up "a little bit" */
-				m_ptr->csleep -= pwake;
-
-#ifdef OLD_MONSTER_LORE
-				/* Notice the "not waking up" */
-				if (p_ptr->mon_vis[m_idx]) {
-					/* Hack -- Count the ignores */
-					r_ptr->r_ignore++; //unused
-				}
-#endif
-			}
-			/* Just woke up */
-			else {
-				/* Reset sleep counter */
-				m_ptr->csleep = 0;
-				if (m_ptr->custom_lua_awoke) exec_lua(0, format("custom_monster_awoke(%d,%d,%d)", Ind, m_idx, m_ptr->custom_lua_awoke));
-
-				/* Notice the "waking up" */
-				msg_print_near_monster(m_idx, "wakes up.");
-
-#if 0
-				if (p_ptr->mon_vis[m_idx]) {
-					char m_name[MNAME_LEN];
-
-					monster_desc(Ind, m_name, m_idx, 0);
-					msg_format(Ind, "%^s wakes up.", m_name);
-
-					/* Hack -- Count the wakings */
-					r_ptr->r_wake++; //unused
-				}
-#endif
-			}
-		}
+		player_wakes_monster(Ind, m_idx);
 
 		/* Still sleeping */
 		if (m_ptr->csleep) {
@@ -10849,7 +10866,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 		/* The player is in the way.  Attack him. */
 		if (do_move && (c_ptr->m_idx < 0)) {
-			player_type *q_ptr = get_melee_target(r_ptr, m_ptr, c_ptr, pfriend);
+			q_ptr = get_melee_target(r_ptr, m_ptr, c_ptr, pfriend);
 
 			if (q_ptr && !q_ptr->admin_invinc) {
 				/* Push past weaker players (unless leaving a wall) */
@@ -11039,8 +11056,9 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 				/* Update the old monster */
 				update_mon(c_ptr->m_idx, TRUE);
 			} else if (c_ptr->m_idx < 0) { /* caused by MOVE_BODY to a player */
-				player_type *q_ptr = Players[0 - c_ptr->m_idx];
 				char m_name[MNAME_LEN];
+
+				q_ptr = Players[0 - c_ptr->m_idx];
 
 				/* Acquire the monster name */
 				monster_desc(Ind, m_name, m_idx, 0x04);
@@ -11306,8 +11324,7 @@ static void process_monster(int Ind, int m_idx, bool force_random_movement) {
 
 	/* AI_ANNOY special treatment: Actually attack when out of moves! */
 	if (!do_move && !do_turn && do_melee) {
-		player_type *q_ptr = get_melee_target(r_ptr, m_ptr, NULL, pfriend);
-
+		q_ptr = get_melee_target(r_ptr, m_ptr, NULL, pfriend);
 		if (q_ptr) {
 			m_ptr->energy -= level_speed(&m_ptr->wpos);
 
@@ -13083,7 +13100,8 @@ void process_monsters(void) {
 
 		/* Handle "sensing radius" */
 		if (m_ptr->cdis <= r_ptr->aaf || (blos && !m_ptr->csleep)) {
-			/* We can "sense" the player */
+			/* We can "sense" the player -
+			   note that sleeping monsters won't lose sleep either if the player is outside their sensing radius(!) */
 			test = TRUE;
 		}
 		/* Handle "sight" and "aggravation" */
@@ -13105,6 +13123,10 @@ void process_monsters(void) {
 			/* We can "see" or "feel" the player */
 			test = TRUE;
 		}
+#ifdef LOS_WAKES_MONSTER_OUTSIDE_AAF
+		/* Sleeping monsters also lose sleep if player is outside of its aaf radius, as long as there is LoS: */
+		if (blos && m_ptr->csleep) player_wakes_monster(p_ptr->Ind, i);
+#endif
 
 #ifdef MONSTER_FLOW
 		/* Hack -- Monsters can "smell" the player from far away */
