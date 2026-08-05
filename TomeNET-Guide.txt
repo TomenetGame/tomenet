@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 3. August 2026 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 5. August 2026 - written by C. Blue (c_blue@gmx.net)       |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -17119,11 +17119,12 @@ damage as usual, even if the target is in wraithform too.
 
 (6.1) Monsters
 --------------
-All creatures in the game apart from special 'questors' and player characters
-are actually "monsters", aka your enemies. Some might exhibit rather neutral
-looking movement or no movement at all, some might not even inflict damage,
-but none of them is friendly towards you and all of them will in some way or
-another make your survival more difficult.
+Virtually all creatures in the game apart from special 'questors' (that means
+they are quest-related NPCs) and player characters are actually "monsters",
+aka your enemies.
+Some might exhibit rather neutral looking movement or no movement at all, some
+might not even inflict damage, but none of them is friendly towards you and all
+of them will in some way or another make your survival more difficult.
 
 Right after creating a new character you will already encounter "monsters" of
 some sort: Townspeople, denoted by the letter 't' and maybe some cats, birds or
@@ -17132,10 +17133,20 @@ Since all creatures are basically hostile, you will auto-attack them when you
 move onto an adjacent grid. Killing townies is a good way to make some easy
 money. Just beware of mean-looking mercenaries and battle-scarred veterans.
 
-In Bree, the starter town, you might also meet an exception: The 'questor'
-standing a bit south of the inn, the 'Town Elder'. He is a purple 't' that
-sometimes flashes a bit and is actually not hostile, you can talk to him a bit
-by bumping into him.
+In Bree, the starter town, you might meet some exceptions from hostility:
+
+- The Town Elder
+  She is a quest NPC and stands a bit south of the inn and isn't hostile but
+  actually friendly. She is a purple 't' and her 'quest' is simply that you can
+  talk to her for advice at any time. Just bump into her to initiate the
+  dialogue. She will give you different advice depending on your character and
+  your current level, so just ask her eg about 'inven' or 'equip' from time to
+  time.
+
+- Target dummies
+  A normal and an armoured target dummy might be standing around town, usually
+  at the western side of the town hall. These won't attack but can just be used
+  to test your own attacks and spells. (Also see the '/tym' command in (0.2b).)
 
 When you enter the training tower or the dungeon you will soon notice the
 variety of monsters, for example you will probably encounter a "floating eye",
