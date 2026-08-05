@@ -5887,6 +5887,68 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	return(filesets_found);
 }
 
+int macrofileset_mempurge(int f) {
+	int m = -1, found = 0;
+	bool style_cyclic, style_free;
+
+	char *cc, *cf, *cfile;
+	char buf_act[160], buftxt_act[160];
+	char buf_basename[1024];
+
+	//scan all macros
+	while (TRUE) {
+		while (++m < macro__num) {
+			/* Get macro in parsable format */
+			strncpy(buf_act, macro__act[m], 159);
+			buf_act[159] = '\0';
+			ascii_to_text(buftxt_act, buf_act);
+
+			/* Scan macro for marker text, indicating that it's a set-switch */
+			if ((cc = strstr(buftxt_act, MACROFILESET_MARKER_CYCLIC))) style_cyclic = TRUE;
+			if ((cf = strstr(buftxt_act, MACROFILESET_MARKER_SWITCH))) style_free = TRUE;
+
+			if (!style_cyclic && !style_free) continue;
+
+			/* Found one! */
+
+			/* Determine base filename from the action text : %lFILENAME\r\e */
+			cfile = strstr(buftxt_act, "%l");
+			if (!cfile) continue; //broken set-switching macro (not following our known scheme)
+			strcpy(buf_basename, cfile + 2);
+			/* Find end of filename */
+			cfile = strstr(buf_basename, "\\r\\e");
+			if (!cfile) continue; //broken set-switching macro (not following our known scheme)
+			*cfile = 0;
+			/* Find start of 'stage' appendix of the filename, cut it off to obtain base filename.
+			   Assume filename has this format "basename-FSn.prf" where n is the stage number: 0...MACROFILESETS_STAGES_MAX */
+			/* If this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
+			   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
+			   -- actually, store 'comment' in a separate '<macrosetname-stage>.meta' file instead! Hard to handle otherwise. --
+			   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
+			if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
+
+			/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
+
+			/* Finalize base filename */
+			buf_basename[strlen(buf_basename) - 8] = 0;
+
+			/* Compare to set we want to delete */
+			if (strcmp(fileset[f].basefilename, buf_basename)) continue;
+
+			/* --- Matches target set! --- */
+
+			/* Delete macro */
+			(void)macro_del(macro__pat[m]);
+			found++;
+
+			/* Continue scanning keys for switch-macros */
+		}
+		/* Scanned the last one of all loaded macros? We're done. */
+		if (m >= macro__num - 1) break;
+	}
+	return(found);
+}
+
 /* Prompt to enter an existing macrofileset number, stores it in 'f': */
 #define GET_MACROFILESET \
 	{ if (!filesets_found) continue; \
@@ -8866,11 +8928,9 @@ Chain_Macro:
 #ifdef TEST_CLIENT
 						FILE *fp;
 						int xoffset1 = 1, xoffset2 = 3 - 2;
-						int f, k, m, n, found;
-						char *cc, *cf, *cfile;
+						int f, k, n, found;
 						char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
-						char buf_basename[1024], tmpbuf[1024];
-						bool style_cyclic, style_free;
+						char tmpbuf[1024];
 						bool ok_new_set, ok_new_stage, ok_swap_stages, cancel;
 
 						if (rescan) { /* (Is statically TRUE on first invocation of mw_fileset, to ensure an initial scan) */
@@ -9101,12 +9161,6 @@ Chain_Macro:
 							case 'I': //init new fileset (implies initialization+activation of a 1st stage too)
 								if (!ok_new_set) continue;
 
-								// If a macro set was already selected, first remove its trigger macro keys from memory ie from currently existing game macros
-								if (fileset_selected != -1) {
-									// Purge
-									//todo...^
-								}
-
 								// new set index, gets appended to existing ones
 								// get name
 								cancel = FALSE;
@@ -9196,7 +9250,7 @@ Chain_Macro:
 								else Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377s------");
 								l++;
  #endif
-								// auto-select set and its first stage
+								// auto-select set and 'init' its first stage (ie just select the first stage as 'active' and imprint its trigger keys)
 								fileset[f].stages = 1;
 
 								/* Init cycle keys */
@@ -9293,6 +9347,13 @@ Chain_Macro:
 								}
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
 
+								// If a macro set was already selected when we chose to add this one set,
+								//  first remove its trigger macro keys from memory ie from currently existing game macros:
+								// (Basically same as if we pressed 'F' before this 'I'.)
+								if (fileset_selected != -1)
+									/* Purge all switching keys of this set from current macros in memory */
+									(void)macrofileset_mempurge(fileset_selected);
+
 								/* Auto-select the newly added set */
 								fileset_selected = f;
 								fileset_stage_selected = 0;
@@ -9300,6 +9361,9 @@ Chain_Macro:
 
 							case 'S': //select a set - or unselect it again
 								if (fileset_selected != -1) {
+									/* Purge all switching keys of this set from current macros in memory */
+									(void)macrofileset_mempurge(fileset_selected);
+
 									// unselect the currently selected set instead
 									fileset_selected = -1;
 									fileset_stage_selected = -1; //not required
@@ -9340,59 +9404,10 @@ Chain_Macro:
 								//...so the player then has to save all macros to <charname.prf> or <global.prf> or whatever he prefers, again, to erase the traces of that set
 								GET_MACROFILESET
 								if (fileset_selected == f) fileset_selected = -1; //unselect it if it was selected
-								//scan all macros
-								m = -1;
-								found = 0;
-								while (TRUE) {
-									while (++m < macro__num) {
-										/* Get macro in parsable format */
-										strncpy(buf_act, macro__act[m], 159);
-										buf_act[159] = '\0';
-										ascii_to_text(buftxt_act, buf_act);
 
-										/* Scan macro for marker text, indicating that it's a set-switch */
-										if ((cc = strstr(buftxt_act, MACROFILESET_MARKER_CYCLIC))) style_cyclic = TRUE;
-										if ((cf = strstr(buftxt_act, MACROFILESET_MARKER_SWITCH))) style_free = TRUE;
+								/* Purge all switching keys of this set from current macros in memory */
+								found = macrofileset_mempurge(f);
 
-										if (!style_cyclic && !style_free) continue;
-
-										/* Found one! */
-
-										/* Determine base filename from the action text : %lFILENAME\r\e */
-										cfile = strstr(buftxt_act, "%l");
-										if (!cfile) continue; //broken set-switching macro (not following our known scheme)
-										strcpy(buf_basename, cfile + 2);
-										/* Find end of filename */
-										cfile = strstr(buf_basename, "\\r\\e");
-										if (!cfile) continue; //broken set-switching macro (not following our known scheme)
-										*cfile = 0;
-										/* Find start of 'stage' appendix of the filename, cut it off to obtain base filename.
-										   Assume filename has this format "basename-FSn.prf" where n is the stage number: 0...MACROFILESETS_STAGES_MAX */
-										/* If this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
-										   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
-										   -- actually, store 'comment' in a separate '<macrosetname-stage>.meta' file instead! Hard to handle otherwise. --
-										   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
-										if (strncmp(buf_basename + strlen(buf_basename) - 8, "-FS", 3)) continue; //broken set-switching macro (not following our known scheme)
-
-										/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
-
-										/* Finalize base filename */
-										buf_basename[strlen(buf_basename) - 8] = 0;
-
-										/* Compare to set we want to delete */
-										if (strcmp(fileset[f].basefilename, buf_basename)) continue;
-
-										/* --- Matches target set! --- */
-
-										/* Delete macro */
-										(void)macro_del(macro__pat[m]);
-										found++;
-
-										/* Continue scanning keys for switch-macros */
-									}
-									/* Scanned the last one of all loaded macros? We're done. */
-									if (m >= macro__num - 1) break;
-								}
 								if (!found) c_msg_print("No references to the macroset were found within currently loaded macros.");
 								c_msg_format("%d reference%s to the macroset were cleared within currently loaded macros.", found, found == 1 ? "" : "s");
 
@@ -9407,7 +9422,112 @@ Chain_Macro:
 							/* Note: If a fileset is activated, a stage of it will also be activated automatically. If it's a new set, it'll be stage #1 (still empty). */
 							/* Fileset-stage actions (required 'fileset_selected != -1' condition was already checked directly after inkey() read) : */
 							case 'k': //modify switching keys
-								//todo..
+
+
+break;
+								// auto-select set and 'init' its first stage (ie just select the first stage as 'active' and imprint its trigger keys)
+								fileset[f].stages = 1;
+
+								/* Init cycle keys */
+								fileset[f].macro__pat__cycle[0] = 0;
+								fileset[f].macro__patbuf__cycle[0] = 0;
+								/* Init switch keys */
+								fileset[f].macro__pat__switch[0][0] = 0;
+								fileset[f].macro__patbuf__switch[0][0] = 0;
+								fileset[f].macro__act__switch[0][0] = 0;
+								fileset[f].macro__actbuf__switch[0][0] = 0;
+
+								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/12)
+								if (fileset[f].style_cyclic) { //ask for set-global cycling-key
+									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
+									while (TRUE) {
+										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as macro-cycling trigger: ");
+										tmpbuf[0] = 0;
+										get_macro_trigger(tmpbuf);
+										if (!strcmp(tmpbuf, "\e") || !strcmp(buf, "%")) {
+											c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
+											if (!strcmp(buf, "\e")) break;
+											continue;
+										}
+										break;
+									}
+									if (!strcmp(buf, "\e")) {
+										/* Abort: Erase newly started set-in-the-making again */
+										fileset[f].basefilename[0] = 0;
+										filesets_found--;
+										continue;
+									}
+
+									/* Set macro trigger */
+									strcpy(buf_pat, tmpbuf);
+									strcpy(fileset[f].macro__pat__cycle, buf_pat);
+									/* Set macro trigger in human-readable format */
+									ascii_to_text(buftxt_pat, buf_pat);
+									strcpy(fileset[f].macro__patbuf__cycle, buftxt_pat);
+
+									/* Forge macro action (in human-readable format) */
+
+									/* Start with meaningless placeholder stages, ie ourself: 'cycle from stage 1 to stage 1 of 1' ^^
+									  - to be replaced later with the addition of more stages... */
+									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e",
+									   fileset[f].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[f].basefilename);
+
+									/* Set macro action in human-readable format */
+									strcpy(buftxt_act, tmpbuf);
+									strcpy(fileset[f].macro__actbuf__cycle, buftxt_act);
+									/* Set macro action */
+									text_to_ascii(buf_act, buftxt_act);
+									strcpy(fileset[f].macro__act__cycle, buf_act);
+								}
+								if (fileset[f].style_free) { //ask for stage-specific switching-key
+									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
+									while (TRUE) {
+										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as stage 1-specific trigger: ");
+										tmpbuf[0] = 0;
+										get_macro_trigger(tmpbuf);
+										if (!strcmp(tmpbuf, "\e") || !strcmp(buf, "%")) {
+											c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
+											if (!strcmp(buf, "\e")) break;
+											continue;
+										}
+										break;
+									}
+									if (!strcmp(buf, "\e")) {
+										/* Abort: Erase newly started set-in-the-making again */
+										fileset[f].basefilename[0] = 0;
+										filesets_found--;
+										continue;
+									}
+
+									/* Set macro trigger */
+									strcpy(buf_pat, tmpbuf);
+									strcpy(fileset[f].macro__pat__switch[0], buf_pat);
+									/* Set macro trigger in human-readable format */
+									ascii_to_text(buftxt_pat, buf_pat);
+									strcpy(fileset[f].macro__patbuf__switch[0], buftxt_pat);
+
+									/* Forge macro action (in human-readable format) */
+
+									/* Start with meaningless placeholder stages, ie ourself: 'switch from stage 1 to stage 1 of 1' ^^
+									  - to be replaced later with the addition of more stages... */
+									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e",
+									   fileset[f].basefilename, MACROFILESET_MARKER_SWITCH, fileset[f].basefilename);
+
+									/* Set macro action in human-readable format */
+									strcpy(buftxt_act, tmpbuf);
+									strcpy(fileset[f].macro__actbuf__switch[0], buftxt_act);
+									/* Set macro action */
+									text_to_ascii(buf_act, buftxt_act);
+									strcpy(fileset[f].macro__act__switch[0], buf_act);
+								}
+								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
+
+								/* Auto-select the newly added set */
+								fileset_selected = f;
+								fileset_stage_selected = 0;
+
+
+
 								break;
 
 							case 'm': //modify switching method
