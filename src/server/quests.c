@@ -6162,6 +6162,10 @@ void quest_handle_disabled_on_startup() {
 	bool questor;
 
 	for (i = 0; i < MAX_Q_IDX; i++) {
+#ifdef ARCADE_SERVER
+		/* Automatically disable all quests */
+		q_ptr->disabled_on_load = TRUE;
+#endif
 		q_ptr = &q_info[i];
 		if (!q_ptr->defined) continue;
 		if (!q_ptr->disabled_on_load) continue;
