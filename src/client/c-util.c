@@ -8964,7 +8964,7 @@ Chain_Macro:
 						char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
 						char tmpbuf[1024];
 						bool ok_new_set, ok_new_stage, ok_swap_stages, cancel;
-						bool style_cyclic, style_freesw;
+						bool style_cyclic, style_freesw, tmpbool;
 
 						if (rescan) { /* (Is statically TRUE on first invocation of mw_fileset, to ensure an initial scan) */
 							rescan = FALSE;
@@ -9606,7 +9606,41 @@ Chain_Macro:
 									continue;
 								}
 								if (!ok_swap_stages) continue;
-							    //todo..
+
+								GET_MACROFILESET_STAGE
+								k = f;
+								GET_MACROFILESET_STAGE
+
+								strcpy(tmpbuf, fileset[fileset_selected].macro__pat__freesw[k]);
+								strcpy(fileset[fileset_selected].macro__pat__freesw[k], fileset[fileset_selected].macro__pat__freesw[f]);
+								strcpy(fileset[fileset_selected].macro__pat__freesw[f], tmpbuf);
+
+								strcpy(tmpbuf, fileset[fileset_selected].macro__patbuf__freesw[k]);
+								strcpy(fileset[fileset_selected].macro__patbuf__freesw[k], fileset[fileset_selected].macro__patbuf__freesw[f]);
+								strcpy(fileset[fileset_selected].macro__patbuf__freesw[f], tmpbuf);
+
+								strcpy(tmpbuf, fileset[fileset_selected].macro__act__freesw[k]);
+								strcpy(fileset[fileset_selected].macro__act__freesw[k], fileset[fileset_selected].macro__act__freesw[f]);
+								strcpy(fileset[fileset_selected].macro__act__freesw[f], tmpbuf);
+
+								strcpy(tmpbuf, fileset[fileset_selected].macro__actbuf__freesw[k]);
+								strcpy(fileset[fileset_selected].macro__actbuf__freesw[k], fileset[fileset_selected].macro__actbuf__freesw[f]);
+								strcpy(fileset[fileset_selected].macro__actbuf__freesw[f], tmpbuf);
+
+								tmpbool = fileset[fileset_selected].stage_file_exists[k];
+								fileset[fileset_selected].stage_file_exists[k] = fileset[fileset_selected].stage_file_exists[f];
+								fileset[fileset_selected].stage_file_exists[f] = tmpbool;
+							    //todo: rename actual files on disk!
+							    //rename(,);
+
+								strcpy(tmpbuf, fileset[fileset_selected].stage_comment[k]);
+								strcpy(fileset[fileset_selected].stage_comment[k], fileset[fileset_selected].stage_comment[f]);
+								strcpy(fileset[fileset_selected].stage_comment[f], tmpbuf);
+
+								tmpbool = fileset[fileset_selected].stage_disabled[k];
+								fileset[fileset_selected].stage_disabled[k] = fileset[fileset_selected].stage_disabled[f];
+								fileset[fileset_selected].stage_disabled[f] = tmpbool;
+
 								break;
 
 							case 't': //toggle a stage (available vs unavailabe (aka getting skipped) from switching keys from the other stages)
