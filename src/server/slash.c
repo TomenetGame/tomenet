@@ -11383,6 +11383,19 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "set custom_xp = %d", m_ptr->custom_xp);
 				return;
 			}
+			else if (prefix(messagelc, "/mcsleep")) { /* show sleep state of monster currently looked at (not the one targetted) */
+				s16b m_idx;
+				monster_type *m_ptr;
+
+				if (p_ptr->health_who <= 0) {
+					msg_print(Ind, "No monster looked at.");
+					return;
+				}
+				m_idx = p_ptr->health_who;
+				m_ptr = &m_list[m_idx];
+				msg_format(Ind, "m_ptr->csleep = %d", m_ptr->csleep);
+				return;
+			}
 			else if (prefix(messagelc, "/unown") && !prefix(messagelc, "/unownhou")) { /* clear owner of an item - C. Blue */
 				object_type *o_ptr;
 				if (!tk) {
