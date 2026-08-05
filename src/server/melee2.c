@@ -13093,12 +13093,13 @@ void process_monsters(void) {
 		/* Assume no move */
 		test = FALSE;
 
-		/* Handle "sensing radius" and LoS if awake -> monster will get processed. */
+		/* Handle "sensing radius" and LoS if awake -> monster will get processed.
+		   Note that LoS has no range limit here, so if a monster can see the player, it can act (just not locally snowball-summon, that was removed a long time ago). */
 		if (m_ptr->cdis <= r_ptr->aaf || (blos && !m_ptr->csleep))
 			/* We can "sense" the player -
 			   note that sleeping monsters won't lose sleep either if the player is outside their sensing radius(!) */
 			test = TRUE;
-		/* Handle "aggravation", overrding monster's aaf max radius.
+		/* Handle "aggravation", overriding monster's aaf max radius.
 		   (Note that we don't use MAX_SIGHT here anymore for an alternative non-aggr case.) */
 		else if (p_ptr->aggravate && m_ptr->cdis <= AGGRAVATION_DIST)
 			/* We can "see" or "feel" the player */
