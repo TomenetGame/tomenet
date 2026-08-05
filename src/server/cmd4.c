@@ -1069,7 +1069,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
   #endif
 		}
 
-	} else { /* COMPACT_PLAYERLIST */
+	} else { /* COMPACT_PLAYERLIST (3 or 0) */
 		if (compaction == 3) { /* #ifdef ULTRA_COMPACT_PLAYERLIST */
 			char flag_str[12];
 
@@ -1273,7 +1273,7 @@ static void do_write_others_attributes(int Ind, FILE *fff, player_type *q_ptr, b
 				if (q_ptr->mode & MODE_SOLO) fprintf(fff, " \377D(Soloist)\377U");
    #endif
 			} else fprintf(fff, "  \377u(%s\377u)", q_ptr->afk_msg);
-		} else {
+		} else { /* Uncompacted player list (compaction == 0) */
 			/* Check for special character */
 			/* Uncomment these as you feel it's needed ;) */
 			//if (!strcmp(q_ptr->name, "")) modify_number = 1; //wussy Cheezer
@@ -1607,7 +1607,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 		iddc = in_irondeepdive(&q_ptr->wpos) || (q_ptr->mode & MODE_DED_IDDC);
 
 		if (compaction == 1 || compaction == 2) { //#ifdef COMPACT_PLAYERLIST
-			if (compaction != 2) { //#ifndef COMPACT_ALT
+			if (compaction != 2) { //#ifndef COMPACT_ALT //compaction == 1
 				/*** Determine color ***/
 				/* Print self in green */
 				if (Ind == k) attr = 'G';
@@ -1643,7 +1643,8 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 #ifdef KURZEL_PK
 				     || ((p_ptr->pkill & PKILL_SET) && (q_ptr->pkill & PKILL_SET))
 #endif
-				    ) && !admin) fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
+				    ) && !admin)
+					fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
 				/* Print extra info if these people are in the same party or if viewer is DM */
 				else if ((p_ptr->party == q_ptr->party && p_ptr->party) || Ind == k || admin
 #ifdef IDDC_CHAR_POSITION_INDICATOR
@@ -1651,10 +1652,26 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 #endif
 				    ) {
   #if 1
-					if (admin)
+					if (admin) {
 #ifdef ADMIN_EXTRA_STATISTICS
  #ifdef USE_SOUND_2010
+  #if 0 /* normal */
 						fprintf(fff, "%s [%d,%d] (%s)%s%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname,
+  #else /* hack: admins see coloured depth, colour indicating how close to game bosses [Sauron/Morgoth/Tik and beyond] they are */
+						char col = '\0';
+
+						if (attr != 'G' && q_ptr->wpos.wz && !isdungeontown(&q_ptr->wpos) &&
+						    (q_ptr->wpos.wz || (in_sector000(&q_ptr->wpos) && sector000separation))) {
+							int lv = getlevel(&q_ptr->wpos);
+							struct dungeon_type *d_ptr = getdungeon(&q_ptr->wpos);
+
+							if (lv >= 126 || d_ptr->type == DI_MT_DOOM || (lv >= 98 && !q_ptr->total_winner && q_ptr->r_killed[RI_SAURON] == 1)) col = 'R';
+							else if (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) col = 'y';
+							/* extended hack: see orange colour for 'engaged' characters, ie not in town and not afk */
+							else if (!q_ptr->afk) col = 'o';
+						}
+						fprintf(fff, "\377%c%s\377- [%d,%d] (%s)%s%s%s%s", col ? col : 'U', wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname,
+  #endif
 						    !q_ptr->exp_bar ?
   #if 0
 						    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1677,7 +1694,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 #else
 						fprintf(fff, "%s [%d,%d] (%s)", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row, q_ptr->hostname);
 #endif
-					else
+					} else
   #endif
 						fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row);
 
@@ -1696,7 +1713,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 				} else fprintf(fff, "  \377u(%s\377u)\n", q_ptr->afk_msg);
 
 				lines += 3;
-			} else { //#else /* COMPACT_ALT */
+			} else { //#else /* COMPACT_ALT -- compaction == 2 */
 				/*** Determine color ***/
 				/* Print self in green */
 				if (Ind == k) attr = 'G';
@@ -1749,10 +1766,26 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 				    || iddc
 #endif
 				    ) {
-					if (admin)
+					if (admin) {
 #ifdef ADMIN_EXTRA_STATISTICS
  #ifdef USE_SOUND_2010
+  #if 0 /* normal */
 						fprintf(fff, "%s [%d,%d]%s%s%s%s", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row,
+  #else /* hack: admins see coloured depth, colour indicating how close to game bosses [Sauron/Morgoth/Tik and beyond] they are */
+						char col = '\0';
+
+						if (attr != 'G' && q_ptr->wpos.wz && !isdungeontown(&q_ptr->wpos) &&
+						    (q_ptr->wpos.wz || (in_sector000(&q_ptr->wpos) && sector000separation))) {
+							int lv = getlevel(&q_ptr->wpos);
+							struct dungeon_type *d_ptr = getdungeon(&q_ptr->wpos);
+
+							if (lv >= 126 || d_ptr->type == DI_MT_DOOM || (lv >= 98 && !q_ptr->total_winner && q_ptr->r_killed[RI_SAURON] == 1)) col = 'R';
+							else if (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) col = 'y';
+							/* extended hack: see orange colour for 'engaged' characters, ie not in town and not afk */
+							else if (!q_ptr->afk) col = 'o';
+						}
+						fprintf(fff, "\377%c%s\377- [%d,%d]%s%s%s%s", col ? col : 'U', wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row,
+  #endif
 						    !q_ptr->exp_bar ?
   #if 0
 						    (q_ptr->audio_mus >= __audio_mus_max ? "\377G+\377-" : (q_ptr->audio_sfx >= __audio_sfx_max ? "\377y+\377-" : "")) :
@@ -1775,7 +1808,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 #else
 						fprintf(fff, "%s [%d,%d]", wpos_format(Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row);
 #endif
-					else fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row);
+					} else fprintf(fff, "%s [%d,%d]", wpos_format(-Ind, &q_ptr->wpos), q_ptr->panel_col, q_ptr->panel_row);
 
 					/* Print questing flag */
 					//if (q_ptr->xorder_id) fprintf(fff, " X");
@@ -1835,7 +1868,7 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 				fprintf(fff, "\n");
 
 				lines += 2;
-			} else { //#else (compaction == 0, ie 4 lines per entry)
+			} else { //#else (compaction == 0, ie 4 lines per entry -- aka uncompacted default view)
 				/*** Determine color ***/
 				/* Print self in green */
 				if (Ind == k) attr = 'G';
@@ -1902,8 +1935,27 @@ void do_cmd_check_players(int Ind, int line, char *srcstr) {
 				    || iddc
 #endif
 				    ) {
+#if 0 /* normal */
 					if (admin) fprintf(fff, "%s", wpos_format(Ind, &q_ptr->wpos));
 					else fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
+#else /* hack: admins see coloured depth, colour indicating how close to game bosses [Sauron/Morgoth/Tik and beyond] they are */
+					char col = '\0';
+
+					if (admin && attr != 'G' && q_ptr->wpos.wz && !isdungeontown(&q_ptr->wpos) &&
+					    (q_ptr->wpos.wz || (in_sector000(&q_ptr->wpos) && sector000separation))) {
+						int lv = getlevel(&q_ptr->wpos);
+						struct dungeon_type *d_ptr = getdungeon(&q_ptr->wpos);
+
+						if (lv >= 126 || d_ptr->type == DI_MT_DOOM || (lv >= 98 && !q_ptr->total_winner && q_ptr->r_killed[RI_SAURON] == 1)) col = 'R';
+						else if (d_ptr->type == DI_DEATH_FATE || (!d_ptr->type && d_ptr->theme == DI_DEATH_FATE)) col = 'y';
+						/* extended hack: see orange colour for 'engaged' characters, ie not in town and not afk */
+						else if (!q_ptr->afk) col = 'o';
+					}
+					if (admin) {
+						if (col) fprintf(fff, "\377%c%s\377-", col, wpos_format(Ind, &q_ptr->wpos));
+						else fprintf(fff, "%s", wpos_format(Ind, &q_ptr->wpos));
+					} else fprintf(fff, "%s", wpos_format(-Ind, &q_ptr->wpos));
+#endif
 
 					fprintf(fff, " [%d,%d]", q_ptr->panel_col, q_ptr->panel_row);
 #ifdef ADMIN_EXTRA_STATISTICS
