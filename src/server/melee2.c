@@ -13104,23 +13104,21 @@ void process_monsters(void) {
 		else if (p_ptr->aggravate && m_ptr->cdis <= AGGRAVATION_DIST)
 			/* We can "see" or "feel" the player */
 			test = TRUE;
-#ifdef LOS_WAKES_MONSTER_OUTSIDE_AAF
-		/* Sleeping monster loses sleep even if player is outside of its aaf radius, as long as there is LoS and player isn't too far */
-		else if (blos && m_ptr->csleep && m_ptr->cdis <= MAX_HEAR)
-			/* Monster won't get processed ('test') so we 'manually' reduce sleep here. */
-			player_wakes_monster(p_ptr->Ind, i);
-#endif
-
 #ifdef MONSTER_FLOW
 		/* Hack -- Monsters can "smell" the player from far away */
 		/* Note that most monsters have "aaf" of "20" or so */
 		else if (flow_by_sound &&
 		    (cave[py][px].when == cave[fy][fx].when) &&
 		    (cave[fy][fx].cost < MONSTER_FLOW_DEPTH) &&
-		    (cave[fy][fx].cost < r_ptr->aaf)) {
+		    (cave[fy][fx].cost < r_ptr->aaf))
 			/* We can "smell" the player */
 			test = TRUE;
-		}
+#endif
+#ifdef LOS_WAKES_MONSTER_OUTSIDE_AAF
+		/* Sleeping monster loses sleep even if player is outside of its aaf radius, as long as there is LoS and player isn't too far */
+		else if (blos && m_ptr->csleep && m_ptr->cdis <= MAX_HEAR)
+			/* Monster won't get processed ('test') so we 'manually' reduce sleep here. */
+			player_wakes_monster(p_ptr->Ind, i);
 #endif
 
 		/* Do nothing */
