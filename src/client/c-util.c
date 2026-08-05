@@ -5446,10 +5446,10 @@ struct macro_fileset_type {
 	bool all_stage_files_exist; // just QoL shortcut
 	bool currently_referenced; // this macro set is referenced by at least one existing macro among all currently loaded macros
 
-	char macro__pat__switch[MACROFILESETS_STAGES_MAX][32];
-	char macro__patbuf__switch[MACROFILESETS_STAGES_MAX][32];
-	char macro__act__switch[MACROFILESETS_STAGES_MAX][160];
-	char macro__actbuf__switch[MACROFILESETS_STAGES_MAX][160];
+	char macro__pat__freesw[MACROFILESETS_STAGES_MAX][32];
+	char macro__patbuf__freesw[MACROFILESETS_STAGES_MAX][32];
+	char macro__act__freesw[MACROFILESETS_STAGES_MAX][160];
+	char macro__actbuf__freesw[MACROFILESETS_STAGES_MAX][160];
 	bool stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
 	char stage_comment[MACROFILESETS_STAGES_MAX][MACROSET_COMMENT_LEN];
 	bool stage_disabled[MACROFILESETS_STAGES_MAX];
@@ -5599,10 +5599,10 @@ int macroset_scan(void) {
 			ascii_to_text(buftxt_pat, buf_pat);
 
 			/* Init switch keys */
-			fileset[k].macro__pat__switch[stage][0] = 0;
-			fileset[k].macro__patbuf__switch[stage][0] = 0;
-			fileset[k].macro__act__switch[stage][0] = 0;
-			fileset[k].macro__actbuf__switch[stage][0] = 0;
+			fileset[k].macro__pat__freesw[stage][0] = 0;
+			fileset[k].macro__patbuf__freesw[stage][0] = 0;
+			fileset[k].macro__act__freesw[stage][0] = 0;
+			fileset[k].macro__actbuf__freesw[stage][0] = 0;
 			/* Macro-set specific: */
 			if (style_cyclic) {
 				strcpy(fileset[k].macro__pat__cycle, buf_pat);
@@ -5610,10 +5610,10 @@ int macroset_scan(void) {
 			}
 			/* Macro-set-stage specific: */
 			if (style_freesw) {
-				strcpy(fileset[k].macro__pat__switch[stage], buf_pat);
-				strcpy(fileset[k].macro__patbuf__switch[stage], buftxt_pat);
-				strcpy(fileset[k].macro__act__switch[stage], buf_act);
-				strcpy(fileset[k].macro__actbuf__switch[stage], buftxt_act);
+				strcpy(fileset[k].macro__pat__freesw[stage], buf_pat);
+				strcpy(fileset[k].macro__patbuf__freesw[stage], buftxt_pat);
+				strcpy(fileset[k].macro__act__freesw[stage], buf_act);
+				strcpy(fileset[k].macro__actbuf__freesw[stage], buftxt_act);
 			}
 
 			/* Continue scanning keys for switch-macros */
@@ -9290,10 +9290,10 @@ Chain_Macro:
 								fileset[f].macro__pat__cycle[0] = 0;
 								fileset[f].macro__patbuf__cycle[0] = 0;
 								/* Init switch keys */
-								fileset[f].macro__pat__switch[0][0] = 0;
-								fileset[f].macro__patbuf__switch[0][0] = 0;
-								fileset[f].macro__act__switch[0][0] = 0;
-								fileset[f].macro__actbuf__switch[0][0] = 0;
+								fileset[f].macro__pat__freesw[0][0] = 0;
+								fileset[f].macro__patbuf__freesw[0][0] = 0;
+								fileset[f].macro__act__freesw[0][0] = 0;
+								fileset[f].macro__actbuf__freesw[0][0] = 0;
 
 								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/1+2)
 								if (fileset[f].style_cyclic) { //ask for set-global cycling-key
@@ -9359,10 +9359,10 @@ Chain_Macro:
 
 									/* Set macro trigger */
 									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[f].macro__pat__switch[0], buf_pat);
+									strcpy(fileset[f].macro__pat__freesw[0], buf_pat);
 									/* Set macro trigger in human-readable format */
 									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[f].macro__patbuf__switch[0], buftxt_pat);
+									strcpy(fileset[f].macro__patbuf__freesw[0], buftxt_pat);
 
 									/* Forge macro action (in human-readable format) */
 
@@ -9373,10 +9373,10 @@ Chain_Macro:
 
 									/* Set macro action in human-readable format */
 									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[f].macro__actbuf__switch[0], buftxt_act);
+									strcpy(fileset[f].macro__actbuf__freesw[0], buftxt_act);
 									/* Set macro action */
 									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[f].macro__act__switch[0], buf_act);
+									strcpy(fileset[f].macro__act__freesw[0], buf_act);
 								}
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
 
@@ -9428,7 +9428,7 @@ Chain_Macro:
 										if (fileset[fileset_selected].stage_disabled[f]) continue;
 
 										//key_autoconvert(tmp, fmt);
-										macro_add(fileset[fileset_selected].macro__pat__switch[f], fileset[fileset_selected].macro__act__switch[f], FALSE, FALSE);
+										macro_add(fileset[fileset_selected].macro__pat__freesw[f], fileset[fileset_selected].macro__act__freesw[f], FALSE, FALSE);
 									}
 								}
 								break;
@@ -9507,7 +9507,7 @@ Chain_Macro:
 								for (f = 0; f < fileset[fileset_selected].stages; f++) {
 									if (fileset[fileset_selected].style_freesw) { //ask for stage-specific switching-key
 										/* Get trigger in human-readable format */
-										macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__switch[f], tmpbuf);
+										macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__freesw[f], tmpbuf);
 
 										Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 										while (TRUE) {
@@ -9525,10 +9525,10 @@ Chain_Macro:
 
 										/* Set macro trigger */
 										strcpy(buf_pat, tmpbuf);
-										strcpy(fileset[fileset_selected].macro__pat__switch[f], buf_pat);
+										strcpy(fileset[fileset_selected].macro__pat__freesw[f], buf_pat);
 										/* Set macro trigger in human-readable format */
 										ascii_to_text(buftxt_pat, buf_pat);
-										strcpy(fileset[fileset_selected].macro__patbuf__switch[f], buftxt_pat);
+										strcpy(fileset[fileset_selected].macro__patbuf__freesw[f], buftxt_pat);
 
 										/* Forge macro action (in human-readable format) */
 
@@ -9542,10 +9542,10 @@ Chain_Macro:
 
 										/* Set macro action in human-readable format */
 										strcpy(buftxt_act, tmpbuf);
-										strcpy(fileset[fileset_selected].macro__actbuf__switch[f], buftxt_act);
+										strcpy(fileset[fileset_selected].macro__actbuf__freesw[f], buftxt_act);
 										/* Set macro action */
 										text_to_ascii(buf_act, buftxt_act);
-										strcpy(fileset[fileset_selected].macro__act__switch[f], buf_act);
+										strcpy(fileset[fileset_selected].macro__act__freesw[f], buf_act);
 									}
 									/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
 								}
@@ -9585,10 +9585,10 @@ Chain_Macro:
 								/* Clear now deprecated switch keys */
 								if (style_freesw && !fileset[fileset_selected].style_freesw) {
 									for (f = 0; f < fileset[fileset_selected].stages; f++) {
-										fileset[fileset_selected].macro__pat__switch[f][0] = 0;
-										fileset[fileset_selected].macro__patbuf__switch[f][0] = 0;
-										fileset[fileset_selected].macro__act__switch[f][0] = 0;
-										fileset[fileset_selected].macro__actbuf__switch[f][0] = 0;
+										fileset[fileset_selected].macro__pat__freesw[f][0] = 0;
+										fileset[fileset_selected].macro__patbuf__freesw[f][0] = 0;
+										fileset[fileset_selected].macro__act__freesw[f][0] = 0;
+										fileset[fileset_selected].macro__actbuf__freesw[f][0] = 0;
 									}
 									c_msg_print("Cleared deprecated free-switch keys.");
 								}
