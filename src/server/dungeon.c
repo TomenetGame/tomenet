@@ -714,6 +714,13 @@ static void sense_inventory(int Ind) {
 			s_printf("warning_id: %s\n", p_ptr->name);
 			p_ptr->warning_id = 1;
 		}
+		if (!p_ptr->warning_empty && o_ptr->tval == TV_POTION && (streq(feel, "worthless") || streq(feel, "bad"))) {
+			msg_print(Ind, "\374\377yHINT: Use the \377o/empty\377y command on worthless potions to obtain empty bottles.");
+			msg_print(Ind, "\374\377y      Those in turn you can fill up at fountains using the \377o/fill\377y command.");
+			msg_print(Ind, "\374\377y      However, there are other options, eg throwing the potions at monsters.");
+			s_printf("warning_empty: %s\n", p_ptr->name);
+			p_ptr->warning_empty = 1;
+		}
 
 		suppress_message = FALSE;
 
