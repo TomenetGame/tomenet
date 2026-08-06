@@ -5437,6 +5437,7 @@ struct macro_fileset_type {
 	bool style_cyclic; // Style: cyclic (at least one trigger key was found that cycles)
 	bool style_freesw; // Style: free-switching (at last one trigger key was found that switches freely)
 	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended
+	char comment[MACROSET_COMMENT_LEN];
 	char macro__pat__cyclic[32];
 	char macro__patbuf__cyclic[32];
 	char macro__act__cyclic[160];
@@ -5857,7 +5858,35 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	/* Lastly, for all macro sets and their stages, scan for optional stage comment of each stage (separate file for easiest handling),
 	   also read 'disabled' flag for each stage */
 	for (k = 0; k < filesets_found; k++) {
+		/* Read set's .meta file */
+		path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS.meta", fileset[k].basefilename));
+		if (my_fexists(tmpbuf)) {
+			FILE *fp;
+			char flagc;
+
+			fp = fopen(tmpbuf, "r");
+			if (fp) {
+				/* Read comment (1st line) */
+				fgets(fileset[k].comment, MACROSET_COMMENT_LEN, fp);
+				fileset[k].comment[MACROSET_COMMENT_LEN - 1] = 0;
+				/* Trim trailing newline */
+				if (fileset[k].comment[0] && fileset[k].comment[strlen(fileset[k].comment) - 1] == '\n')
+					fileset[k].comment[strlen(fileset[k].comment) - 1] = 0;
+
+				/* Read switching-types (2nd line) */
+				flagc = fgetc(fp);
+				switch (flagc) {
+				case 0: fileset[k].style_cyclic = fileset[k].style_freesw = 0; break; // bug
+				case 1: fileset[k].style_cyclic = 1; fileset[k].style_freesw = 0; break;
+				case 2: fileset[k].style_cyclic = 0; fileset[k].style_freesw = 1; break;
+				case 3: fileset[k].style_cyclic = fileset[k].style_freesw = 1; break;
+				}
+
+				fclose(fp);
+			} else c_msg_format("\377oError: couldn't read file '%s-FS.meta'.", fileset[k].basefilename);
+		}
 		for (f = 0; f < fileset[k].stages; f++) {
+			/* Read stage's .meta file */
 			if (!fileset[k].stage_file_exists[f]) continue;
 			path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.meta", fileset[k].basefilename, f + 1));
 			if (my_fexists(tmpbuf)) {
@@ -5981,6 +6010,17 @@ int macrofileset_mempurge(int f) {
 		fputc(fileset[fileset_selected].stage_disabled[f] ? '1' : '0', fp); \
 		fclose(fp); \
 	} else c_msg_format("\377oError: couldn't write file '%s-FS%d.meta'.", fileset[fileset_selected].basefilename, f + 1); }
+
+/* Store switching-type and comment of currently selected set in a separate file '<macroset>.meta' */
+#define WRITE_MACROFILESET_META \
+	{ path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS.meta", \
+	    fileset[fileset_selected].basefilename)); \
+	fp = fopen(tmpbuf, "w"); \
+	if (fp) { \
+		fprintf(fp, "%s\n", fileset[fileset_selected].comment); \
+		fputc('0' + (fileset[fileset_selected].style_cyclic ? 1 : 0) + (fileset[fileset_selected].style_freesw ? '2' : '0'), fp); \
+		fclose(fp); \
+	} else c_msg_format("\377oError: couldn't write file '%s-FS.meta'.", fileset[fileset_selected].basefilename); }
 
 #endif /* TEST_CLIENT */
 
@@ -9390,6 +9430,7 @@ Chain_Macro:
 								/* Auto-select the newly added set */
 								fileset_selected = f;
 								fileset_stage_selected = 0;
+								WRITE_MACROFILESET_META
 								break;
 
 							case 'S': //select a set - or unselect it again
@@ -9598,6 +9639,8 @@ Chain_Macro:
 									}
 									c_msg_print("Cleared deprecated free-switch keys.");
 								}
+
+								WRITE_MACROFILESET_META
 								break;
 
 							case 's': //swap two stages
@@ -9630,7 +9673,7 @@ Chain_Macro:
 								tmpbool = fileset[fileset_selected].stage_file_exists[k];
 								fileset[fileset_selected].stage_file_exists[k] = fileset[fileset_selected].stage_file_exists[f];
 								fileset[fileset_selected].stage_file_exists[f] = tmpbool;
-							    //todo: rename actual files on disk!
+							    //todo: rename actual files on disk, and if cyclic-style then swap their cyclic-keys too
 							    //rename(,);
 
 								strcpy(tmpbuf, fileset[fileset_selected].stage_comment[k]);
