@@ -6436,7 +6436,7 @@ int Send_ac(int Ind, int base, int plus) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_AC, base, plus);
 	}
-	return Packet_printf(&connp->c, "%c%hd%hd", PKT_AC, base, plus);
+	return(Packet_printf(&connp->c, "%c%hd%hd", PKT_AC, base, plus));
 }
 
 int Send_experience(int Ind, int lev, s32b max, s32b cur, s32b adv, s32b adv_prev) {
@@ -6467,11 +6467,11 @@ int Send_experience(int Ind, int lev, s32b max, s32b cur, s32b adv, s32b adv_pre
 
 	if (is_newer_than(&Players[Ind]->version, 4, 5, 6, 0, 0, 1))
 		/* hack: add marker to 'lev' to allow keeping track of exp_frac during level 1 exp'ing phase */
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%d%d%d%d", PKT_EXPERIENCE, lev + (Players[Ind]->exp_frac >= 5000 ? 1000 : 0), Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv, adv_prev);
+		return(Packet_printf(&connp->c, "%c%hu%hu%hu%d%d%d%d", PKT_EXPERIENCE, lev + (Players[Ind]->exp_frac >= 5000 ? 1000 : 0), Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv, adv_prev));
 	else if (is_newer_than(&Players[Ind]->version, 4, 4, 1, 3, 0, 0))
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%d%d%d", PKT_EXPERIENCE, lev, Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv);
+		return(Packet_printf(&connp->c, "%c%hu%hu%hu%d%d%d", PKT_EXPERIENCE, lev, Players[Ind]->max_lev, Players[Ind]->max_plv, max, cur, adv));
 	else
-		return Packet_printf(&connp->c, "%c%hu%d%d%d", PKT_EXPERIENCE, lev, max, cur, adv);
+		return(Packet_printf(&connp->c, "%c%hu%d%d%d", PKT_EXPERIENCE, lev, max, cur, adv));
 }
 
 #if 0
@@ -6518,7 +6518,7 @@ int Send_skill_points(int Ind) {
 			Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%d", PKT_SKILL_PTS, p_ptr->skill_points);
+	return(Packet_printf(&connp->c, "%c%d", PKT_SKILL_PTS, p_ptr->skill_points));
 }
 
 /* i is skill index, keep means if we want the client to keep his 'deflated?' state */
@@ -6545,15 +6545,15 @@ int Send_skill_info(int Ind, int i, bool keep) {
 #endif
 
 	if (!is_newer_than(&connp->version, 4, 4, 1, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN);
+		return(Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN));
 	else if (!is_newer_than(&connp->version, 4, 4, 1, 7, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey);
+		return(Packet_printf(&connp->c, "%c%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey));
 	} else if (!is_newer_than(&connp->version, 4, 4, 4, 1, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey, p_ptr->s_info[i].flags1 & SKF1_DUMMY);
+		return(Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1 & SKF1_HIDDEN, mkey, p_ptr->s_info[i].flags1 & SKF1_DUMMY));
 	} else if (!is_newer_than(&connp->version, 4, 4, 6, 2, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1, mkey);
+		return(Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, p_ptr->s_info[i].dev, p_ptr->s_info[i].flags1, mkey));
 	} else {
-		return Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, keep ? -1 : (p_ptr->s_info[i].dev ? 1 : 0), p_ptr->s_info[i].flags1, mkey);
+		return(Packet_printf(&connp->c, "%c%d%d%d%d%c%d", PKT_SKILL_MOD, i, p_ptr->s_info[i].value, p_ptr->s_info[i].mod, keep ? -1 : (p_ptr->s_info[i].dev ? 1 : 0), p_ptr->s_info[i].flags1, mkey));
 	}
 }
 
@@ -6572,7 +6572,7 @@ int Send_gold(int Ind, s32b au, s32b balance) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%d%d", PKT_GOLD, au, balance);
 	}
-	return Packet_printf(&connp->c, "%c%d%d", PKT_GOLD, au, balance);
+	return(Packet_printf(&connp->c, "%c%d%d", PKT_GOLD, au, balance));
 }
 
 int Send_sanity(int Ind, byte attr, cptr msg, int cur, int max) {
@@ -6602,11 +6602,11 @@ int Send_sanity(int Ind, byte attr, cptr msg, int cur, int max) {
 			Packet_printf(&connp2->c, "%c%c%s", PKT_SANITY, attr, msg);
 	}
 	if (is_atleast(&p_ptr->version, 4, 8, 1, 3, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%s%c%hd%hd", PKT_SANITY, attr, msg, dam, cur, max);
+		return(Packet_printf(&connp->c, "%c%c%s%c%hd%hd", PKT_SANITY, attr, msg, dam, cur, max));
 	else if (is_newer_than(&p_ptr->version, 4, 6, 1, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%s%c", PKT_SANITY, attr, msg, dam);
+		return(Packet_printf(&connp->c, "%c%c%s%c", PKT_SANITY, attr, msg, dam));
 	else
-		return Packet_printf(&connp->c, "%c%c%s", PKT_SANITY, attr, msg);
+		return(Packet_printf(&connp->c, "%c%c%s", PKT_SANITY, attr, msg));
 #endif
 }
 
@@ -6640,9 +6640,9 @@ int Send_hp(int Ind, int mhp, int chp) {
 			Packet_printf(&connp2->c, "%c%hd%hd", PKT_HP, mhp, chp);
 	}
 	if (is_newer_than(&p_ptr->version, 4, 7, 0, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%hd%hd%c", PKT_HP, mhp, chp, drain);
+		return(Packet_printf(&connp->c, "%c%hd%hd%c", PKT_HP, mhp, chp, drain));
 	else
-		return Packet_printf(&connp->c, "%c%hd%hd", PKT_HP, mhp, chp);
+		return(Packet_printf(&connp->c, "%c%hd%hd", PKT_HP, mhp, chp));
 }
 
 int Send_mp(int Ind, int mmp, int cmp) {
@@ -6672,7 +6672,7 @@ int Send_mp(int Ind, int mmp, int cmp) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_MP, mmp, cmp);
 	}
-	return Packet_printf(&connp->c, "%c%hd%hd", PKT_MP, mmp, cmp);
+	return(Packet_printf(&connp->c, "%c%hd%hd", PKT_MP, mmp, cmp));
 }
 
 int Send_stamina(int Ind, int mst, int cst) {
@@ -6726,7 +6726,7 @@ int Send_stamina(int Ind, int mst, int cst) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hd%hd", PKT_STAMINA, mst, cst);
 	}
-	return Packet_printf(&connp->c, "%c%hd%hd", PKT_STAMINA, mst, cst);
+	return(Packet_printf(&connp->c, "%c%hd%hd", PKT_STAMINA, mst, cst));
 }
 
 int Send_char_info(int Ind, int race, int class, int trait, int sex, u32b mode, int lives, cptr name) {
@@ -6781,15 +6781,15 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, u32b mode, 
 	}
 
 	if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 1)) {
-		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%d%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
+		return(Packet_printf(&connp->c, "%c%hd%hd%hd%hd%d%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name));
 	} else if (is_atleast(&connp->version, 4, 7, 3, 0, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name);
+		return(Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, lives, name));
 	} else if (is_newer_than(&connp->version, 4, 5, 2, 0, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name);
+		return(Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd%s", PKT_CHAR_INFO, race, class, trait, sex, mode, name));
 	} else if (is_newer_than(&connp->version, 4, 4, 5, 10, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, trait, sex, mode);
+		return(Packet_printf(&connp->c, "%c%hd%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, trait, sex, mode));
 	} else {
-		return Packet_printf(&connp->c, "%c%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, sex, mode);
+		return(Packet_printf(&connp->c, "%c%hd%hd%hd%hd", PKT_CHAR_INFO, race, class, sex, mode));
 	}
 }
 
@@ -6809,7 +6809,7 @@ int Send_various(int Ind, int hgt, int wgt, int age, int sc, cptr body) {
 			Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%hu%hu%hu%hu%s", PKT_VARIOUS, hgt, wgt, age, sc, body);
+	return(Packet_printf(&connp->c, "%c%hu%hu%hu%hu%s", PKT_VARIOUS, hgt, wgt, age, sc, body));
 }
 
 int Send_stat(int Ind, int stat) {
@@ -6838,11 +6838,11 @@ int Send_stat(int Ind, int stat) {
 	}
 
 	if (is_atleast(&p_ptr->version, 4, 7, 4, 6, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base, tmp);
+		return(Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base, tmp));
 	else if (boosted && is_atleast(&p_ptr->version, 4, 7, 3, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat | 0x10, max, cur, s_ind, max_base);
+		return(Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat | 0x10, max, cur, s_ind, max_base));
 	else
-		return Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base);
+		return(Packet_printf(&connp->c, "%c%c%hd%hd%hd%hd", PKT_STAT, stat, max, cur, s_ind, max_base));
 }
 
 int Send_history(int Ind, int line, cptr hist) {
@@ -6861,7 +6861,7 @@ int Send_history(int Ind, int line, cptr hist) {
 			Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%hu%s", PKT_HISTORY, line, hist);
+	return(Packet_printf(&connp->c, "%c%hu%s", PKT_HISTORY, line, hist));
 }
 
 /* XXX 'pval' is sent only when the item is TV_BOOK (same with Send_equip)
@@ -6930,13 +6930,13 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	}
 
 	if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name));
 	else if (is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, uses_dir, name);
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, uses_dir, name));
 	else if (is_newer_than(&p_ptr->version, 4, 4, 4, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name));
 	else
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_INVEN, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name));
 }
 
 #ifdef ENABLE_SUBINVEN
@@ -6998,7 +6998,7 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 	}
 
 	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0)) uses_dir |= uses_dir_mod;
-	return Packet_printf(&connp->c, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+	return(Packet_printf(&connp->c, "%c%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_SI_MOVE, ipos, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name));
 }
 #endif
 
@@ -7193,11 +7193,11 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
 	else if (is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, uses_dir, name);
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, uses_dir, name));
 	else if (is_newer_than(&p_ptr->version, 4, 4, 4, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name));
 	else
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name);
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%s", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, name));
 }
 
 /* Added for WIELD_BOOKS */
@@ -7320,9 +7320,9 @@ int Send_equip_availability(int Ind, int slot) {
 
 	/* Maybe not needed to use equip_wide just for changing the slot availability colour! */
 	if (((o_ptr->tval != TV_BOOK || !is_custom_tome(o_ptr->sval)) && (o_ptr->tval != TV_SPECIAL || o_ptr->sval != SV_CUSTOM_OBJECT)) || !is_newer_than(&Players[Ind]->version, 4, 9, 0, 5, 0, 1))
-		return Send_equip(Ind, 'a' + slot - INVEN_WIELD, attr, wgt, o_ptr, o_name);
+		return(Send_equip(Ind, 'a' + slot - INVEN_WIELD, attr, wgt, o_ptr, o_name));
 	else
-		return Send_equip_wide(Ind, 'a' + slot - INVEN_WIELD, attr, wgt, o_ptr, o_name);
+		return(Send_equip_wide(Ind, 'a' + slot - INVEN_WIELD, attr, wgt, o_ptr, o_name));
 }
 
 int Send_title(int Ind, cptr title) {
@@ -7344,7 +7344,7 @@ int Send_title(int Ind, cptr title) {
 			Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%s", PKT_TITLE, title);
+	return(Packet_printf(&connp->c, "%c%s", PKT_TITLE, title));
 }
 
 int Send_extra_status(int Ind, cptr status) {
@@ -7361,7 +7361,7 @@ int Send_extra_status(int Ind, cptr status) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%s", PKT_EXTRA_STATUS, status);
 	}
-	return Packet_printf(&connp->c, "%c%s", PKT_EXTRA_STATUS, status);
+	return(Packet_printf(&connp->c, "%c%s", PKT_EXTRA_STATUS, status));
 }
 
 int Send_depth(int Ind, struct worldpos *wpos) {
@@ -7601,13 +7601,13 @@ int Send_depth(int Ind, struct worldpos *wpos) {
 	}
 
 	if (is_newer_than(&p_ptr->version, 4, 6, 1, 2, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name, loc_pre);
+		return(Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name, loc_pre));
 	} else if (is_newer_than(&p_ptr->version, 4, 5, 9, 0, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name);
+		return(Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name));
 	} else if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
+		return(Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc));
 	} else {
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
+		return(Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc));
 	}
 }
 
@@ -7636,13 +7636,13 @@ int Send_depth_hack(int Ind, struct worldpos *wpos, bool ville, cptr desc) {
 	if (desc[0]) loc_name = desc;
 
 	if (is_newer_than(&p_ptr->version, 4, 6, 1, 2, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name, "testing");
+		return(Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name, "testing"));
 	} else if (is_newer_than(&p_ptr->version, 4, 5, 9, 0, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name);
+		return(Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc, loc_name));
 	} else if (is_newer_than(&p_ptr->version, 4, 4, 1, 6, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc);
+		return(Packet_printf(&connp->c, "%c%hu%hu%hu%c%c%c%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, colour_sector, desc));
 	} else {
-		return Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc);
+		return(Packet_printf(&connp->c, "%c%hu%hu%hu%c%hu%s", PKT_DEPTH, wpos->wx, wpos->wy, wpos->wz, ville, colour, desc));
 	}
 }
 
@@ -7661,7 +7661,7 @@ int Send_food(int Ind, int food) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hu", PKT_FOOD, food);
 	}
-	return Packet_printf(&connp->c, "%c%hu", PKT_FOOD, food);
+	return(Packet_printf(&connp->c, "%c%hu", PKT_FOOD, food));
 }
 
 /* Combine blindness and hallucinations - added in 4.8.1, abusing bool in a compatible manner */
@@ -7681,7 +7681,7 @@ int Send_blind(int Ind, bool blind) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%c", PKT_BLIND, is_newer_than(&connp2->version, 4, 8, 0, 0, 0, 0) ? blind_hallu : blind);
 	}
-	return Packet_printf(&connp->c, "%c%c", PKT_BLIND, is_newer_than(&connp->version, 4, 8, 0, 0, 0, 0) ? blind_hallu : blind);
+	return(Packet_printf(&connp->c, "%c%c", PKT_BLIND, is_newer_than(&connp->version, 4, 8, 0, 0, 0, 0) ? blind_hallu : blind));
 }
 
 int Send_confused(int Ind, bool confused) {
@@ -7699,7 +7699,7 @@ int Send_confused(int Ind, bool confused) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%c", PKT_CONFUSED, confused);
 	}
-	return Packet_printf(&connp->c, "%c%c", PKT_CONFUSED, confused);
+	return(Packet_printf(&connp->c, "%c%c", PKT_CONFUSED, confused));
 }
 
 int Send_fear(int Ind, bool fear) {
@@ -7717,7 +7717,7 @@ int Send_fear(int Ind, bool fear) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%c", PKT_FEAR, fear);
 	}
-	return Packet_printf(&connp->c, "%c%c", PKT_FEAR, fear);
+	return(Packet_printf(&connp->c, "%c%c", PKT_FEAR, fear));
 }
 
 int Send_poison(int Ind, char poisoned) {
@@ -7735,7 +7735,7 @@ int Send_poison(int Ind, char poisoned) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%c", PKT_POISON, poisoned);
 	}
-	return Packet_printf(&connp->c, "%c%c", PKT_POISON, poisoned);
+	return(Packet_printf(&connp->c, "%c%c", PKT_POISON, poisoned));
 }
 
 int Send_state(int Ind, s16b paralyzed, bool searching, bool resting) {
@@ -7758,7 +7758,7 @@ int Send_state(int Ind, s16b paralyzed, bool searching, bool resting) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hu%hu%hu", PKT_STATE, paralyzed, searching, resting);
 	}
-	return Packet_printf(&connp->c, "%c%hu%hu%hu", PKT_STATE, paralyzed, searching, resting);
+	return(Packet_printf(&connp->c, "%c%hu%hu%hu", PKT_STATE, paralyzed, searching, resting));
 }
 
 int Send_speed(int Ind, int speed) {
@@ -7776,7 +7776,7 @@ int Send_speed(int Ind, int speed) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hd", PKT_SPEED, speed);
 	}
-	return Packet_printf(&connp->c, "%c%hd", PKT_SPEED, speed);
+	return(Packet_printf(&connp->c, "%c%hd", PKT_SPEED, speed));
 }
 
 int Send_study(int Ind, bool study) {
@@ -7788,7 +7788,7 @@ int Send_study(int Ind, bool study) {
 			Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%c", PKT_STUDY, study);
+	return(Packet_printf(&connp->c, "%c%c", PKT_STUDY, study));
 }
 
 /* Sends either BpR or Wraithform status.
@@ -7817,7 +7817,7 @@ int Send_bpr_wraith_prob(int Ind, byte bpr, byte attr, cptr bpr_str) {
 	if (is_atleast(&Players[Ind]->version, 4, 9, 1, 0, 0, 1))
 		return(Packet_printf(&connp->c, "%c%c%c%s", PKT_BPR, bpr, attr, bpr_str));
 	if (bpr == 255 && is_older_than(&Players[Ind]->version, 4, 6, 1, 2, 0, 1)) return(0);
-	return Packet_printf(&connp->c, "%c%c%c", PKT_BPR, bpr, attr);
+	return(Packet_printf(&connp->c, "%c%c%c", PKT_BPR, bpr, attr));
 }
 
 int Send_cut(int Ind, int cut) {
@@ -7836,7 +7836,7 @@ int Send_cut(int Ind, int cut) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hu", PKT_CUT, cut);
 	}
-	return Packet_printf(&connp->c, "%c%hu", PKT_CUT, cut);
+	return(Packet_printf(&connp->c, "%c%hu", PKT_CUT, cut));
 }
 
 int Send_stun(int Ind, int stun) {
@@ -7858,7 +7858,7 @@ int Send_stun(int Ind, int stun) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hu", PKT_STUN, stun);
 	}
-	return Packet_printf(&connp->c, "%c%hu", PKT_STUN, stun);
+	return(Packet_printf(&connp->c, "%c%hu", PKT_STUN, stun));
 }
 
 int Send_direction(int Ind) {
@@ -7877,10 +7877,10 @@ int Send_direction(int Ind) {
 #if 0 /* hmm? */
 	if (get_esp_link(Ind, LINKF_MISC, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
-		return Packet_printf(&connp2->c, "%c", PKT_DIRECTION); //return?
+		return(Packet_printf(&connp2->c, "%c", PKT_DIRECTION)); //return?
 	}
 #endif
-	return Packet_printf(&connp->c, "%c", PKT_DIRECTION);
+	return(Packet_printf(&connp->c, "%c", PKT_DIRECTION));
 }
 
 static bool hack_message = FALSE;
@@ -7893,7 +7893,7 @@ int Send_message(int Ind, cptr msg) {
 	if (msg == NULL) {
 		//return(1);
 		/* Hack: Indicate a NULL string by sending a string just consisting of char \377 */
-		return Packet_printf(&connp->c, "%c%c%c", PKT_MESSAGE, '\377', 0);
+		return(Packet_printf(&connp->c, "%c%c%c", PKT_MESSAGE, '\377', 0));
 	}
 
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
@@ -7936,7 +7936,7 @@ int Send_message(int Ind, cptr msg) {
 			}
 		}
 	}
-	return Packet_printf(&connp->c, "%c%S", PKT_MESSAGE, buf);
+	return(Packet_printf(&connp->c, "%c%S", PKT_MESSAGE, buf));
 }
 
 #ifdef GRAPHICS_BG_MASK
@@ -8031,17 +8031,17 @@ int Send_char(int Ind, int x, int y, byte a_fore, char32_t c_fore) {
 		switch (connp->Client_setup.char_transfer_bytes) {
 		case 0:
 		case 1:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[0], a_back, pc_b[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[0], a_back, pc_b[0]));
 			break;
 		case 2:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[1], pc_f[0], a_back, pc_b[1], pc_b[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[1], pc_f[0], a_back, pc_b[1], pc_b[0]));
 			break;
 		case 3:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[2], pc_f[1], pc_f[0], a_back, pc_b[2], pc_b[1], pc_b[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc_f[2], pc_f[1], pc_f[0], a_back, pc_b[2], pc_b[1], pc_b[0]));
 			break;
 		case 4:
 		default:
-			return Packet_printf(&connp->c, "%c%c%c%c%u%c%u", PKT_CHAR, x, y, a_fore, c_fore, a_back, c_back);
+			return(Packet_printf(&connp->c, "%c%c%c%c%u%c%u", PKT_CHAR, x, y, a_fore, c_fore, a_back, c_back));
 		}
 	} else
 #endif
@@ -8053,21 +8053,21 @@ int Send_char(int Ind, int x, int y, byte a_fore, char32_t c_fore) {
 		switch (connp->Client_setup.char_transfer_bytes) {
 		case 0:
 		case 1:
-			return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[0]));
 			break;
 		case 2:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[1], pc[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[1], pc[0]));
 			break;
 		case 3:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[2], pc[1], pc[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR, x, y, a_fore, pc[2], pc[1], pc[0]));
 			break;
 		case 4:
 		default:
-			return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a_fore, c_fore);
+			return(Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR, x, y, a_fore, c_fore));
 		}
 	}
 	/* old clients: each transmitted character is just normal 'char' size */
-	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a_fore, (char)c_fore);
+	return(Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR, x, y, a_fore, (char)c_fore));
 }
 #ifdef GRAPHICS_BG_MASK
 //TODO: if c_back is 0 it should just use the already existing background (just client-side?)
@@ -8161,17 +8161,17 @@ int Send_char_direct(int Ind, int x, int y, byte a_fore, char32_t c_fore) {
 		switch (connp->Client_setup.char_transfer_bytes) {
 		case 0:
 		case 1:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[0], a_back, pc_b[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[0], a_back, pc_b[0]));
 			break;
 		case 2:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[1], pc_f[0], a_back, pc_b[1], pc_b[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[1], pc_f[0], a_back, pc_b[1], pc_b[0]));
 			break;
 		case 3:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[2], pc_f[1], pc_f[0], a_back, pc_b[2], pc_b[1], pc_b[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc_f[2], pc_f[1], pc_f[0], a_back, pc_b[2], pc_b[1], pc_b[0]));
 			break;
 		case 4:
 		default:
-			return Packet_printf(&connp->c, "%c%c%c%c%u%c%u", PKT_CHAR_DIRECT, x, y, a_fore, c_fore, a_back, c_back);
+			return(Packet_printf(&connp->c, "%c%c%c%c%u%c%u", PKT_CHAR_DIRECT, x, y, a_fore, c_fore, a_back, c_back));
 		}
 	} else
 #endif
@@ -8183,21 +8183,21 @@ int Send_char_direct(int Ind, int x, int y, byte a_fore, char32_t c_fore) {
 		switch (connp->Client_setup.char_transfer_bytes) {
 		case 0:
 		case 1:
-			return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[0]));
 			break;
 		case 2:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[1], pc[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[1], pc[0]));
 			break;
 		case 3:
-			return Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[2], pc[1], pc[0]);
+			return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, pc[2], pc[1], pc[0]));
 			break;
 		case 4:
 		default:
-			return Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR_DIRECT, x, y, a_fore, c_fore);
+			return(Packet_printf(&connp->c, "%c%c%c%c%u", PKT_CHAR_DIRECT, x, y, a_fore, c_fore));
 		}
 	}
 	/* old clients: each transmitted character is just normal 'char' size */
-	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, (char)c_fore);
+	return(Packet_printf(&connp->c, "%c%c%c%c%c", PKT_CHAR_DIRECT, x, y, a_fore, (char)c_fore));
 }
 
 int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val) {
@@ -8210,7 +8210,7 @@ int Send_spell_info(int Ind, int realm, int book, int i, cptr out_val) {
 			Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%d%d%d%hu%hu%hu%s", PKT_SPELL_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], realm, book, i, out_val);
+	return(Packet_printf(&connp->c, "%c%d%d%d%hu%hu%hu%s", PKT_SPELL_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], realm, book, i, out_val));
 }
 
 int Send_powers_info(int Ind) {
@@ -8223,7 +8223,7 @@ int Send_powers_info(int Ind) {
 			Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%d%d%d%d", PKT_POWERS_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], p_ptr->innate_spells[3]);
+	return(Packet_printf(&connp->c, "%c%d%d%d%d", PKT_POWERS_INFO, p_ptr->innate_spells[0], p_ptr->innate_spells[1], p_ptr->innate_spells[2], p_ptr->innate_spells[3]));
 }
 
 /* Implementing fighting/shooting techniques, but maybe using a lua 'school' file would be better instead - C. Blue */
@@ -8248,10 +8248,10 @@ int Send_technique_info(int Ind) {
 	if (is_older_than(&p_ptr->version, 4, 6, 1, 2, 0, 1)) {
 		u32b tech_compat = (p_ptr->melee_techniques & 0x0F) | ((p_ptr->melee_techniques & 0xFF00) >> 1);
 
-		return Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, tech_compat, p_ptr->ranged_techniques);
+		return(Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, tech_compat, p_ptr->ranged_techniques));
 	}
 
-	return Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, p_ptr->melee_techniques, p_ptr->ranged_techniques);
+	return(Packet_printf(&connp->c, "%c%d%d", PKT_TECHNIQUE_INFO, p_ptr->melee_techniques, p_ptr->ranged_techniques));
 }
 
 int Send_item_request(int Ind, signed char tester_hook) { //paranoia @ 'signed' char =-p
@@ -8279,9 +8279,9 @@ int Send_item_request(int Ind, signed char tester_hook) { //paranoia @ 'signed' 
 #endif
 
 	if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c", PKT_ITEM, tester_hook);
+		return(Packet_printf(&connp->c, "%c%c", PKT_ITEM, tester_hook));
 	else
-		return Packet_printf(&connp->c, "%c", PKT_ITEM);
+		return(Packet_printf(&connp->c, "%c", PKT_ITEM));
 }
 
 /* for DISCRETE_SPELL_SYSTEM: DSS_EXPANDED_SCROLLS */
@@ -8295,7 +8295,7 @@ int Send_spell_request(int Ind, int item) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c%d", PKT_SPELL, item);
+	return(Packet_printf(&connp->c, "%c%d", PKT_SPELL, item));
 }
 
 int Send_flush(int Ind) {
@@ -8309,7 +8309,7 @@ int Send_flush(int Ind) {
 			Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c", PKT_FLUSH);
+	return(Packet_printf(&connp->c, "%c", PKT_FLUSH));
 }
 
 /*
@@ -9638,13 +9638,13 @@ int Send_store(int Ind, char pos, byte attr, int wgt, int number, int price, cpt
 #endif
 
 	if (is_atleast(&Players[Ind]->version, 4, 9, 3, 0, 0, 3)) /* for TV_GOLD object in homes */
-		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%d%s", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval, powers);
+		return(Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%d%s", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval, powers));
 	else if (is_atleast(&Players[Ind]->version, 4, 7, 3, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd%s", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval, powers);
+		return(Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd%s", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval, powers));
 	else if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
+		return(Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval));
 	else
-		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval);
+		return(Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c%hd", PKT_STORE, pos, attr, wgt, number, price, name, tval, sval, pval));
 }
 
 /* Send_store() variant for custom spellbooks */
@@ -9685,13 +9685,13 @@ int Send_store_wide(int Ind, char pos, byte attr, int wgt, int number, int price
 #endif
 
 	if (is_atleast(&Players[Ind]->version, 4, 9, 3, 0, 0, 3)) /* for TV_GOLD object in homes */
-		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%d%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_STORE_WIDE, pos, attr, wgt, number, price, name, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9);
+		return(Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%d%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_STORE_WIDE, pos, attr, wgt, number, price, name, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9));
 	else if (is_newer_than(&Players[Ind]->version, 4, 7, 0, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_STORE_WIDE, pos, attr, wgt, number, price, name, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9);
+		return(Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_STORE_WIDE, pos, attr, wgt, number, price, name, tval, sval, pval, xtra1, xtra2, xtra3, xtra4, xtra5, xtra6, xtra7, xtra8, xtra9));
 	else if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd%c%c%c%c%c%c%c%c%c", PKT_STORE_WIDE, pos, attr, wgt, number, price, name, tval, sval, pval, xtra1 & 0xFF, xtra2 & 0xFF, xtra3 & 0xFF, xtra4 & 0xFF, xtra5 & 0xFF, xtra6 & 0xFF, xtra7 & 0xFF, xtra8 & 0xFF, xtra9 & 0xFF);
+		return(Packet_printf(&connp->c, "%c%c%c%hd%hd%d%S%c%c%hd%c%c%c%c%c%c%c%c%c", PKT_STORE_WIDE, pos, attr, wgt, number, price, name, tval, sval, pval, xtra1 & 0xFF, xtra2 & 0xFF, xtra3 & 0xFF, xtra4 & 0xFF, xtra5 & 0xFF, xtra6 & 0xFF, xtra7 & 0xFF, xtra8 & 0xFF, xtra9 & 0xFF));
 	else
-		return Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c%hd%c%c%c%c%c%c%c%c%c", PKT_STORE_WIDE, pos, attr, wgt, number, price, name, tval, sval, pval, xtra1 & 0xFF, xtra2 & 0xFF, xtra3 & 0xFF, xtra4 & 0xFF, xtra5 & 0xFF, xtra6 & 0xFF, xtra7 & 0xFF, xtra8 & 0xFF, xtra9 & 0xFF);
+		return(Packet_printf(&connp->c, "%c%c%c%hd%hd%d%s%c%c%hd%c%c%c%c%c%c%c%c%c", PKT_STORE_WIDE, pos, attr, wgt, number, price, name, tval, sval, pval, xtra1 & 0xFF, xtra2 & 0xFF, xtra3 & 0xFF, xtra4 & 0xFF, xtra5 & 0xFF, xtra6 & 0xFF, xtra7 & 0xFF, xtra8 & 0xFF, xtra9 & 0xFF));
 }
 
 /* For new non-shop stores (SPECIAL flag) - C. Blue */
@@ -9719,7 +9719,7 @@ int Send_store_special_str(int Ind, char line, char col, byte attr, char *str) {
 	}
 #endif
 
-	return Packet_printf(&connp->c, "%c%c%c%c%s", PKT_STORE_SPECIAL_STR, line, col, attr, str);
+	return(Packet_printf(&connp->c, "%c%c%c%c%s", PKT_STORE_SPECIAL_STR, line, col, attr, str));
 }
 
 /* For new non-shop stores (SPECIAL flag) - C. Blue */
@@ -9747,7 +9747,7 @@ int Send_store_special_char(int Ind, char line, char col, byte attr, char c) {
 	}
 #endif
 
-	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_STORE_SPECIAL_CHAR, line, col, attr, c);
+	return(Packet_printf(&connp->c, "%c%c%c%c%c", PKT_STORE_SPECIAL_CHAR, line, col, attr, c));
 }
 
 /* For new non-shop stores (SPECIAL flag) - C. Blue */
@@ -9780,7 +9780,7 @@ int Send_store_special_clr(int Ind, char line_start, char line_end) {
 #endif
 
 	if (line_start >= 100 && is_older_than(&connp->version, 4, 9, 3, 0, 0, 3)) line_start -= 100;
-	return Packet_printf(&connp->c, "%c%c%c", PKT_STORE_SPECIAL_CLR, line_start, line_end);
+	return(Packet_printf(&connp->c, "%c%c%c", PKT_STORE_SPECIAL_CLR, line_start, line_end));
 }
 /* Client needs to be 4.9.3.0.0.3+ to recognize this hack! */
 int Send_store_special_clr_force(int Ind, char line_start, char line_end) {
@@ -9811,7 +9811,7 @@ int Send_store_special_anim(int Ind, u16b anim1, u16b anim2, u16b anim3, u16b an
 	}
 #endif
 
-	return Packet_printf(&connp->c, "%c%hd%hd%hd%hd", PKT_STORE_SPECIAL_ANIM, anim1, anim2, anim3, anim4);
+	return(Packet_printf(&connp->c, "%c%hd%hd%hd%hd", PKT_STORE_SPECIAL_ANIM, anim1, anim2, anim3, anim4));
 }
 
 /*
@@ -9855,11 +9855,11 @@ int Send_store_info(int Ind, int num, cptr store, cptr owner, int items, int pur
 #endif
 
 	if (is_newer_than(&connp->version, 4, 7, 4, 2, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hd%s%s%hd%d%c%c%c", PKT_STORE_INFO, num, store, owner, items, purse, attr, c, store_mul);
+		return(Packet_printf(&connp->c, "%c%hd%s%s%hd%d%c%c%c", PKT_STORE_INFO, num, store, owner, items, purse, attr, c, store_mul));
 	} else if (is_newer_than(&connp->version, 4, 4, 4, 0, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%hd%s%s%hd%d%c%c", PKT_STORE_INFO, num, store, owner, items, purse, attr, c);
+		return(Packet_printf(&connp->c, "%c%hd%s%s%hd%d%c%c", PKT_STORE_INFO, num, store, owner, items, purse, attr, c));
 	} else {
-		return Packet_printf(&connp->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse);
+		return(Packet_printf(&connp->c, "%c%hd%s%s%hd%d", PKT_STORE_INFO, num, store, owner, items, purse));
 	}
 }
 
@@ -9919,7 +9919,7 @@ int Send_store_sell(int Ind, int price) {
 	}
 #endif
 
-	return Packet_printf(&connp->c, "%c%d", PKT_SELL, price);
+	return(Packet_printf(&connp->c, "%c%d", PKT_SELL, price));
 }
 
 int Send_store_kick(int Ind) {
@@ -9943,7 +9943,7 @@ int Send_store_kick(int Ind) {
 	}
 #endif
 
-	return Packet_printf(&connp->c, "%c", PKT_STORE_LEAVE);
+	return(Packet_printf(&connp->c, "%c", PKT_STORE_LEAVE));
 }
 
 int Send_target_info(int Ind, int x, int y, cptr str) {
@@ -9980,10 +9980,10 @@ int Send_target_info(int Ind, int x, int y, cptr str) {
 
 	if (is_atleast(&connp->version, 4, 9, 0, 1, 0, 0)) {
 		buf[MAX_CHARS - 1 + l] = '\0';
-		return Packet_printf(&connp->c, "%c%c%c%S", PKT_TARGET_INFO, x, y, buf);
+		return(Packet_printf(&connp->c, "%c%c%c%S", PKT_TARGET_INFO, x, y, buf));
 	}
 	buf[MAX_CHARS - 1] = '\0';
-	return Packet_printf(&connp->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf);
+	return(Packet_printf(&connp->c, "%c%c%c%s", PKT_TARGET_INFO, x, y, buf));
 }
 /* This function was used even without USE_SOUND_2010, in the old sound system. At the same time it is
    now also used as base sfx transmit function for the new USE_SOUND_2010. - C. Blue
@@ -10042,15 +10042,15 @@ int Send_sound(int Ind, int sound, int alternative, int type, int vol, s32b play
 	//if (is_admin(p_ptr)) s_printf("USE_SOUND_2010: sound %d (alt %d) sent to player %s (%d).\n", sound, alternative, p_ptr->name, Ind);//debug
 
 	if (is_atleast(&connp->version, 4, 8, 1, 1, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id, dist_x, dist_y);
+		return(Packet_printf(&connp->c, "%c%d%d%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id, dist_x, dist_y));
 	} else	if (is_newer_than(&connp->version, 4, 4, 5, 3, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id);
+		return(Packet_printf(&connp->c, "%c%d%d%d%d%d", PKT_SOUND, sound, alternative, type, vol, player_id));
 	} else if (is_newer_than(&connp->version, 4, 4, 5, 1, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%d%d%d", PKT_SOUND, sound, alternative, type);
+		return(Packet_printf(&connp->c, "%c%d%d%d", PKT_SOUND, sound, alternative, type));
 	} else if (is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%d%d", PKT_SOUND, sound, alternative);
+		return(Packet_printf(&connp->c, "%c%d%d", PKT_SOUND, sound, alternative));
 	} else {
-		return Packet_printf(&connp->c, "%c%c", PKT_SOUND, sound);
+		return(Packet_printf(&connp->c, "%c%c", PKT_SOUND, sound));
 	}
 }
 
@@ -10099,15 +10099,15 @@ int Send_music(int Ind, int music, int musicalt, int musicalt2) {
 	}
 
 	if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 1))
-		return Packet_printf(&connp->c, "%c%d%d%d", PKT_MUSIC, music, musicalt, musicalt2);
+		return(Packet_printf(&connp->c, "%c%d%d%d", PKT_MUSIC, music, musicalt, musicalt2));
 	else if (is_atleast(&connp->version, 4, 8, 1, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%c", PKT_MUSIC, music, musicalt, musicalt2);
+		return(Packet_printf(&connp->c, "%c%c%c%c", PKT_MUSIC, music, musicalt, musicalt2));
 	else if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1))
-		return Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt);
+		return(Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt));
 	else if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0))
 		return(-1);
 	//s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, p_ptr->name, Ind);//debug
-	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
+	return(Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music));
 }
 int Send_music_vol(int Ind, int music, int musicalt, int musicalt2, char vol) {
 	player_type *p_ptr = Players[Ind];
@@ -10161,22 +10161,22 @@ int Send_music_vol(int Ind, int music, int musicalt, int musicalt2, char vol) {
 	//s_printf("USE_SOUND_2010: music %d sent to player %s (%d).\n", music, p_ptr->name, Ind);//debug
 	if (is_atleast(&connp->version, 4, 9, 2, 1, 0, 1)) {
 		p_ptr->music_vol = vol;
-		return Packet_printf(&connp->c, "%c%d%d%d%c", PKT_MUSIC_VOL, music, musicalt, musicalt2, vol);
+		return(Packet_printf(&connp->c, "%c%d%d%d%c", PKT_MUSIC_VOL, music, musicalt, musicalt2, vol));
 	} else if (is_atleast(&connp->version, 4, 8, 1, 2, 0, 0)) {
 		p_ptr->music_vol = vol;
-		return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, musicalt2, vol);
+		return(Packet_printf(&connp->c, "%c%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, musicalt2, vol));
 	} else if (is_atleast(&connp->version, 4, 7, 3, 2, 0, 0)) {
 		p_ptr->music_vol = vol;
-		return Packet_printf(&connp->c, "%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, vol);
+		return(Packet_printf(&connp->c, "%c%c%c%c", PKT_MUSIC_VOL, music, musicalt, vol));
 	} else if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1)) {
 		p_ptr->music_vol = 100;
-		return Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt);
+		return(Packet_printf(&connp->c, "%c%c%c", PKT_MUSIC, music, musicalt));
 	} else if (!is_newer_than(&connp->version, 4, 4, 4, 5, 0, 0)) {
 		p_ptr->music_vol = 100;
 		return(-1);
 	}
 	p_ptr->music_vol = 100;
-	return Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music);
+	return(Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music));
 }
 int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 	player_type *p_ptr = Players[Ind];
@@ -10290,7 +10290,7 @@ int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 
 	if (!is_newer_than(&connp->version, 4, 5, 4, 0, 0, 0)) return(-1);
 	//s_printf("USE_SOUND_2010: ambient sfx %d sent to player %s (%d).\n", i, Players[Ind]->name, Ind);//debug
-	return Packet_printf(&connp->c, "%c%d", PKT_SFX_AMBIENT, i);
+	return(Packet_printf(&connp->c, "%c%d", PKT_SFX_AMBIENT, i));
 }
 int Send_sfx_volume(int Ind, char sfx_ambient_vol, char sfx_weather_vol) {
 	connection_t *connp = Conn[Players[Ind]->conn];
@@ -10315,7 +10315,7 @@ int Send_sfx_volume(int Ind, char sfx_ambient_vol, char sfx_weather_vol) {
 
 	if (!is_newer_than(&connp->version, 4, 5, 5, 0, 0, 0)) return(-1);
 	//s_printf("USE_SOUND_2010: ambient sfx %d sent to player %s (%d).\n", i, Players[Ind]->name, Ind);//debug
-	return Packet_printf(&connp->c, "%c%c%c", PKT_SFX_VOLUME, sfx_ambient_vol, sfx_weather_vol);
+	return(Packet_printf(&connp->c, "%c%c%c", PKT_SFX_VOLUME, sfx_ambient_vol, sfx_weather_vol));
 }
 #endif
 
@@ -10407,7 +10407,7 @@ int Send_beep(int Ind) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c", PKT_BEEP);
+	return(Packet_printf(&connp->c, "%c", PKT_BEEP));
 }
 
 int Send_warning_beep(int Ind) {
@@ -10421,9 +10421,9 @@ int Send_warning_beep(int Ind) {
 	}
 
 	if (is_newer_than(&Players[Ind]->version, 4, 5, 2, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c", PKT_WARNING_BEEP);
+		return(Packet_printf(&connp->c, "%c", PKT_WARNING_BEEP));
 	else
-		return Packet_printf(&connp->c, "%c", PKT_BEEP);
+		return(Packet_printf(&connp->c, "%c", PKT_BEEP));
 }
 
 int Send_AFK(int Ind, byte afk) {
@@ -10436,7 +10436,7 @@ int Send_AFK(int Ind, byte afk) {
 			Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%c", PKT_AFK, afk);
+	return(Packet_printf(&connp->c, "%c%c", PKT_AFK, afk));
 }
 
 int Send_encumberment(int Ind, byte cumber_armor, byte awkward_armor, byte cumber_glove, byte heavy_wield, byte heavy_shield, byte heavy_shoot,
@@ -10576,13 +10576,13 @@ int Send_special_line(int Ind, s32b max, s32b line, byte attr, cptr buf) {
 #endif
 
 	if (is_newer_than(&Players[Ind]->version, 4, 4, 7, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%d%d%c%I", PKT_SPECIAL_LINE, max, line, attr, temp2);
+		return(Packet_printf(&connp->c, "%c%d%d%c%I", PKT_SPECIAL_LINE, max, line, attr, temp2));
 	else if (is_newer_than(&Players[Ind]->version, 4, 4, 6, 1, 0, 0))
-		return Packet_printf(&connp->c, "%c%hd%hd%c%I", PKT_SPECIAL_LINE, max, line, attr, temp2);
+		return(Packet_printf(&connp->c, "%c%hd%hd%c%I", PKT_SPECIAL_LINE, max, line, attr, temp2));
 	else {
 		/* Cut it off so old clients can handle it, ouch */
 		temp2[79] = 0;
-		return Packet_printf(&connp->c, "%c%d%d%c%s", PKT_SPECIAL_LINE, max, line, attr, temp2);
+		return(Packet_printf(&connp->c, "%c%d%d%c%s", PKT_SPECIAL_LINE, max, line, attr, temp2));
 	}
 }
 
@@ -10598,7 +10598,7 @@ int Send_special_line_pos(int Ind, int line) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c%d", PKT_SPECIAL_LINE_POS, line);
+	return(Packet_printf(&connp->c, "%c%d", PKT_SPECIAL_LINE_POS, line));
 }
 
 int Send_floor(int Ind, byte tval) {
@@ -10611,7 +10611,7 @@ int Send_floor(int Ind, byte tval) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c%c", PKT_FLOOR, tval);
+	return(Packet_printf(&connp->c, "%c%c", PKT_FLOOR, tval));
 }
 
 int Send_pickup_check(int Ind, cptr buf) {
@@ -10624,7 +10624,7 @@ int Send_pickup_check(int Ind, cptr buf) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c%s", PKT_PICKUP_CHECK, buf);
+	return(Packet_printf(&connp->c, "%c%s", PKT_PICKUP_CHECK, buf));
 }
 
 /* adding ultimate quick and dirty hack here so geraldo can play his 19th lvl char
@@ -10821,7 +10821,7 @@ int Send_special_other(int Ind) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c", PKT_SPECIAL_OTHER);
+	return(Packet_printf(&connp->c, "%c", PKT_SPECIAL_OTHER));
 }
 
 int Send_skills(int Ind) {
@@ -10932,7 +10932,7 @@ int Send_pause(int Ind) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c", PKT_PAUSE);
+	return(Packet_printf(&connp->c, "%c", PKT_PAUSE));
 }
 
 
@@ -10954,7 +10954,7 @@ int Send_monster_health(int Ind, int num, byte attr) {
 		    Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%c%c", PKT_MONSTER_HEALTH, num, attr);
+	return(Packet_printf(&connp->c, "%c%c%c", PKT_MONSTER_HEALTH, num, attr));
 }
 
 /* Always display oneself as '@' for easier visibility,
@@ -10991,9 +10991,9 @@ int Send_chardump(int Ind, cptr tag) {
 
 	if (!is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0) ||
 	    MY_VERSION <= (4 << 12 | 4 << 8 | 2 << 4 | 0))
-		return Packet_printf(&connp->c, "%c", PKT_CHARDUMP);
+		return(Packet_printf(&connp->c, "%c", PKT_CHARDUMP));
 	else
-		return Packet_printf(&connp->c, "%c%s", PKT_CHARDUMP, tag);
+		return(Packet_printf(&connp->c, "%c%s", PKT_CHARDUMP, tag));
 
 #ifdef CHARDUMP_VIS_HACK
 	/* unhack '@' */
@@ -11014,7 +11014,7 @@ int Send_unique_monster(int Ind, int r_idx) {
 			Ind, connp->state, connp->id));
 		return(0);
 	}
-	return Packet_printf(&connp->c, "%c%d%d%s", PKT_UNIQUE_MONSTER, r_info[r_idx].u_idx, p_ptr->r_killed[r_idx], r_name + r_info[r_idx].name);
+	return(Packet_printf(&connp->c, "%c%d%d%s", PKT_UNIQUE_MONSTER, r_info[r_idx].u_idx, p_ptr->r_killed[r_idx], r_name + r_info[r_idx].name));
 }
 
 int Send_weather(int Ind, int weather_type, int weather_wind, int weather_gen_speed, int weather_intensity, int weather_speed, bool update_clouds, bool revoke_clouds) {
@@ -11163,7 +11163,7 @@ int Send_inventory_revision(int Ind) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c%d", PKT_INVENTORY_REV, p_ptr->inventory_revision);
+	return(Packet_printf(&connp->c, "%c%d", PKT_INVENTORY_REV, p_ptr->inventory_revision));
 }
 
 int Send_account_info(int Ind) {
@@ -11183,7 +11183,7 @@ int Send_account_info(int Ind) {
 	if (GetAccount(&acc, connp->nick, NULL, FALSE, NULL, NULL)) acc_flags = acc.flags;
 	if ((acc_flags & (ACC_QUIET | ACC_VQUIET)) == (ACC_QUIET | ACC_VQUIET)) acc_flags &= ~(ACC_QUIET | ACC_VQUIET);
 
-	return Packet_printf(&connp->c, "%c%hd", PKT_ACCOUNT_INFO, acc_flags);
+	return(Packet_printf(&connp->c, "%c%hd", PKT_ACCOUNT_INFO, acc_flags));
 }
 
 int Send_request_key(int Ind, int id, char *prompt) {
@@ -11200,7 +11200,7 @@ int Send_request_key(int Ind, int id, char *prompt) {
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_KEY;
 	Players[Ind]->request_extra = 0; //anti-exploit: clear!
-	return Packet_printf(&connp->c, "%c%d%s", PKT_REQUEST_KEY, id, prompt);
+	return(Packet_printf(&connp->c, "%c%d%s", PKT_REQUEST_KEY, id, prompt));
 }
 int Send_request_amt(int Ind, int id, char *prompt, int max) {
 	connection_t *connp = Conn[Players[Ind]->conn];
@@ -11216,7 +11216,7 @@ int Send_request_amt(int Ind, int id, char *prompt, int max) {
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_AMT;
 	Players[Ind]->request_extra = 0; //anti-exploit: clear!
-	return Packet_printf(&connp->c, "%c%d%s%d", PKT_REQUEST_AMT, id, prompt, max);
+	return(Packet_printf(&connp->c, "%c%d%s%d", PKT_REQUEST_AMT, id, prompt, max));
 }
 int Send_request_num(int Ind, int id, char *prompt, int predef, int min, int max) {
 	connection_t *connp = Conn[Players[Ind]->conn];
@@ -11232,7 +11232,7 @@ int Send_request_num(int Ind, int id, char *prompt, int predef, int min, int max
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_NUM;
 	Players[Ind]->request_extra = 0; //anti-exploit: clear!
-	return Packet_printf(&connp->c, "%c%d%s%d%d%d", PKT_REQUEST_NUM, id, prompt, predef, min, max);
+	return(Packet_printf(&connp->c, "%c%d%s%d%d%d", PKT_REQUEST_NUM, id, prompt, predef, min, max));
 }
 void Send_delayed_request_str(int Ind, int id, char *prompt, char *std) {
 	player_type *p_ptr = Players[Ind];
@@ -11257,7 +11257,7 @@ int Send_request_str(int Ind, int id, char *prompt, char *std) {
 	Players[Ind]->request_id = id;
 	Players[Ind]->request_type = RTYPE_STR;
 	Players[Ind]->request_extra = 0; //anti-exploit: clear!
-	return Packet_printf(&connp->c, "%c%d%s%s", PKT_REQUEST_STR, id, prompt, std);
+	return(Packet_printf(&connp->c, "%c%d%s%s", PKT_REQUEST_STR, id, prompt, std));
 }
 void Send_delayed_request_cfr(int Ind, int id, char *prompt, char default_choice) {
 	player_type *p_ptr = Players[Ind];
@@ -11283,9 +11283,9 @@ int Send_request_cfr(int Ind, int id, char *prompt, char default_choice) {
 	Players[Ind]->request_type = RTYPE_CFR;
 	Players[Ind]->request_extra = 0; //anti-exploit: clear!
 	if (is_newer_than(&connp->version, 4, 5, 6, 0, 0, 1))
-		return Packet_printf(&connp->c, "%c%d%s%c", PKT_REQUEST_CFR, id, prompt, default_choice);
+		return(Packet_printf(&connp->c, "%c%d%s%c", PKT_REQUEST_CFR, id, prompt, default_choice));
 	else
-		return Packet_printf(&connp->c, "%c%d%s", PKT_REQUEST_CFR, id, prompt);
+		return(Packet_printf(&connp->c, "%c%d%s", PKT_REQUEST_CFR, id, prompt));
 }
 /* NOTE: Should be followed by a p_ptr->request_id = RID_NONE to clean up. */
 int Send_request_abort(int Ind) {
@@ -11299,7 +11299,7 @@ int Send_request_abort(int Ind) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c", PKT_REQUEST_ABORT);
+	return(Packet_printf(&connp->c, "%c", PKT_REQUEST_ABORT));
 }
 
 int Send_apply_auto_insc(int Ind, int slot) {
@@ -11316,8 +11316,8 @@ int Send_apply_auto_insc(int Ind, int slot) {
 	if (is_older_than(&connp->version, 4, 9, 2, 1, 0, 1)) {
 		/* Older clients cannot handle this for subinventory items, so just drop it. */
 		if (slot >= SUBINVEN_INVEN_MUL) return(0);
-		return Packet_printf(&connp->c, "%c%c", PKT_AUTOINSCRIBE, (char)slot);
-	} else return Packet_printf(&connp->c, "%c%hd", PKT_AUTOINSCRIBE, (s16b)slot);
+		return(Packet_printf(&connp->c, "%c%c", PKT_AUTOINSCRIBE, (char)slot));
+	} else return(Packet_printf(&connp->c, "%c%hd", PKT_AUTOINSCRIBE, (s16b)slot));
 }
 
 int Send_martyr(int Ind) {
@@ -11331,7 +11331,7 @@ int Send_martyr(int Ind) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c%c", PKT_MARTYR, (char)Players[Ind]->martyr);
+	return(Packet_printf(&connp->c, "%c%c", PKT_MARTYR, (char)Players[Ind]->martyr));
 }
 
 /* Send a signal to the client that his previous command has finished being processed and
@@ -11358,7 +11358,7 @@ int Send_confirm(int Ind, int confirmed_command) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c%c", PKT_CONFIRM, confirmed_command);
+	return(Packet_printf(&connp->c, "%c%c", PKT_CONFIRM, confirmed_command));
 }
 
 int Send_item_newest(int Ind, int item) {
@@ -11377,8 +11377,8 @@ int Send_item_newest(int Ind, int item) {
 	Players[Ind]->item_newest = item;
 
 	if (is_older_than(&connp->version, 4, 8, 1, 1, 0, 0))
-		return Packet_printf(&connp->c, "%c%c", PKT_ITEM_NEWEST, (char)item);
-	return Packet_printf(&connp->c, "%c%d", PKT_ITEM_NEWEST, item); //ENABLE_SUBINVEN
+		return(Packet_printf(&connp->c, "%c%c", PKT_ITEM_NEWEST, (char)item));
+	return(Packet_printf(&connp->c, "%c%d", PKT_ITEM_NEWEST, item)); //ENABLE_SUBINVEN
 }
 int Send_item_newest_2nd(int Ind, int item) {
 	connection_t *connp = Conn[Players[Ind]->conn];
@@ -11394,7 +11394,7 @@ int Send_item_newest_2nd(int Ind, int item) {
 	}
 
 	Players[Ind]->item_newest_2nd = item;
-	return Packet_printf(&connp->c, "%c%d", PKT_ITEM_NEWEST_2ND, item); //ENABLE_SUBINVEN
+	return(Packet_printf(&connp->c, "%c%d", PKT_ITEM_NEWEST_2ND, item)); //ENABLE_SUBINVEN
 }
 
 int Send_palette(int Ind, byte c, byte r, byte g, byte b) {
@@ -11408,7 +11408,7 @@ int Send_palette(int Ind, byte c, byte r, byte g, byte b) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c%c%c%c%c", PKT_PALETTE, c, r, g, b);
+	return(Packet_printf(&connp->c, "%c%c%c%c%c", PKT_PALETTE, c, r, g, b));
 }
 
 int Send_idle(int Ind, bool idle) {
@@ -11458,8 +11458,8 @@ int Send_Guide(int Ind, byte search_type, int lineno, const char* search_string)
 	}
 
 	/* Hack: Allow NULL for search_string if not used. */
-	if (!search_string) return Packet_printf(&connp->c, "%c%c%d%s", PKT_GUIDE, search_type, lineno, "");
-	else return Packet_printf(&connp->c, "%c%c%d%s", PKT_GUIDE, search_type, lineno, search_string);
+	if (!search_string) return(Packet_printf(&connp->c, "%c%c%d%s", PKT_GUIDE, search_type, lineno, ""));
+	else return(Packet_printf(&connp->c, "%c%c%d%s", PKT_GUIDE, search_type, lineno, search_string));
 }
 
 int Send_indicators(int Ind, u32b indicators) {
@@ -11480,7 +11480,7 @@ int Send_indicators(int Ind, u32b indicators) {
 		}
 	}
 
-	return Packet_printf(&connp->c, "%c%d", PKT_INDICATORS, indicators);
+	return(Packet_printf(&connp->c, "%c%d", PKT_INDICATORS, indicators));
 }
 
 /* Ind:
@@ -11553,7 +11553,7 @@ int Send_playerlist(int Ind, int i, int mode) {
 			Send_playerlist_aux(p, i, mode);
 		return(1);
 	}
-	return Send_playerlist_aux(Ind, i, mode);
+	return(Send_playerlist_aux(Ind, i, mode));
 }
 
 int Send_weather_colouring(int Ind, byte col_raindrop, byte col_snowflake, byte col_sandgrain, char c_sandgrain) {
@@ -11643,7 +11643,7 @@ int Send_macro_failure(int Ind) {
 		return(0);
 	}
 
-	return Packet_printf(&connp->c, "%c", PKT_MACRO_FAILURE);
+	return(Packet_printf(&connp->c, "%c", PKT_MACRO_FAILURE));
 }
 
 
@@ -11815,12 +11815,12 @@ static int Receive_run(int ind) {
 	if (p_ptr && !p_ptr->admin_dm && !p_ptr->admin_invinc) {
 		monster_race *r_ptr;
 
-		if ((p_ptr->global_event_temp & PEVF_NO_RUN_00)) return Receive_walk(ind);
-		if (l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) return Receive_walk(ind);
-		if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_RUN)) return Receive_walk(ind);
+		if ((p_ptr->global_event_temp & PEVF_NO_RUN_00)) return(Receive_walk(ind));
+		if (l_ptr && (l_ptr->flags2 & LF2_NO_RUN)) return(Receive_walk(ind));
+		if (in_sector000(&p_ptr->wpos) && (sector000flags2 & LF2_NO_RUN)) return(Receive_walk(ind));
 
 		/* check for status impairments (lack of light is checked in run_test()) */
-		if (p_ptr->confused || p_ptr->blind) return Receive_walk(ind);
+		if (p_ptr->confused || p_ptr->blind) return(Receive_walk(ind));
 
 		/* Check for monsters in sight */
 		if (!l_ptr || !(l_ptr->flags1 & LF1_CAN_ALWAYS_RUN))
@@ -11837,7 +11837,7 @@ static int Receive_run(int ind) {
 					msg_print(player, "\374\377y      of an awake monster. The town of Bree is excepted from this.");
 					s_printf("warning_run_monlos: %s\n", p_ptr->name);
 				}
-				return Receive_walk(ind);
+				return(Receive_walk(ind));
 			}
 		}
 
@@ -11848,7 +11848,7 @@ static int Receive_run(int ind) {
 			if (i == player) continue;
 			if (check_hostile(player, i)) {
 				if (target_able(player, 0 - i)) { /* target_able takes in midx usually */
-					return Receive_walk(ind);
+					return(Receive_walk(ind));
 				}
 			}
 		}
@@ -11875,7 +11875,7 @@ static int Receive_run(int ind) {
 //else s_printf("not a-r\n");
 //	if (!p_ptr->admin_dm && p_ptr->auto_retaliating) {
 	if (p_ptr && (p_ptr->auto_retaliating || p_ptr->shooting_till_kill))
-		return Receive_walk(ind);
+		return(Receive_walk(ind));
 #endif
 
 
@@ -15702,7 +15702,7 @@ static int Receive_sip(int ind) {
 
 static int Receive_telekinesis(int ind) {
 #if 1 /* taken over by Receive_mind() now, that mindcrafters got fusion */
-	return Receive_mind(ind);
+	return(Receive_mind(ind));
 #else
 	connection_t *connp = Conn[ind];
 	player_type *p_ptr = NULL;

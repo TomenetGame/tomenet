@@ -112,20 +112,20 @@ char socklib_version[] = VERSION;
 /* static          jmp_buf env; */
 
 /* Global socklib errno variable */
-int			sl_errno = 0;
+int sl_errno = 0;
 
 /* Global timeout variable. May be modified by users */
-int			sl_timeout_s = DEFAULT_S_TIMEOUT_VALUE;
-int			sl_timeout_us = DEFAULT_US_TIMEOUT_VALUE;
+int sl_timeout_s = DEFAULT_S_TIMEOUT_VALUE;
+int sl_timeout_us = DEFAULT_US_TIMEOUT_VALUE;
 
 /* Global default retries variable used by DgramSendRec */
-int			sl_default_retries = DEFAULT_RETRIES;
+int sl_default_retries = DEFAULT_RETRIES;
 
 /* Global variable containing the last address from DgramReceiveAny */
 /*struct sockaddr_in	sl_dgram_lastaddr;*/
 
 /* Global broadcast enable variable (super-user only), default disabled */
-int			sl_broadcast_enabled = 0;
+int sl_broadcast_enabled = 0;
 
 /* Static array of "socket types" defined in tcp.h */
 static sock_type sockets[32];
@@ -172,8 +172,7 @@ static int initialized = 0;
  *
  * Originally coded by Arne Helme
  */
-void SetTimeout(int s, int us)
-{
+void SetTimeout(int s, int us) {
     sl_timeout_us = us;
     sl_timeout_s = s;
 } /* SetTimeout */
@@ -208,9 +207,8 @@ void SetTimeout(int s, int us)
  *
  * Originally coded by Arne Helme
  */
-int GetPortNum(int fd)
-{
-	return (temp_port);
+int GetPortNum(int fd) {
+	return(temp_port);
 } /* GetPortNum */
 
 
@@ -247,14 +245,13 @@ int GetPortNum(int fd)
  *
  * Originally coded by Bert Gijsbers
  */
-char *GetSockAddr(int fd)
-{
+char *GetSockAddr(int fd) {
 	char buf[1024];
 	longword addr = 0x83973a07;
 
 	inet_ntoa(buf, addr);
 
-	return buf;
+	return(buf);
 } /* GetSockAddr */
 
 
@@ -288,8 +285,7 @@ char *GetSockAddr(int fd)
  *
  * Originally coded by Bert G sbers
  */
-int SetSocketReceiveBufferSize(int fd, int size)
-{
+int SetSocketReceiveBufferSize(int fd, int size) {
 	/* Hmm, I'll leave it alone */
 } /* SetSocketReceiveBufferSize */
 
@@ -324,8 +320,7 @@ int SetSocketReceiveBufferSize(int fd, int size)
  *
  * Originally coded by Bert G sbers
  */
-int SetSocketSendBufferSize(int fd, int size)
-{
+int SetSocketSendBufferSize(int fd, int size) {
 	/* Hmm, I'll leave it alone */
 } /* SetSocketSendBufferSize */
 
@@ -360,8 +355,7 @@ int SetSocketSendBufferSize(int fd, int size)
  *
  * Originally coded by Bert G sbers
  */
-int SetSocketNonBlocking(int fd, int flag)
-{
+int SetSocketNonBlocking(int fd, int flag) {
 	/* Hmm, I'll leave it alone */
 } /* SetSocketNonBlocking */
 
@@ -395,8 +389,7 @@ int SetSocketNonBlocking(int fd, int flag)
  *
  * Originally coded by Bert G sbers
  */
-int GetSocketError(int fd)
-{
+int GetSocketError(int fd) {
 	/* We never have errors */
 } /* GetSocketError */
 
@@ -430,13 +423,11 @@ int GetSocketError(int fd)
  *
  * Originally coded by Arne Helme
  */
-int SocketReadable(int fd)
-{
+int SocketReadable(int fd) {
 	tcp_tick(&sockets[fd]);
 
 	sock_wait_input(&sockets[fd], sl_timeout_s, sl_timeout_us, NULL, NULL);
-
-	return 1;
+	return(1);
 
 	sock_err:
 		sock_close(&sockets[fd]);
@@ -477,11 +468,9 @@ int SocketReadable(int fd)
  *
  * Originally coded by Arne Helme
  */
-int CreateDgramSocket(int port)
-{
+int CreateDgramSocket(int port) {
 	/* Hack -- Make sure we have called sock_init once */
-	if (!initialized)
-	{
+	if (!initialized) {
 		sock_init();
 		initialized = 1;
 	}
@@ -491,7 +480,7 @@ int CreateDgramSocket(int port)
 	/* We only save the intended port here for later use in DgramConnect */
 	temp_port = port;
 
-	return num_sockets++;
+	return(num_sockets++);
 } /* CreateDgramSocket */
 
 
@@ -527,13 +516,12 @@ int CreateDgramSocket(int port)
  *
  * Originally coded by Bert G sbers
  */
-int DgramConnect(int fd, char *host, int port)
-{
+int DgramConnect(int fd, char *host, int port) {
 	longword addr;
 
 	addr = resolve(host);
 
-	return (udp_open(&sockets[fd].udp, temp_port, addr, port, NULL));
+	return(udp_open(&sockets[fd].udp, temp_port, addr, port, NULL));
 } /* DgramConnect */
 
 
@@ -574,20 +562,17 @@ int DgramConnect(int fd, char *host, int port)
  *
  * Originally coded by Arne Helme
  */
-int DgramSend(int fd, char *host, int port, char *sbuf, int size)
-{
+int DgramSend(int fd, char *host, int port, char *sbuf, int size) {
 	longword addr;
 
 	addr = resolve(host);
 
-	if (!udp_open(&sockets[fd], temp_port, addr, port, NULL))
-		return 0;
+	if (!udp_open(&sockets[fd], temp_port, addr, port, NULL)) return(0);
 
 	sock_write(&sockets[fd], sbuf, size);
-
 	sock_close(&sockets[fd]);
 
-	return 1;
+	return(1);
 } /* DgramSend */
 
 
@@ -621,8 +606,7 @@ int DgramSend(int fd, char *host, int port, char *sbuf, int size)
  *
  * Originally coded by Arne Helme
  */
-int DgramReceiveAny(int fd, char *rbuf, int size)
-{
+int DgramReceiveAny(int fd, char *rbuf, int size) {
 	/* The client doesn't use this one */
 } /* DgramReceiveAny */
 
@@ -662,8 +646,7 @@ int DgramReceiveAny(int fd, char *rbuf, int size)
  *
  * Originally coded by Arne Helme
  */
-int DgramReceive(int fd, char *from, char *rbuf, int size)
-{
+int DgramReceive(int fd, char *from, char *rbuf, int size) {
 	/* The client doesn't use this one */
 } /* DgramReceive */
 
@@ -700,8 +683,7 @@ int DgramReceive(int fd, char *from, char *rbuf, int size)
  *
  * Originally coded by Bert Gijsbers
  */
-int DgramReply(int fd, char *sbuf, int size)
-{
+int DgramReply(int fd, char *sbuf, int size) {
 	/* I don't think the client uses this one */
 } /* DgramReply */
 
@@ -736,10 +718,9 @@ int DgramReply(int fd, char *sbuf, int size)
  *
  * Originally coded by Bert Gijsbers
  */
-int DgramRead(int fd, char *rbuf, int size)
-{
+int DgramRead(int fd, char *rbuf, int size) {
 	tcp_tick(&sockets[fd]);
-	return (sock_fastread(&sockets[fd].udp, rbuf, size));
+	return(sock_fastread(&sockets[fd].udp, rbuf, size));
 } /* DgramRead */
 
 
@@ -774,9 +755,8 @@ int DgramRead(int fd, char *rbuf, int size)
  *
  * Originally coded by Bert Gijsbers
  */
-int DgramWrite(int fd, char *wbuf, int size)
-{
-	return (sock_write(&sockets[fd], wbuf, size));
+int DgramWrite(int fd, char *wbuf, int size) {
+	return(sock_write(&sockets[fd], wbuf, size));
 } /* DgramWrite */
 
 
@@ -811,11 +791,10 @@ int DgramWrite(int fd, char *wbuf, int size)
  *
  * Originally coded by Arne Helme
  */
-char *DgramLastaddr(void)
-{
+char *DgramLastaddr(void) {
 	/* I don't think the client uses this one */
 
-	return (NULL);
+	return(NULL);
 } /* DgramLastaddr */
 
 
@@ -852,11 +831,10 @@ char *DgramLastaddr(void)
  *
  * Originally coded by Bert Gijsbers
  */
-char *DgramLastname(void)
-{
+char *DgramLastname(void) {
 	/* I don't think the client uses this one */
 
-	return (NULL);
+	return(NULL);
 } /* DgramLastname */
 
 
@@ -889,11 +867,10 @@ char *DgramLastname(void)
  *
  * Originally coded by Arne Helme
  */
-int DgramLastport(void)
-{
+int DgramLastport(void) {
 	/* Not this one either */
 
-	return (NULL);
+	return(NULL);
 } /* DgramLastport */
 
 /*
@@ -925,8 +902,7 @@ int DgramLastport(void)
  *
  * Originally coded by Bert Gijsbers
  */
-void DgramClose(int fd)
-{
+void DgramClose(int fd) {
 	sock_close(&sockets[fd]);
 } /* DgramClose */
 
@@ -978,20 +954,17 @@ void do_DgramCloseSoft(int fd_idx) {
  *
  * Originally coded by Bert Gijsbers
  */
-void GetLocalHostName(char *name, unsigned size)
-{
+void GetLocalHostName(char *name, unsigned size) {
 	char host[1024], domain[1024];
 
-	if (!initialized)
-	{
+	if (!initialized) {
 		sock_init();
 		initialized = 1;
 	}
 
 	gethostname(host, 1024);
 
-	if (strlen(host) == 0)
-	{
+	if (strlen(host) == 0) {
 		printf("Couldn't get host name!\n");
 		printf("What is it, pray tell?\n");
 		gets(host);
@@ -1000,16 +973,12 @@ void GetLocalHostName(char *name, unsigned size)
 	printf("Host: %s\n", host);
 
   /*getdomainname(domain, 1024);
-
 	printf("Domain: %s\n", domain);
-
-	
 	strcat(host, domain);
   */
 
 	strncpy(name, host, size);
-
-    return;
+	return;
 } /* GetLocalHostName */
 
 
