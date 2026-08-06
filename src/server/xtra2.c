@@ -2791,8 +2791,8 @@ bool set_thero(int Ind, int v) {
 				set_fury(Ind, 0);
 			}
 
-			msg_format_near(Ind, "%s has become a killing machine.", p_ptr->name);
-			msg_print(Ind, "You feel like a killing machine!");
+			msg_format_near(Ind, "%s has become a *killing machine*.", p_ptr->name);
+			msg_print(Ind, "You feel like a *killing machine*!");
 			notice = TRUE;
 		}
 	}
