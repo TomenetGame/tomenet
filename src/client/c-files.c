@@ -963,6 +963,9 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 		}
 	}
 
+	/* Don't read too long macro strings */
+	buf[MACRO_MAXLEN - 1] = 0;
+
 	/* For all kinds of visual mappings (R/K/F/U/@/Z/r):
 	   Allow specifying animation steps and within each (or for a static step w/o animation) allow randomization, eg
 	   MAPCHAR:A-Anim1,Rchance1..m%:tile1..m,A-Anim2,Rchance1..n%:tile1..n% etc, or just
