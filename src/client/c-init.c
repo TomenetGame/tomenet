@@ -319,12 +319,6 @@ void initialize_player_pref_files(void) {
 	/* Access the "character" pref file */
 	load_charspec_macros(cname);
 
-	/* Special hack: On ARCADE_SERVER, load special arcade macros! */
-	if (s_ARCADE) {
-		sprintf(buf, "arcade-%s.prf", ANGBAND_SYS);
-		process_pref_file(buf);
-	}
-
 	/* Finally give the actual info how to check the tomenet log for details */
 	if (cfg_outdated == 1) cfg_outdated = 2;
 }

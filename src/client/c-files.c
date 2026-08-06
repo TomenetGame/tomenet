@@ -1476,11 +1476,20 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
  */
 errr process_pref_file(cptr name) {
 	char buf[1024];
+	int res;
 
 	/* Build the filename */
 	path_build(buf, 1024, ANGBAND_DIR_USER, name);
 	if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Processing prf file '%s'.\n", name)); //in GCU-only client this lands across the curses terminals instead of the console, pointless
-	return(process_pref_file_aux(buf, name, TRUE));
+	res = process_pref_file_aux(buf, name, TRUE);
+
+	/* Special hack: On ARCADE_SERVER, load special arcade macros! */
+	if (s_ARCADE && !strstr(name, format("arcade-%s.prf", ANGBAND_SYS))) {
+		sprintf(buf, "arcade-%s.prf", ANGBAND_SYS);
+		process_pref_file(buf);
+	}
+
+	return(res);
 }
 errr process_pref_file_manual(cptr name) {
 	char buf[1024];
