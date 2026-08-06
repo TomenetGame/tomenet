@@ -157,10 +157,10 @@ struct object_type {
  */
 struct skill_player
 {
-	s32b base_value;			     /* Actual value */
-	s32b value;			     /* Actual value */
-	u16b mod;			       /* Modifier(1 skill point = modifier skill) */
-	bool dev;			       /* Is the branch developped ? */
+	s32b base_value;		/* Actual value */
+	s32b value;			/* Actual value */
+	u16b mod;			/* Modifier(1 skill point = modifier skill) */
+	bool dev;			/* Is the branch developped ? */
 	char flags1;
 };
 
@@ -518,6 +518,7 @@ struct player_type {
 	s16b invuln;			/* Timed -- Invulnerable */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
+	s16b thero;			/* Timed -- Berserk (fighting technique version) */
 	s16b fury;			/* Timed -- Fury */
 	s16b shield;			/* Timed -- Shield Spell */
 	s16b tim_regen;			/* Timed extra regen */
@@ -531,7 +532,7 @@ struct player_type {
 	s16b tim_invis;			/* Timed -- See Invisible */
 	s16b tim_infra;			/* Timed -- Infra Vision */
 	s16b tim_wraith;		/* Timed -- Wraithform */
-	byte tim_wraithstep;			/* Wraithstep */
+	byte tim_wraithstep;		/* Wraithstep */
 	bool wraith_in_wall;
 	u16b tim_jail;
 	u16b tim_susp;
@@ -797,10 +798,10 @@ struct player_type {
 
 	u32b mode; /* Difficulty MODE */
 
-	s32b esp_link; /* Mental link */
+	s32b esp_link;		/* Mental link */
 	byte esp_link_type;
 	u16b esp_link_flags;
-	u16b esp_link_end; /* Time before actual end */
+	u16b esp_link_end;	/* Time before actual end */
 
 	/* additions */
 	bool black_breath;	/* The Tolkien's Black Breath */
@@ -818,7 +819,7 @@ struct player_type {
 	u16b team;
 
 #ifdef ARCADE_SERVER
-	/* Moltor's arcade crap */
+	/* Moltor's arcade crap (he's calling it crap but it's fukn' awesome *_* - Ed: C. Blue) */
 	int arc_a;
 	int arc_b;
 	int arc_c;
@@ -841,7 +842,7 @@ struct player_type {
 	int ret_dam;			/* Drained life from a monster */
 	const char *attacker;		/* Attacking player string, contains name and attack */
 
-	int luck;   /* Extra luck of this player */
+	int luck;			/* Extra luck of this player */
 
 	/* C. Blue - was the last shutdown a panic save? */
 	bool panic;
