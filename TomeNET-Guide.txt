@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 5. August 2026 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 6. August 2026 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -11593,6 +11593,17 @@ Berserk Rage:     Remove and resist fear.
                   Initially heals you for 30 HP.
                   Increases hit points (CHP and MHP) by 20.
                   Increases Strength by 10.
+                  Reduces AC by 10.
+                  Slightly increases your resistance to Psionic effects.
+                  Increases your throwing distance (but doesn't increase caps).
+
+Berserk Rage (Fighting technique version):
+                  Remove and resist fear.
+                  Initially heals you for 1/4 max HP.
+                  Increases hit points (CHP and MHP) by 50.
+                  Increases Strength by 10.
+                  Increases +damage by 10.
+                  Increases BpR by 1.
                   Reduces AC by 10.
                   Slightly increases your resistance to Psionic effects.
                   Increases your throwing distance (but doesn't increase caps).
@@ -26304,8 +26315,9 @@ The techniques are as follows:
         blows/round!
         (Spinning around costs a turn of energy.)
     Berserk             10 stamina
-        Temporary effects: Heals you for 30 HP, increases CHP and MHP by 20,
-        become fearless, -10 malus to ac and +10 to strength, compare (4.11c).
+        Temporary effects: Become fearless, heals you for 1/4 of your max HP,
+        increases CHP and MHP by 50, +1 attack per round (BpR),
+        -10 malus to ac, +10 to damage, +10 to strength, compare (4.11c).
         (Entering berserk rage does not cost movement energy.)
         Does not stack with a potion of berserk strength.
 

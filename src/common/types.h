@@ -3892,8 +3892,8 @@ struct player_type {
 	s16b invuln_dur;		/* How long this invuln was when it started */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
-	s16b berserk;			/* Timed -- Berserk #2 */
-	s16b fury;			/* Timed -- Furry */
+	s16b thero;			/* Timed -- Super Heroism aka 'Berserk' from Fighting Technique */
+	s16b fury;			/* Timed -- Fury */
 	s16b tim_thunder;		/* Timed thunderstorm */
 	s16b tim_thunder_p1;		/* Timed thunderstorm */
 	s16b tim_thunder_p2;		/* Timed thunderstorm */

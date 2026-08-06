@@ -3199,7 +3199,6 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_run_lite = 10;
 		p_ptr->warning_ranged_autoret = 1;
 		p_ptr->warning_mimic = 1;
-		p_ptr->warning_bash = 1;
 	}
 	if (p_ptr->max_plv > 15) {
 		p_ptr->warning_bpr = 1;
@@ -3214,6 +3213,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_id = 1;
 		p_ptr->warning_fill = 1;
 		p_ptr->warning_tss = 1;
+		p_ptr->warning_bash = 1;
 	}
 	if (p_ptr->max_plv > 20) {
 		p_ptr->warning_boomerang = 1;

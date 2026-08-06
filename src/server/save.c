@@ -1210,8 +1210,10 @@ static void wr_extra(int Ind) {
 	wr_byte(p_ptr->combosets);
 	wr_s16b(p_ptr->cut_bandaged);
 
+	wr_s16b(p_ptr->thero);
+
 	/* --- future use / HOLE: --- */
-	for (i = 0; i < 4; i++) wr_byte(0);
+	for (i = 0; i < 2; i++) wr_byte(0);
 
 	/* for shuffling/dealing a deck of cards */
 	wr_u16b(p_ptr->cards_diamonds);

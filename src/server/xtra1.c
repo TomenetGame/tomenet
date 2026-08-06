@@ -1977,7 +1977,10 @@ void calc_hitpoints(int Ind) {
 
 	/* Factor in the hero / superhero settings.
 	   Specialty: It's applied AFTER mimic form HP influence. */
-	if (p_ptr->shero) {
+	if (p_ptr->thero) {
+		mhp += 50;
+		p_ptr->mhp_tmp += 50;
+	} else if (p_ptr->shero) {
 		mhp += 20;
 		p_ptr->mhp_tmp += 20;
 	}
@@ -5044,12 +5047,21 @@ void calc_boni(int Ind) {
 	}
 
 	/* Temporary "Berserk"/"Berserk Strength" */
-	if (p_ptr->shero) {
+	if (p_ptr->shero || p_ptr->thero) {
 		p_ptr->to_a -= 10;
 		p_ptr->dis_to_a -= 10;
 		/* may greatly increase +dam and +bpr, also helps bashing doors open and tunnelling */
 		p_ptr->stat_add[A_STR] += 10;
 		p_ptr->stat_tmp[A_STR] += 10;
+	}
+	if (p_ptr->thero) {
+		/* +10 damage */
+		p_ptr->to_d += 10;
+		p_ptr->dis_to_d += 10;
+		p_ptr->to_d_tmp += 10;
+		/* +1 bpr */
+		extra_blows_tmp++;
+		p_ptr->extra_blows++;
 	}
 
 	/* Temporary "Fury" */
@@ -5077,8 +5089,7 @@ void calc_boni(int Ind) {
 	if (p_ptr->tim_infra) p_ptr->see_infra += 5;
 
 	/* Heart is boldened */
-	if (p_ptr->res_fear_temp || p_ptr->hero || p_ptr->shero ||
-	    p_ptr->fury || p_ptr->berserk || p_ptr->mindboost)
+	if (p_ptr->res_fear_temp || p_ptr->hero || p_ptr->shero || p_ptr->thero || p_ptr->fury || p_ptr->mindboost)
 		p_ptr->resist_fear = TRUE;
 
 

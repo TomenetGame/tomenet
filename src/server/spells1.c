@@ -11700,7 +11700,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (rand_int(100) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) /* An open mind invites psi attacks */
 			psi_resists++;
 		if (p_ptr->mindboost && magik(p_ptr->mindboost_power)) psi_resists++;
-		if (p_ptr->shero) psi_resists++; /* Note: Berserk is like a trance and actually increases your resistance to psionic effects (!) :) .. */
+		if (p_ptr->shero || p_ptr->thero) psi_resists++; /* Note: Berserk is like a trance and actually increases your resistance to psionic effects (!) :) .. */
 
 		if ((p_ptr->fury) && (rand_int(100) >= p_ptr->skill_sav)) psi_resists--; /* ..unlike fury, which is swinging around wildly while super annoyed */
 		if (p_ptr->confused) psi_resists--;
@@ -12613,7 +12613,8 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		break;
 
 	case GF_SHERO_PLAYER:
-		(void)set_shero(Ind, dam); /* removed stacking */
+		if (!p_ptr->thero) /* don't overwrite Berserk fighting technique */
+			(void)set_shero(Ind, dam); /* removed stacking */
 		dam = 0;
 		break;
 

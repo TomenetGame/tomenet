@@ -1482,7 +1482,7 @@ void self_knowledge(int Ind) {
 	if (p_ptr->blessed > 0) fprintf(fff, "You feel rightous.\n");
 	else if (p_ptr->blessed < 0) fprintf(fff, "You are enveloped in cursed moonlight.\n");
 	if (p_ptr->hero) fprintf(fff, "You feel heroic.\n");
-	if (p_ptr->shero) fprintf(fff, "You are in a berserk rage.\n");
+	if (p_ptr->shero || p_ptr->thero) fprintf(fff, "You are in a berserk rage.\n");
 	if (p_ptr->fury) fprintf(fff, "You are in a wild fury.\n");
 	if (p_ptr->protevil) fprintf(fff, "You are protected from evil.\n");
 #if 0

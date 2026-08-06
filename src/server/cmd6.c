@@ -8598,6 +8598,7 @@ bool unmagic(int Ind) {
 		set_dispersion(Ind, 0, 0) +
 		set_hero(Ind, 0) +
 		set_shero(Ind, 0) +
+		/* set_thero(Ind, 0) +   --- exempt for now, as Fighting Technique considered physical rather than magic, hmmm */
 		set_fury(Ind, 0) +
 		set_protevil(Ind, 0, FALSE) +
 		set_invuln(Ind, 0) +
@@ -9725,7 +9726,7 @@ void do_cmd_melee_technique(int Ind, int technique) {
 
 		use_stamina(p_ptr, 10);
 		un_afk_idle(Ind);
-		set_shero(Ind, randint(5) + 15);
+		set_thero(Ind, randint(5) + 15);
 		s_printf("TECHNIQUE_MELEE: %s - berserk\n", p_ptr->name);
 		p_ptr->warning_technique_melee = 1;
 		break;

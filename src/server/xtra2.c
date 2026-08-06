@@ -1522,7 +1522,7 @@ bool set_fury(int Ind, int v) {
 	if (v) {
 		if (!p_ptr->fury) {
 			set_afraid(Ind, 0);
-			if (p_ptr->shero) {
+			if (p_ptr->shero || p_ptr->thero) {
 				msg_print(Ind, "You cannot grow additional fury while in a berserk rage!");
 				return(FALSE);
 			}
@@ -2718,6 +2718,9 @@ bool set_shero(int Ind, int v) {
 	/* Hack -- Force good values */
 	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
 
+	/* No effect if thero is already active */
+	if (p_ptr->thero) v = 0;
+
 	/* Open */
 	if (v) {
 		if (!p_ptr->shero) {
@@ -2736,7 +2739,7 @@ bool set_shero(int Ind, int v) {
 	}
 	/* Shut */
 	else {
-		if (p_ptr->shero) {
+		if (p_ptr->shero && !p_ptr->thero) {
 			msg_format_near(Ind, "%s has returned to being a wimp.", p_ptr->name);
 			msg_print(Ind, "You feel less Berserk.");
 			notice = TRUE;
@@ -2745,6 +2748,65 @@ bool set_shero(int Ind, int v) {
 
 	/* Use the value */
 	p_ptr->shero = v;
+
+	/* Nothing to notice */
+	if (!notice) return(FALSE);
+
+	/* Disturb */
+	if (p_ptr->disturb_state) disturb(Ind, 0, 0);
+
+	/* Recalculate boni + hit points */
+	p_ptr->update |= (PU_BONUS | PU_HP);
+
+	/* Handle stuff */
+	handle_stuff(Ind);
+
+	/* Result */
+	return(TRUE);
+}
+
+/*
+ * Set "p_ptr->thero", notice observable changes ('Berserk Rage' special fighting technique version aka 'professional Berserk rage' ;)
+ * - overrides normal Berserk Rage, overrides Fury)
+ */
+bool set_thero(int Ind, int v) {
+	player_type *p_ptr = Players[Ind];
+	bool notice = FALSE;
+
+	/* Hack -- Force good values */
+	v = (v > cfg.spell_stack_limit) ? cfg.spell_stack_limit : (v < 0) ? 0 : v;
+
+	/* Open */
+	if (v) {
+		if (!p_ptr->thero) {
+			hp_player(Ind, p_ptr->mhp / 4, TRUE, FALSE);
+			set_afraid(Ind, 0);
+
+			/* Replace shero */
+			if (p_ptr->shero) set_shero(Ind, 0);
+
+			/* Replace fury */
+			if (p_ptr->fury) {
+				msg_print(Ind, "The berserk rage replaces your fury!");
+				set_fury(Ind, 0);
+			}
+
+			msg_format_near(Ind, "%s has become a killing machine.", p_ptr->name);
+			msg_print(Ind, "You feel like a killing machine!");
+			notice = TRUE;
+		}
+	}
+	/* Shut */
+	else {
+		if (p_ptr->thero) {
+			msg_format_near(Ind, "%s has returned to being a wimp.", p_ptr->name);
+			msg_print(Ind, "You feel less Berserk.");
+			notice = TRUE;
+		}
+	}
+
+	/* Use the value */
+	p_ptr->thero = v;
 
 	/* Nothing to notice */
 	if (!notice) return(FALSE);

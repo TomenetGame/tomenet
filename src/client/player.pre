@@ -130,10 +130,10 @@ struct player_type {
 	s16b fruit_bat;		/* Are we a fruit bat */
 	byte lives;		/* number of times we have ressurected */
 
-	byte prace;			/* Race index */
-	byte pclass;			/* Class index */
-	byte ptrait;			/* Trait index */
-	byte male;			/* Sex of character */
+	byte prace;		/* Race index */
+	byte pclass;		/* Class index */
+	byte ptrait;		/* Trait index */
+	byte male;		/* Sex of character */
 
 	skill_player s_info[MAX_SKILLS]; /* Player skills */
 	s16b skill_points;      /* number of skills assignable */
@@ -141,16 +141,16 @@ struct player_type {
 	byte hitdie;		/* Hit dice (sides) */
 	s16b expfact;		/* Experience factor */
 
-	s32b au;			/* Current Gold */
+	s32b au;		/* Current Gold */
 
 	s32b max_exp;		/* Max experience */
-	s32b exp;			/* Cur experience */
+	s32b exp;		/* Cur experience */
 	u16b exp_frac;		/* Cur exp frac (times 2^16) */
 
-	s16b lev;			/* Level */
+	s16b lev;		/* Level */
 
-	s16b mhp;			/* Max hit pts */
-	s16b chp;			/* Cur hit pts */
+	s16b mhp;		/* Max hit pts */
+	s16b chp;		/* Cur hit pts */
 	u16b chp_frac;		/* Cur hit frac (times 2^16) */
 
 	s16b player_hp[PY_MAX_LEVEL];
@@ -284,15 +284,14 @@ struct player_type {
 	s16b panel_col_old;
 
 	char died_from[80];	/* What off-ed him */
-	char died_from_list[80]; /* what goes on the high score list */
+	char died_from_list[80];/* what goes on the high score list */
 	s16b died_from_depth;	/* what depth we died on */
 
 	u16b total_winner;	/* Is this guy the winner */
 	struct worldpos own1;
 	struct worldpos own2;
 	u16b retire_timer;	/* The number of minutes this guy can play until
-				   he will be forcibly retired.
-				 */
+				   he will be forcibly retired. */
 
 	u16b noscore;		/* Has he cheated in some way (hopefully not) */
 	s16b command_rep;	/* Command repetition */
@@ -317,7 +316,7 @@ struct player_type {
 	s16b current_mind;	/* Power being use */
 	s16b current_rod;	/* Rod being zapped */
 	s16b current_activation;/* Artifact (or dragon mail) being activated */
-	s16b current_enchant_h; /* Current enchantments */
+	s16b current_enchant_h;	/* Current enchantments */
 	s16b current_enchant_d;
 	s16b current_enchant_a;
 	s16b current_identify;	/* Are we identifying something? */
@@ -333,17 +332,17 @@ struct player_type {
 
 	int store_num;		/* What store this guy is in */
 
-	s16b fast;			/* Timed -- Fast */
-	s16b slow;			/* Timed -- Slow */
-	s16b blind;			/* Timed -- Blindness */
+	s16b fast;		/* Timed -- Fast */
+	s16b slow;		/* Timed -- Slow */
+	s16b blind;		/* Timed -- Blindness */
 	s16b paralyzed;		/* Timed -- Paralysis */
 	s16b confused;		/* Timed -- Confusion */
 	s16b afraid;		/* Timed -- Fear */
-	s16b image;			/* Timed -- Hallucination */
+	s16b image;		/* Timed -- Hallucination */
 	s16b poisoned;		/* Timed -- Poisoned */
 	s16b diseased;		/* Timed -- Diseased */
-	s16b cut;			/* Timed -- Cut */
-	s16b stun;			/* Timed -- Stun */
+	s16b cut;		/* Timed -- Cut */
+	s16b stun;		/* Timed -- Stun */
 
 	s16b protevil;		/* Timed -- Protection */
 	s16b zeal;
@@ -351,9 +350,10 @@ struct player_type {
 	s16b martyr;
 	s16b martyr_timeout;
 	s16b invuln;		/* Timed -- Invulnerable */
-	s16b hero;			/* Timed -- Heroism */
-	s16b shero;			/* Timed -- Super Heroism */
-	s16b fury;			/* Timed -- Furry */
+	s16b hero;		/* Timed -- Heroism */
+	s16b shero;		/* Timed -- Berserk */
+	s16b thero;		/* Timed -- Berserk (fighting technique version) */
+	s16b fury;		/* Timed -- Fury */
 	s16b shield;		/* Timed -- Shield Spell */
 	s16b blessed;		/* Timed -- Blessed */
 	s16b tim_invis;		/* Timed -- See Invisible */
@@ -361,7 +361,7 @@ struct player_type {
 	s16b tim_wraith;	/* Timed -- Wraithform */
 	bool wraith_in_wall;
 	s16b tim_meditation;	/* Timed -- Meditation */
-	s16b tim_invisibility;		/* Timed -- Invisibility */
+	s16b tim_invisibility;	/* Timed -- Invisibility */
 	s16b tim_invis_power;	/* Timed -- Invisibility Power */
 	s16b tim_traps; 	/* Timed -- Avoid traps */
 	s16b tim_manashield;    /* Timed -- Mana Shield */
@@ -370,12 +370,12 @@ struct player_type {
 	s16b ammo_brand; 	/* Timed -- Bow Branding */
 	byte ammo_brand_t; 	/* Timed -- Bow Branding */
 	s16b ammo_brand_d; 	/* Timed -- Bow Branding */
-	s16b nimbus;      /* Timed -- Magic brand, shield, resist - Kurzel */
-	byte nimbus_t;    /* Timed -- GF_TYPE to resist and project() */
-	byte nimbus_d;    /* Timed -- Damage for project() */
-	s16b prob_travel;       /* Timed -- Probability travel */
-	s16b st_anchor;         /* Timed -- Space/Time Anchor */
-	s16b tim_esp;           /* Timed -- ESP */
+	s16b nimbus;		/* Timed -- Magic brand, shield, resist - Kurzel */
+	byte nimbus_t;		/* Timed -- GF_TYPE to resist and project() */
+	byte nimbus_d;		/* Timed -- Damage for project() */
+	s16b prob_travel;	/* Timed -- Probability travel */
+	s16b st_anchor;		/* Timed -- Space/Time Anchor */
+	s16b tim_esp;		/* Timed -- ESP */
 	s16b adrenaline;
 	s16b biofeedback;
 
@@ -392,7 +392,7 @@ struct player_type {
 
 	s16b energy;		/* Current energy */
 
-	s16b food;			/* Current nutrition */
+	s16b food;		/* Current nutrition */
 
 	byte confusing;		/* Glowing hands */
 	byte stunning;		/* Heavy hands */
@@ -434,10 +434,10 @@ struct player_type {
 	bool immune_fire;	/* Immunity to fire */
 	bool immune_cold;	/* Immunity to cold */
 
-	s16b reduc_fire;        /* Fire damage reduction */
-	s16b reduc_elec;        /* elec damage reduction */
-	s16b reduc_acid;        /* acid damage reduction */
-	s16b reduc_cold;        /* cold damage reduction */
+	s16b reduc_fire;	/* Fire damage reduction */
+	s16b reduc_elec;	/* elec damage reduction */
+	s16b reduc_acid;	/* acid damage reduction */
+	s16b reduc_cold;	/* cold damage reduction */
 
 	bool resist_acid;	/* Resist acid */
 	bool resist_elec;	/* Resist lightning */
@@ -495,11 +495,11 @@ struct player_type {
 
 	s16b dis_ac;		/* Known base ac */
 
-	s16b to_h;			/* Bonus to hit */
-	s16b to_d;			/* Bonus to dam */
-	s16b to_a;			/* Bonus to ac */
+	s16b to_h;		/* Bonus to hit */
+	s16b to_d;		/* Bonus to dam */
+	s16b to_a;		/* Bonus to ac */
 
-	s16b ac;			/* Base ac */
+	s16b ac;		/* Base ac */
 
 	s16b see_infra;		/* Infravision range */
 
@@ -527,12 +527,12 @@ struct player_type {
  	s16b r_killed[MAX_R_IDX];	/* Monsters killed */
  	s16b r_mimicry[MAX_R_IDX];	/* Monster kill count for mimicry */
 
-	s32b innate_spells[4]; /* Monster spells */
+	s32b innate_spells[4];		/* Monster spells */
 	bool body_changed;
 
 	bool anti_magic;	/* Can the player resist magic */
 
-	player_list_type *blood_bond; /* Norc is now happy :) */
+	player_list_type *blood_bond;	/* Norc is now happy :) */
 
 	u32b mode; /* Difficulty MODE */
 
@@ -541,14 +541,15 @@ struct player_type {
 	u16b esp_link_flags;
 	u16b esp_link_end; /* Time before actual end */
 
-		/* additions */
-	bool black_breath;      /* The Tolkien's Black Breath */
+	/* --- additions --- */
 
-	s16b msane;                   /* Max sanity */
-	s16b csane;                   /* Cur sanity */
-	u16b csane_frac;              /* Cur sanity frac */
+	bool black_breath;	/* The Tolkien's Black Breath */
 
-	int limit_spells; /* LIMIT_SPELLS server-side */
+	s16b msane;		/* Max sanity */
+	s16b csane;		/* Cur sanity */
+	u16b csane_frac;	/* Cur sanity frac */
+
+	int limit_spells;	/* LIMIT_SPELLS server-side */
 	bool add_kind_diz;
 	bool hide_lore_paste;
 	bool new_retaliator;

@@ -2398,6 +2398,7 @@ extern bool set_dispersion(int Ind, byte v, byte d);
 extern bool set_res_fear(int Ind, int v);
 extern bool set_hero(int Ind, int v);
 extern bool set_shero(int Ind, int v);
+extern bool set_thero(int Ind, int v);
 extern bool set_melee_sprint(int Ind, int v);
 extern bool set_protevil(int Ind, int v, bool own);
 extern bool set_zeal(int Ind, int p, int v);

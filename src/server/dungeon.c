@@ -5157,7 +5157,7 @@ int food_consumption(int Ind) {
 #endif
 	if (p_ptr->regenerate || p_ptr->xtrastat_tim) i += 15;
 	/* Other stat-boosting effects: */
-	if (p_ptr->shero || p_ptr->fury) i += 20;
+	if (p_ptr->shero || p_ptr->fury || p_ptr->thero) i += 20;
 	else if (p_ptr->hero) i += 10;
 
 	/* Non-magical regeneration burns enormously more food temporarily: Fast metabolism! */
@@ -6203,6 +6203,10 @@ static bool process_player_end_aux(int Ind) {
 	/* Berserk */
 	if (p_ptr->shero)
 		(void)set_shero(Ind, p_ptr->shero - 1);
+
+	/* Berserk (Fighting Technique) */
+	if (p_ptr->thero)
+		(void)set_thero(Ind, p_ptr->thero - 1);
 
 	/* Fury */
 	if (p_ptr->fury)

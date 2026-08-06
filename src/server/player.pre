@@ -518,7 +518,7 @@ struct player_type {
 	s16b invuln;			/* Timed -- Invulnerable */
 	s16b hero;			/* Timed -- Heroism */
 	s16b shero;			/* Timed -- Super Heroism */
-	s16b fury;			/* Timed -- Furry */
+	s16b fury;			/* Timed -- Fury */
 	s16b shield;			/* Timed -- Shield Spell */
 	s16b tim_regen;			/* Timed extra regen */
 	s16b tim_regen_pow;		/* Timed extra regen power */

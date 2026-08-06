@@ -8897,7 +8897,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 	/* Hack -- Distance -- Reward strength, penalize weight */
 	tdis = (adj_str_blow[p_ptr->stat_ind[A_STR]] + 20) * mul / div;
-	if (p_ptr->shero) tdis += 100 * mul / div;
+	if (p_ptr->shero || p_ptr->thero) tdis += 100 * mul / div;
 
 	/* hack for rugby - all throws capped */
 	if (o_ptr->tval == TV_GAME && o_ptr->sval == SV_GAME_BALL) {
