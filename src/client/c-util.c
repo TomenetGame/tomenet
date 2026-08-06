@@ -9084,10 +9084,10 @@ Chain_Macro:
 									    fileset[fileset_selected].stages ? "\377Gt\377-" : "\377Dt"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
 									    "\377Gi\377-" : "\377Di", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (\377oforgets active macros\377- & loads stage macrofile)",
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate/load a stage (\377yforgets active macros\377- & loads stage macrofile)",
 									    fileset[fileset_selected].stages ? "\377Ga\377-" : "\377Da"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377Gw\377-) Write all currently active macros to the activated stage file%s",
-									    fileset_stage_selected == -1 ? "" : format(" (\377B%d\377-)", fileset_stage_selected + 1)));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377Gw\377-) Write all currently active macros to the activated stage %sfile",
+									    fileset_stage_selected == -1 ? "" : format("[\377B%d\377-] ", fileset_stage_selected + 1)));
 								}
 
 								l++;
@@ -9172,10 +9172,10 @@ Chain_Macro:
 									    fileset[fileset_selected].stages ? "\377Gt\377-" : "\377Dt"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
 									    "\377Gi\377-" : "\377Di", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate a stage (\377oforgets active macros\377- & loads stage macrofile)",
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate/load a stage (\377yforgets active macros\377- & loads stage macrofile)",
 									    fileset[fileset_selected].stages ? "\377Ga\377-" : "\377Da"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377Gw\377-) Write all currently active macros to the activated stage file%s",
-									    fileset_stage_selected == -1 ? "" : format(" (\377B%d\377-)", fileset_stage_selected + 1)));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377Gw\377-) Write all currently active macros to the activated stage %sfile",
+									    fileset_stage_selected == -1 ? "" : format("[\377B%d\377-] ", fileset_stage_selected + 1)));
 								}
 
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "After selecting a set (and stage), you can leave this menu with \377GESC\377- to work");
@@ -9708,13 +9708,15 @@ Chain_Macro:
 							    //todo..
 								break;
 
-							case 'a': //activate a stage
+							case 'a': //activate(+load) a stage
 								if (fileset_selected == -1) {
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
 								GET_MACROFILESET_STAGE
 								fileset_stage_selected = f;
+							    //todo: ask whether or not we want to clear all macros
+							    //todo: load the stage's macro file to macro memory
 								break;
 
 							case 'c': // change a stage's comment
