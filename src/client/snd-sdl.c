@@ -2872,7 +2872,7 @@ static bool play_music_vol(int event, char vol) {
 		if (event < 0 || songs[event].num) jukebox_org = (event < 0 ? -1 : event);
 		/* Special hack for ghost music (4.7.4b+), see handle_music() in util.c */
 		if (event == 89 && songs[event].num && is_atleast(&server_version, 4, 7, 4, 2, 0, 0)) skip_received_music = TRUE;
-		return (event < 0 || songs[event].num != 0);
+		return(event < 0 || songs[event].num != 0);
 	} else if (jukebox_screen) {
 		/* Still update jukebox_org et al, as they WILL be restored even if jukebox wasn't playing at all (could be prevented for efficiency I guess, pft) */
 		/* Check there are samples for this event, otherwise don't remember (unless it's a 'stop music' event sort of thing) */

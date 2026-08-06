@@ -8778,7 +8778,7 @@ int check_monster(worldpos *wpos, int y, int x) {
 		m_ptr = &m_list[c_ptr->m_idx];
 		return(m_ptr->r_idx);
 	} else {
-		return 0;
+		return(0);
 	}
 }
 int check_monster_ego(worldpos *wpos, int y, int x) {

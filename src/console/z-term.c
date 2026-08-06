@@ -218,16 +218,10 @@ byte flick_colour(byte attr);
  */
 
 
-
-
-
-
 /*
  * The current "term"
  */
 term *Term = NULL;
-
-
 
 
 /*** Local routines ***/
@@ -246,7 +240,7 @@ static errr term_win_nuke(term_win *s, int w, int h) {
 	C_KILL(s->vc, h * w, char);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -271,7 +265,7 @@ static errr term_win_init(term_win *s, int w, int h) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -303,9 +297,8 @@ static errr term_win_copy(term_win *s, term_win *f, int w, int h) {
 	s->cv = f->cv;
 
 	/* Success */
-	return (0);
+	return(0);
 }
-
 
 
 /*** Local routines ***/
@@ -388,8 +381,6 @@ static void QueueAttrChars(int x, int y, int n, byte a, cptr s) {
 }
 
 
-
-
 /*** External hooks ***/
 
 
@@ -397,8 +388,8 @@ static void QueueAttrChars(int x, int y, int n, byte a, cptr s) {
  * Perform the "user action" of type "n".
  */
 errr Term_user(int n) {
-	if (!Term->user_hook) return (-1);
-	return ((*Term->user_hook)(n));
+	if (!Term->user_hook) return(-1);
+	return((*Term->user_hook)(n));
 }
 
 /*
@@ -409,8 +400,8 @@ errr Term_user(int n) {
  * parameters may not make sense unless called from "term.c".
  */
 errr Term_xtra(int n, int v) {
-	if (!Term->xtra_hook) return (-1);
-	return ((*Term->xtra_hook)(n, v));
+	if (!Term->xtra_hook) return(-1);
+	return((*Term->xtra_hook)(n, v));
 }
 
 
@@ -424,10 +415,10 @@ errr Term_xtra(int n, int v) {
  */
 static errr Term_curs_hack(int x, int y) {
 	/* XXX XXX XXX */
-	if (x || y) return (-2);
+	if (x || y) return(-2);
 
 	/* Oops */
-	return (-1);
+	return(-1);
 }
 
 /*
@@ -436,10 +427,10 @@ static errr Term_curs_hack(int x, int y) {
  */
 static errr Term_wipe_hack(int x, int y, int n) {
 	/* XXX XXX XXX */
-	if (x || y || n) return (-2);
+	if (x || y || n) return(-2);
 
 	/* Oops */
-	return (-1);
+	return(-1);
 }
 
 /*
@@ -448,10 +439,10 @@ static errr Term_wipe_hack(int x, int y, int n) {
  */
 static errr Term_pict_hack(int x, int y, byte a, char c) {
 	/* XXX XXX XXX */
-	if (x || y || a || c) return (-2);
+	if (x || y || a || c) return(-2);
 
 	/* Oops */
-	return (-1);
+	return(-1);
 }
 
 /*
@@ -460,10 +451,10 @@ static errr Term_pict_hack(int x, int y, byte a, char c) {
  */
 static errr Term_text_hack(int x, int y, int n, byte a, cptr s) {
 	/* XXX XXX XXX */
-	if (x || y || n || a || s) return (-2);
+	if (x || y || n || a || s) return(-2);
 
 	/* Oops */
-	return (-1);
+	return(-1);
 }
 
 #ifdef CLIENT_SHIMMER
@@ -472,20 +463,20 @@ static errr Term_text_hack(int x, int y, int n, byte a, cptr s) {
  */
 static char get_shimmer_color() {
 	switch (randint(7)) {
-		case 1:
-			return(TERM_RED);
-		case 2:
-			return(TERM_L_RED);
-		case 3:
-			return(TERM_WHITE);
-		case 4:
-			return(TERM_L_GREEN);
-		case 5:
-			return(TERM_BLUE);
-		case 6:
-			return(TERM_L_DARK);
-		case 7:
-			return(TERM_GREEN);
+	case 1:
+		return(TERM_RED);
+	case 2:
+		return(TERM_L_RED);
+	case 3:
+		return(TERM_WHITE);
+	case 4:
+		return(TERM_L_GREEN);
+	case 5:
+		return(TERM_BLUE);
+	case 6:
+		return(TERM_L_DARK);
+	case 7:
+		return(TERM_GREEN);
 	}
 	return(TERM_VIOLET);
 }
@@ -572,48 +563,47 @@ byte flick_colour(byte attr) {
 		}
 	}
 	switch (attr) {
-		case TERM_MULTI:
-			return(randint(15));
-			break;	/* unnecessary breaks ;) */
-		case TERM_FIRE:
-			return(randint(7) > 6 ? TERM_YELLOW : rand_int(3) > 1 ? TERM_RED : TERM_L_RED);
-			break;
-		case TERM_POIS:
-			return(randint(5) > 3 ? TERM_GREEN : TERM_L_GREEN);
-			break;
-		case TERM_COLD:
-			return(randint(5) > 3 ? TERM_WHITE : TERM_L_WHITE);
-			break;
-		case TERM_ELEC:
-			return(randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE));
-			break;
-		case TERM_HALF:
-			return(get_shimmer_color());
-			break;
-		case TERM_ACID:
-			return(randint(5) > 4 ? TERM_L_DARK : TERM_SLATE);
-			break;
-		case TERM_CONF:
-			return(randint(5) > 3 ? TERM_UMBER : TERM_L_UMBER);
-			break;
-		case TERM_SOUN:
-			return(randint(5) > 3 ? TERM_L_UMBER : TERM_YELLOW);
-			break;
-		case TERM_SHAR:
-			return(randint(5) > 3 ? TERM_UMBER : TERM_SLATE);
-			break;
-		case TERM_LITE:
-			return(randint(5) > 3 ? TERM_ORANGE : TERM_YELLOW);
-			break;
-		case TERM_DARKNESS:
-			return(randint(5) > 4 ? TERM_SLATE : TERM_L_DARK);
-			break;
-		/* NOTE: TERM_SHAL_LAVA, TERM_DEEP_LAVA, TERM_SHAL_WATER,
-		 * TERM_DEEP_WATER would be nice for terrains  - Jir - */
+	case TERM_MULTI:
+		return(randint(15));
+		break;	/* unnecessary breaks ;) */
+	case TERM_FIRE:
+		return(randint(7) > 6 ? TERM_YELLOW : rand_int(3) > 1 ? TERM_RED : TERM_L_RED);
+		break;
+	case TERM_POIS:
+		return(randint(5) > 3 ? TERM_GREEN : TERM_L_GREEN);
+		break;
+	case TERM_COLD:
+		return(randint(5) > 3 ? TERM_WHITE : TERM_L_WHITE);
+		break;
+	case TERM_ELEC:
+		return(randint(7) > 6 ? TERM_WHITE : (randint(4) == 1 ? TERM_L_BLUE : TERM_BLUE));
+		break;
+	case TERM_HALF:
+		return(get_shimmer_color());
+		break;
+	case TERM_ACID:
+		return(randint(5) > 4 ? TERM_L_DARK : TERM_SLATE);
+		break;
+	case TERM_CONF:
+		return(randint(5) > 3 ? TERM_UMBER : TERM_L_UMBER);
+		break;
+	case TERM_SOUN:
+		return(randint(5) > 3 ? TERM_L_UMBER : TERM_YELLOW);
+		break;
+	case TERM_SHAR:
+		return(randint(5) > 3 ? TERM_UMBER : TERM_SLATE);
+		break;
+	case TERM_LITE:
+		return(randint(5) > 3 ? TERM_ORANGE : TERM_YELLOW);
+		break;
+	case TERM_DARKNESS:
+		return(randint(5) > 4 ? TERM_SLATE : TERM_L_DARK);
+		break;
+	/* NOTE: TERM_SHAL_LAVA, TERM_DEEP_LAVA, TERM_SHAL_WATER,
+	 * TERM_DEEP_WATER would be nice for terrains  - Jir - */
 
-
-		default:
-			return(attr);
+	default:
+		return(attr);
 	}
 }
 
@@ -1575,17 +1565,17 @@ errr Term_draw(int x, int y, byte a, char c) {
 	int h = Term->hgt;
 
 	/* Verify location */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w)) return(-1);
+	if ((y < 0) || (y >= h)) return(-1);
 
 	/* Paranoia -- illegal char */
-	if (!c) return (-2);
+	if (!c) return(-2);
 
 	/* Queue it for later */
 	QueueAttrChar(x, y, a, c);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1609,10 +1599,10 @@ errr Term_addch(byte a, char c) {
 	int w = Term->wid;
 
 	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return (-1);
+	if (Term->scr->cu) return(-1);
 
 	/* Paranoia -- no illegal chars */
-	if (!c) return (-2);
+	if (!c) return(-2);
 
 	/* Queue the given character for display */
 	QueueAttrChar(Term->scr->cx, Term->scr->cy, a, c);
@@ -1621,13 +1611,13 @@ errr Term_addch(byte a, char c) {
 	Term->scr->cx++;
 
 	/* Success */
-	if (Term->scr->cx < w) return (0);
+	if (Term->scr->cx < w) return(0);
 
 	/* Note "Useless" cursor */
 	Term->scr->cu = 1;
 
 	/* Note "Useless" cursor */
-	return (1);
+	return(1);
 }
 
 
@@ -1658,7 +1648,7 @@ errr Term_addstr(int n, byte a, cptr s) {
 	errr res = 0;
 
 	/* Handle "unusable" cursor */
-	if (Term->scr->cu) return (-1);
+	if (Term->scr->cu) return(-1);
 
 	/* Obtain maximal length */
 	k = (n < 0) ? (w + 1) : n;
@@ -1679,7 +1669,7 @@ errr Term_addstr(int n, byte a, cptr s) {
 	if (res) Term->scr->cu = 1;
 
 	/* Success (usually) */
-	return (res);
+	return(res);
 }
 
 
@@ -1690,13 +1680,13 @@ errr Term_putch(int x, int y, byte a, char c) {
 	errr res;
 
 	/* Move first */
-	if ((res = Term_gotoxy(x, y)) != 0) return (res);
+	if ((res = Term_gotoxy(x, y)) != 0) return(res);
 
 	/* Then add the char */
-	if ((res = Term_addch(a, c)) != 0) return (res);
+	if ((res = Term_addch(a, c)) != 0) return(res);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1710,12 +1700,12 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 	int b;
 
 	/* Move first */
-	if ((res = Term_gotoxy(x, y)) != 0) return (res);
+	if ((res = Term_gotoxy(x, y)) != 0) return(res);
 
 	ptr = strchr(s,'\377');
 	if (!ptr) {
 		/* Then add the string */
-		if ((res = Term_addstr(n, a, s)) != 0) return (res);
+		if ((res = Term_addstr(n, a, s)) != 0) return(res);
 		return(0);
 	}
 
@@ -1739,7 +1729,7 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 	if (strlen(s)) Term_addstr(strlen(s),a,s);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1764,7 +1754,7 @@ errr Term_erase(int x, int y, int n) {
 
 
 	/* Place cursor */
-	if (Term_gotoxy(x, y)) return (-1);
+	if (Term_gotoxy(x, y)) return(-1);
 
 	/* Force legal size */
 	if (x + n > w) n = w - x;
@@ -1804,7 +1794,7 @@ errr Term_erase(int x, int y, int n) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1852,7 +1842,7 @@ errr Term_clear(void) {
 	Term->total_erase = TRUE;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 /*
@@ -1866,7 +1856,7 @@ errr Term_redraw(void) {
 	Term_fresh();
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 #if 0	/* CURRENTLY unused */
@@ -1905,11 +1895,9 @@ errr Term_redraw_section(int x1, int y1, int x2, int y2) {
 	Term_fresh();
 
 	/* Success */
-	return (0);
+	return(0);
 }
 #endif
-
-
 
 
 
@@ -1924,7 +1912,7 @@ errr Term_get_cursor(int *v) {
 	(*v) = Term->scr->cv;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1937,7 +1925,7 @@ errr Term_get_size(int *w, int *h) {
 	(*h) = Term->hgt;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1950,10 +1938,10 @@ errr Term_locate(int *x, int *y) {
 	(*y) = Term->scr->cy;
 
 	/* Warn about "useless" cursor */
-	if (Term->scr->cu) return (1);
+	if (Term->scr->cu) return(1);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -1967,15 +1955,15 @@ errr Term_what(int x, int y, byte *a, char *c) {
 	int h = Term->hgt;
 
 	/* Verify location */
-	if ((x < 0) || (x >= w)) return (-1);
-	if ((y < 0) || (y >= h)) return (-1);
+	if ((x < 0) || (x >= w)) return(-1);
+	if ((y < 0) || (y >= h)) return(-1);
 
 	/* Direct access */
 	(*a) = Term->scr->a[y][x];
 	(*c) = Term->scr->c[y][x];
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2015,7 +2003,7 @@ errr Term_flush(void) {
 	/* XXX XXX XXX */
 	if (Term_inkey_hook) {
 		/* Special "Borg" hook (flush keys) */
-		return ((*Term_inkey_hook)(NULL, 0, 0));
+		return((*Term_inkey_hook)(NULL, 0, 0));
 	}
 
 	/* Hack -- Flush all events */
@@ -2025,7 +2013,7 @@ errr Term_flush(void) {
 	Term->key_head = Term->key_tail = 0;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2105,7 +2093,7 @@ static void Term_decrease_queue() {
  */
 errr Term_keypress(int k) {
 	/* Hack -- Refuse to enqueue non-keys */
-	if (!k) return (-1);
+	if (!k) return(-1);
 
 	/* Store the char, advance the queue */
 	Term->key_queue[Term->key_head++] = k;
@@ -2121,10 +2109,10 @@ errr Term_keypress(int k) {
 	if (Term->key_head == Term->key_size) Term->key_head = 0;
 
 	/* Success (unless overflow) */
-	if (Term->key_head != Term->key_tail) return (0);
+	if (Term->key_head != Term->key_tail) return(0);
 
 	/* Problem */
-	return (1);
+	return(1);
 }
 
 
@@ -2133,7 +2121,7 @@ errr Term_keypress(int k) {
  */
 errr Term_key_push(int k) {
 	/* Hack -- Refuse to enqueue non-keys */
-	if (!k) return (-1);
+	if (!k) return(-1);
 
 	/* Hack -- Overflow may induce circular queue */
 	if (Term->key_tail == 0) Term->key_tail = Term->key_size;
@@ -2149,14 +2137,11 @@ errr Term_key_push(int k) {
 		Term_increase_queue();
 
 	/* Success (unless overflow) */
-	if (Term->key_head != Term->key_tail) return (0);
+	if (Term->key_head != Term->key_tail) return(0);
 
 	/* Problem */
-	return (1);
+	return(1);
 }
-
-
-
 
 
 /*
@@ -2176,7 +2161,7 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 	/* XXX XXX XXX */
 	if (Term_inkey_hook) {
 		/* Special "Borg" hook (generate keys) */
-		return ((*Term_inkey_hook)(ch, wait, take));
+		return((*Term_inkey_hook)(ch, wait, take));
 	}
 
 	/* Hack -- get bored */
@@ -2204,7 +2189,7 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 	}
 
 	/* No keys are ready */
-	if (Term->key_head == Term->key_tail) return (1);
+	if (Term->key_head == Term->key_tail) return(1);
 
 	/* Extract the next keypress */
 	(*ch) = Term->key_queue[Term->key_tail];
@@ -2226,7 +2211,7 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 	}
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2248,7 +2233,7 @@ errr Term_save(void) {
  	term_win_copy(Term->mem[screen_icky++], Term->scr, w, h);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2279,7 +2264,7 @@ errr Term_load(void) {
 	Term->y2 = h - 1;
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2321,10 +2306,10 @@ errr Term_resize(int w, int h) {
 	term_win *hold_mem[4];
 
 	/* Ignore illegal changes */
-	if ((w < 1) || (h < 1)) return (1);
+	if ((w < 1) || (h < 1)) return(1);
 
 	/* Ignore non-changes */
-	if ((Term->wid == w) && (Term->hgt == h)) return (1);
+	if ((Term->wid == w) && (Term->hgt == h)) return(1);
 
 	/* Minimum dimensions */
 	wid = MIN(Term->wid, w);
@@ -2437,8 +2422,7 @@ errr Term_resize(int w, int h) {
 	Term->total_erase = TRUE;
 
 	/* Assume change */
-	for (i = 0; i < h; i++)
-	{
+	for (i = 0; i < h; i++) {
 		/* Assume change */
 		Term->x1[i] = 0;
 		Term->x2[i] = w - 1;
@@ -2448,9 +2432,8 @@ errr Term_resize(int w, int h) {
 	Term->y1 = 0;
 	Term->y2 = h - 1;
 
-
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2466,14 +2449,13 @@ errr Term_resize(int w, int h) {
  */
 errr Term_activate(term *t) {
 	/* Hack -- already done */
-	if (Term == t) return (1);
+	if (Term == t) return(1);
 
 	/* Deactivate the old Term */
 	if (Term) Term_xtra(TERM_XTRA_LEVEL, 0);
 
 	/* Hack -- Call the special "init" hook */
-	if (t && !t->active_flag)
-	{
+	if (t && !t->active_flag) {
 		/* Call the "init" hook */
 		if (t->init_hook) (*t->init_hook)(t);
 
@@ -2491,7 +2473,7 @@ errr Term_activate(term *t) {
 	if (Term) Term_xtra(TERM_XTRA_LEVEL, 1);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2505,8 +2487,7 @@ errr term_nuke(term *t) {
 	int i;
 
 	/* Hack -- Call the special "nuke" hook */
-	if (t->active_flag)
-	{
+	if (t->active_flag) {
 		/* Call the "nuke" hook */
 		if (t->nuke_hook) (*t->nuke_hook)(t);
 
@@ -2546,7 +2527,7 @@ errr term_nuke(term *t) {
 	C_KILL(t->key_queue, t->key_size, char);
 
 	/* Success */
-	return (0);
+	return(0);
 }
 
 
@@ -2559,10 +2540,8 @@ errr term_nuke(term *t) {
 errr term_init(term *t, int w, int h, int k) {
 	int y;
 
-
 	/* Wipe it */
 	WIPE(t, term);
-
 
 	/* Prepare the input queue */
 	t->key_head = t->key_tail = t->key_length = 0;
@@ -2606,8 +2585,7 @@ errr term_init(term *t, int w, int h, int k) {
 	}
 
 	/* Assume change */
-	for (y = 0; y < h; y++)
-	{
+	for (y = 0; y < h; y++) {
 		/* Assume change */
 		t->x1[y] = 0;
 		t->x2[y] = w - 1;
@@ -2627,5 +2605,5 @@ errr term_init(term *t, int w, int h, int k) {
 
 
 	/* Success */
-	return (0);
+	return(0);
 }

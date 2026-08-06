@@ -918,7 +918,7 @@ char *u32b_char_dict_get(struct u32b_char_dict_t *start, uint32_t key) {
 
 	for (struct u32b_char_dict_t *cur=start;cur!=NULL;cur=cur->next) {
 		if (key == cur->key) {
-			return &cur->value;
+			return(&cur->value);
 		}
 	}
 	return(NULL);

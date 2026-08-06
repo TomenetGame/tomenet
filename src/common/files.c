@@ -459,7 +459,7 @@ int local_file_write(int ind, unsigned short fnum, unsigned long len) {
 		unlink(c_fd->tname);	/* remove it on Windows OS */
 #endif
 		remove_ft(c_fd);
-		return -2;
+		return(-2);
 	}
 	return(1);
 }

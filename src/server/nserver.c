@@ -7067,23 +7067,23 @@ int Send_inven_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 	}
 
 	if (is_newer_than(&p_ptr->version, 4, 7, 1, 1, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I%c", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
-		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name, ident);
+		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name, ident));
 	else if (is_newer_than(&p_ptr->version, 4, 7, 0, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%hd%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
-		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name);
+		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9, name));
 	else if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0,
-		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
+		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name));
 	else if (is_newer_than(&p_ptr->version, 4, 4, 4, 2, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval,
-		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%I", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval,
+		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name));
 	else
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval,
-		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name);
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%c%c%c%c%c%c%c%c%s", PKT_INVEN_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval,
+		    o_ptr->xtra1 & 0xFF, o_ptr->xtra2 & 0xFF, o_ptr->xtra3 & 0xFF, o_ptr->xtra4 & 0xFF, o_ptr->xtra5 & 0xFF, o_ptr->xtra6 & 0xFF, o_ptr->xtra7 & 0xFF, o_ptr->xtra8 & 0xFF, o_ptr->xtra9 & 0xFF, name));
 }
 
 //int Send_equip(int Ind, char pos, byte attr, int wgt, byte tval, cptr name)
@@ -7190,8 +7190,8 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 	if (forward) return(0);
 
 	if (is_newer_than(&p_ptr->version, 4, 5, 2, 0, 0, 0))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
-		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name);
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
+		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name));
 	else if (is_newer_than(&p_ptr->version, 4, 4, 5, 10, 0, 0))
 		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%c%I", PKT_EQUIP, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval, pval, uses_dir, name));
 	else if (is_newer_than(&p_ptr->version, 4, 4, 4, 2, 0, 0))
@@ -7297,9 +7297,9 @@ int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 	if (forward) return(0);
 
 	if (is_newer_than(&p_ptr->version, 4, 9, 0, 5, 0, 1))
-		return Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_EQUIP_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
+		return(Packet_printf(&connp->c, "%c%c%c%hu%hd%c%c%hd%hd%c%I%hd%hd%hd%hd%hd%hd%hd%hd%hd", PKT_EQUIP_WIDE, pos, attr, wgt, o_ptr->number, o_ptr->tval, sval,
 		    pval, object_known_p(Ind, o_ptr) ? o_ptr->name1 : 0, uses_dir, name,
-		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9);
+		    o_ptr->xtra1, o_ptr->xtra2, o_ptr->xtra3, o_ptr->xtra4, o_ptr->xtra5, o_ptr->xtra6, o_ptr->xtra7, o_ptr->xtra8, o_ptr->xtra9));
 	return(0);
 }
 
@@ -10371,29 +10371,29 @@ int Send_boni_col(int Ind, boni_col c) {
 	if (!is_newer_than(&connp->version, 4, 5, 3, 2, 0, 0)) return(-1);
 	/* 4.8.1 and newer clients use 32bit character size. */
 	if (is_atleast(&connp->version, 4, 8, 1, 0, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%u", PKT_BONI_COL, //1+22+13+2 bytes in total
+		return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%u", PKT_BONI_COL, //1+22+13+2 bytes in total
 				c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 				c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
 				c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
-				c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, c.symbol);
+				c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, c.symbol));
 	} else if (is_newer_than(&connp->version, 4, 6, 1, 2, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
+		return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
 				c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 				c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
 				c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
-				c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, (char)c.symbol);
+				c.cb[10], c.cb[11], c.cb[12], c.cb[13], c.cb[14], c.cb[15], c.color, (char)c.symbol));
 	} else if (is_newer_than(&connp->version, 4, 5, 9, 0, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
+		return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+22+13+2 bytes in total
 				c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 				c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr, c.amfi, c.sigl,
 				c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
-				c.cb[10], c.cb[11], c.cb[12], c.color, (char)c.symbol);
+				c.cb[10], c.cb[11], c.cb[12], c.color, (char)c.symbol));
 	} else {
-		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+20+13+2 bytes in total
+		return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_BONI_COL, //1+20+13+2 bytes in total
 				c.i, c.spd, c.slth, c.srch, c.infr, c.lite, c.dig, c.blow, c.crit, c.shot,
 				c.migh, c.mxhp, c.mxmp, c.luck, c.pstr, c.pint, c.pwis, c.pdex, c.pcon, c.pchr,
 				c.cb[0], c.cb[1], c.cb[2], c.cb[3], c.cb[4], c.cb[5], c.cb[6], c.cb[7], c.cb[8], c.cb[9],
-				c.cb[10], c.cb[11], c.cb[12], c.color, (char)c.symbol);
+				c.cb[10], c.cb[11], c.cb[12], c.color, (char)c.symbol));
 	}
 }
 
@@ -10469,14 +10469,14 @@ int Send_encumberment(int Ind, byte cumber_armor, byte awkward_armor, byte cumbe
 		}
 	}
 	if (!is_newer_than(&connp->version, 4, 4, 2, 0, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot);
+		return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
+			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, awkward_shoot));
 	} else if (is_older_than(&connp->version, 4, 8, 1, 0, 0, 0)) {
-		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot);
+		return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
+			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot));
 	} else {
-		return Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
-			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot, heavy_swim, heavy_tool);
+		return(Packet_printf(&connp->c, "%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c%c", PKT_ENCUMBERMENT, cumber_armor, awkward_armor, cumber_glove, heavy_wield, heavy_shield, heavy_shoot,
+			icky_wield, awkward_wield, easy_wield, cumber_weight, monk_heavyarmor, rogue_heavyarmor, awkward_shoot, heavy_swim, heavy_tool));
 	}
 }
 

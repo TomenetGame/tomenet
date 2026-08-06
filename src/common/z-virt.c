@@ -55,7 +55,7 @@ void *mem_alloc(size_t len) {
 	void *mem;
 
 	/* Allow allocation of "zero bytes" */
-	if (len == 0) return (NULL);
+	if (len == 0) return(NULL);
 
 	/* Allocate some memory */
 	if (ralloc_aux) mem = (*ralloc_aux)(len);
@@ -75,11 +75,11 @@ void *mem_alloc(size_t len) {
  */
 void *mem_free(void *p) {
 	/* Easy to free nothing */
-	if (!p) return (NULL);
+	if (!p) return(NULL);
 
 	/* Free memory */
 	if (rnfree_aux) (*rnfree_aux)(p);
-	else            free(p);
+	else free(p);
 
 	/* Done */
 	return(NULL);

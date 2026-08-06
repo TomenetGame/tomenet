@@ -11396,10 +11396,10 @@ static bool do_cmd_options_aux(int page, cptr info, int select) {
 		case KTRL('Q'):
 			/* Next time on this options page, restore our position */
 			k_lasttime[page] = k_no_advance;
-			return (FALSE);
+			return(FALSE);
 		case '/':
 			k_lasttime[page] = k_no_advance;
-			return (TRUE);
+			return(TRUE);
 
 		case KTRL('T'):
 			/* Take a screenshot */

@@ -159,10 +159,10 @@ bool askfor_aux(char *buf, int len, char private) {
 	}
 
 	/* Aborted */
-	if (i == ESCAPE) return (FALSE);
+	if (i == ESCAPE) return(FALSE);
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -190,7 +190,7 @@ bool get_string(cptr prompt, char *buf, int len) {
 	prt("", 0, 0);
 
 	/* Result */
-	return (res);
+	return(res);
 }
 
 /*
@@ -211,10 +211,10 @@ bool get_com(cptr prompt, char *command) {
 	prt("", 0, 0);
 
 	/* Handle "cancel" */
-	if (*command == ESCAPE) return (FALSE);
+	if (*command == ESCAPE) return(FALSE);
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -332,10 +332,10 @@ bool get_check(cptr prompt) {
 	prt("", 0, 0);
 
 	/* Normal negation */
-	if ((i != 'Y') && (i != 'y')) return (FALSE);
+	if ((i != 'Y') && (i != 'y')) return(FALSE);
 
 	/* Success */
-	return (TRUE);
+	return(TRUE);
 }
 
 
@@ -366,7 +366,7 @@ s16b c_get_quantity(cptr prompt, int max) {
 	sprintf(buf, "%d", amt);
 
 	/* Ask for a quantity */
-	if (!get_string(prompt, buf, 6)) return (0);
+	if (!get_string(prompt, buf, 6)) return(0);
 
 	/* Extract a number */
 	amt = atoi(buf);
@@ -381,7 +381,7 @@ s16b c_get_quantity(cptr prompt, int max) {
 	if (amt < 0) amt = 0;
 
 	/* Return the result */
-	return (amt);
+	return(amt);
 }
 
 void clear_from(int row) {
