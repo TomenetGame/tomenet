@@ -5664,7 +5664,7 @@ c_msg_format("(2)FindFirstFile failed (%ld)", GetLastError());
 			strcpy(buf_basename, FindFileData.cFileName);
 			n = 0;
 			while (TRUE) {
-				if (n++) {
+				if (n++) { /* Skip on 1st run as it was from FindFirstFile() */
 					if (FindNextFile(hFind, &FindFileData)) strcpy(buf_basename, FindFileData.cFileName);
 					else break;
 				}
@@ -5719,7 +5719,7 @@ c_msg_print("(2)nothing");
 		strcpy(buf_basename, FindFileData.cFileName);
 		n = 0;
 		while (TRUE) {
-			if (n++) {
+			if (n++) { /* Skip on 1st run as it was from FindFirstFile() */
 				if (FindNextFile(hFind, &FindFileData)) strcpy(buf_basename, FindFileData.cFileName);
 				else break;
 			}
@@ -5783,12 +5783,19 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 				/* Register that there is an existing file to back up this stage's existance */
 				fileset[k].stage_file_exists[stage] = TRUE;
 
-				fileset[k].style_cyclic = FALSE;//todo:find out- style_cyclic;
-				fileset[k].style_freesw = FALSE;//todo:find out- style_freesw;
+				fileset[k].style_cyclic = FALSE; // found out further below via .meta file
+				fileset[k].style_freesw = FALSE; // found out further below via .meta file
 
 				/* Init cycle key */
 				fileset[k].macro__pat__cyclic[0] = 0;
 				fileset[k].macro__patbuf__cyclic[0] = 0;
+				/* Init free-switch keys */
+				for (f = 0; f < fileset[k].stages; f++) {
+					fileset[k].macro__pat__freesw[f][0] = 0;
+					fileset[k].macro__patbuf__freesw[f][0] = 0;
+					fileset[k].macro__act__freesw[f][0] = 0;
+					fileset[k].macro__actbuf__freesw[f][0] = 0;
+				}
 
 				/* Set is purely from disk, not referenced by loaded macros in memory */
 				fileset[k].currently_referenced = FALSE;
