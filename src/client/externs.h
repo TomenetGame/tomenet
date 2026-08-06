@@ -1276,7 +1276,7 @@ extern char32_t minimap_char, minimap_selchar;
 extern bool silent_dump;
 extern bool equip_no_weapon;
 extern bool auto_reincarnation;
-extern char macro_trigger_exclusive[MAX_CHARS];
+extern char macro_trigger_exclusive[MACROKEY_LEN];
 extern bool macro_processing_exclusive;
 
 extern char32_t char_map_offset;
