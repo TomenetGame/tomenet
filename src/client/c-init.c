@@ -3519,7 +3519,7 @@ int re_init_sound() {
 
 	if (!use_sound) {
 		/* Don't initialize sound modules */
-		return 0;
+		return(0);
 	}
 
 	/* Scan specifically for SDL-module */
@@ -3547,7 +3547,7 @@ int re_init_sound() {
  #endif
 	if (i == N_ELEMENTS(sound_modules)) {
 		puts("ERROR: No SDL audio module found.");
-		return -2;
+		return(-2);
 	}
 
 	/* initialize mixer, putting configuration read from rc file live */
@@ -3573,7 +3573,7 @@ int re_init_sound() {
 	/* Inform server about potentially changed capabilities */
 	Send_audio();
 
-	return 0;
+	return(0);
 }
 #endif
 
@@ -3890,7 +3890,7 @@ again:
 			int rawsock_is_adapter_names_equal(const char *lhs, const char *rhs) {
 				if (memcmp(lhs, "\\Device\\NPF_", 12) == 0) lhs += 12;
 				if (memcmp(rhs, "\\Device\\NPF_", 12) == 0) rhs += 12;
-				return strcmp(lhs, rhs) == 0;
+				return(strcmp(lhs, rhs) == 0);
 			}
   #endif
 			//break;

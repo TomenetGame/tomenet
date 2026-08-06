@@ -6069,11 +6069,11 @@ int Receive_guild_config(void) {
 		if (i >= 5) {
 			n = Packet_scanf(&rbuf, "%s", dummy);
 			if (n == 0) goto rollback;
-			else if (n < 0) return n;
+			else if (n < 0) return(n);
 		} else {
 			n = Packet_scanf(&rbuf, "%s", guild.adder[i]);
 			if (n == 0) goto rollback;
-			else if (n < 0) return n;
+			else if (n < 0) return(n);
 		}
 	}
 
@@ -7561,7 +7561,7 @@ int Send_stay_one(void) {
 int Send_stay_auto(void) {
 	int n;
 
-	if (is_older_than(&server_version, 4, 7, 4, 4, 0, 0)) return Send_stay();
+	if (is_older_than(&server_version, 4, 7, 4, 4, 0, 0)) return(Send_stay());
 
 	if ((n = Packet_printf(&wbuf, "%c", PKT_STAND_AUTO)) <= 0) return(n);
 	return(1);

@@ -447,10 +447,10 @@ static int my_fpeekc(FILE *fff) {
 	}
 
 	if (my_fgetc_pos < my_fgetc_len) {
-		return my_fgetc_buf[my_fgetc_pos];
+		return(my_fgetc_buf[my_fgetc_pos]);
 	} else {
 		/* Return EOF */
-		return EOF;
+		return(EOF);
 	}
 }
 

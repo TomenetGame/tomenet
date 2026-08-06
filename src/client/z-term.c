@@ -13,7 +13,7 @@ extern client_opts c_cfg;
 extern short screen_icky;
 
 extern bool recording_macro;
-extern char recorded_macro[160];
+extern char recorded_macro[MACRO_MAXLEN];
 
 static char get_shimmer_color(void);
 byte flick_colour(byte attr);
@@ -3873,7 +3873,7 @@ errr Term_keypress(int k) {
 	if (!Term) return(0);
 
 	/* Add it to the queue */
-	return Term_keypress_aux(Term->keys, k);
+	return(Term_keypress_aux(Term->keys, k));
 }
 
 
@@ -3907,7 +3907,7 @@ errr Term_key_push_aux(key_queue *keys, int k) {
  */
 errr Term_key_push(int k) {
 	/* Add it to the front of the queue */
-	return Term_key_push_aux(Term->keys, k);
+	return(Term_key_push_aux(Term->keys, k));
 }
 
 
@@ -3957,7 +3957,7 @@ errr Term_key_push_buf_aux(key_queue *keys, cptr buf, int n) {
  * Add multiple key presses to the front of the queue.
  */
 errr Term_key_push_buf(cptr buf, int len) {
-	return Term_key_push_buf_aux(Term->keys, buf, len);
+	return(Term_key_push_buf_aux(Term->keys, buf, len));
 }
 
 /*
@@ -4110,12 +4110,12 @@ errr Term_inkey(char *ch, bool wait, bool take) {
 
 		/* record keypress for macro? */
 		if (recording_macro) {
-			if (strlen(recorded_macro) < 159) {
+			if (strlen(recorded_macro) < MACRO_MAXLEN - 1) {
 				/* still below maximum recording length (160-1 bytes)? */
 				strcat(recorded_macro, format("%c", *ch));
 			} else {
 				/* ensure termination */
-				recorded_macro[159] = '\0';
+				recorded_macro[MACRO_MAXLEN - 1] = '\0';
 			}
 		}
 	}
