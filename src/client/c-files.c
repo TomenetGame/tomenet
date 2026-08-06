@@ -477,7 +477,7 @@ errr my_fgets2(FILE *fff, char **line, int *n, byte *fmt) {
 		*n = 0;
 
 		/* Grave error */
-		return 2;
+		return(2);
 	}
 
 	while (TRUE) {
@@ -548,7 +548,7 @@ errr my_fgets2(FILE *fff, char **line, int *n, byte *fmt) {
 					*n = 0;
 
 					/* Grave error */
-					return 2;
+					return(2);
 				}
 				tmp = buf;
 			}
@@ -581,7 +581,7 @@ errr my_fgets2(FILE *fff, char **line, int *n, byte *fmt) {
 				*n = 0;
 
 				/* Grave error */
-				return 2;
+				return(2);
 			}
 			tmp = buf;
 		}
@@ -829,7 +829,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 	int i, j, k;
 	int n1, n2;
 
-	char *zz[16], tmp[1024];
+	char *zz[16], tmp[MACRO_MAXLEN];
 
 	/* We use our own macro__buf - mikaelh */
 	static char *macro__buf = NULL;
@@ -1427,6 +1427,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 #endif
 		mem_free(buf2);
 	}
+
 #ifdef BAD_MAPPING_BUNDLE /* Warn for every bad mapping-line? */
 	if (bad_solid_mapping) {
 		if (rl_connection_state == 1 || rl_msg_output) {
@@ -1438,11 +1439,13 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 		bad_solid_mapping = FALSE;
 	}
 #endif
+
 	if (outdated) {
 		if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yFile '%s' has outdated option names. Overwrite/delete it to fix.", name);
 		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' has outdated option names. Overwrite/delete it to fix.\n", name));
 		cfg_outdated = 1;
 	}
+
 	if (err == 2) {
 		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Grave error: Couldn't allocate memory when parsing '%s'.\n", name));
 		//plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name)); //might be deadly if it happens in live game ^^' so instead just:

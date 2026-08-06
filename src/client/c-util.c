@@ -5285,16 +5285,16 @@ static void ascii_to_text(char *buf, cptr str) {
 }
 
 static errr macro_dump(cptr fname) {
-	int i, j, n;
+	int i;//, j, n;
 
 	FILE *fff;
 
-	char buf[1024];
-	char buf2[4096];
+	char buf[MACRO_MAXLEN];
+	char buf2[MACRO_MAXLEN];
 
 
 	/* Build the filename */
-	path_build(buf, 1024, ANGBAND_DIR_USER, fname);
+	path_build(buf, MACRO_MAXLEN, ANGBAND_DIR_USER, fname);
 
 	/* Check if the file already exists */
 	fff = my_fopen(buf, "r");
@@ -5304,7 +5304,7 @@ static errr macro_dump(cptr fname) {
 
 		/* Attempt to rename */
 		strcpy(buf2, buf);
-		strncat(buf2, ".bak", 1023);
+		strncat(buf2, ".bak", MACRO_MAXLEN - 1);
 		rename(buf, buf2);
 	}
 
@@ -5327,20 +5327,22 @@ static errr macro_dump(cptr fname) {
 		/* Start the macro */
 		fprintf(fff, "# Macro '%d'\n\n", i);
 
-#if 0
+#if 1
 		/* Extract the action */
 		ascii_to_text(buf, macro__act[i]);
 
 		/* Dump the macro */
 		fprintf(fff, "A:%s\n", buf);
 #else
-		/* Support really long macros - mikaelh */
+		/* Support really long macros - mikaelh - update 2026: Fixed max macro len via define 'MACRO_MAXLEN', so I reenabled the '#if 1' above again - C. Blue */
 		fprintf(fff, "A:");
 
-		for (j = 0, n = strlen(macro__act[i]); j < n; j += 1023) {
+		/* Note regarding realllllly long macros - streamlining max macro size required defining MACRO_MAXLEN, so we don't have to handle variable sizes anymore.
+		   So the following loop doesn't really loop.*/
+		for (j = 0, n = strlen(macro__act[i]); j < n; j += MACRO_MAXLEN - 1) {
 			/* Take a piece of the action */
-			strncpy(buf, &macro__act[i][j], 1023);
-			buf[1023] = '\0';
+			strncpy(buf, &macro__act[i][j], MACRO_MAXLEN);
+			buf[MACRO_MAXLEN - 1] = '\0';
 
 			/* Convert it */
 			ascii_to_text(buf2, buf);
@@ -5377,7 +5379,7 @@ static errr macro_dump(cptr fname) {
 
 static void get_macro_trigger(char *buf) {
 	int i, n = 0;
-	char tmp[1024];
+	char tmp[MACROKEY_LEN];
 
 	/* Flush */
 	flush();
@@ -5438,19 +5440,19 @@ struct macro_fileset_type {
 	bool style_freesw; // Style: free-switching (at last one trigger key was found that switches freely)
 	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended
 	char comment[MACROSET_COMMENT_LEN];
-	char macro__pat__cyclic[32];
-	char macro__patbuf__cyclic[32];
-	char macro__act__cyclic[160];
-	char macro__actbuf__cyclic[160];
+	char macro__pat__cyclic[MACROKEY_LEN];
+	char macro__patbuf__cyclic[MACROKEY_LEN];
+	char macro__act__cyclic[MACRO_MAXLEN];
+	char macro__actbuf__cyclic[MACRO_MAXLEN];
 	int stages; // Amount of stages to cyclic/switch between
 	bool any_stage_file_exists; // just QoL shortcut derived from at least one of 'stage_file_exists[]' being TRUE
 	bool all_stage_files_exist; // just QoL shortcut
 	bool currently_referenced; // this macro set is referenced by at least one existing macro among all currently loaded macros
 
-	char macro__pat__freesw[MACROFILESETS_STAGES_MAX][32];
-	char macro__patbuf__freesw[MACROFILESETS_STAGES_MAX][32];
-	char macro__act__freesw[MACROFILESETS_STAGES_MAX][160];
-	char macro__actbuf__freesw[MACROFILESETS_STAGES_MAX][160];
+	char macro__pat__freesw[MACROFILESETS_STAGES_MAX][MACROKEY_LEN];
+	char macro__patbuf__freesw[MACROFILESETS_STAGES_MAX][MACROKEY_LEN];
+	char macro__act__freesw[MACROFILESETS_STAGES_MAX][MACRO_MAXLEN];
+	char macro__actbuf__freesw[MACROFILESETS_STAGES_MAX][MACRO_MAXLEN];
 	bool stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
 	char stage_comment[MACROFILESETS_STAGES_MAX][MACROSET_COMMENT_LEN];
 	bool stage_disabled[MACROFILESETS_STAGES_MAX];
@@ -5471,7 +5473,7 @@ int macroset_scan(void) {
 
 	int f, n, stage = -1; //-1: silence compiler warning
 	char *cc, *cf, *cfile;
-	char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
+	char buf_pat[MACROKEY_LEN], buftxt_pat[MACROKEY_LEN], buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
 	char buf_basename[1024], tmpbuf[1024];
 #ifndef WINDOWS
 	size_t glob_size;
@@ -5508,8 +5510,8 @@ int macroset_scan(void) {
 			style_cyclic = style_freesw = FALSE;
 
 			/* Get macro in parsable format */
-			strncpy(buf_act, macro__act[m], 159);
-			buf_act[159] = '\0';
+			strncpy(buf_act, macro__act[m], MACRO_MAXLEN);
+			buf_act[MACRO_MAXLEN - 1] = '\0';
 			ascii_to_text(buftxt_act, buf_act);
 
 			/* Scan macro for marker text, indicating that it's a set-switch */
@@ -5928,15 +5930,15 @@ int macrofileset_mempurge(int f) {
 	bool style_cyclic, style_freesw;
 
 	char *cc, *cf, *cfile;
-	char buf_act[160], buftxt_act[160];
+	char buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
 	char buf_basename[1024];
 
 	//scan all macros
 	while (TRUE) {
 		while (++m < macro__num) {
 			/* Get macro in parsable format */
-			strncpy(buf_act, macro__act[m], 159);
-			buf_act[159] = '\0';
+			strncpy(buf_act, macro__act[m], MACRO_MAXLEN);
+			buf_act[MACRO_MAXLEN - 1] = '\0';
 			ascii_to_text(buftxt_act, buf_act);
 
 			/* Scan macro for marker text, indicating that it's a set-switch */
@@ -6038,15 +6040,15 @@ int macrofileset_mempurge(int f) {
 void macroinfo_ascii(int macro_idx, char *macropat, char *fff) {
 	bool m_ctrl = FALSE, m_alt = FALSE, m_shift = FALSE;
 	bool t_hyb = FALSE, t_com = FALSE;
-	char buf[1024] = { 0 }, buf2[1024] = { 0 }, *bptr;
+	char buf[MACRO_MAXLEN] = { 0 }, buf2[MACRO_MAXLEN] = { 0 }, *bptr;
 	char t_key[10] = { 0 };
 
 	fff[0] = 0;
 
 	if (macro_idx != -1) {
 		/* Also get macro action in parsable format */
-		strncpy(buf, macro__act[macro_idx], 159);
-		buf[159] = '\0';
+		strncpy(buf, macro__act[macro_idx], MACRO_MAXLEN);
+		buf[MACRO_MAXLEN - 1] = '\0';
 		ascii_to_text(buf2, buf);
 
 		/* Get trigger in parsable format */
@@ -6383,8 +6385,7 @@ void macroinfo_ascii(int macro_idx, char *macropat, char *fff) {
 
 void interact_macros(void) {
 	int i, j = 0, l, l2, chain_type;
-	char tmp[160], buf[1024], buf2[1024], *bptr, *b2ptr, chain_macro_buf[1024];
-	char fff[1024], choice;
+	char tmp[MACRO_MAXLEN], buf[MACRO_MAXLEN], buf2[MACRO_MAXLEN], *bptr, *b2ptr, chain_macro_buf[MACRO_MAXLEN], choice;
 	bool were_recording = FALSE;
 	bool inkey_msg_old = inkey_msg; //just for cmd_message().. probably redundant and we could just remove the inkey_msg = TRUE at cmd_message() instead of doing these extra checks...
 #ifdef TEST_CLIENT
@@ -6602,7 +6603,7 @@ void interact_macros(void) {
 			Term_gotoxy(0, l + 3);
 
 			/* Get an encoded action */
-			if (!askfor_aux(buf, 159, 0)) continue;
+			if (!askfor_aux(buf, MACRO_MAXLEN - 1, 0)) continue;
 
 			/* Extract an action */
 			text_to_ascii(macro__buf, buf);
@@ -6752,8 +6753,8 @@ void interact_macros(void) {
 				/* if there's a default macro on that key, ask user if he wants to keep it */
 				for (i = 0; i < macro__num; i++) {
 					if (streq(macro__pat[i], buf)) {
-						strncpy(macro__buf, macro__act[i], 159);
-						macro__buf[159] = '\0';
+						strncpy(macro__buf, macro__act[i], MACRO_MAXLEN);
+						macro__buf[MACRO_MAXLEN - 1] = '\0';
 						break;
 					}
 				}
@@ -6790,8 +6791,8 @@ void interact_macros(void) {
 
 				for (i = 0; i < macro__num; i++) {
 					if (streq(macro__pat[i], buf)) {
-						strncpy(macro__buf, macro__act[i], 159);
-						macro__buf[159] = '\0';
+						strncpy(macro__buf, macro__act[i], MACRO_MAXLEN);
+						macro__buf[MACRO_MAXLEN - 1] = '\0';
 						break;
 					}
 				}
@@ -6845,16 +6846,20 @@ void interact_macros(void) {
 			/* Re-using 'i' here shouldn't matter anymore */
 			for (i = 0; i < macro__num; i++) {
 				if (streq(macro__pat[i], buf)) {
-					strncpy(macro__buf, macro__act[i], 159);
-					macro__buf[159] = '\0';
+					strncpy(macro__buf, macro__act[i], MACRO_MAXLEN);
+					macro__buf[MACRO_MAXLEN - 1] = '\0';
 
 					/* Message */
-					ascii_to_text(tmp, macro__buf);
-					if (macro__hyb[i]) c_msg_format("Found hybrid macro: %s", tmp);
-					else if (macro__cmd[i]) c_msg_format("Found command macro: %s", tmp);
+					ascii_to_text(buf, macro__buf);
+					/* Note that c_msg_print/c_msg_format don't support more than 1024 chars, which atm is same as MACRO_MAXLEN,
+					   so maybe paranoia, but let's ensure zero-termination: */
+					buf[MACRO_MAXLEN - 1] = '\0';
+
+					if (macro__hyb[i]) c_msg_format("Found hybrid macro: %s", buf);
+					else if (macro__cmd[i]) c_msg_format("Found command macro: %s", buf);
 					else {
 						if (!macro__act[i][0]) c_msg_print("Found empty macro.");
-						else c_msg_format("Found normal macro: %s", tmp);
+						else c_msg_format("Found normal macro: %s", buf);
 					}
 
 					/* Update windows */
@@ -6873,7 +6878,7 @@ void interact_macros(void) {
 		/* Switch macros */
 		else if (i == 'w') {
 			int mi1, mi2;
-			char mpat1[1024], mpat2[1024];
+			char mpat1[MACROKEY_LEN], mpat2[MACROKEY_LEN];
 
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Swap macro(s) of two keys");
 
@@ -6932,8 +6937,8 @@ void interact_macros(void) {
 				}
 
 				/* Get human-readanble macro info */
-				macroinfo_ascii(i, NULL, fff);
-				Term_putstr(0, i % 20 + 2, -1, TERM_WHITE, fff);
+				macroinfo_ascii(i, NULL, buf);
+				Term_putstr(0, i % 20 + 2, -1, TERM_WHITE, buf);
 
 				/* Wait for keypress before displaying more */
 				if ((i % 20 == 19) || (i == macro__num - 1)) switch (inkey()) {
@@ -6979,7 +6984,7 @@ void interact_macros(void) {
 			/* Go to the correct location */
 			Term_gotoxy(0, l + 3);
 
-			/* Get an encoded action */
+			/* Get an encoded action -- shorter than real macro strings as it gets expanded */
 			if (!askfor_aux(buf, 159, 0)) continue;
 
 			/* Fix it up quick and dirty: Ability code short-cutting */
@@ -7471,6 +7476,7 @@ void interact_macros(void) {
 				continue;
 			}
 
+			/* Note that this supports max MSG_LEN, so rest of the macro action won't be pasted but just cut off... */
 			Send_paste_msg(buf);
 		}
 
@@ -7529,9 +7535,9 @@ Chain_Macro:
 				choice = mw_fileset;
 			} else i = choice = 0;
 			/* Paranoia */
-			memset(tmp, 0, 160);
-			memset(buf, 0, 1024);
-			memset(buf2, 0, 1024);
+			memset(tmp, 0, MACRO_MAXLEN);
+			memset(buf, 0, MACRO_MAXLEN);
+			memset(buf2, 0, MACRO_MAXLEN);
 
 			while (i != -1) {
 				/* mw_fileset: Restart */
@@ -7543,9 +7549,9 @@ Chain_Macro:
 				/* Restart wizard from a wrong choice? */
 				if (i == -2 || i == -3) {
 					/* Paranoia */
-					memset(tmp, 0, 160);
-					memset(buf, 0, 1024);
-					memset(buf2, 0, 1024);
+					memset(tmp, 0, MACRO_MAXLEN);
+					memset(buf, 0, MACRO_MAXLEN);
+					memset(buf2, 0, MACRO_MAXLEN);
 					/* Reinitialize */
 					if (i == -2) i = choice = chain_macro_buf[0] = tmp[0] = buf[0] = buf2[0] = 0;
 					else {
@@ -8814,7 +8820,7 @@ Chain_Macro:
 						strcat(buf2, format("%c", target_dir));
 						break;
 					case mw_chain: {
-						char tmp[1024], buf[64];
+						char tmp[MACRO_MAXLEN], buf[64];
 						bool bind = FALSE;
 
 						while (TRUE) {
@@ -8839,8 +8845,8 @@ Chain_Macro:
 							for (i = 0; i < macro__num; i++) {
 								if (!streq(macro__pat[i], buf)) continue;
 
-								strncpy(macro__buf, macro__act[i], 159);
-								macro__buf[159] = '\0';
+								strncpy(macro__buf, macro__act[i], MACRO_MAXLEN - 1);
+								macro__buf[MACRO_MAXLEN - 1] = '\0';
 
 								/* Message */
 								ascii_to_text(tmp, macro__buf);
@@ -8885,7 +8891,7 @@ Chain_Macro:
 						c_msg_format("\377yChain: %s", tmp);
 
 						/* max length check, rough estimate */
-						if (strlen(chain_macro_buf) + strlen(macro__buf) >= 1024 - 50) {
+						if (strlen(chain_macro_buf) + strlen(macro__buf) >= MACRO_MAXLEN - 50) {
 							c_msg_print("\377oDue to excess length you cannot chain any further commands to this macro.");
 							bind = TRUE;
 						}
@@ -8920,7 +8926,7 @@ Chain_Macro:
 								int delay;
 
 								/* max length check, rough estimate */
-								if (strlen(chain_macro_buf) + strlen(macro__buf) >= 1024 - 50) {
+								if (strlen(chain_macro_buf) + strlen(macro__buf) >= MACRO_MAXLEN - 50) {
 									c_msg_print("\377oDue to excess length you cannot chain any further commands to this macro.");
 									continue;
 								}
@@ -9008,7 +9014,7 @@ Chain_Macro:
 						FILE *fp;
 						int xoffset1 = 1, xoffset2 = 3 - 2;
 						int f, k, n, found;
-						char buf_pat[32], buftxt_pat[32], buf_act[160], buftxt_act[160];
+						char buf_pat[MACROKEY_LEN], buftxt_pat[MACROKEY_LEN], buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
 						char tmpbuf[1024];
 						bool ok_new_set, ok_new_stage, ok_swap_stages, cancel;
 						bool style_cyclic, style_freesw, tmpbool;
@@ -10365,11 +10371,11 @@ Chain_Macro:
 							}
 							continue;
 						} else if (!strcmp(buf, "%")) {
-							char tmp[1024];
+							char tmp[MACRO_MAXLEN];
 							int delay;
 
 							/* max length check, rough estimate */
-							if (strlen(chain_macro_buf) + strlen(macro__buf) >= 1024 - 50) {
+							if (strlen(chain_macro_buf) + strlen(macro__buf) >= MACRO_MAXLEN - 50) {
 								c_msg_print("\377oDue to excess length you cannot chain any further commands to this macro.");
 								continue;
 							}
@@ -15829,9 +15835,13 @@ void audio_pack_selector(void) {
 
 /* For pasting monster lore into chat, also usable for item-pasting. - C. Blue
    Important feature: Replaces first ':' by '::' if sending to normal chat. */
-void Send_paste_msg(char *msg) {
-	/* replace first : by :: in case we're going for normal chat mode */
-	char buf[MSG_LEN], *c;
+void Send_paste_msg(cptr raw_msg) {
+	char msg[MSG_LEN];
+	char buf[MSG_LEN], *c; /* to replace first : by :: in case we're going for normal chat mode */
+
+	/* If we're pasting a macro it could far exceed max allowed message length, so trim it first... */
+	strncpy(msg, raw_msg, MSG_LEN);
+	msg[MSG_LEN - 1] = 0;
 
 	/* Only needed for non-global chat: If first msg char is a ':' it'd screw up the chat mode tag.
 	   Hack for this: Just insert a pointless colour code '\377-' as a separator of the two ':'.. */

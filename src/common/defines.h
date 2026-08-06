@@ -806,6 +806,13 @@
  */
 #define MACRO_MAX	512
 
+/* Maximum size of a macro action (encoded or not) */
+#define MACRO_MAXLEN	1024
+
+/* Maximum length of a macro trigger key representation */
+#define MACROKEY_LEN	32
+
+
 /*
  * OPTION: Maximum number of "quarks" (see "io.c")
  * Default: assume at most 512 different inscriptions are used

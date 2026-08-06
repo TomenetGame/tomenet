@@ -136,7 +136,7 @@ bool *macro__cmd;
 bool *macro__hyb;
 char *macro__buf;
 
-char recorded_macro[160];
+char recorded_macro[MACRO_MAXLEN];
 bool recording_macro = FALSE;
 
 s32b message__next;

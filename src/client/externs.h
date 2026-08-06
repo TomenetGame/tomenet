@@ -277,7 +277,7 @@ extern bool *macro__cmd;
 extern bool *macro__hyb;
 extern char *macro__buf;
 
-extern char recorded_macro[160];
+extern char recorded_macro[MACRO_MAXLEN];
 extern bool recording_macro;
 
 extern s32b message__next;
@@ -758,7 +758,7 @@ extern bool parse_macro;
 extern bool inkey_sleep, inkey_sleep_semaphore;
 extern bool abort_prompt;
 extern int macro_missing_item;
-extern void Send_paste_msg(char *msg);
+extern void Send_paste_msg(cptr msg);
 extern void check_immediate_options(int i, bool yes, bool playing);
 extern void prompt_topline(cptr prompt);
 extern void clear_topline(void);

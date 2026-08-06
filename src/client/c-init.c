@@ -54,7 +54,7 @@ static void init_arrays(void) {
 	C_MAKE(macro__hyb, MACRO_MAX, bool);
 
 	/* Macro action buffer */
-	C_MAKE(macro__buf, 1024, char);
+	C_MAKE(macro__buf, MACRO_MAXLEN, char);
 
 	/* Message variables */
 	C_MAKE(message__ptr, MESSAGE_MAX, s32b);
