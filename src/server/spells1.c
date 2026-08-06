@@ -6989,7 +6989,7 @@ static bool psi_backlash(int Ind, int m_idx, int dam) {
 	p_ptr = Players[Ind];
 
 	if ((r_ptr->flags3 & (RF3_UNDEAD | RF3_DEMON)) &&
-	    (r_ptr->level > p_ptr->lev/2) && !rand_int(2)) {
+	    (r_ptr->level > p_ptr->lev / 2) && !rand_int(2)) {
 		monster_desc(Ind, m_name, m_idx, 0);
 		switch (m_name[strlen(m_name) - 1]) {
 		case 's': case 'x': case 'z':
@@ -13065,7 +13065,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		if (p_ptr->resist_conf ||
 		    (p_ptr->mindboost && magik(p_ptr->mindboost_power)))
 			msg_print(Ind, "You disbelieve the feeble spell.");
-		else if (rand_int(100 + dam*6) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) /* An open mind invites psi attacks */
+		else if (rand_int(100 + dam * 6) < p_ptr->skill_sav && !(p_ptr->esp_link_flags & LINKF_OPEN)) /* An open mind invites psi attacks */
 			msg_print(Ind, "You disbelieve the feeble spell.");
 		//else set_confused(Ind, p_ptr->confused + dam); too much for pvp
 		else set_confused(Ind, p_ptr->confused + 2 + rand_int(3));

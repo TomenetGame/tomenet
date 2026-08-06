@@ -8767,8 +8767,8 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 	}
 
 #ifdef ARCADE_SERVER
-	dun->l_ptr->hgt = SCREEN_HGT*2;
-	dun->l_ptr->wid = SCREEN_WID*2;
+	dun->l_ptr->hgt = SCREEN_HGT * 2;
+	dun->l_ptr->wid = SCREEN_WID * 2;
 	if (tron_dark && wpos->wz == 11)
 		dun->l_ptr->flags1 |= DF1_FORGET;
 	if (tron_forget && wpos->wz == 11)
@@ -12108,7 +12108,7 @@ void generate_cave_blank(worldpos *twpos, int W, int H, bool light) {
 	if (getcave(wpos)) dealloc_dungeon_level(wpos);
 	alloc_dungeon_level(wpos);
 	if (!(zcave = getcave(wpos))) return;
-	new_players_on_depth(wpos,1,TRUE);
+	new_players_on_depth(wpos, 1, TRUE);
 
 	/* Start with a blank cave */
 	for (y = 0; y < MAX_HGT; y++) {

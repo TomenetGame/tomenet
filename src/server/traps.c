@@ -844,7 +844,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 			if (p_ptr->res_tele) chance >>= 1;
 			if (p_ptr->anti_tele || check_st_anchor(wpos, y, x) || magik(chance)) break;
 			msg_print(Ind, "The world whirls around you.");
-			teleport_player(Ind, RATIO*67, TRUE);
+			teleport_player(Ind, RATIO * 67, TRUE);
 			ident = TRUE;
 			break; }
 

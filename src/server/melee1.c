@@ -561,7 +561,7 @@ static bool do_seduce(int Ind, int m_idx) {
 			case 9:
 				if (p_ptr->csane >= p_ptr->msane) continue;
 				msg_print(Ind, "You feel somewhat quenched in a sense.");
-				heal_insanity(Ind, damroll(4,8));
+				heal_insanity(Ind, damroll(4, 8));
 				done = TRUE;
 				break;
 		}
@@ -3240,7 +3240,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 		/* Immolation / fire aura */
 		if (rand_int(2)) {
 			if (!(r_ptr->flags3 & RF3_IM_FIRE)) {
-				player_aura_dam = damroll(2,6);
+				player_aura_dam = damroll(2, 6);
 				if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
 				if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
 				if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
@@ -3259,7 +3259,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 		/* Frostweaving / cold aura */
 		else {
 			if (!(r_ptr->flags3 & RF3_IM_COLD)) {
-				player_aura_dam = damroll(2,6);
+				player_aura_dam = damroll(2, 6);
 				if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
 				if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
 				if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
@@ -3279,7 +3279,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 		/* Immolation / fire aura */
 		if (p_ptr->sh_fire && *alive) {
 			if (!(r_ptr->flags3 & RF3_IM_FIRE)) {
-				player_aura_dam = damroll(2,6);
+				player_aura_dam = damroll(2, 6);
 				if (r_ptr->flags9 & RF9_RES_FIRE) player_aura_dam /= 3;
 				if (r_ptr->flags3 & RF3_SUSCEP_FIRE) player_aura_dam *= 2;
 				if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
@@ -3298,7 +3298,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 		/* Frostweaving / cold aura */
 		if (p_ptr->sh_cold && *alive) {
 			if (!(r_ptr->flags3 & RF3_IM_COLD)) {
-				player_aura_dam = damroll(2,6);
+				player_aura_dam = damroll(2, 6);
 				if (r_ptr->flags9 & RF9_RES_COLD) player_aura_dam /= 3;
 				if (r_ptr->flags3 & RF3_SUSCEP_COLD) player_aura_dam *= 2;
 				if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;
@@ -3318,7 +3318,7 @@ void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *aliv
 	/* Electricity / lightning aura */
 	if (p_ptr->sh_elec && *alive) {
 		if (!(r_ptr->flags3 & RF3_IM_ELEC)) {
-			player_aura_dam = damroll(2,6);
+			player_aura_dam = damroll(2, 6);
 			if (r_ptr->flags9 & RF9_RES_ELEC) player_aura_dam /= 3;
 			if (r_ptr->flags9 & RF9_SUSCEP_ELEC) player_aura_dam *= 2;
 			if (r_idx == RI_MIRROR) player_aura_dam = (player_aura_dam * MIRROR_REDUCE_DAM_TAKEN_AURA + 99) / 100;

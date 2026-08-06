@@ -4303,7 +4303,7 @@ void do_cmd_check_extra_info(int Ind, bool admin) {
 		char o_name[ONAME_LEN];
 
 		invcopy(&forge, lookup_kind(TV_FOOD, p_ptr->mycorrhiza - 1));
-		object_desc(Ind, o_name, &forge, FALSE, 256+512);
+		object_desc(Ind, o_name, &forge, FALSE, 256 + 512);
 		msg_format(Ind, "\377gYou are currently in %s mycorrhiza with a %s.",
 		    p_ptr->mycorrhiza_dur >= 3000 ? "weak" : (p_ptr->mycorrhiza_dur >= 1500 ? "ripening" : (p_ptr->mycorrhiza_dur >= 500 ? "mature" : (p_ptr->mycorrhiza_dur ? "strong" : "perfect"))),
 		    o_name);

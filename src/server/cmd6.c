@@ -1185,22 +1185,22 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 #ifdef EXPAND_TV_POTION
 		//max sanity of a player can go up to around 900 later!
 		case SV_POTION_CURE_LIGHT_SANITY:
-			if (heal_insanity(Ind, damroll(4,8))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(4, 8))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION_CURE_SERIOUS_SANITY:
-			//if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
-			if (heal_insanity(Ind, damroll(8,12))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(6, 13))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(8, 12))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION_CURE_CRITICAL_SANITY:
-			//if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
-			if (heal_insanity(Ind, damroll(16,18))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(9, 20))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(16, 18))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION_CURE_SANITY:
-			//if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
-			if (heal_insanity(Ind, damroll(32,27))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(14, 32))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(32, 27))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION_CHAUVE_SOURIS:
@@ -1251,22 +1251,22 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 		switch (sval) {
 		//max sanity of a player can go up to around 900 later!
 		case SV_POTION2_CURE_LIGHT_SANITY:
-			if (heal_insanity(Ind, damroll(4,8))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(4, 8))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION2_CURE_SERIOUS_SANITY:
-			//if (heal_insanity(Ind, damroll(6,13))) ident = TRUE;
-			if (heal_insanity(Ind, damroll(8,12))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(6, 13))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(8, 12))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION2_CURE_CRITICAL_SANITY:
-			//if (heal_insanity(Ind, damroll(9,20))) ident = TRUE;
-			if (heal_insanity(Ind, damroll(16,18))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(9, 20))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(16, 18))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION2_CURE_SANITY:
-			//if (heal_insanity(Ind, damroll(14,32))) ident = TRUE;
-			if (heal_insanity(Ind, damroll(32,27))) ident = TRUE;
+			//if (heal_insanity(Ind, damroll(14, 32))) ident = TRUE;
+			if (heal_insanity(Ind, damroll(32, 27))) ident = TRUE;
 			(void)set_image(Ind, 0);
 			break;
 		case SV_POTION2_CHAUVE_SOURIS:
@@ -7434,9 +7434,9 @@ void do_cmd_activate(int Ind, int item, int dir) {
 			break;
 		case ART_ROHAN:
 			msg_print(Ind, "Your horn glows deep red.");
-			set_hero(Ind, damroll(5,10) + 30); /* removed stacking */
-			set_fast(Ind, damroll(5,10) + 30, 20); /* removed stacking */
-			set_shero(Ind, damroll(5,10) + 30); /* removed stacking */
+			set_hero(Ind, damroll(5, 10) + 30); /* removed stacking */
+			set_fast(Ind, damroll(5, 10) + 30, 20); /* removed stacking */
+			set_shero(Ind, damroll(5, 10) + 30); /* removed stacking */
 			o_ptr->recharging = 250 + randint(50) - get_skill_scale(p_ptr, SKILL_DEVICE, 150);
 			break;
 		case ART_HELM:
@@ -8780,7 +8780,7 @@ void create_sling_ammo_aux(int Ind) {
 
 	/* Hack -- Give the player some bullets */
 	invcopy(q_ptr, lookup_kind(TV_SHOT, m_bonus(2, tlev)));
-	q_ptr->number = (byte)rand_range(15,30);
+	q_ptr->number = (byte)rand_range(15, 30);
 	q_ptr->iron_trade = p_ptr->iron_trade;
 	q_ptr->iron_turn = turn;
 	do_fletchery_aux();

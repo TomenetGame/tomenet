@@ -8476,7 +8476,7 @@ bool monster_death(int Ind, int m_idx) {
 			/* Prepare to make some Firestone */
 			if (magik(70)) invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRESTONE));
 			else invcopy(qq_ptr, lookup_kind(TV_FIRESTONE, SV_FIRE_SMALL));
-			qq_ptr->number = (byte)rand_range(1,12);
+			qq_ptr->number = (byte)rand_range(1, 12);
 			qq_ptr->level = 0;
 
 			/* Drop it in the dungeon */

@@ -7620,7 +7620,7 @@ errr vinfo_init(void) {
 		/* Extra values */
 		vinfo[e].y = y;
 		vinfo[e].x = x;
-		vinfo[e].d = ((y > x) ? (y + x/2) : (x + y/2));
+		vinfo[e].d = ((y > x) ? (y + x / 2) : (x + y / 2));
 		vinfo[e].r = ((!y) ? x : (!x) ? y : (y == x) ? y : 0);
 	}
 

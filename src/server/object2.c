@@ -11831,7 +11831,7 @@ bool auto_inscribe(int Ind, object_type *o_ptr, int flags) {
 	if (!is_realm_book(o_ptr) && o_ptr->tval != TV_BOOK) return(FALSE);
 
 	/* XXX though it's ok with 'm' for everything.. */
-	c[2] = o_ptr->sval +1 +48;
+	c[2] = o_ptr->sval +1 + 48;
 	o_ptr->note = quark_add(c);
 	return(TRUE);
 #endif

@@ -9899,15 +9899,10 @@ bool heal_insanity(int Ind, int val) {
 		p_ptr->redraw |= PR_SANITY;
 		p_ptr->window |= (PW_PLAYER);
 
-		if (val < (p_ptr->msane/8)) {
-			msg_print(Ind, "You feel a little saner.");
-		} else if (val < (p_ptr->msane/4)) {
-			msg_print(Ind, "You feel saner.");
-		} else if (val < (p_ptr->msane/2)) {
-			msg_print(Ind, "You feel much saner.");
-		} else {
-			msg_print(Ind, "You feel very sane.");
-		}
+		if (val < (p_ptr->msane / 8)) msg_print(Ind, "You feel a little saner.");
+		else if (val < (p_ptr->msane / 4)) msg_print(Ind, "You feel saner.");
+		else if (val < (p_ptr->msane / 2)) msg_print(Ind, "You feel much saner.");
+		else msg_print(Ind, "You feel very sane.");
 
 		return(TRUE);
 	}

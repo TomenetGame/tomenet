@@ -305,7 +305,7 @@ static void arena_comm(int cmd) {
 	switch (cmd) {
 	case BACT_ARENA:
 		if (p_ptr->arena_number == MAX_ARENA_MONS) {
-			clear_bldg(5,19);
+			clear_bldg(5, 19);
 			prt("               Arena Victor!", 5, 0);
 			prt("Congratulations!  You have defeated all before you.", 7, 0);
 			prt("For that, receive the prize: 10,000 gold pieces", 8, 0);
@@ -1419,7 +1419,7 @@ static bool castle_quest(int y, int x) {
 	int             plot = 0;
 	quest_type      *q_ptr;
 
-	clear_bldg(7,18);
+	clear_bldg(7, 18);
 
 	/* Current plot of the building */
 	plot = cave[y][x].special;
@@ -1611,7 +1611,7 @@ static bool compare_weapons(void) {
 	cptr q, s;
 	o1_ptr = NULL; o2_ptr = NULL; i_ptr = NULL;
 
-	clear_bldg(6,18);
+	clear_bldg(6, 18);
 
 	/* Store copy of original wielded weapon in pack slot */
 	i_ptr = &inventory[INVEN_WIELD];
@@ -1669,7 +1669,7 @@ static bool compare_weapons(void) {
 	object_copy(i_ptr, o1_ptr);
 	calc_boni();
 
-	list_weapon(o1_ptr,i,2);
+	list_weapon(o1_ptr, i, 2);
 	compare_weapon_aux1(o1_ptr, 2, i + 8);
 
 	i_ptr = &inventory[INVEN_WIELD];
@@ -1677,7 +1677,7 @@ static bool compare_weapons(void) {
 	else object_copy(i_ptr, o2_ptr);
 	calc_boni();
 
-	list_weapon(o2_ptr,i,40);
+	list_weapon(o2_ptr, i, 40);
 	compare_weapon_aux1(o2_ptr, 40, i + 8);
 
 	i_ptr = &inventory[INVEN_WIELD];
@@ -2136,7 +2136,7 @@ bool repair_item_aux(int Ind, int i, bool iac) {
  * Research Item
  */
 static bool research_item(void) {
-	clear_bldg(5,18);
+	clear_bldg(5, 18);
 	identify_fully();
 #ifdef USE_SOUND_2010
 	sound(Ind, "store_id", NULL, SFX_TYPE_MISC, FALSE);
@@ -2170,7 +2170,7 @@ static void show_bounties(void) {
 	monster_race* r_ptr;
 	char buff[80];
 
-	clear_bldg(7,18);
+	clear_bldg(7, 18);
 	c_prt(TERM_YELLOW, "Currently active bounties:", 4, 2);
 #ifdef USE_SOUND_2010
 	sound(Ind, "store_paperwork", NULL, SFX_TYPE_MISC, FALSE);
@@ -2185,7 +2185,7 @@ static void show_bounties(void) {
 			msg_print("Press space for more.");
 			msg_print(NULL);
 
-			clear_bldg(7,18);
+			clear_bldg(7, 18);
 			j = 5;
 		}
 	}
@@ -2455,7 +2455,7 @@ void select_bounties(void) {
 
 		bounties[i][0] = r_idx;
 		r_ptr = &r_info[r_idx];
-		val = r_ptr->mexp + r_ptr->level*20 + randnor(0, r_ptr->level*2);
+		val = r_ptr->mexp + r_ptr->level * 20 + randnor(0, r_ptr->level * 2);
 		if (val < 1) val = 1;
 		bounties[i][1] = val;
 	}
@@ -3002,7 +3002,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		p_ptr->au -= req;
 
 		if (p_ptr->loan_time)
-			p_ptr->loan_time = MAX(p_ptr->loan/2, p_ptr->loan_time);
+			p_ptr->loan_time = MAX(p_ptr->loan / 2, p_ptr->loan_time);
 
 		if (!p_ptr->loan) p_ptr->loan_time = 0;
 

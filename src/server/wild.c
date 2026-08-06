@@ -2419,7 +2419,7 @@ static void init_terrain(terrain_type *t_ptr, int radius) {
 		t_ptr->deadtree = rand_int(10) + 5;
 		t_ptr->water = rand_int(15);
 		t_ptr->dwelling = 8;
-		t_ptr->hotspot = rand_int(15) +4;
+		t_ptr->hotspot = rand_int(15) + 4;
 		t_ptr->monst_lev = 15 + (radius / 2);
 		/* you don't want to go into an evil forst at night */
 		if (IS_NIGHT) t_ptr->monst_lev += 10;

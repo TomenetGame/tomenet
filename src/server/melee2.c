@@ -4340,18 +4340,18 @@ bool make_attack_spell(int Ind, int m_idx) {
 	/* Remember what the monster did to us */
 	if (seen) {
 		/* Innate spell */
-		if (thrown_spell < 32*4) {
-			r_ptr->r_flags4 |= (1U << (thrown_spell - 32*3));
+		if (thrown_spell < 32 * 4) {
+			r_ptr->r_flags4 |= (1U << (thrown_spell - 32 * 3));
 			if (r_ptr->r_cast_innate < MAX_UCHAR) r_ptr->r_cast_inate++;
 		}
 		/* Bolt or Ball */
-		else if (thrown_spell < 32*5) {
-			r_ptr->r_flags5 |= (1U << (thrown_spell - 32*4));
+		else if (thrown_spell < 32 * 5) {
+			r_ptr->r_flags5 |= (1U << (thrown_spell - 32 * 4));
 			if (r_ptr->r_cast_spell < MAX_UCHAR) r_ptr->r_cast_spell++;
 		}
 		/* Special spell */
-		else if (thrown_spell < 32*6) {
-			r_ptr->r_flags6 |= (1U << (thrown_spell - 32*5));
+		else if (thrown_spell < 32 * 6) {
+			r_ptr->r_flags6 |= (1U << (thrown_spell - 32 * 5));
 			if (r_ptr->r_cast_spell < MAX_UCHAR) r_ptr->r_cast_spell++;
 		}
 	}
@@ -6581,18 +6581,18 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 	/* Remember what the monster did to us */
 	if (seen) {
 		/* Innate spell */
-		if (thrown_spell < 32*4) {
-			r_ptr->r_flags4 |= (1U << (thrown_spell - 32*3));
+		if (thrown_spell < 32 * 4) {
+			r_ptr->r_flags4 |= (1U << (thrown_spell - 32 * 3));
 			if (r_ptr->r_cast_innate < MAX_UCHAR) r_ptr->r_cast_inate++;
 		}
 		/* Bolt or Ball */
-		else if (thrown_spell < 32*5) {
-			r_ptr->r_flags5 |= (1U << (thrown_spell - 32*4));
+		else if (thrown_spell < 32 * 5) {
+			r_ptr->r_flags5 |= (1U << (thrown_spell - 32 * 4));
 			if (r_ptr->r_cast_spell < MAX_UCHAR) r_ptr->r_cast_spell++;
 		}
 		/* Special spell */
-		else if (thrown_spell < 32*6) {
-			r_ptr->r_flags6 |= (1U << (thrown_spell - 32*5));
+		else if (thrown_spell < 32 * 6) {
+			r_ptr->r_flags6 |= (1U << (thrown_spell - 32 * 5));
 			if (r_ptr->r_cast_spell < MAX_UCHAR) r_ptr->r_cast_spell++;
 		}
 	}

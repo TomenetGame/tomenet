@@ -3898,7 +3898,7 @@ static void py_attack_player(int Ind, int y, int x, byte old) {
 
 				else {
 					if (ma_ptr->effect) {
-						stun_effect = (ma_ptr->effect/2) + randint(ma_ptr->effect/2);
+						stun_effect = (ma_ptr->effect / 2) + randint(ma_ptr->effect / 2);
 					}
 
 					sprintf(hit_desc, ma_ptr->desc, q_name);
@@ -5180,7 +5180,7 @@ static void py_attack_mon(int Ind, int y, int x, byte old) {
 #endif
 				} else {
 					if (ma_ptr->effect)
-						stun_effect = (ma_ptr->effect/2) + randint(ma_ptr->effect/2);
+						stun_effect = (ma_ptr->effect / 2) + randint(ma_ptr->effect / 2);
 
 					sprintf(hit_desc, ma_ptr->desc, m_name);
 					//msg_format(Ind, ma_ptr->desc, m_name);

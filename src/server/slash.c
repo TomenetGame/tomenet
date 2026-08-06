@@ -1271,7 +1271,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				} else {
 //					msg_format(Ind, "Book = %d, Spell = %d, PlayerName = %s, PlayerID = %d",book,whichspell,token[3],whichplayer);
-					target_set_friendly(Ind,5,whichplayer);
+					target_set_friendly(Ind, 5, whichplayer);
 					whichspell += 64;
 				}
 			} else if (ami) {
