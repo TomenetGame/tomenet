@@ -12316,21 +12316,37 @@ Three time systems are relevant for the players' game experience:
  In-game time passes 20x as fast as real-time (see below for more info).
  This time also controls day/night changes, where the sun rises at 5am and
  night falls at 9pm.
+
  Note that the four seaons however (and seasonal events with them) do not
  pass that quickly but just at 2x real-time speed (or maybe even exactly at
  real-time speed, depending on server settings).
 
 -in-game 'turns' (the /ex command tells you how fast you can move, ie how much
                  you can move each turn)
- (Not to be confused with server-frame turns, which usually pass at 60 Hz.)
+ (Not to be confused with server-frame turns, which usually pass at 60 Hz, and
+ should really just be called 'frames' to avoid confusion with 'game turns'.)
  Turns are small chunks of time during which players and monsters can make a
  move (or several moves if their speed is greater than the basic value of +0
  or less moves if they are especially slow).
+
  The special thing about turns is that they pass slower for deeper dungeon
  floors, meaning that the speed of all actions is slowed down for both players
  and monsters alike. This is done because both players and monsters will
  usually have gained more speed at higher levels and combat would become too
- fast to react properly.
+ fast to react properly. Since players usually have gained higher speed thanks
+ to equipment or skills, at deeper levels they will be able to perform more
+ actions (ie have more player-turns) within the same game-turn (also often
+ called 'dungeon turn') time.
+
+ Since almost all timed effects use dungeon turns (most notably the 'Martyr'
+ priest spell uses a real-time amount of seconds instead of dungeon turns) this
+ means that buffs (but also bad status effects) last longer in real-time the
+ deeper the dungeon level is.
+ For example the warrior fighting technique 'Berserk' would last maybe mere 10
+ seconds in Bree, but actually half a minute or more in deep Angband, allowing
+ a faster moving character (ie having more player-turns per dungeon turn) to
+ profit more from it.
+
  You can measure the passing of turns simply by looking at your lamp fuel for
  example, as it is measured in turns (of light) too, passing at 1 energy/turn
  (unless you have fuel-prolonging powers, ie Temporal magic school training).
