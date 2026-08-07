@@ -9882,21 +9882,28 @@ Chain_Macro:
 								GET_MACROFILESET_STAGE
 								fileset_stage_selected = f;
 
-							    //todo: ask whether or not we want to clear all macros
-								/*for (i = 0; i < macro__num; i++) {
-									string_free(macro__pat[i]);
-									macro__pat[i] = NULL;
-									string_free(macro__act[i]);
-									macro__act[i] = NULL;
-									macro__cmd[i] = FALSE;
-									macro__hyb[i] = FALSE;
+								// Optional: clear all macros from memory to start with a clean slate
+								Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                               ");
+								Term_putstr(15, l, -1, TERM_L_GREEN, "Do you wish to clear all currently loaded macros? [y/N] ");
+								i = inkey();
+								if (i != 'y' && i != 'Y') {
+									for (i = 0; i < macro__num; i++) {
+										string_free(macro__pat[i]);
+										macro__pat[i] = NULL;
+										string_free(macro__act[i]);
+										macro__act[i] = NULL;
+										macro__cmd[i] = FALSE;
+										macro__hyb[i] = FALSE;
+									}
+									macro__num = 0;
+									for (i = 0; i < 256; i++) macro__use[i] = 0;
+									c_msg_print("Unloaded all macros");
 								}
-								macro__num = 0;
-								for (i = 0; i < 256; i++) macro__use[i] = 0;
-								c_msg_print("Unloaded all macros"); */
 
-							    //todo: load the stage's macro file to macro memory
-								//process_pref_file();
+								// Load the stage's macro file to macro memory
+								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
+								    fileset[fileset_selected].basefilename, f));
+								process_pref_file(tmpbuf);
 								break;
 
 							case 'c': // change a stage's comment
