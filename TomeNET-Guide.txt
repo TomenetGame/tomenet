@@ -21084,6 +21084,12 @@ create a character!):
     strength to get at least 2 blows per round with it).
     (For details on the benefits of dual-wielding, see (7.2).)
 
+    Weapon-switching in later game:
+    If you increased your STR and DEX far enough to wield 2-handed weapons
+    more effectively than 1-handed weapons, you can easily switch between
+    wielding a two-handers and wielding a one-hander with shield with the '/dr'
+    command (shortcut for '/dress', also see (0.2b)).
+
 - Istar (the Quenya word for "mage")
     Istari use intelligence primarily, determining how much mana they have
     to cast spells and how low their failure rate is.
@@ -21897,6 +21903,12 @@ curve gets less steep. :)
 This, however, doesn't determine its final melee performance, which is actually
 given by the 'Max. base blows/round' shown further above, and other parameters
 such as blocking/parrying effectiveness.
+
+Weapon-switching in later game:
+If you increased your STR and DEX far enough to wield 2-handed weapons more
+effectively than 1-handed weapons, you can easily switch between wielding a
+two-handers and wielding a one-hander with shield with the '/dr' command
+(shortcut for '/dress', also see (0.2b)).
 
 
 (7.5b) Titles
