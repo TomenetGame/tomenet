@@ -9044,8 +9044,8 @@ Chain_Macro:
 						FILE *fp, *fp2;
 						int xoffset1 = 1, xoffset2 = 3 - 2;
 						int f, k, m, n, found;
-						char buf_pat[MACROKEY_LEN], buftxt_pat[MACROKEY_LEN], buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
-						char tmpbuf[1024], tmpbuf2[1024], tmpbuf3[1024];
+						char buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
+						char tmpbuf[MACROKEY_LEN], tmpbuf2[MACROKEY_LEN], tmpbuf3[MACROKEY_LEN];
 						bool ok_new_set, ok_new_stage, ok_swap_stages, cancel;
 						bool style_cyclic, style_freesw, tmpbool;
 
@@ -9074,7 +9074,7 @@ Chain_Macro:
 								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
 
 								/* If no macro set is selected, show the list of macro sets, otherwise show the list of stages of the currently active set */
-					    // todo...^ (use implementation of 'Small screen' section below for reference)
+					    // todo...^ (use implementation of 'Small screen' section below for reference, list the stages actually)
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found) {
 										/* Build stages string */
@@ -9173,8 +9173,7 @@ Chain_Macro:
 									} else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 								else { /* We have a set selected? Then list its stages instead */
-					    // todo....
-
+					    // todo.... list the stages actually
 									/* Build stages string */
 									tmpbuf[0] = 0;
 									for (f = 0; f < fileset[k].stages; f++) {
@@ -9183,8 +9182,7 @@ Chain_Macro:
 										else strcat(tmpbuf, format("\377D%d", f + 1));
 									}
 									for (; f < MACROFILESETS_STAGES_MAX; f++) strcat(tmpbuf, "  ");
-
-								    // todo...?:
+								    // todo...wassup?:
 									Term_putstr(xoffset2 - 1, l++, -1, fileset_stage_selected == k ? TERM_L_BLUE : TERM_UMBER,
 									    //format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g, active: %s; \377s%s\377-; \"\377s%s\377-\"",
 									    format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g [%s]; \377s%s\377-; \"\377s%s\377-\"",
@@ -9606,6 +9604,11 @@ Chain_Macro:
 								}
 
 								if (fileset[fileset_selected].style_freesw) { //ask for stage-specific switching-key
+									/* Forge template freeswitch-macro action (in human-readable format) */
+									sprintf(fileset[fileset_selected].macro__actbuf__freesw_fmt, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s-FS%%d.prf\\r\\e",
+									    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH, fileset[fileset_selected].basefilename);
+
+									/* Set freeswitch-macros for each stage */
 									for (f = 0; f < fileset[fileset_selected].stages; f++) {
 										/* Get trigger in human-readable format */
 										macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__freesw[f], tmpbuf);
@@ -9629,35 +9632,16 @@ Chain_Macro:
 										/* Set macro trigger in human-readable format */
 										ascii_to_text(fileset[fileset_selected].macro__patbuf__freesw[f], tmpbuf);
 
-										/* Forge macro action (in human-readable format) */
-
-										/* Start with meaningless placeholder stages, ie ourself: 'switch from stage 1 to stage 1 of 1' ^^
-										  - to be replaced later with the addition of more stages... */
-										sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
-										   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH,
-										   f + 1, fileset[fileset_selected].stages,
-										   fileset[fileset_selected].basefilename,
-										   f + 1);
-
-										/* Set macro action in human-readable format */
-										strcpy(buftxt_act, tmpbuf);
-										strcpy(fileset[fileset_selected].macro__actbuf__freesw[f], buftxt_act);
-										/* Set macro action */
-										text_to_ascii(buf_act, buftxt_act);
-										strcpy(fileset[fileset_selected].macro__act__freesw[f], buf_act);
-
-										/* Forge template freeswitch-macro action (in human-readable format) */
-										sprintf(fileset[fileset_selected].macro__actbuf__freesw_fmt, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s-FS%%d.prf\\r\\e",
-										    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH, fileset[fileset_selected].basefilename);
-
-										/* Set free-switch macro action for stage 1, in human-readable format */
-										strcpy(fileset[fileset_selected].macro__actbuf__freesw[0],
-										    format(fileset[fileset_selected].macro__actbuf__freesw_fmt, 1, fileset[fileset_selected].stages, 0));
-										/* Set free-switch macro action for stage 1 */
-										text_to_ascii(fileset[fileset_selected].macro__act__freesw[0], fileset[fileset_selected].macro__actbuf__freesw[0]);
+										/* Set free-switch macro action for this stage, in human-readable format */
+										strcpy(fileset[f].macro__actbuf__freesw[f],
+										    format(fileset[f].macro__actbuf__freesw_fmt, f + 1, fileset[f].stages, f));
+										/* Set free-switch macro action for this stage */
+										text_to_ascii(fileset[f].macro__act__freesw[f], fileset[f].macro__actbuf__freesw[f]);
 									}
 								}
+
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
+
 								break;
 
 							case 'm': //modify switching method
@@ -9927,12 +9911,13 @@ Chain_Macro:
 								f = fileset[fileset_selected].stages;
 								fileset[fileset_selected].stages++;
 
-								/* Init free-switch key */
-								fileset[fileset_selected].macro__pat__freesw[f][0] = 0;
-								fileset[fileset_selected].macro__patbuf__freesw[f][0] = 0;
-								fileset[fileset_selected].macro__act__freesw[f][0] = 0;
-								fileset[fileset_selected].macro__actbuf__freesw[f][0] = 0;
+								/* Set cycling-to-next-stage key for this stage and
+								   set previous stage's cycling key if it was the last stage and therefore cycled back to 0 */
+								if (fileset[fileset_selected].style_cyclic) {
+					    // todo...
+								}
 
+								/* Set free-switching key for this stage and imprint it on all stages and imprint it on this stage */
 								if (fileset[fileset_selected].style_freesw) { //ask for stage-specific switching-key
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
@@ -9953,15 +9938,14 @@ Chain_Macro:
 									}
 
 									/* Set macro trigger */
-									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[fileset_selected].macro__pat__freesw[f], buf_pat);
+									strcpy(fileset[fileset_selected].macro__pat__freesw[f], tmpbuf);
 									/* Set macro trigger in human-readable format */
-									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[fileset_selected].macro__patbuf__freesw[f], buftxt_pat);
+									ascii_to_text(fileset[fileset_selected].macro__patbuf__freesw[f],
+									    fileset[fileset_selected].macro__pat__freesw[f]);
 
 									/* Forge macro action (in human-readable format) */
 
-									/* Imprint all existing and this new stage with all the switching keys */
+									/* Set free-switch key for this stage (ie that other stages reference to invoke this stage) */
 						    // todo...
 									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
 									    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH,
@@ -9974,10 +9958,11 @@ Chain_Macro:
 									/* Set macro action */
 									text_to_ascii(buf_act, buftxt_act);
 									strcpy(fileset[fileset_selected].macro__act__freesw[f], buf_act);
+
+									/* Imprint all existing stage files with the free-switch key of this stage */
+						    // todo...
 								}
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
-
-					    // todo... also add cyclic key + freesw keys for current stage?
 
 								/* Auto-select the newly added stage? */
 								fileset_stage_selected = f;
@@ -10018,6 +10003,9 @@ Chain_Macro:
 									remove(tmpbuf);
 								}
 
+								/* Set previous stage's cycling key if this was the last stage and therefore the previous stage now must cycleback to 0 */
+					    // todo...
+
 								/* If the deleted stage was actually the currently active one, unselect it */
 								if (fileset_stage_selected == f) fileset_stage_selected = -1;
 								break;
@@ -10055,7 +10043,7 @@ Chain_Macro:
 									process_pref_file(tmpbuf);
 								}
 
-					    // todo... also add cyclic key + freesw keys for current stage?
+					    // todo... also add cyclic key + freesw keys for current stage to macro memory too, in case this stage didn't have a macro file to load
 
 								break;
 
