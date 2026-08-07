@@ -9090,13 +9090,15 @@ Chain_Macro:
 #endif
 
 									Term_putstr(xoffset2, l, -1, TERM_GREEN, "\377Gk\377-) Modify its switching keys");
-									Term_putstr(xoffset2 + 35, l++, -1, TERM_GREEN, "\377Gm\377-) Change its switching method");
+									Term_putstr(xoffset2 + 37, l++, -1, TERM_GREEN, "\377Gm\377-) Change its switching method");
 									Term_putstr(xoffset2, l, -1, TERM_GREEN, ok_swap_stages ? "\377Gs\377-) Swap two stages" : "\377Ds) Swap two stages");
-									Term_putstr(xoffset2 + 35, l++, -1, TERM_GREEN, "\377Gc\377-) Change a stage's comment");
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Toggle a stage (removes/reinserts its activation keys in the other stages)",
-									    fileset[fileset_selected].stages ? "\377Gt\377-" : "\377Dt"));
+									Term_putstr(xoffset2 + 37, l++, -1, TERM_GREEN, "\377Gc\377-) Change a stage's comment");
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
 									    "\377Gi\377-" : "\377Di", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", fileset[fileset_selected].stages ?
+									    "\377Gd\377-" : "\377Dd", ") Delete a stage"));
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Toggle a stage (removes/reinserts its activation keys in the other stages)",
+									    fileset[fileset_selected].stages ? "\377Gt\377-" : "\377Dt"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate/load a stage (\377yforgets active macros\377- & loads stage macrofile)",
 									    fileset[fileset_selected].stages ? "\377Ga\377-" : "\377Da"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377Gw\377-) Write all currently active macros to the activated stage %sfile",
@@ -9179,13 +9181,15 @@ Chain_Macro:
 										    ", no stage comment")));
 
 									Term_putstr(xoffset2, l, -1, TERM_GREEN, "\377Gk\377-) Modify its switching keys");
-									Term_putstr(xoffset2 + 35, l++, -1, TERM_GREEN, "\377Gm\377-) Change its switching method");
+									Term_putstr(xoffset2 + 37, l++, -1, TERM_GREEN, "\377Gm\377-) Change its switching method");
 									Term_putstr(xoffset2, l, -1, TERM_GREEN, ok_swap_stages ? "\377Gs\377-) Swap two stages" : "\377Ds) Swap two stages");
-									Term_putstr(xoffset2 + 35, l++, -1, TERM_GREEN, "\377Gc\377-) Change a stage's comment");
+									Term_putstr(xoffset2 + 37, l++, -1, TERM_GREEN, "\377Gc\377-) Change a stage's comment");
+									Term_putstr(xoffset2, l, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
+									    "\377Gi\377-" : "\377Di", ") Initialise+activate a new stage"));
+									Term_putstr(xoffset2 + 37, l++, -1, TERM_GREEN, format("%s%s", fileset[fileset_selected].stages ?
+									    "\377Gd\377-" : "\377Dd", ") Delete a stage"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Toggle a stage (removes/reinserts its activation keys in the other stages)",
 									    fileset[fileset_selected].stages ? "\377Gt\377-" : "\377Dt"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
-									    "\377Gi\377-" : "\377Di", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate/load a stage (\377yforgets active macros\377- & loads stage macrofile)",
 									    fileset[fileset_selected].stages ? "\377Ga\377-" : "\377Da"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377Gw\377-) Write all currently active macros to the activated stage %sfile",
@@ -9219,7 +9223,7 @@ Chain_Macro:
 									break;
 								case 'C': case 'I': case 'S': case 'A': case 'F':
 									break; //accepted commands
-								case 'c': case 'k': case 'm': case 's': case 't': case 'i': case 'a': case 'w':
+								case 'c': case 'k': case 'm': case 's': case 't': case 'i': case 'd': case 'a': case 'w':
 									//if (fileset_selected == -1) continue;
 									break; //accepted commands
 								default:
@@ -9865,13 +9869,19 @@ Chain_Macro:
 								}
 								break;
 
-							case 'i': //init additional stage; append it to or insert it into the current stages list
+							case 'i': //init additional stage; append it to (or insert it?) into the current stages list
 								if (fileset_selected == -1) {
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
 								if (!ok_new_stage) continue;
+
+								/* Append it (for now we only append, inserting would be emulated via swapping/deleting) */
 							    //todo..
+								break;
+
+							case 'd': //delete a stage
+							    //todo...
 								break;
 
 							case 'a': //activate(+load) a stage
