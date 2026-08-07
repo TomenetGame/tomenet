@@ -5440,19 +5440,21 @@ struct macro_fileset_type {
 	bool style_freesw; // Style: free-switching (at last one trigger key was found that switches freely)
 	char basefilename[MACROSET_NAME_LEN]; // Base .prf filename part (excluding path) for all macro files of this set, to which stage numbers get appended
 	char comment[MACROSET_COMMENT_LEN];
-	char macro__pat__cyclic[MACROKEY_LEN];
-	char macro__patbuf__cyclic[MACROKEY_LEN];
-	char macro__act__cyclic[MACRO_MAXLEN];
-	char macro__actbuf__cyclic[MACRO_MAXLEN];
+	char macro__pat__cyclic[MACROKEY_LEN]; // Store cyclic key globally
+	char macro__patbuf__cyclic[MACROKEY_LEN]; // Store cyclic key globally (human-readable for convenience, so we don't have to ascii_to_text() it each time)
+	char macro__actbuf__cyclic_fmt[MACRO_MAXLEN]; // NOTE: This is NOT directly the macro string, but actually a format string to GENERATE the macro string by inserting a target stage!
+	char macro__actbuf__freesw_fmt[MACRO_MAXLEN]; // NOTE: Again a format string that is stage-independant and requires curstage + maxstages to be filled in.
 	int stages; // Amount of stages to cyclic/switch between
 	bool any_stage_file_exists; // just QoL shortcut derived from at least one of 'stage_file_exists[]' being TRUE
 	bool all_stage_files_exist; // just QoL shortcut
 	bool currently_referenced; // this macro set is referenced by at least one existing macro among all currently loaded macros
 
-	char macro__pat__freesw[MACROFILESETS_STAGES_MAX][MACROKEY_LEN];
-	char macro__patbuf__freesw[MACROFILESETS_STAGES_MAX][MACROKEY_LEN];
-	char macro__act__freesw[MACROFILESETS_STAGES_MAX][MACRO_MAXLEN];
-	char macro__actbuf__freesw[MACROFILESETS_STAGES_MAX][MACRO_MAXLEN];
+	char macro__act__cyclic[MACROFILESETS_STAGES_MAX][MACRO_MAXLEN]; // For convenience store each stage's cyclic macro action that loads THE NEXT stage
+	char macro__actbuf__cyclic[MACROFILESETS_STAGES_MAX][MACRO_MAXLEN]; // For convenience also store the above macro__act__cyclic in human-readable format
+	char macro__pat__freesw[MACROFILESETS_STAGES_MAX][MACROKEY_LEN]; // Store free-switch key of each stage
+	char macro__patbuf__freesw[MACROFILESETS_STAGES_MAX][MACROKEY_LEN]; // Store free-switch key of each stage (human-readable for convenience, so we don't have to ascii_to_text() it each time)
+	char macro__act__freesw[MACROFILESETS_STAGES_MAX][MACRO_MAXLEN]; // Same as macro__actbuf__freesw below, but in non-humanreadable form, to save on text_to_ascii() calls for convenience
+	char macro__actbuf__freesw[MACROFILESETS_STAGES_MAX][MACRO_MAXLEN]; // Store free-switch action targetting this stage from any other stage, for convenience instead of regenerating it from set-global actbuf-freesw-fmt string each time
 	bool stage_file_exists[MACROFILESETS_STAGES_MAX]; // stage file was actually found? (eg if stage files 1,2,4 are found, we must assume there is a stage 3, but maybe the file is missing)
 	char stage_comment[MACROFILESETS_STAGES_MAX][MACROSET_COMMENT_LEN];
 	bool stage_disabled[MACROFILESETS_STAGES_MAX];
@@ -5880,8 +5882,8 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 				/* Read cyclic key (whether in use or not) */
 				success &= (fgets(fileset[fileset_selected].macro__pat__cyclic, MACROKEY_LEN, fp) != NULL);
 				success &= (fgets(fileset[fileset_selected].macro__patbuf__cyclic, MACROKEY_LEN, fp) != NULL);
-				success &= (fgets(fileset[fileset_selected].macro__act__cyclic, MACRO_MAXLEN, fp) != NULL);
-				success &= (fgets(fileset[fileset_selected].macro__actbuf__cyclic, MACRO_MAXLEN, fp) != NULL);
+				success &= (fgets(fileset[fileset_selected].macro__actbuf__cyclic_fmt, MACRO_MAXLEN, fp) != NULL);
+				success &= (fgets(fileset[fileset_selected].macro__actbuf__freesw_fmt, MACRO_MAXLEN, fp) != NULL);
 				/* Read comment */
 				success &= (fgets(fileset[k].comment, MACROSET_COMMENT_LEN, fp) != NULL);
 				fileset[k].comment[MACROSET_COMMENT_LEN - 1] = 0;
@@ -6052,8 +6054,8 @@ int macrofileset_mempurge(int f) {
 	if (fp) { \
 		fprintf(fp, "%s\n", fileset[fileset_selected].macro__pat__cyclic); \
 		fprintf(fp, "%s\n", fileset[fileset_selected].macro__patbuf__cyclic); \
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__act__cyclic); \
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__cyclic); \
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__cyclic_fmt); \
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__freesw_fmt); \
 		fprintf(fp, "%s\n", fileset[fileset_selected].comment); \
 		fputc('0' + (fileset[fileset_selected].style_cyclic ? 1 : 0) + (fileset[fileset_selected].style_freesw ? '2' : '0'), fp); \
 		fclose(fp); \
@@ -9041,7 +9043,7 @@ Chain_Macro:
 #ifdef TEST_CLIENT
 						FILE *fp, *fp2;
 						int xoffset1 = 1, xoffset2 = 3 - 2;
-						int f, k, n, found;
+						int f, k, m, n, found;
 						char buf_pat[MACROKEY_LEN], buftxt_pat[MACROKEY_LEN], buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
 						char tmpbuf[1024], tmpbuf2[1024], tmpbuf3[1024];
 						bool ok_new_set, ok_new_stage, ok_swap_stages, cancel;
@@ -9382,6 +9384,7 @@ Chain_Macro:
 								fileset[f].macro__actbuf__freesw[0][0] = 0;
 
 								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/1+2)
+
 								if (fileset[f].style_cyclic) { //ask for set-global cycling-key
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
@@ -9403,26 +9406,19 @@ Chain_Macro:
 									}
 
 									/* Set macro trigger */
-									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[f].macro__pat__cyclic, buf_pat);
+									strcpy(fileset[f].macro__pat__cyclic, tmpbuf);
 									/* Set macro trigger in human-readable format */
-									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[f].macro__patbuf__cyclic, buftxt_pat);
+									ascii_to_text(fileset[f].macro__patbuf__cyclic, fileset[f].macro__pat__cyclic);
 
-									/* Forge macro action (in human-readable format) */
-
-									/* Start with meaningless placeholder stages, ie ourself: 'cycle from stage 1 to stage 1 of 1' ^^
-									   - to be replaced later with the addition of more stages... */
-									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e",
+									/* Forge template cycle-macro action (in human-readable format) */
+									sprintf(fileset[f].macro__actbuf__cyclic_fmt,
+									    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s-FS%%d.prf\\r\\e",
 									    fileset[f].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[f].basefilename);
 
-									/* Set macro action in human-readable format */
-									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[f].macro__actbuf__cyclic, buftxt_act);
-									/* Set macro action */
-									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[f].macro__act__cyclic, buf_act);
+									/* No cycle action for this stage yet, as we don't have any further stage to cycle to */
+									fileset[f].macro__act__cyclic[0][0] = fileset[f].macro__actbuf__cyclic[0][0] = 0;
 								}
+
 								if (fileset[f].style_freesw) { //ask for stage-specific switching-key
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
@@ -9444,26 +9440,23 @@ Chain_Macro:
 									}
 
 									/* Set macro trigger */
-									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[f].macro__pat__freesw[0], buf_pat);
+									strcpy(fileset[f].macro__pat__freesw[0], tmpbuf);
 									/* Set macro trigger in human-readable format */
-									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[f].macro__patbuf__freesw[0], buftxt_pat);
+									ascii_to_text(fileset[f].macro__patbuf__freesw[0], tmpbuf);
 
 									/* Forge macro action (in human-readable format) */
 
-									/* Start with meaningless placeholder stages, ie ourself: 'switch from stage 1 to stage 1 of 1' ^^
-									   - to be replaced later with the addition of more stages... */
-									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e",
+									/* Forge template freeswitch-macro action (in human-readable format) */
+									sprintf(fileset[f].macro__actbuf__freesw_fmt, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s-FS%%d.prf\\r\\e",
 									    fileset[f].basefilename, MACROFILESET_MARKER_SWITCH, fileset[f].basefilename);
 
-									/* Set macro action in human-readable format */
-									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[f].macro__actbuf__freesw[0], buftxt_act);
-									/* Set macro action */
-									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[f].macro__act__freesw[0], buf_act);
+									/* Set free-switch macro action for stage 1, in human-readable format */
+									strcpy(fileset[f].macro__actbuf__freesw[0],
+									    format(fileset[f].macro__actbuf__freesw_fmt, 1, fileset[f].stages, 0));
+									/* Set free-switch macro action for stage 1 */
+									text_to_ascii(fileset[f].macro__act__freesw[0], fileset[f].macro__actbuf__freesw[0]);
 								}
+
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
 
 								// If a macro set was already selected when we chose to add this one set,
@@ -9505,10 +9498,22 @@ Chain_Macro:
 								}
 
 								/* Add the trigger macros to currently loaded macros */
+
+								/* Cyclic set */
 								if (fileset[fileset_selected].style_cyclic) {
-									//key_autoconvert(tmp, fmt);
-									macro_add(fileset[fileset_selected].macro__pat__cyclic, fileset[fileset_selected].macro__act__cyclic, FALSE, FALSE);
+									//  If no stage is selected, auto-select the first stage.
+									if (fileset_stage_selected == -1) {
+										fileset_stage_selected = 0;
+										c_msg_print("No stage selected, auto-selecting the first stage.");
+									}
+
+									/* Add macro to cycle to the next stage from this stage (ie stage 0->1) */
+									macro_add(fileset[fileset_selected].macro__pat__cyclic,
+									    fileset[fileset_selected].macro__act__cyclic[fileset_stage_selected],
+									    FALSE, FALSE);
 								}
+
+								/* Free-switching stages */
 								if (fileset[fileset_selected].style_freesw) {
 									for (f = 0; f < fileset[fileset_selected].stages; f++) {
 										//if (!fileset[fileset_selected].stage_file_exists[f]) continue;
@@ -9521,7 +9526,6 @@ Chain_Macro:
 										macro_add(fileset[fileset_selected].macro__pat__freesw[f], fileset[fileset_selected].macro__act__freesw[f], FALSE, FALSE);
 									}
 								}
-					    // todo... also add cyclic keys for current stage?
 								c_msg_print("Set-trigger macros added to active macros in memory.");
 								break;
 
@@ -9546,9 +9550,11 @@ Chain_Macro:
 								fileset[k].stages = 0;
 								break;
 
-							/* Note: If a fileset is activated, a stage of it will also be activated automatically. If it's a new set, it'll be stage #1 (still empty). */
-							/* Fileset-stage actions (required 'fileset_selected != -1' condition was already checked directly after inkey() read) : */
-							case 'k': //modify switching keys
+							/* --- Note: If a fileset is activated, a stage of it will also be activated automatically.
+							 *     If it's a new set, it'll be stage #1 (still empty). */
+							/*     Fileset-stage actions (required 'fileset_selected != -1' condition was already checked directly after inkey() read): --- */
+
+							case 'k': //modify switching keys of the currently selected set
 								if (fileset_selected == -1) {
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
@@ -9559,6 +9565,7 @@ Chain_Macro:
 								}
 
 								// ask for cycling-key / stage switching key depending on selected type (1/2/12)
+
 								if (fileset[fileset_selected].style_cyclic) { //ask for set-global cycling-key
 									/* Get trigger in human-readable format */
 									macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__cyclic, tmpbuf);
@@ -9578,26 +9585,26 @@ Chain_Macro:
 									if (!strcmp(buf, "\e")) continue; //abort
 
 									/* Set macro trigger */
-									strcpy(buf_pat, tmpbuf);
-									strcpy(fileset[fileset_selected].macro__pat__cyclic, buf_pat);
+									strcpy(fileset[fileset_selected].macro__pat__cyclic, tmpbuf);
 									/* Set macro trigger in human-readable format */
-									ascii_to_text(buftxt_pat, buf_pat);
-									strcpy(fileset[fileset_selected].macro__patbuf__cyclic, buftxt_pat);
+									ascii_to_text(fileset[fileset_selected].macro__patbuf__cyclic, fileset[fileset_selected].macro__pat__cyclic);
 
 									/* Forge macro action (in human-readable format) */
 
-									/* Start with meaningless placeholder stages, ie ourself: 'cycle from stage 1 to stage 1 of 1' ^^
-									  - to be replaced later with the addition of more stages... */
-									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G1{s\\sof\\s{G1{s ---\\r%%l%s-FS1.prf\\r\\e",
-									   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[fileset_selected].basefilename);
+									/* Forge template cycle-macro action (in human-readable format) */
+									sprintf(fileset[fileset_selected].macro__actbuf__cyclic_fmt,
+									    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s-FS%%d.prf\\r\\e",
+									    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[fileset_selected].basefilename);
 
-									/* Set macro action in human-readable format */
-									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[fileset_selected].macro__actbuf__cyclic, buftxt_act);
-									/* Set macro action */
-									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[fileset_selected].macro__act__cyclic, buf_act);
+									/* Set cycle-to-next-stage action for all stages */
+									for (n = 0; n < fileset[fileset_selected].stages; n++) {
+										m = n + 1;
+										if (m == fileset[fileset_selected].stages) m = 0;
+										text_to_ascii(fileset[fileset_selected].macro__act__cyclic[n],
+										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, m + 1, fileset[fileset_selected].stages, m));
+									}
 								}
+
 								if (fileset[fileset_selected].style_freesw) { //ask for stage-specific switching-key
 									for (f = 0; f < fileset[fileset_selected].stages; f++) {
 										/* Get trigger in human-readable format */
@@ -9618,11 +9625,9 @@ Chain_Macro:
 										if (!strcmp(buf, "\e")) continue; // abort
 
 										/* Set macro trigger */
-										strcpy(buf_pat, tmpbuf);
-										strcpy(fileset[fileset_selected].macro__pat__freesw[f], buf_pat);
+										strcpy(fileset[fileset_selected].macro__pat__freesw[f], tmpbuf);
 										/* Set macro trigger in human-readable format */
-										ascii_to_text(buftxt_pat, buf_pat);
-										strcpy(fileset[fileset_selected].macro__patbuf__freesw[f], buftxt_pat);
+										ascii_to_text(fileset[fileset_selected].macro__patbuf__freesw[f], tmpbuf);
 
 										/* Forge macro action (in human-readable format) */
 
@@ -9640,6 +9645,16 @@ Chain_Macro:
 										/* Set macro action */
 										text_to_ascii(buf_act, buftxt_act);
 										strcpy(fileset[fileset_selected].macro__act__freesw[f], buf_act);
+
+										/* Forge template freeswitch-macro action (in human-readable format) */
+										sprintf(fileset[fileset_selected].macro__actbuf__freesw_fmt, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s-FS%%d.prf\\r\\e",
+										    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH, fileset[fileset_selected].basefilename);
+
+										/* Set free-switch macro action for stage 1, in human-readable format */
+										strcpy(fileset[fileset_selected].macro__actbuf__freesw[0],
+										    format(fileset[fileset_selected].macro__actbuf__freesw_fmt, 1, fileset[fileset_selected].stages, 0));
+										/* Set free-switch macro action for stage 1 */
+										text_to_ascii(fileset[fileset_selected].macro__act__freesw[0], fileset[fileset_selected].macro__actbuf__freesw[0]);
 									}
 								}
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
