@@ -132,6 +132,7 @@ extern s32b server_port;
 extern char ip_ihost[MAX_CHARS], ip_iface[MAX_CHARS];
 extern unsigned char ip_iaddr[6];
 extern char cname[MAX_CHARS], prev_cname[MAX_CHARS];
+extern bool reincarnate_previous;
 
 extern char message_history[MSG_HISTORY_MAX][MSG_LEN];
 extern char message_history_chat[MSG_HISTORY_MAX][MSG_LEN];

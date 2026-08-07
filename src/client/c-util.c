@@ -3135,9 +3135,11 @@ bool askfor_aux(char *buf, int len, char mode) {
 					/* force upper-case */
 					i = toupper(i);
 					/* must be a letter */
-					if (i < 'A' || i > 'Z') continue;
-				}
-				if (!((i >= 'A' && i <= 'Z') ||
+					if ((i < 'A' || i > 'Z')
+					    /* hack: allow prefixing a '+' to the name for reincarnation */
+					    && !((mode & ASKFOR_PLUSPREFIX) && i == '+'))
+						continue;
+				} else if (!((i >= 'A' && i <= 'Z') ||
 				    (i >= 'a' && i <= 'z') ||
 				    (i >= '0' && i <= '9') ||
 				    //strchr(" .,-'&_$%~#<>|", i))) /* chars allowed for character name, */

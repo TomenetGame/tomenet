@@ -1120,6 +1120,8 @@ void Receive_login(void) {
 	Term->scr->cx = Term->wid;
 	Term->scr->cu = 1;
 
+	reincarnate_previous = FALSE;
+
 	while ((ch < 'a' || ch >= 'a' + i) && (((ch != 'N' || !new_ok) && (ch != 'E' || !exclusive_ok || firstrun)) || i > (max_cpa - 1))
 	    && ((ch != 'S' && ch != 'I' && ch != 'A') || !allow_reordering)) {
 		ch = inkey();
@@ -1174,8 +1176,10 @@ void Receive_login(void) {
 			c_put_str(TERM_SLATE, "Keep blank for random name, ESC to cancel. Allowed symbols: .,-'&_$%~#", offset, 35);
 
 		while (1) {
-			c_put_str(TERM_YELLOW, "New name: ", offset, COL_CHARS);
-			if (!askfor_aux(c_name, CNAME_LEN - 1, ASKFOR_LIVETRIM)) {
+			if (*prev_cname) c_put_str(TERM_YELLOW, "New name (prefix '+' to reincarnate previous char): ", offset, COL_CHARS);
+			else c_put_str(TERM_YELLOW, "New name: ", offset, COL_CHARS);
+
+			if (!askfor_aux(c_name, CNAME_LEN - 1, ASKFOR_LIVETRIM | ASKFOR_PLUSPREFIX)) {
 				if (total_cpa <= 15) {
 					Term_erase(0, offset, 80);
 					Term_erase(0, offset + 1, 80);
@@ -1184,30 +1188,38 @@ void Receive_login(void) {
 				ch = 0;
 				break;
 			}
-			else if (strlen(c_name)) break;
-			else create_random_name(0, c_name);
+
+			/* Trim spaces right away */
+			strcpy(tmp, c_name);
+			cp = tmp;
+			while (*cp == ' ') cp++;
+			strcpy(c_name, cp);
+			cp = c_name + (strlen(c_name) - 1);
+			while (*cp == ' ') {
+				*cp = 0;
+				cp--;
+			}
+
+			/* Prefix '+' to reincarnate to the character of the previous name, but with this new name */
+			cp = c_name;
+			if (*cp == '+') {
+				cp++;
+				reincarnate_previous = TRUE;
+			}
+			if (strlen(cp)) break;
+			else create_random_name(0, cp);
 		}
 		if (!ch) goto enter_menu;
 
-		/* Trim spaces right away */
-		strcpy(tmp, c_name);
-		cp = tmp;
-		while (*cp == ' ') cp++;
-		strcpy(c_name, cp);
-		cp = c_name + (strlen(c_name) - 1);
-		while (*cp == ' ') {
-			*cp = 0;
-			cp--;
-		}
-
 		/* Capitalize the name */
-		c_name[0] = toupper(c_name[0]);
+		*cp = toupper(*cp);
 
 		if (ch == 'E') sex |= MODE_DED_PVP | MODE_DED_IDDC;
 	}
-	else strcpy(c_name, names[ch - 'a']);
+	else cp = names[ch - 'a'];
+
 	Term_clear();
-	strcpy(cname, c_name);
+	strcpy(cname, cp);
 }
 
 /*

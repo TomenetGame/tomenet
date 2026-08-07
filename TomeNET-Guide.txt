@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 6. August 2026 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 8. August 2026 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5846,6 +5846,15 @@ creation process: '%' for auto-reincarnation and '#' for reincarnation just for
 the current step of the character creation process.
 Auto-reincarnation, ie pressing '%', is like pressing '#' in every step of the
 character creation process. (There is also command-line option '-R' for this.)
+
+Reincarnate a character but with a different name:
+If you want to re-create the character that just died but with a new name, you
+can do that by prefixing the new name with a '+' symbol. But you can only do
+that for the previous character you just logged on with. So if you just died
+on a character named 'Gandalf' and are back in the character list screen, you
+can press 'N' to create a new character and then for name type in '+Saruman'.
+Your new character will then be named 'Saruman' but will reincarnate to be the
+same as your previous character 'Gandalf' (ie same race, class, etc.).
 
 However, since this is your first character, just press 'N' to start the
 creation progress, enter a character name, and continue reading.

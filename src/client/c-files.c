@@ -3031,7 +3031,11 @@ void load_birth_file(cptr cname) {
 	/* Assume invalid until we completely loaded it successfully */
 	valid_dna = FALSE;
 
-	strcpy(name, cname);
+	/* Player entered a plus-prefixed char name? That means reincarnate the previous char but with this new name now */
+	if (reincarnate_previous) strcpy(name, prev_cname);
+	/* Normal char name was provided */
+	else strcpy(name, cname);
+
 #ifdef CHARNAME_ROMAN
 	/* Ignore roman number at the end, for players who increment after each death :) */
 	if ((ptr = roman_suffix(name))) *(ptr - 1) = 0;
