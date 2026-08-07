@@ -1189,17 +1189,6 @@ void Receive_login(void) {
 				break;
 			}
 
-			/* Trim spaces right away */
-			strcpy(tmp, c_name);
-			cp = tmp;
-			while (*cp == ' ') cp++;
-			strcpy(c_name, cp);
-			cp = c_name + (strlen(c_name) - 1);
-			while (*cp == ' ') {
-				*cp = 0;
-				cp--;
-			}
-
 			/* Prefix '+' to reincarnate to the character of the previous name, but with this new name */
 			cp = c_name;
 			if (*cp == '+') {
@@ -1211,15 +1200,27 @@ void Receive_login(void) {
 		}
 		if (!ch) goto enter_menu;
 
-		/* Capitalize the name */
-		*cp = toupper(*cp);
-
 		if (ch == 'E') sex |= MODE_DED_PVP | MODE_DED_IDDC;
 	}
 	else cp = names[ch - 'a'];
 
+	/* Trim spaces */
+	strcpy(tmp, cp);
+	cp = tmp;
+	while (*cp == ' ') cp++;
+	strcpy(c_name, cp);
+	cp = c_name + (strlen(c_name) - 1);
+	while (*cp == ' ') {
+		*cp = 0;
+		cp--;
+	}
+
+	/* Capitalize the name */
+	*c_name = toupper(*c_name);
+
+	strcpy(cname, c_name);
+
 	Term_clear();
-	strcpy(cname, cp);
 }
 
 /*
