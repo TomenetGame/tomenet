@@ -9695,66 +9695,70 @@ Chain_Macro:
 								    fileset[fileset_selected].basefilename, k));
 								path_build(tmpbuf3, 1024, ANGBAND_DIR_USER, format("%s-FS_tmp.prf",
 								    fileset[fileset_selected].basefilename, f));
-								rename(tmpbuf, tmpbuf3);
-								rename(tmpbuf2, tmpbuf);
-								rename(tmpbuf3, tmpbuf2);
+								if (fileset[fileset_selected].stage_file_exists[k]) rename(tmpbuf, tmpbuf3);
+								if (fileset[fileset_selected].stage_file_exists[f]) rename(tmpbuf2, tmpbuf);
+								if (fileset[fileset_selected].stage_file_exists[k]) rename(tmpbuf3, tmpbuf2);
 
 								/* Step 2/2: If cyclic-style then swap their cyclic-keys */
 								if (fileset[fileset_selected].style_cyclic) {
 									/* Translate all 'MACROFILESET_MARKER_CYCLIC...-FS<k+1+1>' to '-FS<f+1+1>' in former stage k, now stage f */
-									fp = fopen(tmpbuf, "r");
-									fp2 = fopen(tmpbuf3, "w");
-									if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf);
-									if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
-									if (fp && fp2) {
-										sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
-										   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-										   k + 1 + 1, fileset[fileset_selected].stages,
-										   fileset[fileset_selected].basefilename,
-										   k + 1 + 1);
-										while (fgets(buf_act, MACRO_MAXLEN, fp)) {
-											if (strstr(buf_act, buftxt_act))
-												fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e\n",
-												   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-												   f + 1 + 1, fileset[fileset_selected].stages,
-												   fileset[fileset_selected].basefilename,
-												   f + 1 + 1);
-											else fputs(buf_act, fp2);
+									if (fileset[fileset_selected].stage_file_exists[f]) {
+										fp = fopen(tmpbuf, "r");
+										fp2 = fopen(tmpbuf3, "w");
+										if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf);
+										if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
+										if (fp && fp2) {
+											sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
+											   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+											   k + 1 + 1, fileset[fileset_selected].stages,
+											   fileset[fileset_selected].basefilename,
+											   k + 1 + 1);
+											while (fgets(buf_act, MACRO_MAXLEN, fp)) {
+												if (strstr(buf_act, buftxt_act))
+													fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e\n",
+													   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+													   f + 1 + 1, fileset[fileset_selected].stages,
+													   fileset[fileset_selected].basefilename,
+													   f + 1 + 1);
+												else fputs(buf_act, fp2);
+											}
+											fclose(fp);
+											fclose(fp2);
+											rename(tmpbuf3, tmpbuf);
+										} else {
+											if (fp) fclose(fp);
+											if (fp2) fclose(fp2);
 										}
-										fclose(fp);
-										fclose(fp2);
-										rename(tmpbuf3, tmpbuf);
-									} else {
-										if (fp) fclose(fp);
-										if (fp2) fclose(fp2);
 									}
 
 									/* Translate all 'MACROFILESET_MARKER_CYCLIC...-FS<f+1+1>' to '-FS<k+1+1>' in former stage f, now stage k */
-									fp = fopen(tmpbuf2, "r");
-									fp2 = fopen(tmpbuf3, "w");
-									if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf2);
-									if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
-									if (fp && fp2) {
-										sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
-										   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-										   f + 1 + 1, fileset[fileset_selected].stages,
-										   fileset[fileset_selected].basefilename,
-										   f + 1 + 1);
-										while (fgets(buf_act, MACRO_MAXLEN, fp)) {
-											if (strstr(buf_act, buftxt_act))
-												fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e\n",
-												   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-												   k + 1 + 1, fileset[fileset_selected].stages,
-												   fileset[fileset_selected].basefilename,
-												   k + 1 + 1);
-											else fputs(buf_act, fp2);
+									if (fileset[fileset_selected].stage_file_exists[k]) {
+										fp = fopen(tmpbuf2, "r");
+										fp2 = fopen(tmpbuf3, "w");
+										if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf2);
+										if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
+										if (fp && fp2) {
+											sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
+											   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+											   f + 1 + 1, fileset[fileset_selected].stages,
+											   fileset[fileset_selected].basefilename,
+											   f + 1 + 1);
+											while (fgets(buf_act, MACRO_MAXLEN, fp)) {
+												if (strstr(buf_act, buftxt_act))
+													fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e\n",
+													   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+													   k + 1 + 1, fileset[fileset_selected].stages,
+													   fileset[fileset_selected].basefilename,
+													   k + 1 + 1);
+												else fputs(buf_act, fp2);
+											}
+											fclose(fp);
+											fclose(fp2);
+											rename(tmpbuf3, tmpbuf2);
+										} else {
+											if (fp) fclose(fp);
+											if (fp2) fclose(fp2);
 										}
-										fclose(fp);
-										fclose(fp2);
-										rename(tmpbuf3, tmpbuf2);
-									} else {
-										if (fp) fclose(fp);
-										if (fp2) fclose(fp2);
 									}
 								}
 
@@ -9777,9 +9781,28 @@ Chain_Macro:
 								fileset[fileset_selected].stage_disabled[f] = !fileset[fileset_selected].stage_disabled[f];
 								WRITE_MACROFILESET_STAGE_META
 
-								/* Also delete (or restore) the trigger keys for this stage from all the other stages -
-								   which means also crop them out (or reinsert them) of the '-FS' disk files! */
+								/* --- Also delete (or restore) the trigger keys for this stage from all the other stages -
+								       which means also crop them out (or reinsert them) of the '-FS' disk files! --- */
+								if (!fileset[fileset_selected].stage_file_exists[f]) break;
+
+								/* For now just remove this stage from cyclic key reference of the previous stage,
+								   should be enough, just leave the freeswitch keys intact for laziness */
+								if (!fileset[fileset_selected].style_cyclic) break;
+
+								n = f - 1;
+								if (n == -1) n = fileset[fileset_selected].stages - 1;
+								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
+								    fileset[fileset_selected].basefilename, n));
+								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s-FS_tmp.prf",
+								    fileset[fileset_selected].basefilename, f));
+
+								if (fileset[fileset_selected].stage_disabled[f]) {
+									/* Remove previous stage's cyclic reference to us, bumping it to our successor stage instead */
 							    //...todo
+								} else {
+									/* Consistent with above if-branch, just reinsert us into the previous stage's cyclic reference */
+							    //...todo
+								}
 								break;
 
 							case 'i': //init additional stage; append it to or insert it into the current stages list
