@@ -9866,6 +9866,7 @@ Chain_Macro:
 										if (fp) fclose(fp);
 										if (fp2) fclose(fp2);
 									}
+									/* Remove free-switch references in all other stages to us? Not really needed, so not for now, for great laziness, Gentlemen, make your time */
 								} else {
 									/* Consistent with above if-branch, just reinsert us into the previous stage's cyclic reference */
 									fp = fopen(tmpbuf, "r");
@@ -9894,6 +9895,7 @@ Chain_Macro:
 										if (fp) fclose(fp);
 										if (fp2) fclose(fp2);
 									}
+									/* Reinsert free-switch reference to us into all other stages? Not needed since we currently don't delete them (laziness). */
 								}
 								break;
 
@@ -9912,9 +9914,40 @@ Chain_Macro:
 								fileset[fileset_selected].stages++;
 
 								/* Set cycling-to-next-stage key for this stage and
-								   set previous stage's cycling key if it was the last stage and therefore cycled back to 0 */
+								   set previous/subsequent stages' cycling keys, depending on whether...
+								   - previous stage was the last stage and therefore cycled back to 0
+								   - instead more stages follow after us and therefore need to cycle one further now */
 								if (fileset[fileset_selected].style_cyclic) {
+									/* We're the last stage? Then cycle to 0 and set previous' stage's key to cycle to us now instead of 0. */
+									if (f == fileset[fileset_selected].stages - 1 && !f) ; /* We're the only existing stage? nothing to do regarding cycling */
+									else if (f == fileset[fileset_selected].stages - 1) {
+										/* Set previous stage to cycle to us */
+										text_to_ascii(fileset[fileset_selected].macro__act__cyclic[f - 1],
+										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, f + 1, fileset[fileset_selected].stages, f));
+
+										/* Also save the cycle-macro to disk for the previous stage, if it has a disk file */
 					    // todo...
+
+										/* Set us to cycle to 0 */
+										text_to_ascii(fileset[fileset_selected].macro__act__cyclic[f],
+										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, 1, fileset[fileset_selected].stages, 0));
+									}
+									/* We got inserted instead of appended? Then increase cycle value of all subsequent stages by +1,
+									   except for the final stage which remains at cycling-back-to-0. */
+									else {
+										/* Increment cycle-to-next-stage action for all subsequent stages except the final one by 1 */
+										for (n = f + 1; n < fileset[fileset_selected].stages - 1; n++) {
+											text_to_ascii(fileset[fileset_selected].macro__act__cyclic[n],
+											    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, n + 1 + 1, fileset[fileset_selected].stages, n + 1));
+
+											/* Also save the cycle-macro to disk for the subsequent stages, if they have disk files */
+					    // todo...
+										}
+
+										/* Insert us by setting our cycle action to the next stage */
+										text_to_ascii(fileset[fileset_selected].macro__act__cyclic[f],
+										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, f + 1 + 1, fileset[fileset_selected].stages, f + 1));
+									}
 								}
 
 								/* Set free-switching key for this stage and imprint it on all stages and imprint it on this stage */
@@ -9946,18 +9979,12 @@ Chain_Macro:
 									/* Forge macro action (in human-readable format) */
 
 									/* Set free-switch key for this stage (ie that other stages reference to invoke this stage) */
-						    // todo...
-									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
-									    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH,
-									    f + 1, fileset[fileset_selected].stages,
-									    fileset[fileset_selected].basefilename, f + 1);
-
-									/* Set macro action in human-readable format */
-									strcpy(buftxt_act, tmpbuf);
-									strcpy(fileset[fileset_selected].macro__actbuf__freesw[f], buftxt_act);
-									/* Set macro action */
-									text_to_ascii(buf_act, buftxt_act);
-									strcpy(fileset[fileset_selected].macro__act__freesw[f], buf_act);
+									/* ...in human-readable format */
+									strcpy(fileset[fileset_selected].macro__actbuf__freesw[f],
+									    format(fileset[fileset_selected].macro__actbuf__freesw_fmt, f + 1, fileset[fileset_selected].stages, f));
+									/* ...in macro format  */
+									text_to_ascii(fileset[fileset_selected].macro__act__freesw[f],
+									    fileset[fileset_selected].macro__actbuf__freesw[f]);
 
 									/* Imprint all existing stage files with the free-switch key of this stage */
 						    // todo...
@@ -9979,6 +10006,39 @@ Chain_Macro:
 
 								// Note: We don't clear current macros from memory
 
+								/* Set previous/subsequent stages' cycling keys, depending on whether...
+								   - previous stage was the last stage and therefore cycled back to 0
+								   - instead more stages follow after us and therefore need to cycle one further now */
+								if (fileset[fileset_selected].style_cyclic && fileset[fileset_selected].stages > 1) {
+									/* We're the final stage? Then set previous' stage's key to cycle to 0 now instead to us. */
+									if (f == fileset[fileset_selected].stages - 1) {
+										/* Set previous stage to cycle to 0 */
+										text_to_ascii(fileset[fileset_selected].macro__act__cyclic[f - 1],
+										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, 1, fileset[fileset_selected].stages, 0));
+
+										/* Also save the cycle-macro to disk for the previous stage, if it has a disk file */
+					    // todo...
+									}
+									/* We were in between somewhere? Then decrease cycle value of all subsequent stages by 1,
+									   except for the final stage which remains at cycling-back-to-0. */
+									else {
+										/* Decrement cycle-to-next-stage action for all subsequent stages except the final one by 1 */
+										for (n = f + 1; n < fileset[fileset_selected].stages - 1; n++) {
+											text_to_ascii(fileset[fileset_selected].macro__act__cyclic[n],
+											    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, n + 1 - 1, fileset[fileset_selected].stages, n - 1));
+
+											/* Also save the cycle-macro to disk for this subsequent stage, if it has a disk file */
+					    // todo...
+										}
+
+										/* Insert us by setting our cycle action to the next stage */
+										text_to_ascii(fileset[fileset_selected].macro__act__cyclic[f],
+										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, f + 1 + 1, fileset[fileset_selected].stages, f + 1));
+									}
+								}
+								/* Edit all stage files of stages before us too, to remove our free-switch reference key from them? */
+					    // todo...
+
 								/* Slide subsequent stages up */
 								for (n = f; n < fileset[fileset_selected].stages - 1; n++) {
 									strcpy(fileset[fileset_selected].macro__pat__freesw[n], fileset[fileset_selected].macro__pat__freesw[n + 1]);
@@ -9988,6 +10048,15 @@ Chain_Macro:
 									fileset[fileset_selected].stage_file_exists[n] = fileset[fileset_selected].stage_file_exists[n + 1];
 									strcpy(fileset[fileset_selected].stage_comment[n], fileset[fileset_selected].stage_comment[n + 1]);
 									fileset[fileset_selected].stage_disabled[n] = fileset[fileset_selected].stage_disabled[n + 1];
+
+									/* Slide stage file names accordingly, overwriting the deleted stage in the process */
+									if (!fileset[fileset_selected].stage_file_exists[f]) {
+										path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
+										    fileset[fileset_selected].basefilename, n));
+										path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
+										    fileset[fileset_selected].basefilename, n + 1));
+										rename(tmpbuf2, tmpbuf);
+									}
 								}
 								fileset[fileset_selected].stages--;
 
@@ -9996,15 +10065,6 @@ Chain_Macro:
 								for (n = 0; n < fileset[fileset_selected].stages; n++)
 									fileset[fileset_selected].any_stage_file_exists |= fileset[fileset_selected].stage_file_exists[n];
 
-								/* Also delete stage file from disk */
-								if (!fileset[fileset_selected].stage_file_exists[f]) {
-									path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
-									    fileset[fileset_selected].basefilename, f));
-									remove(tmpbuf);
-								}
-
-								/* Set previous stage's cycling key if this was the last stage and therefore the previous stage now must cycleback to 0 */
-					    // todo...
 
 								/* If the deleted stage was actually the currently active one, unselect it */
 								if (fileset_stage_selected == f) fileset_stage_selected = -1;
