@@ -5875,8 +5875,15 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 
 			fp = fopen(tmpbuf, "r");
 			if (fp) {
-				/* Read comment (1st line) */
-				fgets(fileset[k].comment, MACROSET_COMMENT_LEN, fp);
+				bool success = TRUE;
+
+				/* Read cyclic key (whether in use or not) */
+				success &= (fgets(fileset[fileset_selected].macro__pat__cyclic, MACROKEY_LEN, fp) != NULL);
+				success &= (fgets(fileset[fileset_selected].macro__patbuf__cyclic, MACROKEY_LEN, fp) != NULL);
+				success &= (fgets(fileset[fileset_selected].macro__act__cyclic, MACRO_MAXLEN, fp) != NULL);
+				success &= (fgets(fileset[fileset_selected].macro__actbuf__cyclic, MACRO_MAXLEN, fp) != NULL);
+				/* Read comment */
+				success &= (fgets(fileset[k].comment, MACROSET_COMMENT_LEN, fp) != NULL);
 				fileset[k].comment[MACROSET_COMMENT_LEN - 1] = 0;
 				/* Trim trailing newline */
 				if (fileset[k].comment[0] && fileset[k].comment[strlen(fileset[k].comment) - 1] == '\n')
@@ -5884,6 +5891,7 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 
 				/* Read switching-types (2nd line) */
 				flagc = fgetc(fp);
+				success &= (flagc != EOF);
 				switch (flagc) {
 				case 0: fileset[k].style_cyclic = fileset[k].style_freesw = 0; break; // bug
 				case 1: fileset[k].style_cyclic = 1; fileset[k].style_freesw = 0; break;
@@ -5892,6 +5900,7 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 				}
 
 				fclose(fp);
+				if (!success) c_msg_format("\377oError in contents of file '%s-FS.meta'.", fileset[k].basefilename);
 			} else c_msg_format("\377oError: couldn't read file '%s-FS.meta'.", fileset[k].basefilename);
 		}
 		for (f = 0; f < fileset[k].stages; f++) {
@@ -5904,8 +5913,15 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 
 				fp = fopen(tmpbuf, "r");
 				if (fp) {
-					/* Read comment (1st line) */
-					fgets(fileset[k].stage_comment[f], MACROSET_COMMENT_LEN, fp);
+					bool success = TRUE;
+
+					/* Read free-switch key targetting this stage from any other stage (whether in use or not) */
+					success &= (fgets(fileset[fileset_selected].macro__pat__freesw[f], MACROKEY_LEN, fp) != NULL);
+					success &= (fgets(fileset[fileset_selected].macro__patbuf__freesw[f], MACROKEY_LEN, fp) != NULL);
+					success &= (fgets(fileset[fileset_selected].macro__act__freesw[f], MACRO_MAXLEN, fp) != NULL);
+					success &= (fgets(fileset[fileset_selected].macro__actbuf__freesw[f], MACRO_MAXLEN, fp) != NULL);
+					/* Read comment */
+					success &= (fgets(fileset[k].stage_comment[f], MACROSET_COMMENT_LEN, fp) != NULL);
 					fileset[k].stage_comment[f][MACROSET_COMMENT_LEN - 1] = 0;
 					/* Trim trailing newline */
 					if (fileset[k].stage_comment[f][0] && fileset[k].stage_comment[f][strlen(fileset[k].stage_comment[f]) - 1] == '\n')
@@ -5913,9 +5929,11 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 
 					/* Read 'disabled' flag (2nd line) */
 					flagc = fgetc(fp);
+					success &= (flagc != EOF);
 					fileset[k].stage_disabled[f] = ((flagc == '0' || flagc == EOF) ? FALSE : TRUE);
 
 					fclose(fp);
+					if (!success) c_msg_format("\377oError in contents of file '%s-FS%d.meta'.", fileset[k].basefilename, f);
 				} else c_msg_format("\377oError: couldn't read file '%s-FS%d.meta'.", fileset[k].basefilename, f + 1);
 			}
 		}
@@ -6009,24 +6027,33 @@ int macrofileset_mempurge(int f) {
 		continue; \
 	} }
 
-/* Store stage 'f' state and comment of currently selected set in a separate file '<macroset-stage>.meta', otherwise hard to handle... */
+/* Store infos about stage 'f' of currently selected set in a separate file '<macroset-stage>.meta':
+   Currently: free-switch key targetting this stage from any other stage (independantly of whether or not the set uses free-switching or not), comment, disabled-flag.  */
 #define WRITE_MACROFILESET_STAGE_META \
 	{ path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.meta", \
 	    fileset[fileset_selected].basefilename, f + 1)); \
 	fp = fopen(tmpbuf, "w"); \
 	if (fp) { \
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__pat__freesw[f]); \
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__patbuf__freesw[f]); \
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__act__freesw[f]); \
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__freesw[f]); \
 		fprintf(fp, "%s\n", fileset[fileset_selected].stage_comment[f]); \
 		fputc(fileset[fileset_selected].stage_disabled[f] ? '1' : '0', fp); \
 		fclose(fp); \
 	} else c_msg_format("\377oError: couldn't write file '%s-FS%d.meta'.", fileset[fileset_selected].basefilename, f + 1); }
 
-/* Store switching-type and comment of currently selected set in a separate file '<macroset>.meta' */
-#pragma message("todo... write cyclic key to this meta file, seems best solution")
+/* Store switching-type and comment of currently selected set in a separate file '<macroset>.meta'.
+   Currently: cycle key (independantly of whether or not the set uses cyclic switching or not), comment, switching-type.  */
 #define WRITE_MACROFILESET_META \
 	{ path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS.meta", \
 	    fileset[fileset_selected].basefilename)); \
 	fp = fopen(tmpbuf, "w"); \
 	if (fp) { \
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__pat__cyclic); \
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__patbuf__cyclic); \
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__act__cyclic); \
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__cyclic); \
 		fprintf(fp, "%s\n", fileset[fileset_selected].comment); \
 		fputc('0' + (fileset[fileset_selected].style_cyclic ? 1 : 0) + (fileset[fileset_selected].style_freesw ? '2' : '0'), fp); \
 		fclose(fp); \
