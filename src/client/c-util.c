@@ -9072,7 +9072,7 @@ Chain_Macro:
 								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
 
 								/* If no macro set is selected, show the list of macro sets, otherwise show the list of stages of the currently active set */
-								//todo...^ (use implementation of 'Small screen' section below for reference)
+					    // todo...^ (use implementation of 'Small screen' section below for reference)
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found) {
 										/* Build stages string */
@@ -9108,7 +9108,7 @@ Chain_Macro:
 									l++;
 									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("And with the currently selected fileset (\377v%d\377-) you may...", fileset_selected + 1));
 
-#if 1 //todo: adjust to the correct position for this big screen
+#if 1 // todo: adjust to the correct position for this big screen
 									/* urgh, low on space, we somehow squeeze the stage comment in there */
 									if (fileset_stage_selected != -1)
 										Term_putstr(xoffset1 + 55, l - 1, -1, TERM_GREEN,
@@ -9171,7 +9171,7 @@ Chain_Macro:
 									} else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 								else { /* We have a set selected? Then list its stages instead */
-								    //todo:....
+					    // todo....
 
 									/* Build stages string */
 									tmpbuf[0] = 0;
@@ -9182,7 +9182,7 @@ Chain_Macro:
 									}
 									for (; f < MACROFILESETS_STAGES_MAX; f++) strcat(tmpbuf, "  ");
 
-								    // todo?:
+								    // todo...?:
 									Term_putstr(xoffset2 - 1, l++, -1, fileset_stage_selected == k ? TERM_L_BLUE : TERM_UMBER,
 									    //format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g, active: %s; \377s%s\377-; \"\377s%s\377-\"",
 									    format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g [%s]; \377s%s\377-; \"\377s%s\377-\"",
@@ -9521,7 +9521,7 @@ Chain_Macro:
 										macro_add(fileset[fileset_selected].macro__pat__freesw[f], fileset[fileset_selected].macro__act__freesw[f], FALSE, FALSE);
 									}
 								}
-					    //todo... also add cyclic keys for current stage?
+					    // todo... also add cyclic keys for current stage?
 								c_msg_print("Set-trigger macros added to active macros in memory.");
 								break;
 
@@ -9947,7 +9947,7 @@ Chain_Macro:
 									/* Forge macro action (in human-readable format) */
 
 									/* Imprint all existing and this new stage with all the switching keys */
-						    //todo...
+						    // todo...
 									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
 									    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH,
 									    f + 1, fileset[fileset_selected].stages,
@@ -9962,7 +9962,7 @@ Chain_Macro:
 								}
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
 
-					    //todo... also add cyclic key + freesw keys for current stage?
+					    // todo... also add cyclic key + freesw keys for current stage?
 
 								/* Auto-select the newly added stage? */
 								fileset_stage_selected = f;
@@ -10040,7 +10040,7 @@ Chain_Macro:
 									process_pref_file(tmpbuf);
 								}
 
-					    //todo... also add cyclic key + freesw keys for current stage?
+					    // todo... also add cyclic key + freesw keys for current stage?
 
 								break;
 
