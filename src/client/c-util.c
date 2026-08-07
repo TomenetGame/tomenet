@@ -9694,7 +9694,7 @@ Chain_Macro:
 								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
 								    fileset[fileset_selected].basefilename, k));
 								path_build(tmpbuf3, 1024, ANGBAND_DIR_USER, format("%s-FS_tmp.prf",
-								    fileset[fileset_selected].basefilename, f));
+								    fileset[fileset_selected].basefilename));
 								if (fileset[fileset_selected].stage_file_exists[k]) rename(tmpbuf, tmpbuf3);
 								if (fileset[fileset_selected].stage_file_exists[f]) rename(tmpbuf2, tmpbuf);
 								if (fileset[fileset_selected].stage_file_exists[k]) rename(tmpbuf3, tmpbuf2);
@@ -9765,6 +9765,16 @@ Chain_Macro:
 								strcpy(tmpbuf, fileset[fileset_selected].stage_comment[k]);
 								strcpy(fileset[fileset_selected].stage_comment[k], fileset[fileset_selected].stage_comment[f]);
 								strcpy(fileset[fileset_selected].stage_comment[f], tmpbuf);
+								/* Rename the .meta files on disk */
+								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.meta",
+								    fileset[fileset_selected].basefilename, f));
+								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s-FS%d.meta",
+								    fileset[fileset_selected].basefilename, k));
+								path_build(tmpbuf3, 1024, ANGBAND_DIR_USER, format("%s-FS_tmp.meta",
+								    fileset[fileset_selected].basefilename));
+								if (fileset[fileset_selected].stage_file_exists[k]) rename(tmpbuf, tmpbuf3);
+								if (fileset[fileset_selected].stage_file_exists[f]) rename(tmpbuf2, tmpbuf);
+								if (fileset[fileset_selected].stage_file_exists[k]) rename(tmpbuf3, tmpbuf2);
 
 								tmpbool = fileset[fileset_selected].stage_disabled[k];
 								fileset[fileset_selected].stage_disabled[k] = fileset[fileset_selected].stage_disabled[f];
@@ -9794,14 +9804,64 @@ Chain_Macro:
 								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
 								    fileset[fileset_selected].basefilename, n));
 								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s-FS_tmp.prf",
-								    fileset[fileset_selected].basefilename, f));
+								    fileset[fileset_selected].basefilename));
 
 								if (fileset[fileset_selected].stage_disabled[f]) {
 									/* Remove previous stage's cyclic reference to us, bumping it to our successor stage instead */
-							    //...todo
+									fp = fopen(tmpbuf, "r");
+									fp2 = fopen(tmpbuf2, "w");
+									if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf);
+									if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
+									if (fp && fp2) {
+										sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
+										   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+										   f + 1, fileset[fileset_selected].stages,
+										   fileset[fileset_selected].basefilename,
+										   f + 1);
+										while (fgets(buf_act, MACRO_MAXLEN, fp)) {
+											if (strstr(buf_act, buftxt_act))
+												fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e\n",
+												   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+												   n + 1, fileset[fileset_selected].stages,
+												   fileset[fileset_selected].basefilename,
+												   n + 1);
+											else fputs(buf_act, fp2);
+										}
+										fclose(fp);
+										fclose(fp2);
+										rename(tmpbuf2, tmpbuf);
+									} else {
+										if (fp) fclose(fp);
+										if (fp2) fclose(fp2);
+									}
 								} else {
 									/* Consistent with above if-branch, just reinsert us into the previous stage's cyclic reference */
-							    //...todo
+									fp = fopen(tmpbuf, "r");
+									fp2 = fopen(tmpbuf2, "w");
+									if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf);
+									if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
+									if (fp && fp2) {
+										sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
+										   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+										   n + 1, fileset[fileset_selected].stages,
+										   fileset[fileset_selected].basefilename,
+										   n + 1);
+										while (fgets(buf_act, MACRO_MAXLEN, fp)) {
+											if (strstr(buf_act, buftxt_act))
+												fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e\n",
+												   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+												   f + 1, fileset[fileset_selected].stages,
+												   fileset[fileset_selected].basefilename,
+												   f + 1);
+											else fputs(buf_act, fp2);
+										}
+										fclose(fp);
+										fclose(fp2);
+										rename(tmpbuf2, tmpbuf);
+									} else {
+										if (fp) fclose(fp);
+										if (fp2) fclose(fp2);
+									}
 								}
 								break;
 
@@ -9821,8 +9881,22 @@ Chain_Macro:
 								}
 								GET_MACROFILESET_STAGE
 								fileset_stage_selected = f;
+
 							    //todo: ask whether or not we want to clear all macros
+								/*for (i = 0; i < macro__num; i++) {
+									string_free(macro__pat[i]);
+									macro__pat[i] = NULL;
+									string_free(macro__act[i]);
+									macro__act[i] = NULL;
+									macro__cmd[i] = FALSE;
+									macro__hyb[i] = FALSE;
+								}
+								macro__num = 0;
+								for (i = 0; i < 256; i++) macro__use[i] = 0;
+								c_msg_print("Unloaded all macros"); */
+
 							    //todo: load the stage's macro file to macro memory
+								//process_pref_file();
 								break;
 
 							case 'c': // change a stage's comment
