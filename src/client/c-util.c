@@ -9011,11 +9011,11 @@ Chain_Macro:
 
 					case mw_fileset: {
 #ifdef TEST_CLIENT
-						FILE *fp;
+						FILE *fp, *fp2;
 						int xoffset1 = 1, xoffset2 = 3 - 2;
 						int f, k, n, found;
 						char buf_pat[MACROKEY_LEN], buftxt_pat[MACROKEY_LEN], buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
-						char tmpbuf[1024];
+						char tmpbuf[1024], tmpbuf2[1024], tmpbuf3[1024];
 						bool ok_new_set, ok_new_stage, ok_swap_stages, cancel;
 						bool style_cyclic, style_freesw, tmpbool;
 
@@ -9152,7 +9152,8 @@ Chain_Macro:
 									}
 									for (; f < MACROFILESETS_STAGES_MAX; f++) strcat(tmpbuf, "  ");
 
-								    Term_putstr(xoffset2 - 1, l++, -1, fileset_stage_selected == k ? TERM_L_BLUE : TERM_UMBER, ///todo...
+								    // todo?:
+									Term_putstr(xoffset2 - 1, l++, -1, fileset_stage_selected == k ? TERM_L_BLUE : TERM_UMBER,
 									    //format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g, active: %s; \377s%s\377-; \"\377s%s\377-\"",
 									    format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g [%s]; \377s%s\377-; \"\377s%s\377-\"",
 									    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", "",//fileset[k].all_stage_files_exist ? "" : "\377y",
@@ -9686,8 +9687,76 @@ Chain_Macro:
 								tmpbool = fileset[fileset_selected].stage_file_exists[k];
 								fileset[fileset_selected].stage_file_exists[k] = fileset[fileset_selected].stage_file_exists[f];
 								fileset[fileset_selected].stage_file_exists[f] = tmpbool;
-							    //todo: rename actual files on disk, and if cyclic-style then swap their cyclic-keys too
-							    //rename(,);
+
+								/* Step 1/2: Rename the actual files on disk */
+								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
+								    fileset[fileset_selected].basefilename, f));
+								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
+								    fileset[fileset_selected].basefilename, k));
+								path_build(tmpbuf3, 1024, ANGBAND_DIR_USER, format("%s-FS_tmp.prf",
+								    fileset[fileset_selected].basefilename, f));
+								rename(tmpbuf, tmpbuf3);
+								rename(tmpbuf2, tmpbuf);
+								rename(tmpbuf3, tmpbuf2);
+
+								/* Step 2/2: If cyclic-style then swap their cyclic-keys */
+								if (fileset[fileset_selected].style_cyclic) {
+									/* Translate all 'MACROFILESET_MARKER_CYCLIC...-FS<k+1+1>' to '-FS<f+1+1>' in former stage k, now stage f */
+									fp = fopen(tmpbuf, "r");
+									fp2 = fopen(tmpbuf3, "w");
+									if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf);
+									if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
+									if (fp && fp2) {
+										sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
+										   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+										   k + 1 + 1, fileset[fileset_selected].stages,
+										   fileset[fileset_selected].basefilename,
+										   k + 1 + 1);
+										while (fgets(buf_act, MACRO_MAXLEN, fp)) {
+											if (strstr(buf_act, buftxt_act))
+												fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e\n",
+												   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+												   f + 1 + 1, fileset[fileset_selected].stages,
+												   fileset[fileset_selected].basefilename,
+												   f + 1 + 1);
+											else fputs(buf_act, fp2);
+										}
+										fclose(fp);
+										fclose(fp2);
+										rename(tmpbuf3, tmpbuf);
+									} else {
+										if (fp) fclose(fp);
+										if (fp2) fclose(fp2);
+									}
+
+									/* Translate all 'MACROFILESET_MARKER_CYCLIC...-FS<f+1+1>' to '-FS<k+1+1>' in former stage f, now stage k */
+									fp = fopen(tmpbuf2, "r");
+									fp2 = fopen(tmpbuf3, "w");
+									if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf2);
+									if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
+									if (fp && fp2) {
+										sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
+										   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+										   f + 1 + 1, fileset[fileset_selected].stages,
+										   fileset[fileset_selected].basefilename,
+										   f + 1 + 1);
+										while (fgets(buf_act, MACRO_MAXLEN, fp)) {
+											if (strstr(buf_act, buftxt_act))
+												fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e\n",
+												   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
+												   k + 1 + 1, fileset[fileset_selected].stages,
+												   fileset[fileset_selected].basefilename,
+												   k + 1 + 1);
+											else fputs(buf_act, fp2);
+										}
+										fclose(fp);
+										fclose(fp2);
+										rename(tmpbuf3, tmpbuf2);
+									} else {
+										if (fp) fclose(fp);
+										if (fp2) fclose(fp2);
+									}
+								}
 
 								strcpy(tmpbuf, fileset[fileset_selected].stage_comment[k]);
 								strcpy(fileset[fileset_selected].stage_comment[k], fileset[fileset_selected].stage_comment[f]);
@@ -9708,7 +9777,8 @@ Chain_Macro:
 								fileset[fileset_selected].stage_disabled[f] = !fileset[fileset_selected].stage_disabled[f];
 								WRITE_MACROFILESET_STAGE_META
 
-								/* Also delete the trigger keys for this stage from all the other stages - which means also crop them out of the '-FS' disk files! */
+								/* Also delete (or restore) the trigger keys for this stage from all the other stages -
+								   which means also crop them out (or reinsert them) of the '-FS' disk files! */
 							    //...todo
 								break;
 
@@ -10318,11 +10388,12 @@ Chain_Macro:
 #endif
 
 					/* Extract an action */
-					/* Omit repeated '\e)' -- can break chain macros (todo: fix?) */
 					if (chain_macro_buf[0] && choice != mw_custom) text_to_ascii(macro__buf, buf2 + 3);
 					else text_to_ascii(macro__buf, buf2);
 					/* Handle chained macros */
-					if (chain_macro_buf[0] && !strncmp(macro__buf, "\e)", 2)) { /* Skip subsequent ')' keybuffer clearing, as it would cancel the previous macro if the player doesn't have enough energy to execute it right now! */
+					if (chain_macro_buf[0] && !strncmp(macro__buf, "\e)", 2)) {
+						/* Skip subsequent ')' keybuffer clearing, as it would cancel the previous macro
+						   if the player doesn't have enough energy to execute it right now! */
 						strcat(chain_macro_buf, "\e");
 						strcat(chain_macro_buf, macro__buf + 2);
 					} else
