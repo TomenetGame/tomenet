@@ -6021,6 +6021,7 @@ int macrofileset_mempurge(int f) {
 	} else c_msg_format("\377oError: couldn't write file '%s-FS%d.meta'.", fileset[fileset_selected].basefilename, f + 1); }
 
 /* Store switching-type and comment of currently selected set in a separate file '<macroset>.meta' */
+#pragma message("todo... write cyclic key to this meta file, seems best solution")
 #define WRITE_MACROFILESET_META \
 	{ path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS.meta", \
 	    fileset[fileset_selected].basefilename)); \
@@ -9493,6 +9494,7 @@ Chain_Macro:
 										macro_add(fileset[fileset_selected].macro__pat__freesw[f], fileset[fileset_selected].macro__act__freesw[f], FALSE, FALSE);
 									}
 								}
+					    //todo... also add cyclic keys for current stage?
 								c_msg_print("Set-trigger macros added to active macros in memory.");
 								break;
 
@@ -9874,14 +9876,108 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
-								if (!ok_new_stage) continue;
+								if (!ok_new_stage) {
+									c_msg_print("\377yThis set cannot have any more stages.");
+									continue;
+								}
 
 								/* Append it (for now we only append, inserting would be emulated via swapping/deleting) */
-							    //todo..
+								f = fileset[fileset_selected].stages;
+								fileset[fileset_selected].stages++;
+
+								/* Init free-switch key */
+								fileset[fileset_selected].macro__pat__freesw[f][0] = 0;
+								fileset[fileset_selected].macro__patbuf__freesw[f][0] = 0;
+								fileset[fileset_selected].macro__act__freesw[f][0] = 0;
+								fileset[fileset_selected].macro__actbuf__freesw[f][0] = 0;
+
+								if (fileset[fileset_selected].style_freesw) { //ask for stage-specific switching-key
+									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
+									while (TRUE) {
+										Term_putstr(1, l, -1, TERM_L_GREEN, format("Press the key you want to use as stage %d-specific trigger: ", f + 1));
+										tmpbuf[0] = 0;
+										get_macro_trigger(tmpbuf);
+										if (!strcmp(tmpbuf, "\e") || !strcmp(buf, "%")) {
+											c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
+											if (!strcmp(buf, "\e")) break;
+											continue;
+										}
+										break;
+									}
+									if (!strcmp(buf, "\e")) {
+										/* Abort: Erase newly started stage-in-the-making again */
+										fileset[fileset_selected].stages--;
+										continue;
+									}
+
+									/* Set macro trigger */
+									strcpy(buf_pat, tmpbuf);
+									strcpy(fileset[fileset_selected].macro__pat__freesw[f], buf_pat);
+									/* Set macro trigger in human-readable format */
+									ascii_to_text(buftxt_pat, buf_pat);
+									strcpy(fileset[fileset_selected].macro__patbuf__freesw[f], buftxt_pat);
+
+									/* Forge macro action (in human-readable format) */
+
+									/* Imprint all existing and this new stage with all the switching keys */
+						    //todo...
+									sprintf(tmpbuf, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s-FS%d.prf\\r\\e",
+									    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH,
+									    f + 1, fileset[fileset_selected].stages,
+									    fileset[fileset_selected].basefilename, f + 1);
+
+									/* Set macro action in human-readable format */
+									strcpy(buftxt_act, tmpbuf);
+									strcpy(fileset[fileset_selected].macro__actbuf__freesw[f], buftxt_act);
+									/* Set macro action */
+									text_to_ascii(buf_act, buftxt_act);
+									strcpy(fileset[fileset_selected].macro__act__freesw[f], buf_act);
+								}
+								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
+
+					    //todo... also add cyclic key + freesw keys for current stage?
+
+								/* Auto-select the newly added stage? */
+								fileset_stage_selected = f;
+								WRITE_MACROFILESET_STAGE_META
+
 								break;
 
 							case 'd': //delete a stage
-							    //todo...
+								if (fileset_selected == -1) {
+									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
+									continue;
+								}
+								GET_MACROFILESET_STAGE
+
+								// Note: We don't clear current macros from memory
+
+								/* Slide subsequent stages up */
+								for (n = f; n < fileset[fileset_selected].stages - 1; n++) {
+									strcpy(fileset[fileset_selected].macro__pat__freesw[n], fileset[fileset_selected].macro__pat__freesw[n + 1]);
+									strcpy(fileset[fileset_selected].macro__patbuf__freesw[n], fileset[fileset_selected].macro__patbuf__freesw[n + 1]);
+									strcpy(fileset[fileset_selected].macro__act__freesw[n], fileset[fileset_selected].macro__act__freesw[n + 1]);
+									strcpy(fileset[fileset_selected].macro__actbuf__freesw[n], fileset[fileset_selected].macro__actbuf__freesw[n + 1]);
+									fileset[fileset_selected].stage_file_exists[n] = fileset[fileset_selected].stage_file_exists[n + 1];
+									strcpy(fileset[fileset_selected].stage_comment[n], fileset[fileset_selected].stage_comment[n + 1]);
+									fileset[fileset_selected].stage_disabled[n] = fileset[fileset_selected].stage_disabled[n + 1];
+								}
+								fileset[fileset_selected].stages--;
+
+								/* any_stage_file_exists is actually not used in any way, but let's still rebuild it :-s */
+								fileset[fileset_selected].any_stage_file_exists = FALSE;
+								for (n = 0; n < fileset[fileset_selected].stages; n++)
+									fileset[fileset_selected].any_stage_file_exists |= fileset[fileset_selected].stage_file_exists[n];
+
+								/* Also delete stage file from disk */
+								if (!fileset[fileset_selected].stage_file_exists[f]) {
+									path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
+									    fileset[fileset_selected].basefilename, f));
+									remove(tmpbuf);
+								}
+
+								/* If the deleted stage was actually the currently active one, unselect it */
+								if (fileset_stage_selected == f) fileset_stage_selected = -1;
 								break;
 
 							case 'a': //activate(+load) a stage
@@ -9911,9 +10007,14 @@ Chain_Macro:
 								}
 
 								// Load the stage's macro file to macro memory
-								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
-								    fileset[fileset_selected].basefilename, f));
-								process_pref_file(tmpbuf);
+								if (!fileset[fileset_selected].stage_file_exists[f]) {
+									path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.prf",
+									    fileset[fileset_selected].basefilename, f));
+									process_pref_file(tmpbuf);
+								}
+
+					    //todo... also add cyclic key + freesw keys for current stage?
+
 								break;
 
 							case 'c': // change a stage's comment
@@ -9922,6 +10023,7 @@ Chain_Macro:
 									continue;
 								}
 								GET_MACROFILESET_STAGE
+
 								cancel = FALSE;
 								while (!cancel) {
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                               ");
