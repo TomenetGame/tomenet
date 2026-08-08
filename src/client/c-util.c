@@ -5574,7 +5574,7 @@ bool macrofileset_stage_meta_read(int k, int f) {
 	fs->stage[f].stage_disabled = ((flagc == '0' || flagc == EOF) ? FALSE : TRUE);
 
 	fclose(fp);
-	if (!success) c_msg_format("\377oError in contents of file '%s%s%d.meta'.", fs->basefilename, SETFILEPOSTFIX, f);
+	if (!success) c_msg_format("\377oError in contents of file '%s%s%d.meta'.", fs->basefilename, SETFILEPOSTFIX, f + 1);
 	return(success);
 }
 
@@ -6214,7 +6214,7 @@ int macrofileset_stage_mempurge(int f) {
 	/* Note: The cyclic key is still valid, since if this stage gets removed from memory,
 	   the previous stage would instead cycle to the same target that this stage currently has!
 	   So we only need to remove this stage's free-switch key, which targets this stage (_from_ any stage). */
-	sprintf(searchstr_freesw, "%s%d", SETFILEPOSTFIX, f);
+	sprintf(searchstr_freesw, "%s%d", SETFILEPOSTFIX, f + 1);
 	searchstr_freesw_len = strlen(searchstr_freesw);
 
 	//scan all macros
@@ -6360,20 +6360,98 @@ void macrofileset_stage_write(int f) {
 	(void)macro_dump(tmpbuf);
 }
 
+/* Read a macro file set stage of the currently selected fileset into temp buffer, update its stage keys, write it back to disk. */
+void macrofileset_stage_update_keys(int f, bool rebuild) {
+	char tmpbuf[1024];
+	macro_fileset_type *fs = &fileset[fileset_selected];
+
+	int i, macro__num_bak = macro__num;
+	cptr macro__pat_bak[macro__num];
+	cptr macro__act_bak[macro__num];
+	bool macro__cmd_bak[macro__num];
+	bool macro__hyb_bak[macro__num];
+	byte macro__use_bak[256];
+
+
+	/* Move currently active macros to temp buffer */
+	for (i = 0; i < macro__num; i++) {
+		macro__pat_bak[i] = strdup(macro__pat[i]);
+		macro__act_bak[i] = strdup(macro__act[i]);
+		macro__cmd_bak[i] = macro__cmd[i];
+		macro__hyb_bak[i] = macro__hyb[i];
+	}
+	for (i = 0; i < 256; i++) macro__use_bak[i] = macro__use[i];
+
+	/* Erase all macros so we load the stage with a clean slate */
+	macro_clear();
+
+	/* Load stage's macro file from disk into memory */
+	if (!fs->stage[f].stage_file_exists) {
+		path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
+		    fs->basefilename, SETFILEPOSTFIX, f + 1));
+			process_pref_file(tmpbuf);
+	}
+
+	/* hm, rebuild keys first, for paranoia? */
+	if (rebuild) macrofileset_rebuild_keys();
+
+	/* Update the stage's trigger keys */
+	macrofileset_stage_meminsert(f);
+
+	/* Write all active macros to active set's stage 'f' again */
+	sprintf(tmpbuf, "%s%s%d.prf", fileset[fileset_selected].basefilename, SETFILEPOSTFIX, f + 1);
+	(void)macro_dump(tmpbuf);
+
+	/* Erase all macros again, as we only loaded the file temporarily */
+	macro_clear();
+
+	/* Restore our original macro environment */
+	macro__num = macro__num_bak;
+	for (i = 0; i < macro__num; i++) {
+		macro__pat[i] = strdup(macro__pat_bak[i]);
+		string_free(macro__pat_bak[i]);
+		macro__act[i] = strdup(macro__act_bak[i]);
+		string_free(macro__act_bak[i]);
+		macro__cmd[i] = macro__cmd_bak[i];
+		macro__hyb[i] = macro__hyb_bak[i];
+	}
+	for (i = 0; i < 256; i++) macro__use[i] = macro__use_bak[i];
+}
+
+/* Update all trigger keys in all stages of a fileset (non-destructively ie we keep our current macro memory environment). */
+void macrofileset_update_keys(int f) {
+	int n, prev_sel = fileset_selected;
+
+	fileset_selected = f;
+
+	macrofileset_rebuild_keys();
+	macrofileset_meta_write();
+
+	for (n = 0; n < fileset[fileset_selected].stages; n++) {
+		macrofileset_stage_update_keys(n, FALSE);
+		macrofileset_stage_meta_write(n);
+	}
+
+	fileset_selected = prev_sel;
+}
+
+#if 0 /* doesn't make sense as we cannot write actual macros to other stages than the currently active one, as we'd have to modify the macros in memory first */
 /* Write a macro file set to disk */
 void macrofileset_write(int f) {
 	int n, sel_prev = fileset_selected;
 
 	fileset_selected = f;
+
 	macrofileset_meta_write();
 
 	for (n = 0; n < fileset[f].stages; n++) {
-		macrofileset_stage_write(n);
+		macrofileset_stage_write(f);
 		macrofileset_stage_meta_write(n);
 	}
 
 	fileset_selected = sel_prev;
 }
+#endif
 #endif /* ENABLE_MACROSETS */
 
 /* Make a macro trigger human-readable.
@@ -9574,6 +9652,10 @@ Chain_Macro:
 							switch (choice) {
 							/* Fileset actions: */
 
+				    //todo... 
+					//'W'rite whole macroset -> macrofileset_update_keys(fileset_selected);
+					//'D'elete whole macroset -> same as 'F' + deleting the files from disk too
+
 							case 'C': // wipe memory list and rescan
 								/* Init filesets */
 								rescan = TRUE;
@@ -9992,9 +10074,9 @@ Chain_Macro:
 
 								/* Rename the actual files on disk */
 								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
-								    fs->basefilename, SETFILEPOSTFIX, f));
+								    fs->basefilename, SETFILEPOSTFIX, f + 1));
 								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
-								    fs->basefilename, SETFILEPOSTFIX, k));
+								    fs->basefilename, SETFILEPOSTFIX, k + 1));
 								path_build(tmpbuf3, 1024, ANGBAND_DIR_USER, format("%s%s_tmp.prf",
 								    fs->basefilename, SETFILEPOSTFIX));
 								if (fs->stage[k].stage_file_exists) rename(tmpbuf, tmpbuf3);
@@ -10065,9 +10147,9 @@ Chain_Macro:
 
 								/* Rename the .meta files on disk */
 								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.meta",
-								    fs->basefilename, SETFILEPOSTFIX, f));
+								    fs->basefilename, SETFILEPOSTFIX, f + 1));
 								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s%s%d.meta",
-								    fs->basefilename, SETFILEPOSTFIX, k));
+								    fs->basefilename, SETFILEPOSTFIX, k + 1));
 								path_build(tmpbuf3, 1024, ANGBAND_DIR_USER, format("%s%s_tmp.meta",
 								    fs->basefilename, SETFILEPOSTFIX));
 								if (fs->stage[k].stage_file_exists) rename(tmpbuf, tmpbuf3);
@@ -10100,7 +10182,7 @@ Chain_Macro:
 								n = f - 1;
 								if (n == -1) n = fs->stages - 1;
 								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
-								    fs->basefilename, SETFILEPOSTFIX, n));
+								    fs->basefilename, SETFILEPOSTFIX, n + 1));
 								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s%s_tmp.prf",
 								    fs->basefilename, SETFILEPOSTFIX));
 
@@ -10194,7 +10276,7 @@ Chain_Macro:
 										    format(fs->macro__actbuf__cyclic_fmt, f + 1, fs->stages, f));
 
 										/* Also save the cycle-macro to disk for the previous stage, if it has a disk file */
-					    // todo...
+										macrofileset_stage_update_keys(f - 1, TRUE);
 
 										/* Set us to cycle to 0 */
 										text_to_ascii(fs->stage[f].macro__act__cyclic,
@@ -10209,7 +10291,7 @@ Chain_Macro:
 											    format(fs->macro__actbuf__cyclic_fmt, n + 1 + 1, fs->stages, n + 1));
 
 											/* Also save the cycle-macro to disk for the subsequent stages, if they have disk files */
-					    // todo...
+											macrofileset_stage_update_keys(n, TRUE);
 										}
 
 										/* Insert us by setting our cycle action to the next stage */
@@ -10364,7 +10446,7 @@ Chain_Macro:
 								// Load the stage's macro file to macro memory
 								if (!fs->stage[f].stage_file_exists) {
 									path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
-									    fs->basefilename, SETFILEPOSTFIX, f));
+									    fs->basefilename, SETFILEPOSTFIX, f + 1));
 									process_pref_file(tmpbuf);
 								}
 
