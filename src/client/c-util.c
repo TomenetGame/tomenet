@@ -6479,7 +6479,7 @@ void macroinfo_ascii(int macro_idx, char *macropat, char *fff) {
 
 
 void interact_macros(void) {
-	int i, j = 0, l, l2, chain_type;
+	int i, j = 0, l, l2, n, chain_type;
 	char tmp[MACRO_MAXLEN], buf[MACRO_MAXLEN], buf2[MACRO_MAXLEN], *bptr, *b2ptr, chain_macro_buf[MACRO_MAXLEN], choice;
 	bool were_recording = FALSE;
 	bool inkey_msg_old = inkey_msg; //just for cmd_message().. probably redundant and we could just remove the inkey_msg = TRUE at cmd_message() instead of doing these extra checks...
@@ -8008,10 +8008,10 @@ Chain_Macro:
 								xhtml_screenshot("screenshot????", 2);
 								break;
 							default:
-								i = (islower(choice) ? A2I(choice) : -1);
-								if (i < 0 || i > exec_lua(0, format("return rcraft_max(%d)", u))) continue;
+								n = (islower(choice) ? A2I(choice) : -1);
+								if (n < 0 || n > exec_lua(0, format("return rcraft_max(%d)", u))) continue;
 								u_prev[step++] = u;
-								u |= exec_lua(0, format("return rcraft_bit(%d,%d)", u, i));
+								u |= exec_lua(0, format("return rcraft_bit(%d,%d)", u, n));
 								strcat(buf, format("%c", choice)); /* build macro */
 								break;
 							}
@@ -8020,8 +8020,7 @@ Chain_Macro:
 						if (i == -2) continue; /* exit for */
 
 						/* Ask for a direction? */
-						if (exec_lua(0, format("return rcraft_dir(%d)", u)))
-							strcat(buf, "*t");
+						if (exec_lua(0, format("return rcraft_dir(%d)", u))) strcat(buf, "*t");
 
 						choice = mw_rune;
 						i = 1;
@@ -8935,27 +8934,44 @@ Chain_Macro:
 								c_msg_print("\377yThe '%' key cannot have any macros on it. Please try again.");
 								continue;
 							}
+							/* Also protect macro file set switching keys! */
+							for (n = 0; n < macro__num; n++) {
+								if (streq(macro__pat[n], buf)) {
+									strncpy(macro__buf, macro__act[n], MACRO_MAXLEN);
+									macro__buf[MACRO_MAXLEN - 1] = '\0';
+									ascii_to_text(tmp, macro__buf);
+									if (!*tmp) continue;
 
-							/* Re-using 'i' here shouldn't matter anymore */
-							for (i = 0; i < macro__num; i++) {
-								if (!streq(macro__pat[i], buf)) continue;
+									/* That key holds a macro, check whether it is a set key macro */
+									if (strstr(tmp, "-FS")) {
+										c_msg_print("\377yThat key already holds a macro-set switching key. Please try again.");
+										n = -1; //hack: continue-marker
+										break;
+									}
+								}
+							}
+							if (n == -1) continue;
 
-								strncpy(macro__buf, macro__act[i], MACRO_MAXLEN - 1);
+
+							for (n = 0; n < macro__num; n++) {
+								if (!streq(macro__pat[n], buf)) continue;
+
+								strncpy(macro__buf, macro__act[n], MACRO_MAXLEN - 1);
 								macro__buf[MACRO_MAXLEN - 1] = '\0';
 
 								/* Message */
 								ascii_to_text(tmp, macro__buf);
-								if (macro__hyb[i]) {
+								if (macro__hyb[n]) {
 									Term_putstr(10, 15, -1, TERM_L_GREEN, "Found hybrid macro:");
 									Term_putstr(10, 16, -1, TERM_L_BLUE, format("%s", tmp));
 									if (chain_type < 1) chain_type = 1;
 									break;
-								} else if (macro__cmd[i]) {
+								} else if (macro__cmd[n]) {
 									Term_putstr(10, 15, -1, TERM_L_GREEN, "Found command macro:");
 									Term_putstr(10, 16, -1, TERM_L_BLUE, format("%s", tmp));
 									break;
 								} else {
-									if (!macro__act[i][0]) c_msg_print("Found empty macro.");
+									if (!macro__act[n][0]) c_msg_print("Found empty macro.");
 									else {
 										Term_putstr(10, 15, -1, TERM_L_GREEN, "Found normal macro:");
 										Term_putstr(10, 16, -1, TERM_L_BLUE, format("%s", tmp));
@@ -8964,7 +8980,7 @@ Chain_Macro:
 									}
 								}
 							}
-							if (i == macro__num) {
+							if (n == macro__num) {
 								c_msg_print("\377yNo valid macro found, please try another key.");
 								continue;
 							}
@@ -9071,6 +9087,23 @@ Chain_Macro:
 								/* chain another macro */
 								goto Chain_Macro;
 							}
+							/* Also protect macro file set switching keys! */
+							for (n = 0; n < macro__num; n++) {
+								if (streq(macro__pat[n], buf)) {
+									strncpy(macro__buf, macro__act[n], MACRO_MAXLEN);
+									macro__buf[MACRO_MAXLEN - 1] = '\0';
+									ascii_to_text(tmp, macro__buf);
+									if (!*tmp) continue;
+
+									/* That key holds a macro, check whether it is a set key macro */
+									if (strstr(tmp, "-FS")) {
+										c_msg_print("\377yThat key already holds a macro-set switching key. Please try again.");
+										n = -1; //hack: continue-marker
+										break;
+									}
+								}
+							}
+							if (n == -1) continue;
 							break;
 						}
 						/* exit? */
@@ -10857,6 +10890,23 @@ Chain_Macro:
 							/* chain another macro */
 							goto Chain_Macro;
 						}
+						/* Also protect macro file set switching keys! */
+						for (n = 0; n < macro__num; n++) {
+							if (streq(macro__pat[n], buf)) {
+								strncpy(macro__buf, macro__act[n], MACRO_MAXLEN);
+								macro__buf[MACRO_MAXLEN - 1] = '\0';
+								ascii_to_text(tmp, macro__buf);
+								if (!*tmp) continue;
+
+								/* That key holds a macro, check whether it is a set key macro */
+								if (strstr(tmp, "-FS")) {
+									c_msg_print("\377yThat key already holds a macro-set switching key. Please try again.");
+									n = -1; //hack: continue-marker
+									break;
+								}
+							}
+						}
+						if (n == -1) continue;
 						break;
 					}
 					/* exit? */
