@@ -5644,7 +5644,7 @@ int macrofileset_scan(void) {
 			/* If this is a cyclic macro, the number after SETFILEPOSTFIX won't give the # of cycles away! Only the %:... self-notification message can do that!
 			   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
 			   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
-			if (strncmp(buf_basename + strlen(buf_basename) - 8, SETFILEPOSTFIX, 3)) continue; //broken set-switching macro (not following our known scheme)
+			if (strncmp(buf_basename + strlen(buf_basename) - 8, SETFILEPOSTFIX, strlen(SETFILEPOSTFIX))) continue; //broken set-switching macro (not following our known scheme)
 
 			/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
 
@@ -6039,14 +6039,14 @@ void macrofileset_rebuild_keys(void) {
 
 		/* Forge and set cyclic macro action, human-readable format */
 		sprintf(fs->stage[f].macro__actbuf__cyclic,
-		    fs->macro__actbuf__cyclic_fmt, n + 1, fs->stages, n);
+		    fs->macro__actbuf__cyclic_fmt, n + 1, fs->stages, n + 1);
 		/* Set cyclic macro action, machine format converted from human-readable format */
 		text_to_ascii(fs->stage[n].macro__act__cyclic,
 		    fs->stage[f].macro__actbuf__cyclic);
 
 		/* Set free-switch macro action, human-readable format */
 		sprintf(fs->stage[f].macro__actbuf__freesw,
-		    fs->macro__actbuf__freesw_fmt, f + 1, fs->stages, f);
+		    fs->macro__actbuf__freesw_fmt, f + 1, fs->stages, f + 1);
 		/* Set free-switch macro action */
 		text_to_ascii(fs->stage[f].macro__act__freesw, fs->stage[f].macro__actbuf__freesw);
 	}
@@ -6132,7 +6132,7 @@ int macrofileset_mempurge(int f) {
 			   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
 			   -- actually, store 'comment' in a separate '<macrosetname-stage>.meta' file instead! Hard to handle otherwise. --
 			   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
-			if (strncmp(buf_basename + strlen(buf_basename) - 8, SETFILEPOSTFIX, 3)) continue; //broken set-switching macro (not following our known scheme)
+			if (strncmp(buf_basename + strlen(buf_basename) - 8, SETFILEPOSTFIX, strlen(SETFILEPOSTFIX))) continue; //broken set-switching macro (not following our known scheme)
 
 			/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
 
@@ -9831,12 +9831,13 @@ Chain_Macro:
 									/* Forge macro action (in human-readable format) */
 
 									/* Forge template freeswitch-macro action (in human-readable format) */
-									sprintf(fs->macro__actbuf__freesw_fmt, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
+									sprintf(fs->macro__actbuf__freesw_fmt,
+									    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
 									    fs->basefilename, MACROFILESET_MARKER_SWITCH, fs->basefilename, SETFILEPOSTFIX);
 
 									/* Set free-switch macro action for stage 1, in human-readable format */
 									strcpy(fs->stage[0].macro__actbuf__freesw,
-									    format(fs->macro__actbuf__freesw_fmt, 1, fs->stages, 0));
+									    format(fs->macro__actbuf__freesw_fmt, 1, fs->stages, 1));
 									/* Set free-switch macro action for stage 1 */
 									text_to_ascii(fs->stage[0].macro__act__freesw, fs->stage[0].macro__actbuf__freesw);
 								}
@@ -9960,13 +9961,14 @@ Chain_Macro:
 										m = n + 1;
 										if (m == fs->stages) m = 0;
 										text_to_ascii(fs->stage[n].macro__act__cyclic,
-										    format(fs->macro__actbuf__cyclic_fmt, m + 1, fs->stages, m));
+										    format(fs->macro__actbuf__cyclic_fmt, m + 1, fs->stages, m + 1));
 									}
 								}
 
 								if (fs->style_freesw) { //ask for stage-specific switching-key
 									/* Forge template freeswitch-macro action (in human-readable format) */
-									sprintf(fs->macro__actbuf__freesw_fmt, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
+									sprintf(fs->macro__actbuf__freesw_fmt,
+									    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
 									    fs->basefilename, MACROFILESET_MARKER_SWITCH, fs->basefilename, SETFILEPOSTFIX);
 
 									/* Set freeswitch-macros for each stage */
@@ -9995,7 +9997,7 @@ Chain_Macro:
 
 										/* Set free-switch macro action for this stage, in human-readable format */
 										strcpy(fs->stage[f].macro__actbuf__freesw,
-										    format(fs->macro__actbuf__freesw_fmt, f + 1, fs->stages, f));
+										    format(fs->macro__actbuf__freesw_fmt, f + 1, fs->stages, f + 1));
 										/* Set free-switch macro action for this stage */
 										text_to_ascii(fs->stage[f].macro__act__freesw, fs->stage[f].macro__actbuf__freesw);
 									}
@@ -10273,14 +10275,14 @@ Chain_Macro:
 									else if (f == fs->stages - 1) {
 										/* Set previous stage to cycle to us */
 										text_to_ascii(fs->stage[f - 1].macro__act__cyclic,
-										    format(fs->macro__actbuf__cyclic_fmt, f + 1, fs->stages, f));
+										    format(fs->macro__actbuf__cyclic_fmt, f + 1, fs->stages, f + 1));
 
 										/* Also save the cycle-macro to disk for the previous stage, if it has a disk file */
 										macrofileset_stage_update_keys(f - 1, TRUE);
 
 										/* Set us to cycle to 0 */
 										text_to_ascii(fs->stage[f].macro__act__cyclic,
-										    format(fs->macro__actbuf__cyclic_fmt, 1, fs->stages, 0));
+										    format(fs->macro__actbuf__cyclic_fmt, 1, fs->stages, 1));
 									}
 									/* We got inserted instead of appended? Then increase cycle value of all subsequent stages by +1,
 									   except for the final stage which remains at cycling-back-to-0. */
@@ -10288,7 +10290,7 @@ Chain_Macro:
 										/* Increment cycle-to-next-stage action for all subsequent stages except the final one by 1 */
 										for (n = f + 1; n < fs->stages - 1; n++) {
 											text_to_ascii(fs->stage[n].macro__act__cyclic,
-											    format(fs->macro__actbuf__cyclic_fmt, n + 1 + 1, fs->stages, n + 1));
+											    format(fs->macro__actbuf__cyclic_fmt, n + 1 + 1, fs->stages, n + 1 + 1));
 
 											/* Also save the cycle-macro to disk for the subsequent stages, if they have disk files */
 											macrofileset_stage_update_keys(n, TRUE);
@@ -10296,7 +10298,7 @@ Chain_Macro:
 
 										/* Insert us by setting our cycle action to the next stage */
 										text_to_ascii(fs->stage[f].macro__act__cyclic,
-										    format(fs->macro__actbuf__cyclic_fmt, f + 1 + 1, fs->stages, f + 1));
+										    format(fs->macro__actbuf__cyclic_fmt, f + 1 + 1, fs->stages, f + 1 + 1));
 									}
 								}
 
@@ -10331,7 +10333,7 @@ Chain_Macro:
 									/* Set free-switch key for this stage (ie that other stages reference to invoke this stage) */
 									/* ...in human-readable format */
 									strcpy(fs->stage[f].macro__actbuf__freesw,
-									    format(fs->macro__actbuf__freesw_fmt, f + 1, fs->stages, f));
+									    format(fs->macro__actbuf__freesw_fmt, f + 1, fs->stages, f + 1));
 									/* ...in macro format  */
 									text_to_ascii(fs->stage[f].macro__act__freesw,
 									    fs->stage[f].macro__actbuf__freesw);
@@ -10367,7 +10369,7 @@ Chain_Macro:
 									if (f == fs->stages - 1) {
 										/* Set previous stage to cycle to 0 */
 										text_to_ascii(fs->stage[f - 1].macro__act__cyclic,
-										    format(fs->macro__actbuf__cyclic_fmt, 1, fs->stages, 0));
+										    format(fs->macro__actbuf__cyclic_fmt, 1, fs->stages, 1));
 
 										/* Also save the cycle-macro to disk for the previous stage, if it has a disk file */
 					    // todo...
@@ -10378,7 +10380,7 @@ Chain_Macro:
 										/* Decrement cycle-to-next-stage action for all subsequent stages except the final one by 1 */
 										for (n = f + 1; n < fs->stages - 1; n++) {
 											text_to_ascii(fs->stage[n].macro__act__cyclic,
-											    format(fs->macro__actbuf__cyclic_fmt, n + 1 - 1, fs->stages, n - 1));
+											    format(fs->macro__actbuf__cyclic_fmt, n + 1 - 1, fs->stages, n + 1 - 1));
 
 											/* Also save the cycle-macro to disk for this subsequent stage, if it has a disk file */
 					    // todo...
@@ -10386,7 +10388,7 @@ Chain_Macro:
 
 										/* Insert us by setting our cycle action to the next stage */
 										text_to_ascii(fs->stage[f].macro__act__cyclic,
-										    format(fs->macro__actbuf__cyclic_fmt, f + 1 + 1, fs->stages, f + 1));
+										    format(fs->macro__actbuf__cyclic_fmt, f + 1 + 1, fs->stages, f + 1 + 1));
 									}
 								}
 								/* Edit all stage files of stages before us too, to remove our free-switch reference key from them? */
