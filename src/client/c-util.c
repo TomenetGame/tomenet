@@ -5427,7 +5427,10 @@ static void get_macro_trigger(char *buf) {
 //#define FORGET_MACRO_VISUALS
 
 #ifdef TEST_CLIENT
+#define ENABLE_MACROSETS
+#endif
 
+#ifdef ENABLE_MACROSETS
 /* Maximum amount of switchable macrofile-sets loaded at the same time */
 #define MACROFILESETS_MAX 8
 /* Maximum amount of switchable macrofile-set-stages */
@@ -6125,8 +6128,7 @@ void macrofileset_meta_write(void) {
 /* Write macro file set stage to disk */
 void macrofileset_stage_write(int f) {
 }
-
-#endif /* TEST_CLIENT */
+#endif /* ENABLE_MACROSETS */
 
 /* Make a macro trigger human-readable.
    Either accepts a macro index 'i' for all the macros in memory, or a string 'macropat'.
@@ -6483,7 +6485,7 @@ void interact_macros(void) {
 	char tmp[MACRO_MAXLEN], buf[MACRO_MAXLEN], buf2[MACRO_MAXLEN], *bptr, *b2ptr, chain_macro_buf[MACRO_MAXLEN], choice;
 	bool were_recording = FALSE;
 	bool inkey_msg_old = inkey_msg; //just for cmd_message().. probably redundant and we could just remove the inkey_msg = TRUE at cmd_message() instead of doing these extra checks...
-#ifdef TEST_CLIENT
+#ifdef ENABLE_MACROSETS
 	static bool rescan = TRUE; // (mw_fileset) always initially scan once on first invocation of the macro-fileset menu
 #endif
 
@@ -6524,7 +6526,9 @@ void interact_macros(void) {
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B/\377yA\377B) Save macros to named / global.prf / form-named / class pref file");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w/\377yL\377w) Load macros from a pref file / load current class-specific pref file");
+#ifdef ENABLE_MACROSETS
 		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yZ\377w) Invoke macro wizard and implicitely choose macro-set creation.");
+#endif
 		l++;
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
 		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yI\377w) Reinitialize all macros     (discards all unsaved macros)");
@@ -7692,7 +7696,7 @@ Chain_Macro:
 					Term_putstr(6, l++, -1, TERM_L_GREEN, "n\377w/\377GN\377w/\377GZ) Slash command. \377w/\377G Custom action ('%a'). \377w/\377G Chain existing macros.");
 					Term_putstr(6, l++, -1, TERM_L_GREEN, "o\377w/\377GO\377w/\377Gp) Load a macro file. \377w/\377G Modify an option. \377w/\377G Change equipment.");
 					Term_putstr(2, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt\377w/\377Gu) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing \377w/\377G closing.");
-#ifdef TEST_CLIENT
+#ifdef ENABLE_MACROSETS
 					Term_putstr(8, l++, -1, TERM_L_GREEN, "S)   Create a switchable multi-macrofile set.");
 #endif
 
@@ -7724,7 +7728,7 @@ Chain_Macro:
 							    choice != 'G' && choice != 'H' && choice != 'I' && choice != 'J' &&
 							    choice != 'K' && choice != 'L' && choice != 'M' && choice != 'N' && choice != 'O' &&
 							    choice != 'Z'
-#ifdef TEST_CLIENT
+#ifdef ENABLE_MACROSETS
 							    && choice != 'S'
 #endif
 							    ) {
@@ -9138,7 +9142,7 @@ Chain_Macro:
 						}
 
 					case mw_fileset: {
-#ifdef TEST_CLIENT /* --- mw_fileset --- */
+#ifdef ENABLE_MACROSETS /* --- mw_fileset --- */
 						FILE *fp, *fp2;
 						int xoffset1 = 1, xoffset2 = 3 - 2;
 						int f, k, m, n, found;
@@ -10258,7 +10262,9 @@ Chain_Macro:
 						if (i_stage != -2 || Z_hack) i_stage = -1; //actually don't continue (back to macro wizard main screen) but break out (back to macro menu) for convenience!
 						/* Exit mw_fileset menu (back to macro wizard main menu) */
 						continue; }
-#endif /* TEST_CLIENT --- mw_fileset --- */
+#else
+						continue;
+#endif /* --- mw_fileset --- */
 					}
 
 
