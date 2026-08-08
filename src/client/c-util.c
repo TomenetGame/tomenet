@@ -6009,59 +6009,83 @@ int macrofileset_mempurge(int f) {
 	return(found);
 }
 
-/* Prompt to enter an existing macrofileset number, stores it in 'f': */
-#define GET_MACROFILESET \
-	{ if (!filesets_found) continue; \
-	Term_putstr(15, l, -1, TERM_L_GREEN, format("Enter number of set to select (1-%d): ", filesets_found)); \
-	tmpbuf[0] = inkey(); if (!tmpbuf[0] || tmpbuf[0] == '\e') continue; \
-	f = tmpbuf[0] - '1'; /* (user enters index+1) */ \
-	if (f < 0 || f >= filesets_found) { \
-		c_msg_format("\377oError: Invalid number entered (%d).", f + 1); \
-		continue; \
-	} }
+/* Prompt to enter an existing macrofileset number.
+   Returns it (0..filesets_found-1) or -1 to abort. */
+int macrofileset_get(int msg_y) {
+	int f, ch;
 
-/* Prompt to enter an existing macrofileset-stage number of the currently selected fileset, stores it in 'f': */
-#define GET_MACROFILESET_STAGE \
-	{ if (fileset_selected == -1 || !fileset[fileset_selected].stages) continue; \
-	Term_putstr(15, l, -1, TERM_L_GREEN, format("Enter number of stage to select (1-%d): ", fileset[fileset_selected].stages)); \
-	tmpbuf[0] = inkey(); if (!tmpbuf[0] || tmpbuf[0] == '\e') continue; \
-	f = tmpbuf[0] - '1'; /* (user enters index+1) */ \
-	if (f < 0 || f >= fileset[fileset_selected].stages) { \
-		c_msg_format("\377oError: Invalid number entered (%d).", f + 1); \
-		continue; \
-	} }
+	if (!filesets_found) return(-1);
+
+	Term_putstr(15, msg_y, -1, TERM_L_GREEN, format("Enter number of set to select (1-%d): ", filesets_found));
+	ch = inkey();
+	if (!ch || ch == '\e') return(-1);
+
+	f = ch - '1'; /* (user enters index+1) */
+	if (f < 0 || f >= filesets_found) {
+		c_msg_format("\377oError: Invalid number entered (%d).", f + 1);
+		return(-1);
+	}
+	return(f);
+}
+
+/* Prompt to enter an existing macrofileset-stage number of the currently selected fileset.
+   Returns it (0..filesets_found-1) or -1 to abort. */
+int macrofileset_stage_get(int msg_y) {
+	int f, ch;
+
+	if (fileset_selected == -1 || !fileset[fileset_selected].stages) return(-1);
+
+	Term_putstr(15, msg_y, -1, TERM_L_GREEN, format("Enter number of stage to select (1-%d): ", fileset[fileset_selected].stages));
+	ch = inkey();
+	if (!ch || ch == '\e') return(-1);
+
+	f = ch - '1'; /* (user enters index+1) */
+	if (f < 0 || f >= fileset[fileset_selected].stages) {
+		c_msg_format("\377oError: Invalid number entered (%d).", f + 1);
+		return(-1);
+	}
+	return(f);
+}
 
 /* Store infos about stage 'f' of currently selected set in a separate file '<macroset-stage>.meta':
-   Currently: free-switch key targetting this stage from any other stage (independantly of whether or not the set uses free-switching or not), comment, disabled-flag.  */
-#define WRITE_MACROFILESET_STAGE_META \
-	{ path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.meta", \
-	    fileset[fileset_selected].basefilename, f + 1)); \
-	fp = fopen(tmpbuf, "w"); \
-	if (fp) { \
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__pat__freesw[f]); \
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__patbuf__freesw[f]); \
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__act__freesw[f]); \
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__freesw[f]); \
-		fprintf(fp, "%s\n", fileset[fileset_selected].stage_comment[f]); \
-		fputc(fileset[fileset_selected].stage_disabled[f] ? '1' : '0', fp); \
-		fclose(fp); \
-	} else c_msg_format("\377oError: couldn't write file '%s-FS%d.meta'.", fileset[fileset_selected].basefilename, f + 1); }
+   Currently: free-switch key targetting this stage from any other stage (independantly of whether or not the set uses free-switching or not), comment, disabled-flag. */
+void macrofileset_stage_meta_write(int f) {
+	FILE *fp;
+	char tmpbuf[1024];
+
+	path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS%d.meta",
+	    fileset[fileset_selected].basefilename, f + 1));
+	fp = fopen(tmpbuf, "w");
+	if (fp) {
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__pat__freesw[f]);
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__patbuf__freesw[f]);
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__act__freesw[f]);
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__freesw[f]);
+		fprintf(fp, "%s\n", fileset[fileset_selected].stage_comment[f]);
+		fputc(fileset[fileset_selected].stage_disabled[f] ? '1' : '0', fp);
+		fclose(fp);
+	} else c_msg_format("\377oError: couldn't write file '%s-FS%d.meta'.", fileset[fileset_selected].basefilename, f + 1);
+}
 
 /* Store switching-type and comment of currently selected set in a separate file '<macroset>.meta'.
    Currently: cycle key (independantly of whether or not the set uses cyclic switching or not), comment, switching-type.  */
-#define WRITE_MACROFILESET_META \
-	{ path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS.meta", \
-	    fileset[fileset_selected].basefilename)); \
-	fp = fopen(tmpbuf, "w"); \
-	if (fp) { \
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__pat__cyclic); \
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__patbuf__cyclic); \
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__cyclic_fmt); \
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__freesw_fmt); \
-		fprintf(fp, "%s\n", fileset[fileset_selected].comment); \
-		fputc('0' + (fileset[fileset_selected].style_cyclic ? 1 : 0) + (fileset[fileset_selected].style_freesw ? '2' : '0'), fp); \
-		fclose(fp); \
-	} else c_msg_format("\377oError: couldn't write file '%s-FS.meta'.", fileset[fileset_selected].basefilename); }
+void macrofileset_meta_write(void) {
+	FILE *fp;
+	char tmpbuf[1024];
+
+	path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s-FS.meta",
+	    fileset[fileset_selected].basefilename));
+	fp = fopen(tmpbuf, "w");
+	if (fp) {
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__pat__cyclic);
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__patbuf__cyclic);
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__cyclic_fmt);
+		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__freesw_fmt);
+		fprintf(fp, "%s\n", fileset[fileset_selected].comment);
+		fputc('0' + (fileset[fileset_selected].style_cyclic ? 1 : 0) + (fileset[fileset_selected].style_freesw ? '2' : '0'), fp);
+		fclose(fp);
+	} else c_msg_format("\377oError: couldn't write file '%s-FS.meta'.", fileset[fileset_selected].basefilename);
+}
 
 #endif /* TEST_CLIENT */
 
@@ -9469,7 +9493,7 @@ Chain_Macro:
 								/* Auto-select the newly added set */
 								fileset_selected = f;
 								fileset_stage_selected = 0;
-								WRITE_MACROFILESET_META
+								macrofileset_meta_write();
 								break;
 
 							case 'S': //select a set - or unselect it again
@@ -9484,7 +9508,8 @@ Chain_Macro:
 								}
 
 								// select a set
-								GET_MACROFILESET
+								f = macrofileset_get(l);
+								if (f == -1) continue;
 								fileset_selected = f;
 								fileset_stage_selected = -1;
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
@@ -9531,7 +9556,8 @@ Chain_Macro:
 
 							case 'F': //forget a set (opposite of 'A', but also removes it from our scanned-list, requires rescan to reload it from disk)
 								//...so the player then has to save all macros to <charname.prf> or <global.prf> or whatever he prefers, again, to erase the traces of that set
-								GET_MACROFILESET
+								f = macrofileset_get(l);
+								if (f == -1) continue;
 								if (fileset_selected == f) fileset_selected = -1; //unselect it if it was selected
 
 								/* Purge all switching keys of this set from current macros in memory */
@@ -9688,7 +9714,7 @@ Chain_Macro:
 									c_msg_print("Cleared deprecated free-switch keys.");
 								}
 
-								WRITE_MACROFILESET_META
+								macrofileset_meta_write();
 								break;
 
 							case 's': //swap two stages
@@ -9698,9 +9724,10 @@ Chain_Macro:
 								}
 								if (!ok_swap_stages) continue;
 
-								GET_MACROFILESET_STAGE
-								k = f;
-								GET_MACROFILESET_STAGE
+								k = macrofileset_stage_get(l);
+								if (k == -1) continue;
+								f = macrofileset_stage_get(l);
+								if (f == -1) continue;
 
 								strcpy(tmpbuf, fileset[fileset_selected].macro__pat__freesw[k]);
 								strcpy(fileset[fileset_selected].macro__pat__freesw[k], fileset[fileset_selected].macro__pat__freesw[f]);
@@ -9821,9 +9848,10 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
-								GET_MACROFILESET_STAGE
+								f = macrofileset_stage_get(l);
+								if (f == -1) continue;
 								fileset[fileset_selected].stage_disabled[f] = !fileset[fileset_selected].stage_disabled[f];
-								WRITE_MACROFILESET_STAGE_META
+								macrofileset_stage_meta_write(f);
 
 								/* --- Also delete (or restore) the trigger keys for this stage from all the other stages -
 								       which means also crop them out (or reinsert them) of the '-FS' disk files! --- */
@@ -9995,8 +10023,8 @@ Chain_Macro:
 
 								/* Auto-select the newly added stage? */
 								fileset_stage_selected = f;
-								WRITE_MACROFILESET_STAGE_META
 
+								macrofileset_stage_meta_write(f);
 								break;
 
 							case 'd': //delete a stage
@@ -10004,7 +10032,8 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
-								GET_MACROFILESET_STAGE
+								f = macrofileset_stage_get(l);
+								if (f == -1) continue;
 
 								// Note: We don't clear current macros from memory
 
@@ -10077,7 +10106,8 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
-								GET_MACROFILESET_STAGE
+								f = macrofileset_stage_get(l);
+								if (f == -1) continue;
 								fileset_stage_selected = f;
 
 								// Optional: clear all macros from memory to start with a clean slate
@@ -10114,7 +10144,8 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
-								GET_MACROFILESET_STAGE
+								f = macrofileset_stage_get(l);
+								if (f == -1) continue;
 
 								cancel = FALSE;
 								while (!cancel) {
@@ -10140,7 +10171,7 @@ Chain_Macro:
 								}
 								if (cancel) break;
 								strcpy(fileset[fileset_selected].stage_comment[f], tmpbuf);
-								WRITE_MACROFILESET_STAGE_META
+								macrofileset_stage_meta_write(f);
 								break;
 
 							case 'w': //write current macros to active stage
@@ -10154,7 +10185,7 @@ Chain_Macro:
 								}
 
 								f = fileset_stage_selected;
-								WRITE_MACROFILESET_STAGE_META
+								macrofileset_stage_meta_write(f);
 
 								/* Write all active macros to active set/stage: */
 								sprintf(tmpbuf, "%s-FS%d.prf", fileset[fileset_selected].basefilename, fileset_stage_selected + 1);
