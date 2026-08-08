@@ -5518,19 +5518,11 @@ int macrofileset_scan(void) {
 	HANDLE hFind;
 #endif
 	char cwd[1024];
+	macro_fileset_type *fs;
 
 
 	/* Discard known filesets - fileset[] already gets zero-initialized */
-#if 0
-	for (k = 0; k < MACROFILESETS_MAX; k++) {
-		fileset[k].stages = 0;
-		fileset[k].currently_referenced = fileset[k].any_stage_file_exists = fileset[k].all_stage_files_exist = FALSE;
-		for (f = 0; f < MACROFILESETS_STAGES_MAX; f++)
-			fileset[k].stage_file_exists[f] = FALSE;
-	}
-#else
 	memset(fileset, 0, sizeof(fileset));
-#endif
 	filesets_found = 0;
 	fileset_selected = fileset_stage_selected = -1;
 
@@ -5613,44 +5605,50 @@ int macrofileset_scan(void) {
 
 			/* No known fileset of this basename found? Register a new set. */
 			if (f == k) {
-				fileset[k].style_cyclic = style_cyclic;
-				fileset[k].style_freesw = style_freesw;
+				fs = &fileset[k];
 
-				fileset[k].stages = stage + 1; // We have at least this many stages, apparently
-				strcpy(fileset[k].basefilename, buf_basename);
+				fs->style_cyclic = style_cyclic;
+				fs->style_freesw = style_freesw;
+
+				fs->stages = stage + 1; // We have at least this many stages, apparently
+				strcpy(fs->basefilename, buf_basename);
 
 				/* Init cycle key */
-				fileset[k].macro__pat__cyclic[0] = 0;
-				fileset[k].macro__patbuf__cyclic[0] = 0;
+				fs->macro__pat__cyclic[0] = 0;
+				fs->macro__patbuf__cyclic[0] = 0;
 
 				/* Set is referenced by loaded macros in memory */
-				fileset[k].currently_referenced = TRUE;
+				fs->currently_referenced = TRUE;
 
 				/* One more registered macroset */
 				k++;
-			} else k = f; //unify, for subsequent code:
+			} else {
+				k = f; //unify, for subsequent code:
+				fs = &fileset[k];
+			}
 
 			/* Get trigger in parsable format */
 			strncpy(buf_pat, macro__pat[m], 31);
 			buf_pat[31] = '\0';
 			ascii_to_text(buftxt_pat, buf_pat);
 
+	    //todo... move some to .meta file, as we use set-global templates now
 			/* Init switch keys */
-			fileset[k].stage[stage].macro__pat__freesw[0] = 0;
-			fileset[k].stage[stage].macro__patbuf__freesw[0] = 0;
-			fileset[k].stage[stage].macro__act__freesw[0] = 0;
-			fileset[k].stage[stage].macro__actbuf__freesw[0] = 0;
+			fs->stage[stage].macro__pat__freesw[0] = 0;
+			fs->stage[stage].macro__patbuf__freesw[0] = 0;
+			fs->stage[stage].macro__act__freesw[0] = 0;
+			fs->stage[stage].macro__actbuf__freesw[0] = 0;
 			/* Macro-set specific: */
 			if (style_cyclic) {
-				strcpy(fileset[k].macro__pat__cyclic, buf_pat);
-				strcpy(fileset[k].macro__patbuf__cyclic, buftxt_pat);
+				strcpy(fs->macro__pat__cyclic, buf_pat);
+				strcpy(fs->macro__patbuf__cyclic, buftxt_pat);
 			}
 			/* Macro-set-stage specific: */
 			if (style_freesw) {
-				strcpy(fileset[k].stage[stage].macro__pat__freesw, buf_pat);
-				strcpy(fileset[k].stage[stage].macro__patbuf__freesw, buftxt_pat);
-				strcpy(fileset[k].stage[stage].macro__act__freesw, buf_act);
-				strcpy(fileset[k].stage[stage].macro__actbuf__freesw, buftxt_act);
+				strcpy(fs->stage[stage].macro__pat__freesw, buf_pat);
+				strcpy(fs->stage[stage].macro__patbuf__freesw, buftxt_pat);
+				strcpy(fs->stage[stage].macro__act__freesw, buf_act);
+				strcpy(fs->stage[stage].macro__actbuf__freesw, buftxt_act);
 			}
 
 			/* Continue scanning keys for switch-macros */
@@ -5813,28 +5811,31 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 					continue;
 				}
 
-				fileset[k].stages = stage + 1; // We have at least this many stages, apparently
-				strcpy(fileset[k].basefilename, buf_basename);
+				fs = &fileset[k];
+
+				fs->stages = stage + 1; // We have at least this many stages, apparently
+				strcpy(fs->basefilename, buf_basename);
 
 				/* Register that there is an existing file to back up this stage's existance */
-				fileset[k].stage[stage].stage_file_exists = TRUE;
+				fs->stage[stage].stage_file_exists = TRUE;
 
-				fileset[k].style_cyclic = FALSE; // found out further below via .meta file
-				fileset[k].style_freesw = FALSE; // found out further below via .meta file
+				fs->style_cyclic = FALSE; // found out further below via .meta file
+				fs->style_freesw = FALSE; // found out further below via .meta file
 
+	    //todo... move some to .meta file, as we use set-global templates now
 				/* Init cycle key */
-				fileset[k].macro__pat__cyclic[0] = 0;
-				fileset[k].macro__patbuf__cyclic[0] = 0;
+				fs->macro__pat__cyclic[0] = 0;
+				fs->macro__patbuf__cyclic[0] = 0;
 				/* Init free-switch keys */
-				for (f = 0; f < fileset[k].stages; f++) {
-					fileset[k].stage[f].macro__pat__freesw[0] = 0;
-					fileset[k].stage[f].macro__patbuf__freesw[0] = 0;
-					fileset[k].stage[f].macro__act__freesw[0] = 0;
-					fileset[k].stage[f].macro__actbuf__freesw[0] = 0;
+				for (f = 0; f < fs->stages; f++) {
+					fs->stage[f].macro__pat__freesw[0] = 0;
+					fs->stage[f].macro__patbuf__freesw[0] = 0;
+					fs->stage[f].macro__act__freesw[0] = 0;
+					fs->stage[f].macro__actbuf__freesw[0] = 0;
 				}
 
 				/* Set is purely from disk, not referenced by loaded macros in memory */
-				fileset[k].currently_referenced = FALSE;
+				fs->currently_referenced = FALSE;
 
 
 				/* One more registered macroset */
@@ -5854,46 +5855,48 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	/* ---------- For all known macro sets, now check whether macro files for all/some stages are missing ---------- */
 
 	for (k = 0; k < filesets_found; k++) {
+		fs = &fileset[k];
+
 		/* Count all stage files */
 		n = 0;
-		for (f = 0; f < fileset[k].stages; f++) {
-			if (fileset[k].stage[f].stage_file_exists) n++;
+		for (f = 0; f < fs->stages; f++) {
+			if (fs->stage[f].stage_file_exists) n++;
 			else stage = f;
 		}
 
 		/* Found all of them aka fileset is complete? We're done. */
-		if (n == fileset[k].stages) {
-			fileset[k].all_stage_files_exist = TRUE;
+		if (n == fs->stages) {
+			fs->all_stage_files_exist = TRUE;
 			continue;
 		}
 
 		/* Found none, ie all stages are missing their file each? */
 		if (!n) {
-			if (fileset[k].stages == 1) {
-				c_msg_format("\377yWarning(+): Macroset \"%s\" (1 stage) has no file.", fileset[k].basefilename);
+			if (fs->stages == 1) {
+				c_msg_format("\377yWarning(+): Macroset \"%s\" (1 stage) has no file.", fs->basefilename);
 			} else {
  #if 0
 				c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files for any stage.",
-				    fileset[k].basefilename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+				    fs->basefilename, fs->stages, fs->stages != 1 ? "s" : "");
  #else /* Save screen space, shorter message */
 				c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no files.",
-				    fileset[k].basefilename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+				    fs->basefilename, fs->stages, fs->stages != 1 ? "s" : "");
  #endif
 			}
 		}
 		/* Just one of the stages is missing a file? */
-		else if (n == fileset[k].stages - 1) {
+		else if (n == fs->stages - 1) {
 			c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s) has no file for stage %d.",
-			    fileset[k].basefilename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "", stage + 1);
+			    fs->basefilename, fs->stages, fs->stages != 1 ? "s" : "", stage + 1);
 		/* Several stages are missing files */
 		} else {
 			tmpbuf[0] = 0;
-			for (f = 0; f < fileset[k].stages; f++)
-				if (!fileset[k].stage[f].stage_file_exists) strcat(tmpbuf, format("%d, ", f + 1));
+			for (f = 0; f < fs->stages; f++)
+				if (!fs->stage[f].stage_file_exists) strcat(tmpbuf, format("%d, ", f + 1));
 			tmpbuf[strlen(tmpbuf) - 2] = 0; //trim trailing comma
 
 			c_msg_format("\377yWarning(+): Macroset \"%s\" (%d stage%s)",
-			    fileset[k].basefilename, fileset[k].stages, fileset[k].stages != 1 ? "s" : "");
+			    fs->basefilename, fs->stages, fs->stages != 1 ? "s" : "");
 			c_msg_format("\377y            has no files for these stages: %s.", tmpbuf);
 		}
 	}
@@ -5901,8 +5904,10 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	/* Lastly, for all macro sets and their stages, scan for optional stage comment of each stage (separate file for easiest handling),
 	   also read 'disabled' flag for each stage */
 	for (k = 0; k < filesets_found; k++) {
+		fs = &fileset[k];
+
 		/* Read set's .meta file */
-		path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s.meta", fileset[k].basefilename, SETFILEPOSTFIX));
+		path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s.meta", fs->basefilename, SETFILEPOSTFIX));
 		if (my_fexists(tmpbuf)) {
 			FILE *fp;
 			char flagc;
@@ -5912,35 +5917,35 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 				bool success = TRUE;
 
 				/* Read cyclic key (whether in use or not) */
-				success &= (fgets(fileset[fileset_selected].macro__pat__cyclic, MACROKEY_LEN, fp) != NULL);
-				success &= (fgets(fileset[fileset_selected].macro__patbuf__cyclic, MACROKEY_LEN, fp) != NULL);
-				success &= (fgets(fileset[fileset_selected].macro__actbuf__cyclic_fmt, MACRO_MAXLEN, fp) != NULL);
-				success &= (fgets(fileset[fileset_selected].macro__actbuf__freesw_fmt, MACRO_MAXLEN, fp) != NULL);
+				success &= (fgets(fs->macro__pat__cyclic, MACROKEY_LEN, fp) != NULL);
+				success &= (fgets(fs->macro__patbuf__cyclic, MACROKEY_LEN, fp) != NULL);
+				success &= (fgets(fs->macro__actbuf__cyclic_fmt, MACRO_MAXLEN, fp) != NULL);
+				success &= (fgets(fs->macro__actbuf__freesw_fmt, MACRO_MAXLEN, fp) != NULL);
 				/* Read comment */
-				success &= (fgets(fileset[k].comment, MACROSET_COMMENT_LEN, fp) != NULL);
-				fileset[k].comment[MACROSET_COMMENT_LEN - 1] = 0;
+				success &= (fgets(fs->comment, MACROSET_COMMENT_LEN, fp) != NULL);
+				fs->comment[MACROSET_COMMENT_LEN - 1] = 0;
 				/* Trim trailing newline */
-				if (fileset[k].comment[0] && fileset[k].comment[strlen(fileset[k].comment) - 1] == '\n')
-					fileset[k].comment[strlen(fileset[k].comment) - 1] = 0;
+				if (fs->comment[0] && fs->comment[strlen(fs->comment) - 1] == '\n')
+					fs->comment[strlen(fs->comment) - 1] = 0;
 
 				/* Read switching-types (2nd line) */
 				flagc = fgetc(fp);
 				success &= (flagc != EOF);
 				switch (flagc) {
-				case 0: fileset[k].style_cyclic = fileset[k].style_freesw = 0; break; // bug
-				case 1: fileset[k].style_cyclic = 1; fileset[k].style_freesw = 0; break;
-				case 2: fileset[k].style_cyclic = 0; fileset[k].style_freesw = 1; break;
-				case 3: fileset[k].style_cyclic = fileset[k].style_freesw = 1; break;
+				case 0: fs->style_cyclic = fs->style_freesw = 0; break; // bug
+				case 1: fs->style_cyclic = 1; fs->style_freesw = 0; break;
+				case 2: fs->style_cyclic = 0; fs->style_freesw = 1; break;
+				case 3: fs->style_cyclic = fs->style_freesw = 1; break;
 				}
 
 				fclose(fp);
-				if (!success) c_msg_format("\377oError in contents of file '%s%s.meta'.", fileset[k].basefilename, SETFILEPOSTFIX);
-			} else c_msg_format("\377oError: couldn't read file '%s%s.meta'.", fileset[k].basefilename, SETFILEPOSTFIX);
+				if (!success) c_msg_format("\377oError in contents of file '%s%s.meta'.", fs->basefilename, SETFILEPOSTFIX);
+			} else c_msg_format("\377oError: couldn't read file '%s%s.meta'.", fs->basefilename, SETFILEPOSTFIX);
 		}
-		for (f = 0; f < fileset[k].stages; f++) {
+		for (f = 0; f < fs->stages; f++) {
 			/* Read stage's .meta file */
-			if (!fileset[k].stage[f].stage_file_exists) continue;
-			path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.meta", fileset[k].basefilename, SETFILEPOSTFIX, f + 1));
+			if (!fs->stage[f].stage_file_exists) continue;
+			path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.meta", fs->basefilename, SETFILEPOSTFIX, f + 1));
 			if (my_fexists(tmpbuf)) {
 				FILE *fp;
 				char flagc;
@@ -5950,25 +5955,25 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 					bool success = TRUE;
 
 					/* Read free-switch key targetting this stage from any other stage (whether in use or not) */
-					success &= (fgets(fileset[fileset_selected].stage[f].macro__pat__freesw, MACROKEY_LEN, fp) != NULL);
-					success &= (fgets(fileset[fileset_selected].stage[f].macro__patbuf__freesw, MACROKEY_LEN, fp) != NULL);
-					success &= (fgets(fileset[fileset_selected].stage[f].macro__act__freesw, MACRO_MAXLEN, fp) != NULL);
-					success &= (fgets(fileset[fileset_selected].stage[f].macro__actbuf__freesw, MACRO_MAXLEN, fp) != NULL);
+					success &= (fgets(fs->stage[f].macro__pat__freesw, MACROKEY_LEN, fp) != NULL);
+					success &= (fgets(fs->stage[f].macro__patbuf__freesw, MACROKEY_LEN, fp) != NULL);
+					success &= (fgets(fs->stage[f].macro__act__freesw, MACRO_MAXLEN, fp) != NULL);
+					success &= (fgets(fs->stage[f].macro__actbuf__freesw, MACRO_MAXLEN, fp) != NULL);
 					/* Read comment */
-					success &= (fgets(fileset[k].stage[f].stage_comment, MACROSET_COMMENT_LEN, fp) != NULL);
-					fileset[k].stage[f].stage_comment[MACROSET_COMMENT_LEN - 1] = 0;
+					success &= (fgets(fs->stage[f].stage_comment, MACROSET_COMMENT_LEN, fp) != NULL);
+					fs->stage[f].stage_comment[MACROSET_COMMENT_LEN - 1] = 0;
 					/* Trim trailing newline */
-					if (fileset[k].stage[f].stage_comment[0] && fileset[k].stage[f].stage_comment[strlen(fileset[k].stage[f].stage_comment) - 1] == '\n')
-						fileset[k].stage[f].stage_comment[strlen(fileset[k].stage[f].stage_comment) - 1] = 0;
+					if (fs->stage[f].stage_comment[0] && fs->stage[f].stage_comment[strlen(fs->stage[f].stage_comment) - 1] == '\n')
+						fs->stage[f].stage_comment[strlen(fs->stage[f].stage_comment) - 1] = 0;
 
 					/* Read 'disabled' flag (2nd line) */
 					flagc = fgetc(fp);
 					success &= (flagc != EOF);
-					fileset[k].stage[f].stage_disabled = ((flagc == '0' || flagc == EOF) ? FALSE : TRUE);
+					fs->stage[f].stage_disabled = ((flagc == '0' || flagc == EOF) ? FALSE : TRUE);
 
 					fclose(fp);
-					if (!success) c_msg_format("\377oError in contents of file '%s%s%d.meta'.", fileset[k].basefilename, SETFILEPOSTFIX, f);
-				} else c_msg_format("\377oError: couldn't read file '%s%s%d.meta'.", fileset[k].basefilename, SETFILEPOSTFIX, f + 1);
+					if (!success) c_msg_format("\377oError in contents of file '%s%s%d.meta'.", fs->basefilename, SETFILEPOSTFIX, f);
+				} else c_msg_format("\377oError: couldn't read file '%s%s%d.meta'.", fs->basefilename, SETFILEPOSTFIX, f + 1);
 			}
 		}
 	}
@@ -5980,31 +5985,32 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 /* Rebuild cyclic/free-switch keys for all stages of the current macro set */
 void macrofileset_rebuild_keys(void) {
 	int f, n;
+	macro_fileset_type *fs = &fileset[fileset_selected];
 
 	/* --- First, also rebuild the set's global template strings, for paranoia --- */
 
 	/* Forge template cycle-macro action (in human-readable format) */
-	sprintf(fileset[fileset_selected].macro__actbuf__cyclic_fmt,
+	sprintf(fs->macro__actbuf__cyclic_fmt,
 	    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
-	    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[fileset_selected].basefilename, SETFILEPOSTFIX);
+	    fs->basefilename, MACROFILESET_MARKER_CYCLIC, fs->basefilename, SETFILEPOSTFIX);
 
 	/* Forge template freeswitch-macro action (in human-readable format) */
-	sprintf(fileset[fileset_selected].macro__actbuf__freesw_fmt,
+	sprintf(fs->macro__actbuf__freesw_fmt,
 	    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
-	    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH, fileset[fileset_selected].basefilename, SETFILEPOSTFIX);
+	    fs->basefilename, MACROFILESET_MARKER_SWITCH, fs->basefilename, SETFILEPOSTFIX);
 
 	/* --- Now rebuild the cycle and free-switch keys for each stage, depending on number of stages and disabled-state of any stage --- */
 
 	/* Note that a stage that is currently disabled still gets the keys rebuild, including cycling to the next non-disabled stage, just for paranoia.
 	   Just the other stages won't get their cycle-key set to target any disabled stage, but to the next non-disabled stage in succession. */
-	for (f = 0; f < fileset[fileset_selected].stages; f++) {
+	for (f = 0; f < fs->stages; f++) {
 		/* Is there a non-disabled stage following us? */
 		n = f + 1;
-		while (n < fileset[fileset_selected].stages && fileset[fileset_selected].stage[n].stage_disabled) n++;
+		while (n < fs->stages && fs->stage[n].stage_disabled) n++;
 		/* Otherwise, is there a non-disabled stage starting from stage 0 (except for us)? */
-		if (n == fileset[fileset_selected].stages) {
+		if (n == fs->stages) {
 			n = 0;
-			while (n < f && fileset[fileset_selected].stage[n].stage_disabled) n++;
+			while (n < f && fs->stage[n].stage_disabled) n++;
 		}
 
 		/* Two possible results:
@@ -6012,17 +6018,17 @@ void macrofileset_rebuild_keys(void) {
 		   2) n != f : Otherwise cycle to the next eligible other stage, yay */
 
 		/* Forge and set cyclic macro action, human-readable format */
-		sprintf(fileset[fileset_selected].stage[f].macro__actbuf__cyclic,
-		    fileset[fileset_selected].macro__actbuf__cyclic_fmt, n + 1, fileset[fileset_selected].stages, n);
+		sprintf(fs->stage[f].macro__actbuf__cyclic,
+		    fs->macro__actbuf__cyclic_fmt, n + 1, fs->stages, n);
 		/* Set cyclic macro action, machine format converted from human-readable format */
-		text_to_ascii(fileset[fileset_selected].stage[n].macro__act__cyclic,
-		    fileset[fileset_selected].stage[f].macro__actbuf__cyclic);
+		text_to_ascii(fs->stage[n].macro__act__cyclic,
+		    fs->stage[f].macro__actbuf__cyclic);
 
 		/* Set free-switch macro action, human-readable format */
-		sprintf(fileset[fileset_selected].stage[f].macro__actbuf__freesw,
-		    fileset[fileset_selected].macro__actbuf__freesw_fmt, f + 1, fileset[fileset_selected].stages, f);
+		sprintf(fs->stage[f].macro__actbuf__freesw,
+		    fs->macro__actbuf__freesw_fmt, f + 1, fs->stages, f);
 		/* Set free-switch macro action */
-		text_to_ascii(fileset[fileset_selected].stage[f].macro__act__freesw, fileset[fileset_selected].stage[f].macro__actbuf__freesw);
+		text_to_ascii(fs->stage[f].macro__act__freesw, fs->stage[f].macro__actbuf__freesw);
 	}
 }
 
@@ -6030,9 +6036,10 @@ void macrofileset_rebuild_keys(void) {
    Returns amount of found macros that were inserted. */
 int macrofileset_meminsert(void) {
 	int found = 0, f;
+	macro_fileset_type *fs = &fileset[fileset_selected];
 
 	/* Cyclic set */
-	if (fileset[fileset_selected].style_cyclic) {
+	if (fs->style_cyclic) {
 		//  If no stage is selected, auto-select the first stage.
 		if (fileset_stage_selected == -1) {
 			fileset_stage_selected = 0;
@@ -6040,23 +6047,23 @@ int macrofileset_meminsert(void) {
 		}
 
 		/* Add macro to cycle to the next stage from this stage (ie stage 0->1) */
-		macro_add(fileset[fileset_selected].macro__pat__cyclic,
-		    fileset[fileset_selected].stage[fileset_stage_selected].macro__act__cyclic,
+		macro_add(fs->macro__pat__cyclic,
+		    fs->stage[fileset_stage_selected].macro__act__cyclic,
 		    FALSE, FALSE);
 		found++;
 	}
 
 	/* Free-switching stages */
-	if (fileset[fileset_selected].style_freesw) {
-		for (f = 0; f < fileset[fileset_selected].stages; f++) {
-			//if (!fileset[fileset_selected].stage[f].stage_file_exists) continue;
-			if (fileset[fileset_selected].stage[f].stage_disabled) {
+	if (fs->style_freesw) {
+		for (f = 0; f < fs->stages; f++) {
+			//if (!fs->stage[f].stage_file_exists) continue;
+			if (fs->stage[f].stage_disabled) {
 				c_msg_format("Skipping free-switch macro for disabled stage %d.", f + 1);
 				continue;
 			}
 
 			//key_autoconvert(tmp, fmt);
-			macro_add(fileset[fileset_selected].stage[f].macro__pat__freesw, fileset[fileset_selected].stage[f].macro__act__freesw, FALSE, FALSE);
+			macro_add(fs->stage[f].macro__pat__freesw, fs->stage[f].macro__act__freesw, FALSE, FALSE);
 			found++;
 		}
 	}
@@ -6133,9 +6140,10 @@ int macrofileset_mempurge(int f) {
    Returns amount of found macros that were inserted. */
 int macrofileset_stage_meminsert(int f) {
 	int found = 0, n;
+	macro_fileset_type *fs = &fileset[fileset_selected];
 
 	/* Cyclic set */
-	if (fileset[fileset_selected].style_cyclic) {
+	if (fs->style_cyclic) {
 		//  If no stage is selected, auto-select the first stage.
 		if (f == -1) {
 			f = 0;
@@ -6143,23 +6151,23 @@ int macrofileset_stage_meminsert(int f) {
 		}
 
 		/* Add macro to cycle to the next stage from this stage (ie stage 0->1) */
-		macro_add(fileset[fileset_selected].macro__pat__cyclic,
-		    fileset[fileset_selected].stage[f].macro__act__cyclic,
+		macro_add(fs->macro__pat__cyclic,
+		    fs->stage[f].macro__act__cyclic,
 		    FALSE, FALSE);
 		found++;
 	}
 
 	/* Free-switching stages */
-	if (fileset[fileset_selected].style_freesw) {
-		for (n = 0; n < fileset[fileset_selected].stages; n++) {
-			//if (!fileset[fileset_selected].stage[n].stage_file_exists) continue;
-			if (fileset[fileset_selected].stage[n].stage_disabled) {
+	if (fs->style_freesw) {
+		for (n = 0; n < fs->stages; n++) {
+			//if (!fs->stage[n].stage_file_exists) continue;
+			if (fs->stage[n].stage_disabled) {
 				c_msg_format("Skipping free-switch macro for disabled stage %d.", n + 1);
 				continue;
 			}
 
 			//key_autoconvert(tmp, fmt);
-			macro_add(fileset[fileset_selected].stage[n].macro__pat__freesw, fileset[fileset_selected].stage[n].macro__act__freesw, FALSE, FALSE);
+			macro_add(fs->stage[n].macro__pat__freesw, fs->stage[n].macro__act__freesw, FALSE, FALSE);
 			found++;
 		}
 	}
@@ -6224,7 +6232,7 @@ int macrofileset_stage_mempurge(int f) {
 			buf_basename[strlen(buf_basename) - 8] = 0;
 
 			/* Compare to set we want to delete */
-			if (strcmp(fileset[f].basefilename, buf_basename)) continue;
+			if (strcmp(fileset[fileset_selected].basefilename, buf_basename)) continue;
 
 			/* --- Matches target set! --- */
 
@@ -6283,19 +6291,20 @@ int macrofileset_stage_get(int msg_y) {
 void macrofileset_stage_meta_write(int f) {
 	FILE *fp;
 	char tmpbuf[1024];
+	macro_fileset_type *fs = &fileset[fileset_selected];
 
 	path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.meta",
-	    fileset[fileset_selected].basefilename, SETFILEPOSTFIX, f + 1));
+	    fs->basefilename, SETFILEPOSTFIX, f + 1));
 	fp = fopen(tmpbuf, "w");
 	if (fp) {
-		fprintf(fp, "%s\n", fileset[fileset_selected].stage[f].macro__pat__freesw);
-		fprintf(fp, "%s\n", fileset[fileset_selected].stage[f].macro__patbuf__freesw);
-		fprintf(fp, "%s\n", fileset[fileset_selected].stage[f].macro__act__freesw);
-		fprintf(fp, "%s\n", fileset[fileset_selected].stage[f].macro__actbuf__freesw);
-		fprintf(fp, "%s\n", fileset[fileset_selected].stage[f].stage_comment);
-		fputc(fileset[fileset_selected].stage[f].stage_disabled ? '1' : '0', fp);
+		fprintf(fp, "%s\n", fs->stage[f].macro__pat__freesw);
+		fprintf(fp, "%s\n", fs->stage[f].macro__patbuf__freesw);
+		fprintf(fp, "%s\n", fs->stage[f].macro__act__freesw);
+		fprintf(fp, "%s\n", fs->stage[f].macro__actbuf__freesw);
+		fprintf(fp, "%s\n", fs->stage[f].stage_comment);
+		fputc(fs->stage[f].stage_disabled ? '1' : '0', fp);
 		fclose(fp);
-	} else c_msg_format("\377oError: couldn't write file '%s%s%d.meta'.", fileset[fileset_selected].basefilename, SETFILEPOSTFIX, f + 1);
+	} else c_msg_format("\377oError: couldn't write file '%s%s%d.meta'.", fs->basefilename, SETFILEPOSTFIX, f + 1);
 }
 
 /* Store switching-type and comment of currently selected set in a separate file '<macroset>.meta'.
@@ -6303,19 +6312,20 @@ void macrofileset_stage_meta_write(int f) {
 void macrofileset_meta_write(void) {
 	FILE *fp;
 	char tmpbuf[1024];
+	macro_fileset_type *fs = &fileset[fileset_selected];
 
 	path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s.meta",
-	    fileset[fileset_selected].basefilename, SETFILEPOSTFIX));
+	    fs->basefilename, SETFILEPOSTFIX));
 	fp = fopen(tmpbuf, "w");
 	if (fp) {
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__pat__cyclic);
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__patbuf__cyclic);
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__cyclic_fmt);
-		fprintf(fp, "%s\n", fileset[fileset_selected].macro__actbuf__freesw_fmt);
-		fprintf(fp, "%s\n", fileset[fileset_selected].comment);
-		fputc('0' + (fileset[fileset_selected].style_cyclic ? 1 : 0) + (fileset[fileset_selected].style_freesw ? '2' : '0'), fp);
+		fprintf(fp, "%s\n", fs->macro__pat__cyclic);
+		fprintf(fp, "%s\n", fs->macro__patbuf__cyclic);
+		fprintf(fp, "%s\n", fs->macro__actbuf__cyclic_fmt);
+		fprintf(fp, "%s\n", fs->macro__actbuf__freesw_fmt);
+		fprintf(fp, "%s\n", fs->comment);
+		fputc('0' + (fs->style_cyclic ? 1 : 0) + (fs->style_freesw ? '2' : '0'), fp);
 		fclose(fp);
-	} else c_msg_format("\377oError: couldn't write file '%s%s.meta'.", fileset[fileset_selected].basefilename, SETFILEPOSTFIX);
+	} else c_msg_format("\377oError: couldn't write file '%s%s.meta'.", fs->basefilename, SETFILEPOSTFIX);
 }
 
 /* Write a macro file set stage of the currently selected fileset to disk, using all macros that are currently in memory */
@@ -9312,6 +9322,7 @@ Chain_Macro:
 						char tmpbuf[MACROKEY_LEN], tmpbuf2[MACROKEY_LEN], tmpbuf3[MACROKEY_LEN];
 						bool ok_new_set, ok_new_stage, ok_swap_stages, cancel;
 						bool style_cyclic, style_freesw, Z_hack = (i == 'Z');
+						macro_fileset_type *fs;
 
 						i = 0; // clear 'Z'-hack
 
@@ -9322,8 +9333,8 @@ Chain_Macro:
 
 						while (TRUE) {
 							ok_new_set = (filesets_found < MACROFILESETS_MAX);
-							ok_new_stage = (fileset[fileset_selected].stages < MACROFILESETS_STAGES_MAX);
-							ok_swap_stages = (fileset[fileset_selected].stages >= 2); //need at least 2 stages in order to swap anything
+							ok_new_stage = (fileset_selected != -1 && fileset[fileset_selected].stages < MACROFILESETS_STAGES_MAX);
+							ok_swap_stages = (fileset_selected != -1 && fileset[fileset_selected].stages >= 2); //need at least 2 stages in order to swap anything
 
 							/* --- Begin of visual output --- */
 							//l = ystart + 1;
@@ -9343,11 +9354,12 @@ Chain_Macro:
 					    // todo...^ (use implementation of 'Small screen' section below for reference, list the stages actually)
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found) {
+										fs = &fileset[k];
 										/* Build stages string */
 										tmpbuf[0] = 0;
-										for (f = 0; f < fileset[k].stages; f++) {
+										for (f = 0; f < fs->stages; f++) {
 											if (f) strcat(tmpbuf, "\377g/");
-											if (fileset[k].stage[f].stage_file_exists) strcat(tmpbuf, format("\377W%d", f + 1));
+											if (fs->stage[f].stage_file_exists) strcat(tmpbuf, format("\377W%d", f + 1));
 											else strcat(tmpbuf, format("\377D%d", f + 1));
 										}
 										for (; f < MACROFILESETS_STAGES_MAX; f++) strcat(tmpbuf, "  ");
@@ -9355,10 +9367,10 @@ Chain_Macro:
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
 										    //format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g, active: %s; \377s%s\377-; \"\377s%s\377-\"",
 										    format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g [%s]; \377s%s\377-; \"\377s%s\377-\"",
-										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", "",//fileset[k].all_stage_files_exist ? "" : "\377y",
+										    fileset_selected == k ? ">" : " ", k + 1, fs->currently_referenced ? "\377BREFD" : "\377gdisk", "",//fs->all_stage_files_exist ? "" : "\377y",
 										    tmpbuf, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377B%d\377-", fileset_stage_selected + 1),
-										    (fileset[k].style_cyclic && fileset[k].style_freesw) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : (fileset[k].style_freesw ? "FreeSw" : "------")),
-										    fileset[k].basefilename));
+										    (fs->style_cyclic && fs->style_freesw) ? "Cyc+Fr" : (fs->style_cyclic ? "Cyclic" : (fs->style_freesw ? "FreeSw" : "------")),
+										    fs->basefilename));
 									} else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 
@@ -9373,6 +9385,7 @@ Chain_Macro:
 								} else l += 2;
 
 								if (fileset_selected != -1) {
+									fs = &fileset[fileset_selected];
 									l++;
 									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("And with the currently selected fileset (\377v%d\377-) you may...", fileset_selected + 1));
 
@@ -9380,8 +9393,8 @@ Chain_Macro:
 									/* urgh, low on space, we somehow squeeze the stage comment in there */
 									if (fileset_stage_selected != -1)
 										Term_putstr(xoffset1 + 55, l - 1, -1, TERM_GREEN,
-										    fileset[fileset_selected].stage[fileset_stage_selected].stage_comment[0] ?
-										    format("\377g('\377s%s\377g')", fileset[fileset_selected].stage[fileset_stage_selected].stage_comment) :
+										    fs->stage[fileset_stage_selected].stage_comment[0] ?
+										    format("\377g('\377s%s\377g')", fs->stage[fileset_stage_selected].stage_comment) :
 										    "\377g(no comment)");
 #endif
 
@@ -9391,12 +9404,12 @@ Chain_Macro:
 									Term_putstr(xoffset2 + 37, l++, -1, TERM_GREEN, "\377Gc\377-) Change a stage's comment");
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
 									    "\377Gi\377-" : "\377Di", ") Initialise+activate a new stage to the set (doesn't clear active macros)"));
-									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", fileset[fileset_selected].stages ?
+									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s%s", fs->stages ?
 									    "\377Gd\377-" : "\377Dd", ") Delete a stage"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Toggle a stage (removes/reinserts its activation keys in the other stages)",
-									    fileset[fileset_selected].stages ? "\377Gt\377-" : "\377Dt"));
+									    fs->stages ? "\377Gt\377-" : "\377Dt"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate/load a stage (\377yforgets active macros\377- & loads stage macrofile)",
-									    fileset[fileset_selected].stages ? "\377Ga\377-" : "\377Da"));
+									    fs->stages ? "\377Ga\377-" : "\377Da"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377Gw\377-) Write all currently active macros to the activated stage %sfile",
 									    fileset_stage_selected == -1 ? "" : format("[\377B%d\377-] ", fileset_stage_selected + 1)));
 								}
@@ -9417,14 +9430,16 @@ Chain_Macro:
 								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
 
 								/* If no macro set is selected, show the list of macro sets, otherwise show the list of stages of the currently active set */
+					    //todo... dat "TRUE" -> show stages instead ^
 								if (fileset_selected == -1 || TRUE) //...implementing
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found) {
+										fs = &fileset[k];
 										/* Build stages string */
 										tmpbuf[0] = 0;
-										for (f = 0; f < fileset[k].stages; f++) {
+										for (f = 0; f < fs->stages; f++) {
 											if (f) strcat(tmpbuf, "\377g/");
-											if (fileset[k].stage[f].stage_file_exists) strcat(tmpbuf, format("\377%c%d", fileset[k].stage[f].stage_disabled ? 'r' : 'W', f + 1));
+											if (fs->stage[f].stage_file_exists) strcat(tmpbuf, format("\377%c%d", fs->stage[f].stage_disabled ? 'r' : 'W', f + 1));
 											else strcat(tmpbuf, format("\377D%d", f + 1));
 										}
 										for (; f < MACROFILESETS_STAGES_MAX; f++) strcat(tmpbuf, "  ");
@@ -9432,19 +9447,20 @@ Chain_Macro:
 										Term_putstr(xoffset2 - 1, l++, -1, fileset_selected == k ? TERM_VIOLET : TERM_UMBER,
 										    //format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g, active: %s; \377s%s\377-; \"\377s%s\377-\"",
 										    format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g [%s]; \377s%s\377-; \"\377s%s\377-\"",
-										    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", "",//fileset[k].all_stage_files_exist ? "" : "\377y",
+										    fileset_selected == k ? ">" : " ", k + 1, fs->currently_referenced ? "\377BREFD" : "\377gdisk", "",//fs->all_stage_files_exist ? "" : "\377y",
 										    tmpbuf, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377B%d\377-", fileset_stage_selected + 1),
-										    (fileset[k].style_cyclic && fileset[k].style_freesw) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : (fileset[k].style_freesw ? "FreeSw" : "------")),
-										    fileset[k].basefilename));
+										    (fs->style_cyclic && fs->style_freesw) ? "Cyc+Fr" : (fs->style_cyclic ? "Cyclic" : (fs->style_freesw ? "FreeSw" : "------")),
+										    fs->basefilename));
 									} else
 										Term_putstr(xoffset2, l++, -1, TERM_UMBER, format("%2d\377g) -", k + 1));
 								else { /* We have a set selected? Then list its stages instead */
+									fs = &fileset[fileset_selected];
 					    // todo.... list the stages actually
 									/* Build stages string */
 									tmpbuf[0] = 0;
-									for (f = 0; f < fileset[k].stages; f++) {
+									for (f = 0; f < fs->stages; f++) {
 										if (f) strcat(tmpbuf, "\377g/");
-										if (fileset[k].stage[f].stage_file_exists) strcat(tmpbuf, format("\377W%d", f + 1));
+										if (fs->stage[f].stage_file_exists) strcat(tmpbuf, format("\377W%d", f + 1));
 										else strcat(tmpbuf, format("\377D%d", f + 1));
 									}
 									for (; f < MACROFILESETS_STAGES_MAX; f++) strcat(tmpbuf, "  ");
@@ -9452,10 +9468,10 @@ Chain_Macro:
 									Term_putstr(xoffset2 - 1, l++, -1, fileset_stage_selected == k ? TERM_L_BLUE : TERM_UMBER,
 									    //format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g, active: %s; \377s%s\377-; \"\377s%s\377-\"",
 									    format("%s%2d\377g) %s\377g; %sStages\377g: %s\377g [%s]; \377s%s\377-; \"\377s%s\377-\"",
-									    fileset_selected == k ? ">" : " ", k + 1, fileset[k].currently_referenced ? "\377BREFD" : "\377gdisk", "",//fileset[k].all_stage_files_exist ? "" : "\377y",
+									    fileset_selected == k ? ">" : " ", k + 1, fs->currently_referenced ? "\377BREFD" : "\377gdisk", "",//fs->all_stage_files_exist ? "" : "\377y",
 									    tmpbuf, (k != fileset_selected || fileset_stage_selected == -1) ? "\377u-\377-" : format("\377B%d\377-", fileset_stage_selected + 1),
-									    (fileset[k].style_cyclic && fileset[k].style_freesw) ? "Cyc+Fr" : (fileset[k].style_cyclic ? "Cyclic" : (fileset[k].style_freesw ? "FreeSw" : "------")),
-									    fileset[k].basefilename));
+									    (fs->style_cyclic && fs->style_freesw) ? "Cyc+Fr" : (fs->style_cyclic ? "Cyclic" : (fs->style_freesw ? "FreeSw" : "------")),
+									    fs->basefilename));
 								}
 
 								Term_putstr(xoffset2, l++, -1, TERM_GREEN, "\377GC\377-) Clear list and rescan (discards any unsaved macro set)");
@@ -9467,11 +9483,12 @@ Chain_Macro:
 								} else l += 2;
 
 								if (fileset_selected != -1) {
+									fs = &fileset[fileset_selected];
 									Term_putstr(xoffset1, l++, -1, TERM_GREEN, format("With the selected set (\377v%d\377-%s) you may...",
 										    fileset_selected + 1,
 										    fileset_stage_selected == -1 ? ", no stage activated" :
-										    (fileset[fileset_selected].stage[fileset_stage_selected].stage_comment[0] ?
-										    format(", stage '\377s%s\377-'", fileset[fileset_selected].stage[fileset_stage_selected].stage_comment) :
+										    (fs->stage[fileset_stage_selected].stage_comment[0] ?
+										    format(", stage '\377s%s\377-'", fs->stage[fileset_stage_selected].stage_comment) :
 										    ", no stage comment")));
 
 									Term_putstr(xoffset2, l, -1, TERM_GREEN, "\377Gk\377-) Modify its switching keys");
@@ -9480,12 +9497,12 @@ Chain_Macro:
 									Term_putstr(xoffset2 + 37, l++, -1, TERM_GREEN, "\377Gc\377-) Change a stage's comment");
 									Term_putstr(xoffset2, l, -1, TERM_GREEN, format("%s%s", ok_new_stage ?
 									    "\377Gi\377-" : "\377Di", ") Initialise+activate a new stage"));
-									Term_putstr(xoffset2 + 37, l++, -1, TERM_GREEN, format("%s%s", fileset[fileset_selected].stages ?
+									Term_putstr(xoffset2 + 37, l++, -1, TERM_GREEN, format("%s%s", fs->stages ?
 									    "\377Gd\377-" : "\377Dd", ") Delete a stage"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Toggle a stage (removes/reinserts its activation keys in the other stages)",
-									    fileset[fileset_selected].stages ? "\377Gt\377-" : "\377Dt"));
+									    fs->stages ? "\377Gt\377-" : "\377Dt"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("%s) Activate/load a stage (\377yforgets active macros\377- & loads stage macrofile)",
-									    fileset[fileset_selected].stages ? "\377Ga\377-" : "\377Da"));
+									    fs->stages ? "\377Ga\377-" : "\377Da"));
 									Term_putstr(xoffset2, l++, -1, TERM_GREEN, format("\377Gw\377-) Write all currently active macros to the activated stage %sfile",
 									    fileset_stage_selected == -1 ? "" : format("[\377B%d\377-] ", fileset_stage_selected + 1)));
 								}
@@ -9573,7 +9590,8 @@ Chain_Macro:
 								if (cancel) continue;
 
 								f = filesets_found++;
-								strcpy(fileset[f].basefilename, tmpbuf);
+								fs = &fileset[f];
+								strcpy(fs->basefilename, tmpbuf);
 
  #if 1
 								// get type (switching method)
@@ -9591,18 +9609,18 @@ Chain_Macro:
 								}
 								if (n == -1) {
 									/* Abort: Erase newly started set-in-the-making again */
-									fileset[f].basefilename[0] = 0;
+									fs->basefilename[0] = 0;
 									filesets_found--;
 									continue;
 								}
-								fileset[f].style_cyclic = (n % 2 != 0);
-								fileset[f].style_freesw = (n / 2 != 0);
+								fs->style_cyclic = (n % 2 != 0);
+								fs->style_freesw = (n / 2 != 0);
  #else
 								/* --- do the rest in a new, cleared screen perhaps, so there is room for explanations --- */
 
 								l = 0;
 								clear_from(l);
-								Term_putstr(1, l++, -1, TERM_L_GREEN, format("Set \"\377s%s\377-\":", fileset[f].basefilename));
+								Term_putstr(1, l++, -1, TERM_L_GREEN, format("Set \"\377s%s\377-\":", fs->basefilename));
 								l++;
 
 								// get type (switching method)
@@ -9620,36 +9638,36 @@ Chain_Macro:
 								}
 								if (n == -1) {
 									/* Abort: Erase newly started set-in-the-making again */
-									fileset[f].basefilename[0] = 0;
+									fs->basefilename[0] = 0;
 									filesets_found--;
 									continue;
 								}
-								fileset[f].style_cyclic = (n % 2 != 0);
-								fileset[f].style_freesw = (n / 2 != 0);
-								if (fileset[f].style_cyclic) {
-									if (fileset[f].style_freesw)
+								fs->style_cyclic = (n % 2 != 0);
+								fs->style_freesw = (n / 2 != 0);
+								if (fs->style_cyclic) {
+									if (fs->style_freesw)
 										Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377sCyclic+FreeSw");
 									else
 										Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377sCyclic");
-								} else if (fileset[f].style_freesw) Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377sFreeSw");
+								} else if (fs->style_freesw) Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377sFreeSw");
 								else Term_putstr(15, l++, -1, TERM_L_GREEN, "Switching method: \377s------");
 								l++;
  #endif
 								// auto-select set and 'init' its first stage (ie just select the first stage as 'active' and imprint its trigger keys)
-								fileset[f].stages = 1;
+								fs->stages = 1;
 
 								/* Init cycle key */
-								fileset[f].macro__pat__cyclic[0] = 0;
-								fileset[f].macro__patbuf__cyclic[0] = 0;
+								fs->macro__pat__cyclic[0] = 0;
+								fs->macro__patbuf__cyclic[0] = 0;
 								/* Init switch keys */
-								fileset[f].stage[0].macro__pat__freesw[0] = 0;
-								fileset[f].stage[0].macro__patbuf__freesw[0] = 0;
-								fileset[f].stage[0].macro__act__freesw[0] = 0;
-								fileset[f].stage[0].macro__actbuf__freesw[0] = 0;
+								fs->stage[0].macro__pat__freesw[0] = 0;
+								fs->stage[0].macro__patbuf__freesw[0] = 0;
+								fs->stage[0].macro__act__freesw[0] = 0;
+								fs->stage[0].macro__actbuf__freesw[0] = 0;
 
 								// ask for cycling-key / 1st stage switching key depending on selected type (1/2/1+2)
 
-								if (fileset[f].style_cyclic) { //ask for set-global cycling-key
+								if (fs->style_cyclic) { //ask for set-global cycling-key
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
 										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as macro-cycling trigger: ");
@@ -9664,26 +9682,26 @@ Chain_Macro:
 									}
 									if (!strcmp(buf, "\e")) {
 										/* Abort: Erase newly started set-in-the-making again */
-										fileset[f].basefilename[0] = 0;
+										fs->basefilename[0] = 0;
 										filesets_found--;
 										continue;
 									}
 
 									/* Set macro trigger */
-									strcpy(fileset[f].macro__pat__cyclic, tmpbuf);
+									strcpy(fs->macro__pat__cyclic, tmpbuf);
 									/* Set macro trigger in human-readable format */
-									ascii_to_text(fileset[f].macro__patbuf__cyclic, fileset[f].macro__pat__cyclic);
+									ascii_to_text(fs->macro__patbuf__cyclic, fs->macro__pat__cyclic);
 
 									/* Forge template cycle-macro action (in human-readable format) */
-									sprintf(fileset[f].macro__actbuf__cyclic_fmt,
+									sprintf(fs->macro__actbuf__cyclic_fmt,
 									    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
-									    fileset[f].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[f].basefilename, SETFILEPOSTFIX);
+									    fs->basefilename, MACROFILESET_MARKER_CYCLIC, fs->basefilename, SETFILEPOSTFIX);
 
 									/* No cycle action for this stage yet, as we don't have any further stage to cycle to */
-									fileset[f].stage[0].macro__act__cyclic[0] = fileset[f].stage[0].macro__actbuf__cyclic[0] = 0;
+									fs->stage[0].macro__act__cyclic[0] = fs->stage[0].macro__actbuf__cyclic[0] = 0;
 								}
 
-								if (fileset[f].style_freesw) { //ask for stage-specific switching-key
+								if (fs->style_freesw) { //ask for stage-specific switching-key
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
 										Term_putstr(1, l, -1, TERM_L_GREEN, "Press the key you want to use as stage 1-specific trigger: ");
@@ -9698,27 +9716,27 @@ Chain_Macro:
 									}
 									if (!strcmp(buf, "\e")) {
 										/* Abort: Erase newly started set-in-the-making again */
-										fileset[f].basefilename[0] = 0;
+										fs->basefilename[0] = 0;
 										filesets_found--;
 										continue;
 									}
 
 									/* Set macro trigger */
-									strcpy(fileset[f].stage[0].macro__pat__freesw, tmpbuf);
+									strcpy(fs->stage[0].macro__pat__freesw, tmpbuf);
 									/* Set macro trigger in human-readable format */
-									ascii_to_text(fileset[f].stage[0].macro__patbuf__freesw, tmpbuf);
+									ascii_to_text(fs->stage[0].macro__patbuf__freesw, tmpbuf);
 
 									/* Forge macro action (in human-readable format) */
 
 									/* Forge template freeswitch-macro action (in human-readable format) */
-									sprintf(fileset[f].macro__actbuf__freesw_fmt, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
-									    fileset[f].basefilename, MACROFILESET_MARKER_SWITCH, fileset[f].basefilename, SETFILEPOSTFIX);
+									sprintf(fs->macro__actbuf__freesw_fmt, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
+									    fs->basefilename, MACROFILESET_MARKER_SWITCH, fs->basefilename, SETFILEPOSTFIX);
 
 									/* Set free-switch macro action for stage 1, in human-readable format */
-									strcpy(fileset[f].stage[0].macro__actbuf__freesw,
-									    format(fileset[f].macro__actbuf__freesw_fmt, 1, fileset[f].stages, 0));
+									strcpy(fs->stage[0].macro__actbuf__freesw,
+									    format(fs->macro__actbuf__freesw_fmt, 1, fs->stages, 0));
 									/* Set free-switch macro action for stage 1 */
-									text_to_ascii(fileset[f].stage[0].macro__act__freesw, fileset[f].stage[0].macro__actbuf__freesw);
+									text_to_ascii(fs->stage[0].macro__act__freesw, fs->stage[0].macro__actbuf__freesw);
 								}
 
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
@@ -9802,11 +9820,13 @@ Chain_Macro:
 									continue;
 								}
 
+								fs = &fileset[fileset_selected];
+
 								// ask for cycling-key / stage switching key depending on selected type (1/2/12)
 
-								if (fileset[fileset_selected].style_cyclic) { //ask for set-global cycling-key
+								if (fs->style_cyclic) { //ask for set-global cycling-key
 									/* Get trigger in human-readable format */
-									macroinfo_ascii(-1, fileset[fileset_selected].macro__pat__cyclic, tmpbuf);
+									macroinfo_ascii(-1, fs->macro__pat__cyclic, tmpbuf);
 
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
@@ -9823,35 +9843,35 @@ Chain_Macro:
 									if (!strcmp(buf, "\e")) continue; //abort
 
 									/* Set macro trigger */
-									strcpy(fileset[fileset_selected].macro__pat__cyclic, tmpbuf);
+									strcpy(fs->macro__pat__cyclic, tmpbuf);
 									/* Set macro trigger in human-readable format */
-									ascii_to_text(fileset[fileset_selected].macro__patbuf__cyclic, fileset[fileset_selected].macro__pat__cyclic);
+									ascii_to_text(fs->macro__patbuf__cyclic, fs->macro__pat__cyclic);
 
 									/* Forge macro action (in human-readable format) */
 
 									/* Forge template cycle-macro action (in human-readable format) */
-									sprintf(fileset[fileset_selected].macro__actbuf__cyclic_fmt,
+									sprintf(fs->macro__actbuf__cyclic_fmt,
 									    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
-									    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[fileset_selected].basefilename, SETFILEPOSTFIX);
+									    fs->basefilename, MACROFILESET_MARKER_CYCLIC, fs->basefilename, SETFILEPOSTFIX);
 
 									/* Set cycle-to-next-stage action for all stages */
-									for (n = 0; n < fileset[fileset_selected].stages; n++) {
+									for (n = 0; n < fs->stages; n++) {
 										m = n + 1;
-										if (m == fileset[fileset_selected].stages) m = 0;
-										text_to_ascii(fileset[fileset_selected].stage[n].macro__act__cyclic,
-										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, m + 1, fileset[fileset_selected].stages, m));
+										if (m == fs->stages) m = 0;
+										text_to_ascii(fs->stage[n].macro__act__cyclic,
+										    format(fs->macro__actbuf__cyclic_fmt, m + 1, fs->stages, m));
 									}
 								}
 
-								if (fileset[fileset_selected].style_freesw) { //ask for stage-specific switching-key
+								if (fs->style_freesw) { //ask for stage-specific switching-key
 									/* Forge template freeswitch-macro action (in human-readable format) */
-									sprintf(fileset[fileset_selected].macro__actbuf__freesw_fmt, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
-									    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH, fileset[fileset_selected].basefilename, SETFILEPOSTFIX);
+									sprintf(fs->macro__actbuf__freesw_fmt, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
+									    fs->basefilename, MACROFILESET_MARKER_SWITCH, fs->basefilename, SETFILEPOSTFIX);
 
 									/* Set freeswitch-macros for each stage */
-									for (f = 0; f < fileset[fileset_selected].stages; f++) {
+									for (f = 0; f < fs->stages; f++) {
 										/* Get trigger in human-readable format */
-										macroinfo_ascii(-1, fileset[fileset_selected].stage[f].macro__pat__freesw, tmpbuf);
+										macroinfo_ascii(-1, fs->stage[f].macro__pat__freesw, tmpbuf);
 
 										Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 										while (TRUE) {
@@ -9868,15 +9888,15 @@ Chain_Macro:
 										if (!strcmp(buf, "\e")) continue; // abort
 
 										/* Set macro trigger */
-										strcpy(fileset[fileset_selected].stage[f].macro__pat__freesw, tmpbuf);
+										strcpy(fs->stage[f].macro__pat__freesw, tmpbuf);
 										/* Set macro trigger in human-readable format */
-										ascii_to_text(fileset[fileset_selected].stage[f].macro__patbuf__freesw, tmpbuf);
+										ascii_to_text(fs->stage[f].macro__patbuf__freesw, tmpbuf);
 
 										/* Set free-switch macro action for this stage, in human-readable format */
-										strcpy(fileset[f].stage[f].macro__actbuf__freesw,
-										    format(fileset[f].macro__actbuf__freesw_fmt, f + 1, fileset[f].stages, f));
+										strcpy(fs->stage[f].macro__actbuf__freesw,
+										    format(fs->macro__actbuf__freesw_fmt, f + 1, fs->stages, f));
 										/* Set free-switch macro action for this stage */
-										text_to_ascii(fileset[f].stage[f].macro__act__freesw, fileset[f].stage[f].macro__actbuf__freesw);
+										text_to_ascii(fs->stage[f].macro__act__freesw, fs->stage[f].macro__actbuf__freesw);
 									}
 								}
 
@@ -9889,8 +9909,11 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
-								style_cyclic = fileset[fileset_selected].style_cyclic;
-								style_freesw = fileset[fileset_selected].style_freesw;
+
+								fs = &fileset[fileset_selected];
+
+								style_cyclic = fs->style_cyclic;
+								style_freesw = fs->style_freesw;
 
 								// get type (switching method)
 								Term_putstr(1, l, -1, TERM_L_GREEN, "Set the set type aka switching method (1 cyclic, 2 free-switch, 3 both): ");
@@ -9906,22 +9929,22 @@ Chain_Macro:
 									break;
 								}
 								if (n == -1) continue; // abort
-								fileset[fileset_selected].style_cyclic = (n % 2 != 0);
-								fileset[fileset_selected].style_freesw = (n / 2 != 0);
+								fs->style_cyclic = (n % 2 != 0);
+								fs->style_freesw = (n / 2 != 0);
 
 								/* Clear now deprecated cycle key */
-								if (style_cyclic && !fileset[fileset_selected].style_cyclic) {
-									fileset[fileset_selected].macro__pat__cyclic[0] = 0;
-									fileset[fileset_selected].macro__patbuf__cyclic[0] = 0;
+								if (style_cyclic && !fs->style_cyclic) {
+									fs->macro__pat__cyclic[0] = 0;
+									fs->macro__patbuf__cyclic[0] = 0;
 									c_msg_print("Cleared deprecated cycle key.");
 								}
 								/* Clear now deprecated switch keys */
-								if (style_freesw && !fileset[fileset_selected].style_freesw) {
-									for (f = 0; f < fileset[fileset_selected].stages; f++) {
-										fileset[fileset_selected].stage[f].macro__pat__freesw[0] = 0;
-										fileset[fileset_selected].stage[f].macro__patbuf__freesw[0] = 0;
-										fileset[fileset_selected].stage[f].macro__act__freesw[0] = 0;
-										fileset[fileset_selected].stage[f].macro__actbuf__freesw[0] = 0;
+								if (style_freesw && !fs->style_freesw) {
+									for (f = 0; f < fs->stages; f++) {
+										fs->stage[f].macro__pat__freesw[0] = 0;
+										fs->stage[f].macro__patbuf__freesw[0] = 0;
+										fs->stage[f].macro__act__freesw[0] = 0;
+										fs->stage[f].macro__actbuf__freesw[0] = 0;
 									}
 									c_msg_print("Cleared deprecated free-switch keys.");
 								}
@@ -9941,42 +9964,44 @@ Chain_Macro:
 								f = macrofileset_stage_get(l);
 								if (f == -1) continue;
 
+								fs = &fileset[fileset_selected];
+
 								/* Swap them in current memory */
-								fileset_stage_tmp = fileset[fileset_selected].stage[k];
-								fileset[fileset_selected].stage[k] = fileset[fileset_selected].stage[f];
-								fileset[fileset_selected].stage[f] = fileset_stage_tmp;
+								fileset_stage_tmp = fs->stage[k];
+								fs->stage[k] = fs->stage[f];
+								fs->stage[f] = fileset_stage_tmp;
 
 								/* Rename the actual files on disk */
 								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
-								    fileset[fileset_selected].basefilename, SETFILEPOSTFIX, f));
+								    fs->basefilename, SETFILEPOSTFIX, f));
 								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
-								    fileset[fileset_selected].basefilename, SETFILEPOSTFIX, k));
+								    fs->basefilename, SETFILEPOSTFIX, k));
 								path_build(tmpbuf3, 1024, ANGBAND_DIR_USER, format("%s%s_tmp.prf",
-								    fileset[fileset_selected].basefilename, SETFILEPOSTFIX));
-								if (fileset[fileset_selected].stage[k].stage_file_exists) rename(tmpbuf, tmpbuf3);
-								if (fileset[fileset_selected].stage[f].stage_file_exists) rename(tmpbuf2, tmpbuf);
-								if (fileset[fileset_selected].stage[k].stage_file_exists) rename(tmpbuf3, tmpbuf2);
+								    fs->basefilename, SETFILEPOSTFIX));
+								if (fs->stage[k].stage_file_exists) rename(tmpbuf, tmpbuf3);
+								if (fs->stage[f].stage_file_exists) rename(tmpbuf2, tmpbuf);
+								if (fs->stage[k].stage_file_exists) rename(tmpbuf3, tmpbuf2);
 
 								/* If cyclic-style then swap their cyclic-keys in the files on disk */
-								if (fileset[fileset_selected].style_cyclic) {
+								if (fs->style_cyclic) {
 									/* Translate all 'MACROFILESET_MARKER_CYCLIC...<SETFILEPOSTFIX><k+1+1>' to '<SETFILEPOSTFIX><f+1+1>' in former stage k, now stage f */
-									if (fileset[fileset_selected].stage[f].stage_file_exists) {
+									if (fs->stage[f].stage_file_exists) {
 										fp = fopen(tmpbuf, "r");
 										fp2 = fopen(tmpbuf3, "w");
 										if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf);
 										if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
 										if (fp && fp2) {
 											sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e",
-											   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-											   k + 1 + 1, fileset[fileset_selected].stages,
-											   fileset[fileset_selected].basefilename, SETFILEPOSTFIX,
+											   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
+											   k + 1 + 1, fs->stages,
+											   fs->basefilename, SETFILEPOSTFIX,
 											   k + 1 + 1);
 											while (fgets(buf_act, MACRO_MAXLEN, fp)) {
 												if (strstr(buf_act, buftxt_act))
 													fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e\n",
-													   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-													   f + 1 + 1, fileset[fileset_selected].stages,
-													   fileset[fileset_selected].basefilename, SETFILEPOSTFIX,
+													   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
+													   f + 1 + 1, fs->stages,
+													   fs->basefilename, SETFILEPOSTFIX,
 													   f + 1 + 1);
 												else fputs(buf_act, fp2);
 											}
@@ -9989,23 +10014,23 @@ Chain_Macro:
 										}
 									}
 									/* Translate all 'MACROFILESET_MARKER_CYCLIC...<SETFILEPOSTFIX><f+1+1>' to '<SETFILEPOSTFIX><k+1+1>' in former stage f, now stage k */
-									if (fileset[fileset_selected].stage[k].stage_file_exists) {
+									if (fs->stage[k].stage_file_exists) {
 										fp = fopen(tmpbuf2, "r");
 										fp2 = fopen(tmpbuf3, "w");
 										if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf2);
 										if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
 										if (fp && fp2) {
 											sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e",
-											   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-											   f + 1 + 1, fileset[fileset_selected].stages,
-											   fileset[fileset_selected].basefilename, SETFILEPOSTFIX,
+											   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
+											   f + 1 + 1, fs->stages,
+											   fs->basefilename, SETFILEPOSTFIX,
 											   f + 1 + 1);
 											while (fgets(buf_act, MACRO_MAXLEN, fp)) {
 												if (strstr(buf_act, buftxt_act))
 													fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e\n",
-													   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-													   k + 1 + 1, fileset[fileset_selected].stages,
-													   fileset[fileset_selected].basefilename, SETFILEPOSTFIX,
+													   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
+													   k + 1 + 1, fs->stages,
+													   fs->basefilename, SETFILEPOSTFIX,
 													   k + 1 + 1);
 												else fputs(buf_act, fp2);
 											}
@@ -10021,14 +10046,14 @@ Chain_Macro:
 
 								/* Rename the .meta files on disk */
 								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.meta",
-								    fileset[fileset_selected].basefilename, SETFILEPOSTFIX, f));
+								    fs->basefilename, SETFILEPOSTFIX, f));
 								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s%s%d.meta",
-								    fileset[fileset_selected].basefilename, SETFILEPOSTFIX, k));
+								    fs->basefilename, SETFILEPOSTFIX, k));
 								path_build(tmpbuf3, 1024, ANGBAND_DIR_USER, format("%s%s_tmp.meta",
-								    fileset[fileset_selected].basefilename, SETFILEPOSTFIX));
-								if (fileset[fileset_selected].stage[k].stage_file_exists) rename(tmpbuf, tmpbuf3);
-								if (fileset[fileset_selected].stage[f].stage_file_exists) rename(tmpbuf2, tmpbuf);
-								if (fileset[fileset_selected].stage[k].stage_file_exists) rename(tmpbuf3, tmpbuf2);
+								    fs->basefilename, SETFILEPOSTFIX));
+								if (fs->stage[k].stage_file_exists) rename(tmpbuf, tmpbuf3);
+								if (fs->stage[f].stage_file_exists) rename(tmpbuf2, tmpbuf);
+								if (fs->stage[k].stage_file_exists) rename(tmpbuf3, tmpbuf2);
 
 								break;
 
@@ -10039,25 +10064,28 @@ Chain_Macro:
 								}
 								f = macrofileset_stage_get(l);
 								if (f == -1) continue;
-								fileset[fileset_selected].stage[f].stage_disabled = !fileset[fileset_selected].stage[f].stage_disabled;
+
+								fs = &fileset[fileset_selected];
+
+								fs->stage[f].stage_disabled = !fs->stage[f].stage_disabled;
 								macrofileset_stage_meta_write(f);
 
 								/* --- Also delete (or restore) the trigger keys for this stage from all the other stages -
 								       which means also crop them out (or reinsert them) of the '<SETFILEPOSTFIX>' disk files! --- */
-								if (!fileset[fileset_selected].stage[f].stage_file_exists) break;
+								if (!fs->stage[f].stage_file_exists) break;
 
 								/* For now just remove this stage from cyclic key reference of the previous stage,
 								   should be enough, just leave the freeswitch keys intact for laziness */
-								if (!fileset[fileset_selected].style_cyclic) break;
+								if (!fs->style_cyclic) break;
 
 								n = f - 1;
-								if (n == -1) n = fileset[fileset_selected].stages - 1;
+								if (n == -1) n = fs->stages - 1;
 								path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
-								    fileset[fileset_selected].basefilename, SETFILEPOSTFIX, n));
+								    fs->basefilename, SETFILEPOSTFIX, n));
 								path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s%s_tmp.prf",
-								    fileset[fileset_selected].basefilename, SETFILEPOSTFIX));
+								    fs->basefilename, SETFILEPOSTFIX));
 
-								if (fileset[fileset_selected].stage[f].stage_disabled) {
+								if (fs->stage[f].stage_disabled) {
 									/* Remove previous stage's cyclic reference to us, bumping it to our successor stage instead */
 									fp = fopen(tmpbuf, "r");
 									fp2 = fopen(tmpbuf2, "w");
@@ -10065,16 +10093,16 @@ Chain_Macro:
 									if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
 									if (fp && fp2) {
 										sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e",
-										   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-										   f + 1, fileset[fileset_selected].stages,
-										   fileset[fileset_selected].basefilename, SETFILEPOSTFIX,
+										   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
+										   f + 1, fs->stages,
+										   fs->basefilename, SETFILEPOSTFIX,
 										   f + 1);
 										while (fgets(buf_act, MACRO_MAXLEN, fp)) {
 											if (strstr(buf_act, buftxt_act))
 												fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e\n",
-												   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-												   n + 1, fileset[fileset_selected].stages,
-												   fileset[fileset_selected].basefilename, SETFILEPOSTFIX,
+												   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
+												   n + 1, fs->stages,
+												   fs->basefilename, SETFILEPOSTFIX,
 												   n + 1);
 											else fputs(buf_act, fp2);
 										}
@@ -10094,16 +10122,16 @@ Chain_Macro:
 									if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
 									if (fp && fp2) {
 										sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e",
-										   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-										   n + 1, fileset[fileset_selected].stages,
-										   fileset[fileset_selected].basefilename, SETFILEPOSTFIX,
+										   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
+										   n + 1, fs->stages,
+										   fs->basefilename, SETFILEPOSTFIX,
 										   n + 1);
 										while (fgets(buf_act, MACRO_MAXLEN, fp)) {
 											if (strstr(buf_act, buftxt_act))
 												fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e\n",
-												   fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC,
-												   f + 1, fileset[fileset_selected].stages,
-												   fileset[fileset_selected].basefilename, SETFILEPOSTFIX,
+												   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
+												   f + 1, fs->stages,
+												   fs->basefilename, SETFILEPOSTFIX,
 												   f + 1);
 											else fputs(buf_act, fp2);
 										}
@@ -10128,49 +10156,51 @@ Chain_Macro:
 									continue;
 								}
 
+								fs = &fileset[fileset_selected];
+
 								/* Append it (for now we only append, inserting would be emulated via swapping/deleting) */
-								f = fileset[fileset_selected].stages;
-								fileset[fileset_selected].stages++;
+								f = fs->stages;
+								fs->stages++;
 
 								/* Set cycling-to-next-stage key for this stage and
 								   set previous/subsequent stages' cycling keys, depending on whether...
 								   - previous stage was the last stage and therefore cycled back to 0
 								   - instead more stages follow after us and therefore need to cycle one further now */
-								if (fileset[fileset_selected].style_cyclic) {
+								if (fs->style_cyclic) {
 									/* We're the last stage? Then cycle to 0 and set previous' stage's key to cycle to us now instead of 0. */
-									if (f == fileset[fileset_selected].stages - 1 && !f) ; /* We're the only existing stage? nothing to do regarding cycling */
-									else if (f == fileset[fileset_selected].stages - 1) {
+									if (f == fs->stages - 1 && !f) ; /* We're the only existing stage? nothing to do regarding cycling */
+									else if (f == fs->stages - 1) {
 										/* Set previous stage to cycle to us */
-										text_to_ascii(fileset[fileset_selected].stage[f - 1].macro__act__cyclic,
-										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, f + 1, fileset[fileset_selected].stages, f));
+										text_to_ascii(fs->stage[f - 1].macro__act__cyclic,
+										    format(fs->macro__actbuf__cyclic_fmt, f + 1, fs->stages, f));
 
 										/* Also save the cycle-macro to disk for the previous stage, if it has a disk file */
 					    // todo...
 
 										/* Set us to cycle to 0 */
-										text_to_ascii(fileset[fileset_selected].stage[f].macro__act__cyclic,
-										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, 1, fileset[fileset_selected].stages, 0));
+										text_to_ascii(fs->stage[f].macro__act__cyclic,
+										    format(fs->macro__actbuf__cyclic_fmt, 1, fs->stages, 0));
 									}
 									/* We got inserted instead of appended? Then increase cycle value of all subsequent stages by +1,
 									   except for the final stage which remains at cycling-back-to-0. */
 									else {
 										/* Increment cycle-to-next-stage action for all subsequent stages except the final one by 1 */
-										for (n = f + 1; n < fileset[fileset_selected].stages - 1; n++) {
-											text_to_ascii(fileset[fileset_selected].stage[n].macro__act__cyclic,
-											    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, n + 1 + 1, fileset[fileset_selected].stages, n + 1));
+										for (n = f + 1; n < fs->stages - 1; n++) {
+											text_to_ascii(fs->stage[n].macro__act__cyclic,
+											    format(fs->macro__actbuf__cyclic_fmt, n + 1 + 1, fs->stages, n + 1));
 
 											/* Also save the cycle-macro to disk for the subsequent stages, if they have disk files */
 					    // todo...
 										}
 
 										/* Insert us by setting our cycle action to the next stage */
-										text_to_ascii(fileset[fileset_selected].stage[f].macro__act__cyclic,
-										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, f + 1 + 1, fileset[fileset_selected].stages, f + 1));
+										text_to_ascii(fs->stage[f].macro__act__cyclic,
+										    format(fs->macro__actbuf__cyclic_fmt, f + 1 + 1, fs->stages, f + 1));
 									}
 								}
 
 								/* Set free-switching key for this stage and imprint it on all stages and imprint it on this stage */
-								if (fileset[fileset_selected].style_freesw) { //ask for stage-specific switching-key
+								if (fs->style_freesw) { //ask for stage-specific switching-key
 									Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                                ");
 									while (TRUE) {
 										Term_putstr(1, l, -1, TERM_L_GREEN, format("Press the key you want to use as stage %d-specific trigger: ", f + 1));
@@ -10185,25 +10215,25 @@ Chain_Macro:
 									}
 									if (!strcmp(buf, "\e")) {
 										/* Abort: Erase newly started stage-in-the-making again */
-										fileset[fileset_selected].stages--;
+										fs->stages--;
 										continue;
 									}
 
 									/* Set macro trigger */
-									strcpy(fileset[fileset_selected].stage[f].macro__pat__freesw, tmpbuf);
+									strcpy(fs->stage[f].macro__pat__freesw, tmpbuf);
 									/* Set macro trigger in human-readable format */
-									ascii_to_text(fileset[fileset_selected].stage[f].macro__patbuf__freesw,
-									    fileset[fileset_selected].stage[f].macro__pat__freesw);
+									ascii_to_text(fs->stage[f].macro__patbuf__freesw,
+									    fs->stage[f].macro__pat__freesw);
 
 									/* Forge macro action (in human-readable format) */
 
 									/* Set free-switch key for this stage (ie that other stages reference to invoke this stage) */
 									/* ...in human-readable format */
-									strcpy(fileset[fileset_selected].stage[f].macro__actbuf__freesw,
-									    format(fileset[fileset_selected].macro__actbuf__freesw_fmt, f + 1, fileset[fileset_selected].stages, f));
+									strcpy(fs->stage[f].macro__actbuf__freesw,
+									    format(fs->macro__actbuf__freesw_fmt, f + 1, fs->stages, f));
 									/* ...in macro format  */
-									text_to_ascii(fileset[fileset_selected].stage[f].macro__act__freesw,
-									    fileset[fileset_selected].stage[f].macro__actbuf__freesw);
+									text_to_ascii(fs->stage[f].macro__act__freesw,
+									    fs->stage[f].macro__actbuf__freesw);
 
 									/* Imprint all existing stage files with the free-switch key of this stage */
 						    // todo...
@@ -10224,17 +10254,19 @@ Chain_Macro:
 								f = macrofileset_stage_get(l);
 								if (f == -1) continue;
 
+								fs = &fileset[fileset_selected];
+
 								// Note: We don't clear current macros from memory
 
 								/* Set previous/subsequent stages' cycling keys, depending on whether...
 								   - previous stage was the last stage and therefore cycled back to 0
 								   - instead more stages follow after us and therefore need to cycle one further now */
-								if (fileset[fileset_selected].style_cyclic && fileset[fileset_selected].stages > 1) {
+								if (fs->style_cyclic && fs->stages > 1) {
 									/* We're the final stage? Then set previous' stage's key to cycle to 0 now instead to us. */
-									if (f == fileset[fileset_selected].stages - 1) {
+									if (f == fs->stages - 1) {
 										/* Set previous stage to cycle to 0 */
-										text_to_ascii(fileset[fileset_selected].stage[f - 1].macro__act__cyclic,
-										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, 1, fileset[fileset_selected].stages, 0));
+										text_to_ascii(fs->stage[f - 1].macro__act__cyclic,
+										    format(fs->macro__actbuf__cyclic_fmt, 1, fs->stages, 0));
 
 										/* Also save the cycle-macro to disk for the previous stage, if it has a disk file */
 					    // todo...
@@ -10243,47 +10275,47 @@ Chain_Macro:
 									   except for the final stage which remains at cycling-back-to-0. */
 									else {
 										/* Decrement cycle-to-next-stage action for all subsequent stages except the final one by 1 */
-										for (n = f + 1; n < fileset[fileset_selected].stages - 1; n++) {
-											text_to_ascii(fileset[fileset_selected].stage[n].macro__act__cyclic,
-											    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, n + 1 - 1, fileset[fileset_selected].stages, n - 1));
+										for (n = f + 1; n < fs->stages - 1; n++) {
+											text_to_ascii(fs->stage[n].macro__act__cyclic,
+											    format(fs->macro__actbuf__cyclic_fmt, n + 1 - 1, fs->stages, n - 1));
 
 											/* Also save the cycle-macro to disk for this subsequent stage, if it has a disk file */
 					    // todo...
 										}
 
 										/* Insert us by setting our cycle action to the next stage */
-										text_to_ascii(fileset[fileset_selected].stage[f].macro__act__cyclic,
-										    format(fileset[fileset_selected].macro__actbuf__cyclic_fmt, f + 1 + 1, fileset[fileset_selected].stages, f + 1));
+										text_to_ascii(fs->stage[f].macro__act__cyclic,
+										    format(fs->macro__actbuf__cyclic_fmt, f + 1 + 1, fs->stages, f + 1));
 									}
 								}
 								/* Edit all stage files of stages before us too, to remove our free-switch reference key from them? */
 					    // todo...
 
 								/* Slide subsequent stages up */
-								for (n = f; n < fileset[fileset_selected].stages - 1; n++) {
-									strcpy(fileset[fileset_selected].stage[n].macro__pat__freesw, fileset[fileset_selected].stage[n - 1].macro__pat__freesw);
-									strcpy(fileset[fileset_selected].stage[n].macro__patbuf__freesw, fileset[fileset_selected].stage[n - 1].macro__patbuf__freesw);
-									strcpy(fileset[fileset_selected].stage[n].macro__act__freesw, fileset[fileset_selected].stage[n - 1].macro__act__freesw);
-									strcpy(fileset[fileset_selected].stage[n].macro__actbuf__freesw, fileset[fileset_selected].stage[n - 1].macro__actbuf__freesw);
-									fileset[fileset_selected].stage[n].stage_file_exists = fileset[fileset_selected].stage[n - 1].stage_file_exists;
-									strcpy(fileset[fileset_selected].stage[n].stage_comment, fileset[fileset_selected].stage[n - 1].stage_comment);
-									fileset[fileset_selected].stage[n].stage_disabled = fileset[fileset_selected].stage[n - 1].stage_disabled;
+								for (n = f; n < fs->stages - 1; n++) {
+									strcpy(fs->stage[n].macro__pat__freesw, fs->stage[n - 1].macro__pat__freesw);
+									strcpy(fs->stage[n].macro__patbuf__freesw, fs->stage[n - 1].macro__patbuf__freesw);
+									strcpy(fs->stage[n].macro__act__freesw, fs->stage[n - 1].macro__act__freesw);
+									strcpy(fs->stage[n].macro__actbuf__freesw, fs->stage[n - 1].macro__actbuf__freesw);
+									fs->stage[n].stage_file_exists = fs->stage[n - 1].stage_file_exists;
+									strcpy(fs->stage[n].stage_comment, fs->stage[n - 1].stage_comment);
+									fs->stage[n].stage_disabled = fs->stage[n - 1].stage_disabled;
 
 									/* Slide stage file names accordingly, overwriting the deleted stage in the process */
-									if (!fileset[fileset_selected].stage[f].stage_file_exists) {
+									if (!fs->stage[f].stage_file_exists) {
 										path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
-										    fileset[fileset_selected].basefilename, SETFILEPOSTFIX, n));
+										    fs->basefilename, SETFILEPOSTFIX, n));
 										path_build(tmpbuf2, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
-										    fileset[fileset_selected].basefilename, SETFILEPOSTFIX, n + 1));
+										    fs->basefilename, SETFILEPOSTFIX, n + 1));
 										rename(tmpbuf2, tmpbuf);
 									}
 								}
-								fileset[fileset_selected].stages--;
+								fs->stages--;
 
 								/* any_stage_file_exists is actually not used in any way, but let's still rebuild it :-s */
-								fileset[fileset_selected].any_stage_file_exists = FALSE;
-								for (n = 0; n < fileset[fileset_selected].stages; n++)
-									fileset[fileset_selected].any_stage_file_exists |= fileset[fileset_selected].stage[n].stage_file_exists;
+								fs->any_stage_file_exists = FALSE;
+								for (n = 0; n < fs->stages; n++)
+									fs->any_stage_file_exists |= fs->stage[n].stage_file_exists;
 
 
 								/* If the deleted stage was actually the currently active one, unselect it */
@@ -10299,6 +10331,8 @@ Chain_Macro:
 								if (f == -1) continue;
 								fileset_stage_selected = f;
 
+								fs = &fileset[fileset_selected];
+
 								// Optional: clear all macros from memory to start with a clean slate
 								Term_putstr(1, l, -1, TERM_L_GREEN, "                                                                               ");
 								Term_putstr(15, l, -1, TERM_L_GREEN, "Do you wish to clear all currently loaded macros? [y/N] ");
@@ -10309,9 +10343,9 @@ Chain_Macro:
 								}
 
 								// Load the stage's macro file to macro memory
-								if (!fileset[fileset_selected].stage[f].stage_file_exists) {
+								if (!fs->stage[f].stage_file_exists) {
 									path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
-									    fileset[fileset_selected].basefilename, SETFILEPOSTFIX, f));
+									    fs->basefilename, SETFILEPOSTFIX, f));
 									process_pref_file(tmpbuf);
 								}
 
