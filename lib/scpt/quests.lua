@@ -238,6 +238,10 @@ function quest_towneltalk(Ind, msg, topic)
 				end
 				hinted = 1; hintsub = 1
 			end
+			--special: if we have excess money for our level, also suggest tele scroll and speed pot ^^
+			if player.au + player.balance >= 8000 then
+				msg_print(Ind, "\252\255UActually you seem kind of wealthy - you could probably even afford buying a scroll of teleportation or a potion of speed or both, from the black market, to ensure escaping alive when necessary.")
+			end
 		elseif player.lev < 30 then
 			for i = 0, INVEN_PACK do
 				--check for escapes
