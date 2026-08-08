@@ -5958,6 +5958,18 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	return(filesets_found);
 }
 
+/* Rebuild cyclic/free-switch keys for all stages of the current macro set */
+void macrofileset_rebuild_keys(void) {
+}
+
+/* Insert all macros of a macro file set to current macro memory.
+   Returns amount of found macros that were inserted. */
+int macrofileset_meminsert(int f) {
+	return(0);
+}
+
+/* Remove all macros of a macro file set #f from current macro memory.
+   Returns amount of macros that were removed. */
 int macrofileset_mempurge(int f) {
 	int m = -1, found = 0;
 	bool style_cyclic, style_freesw;
@@ -6018,6 +6030,18 @@ int macrofileset_mempurge(int f) {
 		if (m >= macro__num - 1) break;
 	}
 	return(found);
+}
+
+/* Insert all macros of a stage of the current macro file set to current macro memory.
+   Returns amount of found macros that were inserted. */
+int macrofileset_stage_meminsert(int f) {
+	return(0);
+}
+
+/* Remove all macros of a stage of the current macro file set from current macro memory.
+   Returns amount of found macros that were removed. */
+int macrofileset_stage_mempurge(int f) {
+	return(0);
 }
 
 /* Prompt to enter an existing macrofileset number.
@@ -6096,6 +6120,10 @@ void macrofileset_meta_write(void) {
 		fputc('0' + (fileset[fileset_selected].style_cyclic ? 1 : 0) + (fileset[fileset_selected].style_freesw ? '2' : '0'), fp);
 		fclose(fp);
 	} else c_msg_format("\377oError: couldn't write file '%s-FS.meta'.", fileset[fileset_selected].basefilename);
+}
+
+/* Write macro file set stage to disk */
+void macrofileset_stage_write(int f) {
 }
 
 #endif /* TEST_CLIENT */
