@@ -2840,6 +2840,7 @@ void do_cmd_open(int Ind, int dir) {
 					p_ptr->warning_bash = 1;
 				}
 			}
+			p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 			return;
 		}
 	}
@@ -3333,6 +3334,7 @@ void do_cmd_close(int Ind, int dir) {
 	/* Ghosts cannot close ; not in WRAITHFORM */
 	if ((cannot_spectral && !is_admin(p_ptr)) || cannot_form) {
 		msg_print(Ind, "You cannot close things!");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 		return;
 	}
 
@@ -5350,6 +5352,7 @@ void do_cmd_disarm(int Ind, int dir) {
 	/* Ghosts cannot disarm ; not in WRAITHFORM */
 	if (CANNOT_OPERATE_SPECTRAL) {
 		msg_print(Ind, "Without a material body you cannot disarm things!");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 		if (!is_admin(p_ptr)) return;
 	} //todo maybe: Add CANNOT_OPERATE_FORM check too?
 
@@ -5771,6 +5774,7 @@ void do_cmd_bash(int Ind, int dir) {
 	if (CANNOT_OPERATE_SPECTRAL) {
 		/* Message */
 		msg_print(Ind, "You cannot bash things without a material body!");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 		if (!is_admin(p_ptr)) return;
 	}
 
@@ -6166,6 +6170,7 @@ void do_cmd_spike(int Ind, int dir) {
 	if (CANNOT_OPERATE_SPECTRAL && !is_admin(p_ptr)) {
 		/* Message */
 		msg_print(Ind, "You cannot spike doors without a material body!");
+		p_ptr->energy -= level_speed(&p_ptr->wpos) / 3;
 		return;
 	}
 
