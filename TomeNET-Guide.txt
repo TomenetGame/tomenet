@@ -17136,17 +17136,21 @@ Wraithform is very powerful since it allows you to move around the dungeon
 without having to follow its room/passages structure, making it easy to pick
 encounters or loot items you detected on the ground via detection magic,
 and to escape dangerous situations easily (just retreat into walls).
+You get neither slowed down by terrain nor can you drown.
 
-but at the same time wraithform prevents you from attacking anything else in
-close combat, except if the target is also able to pass walls (ie possesses
-wraithform too, or is actually a ghost or other monster that can pass through
-walls).
+But at the same time wraithform prevents you from attacking or intercepting
+(or interacting in any other way with) an opponent physically, except if the
+target is also in wraithform or able to pass walls for some reason.
 For this reason it can be dangerous for melee classes to go AFK while in
 wraithform, because you will no longer melee-auto-retaliate against most kind
-of attackers..
+of attackers.
 
-Last but not least, spells cast while in wraithform will only deal half as much
-damage as usual, even if the target is in wraithform too.
+Spells cast while in wraithform will only deal half as much damage as usual,
+even if the target is in wraithform too.
+
+Also while in wraithform you cannot fill bottles at fountains, open, close or
+spike doors, bash things, disarm traps, tunnel, throw dirt (fighting technique)
+or craft ammunition from rubble.
 
 
 
@@ -22553,7 +22557,8 @@ F: flag list
                     IM_PSI gives insanity reduction (like EMPTY_MIND) instead.
     PASS_WALL   Will allow the mimic to pass walls like a ghost.
                 These immaterial forms also drain the hit points of their
-                user.
+                user. See chapter (5.20) 'Wraithform' for details as wraithform
+                has a lot of restrictions regarding physical actions.
     KILL_WALL   The mimic will dig *easily* through walls.
     REGENERATE  Faster hit point regeneration (same as item ability, doesn't
                 stack with regeneration obtained from item flag).
