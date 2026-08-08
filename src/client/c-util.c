@@ -6002,12 +6002,9 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	return(filesets_found);
 }
 
-/* Rebuild cyclic/free-switch keys for all stages of the current macro set */
-void macrofileset_rebuild_keys(void) {
-	int f, n;
-	macro_fileset_type *fs = &fileset[fileset_selected];
-
-	/* --- First, also rebuild the set's global template strings, for paranoia --- */
+/* Rebuild a macroset's general key-templates for cyclic and free-switch (from which all stage keys can be forged) */
+void macrofileset_rebuild_key_templates(int f) {
+	macro_fileset_type *fs = &fileset[f];
 
 	/* Forge template cycle-macro action (in human-readable format) */
 	sprintf(fs->macro__actbuf__cyclic_fmt,
@@ -6018,6 +6015,15 @@ void macrofileset_rebuild_keys(void) {
 	sprintf(fs->macro__actbuf__freesw_fmt,
 	    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
 	    fs->basefilename, MACROFILESET_MARKER_SWITCH, fs->basefilename, SETFILEPOSTFIX);
+}
+
+/* Rebuild cyclic/free-switch keys for all stages of the current macro set */
+void macrofileset_rebuild_keys(int k) {
+	int f, n;
+	macro_fileset_type *fs = &fileset[k];
+
+	/* --- First, also rebuild the set's global template strings, for paranoia --- */
+	macrofileset_rebuild_key_templates(k);
 
 	/* --- Now rebuild the cycle and free-switch keys for each stage, depending on number of stages and disabled-state of any stage --- */
 
@@ -6393,7 +6399,7 @@ void macrofileset_stage_update_keys(int f, bool rebuild) {
 	}
 
 	/* hm, rebuild keys first, for paranoia? */
-	if (rebuild) macrofileset_rebuild_keys();
+	if (rebuild) macrofileset_rebuild_keys(fileset_selected);
 
 	/* Update the stage's trigger keys */
 	macrofileset_stage_meminsert(f);
@@ -6424,7 +6430,7 @@ void macrofileset_update_keys(int f) {
 
 	fileset_selected = f;
 
-	macrofileset_rebuild_keys();
+	macrofileset_rebuild_keys(fileset_selected);
 	macrofileset_meta_write();
 
 	for (n = 0; n < fileset[fileset_selected].stages; n++) {
@@ -9694,6 +9700,8 @@ Chain_Macro:
 								f = filesets_found++;
 								fs = &fileset[f];
 								strcpy(fs->basefilename, tmpbuf);
+								/* Generate the key templates, these are stage/set independant so they never change */
+								macrofileset_rebuild_key_templates(f);
 
  #if 1
 								// get type (switching method)
@@ -9793,12 +9801,6 @@ Chain_Macro:
 									strcpy(fs->macro__pat__cyclic, tmpbuf);
 									/* Set macro trigger in human-readable format */
 									ascii_to_text(fs->macro__patbuf__cyclic, fs->macro__pat__cyclic);
-
-									/* Forge template cycle-macro action (in human-readable format) */
-									sprintf(fs->macro__actbuf__cyclic_fmt,
-									    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
-									    fs->basefilename, MACROFILESET_MARKER_CYCLIC, fs->basefilename, SETFILEPOSTFIX);
-
 									/* No cycle action for this stage yet, as we don't have any further stage to cycle to */
 									fs->stage[0].macro__act__cyclic[0] = fs->stage[0].macro__actbuf__cyclic[0] = 0;
 								}
@@ -9827,14 +9829,6 @@ Chain_Macro:
 									strcpy(fs->stage[0].macro__pat__freesw, tmpbuf);
 									/* Set macro trigger in human-readable format */
 									ascii_to_text(fs->stage[0].macro__patbuf__freesw, tmpbuf);
-
-									/* Forge macro action (in human-readable format) */
-
-									/* Forge template freeswitch-macro action (in human-readable format) */
-									sprintf(fs->macro__actbuf__freesw_fmt,
-									    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
-									    fs->basefilename, MACROFILESET_MARKER_SWITCH, fs->basefilename, SETFILEPOSTFIX);
-
 									/* Set free-switch macro action for stage 1, in human-readable format */
 									strcpy(fs->stage[0].macro__actbuf__freesw,
 									    format(fs->macro__actbuf__freesw_fmt, 1, fs->stages, 1));
@@ -9948,14 +9942,6 @@ Chain_Macro:
 									strcpy(fs->macro__pat__cyclic, tmpbuf);
 									/* Set macro trigger in human-readable format */
 									ascii_to_text(fs->macro__patbuf__cyclic, fs->macro__pat__cyclic);
-
-									/* Forge macro action (in human-readable format) */
-
-									/* Forge template cycle-macro action (in human-readable format) */
-									sprintf(fs->macro__actbuf__cyclic_fmt,
-									    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
-									    fs->basefilename, MACROFILESET_MARKER_CYCLIC, fs->basefilename, SETFILEPOSTFIX);
-
 									/* Set cycle-to-next-stage action for all stages */
 									for (n = 0; n < fs->stages; n++) {
 										m = n + 1;
@@ -9966,11 +9952,6 @@ Chain_Macro:
 								}
 
 								if (fs->style_freesw) { //ask for stage-specific switching-key
-									/* Forge template freeswitch-macro action (in human-readable format) */
-									sprintf(fs->macro__actbuf__freesw_fmt,
-									    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s%s%%d.prf\\r\\e",
-									    fs->basefilename, MACROFILESET_MARKER_SWITCH, fs->basefilename, SETFILEPOSTFIX);
-
 									/* Set freeswitch-macros for each stage */
 									for (f = 0; f < fs->stages; f++) {
 										/* Get trigger in human-readable format */
@@ -10094,18 +10075,12 @@ Chain_Macro:
 										if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf);
 										if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
 										if (fp && fp2) {
-											sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e",
-											   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
-											   k + 1 + 1, fs->stages,
-											   fs->basefilename, SETFILEPOSTFIX,
-											   k + 1 + 1);
+											sprintf(buftxt_act, fs->macro__actbuf__cyclic_fmt,
+											   k + 1 + 1, fs->stages, k + 1 + 1);
 											while (fgets(buf_act, MACRO_MAXLEN, fp)) {
 												if (strstr(buf_act, buftxt_act))
-													fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e\n",
-													   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
-													   f + 1 + 1, fs->stages,
-													   fs->basefilename, SETFILEPOSTFIX,
-													   f + 1 + 1);
+													fprintf(fp2, fs->macro__actbuf__cyclic_fmt,
+													   f + 1 + 1, fs->stages, f + 1 + 1);
 												else fputs(buf_act, fp2);
 											}
 											fclose(fp);
@@ -10123,18 +10098,12 @@ Chain_Macro:
 										if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf2);
 										if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
 										if (fp && fp2) {
-											sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e",
-											   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
-											   f + 1 + 1, fs->stages,
-											   fs->basefilename, SETFILEPOSTFIX,
-											   f + 1 + 1);
+											sprintf(buftxt_act, fs->macro__actbuf__cyclic_fmt,
+											   f + 1 + 1, fs->stages, f + 1 + 1);
 											while (fgets(buf_act, MACRO_MAXLEN, fp)) {
 												if (strstr(buf_act, buftxt_act))
-													fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e\n",
-													   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
-													   k + 1 + 1, fs->stages,
-													   fs->basefilename, SETFILEPOSTFIX,
-													   k + 1 + 1);
+													fprintf(fp2, fs->macro__actbuf__cyclic_fmt,
+													   k + 1 + 1, fs->stages, k + 1 + 1);
 												else fputs(buf_act, fp2);
 											}
 											fclose(fp);
@@ -10195,18 +10164,12 @@ Chain_Macro:
 									if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf);
 									if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
 									if (fp && fp2) {
-										sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e",
-										   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
-										   f + 1, fs->stages,
-										   fs->basefilename, SETFILEPOSTFIX,
-										   f + 1);
+										sprintf(buftxt_act, fs->macro__actbuf__cyclic_fmt,
+										   f + 1, fs->stages, f + 1);
 										while (fgets(buf_act, MACRO_MAXLEN, fp)) {
 											if (strstr(buf_act, buftxt_act))
-												fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e\n",
-												   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
-												   n + 1, fs->stages,
-												   fs->basefilename, SETFILEPOSTFIX,
-												   n + 1);
+												fprintf(fp2, fs->macro__actbuf__cyclic_fmt,
+												   n + 1, fs->stages, n + 1);
 											else fputs(buf_act, fp2);
 										}
 										fclose(fp);
@@ -10224,18 +10187,12 @@ Chain_Macro:
 									if (!fp) c_msg_format("\377yError, unable to open <%s> for reading!", tmpbuf);
 									if (!fp2) c_msg_format("\377yError, unable to open <%s> for writing!", tmpbuf3);
 									if (fp && fp2) {
-										sprintf(buftxt_act, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e",
-										   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
-										   n + 1, fs->stages,
-										   fs->basefilename, SETFILEPOSTFIX,
-										   n + 1);
+										sprintf(buftxt_act, fs->macro__actbuf__cyclic_fmt,
+										   n + 1, fs->stages, n + 1);
 										while (fgets(buf_act, MACRO_MAXLEN, fp)) {
 											if (strstr(buf_act, buftxt_act))
-												fprintf(fp2, "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%d{s\\sof\\s{G%d{s ---\\r%%l%s%s%d.prf\\r\\e\n",
-												   fs->basefilename, MACROFILESET_MARKER_CYCLIC,
-												   f + 1, fs->stages,
-												   fs->basefilename, SETFILEPOSTFIX,
-												   f + 1);
+												fprintf(fp2, fs->macro__actbuf__cyclic_fmt,
+												   f + 1, fs->stages, f + 1);
 											else fputs(buf_act, fp2);
 										}
 										fclose(fp);
