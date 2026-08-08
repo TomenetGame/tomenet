@@ -9815,12 +9815,11 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
 								}
-								if (!fileset[fileset_selected].style_cyclic && !fileset[fileset_selected].style_freesw) {
+								fs = &fileset[fileset_selected];
+								if (!fs->style_cyclic && !fs->style_freesw) {
 									c_msg_print("\377yFileset is neither set to cyclic nor to free-switching. Set it with 'm' first.");
 									continue;
 								}
-
-								fs = &fileset[fileset_selected];
 
 								// ask for cycling-key / stage switching key depending on selected type (1/2/12)
 
