@@ -5632,7 +5632,7 @@ int macrofileset_scan(void) {
 			buf_pat[31] = '\0';
 			ascii_to_text(buftxt_pat, buf_pat);
 
-	    //todo... move some to .meta file, as we use set-global templates now
+	    //todo... maybe prefer info from the .meta files instead, as they now also hold the key (template) info?
 			/* Init switch keys */
 			fs->stage[stage].macro__pat__freesw[0] = 0;
 			fs->stage[stage].macro__patbuf__freesw[0] = 0;
@@ -5822,7 +5822,7 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 				fs->style_cyclic = FALSE; // found out further below via .meta file
 				fs->style_freesw = FALSE; // found out further below via .meta file
 
-	    //todo... move some to .meta file, as we use set-global templates now
+	    //todo... maybe already load this info from .meta files now?
 				/* Init cycle key */
 				fs->macro__pat__cyclic[0] = 0;
 				fs->macro__patbuf__cyclic[0] = 0;
@@ -5901,8 +5901,10 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 		}
 	}
 
-	/* Lastly, for all macro sets and their stages, scan for optional stage comment of each stage (separate file for easiest handling),
-	   also read 'disabled' flag for each stage */
+	/* Lastly, for all macro sets and their stages, read their .meta files, which contain...
+	   - optional stage comment of each stage (separate file for easiest handling),
+	   - 'disabled' flag for each stage
+	   - macro actions and macro action templates */
 	for (k = 0; k < filesets_found; k++) {
 		fs = &fileset[k];
 
