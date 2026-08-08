@@ -6479,7 +6479,7 @@ void macroinfo_ascii(int macro_idx, char *macropat, char *fff) {
 
 
 void interact_macros(void) {
-	int i, j = 0, l, l2, n, chain_type;
+	int i, j = 0, l, l2, n, chain_type, i_stage;
 	char tmp[MACRO_MAXLEN], buf[MACRO_MAXLEN], buf2[MACRO_MAXLEN], *bptr, *b2ptr, chain_macro_buf[MACRO_MAXLEN], choice;
 	bool were_recording = FALSE;
 	bool inkey_msg_old = inkey_msg; //just for cmd_message().. probably redundant and we could just remove the inkey_msg = TRUE at cmd_message() instead of doing these extra checks...
@@ -7626,32 +7626,32 @@ Chain_Macro:
 
 			/* Initialize wizard state: First state */
 			if (i == 'Z') { //shortcut
-				i = 1;
+				i_stage = 1;
 				choice = mw_fileset;
-			} else i = choice = 0;
+			} else i_stage = choice = 0;
 			/* Paranoia */
 			memset(tmp, 0, MACRO_MAXLEN);
 			memset(buf, 0, MACRO_MAXLEN);
 			memset(buf2, 0, MACRO_MAXLEN);
 
-			while (i != -1) {
+			while (i_stage != -1) {
 				/* mw_fileset: Restart */
 				if (i == 'Z') { //hack
-					i = 1;
+					i_stage = 1;
 					choice = mw_fileset;
 				}
 
 				/* Restart wizard from a wrong choice? */
-				if (i == -2 || i == -3) {
+				if (i_stage == -2 || i_stage == -3) {
 					/* Paranoia */
 					memset(tmp, 0, MACRO_MAXLEN);
 					memset(buf, 0, MACRO_MAXLEN);
 					memset(buf2, 0, MACRO_MAXLEN);
 					/* Reinitialize */
-					if (i == -2) i = choice = chain_macro_buf[0] = tmp[0] = buf[0] = buf2[0] = 0;
+					if (i_stage == -2) i_stage = choice = chain_macro_buf[0] = tmp[0] = buf[0] = buf2[0] = 0;
 					else {
-						i = 1;
-						chain_macro_buf[0] = tmp[0] = buf[0] = buf2[0] = 0; /* Restart our last 'i' choice! */
+						i_stage = 1;
+						chain_macro_buf[0] = tmp[0] = buf[0] = buf2[0] = 0; /* Restart our last 'i_stage' choice! */
 					}
 					should_wait = FALSE;
 				}
@@ -7666,13 +7666,13 @@ Chain_Macro:
 				Term_putstr(19, 5, -1, TERM_L_UMBER, "----------------------------------------");
 
 				/* Colour currently active step */
-				Term_putstr(12, 1, -1, i == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
-				Term_putstr(12, 2, -1, i == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and targetting method.");
-				Term_putstr(12, 3, -1, i == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
+				Term_putstr(12, 1, -1, i_stage == 0 ? TERM_L_GREEN : TERM_SLATE, "Step 1:  Choose an action for the macro to perform.");
+				Term_putstr(12, 2, -1, i_stage == 1 ? TERM_L_GREEN : TERM_SLATE, "Step 2:  If required, choose item, spell, and targetting method.");
+				Term_putstr(12, 3, -1, i_stage == 2 ? TERM_L_GREEN : TERM_SLATE, "Step 3:  Choose the key you want to bind the macro to.");
 
 				clear_from(ystart);
 
-				switch (i) {
+				switch (i_stage) {
 				case 0:
 					force_normal = FALSE;
 					l = ystart;
@@ -7705,7 +7705,7 @@ Chain_Macro:
 						case ESCAPE:
 						//case 'p': <-this is mw_equip now
 						case '\010': /* backspace */
-							i = -1; /* leave */
+							i_stage = -1; /* leave */
 							break;
 						case ':':
 							/* specialty: allow chatting from within here (only in macro wizard step 1) */
@@ -7728,17 +7728,17 @@ Chain_Macro:
 							    && choice != 'S'
 #endif
 							    ) {
-								//i = -1;
+								//i_stage = -1;
 								continue;
 							}
 						}
 						break;
 					}
 					/* exit? */
-					if (i == -1) continue;
+					if (i_stage == -1) continue;
 
 					/* advance to next step */
-					i++;
+					i_stage++;
 					break;
 				case 1:
 					l = ystart + 2;
@@ -7867,7 +7867,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -2; /* leave */
+								i_stage = -2; /* leave */
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
@@ -7881,14 +7881,14 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'i') {
-									//i = -1;
+									//i_stage = -1;
 									continue;
 								}
 							}
 							break;
 						}
 						/* exit? */
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						buf[0] = choice;
 						choice = mw_combatmode;
@@ -7931,7 +7931,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -2; /* leave */
+								i_stage = -2; /* leave */
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
@@ -7945,14 +7945,14 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'h') {
-									//i = -2;
+									//i_stage = -2;
 									continue;
 								}
 							}
 							break;
 						}
 						/* exit? */
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						/* build macro part */
 						switch (choice) {
@@ -7988,11 +7988,11 @@ Chain_Macro:
 							Term->scr->cu = 1;
 							switch (choice = inkey()) {
 							case ESCAPE:
-								i = -2; /* flag exit */
+								i_stage = -2; /* flag exit */
 								break; /* exit switch */
 							case '\010': /* backspace */
 								if (!step) {
-									i = -2; /* flag exit */
+									i_stage = -2; /* flag exit */
 									break; /* exit switch */
 								}
 								u = u_prev[--step];
@@ -8015,15 +8015,15 @@ Chain_Macro:
 								strcat(buf, format("%c", choice)); /* build macro */
 								break;
 							}
-							if (i == -2) break; /* exit while */
+							if (i_stage == -2) break; /* exit while */
 						}
-						if (i == -2) continue; /* exit for */
+						if (i_stage == -2) continue; /* exit for */
 
 						/* Ask for a direction? */
 						if (exec_lua(0, format("return rcraft_dir(%d)", u))) strcat(buf, "*t");
 
 						choice = mw_rune;
-						i = 1;
+						i_stage = 1;
 						break; }
 
 					case mw_trap:
@@ -8042,7 +8042,7 @@ Chain_Macro:
 						Term_gotoxy(50, l);
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
-							i = -2;
+							i_stage = -2;
 							continue;
 						}
 						strcat(buf, "\\r");
@@ -8064,7 +8064,7 @@ Chain_Macro:
 						strcpy(buf2, "");
 						if (!askfor_aux(buf2, 159, 0)) {
 #if 0
-							i = -2;
+							i_stage = -2;
 							continue;
 #else
 							goto mw_trap_1;
@@ -8100,7 +8100,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -2; /* leave */
+								i_stage = -2; /* leave */
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
@@ -8114,14 +8114,14 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'f') {
-									//i = -1;
+									//i_stage = -1;
 									continue;
 								}
 							}
 							break;
 						}
 						/* exit? */
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						/* build macro part */
 						j = 0; /* hack: != 1 means 'undirectional' device */
@@ -8251,7 +8251,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -2; /* leave */
+								i_stage = -2; /* leave */
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
@@ -8271,7 +8271,7 @@ Chain_Macro:
 							break;
 						}
 						/* exit? */
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						l = ystart + 2;
 						clear_from(l);
@@ -8318,7 +8318,7 @@ Chain_Macro:
 								case ESCAPE:
 								case 'p':
 								case '\010': /* backspace */
-									i = -2; /* leave */
+									i_stage = -2; /* leave */
 									break;
 								case ':': /* Allow chatting */
 									cmd_message();
@@ -8348,7 +8348,7 @@ Chain_Macro:
 								case ESCAPE:
 								case 'p':
 								case '\010': /* backspace */
-									i = -2; /* leave */
+									i_stage = -2; /* leave */
 									break;
 								case ':': /* Allow chatting */
 									cmd_message();
@@ -8374,7 +8374,7 @@ Chain_Macro:
 							}
 						}
 						/* exit? */
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						l = ystart + 2;
 						clear_from(l);
@@ -8423,7 +8423,7 @@ Chain_Macro:
 							case ESCAPE:
 							//case 'p': -- we have a) to p) available..
 							case '\010': /* backspace */
-								i = -2; /* leave */
+								i_stage = -2; /* leave */
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
@@ -8437,14 +8437,14 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'p') {
-									//i = -1;
+									//i_stage = -1;
 									continue;
 								}
 							}
 							break;
 						}
 						/* exit? */
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						/* build macro part */
 						switch (choice) {
@@ -8463,7 +8463,7 @@ Chain_Macro:
 									case ESCAPE:
 									case 'p':
 									case '\010': /* backspace */
-										i = -2; /* leave */
+										i_stage = -2; /* leave */
 										break;
 									case ':': /* Allow chatting */
 										cmd_message();
@@ -8477,16 +8477,16 @@ Chain_Macro:
 									default:
 										/* invalid action -> exit wizard */
 										if (choice < 'a' || choice > 'd') {
-											//i = -1;
+											//i_stage = -1;
 											continue;
 										}
 									}
 									break;
 								}
 								/* exit? */
-								if (i == -2) {
+								if (i_stage == -2) {
 									/* hack before we abort: restart menu choice 'common' */
-									i = -3;
+									i_stage = -3;
 									choice = mw_common;
 									break;
 								}
@@ -8512,7 +8512,7 @@ Chain_Macro:
 							Term_gotoxy(15, l - 1);
 							strcpy(buf, "");
 							if (!askfor_aux(buf, 159, 0)) {
-								i = -2;
+								i_stage = -2;
 								break;
 							}
 							/* Auto-fix if user still enters '.prf' */
@@ -8542,7 +8542,7 @@ Chain_Macro:
 									case ESCAPE:
 									case 'p':
 									case '\010': /* backspace */
-										i = -2; /* leave */
+										i_stage = -2; /* leave */
 										break;
 									case ':': /* Allow chatting */
 										cmd_message();
@@ -8556,16 +8556,16 @@ Chain_Macro:
 									default:
 										/* invalid action -> exit wizard */
 										if (choice < 'a' || choice > 'e') {
-											//i = -1;
+											//i_stage = -1;
 											continue;
 										}
 									}
 									break;
 								}
 								/* exit? */
-								if (i == -2) {
+								if (i_stage == -2) {
 									/* hack before we abort: restart menu choice 'common' */
-									i = -3;
+									i_stage = -3;
 									choice = mw_common;
 									break;
 								}
@@ -8614,7 +8614,7 @@ Chain_Macro:
 									case ESCAPE:
 									case 'p':
 									case '\010': /* backspace */
-										i = -2; /* leave */
+										i_stage = -2; /* leave */
 										break;
 									case ':': /* Allow chatting */
 										cmd_message();
@@ -8628,16 +8628,16 @@ Chain_Macro:
 									default:
 										/* invalid action -> exit wizard */
 										if (choice < 'a' || choice > 'f') {
-											//i = -1;
+											//i_stage = -1;
 											continue;
 										}
 									}
 									break;
 								}
 								/* exit? */
-								if (i == -2) {
+								if (i_stage == -2) {
 									/* hack before we abort: restart menu choice 'common' */
-									i = -3;
+									i_stage = -3;
 									choice = mw_common;
 									break;
 								}
@@ -8682,7 +8682,7 @@ Chain_Macro:
 									case ESCAPE:
 									case 'p':
 									case '\010': /* backspace */
-										i = -2; /* leave */
+										i_stage = -2; /* leave */
 										break;
 									case ':': /* Allow chatting */
 										cmd_message();
@@ -8696,16 +8696,16 @@ Chain_Macro:
 									default:
 										/* invalid action -> exit wizard */
 										if (choice < 'a' || choice > 'd') {
-											//i = -1;
+											//i_stage = -1;
 											continue;
 										}
 									}
 									break;
 								}
 								/* exit? */
-								if (i == -2) {
+								if (i_stage == -2) {
 									/* hack before we abort: restart menu choice 'common' */
-									i = -3;
+									i_stage = -3;
 									choice = mw_common;
 									break;
 								}
@@ -8785,7 +8785,7 @@ Chain_Macro:
 						/* hack before we exit: remember menu choice 'common' */
 						choice = mw_common;
 						/* exit? */
-						if (i == -2 || i == -3) continue;
+						if (i_stage == -2 || i_stage == -3) continue;
 
 						break;
 
@@ -8802,7 +8802,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -2; /* leave */
+								i_stage = -2; /* leave */
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
@@ -8816,14 +8816,14 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (choice < 'a' || choice > 'g') {
-									//i = -2;
+									//i_stage = -2;
 									continue;
 								}
 							}
 							break;
 						}
 						/* exit? */
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						/* build macro part */
 						switch (choice) {
@@ -8865,7 +8865,7 @@ Chain_Macro:
 							case ESCAPE:
 							case 'p':
 							case '\010': /* backspace */
-								i = -2; /* leave */
+								i_stage = -2; /* leave */
 								break;
 							case ':': /* Allow chatting */
 								cmd_message();
@@ -8879,7 +8879,7 @@ Chain_Macro:
 							default:
 								/* invalid action -> exit wizard */
 								if (target_dir < '1' || target_dir > '9') {
-									//i = -3;
+									//i_stage = -3;
 									continue;
 								}
 							}
@@ -8887,7 +8887,7 @@ Chain_Macro:
 						}
 
 						/* exit? */
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						/* This is the default start for running-macros, instead of "\e)", but it probably doesn't matter..
 						   And since we're lazy we just use it for all of these minor functions here below. */
@@ -8928,7 +8928,7 @@ Chain_Macro:
 
 							if (buf[0] == ESCAPE && !buf[1]) {
 								c_msg_print("\377yMacro-chaining cancelled.");
-								i = -2;
+								i_stage = -2;
 								break;
 							} else if (buf[0] == '%' && !buf[1]) {
 								c_msg_print("\377yThe '%' key cannot have any macros on it. Please try again.");
@@ -8987,7 +8987,7 @@ Chain_Macro:
 							break;
 						}
 						/* exit? */
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						/* Chain */
 						if (chain_macro_buf[0] && !strncmp(macro__buf, "\e)", 2)) { /* Skip subsequent ')' keybuffer clearing, as it would cancel the previous macro if the player doesn't have enough energy to execute it right now! */
@@ -9029,7 +9029,7 @@ Chain_Macro:
 							if (!strcmp(buf, "\e")) {
 								c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 								if (!strcmp(buf, "\e")) {
-									i = -2; /* leave */
+									i_stage = -2; /* leave */
 									break;
 								}
 								continue;
@@ -9107,7 +9107,7 @@ Chain_Macro:
 							break;
 						}
 						/* exit? */
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						switch (chain_type) {
 						case 0:
@@ -9133,19 +9133,21 @@ Chain_Macro:
 						}
 
 						/* this was the final step, we're done */
-						i = -2;
+						i_stage = -2;
 						continue;
 						}
 
 					case mw_fileset: {
-#ifdef TEST_CLIENT
+#ifdef TEST_CLIENT /* --- mw_fileset --- */
 						FILE *fp, *fp2;
 						int xoffset1 = 1, xoffset2 = 3 - 2;
 						int f, k, m, n, found;
 						char buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
 						char tmpbuf[MACROKEY_LEN], tmpbuf2[MACROKEY_LEN], tmpbuf3[MACROKEY_LEN];
 						bool ok_new_set, ok_new_stage, ok_swap_stages, cancel;
-						bool style_cyclic, style_freesw;
+						bool style_cyclic, style_freesw, Z_hack = (i == 'Z');
+
+						i = 0; // clear 'Z'-hack
 
 						if (rescan) { /* (Is statically TRUE on first invocation of mw_fileset, to ensure an initial scan) */
 							rescan = FALSE;
@@ -9330,22 +9332,22 @@ Chain_Macro:
 							Term->scr->cx = Term->wid;
 							Term->scr->cu = 1;
 
-							i = choice = 0;
+							i_stage = choice = 0;
 							while (TRUE) {
 								switch (choice = inkey()) {
 								case ESCAPE:
 								case 'p':
 								case '\010': /* backspace */
-									i = -2; /* leave */
+									i_stage = -2; /* leave */
 									break;
 								case ':': /* Allow chatting */
 									cmd_message();
-									i = -3;
+									i_stage = -3;
 									break;
 								case KTRL('T'):
 									/* Take a screenshot */
 									xhtml_screenshot("screenshot????", 2);
-									i = -3;
+									i_stage = -3;
 									break;
 								case 'C': case 'I': case 'S': case 'A': case 'F':
 									break; //accepted commands
@@ -9359,9 +9361,9 @@ Chain_Macro:
 								break;
 							}
 							/* Restore top line */
-							if (i == -3) continue;
+							if (i_stage == -3) continue;
 							/* exit? */
-							if (i == -2) break;
+							if (i_stage == -2) break;
 
 							/* Perform selected action */
 							if (screen_hgt == MAX_SCREEN_HGT) Term_putstr(40, l++, -1, TERM_GREEN, format("(%c)", choice));
@@ -9372,7 +9374,7 @@ Chain_Macro:
 							case 'C': // wipe memory list and rescan
 								/* Init filesets */
 								rescan = TRUE;
-								i = -4;
+								i_stage = -4;
 								break;
 
 							case 'I': //init new fileset (implies initialization+activation of a 1st stage too)
@@ -10242,20 +10244,21 @@ Chain_Macro:
 								break;
 							}
 
-							/* Restart mw_fileset menu */
-							if (i == -4) break;
+							/* Restart or exit mw_fileset menu */
+							if (i_stage == -4 || i_stage == -2) break;
 						}
 
 						/* Hack: Restart mw_fileset menu */
-						if (i == -4) {
+						if (i_stage == -4) {
 							i = 'Z';
 							continue;
 						}
-#endif /* TEST_CLIENT */
 
 						/* this was the final step, we're done */
-						if (i != -2) i = -1; //actually don't continue (back to macro wizard main screen) but break out (back to macro menu) for convenience!
+						if (i_stage != -2 || Z_hack) i_stage = -1; //actually don't continue (back to macro wizard main screen) but break out (back to macro menu) for convenience!
+						/* Exit mw_fileset menu (back to macro wizard main menu) */
 						continue; }
+#endif /* TEST_CLIENT --- mw_fileset --- */
 					}
 
 
@@ -10270,7 +10273,7 @@ Chain_Macro:
 						/* Get an item/spell name */
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
-							i = -2;
+							i_stage = -2;
 							continue;
 						}
 					}
@@ -10280,7 +10283,7 @@ Chain_Macro:
 						/* Get an item/spell name */
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
-							i = -2;
+							i_stage = -2;
 							continue;
 						}
 						strcpy(buf, format(":%s\r", buf));
@@ -10292,7 +10295,7 @@ Chain_Macro:
 							Term_gotoxy(47, ystart + 8);
 							strcpy(buf, "");
 							if (!askfor_aux(buf, 159, 0)) {
-								i = -2;
+								i_stage = -2;
 								break;
 							}
 							/* not a number/invalid? retry (we have slots d)..z)) */
@@ -10302,7 +10305,7 @@ Chain_Macro:
 							strcpy(buf, format("%c", 'd' + atoi(buf)));
 							break;
 						}
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 					}
 					/* no need for inputting an item/spell to use with the macro? */
 					else if (choice != mw_fire && choice != mw_rune && choice != mw_trap && choice != mw_prfimm &&
@@ -10317,7 +10320,7 @@ Chain_Macro:
 						/* Get an item/spell name */
 						strcpy(buf, "");
 						if (!askfor_aux(buf, 159, 0)) {
-							i = -2;
+							i_stage = -2;
 							continue;
 						}
 
@@ -10635,7 +10638,7 @@ Chain_Macro:
 					    && choice != mw_custom
 					    ) {
 						while (TRUE) {
-							i = 1; //clearing it in case it was set to -3 below
+							i_stage = 1; //clearing it in case it was set to -3 below
 							clear_from(ystart);
 							l = ystart + 1;
 							Term_putstr(10, l++, -1, TERM_GREEN, "Please choose the targetting method:");
@@ -10662,7 +10665,7 @@ Chain_Macro:
 								case ESCAPE:
 								case 'p':
 								case '\010': /* backspace */
-									i = -2; /* leave */
+									i_stage = -2; /* leave */
 									break;
 								case ':': /* Allow chatting */
 									cmd_message();
@@ -10677,14 +10680,14 @@ Chain_Macro:
 								default:
 									/* invalid action -> exit wizard */
 									if (choice < 'a' || choice > 'g') {
-										//i = -2;
+										//i_stage = -2;
 										continue;
 									}
 								}
 								break;
 							}
 							/* exit? */
-							if (i == -2) break;
+							if (i_stage == -2) break;
 
 							/* Get a specific fixed direction */
 							if (choice == 'd') {
@@ -10716,7 +10719,7 @@ Chain_Macro:
 									case ESCAPE:
 									case 'p':
 									case '\010': /* backspace */
-										i = -3; /* leave */
+										i_stage = -3; /* leave */
 										break;
 									case ':': /* Allow chatting */
 										cmd_message();
@@ -10731,7 +10734,7 @@ Chain_Macro:
 										/* invalid action -> exit wizard */
 										//if ((target_dir < '1' || target_dir > '9') && target_dir != '?') {
 										if ((target_dir < '1' || target_dir > '9') && target_dir != '%') {
-											//i = -3;
+											//i_stage = -3;
 											continue;
 										}
 									}
@@ -10742,12 +10745,12 @@ Chain_Macro:
 								inkey_interact_macros = TRUE;
 #endif
 								/* exit? */
-								if (i == -3) continue;
+								if (i_stage == -3) continue;
 							}
 							/* successfully done this step */
 							break;
 						}
-						if (i == -2) continue;
+						if (i_stage == -2) continue;
 
 						if (choice != 'c') {
 							/* choose initial targetting mechanics */
@@ -10789,7 +10792,7 @@ Chain_Macro:
 					strcpy(macro__buf, chain_macro_buf);
 
 					/* advance to next step */
-					i++;
+					i_stage++;
 					break;
 				case 2:
 					l = ystart + 1;
@@ -10825,7 +10828,7 @@ Chain_Macro:
 						if (!strcmp(buf, "\e")) {
 							c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 							if (!strcmp(buf, "\e")) {
-								i = -2; /* leave */
+								i_stage = -2; /* leave */
 								break;
 							}
 							continue;
@@ -10910,7 +10913,7 @@ Chain_Macro:
 						break;
 					}
 					/* exit? */
-					if (i == -2) continue;
+					if (i_stage == -2) continue;
 
 					/* Automatically choose usually best fitting macro type,
 					   depending on chosen trigger key! */
@@ -10950,7 +10953,7 @@ Chain_Macro:
 					}
 
 					/* this was the final step, we're done */
-					i = -1;
+					i_stage = -1;
 					break;
 				}
 			}
