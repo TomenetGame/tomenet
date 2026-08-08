@@ -77,8 +77,14 @@ struct term_data {
 
 static term_data data[MAX_TERM_DATA_GCU]; // [4], defines.h
 
-#ifndef USE_X11
-bool disable_tile_cache = FALSE, disable_tileset_caching = FALSE; //unused in GCU, just added because it's external in generic code
+#if !defined(USE_X11) && !defined(USE_SDL3)
+/* Unused in GCU, just added because it's external in generic code. */
+#ifdef USE_GRAPHICS
+bool disable_tileset_caching = FALSE;
+#endif
+ #ifdef TILE_CACHE_SIZE
+bool disable_tile_cache = FALSE;
+ #endif
 #endif
 
 /*
@@ -530,7 +536,9 @@ static void Term_init_gcu(term *t) {
 	keymap_game();
 
 	/* Tell select() to watch stdin - mikaelh */
+#ifndef USE_SDL3
 	x11_socket = 0;
+#endif
 
 	/* One key may be encoded as multiple key presses */
 	multi_key_macros = TRUE;
@@ -1223,7 +1231,7 @@ void gcu_restore_colours(void) {
 	for (i = 0; i < BASE_PALETTE_SIZE; i++) init_color(i, cor[i], cog[i], cob[i]);
 }
 
-#ifndef USE_X11
+#if !defined(USE_X11) && !defined(USE_SDL3)
 /* Returns true if terminal window specified by term_idx is currently visible. */
 bool term_get_visibility(int term_idx) {
 	if (term_idx < 0 || term_idx >= ANGBAND_TERM_MAX) return(false);
@@ -1270,7 +1278,7 @@ void resize_main_window_gcu(int cols, int rows) {
 #endif
 }
 
-#ifndef USE_X11
+#if !defined(USE_X11) && !defined(USE_SDL3)
 /* automatically store name+password to ini file if we're a new player? */
 void store_crecedentials(void) {
 	write_mangrc(TRUE, TRUE, FALSE);
