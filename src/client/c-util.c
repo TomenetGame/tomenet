@@ -5497,6 +5497,87 @@ static int fileset_selected = -1, fileset_stage_selected = -1;
 static macro_fileset_type fileset[MACROFILESETS_MAX] = { 0 };
 static macro_fileset_stage_type fileset_stage_tmp = { 0 };
 
+/* Read .meta file belonging to a fileset[k] that's currently in memory */
+bool macrofileset_meta_read(int k) {
+	macro_fileset_type *fs = &fileset[k];
+	char tmpbuf[1024], flagc;
+	FILE *fp;
+	bool success = TRUE;
+
+	/* Read set's .meta file */
+	path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s.meta", fs->basefilename, SETFILEPOSTFIX));
+	if (!my_fexists(tmpbuf)) return(FALSE);
+
+	fp = fopen(tmpbuf, "r");
+	if (!fp) {
+		c_msg_format("\377oError: couldn't read file '%s%s.meta'.", fs->basefilename, SETFILEPOSTFIX);
+		return(FALSE);
+	}
+
+	/* Read cyclic key (whether in use or not) */
+	success &= (fgets(fs->macro__pat__cyclic, MACROKEY_LEN, fp) != NULL);
+	success &= (fgets(fs->macro__patbuf__cyclic, MACROKEY_LEN, fp) != NULL);
+	success &= (fgets(fs->macro__actbuf__cyclic_fmt, MACRO_MAXLEN, fp) != NULL);
+	success &= (fgets(fs->macro__actbuf__freesw_fmt, MACRO_MAXLEN, fp) != NULL);
+	/* Read comment */
+	success &= (fgets(fs->comment, MACROSET_COMMENT_LEN, fp) != NULL);
+	fs->comment[MACROSET_COMMENT_LEN - 1] = 0;
+	/* Trim trailing newline */
+	if (fs->comment[0] && fs->comment[strlen(fs->comment) - 1] == '\n')
+		fs->comment[strlen(fs->comment) - 1] = 0;
+
+	/* Read switching-types (2nd line) */
+	flagc = fgetc(fp);
+	success &= (flagc != EOF);
+	switch (flagc) {
+	case 0: fs->style_cyclic = fs->style_freesw = 0; break; // bug
+	case 1: fs->style_cyclic = 1; fs->style_freesw = 0; break;
+	case 2: fs->style_cyclic = 0; fs->style_freesw = 1; break;
+	case 3: fs->style_cyclic = fs->style_freesw = 1; break;
+	}
+
+	fclose(fp);
+	if (!success) c_msg_format("\377oError in contents of file '%s%s.meta'.", fs->basefilename, SETFILEPOSTFIX);
+	return(success);
+}
+/* Read a stage-specific .meta file for stage f belonging to a fileset[k] that's currently in memory */
+bool macrofileset_stage_meta_read(int k, int f) {
+	macro_fileset_type *fs = &fileset[k];
+	char tmpbuf[1024], flagc;
+	FILE *fp;
+	bool success = TRUE;
+
+	path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.meta", fs->basefilename, SETFILEPOSTFIX, f + 1));
+	if (!my_fexists(tmpbuf)) return(FALSE);
+
+	fp = fopen(tmpbuf, "r");
+	if (!fp) {
+		c_msg_format("\377oError: couldn't read file '%s%s%d.meta'.", fs->basefilename, SETFILEPOSTFIX, f + 1);
+		return(FALSE);
+	}
+
+	/* Read free-switch key targetting this stage from any other stage (whether in use or not) */
+	success &= (fgets(fs->stage[f].macro__pat__freesw, MACROKEY_LEN, fp) != NULL);
+	success &= (fgets(fs->stage[f].macro__patbuf__freesw, MACROKEY_LEN, fp) != NULL);
+	success &= (fgets(fs->stage[f].macro__act__freesw, MACRO_MAXLEN, fp) != NULL);
+	success &= (fgets(fs->stage[f].macro__actbuf__freesw, MACRO_MAXLEN, fp) != NULL);
+	/* Read comment */
+	success &= (fgets(fs->stage[f].stage_comment, MACROSET_COMMENT_LEN, fp) != NULL);
+	fs->stage[f].stage_comment[MACROSET_COMMENT_LEN - 1] = 0;
+	/* Trim trailing newline */
+	if (fs->stage[f].stage_comment[0] && fs->stage[f].stage_comment[strlen(fs->stage[f].stage_comment) - 1] == '\n')
+		fs->stage[f].stage_comment[strlen(fs->stage[f].stage_comment) - 1] = 0;
+
+	/* Read 'disabled' flag (2nd line) */
+	flagc = fgetc(fp);
+	success &= (flagc != EOF);
+	fs->stage[f].stage_disabled = ((flagc == '0' || flagc == EOF) ? FALSE : TRUE);
+
+	fclose(fp);
+	if (!success) c_msg_format("\377oError in contents of file '%s%s%d.meta'.", fs->basefilename, SETFILEPOSTFIX, f);
+	return(success);
+}
+
 /* Scan...
    (a) all currently loaded macros,
    (b) look on disk for files belonging to those scanned in (a),
@@ -5906,77 +5987,14 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	   - 'disabled' flag for each stage
 	   - macro actions and macro action templates */
 	for (k = 0; k < filesets_found; k++) {
-		fs = &fileset[k];
+		//if (!macrofileset_meta_read(k)) continue;
+		macrofileset_meta_read(k);
 
-		/* Read set's .meta file */
-		path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s.meta", fs->basefilename, SETFILEPOSTFIX));
-		if (my_fexists(tmpbuf)) {
-			FILE *fp;
-			char flagc;
-
-			fp = fopen(tmpbuf, "r");
-			if (fp) {
-				bool success = TRUE;
-
-				/* Read cyclic key (whether in use or not) */
-				success &= (fgets(fs->macro__pat__cyclic, MACROKEY_LEN, fp) != NULL);
-				success &= (fgets(fs->macro__patbuf__cyclic, MACROKEY_LEN, fp) != NULL);
-				success &= (fgets(fs->macro__actbuf__cyclic_fmt, MACRO_MAXLEN, fp) != NULL);
-				success &= (fgets(fs->macro__actbuf__freesw_fmt, MACRO_MAXLEN, fp) != NULL);
-				/* Read comment */
-				success &= (fgets(fs->comment, MACROSET_COMMENT_LEN, fp) != NULL);
-				fs->comment[MACROSET_COMMENT_LEN - 1] = 0;
-				/* Trim trailing newline */
-				if (fs->comment[0] && fs->comment[strlen(fs->comment) - 1] == '\n')
-					fs->comment[strlen(fs->comment) - 1] = 0;
-
-				/* Read switching-types (2nd line) */
-				flagc = fgetc(fp);
-				success &= (flagc != EOF);
-				switch (flagc) {
-				case 0: fs->style_cyclic = fs->style_freesw = 0; break; // bug
-				case 1: fs->style_cyclic = 1; fs->style_freesw = 0; break;
-				case 2: fs->style_cyclic = 0; fs->style_freesw = 1; break;
-				case 3: fs->style_cyclic = fs->style_freesw = 1; break;
-				}
-
-				fclose(fp);
-				if (!success) c_msg_format("\377oError in contents of file '%s%s.meta'.", fs->basefilename, SETFILEPOSTFIX);
-			} else c_msg_format("\377oError: couldn't read file '%s%s.meta'.", fs->basefilename, SETFILEPOSTFIX);
-		}
 		for (f = 0; f < fs->stages; f++) {
 			/* Read stage's .meta file */
-			if (!fs->stage[f].stage_file_exists) continue;
-			path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.meta", fs->basefilename, SETFILEPOSTFIX, f + 1));
-			if (my_fexists(tmpbuf)) {
-				FILE *fp;
-				char flagc;
+			if (!fileset[k].stage[f].stage_file_exists) continue;
+			macrofileset_stage_meta_read(k, f);
 
-				fp = fopen(tmpbuf, "r");
-				if (fp) {
-					bool success = TRUE;
-
-					/* Read free-switch key targetting this stage from any other stage (whether in use or not) */
-					success &= (fgets(fs->stage[f].macro__pat__freesw, MACROKEY_LEN, fp) != NULL);
-					success &= (fgets(fs->stage[f].macro__patbuf__freesw, MACROKEY_LEN, fp) != NULL);
-					success &= (fgets(fs->stage[f].macro__act__freesw, MACRO_MAXLEN, fp) != NULL);
-					success &= (fgets(fs->stage[f].macro__actbuf__freesw, MACRO_MAXLEN, fp) != NULL);
-					/* Read comment */
-					success &= (fgets(fs->stage[f].stage_comment, MACROSET_COMMENT_LEN, fp) != NULL);
-					fs->stage[f].stage_comment[MACROSET_COMMENT_LEN - 1] = 0;
-					/* Trim trailing newline */
-					if (fs->stage[f].stage_comment[0] && fs->stage[f].stage_comment[strlen(fs->stage[f].stage_comment) - 1] == '\n')
-						fs->stage[f].stage_comment[strlen(fs->stage[f].stage_comment) - 1] = 0;
-
-					/* Read 'disabled' flag (2nd line) */
-					flagc = fgetc(fp);
-					success &= (flagc != EOF);
-					fs->stage[f].stage_disabled = ((flagc == '0' || flagc == EOF) ? FALSE : TRUE);
-
-					fclose(fp);
-					if (!success) c_msg_format("\377oError in contents of file '%s%s%d.meta'.", fs->basefilename, SETFILEPOSTFIX, f);
-				} else c_msg_format("\377oError: couldn't read file '%s%s%d.meta'.", fs->basefilename, SETFILEPOSTFIX, f + 1);
-			}
 		}
 	}
 
