@@ -5421,6 +5421,21 @@ static void get_macro_trigger(char *buf) {
 	Term_addstr(-1, TERM_WHITE, tmp);
 }
 
+/* Clear all currently loaded macros from memory */
+void macro_clear(void) {
+	int i;
+
+	for (i = 0; i < macro__num; i++) {
+		string_free(macro__pat[i]);
+		macro__pat[i] = NULL;
+		string_free(macro__act[i]);
+		macro__act[i] = NULL;
+		macro__cmd[i] = FALSE;
+		macro__hyb[i] = FALSE;
+	}
+	macro__num = 0;
+	for (i = 0; i < 256; i++) macro__use[i] = 0;
+}
 
 /* When reinitializing macros, also reload font/graf prefs?
    Shoudln't be needed. */
@@ -5485,7 +5500,7 @@ static macro_fileset_stage_type fileset_stage_tmp = { 0 };
    (a) all currently loaded macros,
    (b) look on disk for files belonging to those scanned in (a),
    (c) all macro files on disk (in user/TomeNET-user folder) for filesets. - C. Blue */
-int macroset_scan(void) {
+int macrofileset_scan(void) {
 	int k, m;
 	bool style_cyclic, style_freesw;
 
@@ -5963,12 +5978,67 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 
 /* Rebuild cyclic/free-switch keys for all stages of the current macro set */
 void macrofileset_rebuild_keys(void) {
+	int f;
+
+	/* --- First, also rebuild the set's global template strings, for paranoia --- */
+
+	/* Forge template cycle-macro action (in human-readable format) */
+	sprintf(fileset[fileset_selected].macro__actbuf__cyclic_fmt,
+	    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s-FS%%d.prf\\r\\e",
+	    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_CYCLIC, fileset[fileset_selected].basefilename);
+
+	/* Forge template freeswitch-macro action (in human-readable format) */
+	sprintf(fileset[fileset_selected].macro__actbuf__freesw_fmt,
+	    "\\e\\e):%%:{s --- <{G%s{s> %s\\s{G%%d{s\\sof\\s{G%%d{s ---\\r%%l%s-FS%%d.prf\\r\\e",
+	    fileset[fileset_selected].basefilename, MACROFILESET_MARKER_SWITCH, fileset[fileset_selected].basefilename);
+
+	/* Set free-switch macro action for stage 1, in human-readable format */
+	strcpy(fileset[fileset_selected].stage[0].macro__actbuf__freesw,
+	    format(fileset[fileset_selected].macro__actbuf__freesw_fmt, 1, fileset[fileset_selected].stages, 0));
+		/* Set free-switch macro action for stage 1 */
+		text_to_ascii(fileset[fileset_selected].stage[0].macro__act__freesw, fileset[fileset_selected].stage[0].macro__actbuf__freesw);
+
+	for (f = 0; f < fileset[fileset_selected].stages; f++) {
+	}
 }
 
 /* Insert all macros of a macro file set to current macro memory.
    Returns amount of found macros that were inserted. */
-int macrofileset_meminsert(int f) {
-	return(0);
+int macrofileset_meminsert(void) {
+	int found = 0, f;
+
+	/* Cyclic set */
+	if (fileset[fileset_selected].style_cyclic) {
+		//  If no stage is selected, auto-select the first stage.
+		if (fileset_stage_selected == -1) {
+			fileset_stage_selected = 0;
+			c_msg_print("No stage selected, auto-selecting the first stage.");
+		}
+
+		/* Add macro to cycle to the next stage from this stage (ie stage 0->1) */
+		macro_add(fileset[fileset_selected].macro__pat__cyclic,
+		    fileset[fileset_selected].stage[fileset_stage_selected].macro__act__cyclic,
+		    FALSE, FALSE);
+		found++;
+	}
+
+	/* Free-switching stages */
+	if (fileset[fileset_selected].style_freesw) {
+		for (f = 0; f < fileset[fileset_selected].stages; f++) {
+			//if (!fileset[fileset_selected].stage[f].stage_file_exists) continue;
+			if (fileset[fileset_selected].stage[f].stage_disabled) {
+				c_msg_format("Skipping free-switch macro for disabled stage %d.", f + 1);
+				continue;
+			}
+
+			//key_autoconvert(tmp, fmt);
+			macro_add(fileset[fileset_selected].stage[f].macro__pat__freesw, fileset[fileset_selected].stage[f].macro__act__freesw, FALSE, FALSE);
+			found++;
+		}
+	}
+
+	c_msg_print("Set-trigger macros added to active macros in memory.");
+	return(found);
 }
 
 /* Remove all macros of a macro file set #f from current macro memory.
@@ -6038,13 +6108,112 @@ int macrofileset_mempurge(int f) {
 /* Insert all macros of a stage of the current macro file set to current macro memory.
    Returns amount of found macros that were inserted. */
 int macrofileset_stage_meminsert(int f) {
-	return(0);
+	int found = 0, n;
+
+	/* Cyclic set */
+	if (fileset[fileset_selected].style_cyclic) {
+		//  If no stage is selected, auto-select the first stage.
+		if (f == -1) {
+			f = 0;
+			c_msg_print("No stage selected, using the first stage as fallback.");
+		}
+
+		/* Add macro to cycle to the next stage from this stage (ie stage 0->1) */
+		macro_add(fileset[fileset_selected].macro__pat__cyclic,
+		    fileset[fileset_selected].stage[f].macro__act__cyclic,
+		    FALSE, FALSE);
+		found++;
+	}
+
+	/* Free-switching stages */
+	if (fileset[fileset_selected].style_freesw) {
+		for (n = 0; n < fileset[fileset_selected].stages; n++) {
+			//if (!fileset[fileset_selected].stage[n].stage_file_exists) continue;
+			if (fileset[fileset_selected].stage[n].stage_disabled) {
+				c_msg_format("Skipping free-switch macro for disabled stage %d.", n + 1);
+				continue;
+			}
+
+			//key_autoconvert(tmp, fmt);
+			macro_add(fileset[fileset_selected].stage[n].macro__pat__freesw, fileset[fileset_selected].stage[n].macro__act__freesw, FALSE, FALSE);
+			found++;
+		}
+	}
+
+	c_msg_format("Stage %d trigger macros added to active macros in memory.", f + 1);
+	return(found);
 }
 
 /* Remove all macros of a stage of the current macro file set from current macro memory.
+   NOTE: That should only mean ONE key: This stage's free-switch key! All other keys including the cycling-key remain valid.
    Returns amount of found macros that were removed. */
 int macrofileset_stage_mempurge(int f) {
-	return(0);
+	int m = -1, found = 0;
+	int searchstr_freesw_len;
+
+	char *cfile;
+	char buf_act[MACRO_MAXLEN], buftxt_act[MACRO_MAXLEN];
+	char buf_basename[1024];
+	char searchstr_freesw[10];
+
+
+	/* This function is weird, we first compare the cyclic/freesw marker strings, then the stage string, and lastly the basefilename string -_-' */
+
+	/* Note: The cyclic key is still valid, since if this stage gets removed from memory,
+	   the previous stage would instead cycle to the same target that this stage currently has!
+	   So we only need to remove this stage's free-switch key, which targets this stage (_from_ any stage). */
+	sprintf(searchstr_freesw, "-FS%d", f);
+	searchstr_freesw_len = strlen(searchstr_freesw);
+
+	//scan all macros
+	while (TRUE) {
+		while (++m < macro__num) {
+			/* Get macro in parsable format */
+			strncpy(buf_act, macro__act[m], MACRO_MAXLEN);
+			buf_act[MACRO_MAXLEN - 1] = '\0';
+			ascii_to_text(buftxt_act, buf_act);
+
+			/* Scan macro for marker text, indicating that it's a free-style set-switch */
+			if (!strstr(buftxt_act, MACROFILESET_MARKER_SWITCH)) continue;
+
+			/* Found one! */
+
+			/* Determine base filename from the action text : %lFILENAME\r\e */
+			cfile = strstr(buftxt_act, "%l");
+			if (!cfile) continue; //broken set-switching macro (not following our known scheme)
+			strcpy(buf_basename, cfile + 2);
+			/* Find end of filename */
+			cfile = strstr(buf_basename, "\\r\\e");
+			if (!cfile) continue; //broken set-switching macro (not following our known scheme)
+			*cfile = 0;
+			/* Find start of 'stage' appendix of the filename, cut it off to obtain base filename.
+			   Assume filename has this format "basename-FSn.prf" where n is the stage number: 0...MACROFILESETS_STAGES_MAX */
+			/* If this is a cyclic macro, the number after FS won't give the # of cycles away! Only the %:... self-notification message can do that!
+			   So it should follow a specific format: ":%:Cycling to set n of m\r 'comment'\r" <- the 'of m' giving away the true amount of stages for cyclic sets!
+			   -- actually, store 'comment' in a separate '<macrosetname-stage>.meta' file instead! Hard to handle otherwise. --
+			   However, it might be better to instead scan the folder for macro files starting on the base filename instead, so we are sure to catch all. */
+			if (strncmp(buf_basename + strlen(buf_basename) - 8, searchstr_freesw, searchstr_freesw_len)) continue; //broken set-switching macro (not following our known scheme)
+
+			/* --- At this point, we confirmed a valid macro belonging to a macro set found --- */
+
+			/* Finalize base filename */
+			buf_basename[strlen(buf_basename) - 8] = 0;
+
+			/* Compare to set we want to delete */
+			if (strcmp(fileset[f].basefilename, buf_basename)) continue;
+
+			/* --- Matches target set! --- */
+
+			/* Delete macro */
+			(void)macro_del(macro__pat[m]);
+			found++;
+
+			/* Continue scanning keys for switch-macros */
+		}
+		/* Scanned the last one of all loaded macros? We're done. */
+		if (m >= macro__num - 1) break;
+	}
+	return(found);
 }
 
 /* Prompt to enter an existing macrofileset number.
@@ -6125,8 +6294,31 @@ void macrofileset_meta_write(void) {
 	} else c_msg_format("\377oError: couldn't write file '%s-FS.meta'.", fileset[fileset_selected].basefilename);
 }
 
-/* Write macro file set stage to disk */
+/* Write a macro file set stage of the currently selected fileset to disk, using all macros that are currently in memory */
 void macrofileset_stage_write(int f) {
+	char tmpbuf[1024];
+
+	/* Make sure the trigger keys of this stage are also in the resulting prf file */
+	macrofileset_stage_meminsert(f);
+
+	/* Write all active macros to active set/stage: */
+	sprintf(tmpbuf, "%s-FS%d.prf", fileset[fileset_selected].basefilename, f + 1);
+	(void)macro_dump(tmpbuf);
+}
+
+/* Write a macro file set to disk */
+void macrofileset_write(int f) {
+	int n, sel_prev = fileset_selected;
+
+	fileset_selected = f;
+	macrofileset_meta_write();
+
+	for (n = 0; n < fileset[f].stages; n++) {
+		macrofileset_stage_write(n);
+		macrofileset_stage_meta_write(n);
+	}
+
+	fileset_selected = sel_prev;
 }
 #endif /* ENABLE_MACROSETS */
 
@@ -7274,16 +7466,7 @@ void interact_macros(void) {
 			/* Forget macros loaded from global.prf */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget global macros");
 
-			for (i = 0; i < macro__num; i++) {
-				string_free(macro__pat[i]);
-				macro__pat[i] = NULL;
-				string_free(macro__act[i]);
-				macro__act[i] = NULL;
-				macro__cmd[i] = FALSE;
-				macro__hyb[i] = FALSE;
-			}
-			macro__num = 0;
-			for (i = 0; i < 256; i++) macro__use[i] = 0;
+			macro_clear();
 
 			macro_processing_exclusive = TRUE;
 
@@ -7328,16 +7511,7 @@ void interact_macros(void) {
 			/* Forget macros loaded from character.prf */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget character-specific macros");
 
-			for (i = 0; i < macro__num; i++) {
-				string_free(macro__pat[i]);
-				macro__pat[i] = NULL;
-				string_free(macro__act[i]);
-				macro__act[i] = NULL;
-				macro__cmd[i] = FALSE;
-				macro__hyb[i] = FALSE;
-			}
-			macro__num = 0;
-			for (i = 0; i < 256; i++) macro__use[i] = 0;
+			macro_clear();
 
 			macro_processing_exclusive = TRUE;
 
@@ -7382,16 +7556,7 @@ void interact_macros(void) {
 			/* Forget macros loaded from global.prf and character.prf */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget global and character-specific macros");
 
-			for (i = 0; i < macro__num; i++) {
-				string_free(macro__pat[i]);
-				macro__pat[i] = NULL;
-				string_free(macro__act[i]);
-				macro__act[i] = NULL;
-				macro__cmd[i] = FALSE;
-				macro__hyb[i] = FALSE;
-			}
-			macro__num = 0;
-			for (i = 0; i < 256; i++) macro__use[i] = 0;
+			macro_clear();
 
 			macro_processing_exclusive = TRUE;
 
@@ -7438,16 +7603,7 @@ void interact_macros(void) {
 			/* Forget all automatically loaded macros (global, charname, race, trait, class) */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget all auto-loaded macros");
 
-			for (i = 0; i < macro__num; i++) {
-				string_free(macro__pat[i]);
-				macro__pat[i] = NULL;
-				string_free(macro__act[i]);
-				macro__act[i] = NULL;
-				macro__cmd[i] = FALSE;
-				macro__hyb[i] = FALSE;
-			}
-			macro__num = 0;
-			for (i = 0; i < 256; i++) macro__use[i] = 0;
+			macro_clear();
 
 			macro_processing_exclusive = TRUE;
 
@@ -7497,16 +7653,7 @@ void interact_macros(void) {
 			/* Forget macros loaded from character.prf */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Forget all macros");
 
-			for (i = 0; i < macro__num; i++) {
-				string_free(macro__pat[i]);
-				macro__pat[i] = NULL;
-				string_free(macro__act[i]);
-				macro__act[i] = NULL;
-				macro__cmd[i] = FALSE;
-				macro__hyb[i] = FALSE;
-			}
-			macro__num = 0;
-			for (i = 0; i < 256; i++) macro__use[i] = 0;
+			macro_clear();
 
 			c_msg_print("Unloaded all macros");
 		}
@@ -7515,16 +7662,7 @@ void interact_macros(void) {
 			/* Forget all macros, then reload all macro files */
 			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Reinitialize all macros");
 
-			for (i = 0; i < macro__num; i++) {
-				string_free(macro__pat[i]);
-				macro__pat[i] = NULL;
-				string_free(macro__act[i]);
-				macro__act[i] = NULL;
-				macro__cmd[i] = FALSE;
-				macro__hyb[i] = FALSE;
-			}
-			macro__num = 0;
-			for (i = 0; i < 256; i++) macro__use[i] = 0;
+			macro_clear();
 
 			macro_processing_exclusive = TRUE;
 
@@ -9155,7 +9293,7 @@ Chain_Macro:
 
 						if (rescan) { /* (Is statically TRUE on first invocation of mw_fileset, to ensure an initial scan) */
 							rescan = FALSE;
-							filesets_found = macroset_scan();
+							filesets_found = macrofileset_scan();
 						}
 
 						while (TRUE) {
@@ -9601,35 +9739,7 @@ Chain_Macro:
 								}
 
 								/* Add the trigger macros to currently loaded macros */
-
-								/* Cyclic set */
-								if (fileset[fileset_selected].style_cyclic) {
-									//  If no stage is selected, auto-select the first stage.
-									if (fileset_stage_selected == -1) {
-										fileset_stage_selected = 0;
-										c_msg_print("No stage selected, auto-selecting the first stage.");
-									}
-
-									/* Add macro to cycle to the next stage from this stage (ie stage 0->1) */
-									macro_add(fileset[fileset_selected].macro__pat__cyclic,
-									    fileset[fileset_selected].stage[fileset_stage_selected].macro__act__cyclic,
-									    FALSE, FALSE);
-								}
-
-								/* Free-switching stages */
-								if (fileset[fileset_selected].style_freesw) {
-									for (f = 0; f < fileset[fileset_selected].stages; f++) {
-										//if (!fileset[fileset_selected].stage[f].stage_file_exists) continue;
-										if (fileset[fileset_selected].stage[f].stage_disabled) {
-											c_msg_format("Skipping free-switch macro for disabled stage %d.", f + 1);
-											continue;
-										}
-
-										//key_autoconvert(tmp, fmt);
-										macro_add(fileset[fileset_selected].stage[f].macro__pat__freesw, fileset[fileset_selected].stage[f].macro__act__freesw, FALSE, FALSE);
-									}
-								}
-								c_msg_print("Set-trigger macros added to active macros in memory.");
+								macrofileset_meminsert();
 								break;
 
 							case 'F': //forget a set (opposite of 'A', but also removes it from our scanned-list, requires rescan to reload it from disk)
@@ -10170,16 +10280,7 @@ Chain_Macro:
 								Term_putstr(15, l, -1, TERM_L_GREEN, "Do you wish to clear all currently loaded macros? [y/N] ");
 								i = inkey();
 								if (i != 'y' && i != 'Y') {
-									for (i = 0; i < macro__num; i++) {
-										string_free(macro__pat[i]);
-										macro__pat[i] = NULL;
-										string_free(macro__act[i]);
-										macro__act[i] = NULL;
-										macro__cmd[i] = FALSE;
-										macro__hyb[i] = FALSE;
-									}
-									macro__num = 0;
-									for (i = 0; i < 256; i++) macro__use[i] = 0;
+									macro_clear();
 									c_msg_print("Unloaded all macros");
 								}
 
@@ -10238,9 +10339,8 @@ Chain_Macro:
 									c_msg_print("\377yCurrently there isn't an active stage, 'a'ctivate a stage first.");
 									continue;
 								}
-
-								f = fileset_stage_selected;
-								macrofileset_stage_meta_write(f);
+								macrofileset_stage_write(fileset_stage_selected);
+								macrofileset_stage_meta_write(fileset_stage_selected);
 
 								/* Write all active macros to active set/stage: */
 								sprintf(tmpbuf, "%s-FS%d.prf", fileset[fileset_selected].basefilename, fileset_stage_selected + 1);
@@ -16748,23 +16848,6 @@ void handle_process_font_file(void) {
 #endif
 	Send_font();
 }
-
-#ifdef RETRY_LOGIN
-void clear_macros(void) {
-	int i;
-
-	for (i = 0; i < macro__num; i++) {
-		string_free(macro__pat[i]);
-		macro__pat[i] = NULL;
-		string_free(macro__act[i]);
-		macro__act[i] = NULL;
-		macro__cmd[i] = FALSE;
-		macro__hyb[i] = FALSE;
-	}
-	macro__num = 0;
-	for (i = 0; i < 256; i++) macro__use[i] = 0;
-}
-#endif
 
 /* Colourize 3-digit clusters a bit to make reading big numbers more comfortable. - C. Blue
    method:

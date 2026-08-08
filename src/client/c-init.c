@@ -3751,7 +3751,7 @@ void client_init(char *argv1, bool skip) {
 	}
 
 	/* also wipe all previously loaded macros, so they don't accidentally get merged */
-	clear_macros();
+	macro_clear();
 
 	status = 0; //not required, paranoia?
 	race = class = trait = sex = 0;
