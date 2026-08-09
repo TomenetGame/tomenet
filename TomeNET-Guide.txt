@@ -7335,7 +7335,14 @@ characters of that class/race/trait.
 Last but not least, characters that change shape (Mimicry) can autoload macro
 files that depend on their form name (in addition to their character name) by
 naming them '<character name>^<form name>.prf' eg "Gandalf^Greater Balrog.prf".
-Priority order (latter one overrides prior one):
+
+Macro order
+-----------
+For macro files and preference files (.prf) the order determines the priority
+when macros clash because they want to use the same key. The macro loaded
+later will overwrite a macro for the same key loaded earlier, taking priority.
+(In the same way as macros, preference settings overwrite each other too.)
+The order in which files are loaded is shown in the two tables below:
 
 These files are meant to store client options and configuration,
 you should NOT use them for macros:
