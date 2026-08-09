@@ -8271,6 +8271,16 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 			sprintf(source_from, "by %s", m_name);
 		}
 	}
+
+	/* Last ditch effort - was it bought from a shop? */
+	else if (o_ptr->find_special <= -1000) { /* stolen */
+		sprintf(source_acttime, "stolen%s", hr_time);
+			sprintf(source_from, "from %s", st_name + st_info[-(o_ptr->find_special + 1000)].name);
+	} else if (o_ptr->find_special < 0) { /* bought */
+		sprintf(source_acttime, "bought%s", hr_time);
+			sprintf(source_from, "from %s", st_name + st_info[-(o_ptr->find_special + 1)].name);
+	}
+
 	/* Fall back 'neutral source', just use the time stamp though */
 	else {
 		sprintf(source_acttime, "found%s", hr_time);
