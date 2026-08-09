@@ -46,6 +46,14 @@
 /* Don't shorten the item name of the artifact 'Antiriad' in its depleted version: */
 #define ROYAL_ARMOUR_SHORTEN_ANTIRIAD_DEPLETED
 
+/* Add meta-information to items on inspection? - (2026) C. Blue */
+#define META_DIZ
+
+
+
+#ifdef META_DIZ
+static void meta_diz(object_type *o_ptr, FILE *fff);
+#endif
 
 /* For ammunition explosion types, must be consistent with ammo_explosion[] */
 static void init_GF_names(void) {
@@ -5880,6 +5888,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		/* Ooook, in the rare case that someone... Questor object! */
 		if (o_ptr->questor) quest_interact(Ind, o_ptr->quest - 1, o_ptr->questor_idx, fff);
 
+ #ifdef META_DIZ
+		meta_diz(o_ptr, fff); // print when the cheque was created?
+ #endif
+
 		my_fclose(fff);
 
 		/* Let the client know it's about to get some info */
@@ -5890,6 +5902,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 		/* Paranoia - ensure cleared hack flags for any subsequent calls */
 		hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
 		hack_comboset_f[1] = hack_comboset_f[2] = hack_comboset_f[3] = hack_comboset_f[4] = hack_comboset_f[5] = hack_comboset_f[6] = hack_comboset_f[0] = 0x0;
+
 		return(TRUE);
 	}
 #endif
@@ -6268,17 +6281,20 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 #endif
 
 		fprintf(fff, "\n\377y(This item has not been *identified* yet.)\n");
+ #ifdef META_DIZ
+		meta_diz(o_ptr, fff);
+ #endif
 		my_fclose(fff);
 		fff = my_fopen(p_ptr->infofile, "rb");
-		if (my_fgets(fff, buf, 1024, FALSE)) {
+		if (my_fgets(fff, buf, 1024, FALSE)) { /* Empty info file? Then return FALSE and call it a day (can only happen if we cannot write to temp file maybe) */
 			my_fclose(fff);
 
 			/* Paranoia - ensure cleared hack flags for any subsequent calls */
 			hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
 			hack_comboset_f[1] = hack_comboset_f[2] = hack_comboset_f[3] = hack_comboset_f[4] = hack_comboset_f[5] = hack_comboset_f[6] = hack_comboset_f[0] = 0x0;
 			return(FALSE);
-		}
-		my_fclose(fff);
+		} else my_fclose(fff);
+
 		strcpy(p_ptr->cur_file_title, "Basic Item Information");
 		Send_special_other(Ind);
 
@@ -6845,6 +6861,10 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
  #endif
 #endif
 
+ #ifdef META_DIZ
+	meta_diz(o_ptr, fff);
+ #endif
+
 	/* Paranoia - ensure cleared hack flags for any subsequent calls */
 	hack_sigil_f[1] = hack_sigil_f[2] = hack_sigil_f[3] = hack_sigil_f[4] = hack_sigil_f[5] = hack_sigil_f[6] = hack_sigil_f[0] = 0x0;
 	hack_comboset_f[1] = hack_comboset_f[2] = hack_comboset_f[3] = hack_comboset_f[4] = hack_comboset_f[5] = hack_comboset_f[6] = hack_comboset_f[0] = 0x0;
@@ -6857,8 +6877,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	if (my_fgets(fff, buf, 1024, FALSE)) {
 		my_fclose(fff);
 		return(FALSE);
-	}
-	my_fclose(fff);
+	} else my_fclose(fff);
 
 #if 0 /* moved to client-side, clean! */
 	/* hack: apply client-side auto-inscriptions */
@@ -8161,3 +8180,120 @@ bool is_empty_magicdevice(object_type *o_ptr) {
 	}
 	return(FALSE); /* Not a magic device even */
 }
+
+#ifdef META_DIZ
+#define META_DIZ_ATTR 's'
+/* When player inspects some object and an infofile is generated to view, add meta-info of the item too (2026)? */
+void meta_diz(object_type *o_ptr, FILE *fff) {
+	struct tm* ctl = localtime(&o_ptr->find_time);
+	static char month[13][4] = {
+	    "Jan", "Feb", "Mar", "Apr", "May", "Jun",
+	    "Jul", "Aug", "Sep", "Oct", "Nov", "Dec",
+	    "Bug" };
+
+	char hr_time[MAX_CHARS]; /* human-readable time/date stamp */
+	char loc_name[MAX_CHARS]; /* dungeon name */
+	char source_acttime[MAX_CHARS], source_from[MAX_CHARS];
+
+
+	/* --- Gather meta info from the object --- */
+
+	/* Admin-generated items, avoid pointless output. */
+	if (!o_ptr->find_id) return;
+
+	/* The time stamp can take up a lot of space, making the full line exceed 80 chars :/ */
+#if 0
+	/* Full length time stamp - this is probably just TMI anyway oO */
+	sprintf(hr_time, " on %d%s %s %04d at %02d:%02dh",
+	    ctl->tm_mday, ctl->tm_mday == 1 ? "st" : (ctl->tm_mday == 2 ? "nd" : (ctl->tm_mday == 3 ? "rd" : "th")),
+	    month[ctl->tm_mon + 1], 1900 + ctl->tm_year,
+	    ctl->tm_hour, ctl->tm_min);
+#elif 1 /* <- seems ideal. We go 2-lines with the info, then everythings fits fine anyway */
+	/* Only show date, not time, to save space */
+	sprintf(hr_time, " on %d%s %s %04d",
+	    ctl->tm_mday, ctl->tm_mday == 1 ? "st" : (ctl->tm_mday == 2 ? "nd" : (ctl->tm_mday == 3 ? "rd" : "th")),
+	    month[ctl->tm_mon + 1], 1900 + ctl->tm_year);
+#elif 0
+	/* Only show date, and in purely numerical format to save more space */
+	sprintf(hr_time, " %04d-%02d-%02d", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday);
+#else
+	/* No timestamp at all */
+	*hr_time = 0;
+#endif
+
+	if (o_ptr->find_reward >= 121) {
+		sprintf(source_acttime, "rewarded%s", hr_time);
+		sprintf(source_from, "for PvP");
+		//switch(o_ptr->find_reward) {
+	} else if (o_ptr->find_reward > 0) {
+		sprintf(source_acttime, "rewarded%s", hr_time);
+		sprintf(source_from, "from an event");
+		//switch(o_ptr->find_reward) {
+	} else if (o_ptr->find_reward < 0) {
+		sprintf(source_acttime, "rewarded%s", hr_time);
+		sprintf(source_from, "from a quest");
+		//switch(-o_ptr->find_reward) {
+	}
+
+	else if (o_ptr->find_special >= 11000) {
+		sprintf(source_acttime, "found%s", hr_time);
+		sprintf(source_from, "by disarming a trap");
+		//could also add the trap type, if we have ID'ed it
+	} else if (o_ptr->find_special >= 10000) {
+		sprintf(source_acttime, "found%s", hr_time);
+		sprintf(source_from, "by digging into %s", f_name + f_info[o_ptr->find_special - 10000].name);
+	} else if (o_ptr->find_special >= 1000) {
+		object_type forge;
+		char o_name[ONAME_LEN];
+
+		invcopy(&forge, lookup_kind(TV_CHEST, o_ptr->find_special - 1000));
+		object_desc(0, o_name, &forge, FALSE, 256);
+		sprintf(source_acttime, "found%s", hr_time);
+		sprintf(source_from, "inside %s", o_name);
+	} //else if (o_ptr->find_special) { --- don't use the negative ones, don't make sense
+
+	else if (o_ptr->find_ridx) {
+		int m_idx = m_pop();
+
+		/* Build fake monster just to generate its name */
+		if (m_idx) {
+			char m_name[MAX_CHARS]; /* full monster name */
+			monster_type *m_ptr = &m_list[m_idx];
+
+			m_ptr->r_idx = o_ptr->find_ridx;
+			m_ptr->ego = o_ptr->find_reidx;
+			monster_desc(0, m_name, m_idx, 0x88);
+			/* Delete it again 'manually' */
+			FREE(m_ptr->r_ptr, monster_race);
+			WIPE(m_ptr, monster_type);
+			/* Forge source diz */
+			sprintf(source_acttime, "dropped%s", hr_time);
+			sprintf(source_from, "by %s", m_name);
+		}
+	}
+	/* Fall back 'neutral source', just use the time stamp though */
+	else {
+		sprintf(source_acttime, "found%s", hr_time);
+		*source_from = 0;
+	}
+
+	// if (!o_ptr->find_wpos.wx && !o_ptr->find_wpos.wy) ; /* hm */
+	if (o_ptr->find_dun > 0) sprintf(loc_name, "on %dft in %s", o_ptr->find_wpos.wz * 50, d_name + d_info[o_ptr->find_dun].name);
+	else if (o_ptr->find_dun < 0) sprintf(loc_name, "on %dft in the IDDC (%s)", o_ptr->find_wpos.wz * 50, d_name + d_info[-o_ptr->find_dun].name);
+	else sprintf(loc_name, "in sector %d,%d", o_ptr->find_wpos.wx, o_ptr->find_wpos.wy);
+
+
+	/* --- Actually add meta info to the infofile --- */
+
+	// print when a cheque was created?
+	if (o_ptr->tval == TV_SCROLL && o_ptr->sval == SV_SCROLL_CHEQUE) {
+		fprintf(fff, "\n(It was issued %s)\n", hr_time);
+		return;
+	}
+
+	if (*source_from) fprintf(fff, "\n\377%c(It was %s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from);
+	else fprintf(fff, "\n\377%c(It was %s %s)\n", META_DIZ_ATTR, source_acttime, loc_name);
+
+	//byte slain_bosses, slain_nazgul, slain_superuniques, slain_sauron, slain_morgoth, slain_zuaon;
+}
+#endif
