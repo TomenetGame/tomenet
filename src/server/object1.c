@@ -5452,7 +5452,7 @@ bool maybe_hidden_powers(int Ind, object_type *o_ptr, bool ignore_id, ego_grante
 	return(FALSE);
 }
 
-/* Display examine (x/I) text of an item we haven't *identified* yet. */
+/* Display examine/inspect (x/I) text of an item we haven't *identified* yet. */
 #ifndef NEW_ID_SCREEN /* old way: paste some info directly into chat. */
 void observe_aux(int Ind, object_type *o_ptr) {
 	player_type *p_ptr = Players[Ind];
@@ -5535,6 +5535,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		/* copied from object1.c.. */
 		object_type forge, forge2, *old_ptr = &forge, *old_ptr2 = &forge2;
 		long tim_wraith = p_ptr->tim_wraith;
+		player_type p_bak = *p_ptr;
 
 		object_copy(old_ptr, &p_ptr->inventory[INVEN_WIELD]);
 		object_copy(&p_ptr->inventory[INVEN_WIELD], o_ptr);
@@ -5556,6 +5557,8 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		suppress_boni = FALSE;
 		suppress_message = FALSE;
 		p_ptr->tim_wraith = tim_wraith;
+		/* Get rid of potential black breath from inspecting a Morgul weapon as reported by Lavas */
+		*p_ptr = p_bak;
 	} else msg_print(Ind, "\377s  You have no special knowledge about that item.");
 }
 #else /* new way: display an info screen as for identify_fully_aux(), for additional k_info information - C. Blue */
