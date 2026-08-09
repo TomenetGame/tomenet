@@ -5713,7 +5713,7 @@ int macrofileset_scan(void) {
 			buf_pat[31] = '\0';
 			ascii_to_text(buftxt_pat, buf_pat);
 
-	    //todo... maybe prefer info from the .meta files instead, as they now also hold the key (template) info?
+	    // todo... maybe prefer info from the .meta files instead, as they now also hold the key (template) info?
 			/* Init switch keys */
 			fs->stage[stage].macro__pat__freesw[0] = 0;
 			fs->stage[stage].macro__patbuf__freesw[0] = 0;
@@ -5903,7 +5903,7 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 				fs->style_cyclic = FALSE; // found out further below via .meta file
 				fs->style_freesw = FALSE; // found out further below via .meta file
 
-	    //todo... maybe already load this info from .meta files now?
+	    // todo... maybe already load this info from .meta files now?
 				/* Init cycle key */
 				fs->macro__pat__cyclic[0] = 0;
 				fs->macro__patbuf__cyclic[0] = 0;
@@ -9568,7 +9568,7 @@ Chain_Macro:
 								    filesets_found, filesets_found != 1 ? "s" : "", MACROFILESETS_MAX, MACROFILESETS_STAGES_MAX));
 
 								/* If no macro set is selected, show the list of macro sets, otherwise show the list of stages of the currently active set */
-					    //todo... dat "TRUE" -> show stages instead ^
+					    // todo... dat "TRUE" -> show stages instead ^
 								if (fileset_selected == -1 || TRUE) //...implementing
 								for (k = 0; k < MACROFILESETS_MAX; k++)
 									if (k < filesets_found) {
@@ -10340,11 +10340,11 @@ Chain_Macro:
 									/* ...in macro format  */
 									text_to_ascii(fs->stage[f].macro__act__freesw,
 									    fs->stage[f].macro__actbuf__freesw);
-
-									/* Imprint all existing stage files with the free-switch key of this stage */
-						    // todo...
 								}
 								/* Note: Actually adding the trigger macros to memory is done explicitely via 'A' instead, to avoid a mess */
+
+								/* Imprint all existing stage files with the free-switch key of this stage */
+								macrofileset_rebuild_keys(fileset_selected);
 
 								/* Auto-select the newly added stage? */
 								fileset_stage_selected = f;
@@ -10352,7 +10352,7 @@ Chain_Macro:
 								macrofileset_stage_meta_write(f);
 								break;
 
-							case 'd': //delete a stage
+							case 'd': //delete a stage - from the set, from macro memory, and from disk!
 								if (fileset_selected == -1) {
 									c_msg_print("\377yCurrently there is no macro set selected, 'S'elect one first.");
 									continue;
@@ -10363,39 +10363,6 @@ Chain_Macro:
 								fs = &fileset[fileset_selected];
 
 								// Note: We don't clear current macros from memory
-
-								/* Set previous/subsequent stages' cycling keys, depending on whether...
-								   - previous stage was the last stage and therefore cycled back to 0
-								   - instead more stages follow after us and therefore need to cycle one further now */
-								if (fs->style_cyclic && fs->stages > 1) {
-									/* We're the final stage? Then set previous' stage's key to cycle to 0 now instead to us. */
-									if (f == fs->stages - 1) {
-										/* Set previous stage to cycle to 0 */
-										text_to_ascii(fs->stage[f - 1].macro__act__cyclic,
-										    format(fs->macro__actbuf__cyclic_fmt, 1, fs->stages, 1));
-
-										/* Also save the cycle-macro to disk for the previous stage, if it has a disk file */
-					    // todo...
-									}
-									/* We were in between somewhere? Then decrease cycle value of all subsequent stages by 1,
-									   except for the final stage which remains at cycling-back-to-0. */
-									else {
-										/* Decrement cycle-to-next-stage action for all subsequent stages except the final one by 1 */
-										for (n = f + 1; n < fs->stages - 1; n++) {
-											text_to_ascii(fs->stage[n].macro__act__cyclic,
-											    format(fs->macro__actbuf__cyclic_fmt, n + 1 - 1, fs->stages, n + 1 - 1));
-
-											/* Also save the cycle-macro to disk for this subsequent stage, if it has a disk file */
-					    // todo...
-										}
-
-										/* Insert us by setting our cycle action to the next stage */
-										text_to_ascii(fs->stage[f].macro__act__cyclic,
-										    format(fs->macro__actbuf__cyclic_fmt, f + 1 + 1, fs->stages, f + 1 + 1));
-									}
-								}
-								/* Edit all stage files of stages before us too, to remove our free-switch reference key from them? */
-					    // todo...
 
 								/* Slide subsequent stages up */
 								for (n = f; n < fs->stages - 1; n++) {
@@ -10416,16 +10383,19 @@ Chain_Macro:
 										rename(tmpbuf2, tmpbuf);
 									}
 								}
-								fs->stages--;
 
-								/* any_stage_file_exists is actually not used in any way, but let's still rebuild it :-s */
+								fs->stages--;
+								/* If the deleted stage was actually the currently active one, unselect it */
+								if (fileset_stage_selected == f) fileset_stage_selected = -1;
+
+								/* Update all reference keys */
+								macrofileset_update_keys(fileset_selected);
+
+								/* 'any_stage_file_exists' is actually not used in any way, but let's still rebuild it :-s */
 								fs->any_stage_file_exists = FALSE;
 								for (n = 0; n < fs->stages; n++)
 									fs->any_stage_file_exists |= fs->stage[n].stage_file_exists;
 
-
-								/* If the deleted stage was actually the currently active one, unselect it */
-								if (fileset_stage_selected == f) fileset_stage_selected = -1;
 								break;
 
 							case 'a': //activate(+load) a stage
@@ -10449,13 +10419,15 @@ Chain_Macro:
 								}
 
 								// Load the stage's macro file to macro memory
-								if (!fs->stage[f].stage_file_exists) {
+								if (fs->stage[f].stage_file_exists) {
 									path_build(tmpbuf, 1024, ANGBAND_DIR_USER, format("%s%s%d.prf",
 									    fs->basefilename, SETFILEPOSTFIX, f + 1));
 									process_pref_file(tmpbuf);
 								}
 
-					    // todo... also add cyclic key + freesw keys for current stage to macro memory too, in case this stage didn't have a macro file to load
+								// Also add cyclic key + freesw keys for current stage to macro memory too,
+								// in case this stage didn't have a macro file to load or loading failed for some reason
+								macrofileset_stage_meminsert(f);
 
 								break;
 
