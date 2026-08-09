@@ -5557,7 +5557,7 @@ void observe_aux(int Ind, object_type *o_ptr) {
 		suppress_boni = FALSE;
 		suppress_message = FALSE;
 		p_ptr->tim_wraith = tim_wraith;
-		/* Get rid of potential black breath from inspecting a Morgul weapon as reported by Lavas */
+		/* Get rid of potential black breath from inspecting a Morgul weapon as reported by Lavas - also restore cur mana/hp to original value maybe */
 		*p_ptr = p_bak;
 	} else msg_print(Ind, "\377s  You have no special knowledge about that item.");
 }
