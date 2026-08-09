@@ -8246,10 +8246,10 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 		object_type forge;
 		char o_name[ONAME_LEN];
 
-		invcopy(&forge, lookup_kind(TV_CHEST, o_ptr->find_special - 1000));
-		object_desc(0, o_name, &forge, FALSE, 256);
+		invcopy(&forge, lookup_kind(TV_CHEST, o_ptr->find_special / 1000));
+		object_desc(0, o_name, &forge, 1, 256);
 		sprintf(source_acttime, "found%s", hr_time);
-		sprintf(source_from, "inside %s", o_name);
+		sprintf(source_from, "inside %s {%d}", o_name, o_ptr->find_special % 1000);
 	} //else if (o_ptr->find_special) { --- don't use the negative ones, don't make sense
 
 	else if (o_ptr->find_ridx) {
@@ -8291,7 +8291,13 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 		return;
 	}
 
-	if (*source_from) fprintf(fff, "\n\377%c(It was %s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from);
+	if (*source_from) {
+		/* Probably doesn't fit into one line, and we don't want to require horizontal scrolling just for this... */
+		if (strlen(format("\n\377%c(It was %s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from)) >= 80 + 5)
+			fprintf(fff, "\n\377%c(It was %s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from);
+		else /* it does fit */
+			fprintf(fff, "\n\377%c(It was %s %s %s)\n", META_DIZ_ATTR, source_acttime, loc_name, source_from);
+	}
 	else fprintf(fff, "\n\377%c(It was %s %s)\n", META_DIZ_ATTR, source_acttime, loc_name);
 
 	//byte slain_bosses, slain_nazgul, slain_superuniques, slain_sauron, slain_morgoth, slain_zuaon;
