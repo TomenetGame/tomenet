@@ -3662,7 +3662,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 #endif
 	bool no_specials = in_sector00(wpos);
 
-	int cfeat;
+	int cfeat, web_power = (fibre_power * 2 + 1) / 3;
 	u32b cinfo, cinfo2;
 	int skill_dig = (!Ind || quiet_borer) ? 0 : get_skill(p_ptr, SKILL_DIG), mining = skill_dig;
 	int dual_power = wood_power > fibre_power ? wood_power : fibre_power; //for FEAT_BUSH specifically
@@ -4469,8 +4469,12 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		/* To allow for INDICATE_IMPOSSIBLE, we need to distinguish between mimicked features that would affect it. */
 		switch (featm) {
 		case FEAT_WEB:
-			if (power < fibre_power) power = fibre_power;
+			if (power < web_power) power = web_power;
 			diff = 100;
+			/* Hack for webs: Fire helps greatly */
+			if (power < 50 && p_ptr->inventory[INVEN_LITE].tval == TV_LITE &&
+			    (p_ptr->inventory[INVEN_LITE].sval == SV_LITE_TORCH || p_ptr->inventory[INVEN_LITE].sval == SV_LITE_TORCH_EVER))
+				power = 50;
 			break;
 		case FEAT_RUBBLE:
 			diff = 200;
@@ -4654,6 +4658,8 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 	}
 	/* Spider Webs */
 	else if (cfeat == FEAT_WEB) {
+		bool torched = FALSE;
+
 		*no_quake = TRUE;
 
 		/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
@@ -4661,9 +4667,18 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			if (o_ptr->sval == SV_SHOVEL || o_ptr->sval == SV_MATTOCK) power >>= 2;
 			else power >>= 3;
 		}
-		if ((((power > fibre_power) ? power : fibre_power) > rand_int(100)) && twall(Ind, wpos, y, x, FEAT_DIRT)) {
+
+		/* Hack for webs: Fire helps greatly */
+		if (power < 50 && p_ptr->inventory[INVEN_LITE].tval == TV_LITE &&
+		    (p_ptr->inventory[INVEN_LITE].sval == SV_LITE_TORCH || p_ptr->inventory[INVEN_LITE].sval == SV_LITE_TORCH_EVER)) {
+			power = 50;
+			torched = TRUE;
+		}
+
+		if ((((power > web_power) ? power : web_power) > rand_int(100)) && twall(Ind, wpos, y, x, FEAT_DIRT)) {
 			if (Ind && !quiet_full && !quiet_borer) {
-				msg_print(Ind, "You have cleared the spider web.");
+				if (torched) msg_print(Ind, "Using your torch you burned away the spider web.");
+				else msg_print(Ind, "You have cleared the spider web.");
 #ifdef USE_SOUND_2010
 				sound(Ind, "miss", NULL, SFX_TYPE_NO_OVERLAP, TRUE); //'swiping' sfx^^
 #endif

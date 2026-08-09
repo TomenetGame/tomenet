@@ -16811,10 +16811,13 @@ Against plants or webs, digging tools are (much) less effective:
 Tool        |  Shovels   |   Picks    |  Mattocks
 ------------+------------+------------+------------
 Dead tree   |     -      |     -      |     -
-Spider web  |     -      |     --     |     -
+Spider web  |     -      |     --     |     -       (*)
 Bush        |     -      |     --     |     -
 Tree        |     --     |     --     |     --
 Ivy         |     --     |     ---    |     --
+(*) Spider webs are weak against flames. If you don't have much digging power,
+    wielding a torch can already help greatly to burn the webs away.
+
 
 For weapons
 -----------
@@ -16849,7 +16852,7 @@ Now we continue for both, weapons and real digging tools:
 To successfully dig through certain features, your digging power must be
 greater than the result of a random number roll "random(0..x-1) + y":
 ---------------------------------------------------------------------
-Spider web           100 +  0
+Spider web           100 +  0   (wielding a torch may help (*))
 Rubble/Ivy           200 +  0
 Bush                 300 +  0
 Dead tree            300 +  0
@@ -16872,6 +16875,9 @@ be very lucky and hope for the random(0..799) roll for quartz to actually be a
 0 so that the result will be 0+20 which is 20 and therefore smaller than your
 digging power of 21. So on each turn of tunnelling your chance to succeed would
 be 1 in 800 in that case.
+
+(*) Spider webs are weak against flames. If you don't have much digging power,
+    wielding a torch can already help greatly to burn the webs away.
 
 If you try to use a digging tool that is too heavy for you, you will see it in
 your encumberment bar and there will be a warning message on equipping it,
