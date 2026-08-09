@@ -842,7 +842,7 @@ struct object_type {
 	u16b find_ridx, find_reidx;	/* Found from this [ego] monster */
 	s16b find_special;		/* Found from digging (10000+feat), disarming (11000+trap_idx), in a chest (sval*1000+lev)...
 					   Maybe not, as this would overwrite the interesting origins above: bought from store(-stidx-1), stolen from store (-stidx-1000), bought from player store(-2000). */
-	signed char find_reward;	/* Received as pvp(121-127), event(0<n<124)/quest(<0) reward? */
+	signed char find_reward;	/* Received as pvp(121-127), event(0<n<121)/quest(<0) reward? */
 
 	/* not yet implemented, for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
