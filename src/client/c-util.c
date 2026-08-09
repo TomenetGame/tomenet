@@ -9657,7 +9657,7 @@ Chain_Macro:
 								l++;
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "After selecting a set (and stage), you can leave this menu with \377GESC\377- to work");
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "on the macros you wish this set to contain. When done, return here to save");
-								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "the macros to the selected stage file with '\377GG\377-)' (this will overwrite it).");
+								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "the macros to the selected stage file with '\377Gw\377-)' (this will overwrite it).");
 
 								l++;
 								Term_putstr(15, l, -1, TERM_L_GREEN, "Please choose an action: ");
@@ -9750,7 +9750,7 @@ Chain_Macro:
 								}
 
 								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "After selecting a set (and stage), you can leave this menu with \377GESC\377- to work");
-								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "on the macros. Return here to save all macros to selected stage with '\377GG\377-)'");
+								Term_putstr(xoffset1, l++, -1, TERM_GREEN, "on the macros. Return here to save all macros to selected stage with '\377Gw\377-)'");
 							}
 
 							/* Hack: Hide the cursor */
