@@ -8283,7 +8283,8 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 
 	/* Fall back 'neutral source', just use the time stamp though */
 	else {
-		sprintf(source_acttime, "found%s", hr_time);
+		if (o_ptr->mode & MODE_STARTER_ITEM) sprintf(source_acttime, "acquired%s", hr_time);
+		else sprintf(source_acttime, "found%s", hr_time);
 		*source_from = 0;
 	}
 
