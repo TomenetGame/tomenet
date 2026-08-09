@@ -8502,6 +8502,9 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 	if (Ind) {
 		forge.killer = Players[Ind]->id;
 		if (preown) {
+			imprint_object_fully(&forge, Players[Ind]);
+
+			/* Partially redundant with imprint_object_fully() above */
 			forge.owner = forge.killer;
 			forge.mode = Players[Ind]->mode;
 			forge.iron_trade = Players[Ind]->iron_trade;
@@ -8516,6 +8519,18 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 				a_info[forge.name1].carrier = forge.owner;
 			}
 		}
+	}
+	/* Object memory fluff */
+	if (opening_chest) forge.find_special = opening_chest_sval * 1000 + opening_chest_lev;
+	/* If it's a new, unowned item, just imprint the dungeon already where it just dropped */
+	if (!forge.find_id && wpos->wz) { /* check 'find_id' instead of 'owner' to detect 'unowned' state despite maybe being 'force-preowned' */
+		dungeon_type *d_ptr = getdungeon(wpos);
+
+		forge.find_dun = d_ptr->type ? d_ptr->type : (d_ptr->theme ? -d_ptr->theme : -128); //-128 encodes 0 aka 'Wilderness' dungeon
+	}
+	if (monster_death_ridx) { /* Paranoia? */
+		forge.find_ridx = monster_death_ridx;
+		forge.find_reidx = monster_death_reidx;
 	}
 
 #ifdef IDDC_ID_BOOST /* experimental - replace insignificant loot with an ID scroll sometimes */
@@ -11176,7 +11191,8 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 
 	/* Object memory fluff */
 	if (opening_chest) o_ptr->find_special = opening_chest_sval * 1000 + opening_chest_lev;
-	else if (!o_ptr->find_id && wpos->wz) { /* check 'find_id' instead of 'owner' to detect 'unowned' state despite maybe being 'force-preowned' */
+	/* If it's a new, unowned item, just imprint the dungeon already where it just dropped */
+	if (!o_ptr->find_id && wpos->wz) { /* check 'find_id' instead of 'owner' to detect 'unowned' state despite maybe being 'force-preowned' */
 		dungeon_type *d_ptr = getdungeon(wpos);
 
 		o_ptr->find_dun = d_ptr->type ? d_ptr->type : (d_ptr->theme ? -d_ptr->theme : -128); //-128 encodes 0 aka 'Wilderness' dungeon
