@@ -5442,20 +5442,23 @@ void macro_clear(void) {
 //#define FORGET_MACRO_VISUALS
 
 #ifdef TEST_CLIENT
-#define ENABLE_MACROSETS
+ #define ENABLE_MACROSETS
 #endif
 
-#ifdef ENABLE_MACROSETS
-#define SETFILEPOSTFIX "-SET"
+#ifndef ENABLE_MACROSETS
+ /* Still define stuff to recognize macro files made with a set-enabled client */
+ #define SETFILEPOSTFIX "-SET"
+#else
+ #define SETFILEPOSTFIX "-SET"
 /* Maximum amount of switchable macrofile-sets loaded at the same time */
-#define MACROFILESETS_MAX 7
+ #define MACROFILESETS_MAX 7
 /* Maximum amount of switchable macrofile-set-stages */
-#define MACROFILESETS_STAGES_MAX 6
+ #define MACROFILESETS_STAGES_MAX 6
 /* String part that serves as marker for recognizing macrosets and their switch-type by the macros on their dedicated cycle/switch-keys */
-#define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset"
-#define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
-#define MACROSET_NAME_LEN 20
-#define MACROSET_COMMENT_LEN 20
+ #define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset"
+ #define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
+ #define MACROSET_NAME_LEN 20
+ #define MACROSET_COMMENT_LEN 20
 struct macro_fileset_stage_type {
 	char macro__act__cyclic[MACRO_MAXLEN]; // For convenience store each stage's cyclic macro action that loads THE NEXT stage
 	char macro__actbuf__cyclic[MACRO_MAXLEN]; // For convenience also store the above macro__act__cyclic in human-readable format
@@ -10499,7 +10502,7 @@ Chain_Macro:
 						/* Exit mw_fileset menu (back to macro wizard main menu) */
 						continue; }
 #else
-						continue;
+						continue; }
 #endif /* --- mw_fileset --- */
 					}
 
