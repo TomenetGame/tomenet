@@ -5455,8 +5455,8 @@ void macro_clear(void) {
 /* Maximum amount of switchable macrofile-set-stages */
  #define MACROFILESETS_STAGES_MAX 6
 /* String part that serves as marker for recognizing macrosets and their switch-type by the macros on their dedicated cycle/switch-keys */
- #define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sset"
- #define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sset"
+ #define MACROFILESET_MARKER_CYCLIC "Cycling\\sto\\sstage"
+ #define MACROFILESET_MARKER_SWITCH "Switching\\sto\\sstage"
  #define MACROSET_NAME_LEN 20
  #define MACROSET_COMMENT_LEN 20
 struct macro_fileset_stage_type {
