@@ -6846,7 +6846,7 @@ void macroinfo_ascii(int macro_idx, char *macropat, char *fff) {
 
 
 void interact_macros(void) {
-	int i, j = 0, l, l2, n, chain_type, i_stage;
+	int i, j = 0, l, l2, n, chain_type, i_stage, xoffs = 3;
 	char tmp[MACRO_MAXLEN], buf[MACRO_MAXLEN], buf2[MACRO_MAXLEN], *bptr, *b2ptr, chain_macro_buf[MACRO_MAXLEN], choice;
 	bool were_recording = FALSE;
 	bool inkey_msg_old = inkey_msg; //just for cmd_message().. probably redundant and we could just remove the inkey_msg = TRUE at cmd_message() instead of doing these extra checks...
@@ -6887,31 +6887,35 @@ void interact_macros(void) {
 
 
 		/* Selections */
-		l = 2;
-		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
-		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B/\377yA\377B) Save macros to named / global.prf / form-named / class pref file");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yl\377w/\377yL\377w) Load macros from a pref file / load current class-specific pref file");
+		l = 1;
+		Term_putstr(xoffs, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
+		Term_putstr(xoffs, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B/\377yA\377B) Save macros to named / global.prf / form-named / class pref file");
+		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yl\377w/\377yL\377w) Load macros from a pref file / load current class-specific pref file");
 #ifdef ENABLE_MACROSETS
-		Term_putstr(5, l++, -1, TERM_L_BLUE, "(\377yZ\377w) Invoke macro wizard and implicitely choose macro-set creation.");
+		Term_putstr(xoffs, l++, -1, TERM_L_BLUE, "(\377yZ\377w) Invoke macro wizard and implicitely choose macro-set creation.");
 #endif
 		l++;
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yI\377w) Reinitialize all macros     (discards all unsaved macros)");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yG\377w/\377yC\377w/\377yB\377w/\377yU\377w/\377yX\377w) Forget global.prf / <character>.prf / both / most / all");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yt\377w/\377yi\377w) Test a key for an existing macro / list all currently defined macros");
-		Term_putstr(5, l++, -1, TERM_WHITE, "(\377yw\377w) Swap the macro(s) of two keys");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ua\377s) Enter a new macro action manually. Afterwards..");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uh\377s) ..create a hybrid macro     (usually preferable over command/normal)");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uc\377s) ..create a command macro    (most compatible, eg for using / and * key)");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377un\377s) ..create a normal macro     (persists everywhere, even in chat)");
-		//Term_putstr(5, l++, -1, TERM_SLATE, "(\377u4\377s) Create a identity macro  (erases a macro)");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ue\377s) Create an empty macro       (completely disables a key)");
-		//Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s/\377yQ\377w) Enter and create a 'quick & dirty' macro / set preferences"),
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377uq\377s) Enter and create a 'quick & dirty' macro"),
-		//Term_putstr(5, l++, -1, TERM_SLATE, "(\377r\377w/\377yR\377w) Record a macro / set preferences");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377ur\377s) Record a macro");
-		Term_putstr(5, l++, -1, TERM_SLATE, "(\377up\377s) Paste currently shown macro action to chat");
+		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
+		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yI\377w) Reinitialize all macros     (discards all unsaved macros)");
+		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yG\377w/\377yC\377w/\377yB\377w/\377yU\377w/\377yX\377w) Forget global.prf / <character>.prf / both / user-defined / all");
+		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yt\377w/\377yi\377w) Test a key for an existing macro / list all currently defined macros");
+		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yw\377w) Swap the macro(s) of two keys");
+		l++;
+		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377ya\377w) Enter a new macro action manually. Afterwards..");
+		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yh\377w) ..create a hybrid macro     (usually preferable over command/normal)");
+		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yc\377w) ..create a command macro    (most compatible, eg for using / and * key)");
+		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yn\377w) ..create a normal macro     (persists everywhere, even in chat)");
+		//Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377y4\377w) Create a identity macro  (erases a macro)");
+		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377ye\377w) Create an empty macro       (completely disables a key)");
+		//Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yq\377s/\377yQ\377w) Enter and create a 'quick & dirty' macro / set preferences"),
+		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yq\377w) Enter and create a 'quick & dirty' macro"),
+		//Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377r\377w/\377yR\377w) Record a macro / set preferences");
+		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yr\377w) Record a macro");
+		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yp\377w) Paste currently shown macro action to chat");
 		//l++;
+
+		/* y-offset for all command processing/action entering */
+		l = 20;
 
 		/* Describe that action */
 		Term_putstr(0, l + 2, -1, TERM_L_GREEN, "Current action (if any) shown below:");
