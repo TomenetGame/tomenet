@@ -5447,9 +5447,9 @@ void macro_clear(void) {
 
 #ifndef ENABLE_MACROSETS
  /* Still define stuff to recognize macro files made with a set-enabled client */
- #define SETFILEPOSTFIX "-SET"
+ #define SETFILEPOSTFIX "-STAGE"
 #else
- #define SETFILEPOSTFIX "-SET"
+ #define SETFILEPOSTFIX "-STAGE"
 /* Maximum amount of switchable macrofile-sets loaded at the same time */
  #define MACROFILESETS_MAX 7
 /* Maximum amount of switchable macrofile-set-stages */
