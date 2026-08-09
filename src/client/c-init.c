@@ -317,7 +317,7 @@ void initialize_player_pref_files(void) {
 	}
 
 	/* Access the "character" pref file */
-	load_charspec_macros(cname);
+	load_charspec_macros();
 
 	/* Finally give the actual info how to check the tomenet log for details */
 	if (cfg_outdated == 1) cfg_outdated = 2;

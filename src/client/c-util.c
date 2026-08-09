@@ -7678,7 +7678,7 @@ void interact_macros(void) {
 				process_pref_file(buf);
 			}
 			/* Access the "character" pref file */
-			load_charspec_macros(cname);
+			load_charspec_macros();
 
 			macro_processing_exclusive = FALSE;
 			c_msg_print("Reninitialized all macros, omitting 'global.prf'");
@@ -7722,7 +7722,7 @@ void interact_macros(void) {
 			}
 #if 0 /* skip exactly these here */
 			/* Access the "character" pref file */
-			load_charspec_macros(cname);
+			load_charspec_macros();
 #endif
 
 			macro_processing_exclusive = FALSE;
@@ -7769,7 +7769,7 @@ void interact_macros(void) {
 			}
 #if 0 /* skip these here */
 			/* Access the "character" pref file */
-			load_charspec_macros(cname);
+			load_charspec_macros();
 #endif
 
 			macro_processing_exclusive = FALSE;
@@ -7814,7 +7814,7 @@ void interact_macros(void) {
 				process_pref_file(buf);
 			}
 			/* Access the "character" pref file */
-			load_charspec_macros(cname);
+			load_charspec_macros();
 #endif
 
 			macro_processing_exclusive = FALSE;
@@ -7872,7 +7872,7 @@ void interact_macros(void) {
 				process_pref_file(buf);
 			}
 			/* Access the "character" pref file */
-			load_charspec_macros(cname);
+			load_charspec_macros();
 
 
 			macro_processing_exclusive = FALSE;
@@ -12032,13 +12032,7 @@ void options_immediate(bool init) {
 		prt_gold(p_ptr->au);
 		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
 	}
-	if (changed7 != c_cfg.load_form_macros && c_cfg.load_form_macros) {
-		char tmp[MAX_CHARS];
-
-		if (strcmp(c_p_ptr->body_name, "Player")) sprintf(tmp, "%s%c%s.prf", cname, PRF_BODY_SEPARATOR, c_p_ptr->body_name);
-		else sprintf(tmp, "%s.prf", cname);
-		(void)process_pref_file(tmp);
-	}
+	if (changed7 != c_cfg.load_form_macros && c_cfg.load_form_macros) load_charspec_macros();
 	if (changed8 != c_cfg.auto_inscr_off && !c_cfg.auto_inscr_off) apply_auto_inscriptions(-1);
 	if (changed9a != c_cfg.ascii_feats || changed9b != c_cfg.ascii_items || changed9c != c_cfg.ascii_monsters || changed9d != c_cfg.ascii_uniques) Send_redraw(0);
 }

@@ -613,7 +613,7 @@ extern errr process_pref_file(cptr buf);
 extern errr process_pref_file_manual(cptr buf);
 extern errr process_pref_file_aux(char *buf, cptr name, bool quiet);
 extern errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool *outdated);
-extern errr load_charspec_macros(cptr cname);
+extern errr load_charspec_macros(void);
 extern void show_motd(int delay);
 extern void peruse_file(void);
 extern errr my_fgets(FILE *fff, char *buf, huge n);
