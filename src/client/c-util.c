@@ -5441,9 +5441,9 @@ void macro_clear(void) {
    Shoudln't be needed. */
 //#define FORGET_MACRO_VISUALS
 
-#ifdef TEST_CLIENT
+//#ifdef TEST_CLIENT
  #define ENABLE_MACROSETS
-#endif
+//#endif
 
 #ifndef ENABLE_MACROSETS
  /* Still define stuff to recognize macro files made with a set-enabled client */
