@@ -845,7 +845,7 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 	if (isspace(buf[0])) return(0);
 
 	/* Skip comments */
-	if (buf[0] == '#') return(0);
+	if (buf[0] == '#' && buf[1] != ':') return(0);
 
 	/* Require "?:*" format */
 	if (buf[1] != ':') return(1);
@@ -974,9 +974,10 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 	   MAPCHAR:A-Anim1,Rchance1..m%:tile1..m,A-Anim2,Rchance1..n%:tile1..n% etc, or just
 	   MAPCHAR:Rcance1..m%:tile1..m for a non-animated mapping that still picks a random tile out of several choices. */
 
+	switch(buf[0]) {
+
 	/* Process "R:<num>:<a>/<c>" -- attr/char for monster races (this should take precedence over 'r:' mappings),
 	   todo for questors: "R:Q<qidx>C<cnt>:<a>/<c>" syntax based on rmapcnt and rcharidx, requires change to network protocol too. */
-	switch(buf[0]) {
 	case 'R':
 		if (tokenize(buf + 2, 3, zz) == 3) {
 			i = (huge)strtol(zz[0], NULL, 0);
@@ -1366,6 +1367,23 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 			return(0);
 		}
 		break;
+
+	/* Process "#:<str>" -- new in 2026: Just allow printing an arbitrary message on file loading, aka 'loud comment'. */
+	case '#': {
+		char *cp, tmp[1024];
+
+		/* Translate colour codes in the format '{c' */
+		cp = buf;
+		while ((cp = strchr(cp + 1, '{')))
+			if (*(cp + 1) != '{') *cp = '\377'; /* Colour code */
+			else { /* Double '{' becomes just one regular '{' without colour code intention */
+				strcpy(tmp, cp + 1);
+				strcpy(cp, tmp);
+			}
+
+		c_msg_print(buf + 2);
+		return(0); }
+
 	}
 
 	/* Failure */
