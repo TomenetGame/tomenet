@@ -6847,7 +6847,8 @@ void macroinfo_ascii(int macro_idx, char *macropat, char *fff) {
 
 void interact_macros(void) {
 	int i, j = 0, l, l2, n, chain_type, i_stage, xoffs = 3;
-	char tmp[MACRO_MAXLEN], buf[MACRO_MAXLEN], buf2[MACRO_MAXLEN], *bptr, *b2ptr, chain_macro_buf[MACRO_MAXLEN], choice;
+	static char tmp[MACRO_MAXLEN] = { 0 }, buf[MACRO_MAXLEN] = { 0 };
+	char buf2[MACRO_MAXLEN], *bptr, *b2ptr, chain_macro_buf[MACRO_MAXLEN], choice;
 	bool were_recording = FALSE;
 	bool inkey_msg_old = inkey_msg; //just for cmd_message().. probably redundant and we could just remove the inkey_msg = TRUE at cmd_message() instead of doing these extra checks...
 #ifdef ENABLE_MACROSETS
@@ -6888,18 +6889,21 @@ void interact_macros(void) {
 
 		/* Selections */
 		l = 1;
-		Term_putstr(xoffs, l++, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard         *** Recommended ***");
-		Term_putstr(xoffs, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B/\377yA\377B) Save macros to named / global.prf / form-named / class pref file");
-		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yl\377w/\377yL\377w) Load macros from a pref file / load current class-specific pref file");
+		Term_putstr(xoffs, l, -1, TERM_L_BLUE, "(\377yz\377B) Invoke macro wizard   *** Recommended ***");
 #ifdef ENABLE_MACROSETS
-		Term_putstr(xoffs, l++, -1, TERM_L_BLUE, "(\377yZ\377w) Invoke macro wizard and implicitely choose macro-set creation.");
+		Term_putstr(xoffs + 52, l, -1, TERM_L_BLUE, "\377w(\377yZ\377w) Macro-set creation");
 #endif
 		l++;
-		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
+		Term_putstr(xoffs, l++, -1, TERM_L_BLUE, "(\377ys\377B/\377yS\377B/\377yF\377B/\377yA\377B) Save macros to named / global.prf / form-named / class pref file");
+		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yl\377w/\377yL\377w) Load macros from a pref file / load current class-specific pref file");
+		l++;
 		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yI\377w) Reinitialize all macros     (discards all unsaved macros)");
 		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yG\377w/\377yC\377w/\377yB\377w/\377yU\377w/\377yX\377w) Forget global.prf / <character>.prf / both / user-defined / all");
 		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yt\377w/\377yi\377w) Test a key for an existing macro / list all currently defined macros");
+		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yp\377w) Paste currently shown macro action to chat");
 		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yw\377w) Swap the macro(s) of two keys");
+		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
+		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yo\377w) Add an on-loading comment line to a macro file");
 		l++;
 		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377ya\377w) Enter a new macro action manually. Afterwards..");
 		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yh\377w) ..create a hybrid macro     (usually preferable over command/normal)");
@@ -6911,7 +6915,6 @@ void interact_macros(void) {
 		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yq\377w) Enter and create a 'quick & dirty' macro"),
 		//Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377r\377w/\377yR\377w) Record a macro / set preferences");
 		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yr\377w) Record a macro");
-		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yp\377w) Paste currently shown macro action to chat");
 		//l++;
 
 		/* y-offset for all command processing/action entering */
@@ -7276,6 +7279,84 @@ void interact_macros(void) {
 			}
 		}
 #endif
+
+		/* Add a '#:text' style on-loading comment line to a macro file; also view any such lines it already has */
+		else if (i == 'o') {
+			FILE *fp, *fp2;
+			char tmptmp[1024], tmptmp2[1024], buftmp[MACRO_MAXLEN];
+			bool replace = FALSE;
+
+			/* Prompt */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Add on-load comment line to a macro file");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
+
+			/* Ask for a file */
+			/* Use the character name by default */
+			if (!*tmp) sprintf(tmp, "%s.prf", cname);
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Read file, forward to temp file */
+			path_build(tmptmp, 1024, ANGBAND_DIR_USER, tmp);
+			path_build(tmptmp2, 1024, ANGBAND_DIR_USER, format("%s_temp", tmp));
+			if (!my_fexists(tmptmp)) {
+				c_msg_format("\377yError: No such file '%s'.", tmptmp);
+				continue;
+			}
+
+			/* Scan file for comment lines only, print them out */
+			fp = fopen(tmptmp, "r");
+			if (!fp) {
+				c_msg_format("\377yError: Cannot open file '%s'.", tmptmp);
+				continue;
+			}
+			while (fgets(buftmp, MACRO_MAXLEN, fp))
+				if (buftmp[0] == '#' && buftmp[1] == ':') {
+					buftmp[strlen(buftmp) - 1] = 0; //trim trailing \r
+					c_msg_format("\377WFound existing comment:\377w %s", buftmp + 2);
+					replace = TRUE;
+				}
+			fclose(fp);
+
+			/* Re-open files, this time to prepare for translation to strip existing comments and adding a new one */
+			fp = fopen(tmptmp, "r");
+			if (!fp) {
+				c_msg_format("\377yError: Cannot reopen file '%s'.", tmptmp);
+				continue;
+			}
+			fp2 = fopen(tmptmp2, "w");
+			if (!fp2) {
+				fclose(fp);
+				c_msg_format("\377yError: Cannot create file '%s'.", tmptmp2);
+				continue;
+			}
+
+			/* Ask for new comment, hint that old comments will be discarded if confirmed */
+			if (replace) {
+				Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Replace on-load comment line to a macro file");
+				Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Replace comment: ");
+			} else Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Add new comment: ");
+				Term_gotoxy(17, l + 3);
+			if (!askfor_aux(buf, MACRO_MAXLEN - 1, 0)) {
+				fclose(fp);
+				fclose(fp2);
+				continue;
+			}
+
+			/* Translate file again, just copying lines but skipping all comment lines, inserting the new comment line at the very beginning. */
+			if (*buf) fprintf(fp2, "#:%s\n", buf); /* Insert comment at the top */
+			while (fgets(buftmp, MACRO_MAXLEN, fp)) { /* Forward rest of the file */
+				if (buftmp[0] == '#' && buftmp[1] == ':') continue; /* Discard all old comments */
+				fputs(buftmp, fp2);
+			}
+			fclose(fp);
+			fclose(fp2);
+			/* Replace original file with the modified version that has the new comment or got the comment deleted */
+			rename(tmptmp2, tmptmp);
+			if (!*buf) c_msg_print("Comment has been removed from the file.");
+			else c_msg_print("Comment has been set.");
+		}
 
 		/* Create an empty macro */
 		else if (i == 'e') {
@@ -8012,7 +8093,7 @@ Chain_Macro:
 					Term_putstr(6, l++, -1, TERM_L_GREEN, "o\377w/\377GO\377w/\377Gp) Load a macro file. \377w/\377G Modify an option. \377w/\377G Change equipment.");
 					Term_putstr(2, l++, -1, TERM_L_GREEN, "q\377w/\377Gr\377w/\377Gs\377w/\377Gt\377w/\377Gu) Directional running \377w/\377G tunneling \377w/\377G disarming \377w/\377G bashing \377w/\377G closing.");
 #ifdef ENABLE_MACROSETS
-					Term_putstr(8, l++, -1, TERM_L_GREEN, "S)   Create a switchable multi-macrofile set.");
+					Term_putstr(8, l++, -1, TERM_L_GREEN, "S)   Create a switchable multi-macrofile set (same as 'Z' in macro menu).");
 #endif
 
 					while (TRUE) {
