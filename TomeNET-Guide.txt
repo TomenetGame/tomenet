@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 8. August 2026 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 9. August 2026 - written by C. Blue (c_blue@gmx.net)      |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1081,8 +1081,8 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
                         chat except for private or party messages.
         '*Private* mode'
                         The player has used the '/ic *' (or alias /dnd) command
-                        to ignore all chat except for party messages and
-                        private messages from party members.
+                        to ignore all chat except for party messages
+                        and private messages from party members.
         (Note that none of these chat restrictions will prevent you from seeing
         administrative broadcasts or messages - those are always visible.)
 
@@ -1118,7 +1118,7 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
             "Set 'AFK' mode automatically" will set you afk after some
                 minutes of inactivity.
 
-:       type a chat message. To whisper privately, enter <player>:<text>
+:       type a chat message. To chat privately, enter <player>:<text>
         eg:  Johnjohn:hi!  - actually the first few letters of the target
         player's name are enough, as long as it's distinct from anyone else
         who is currently online, like:  Joh:hi!
@@ -6352,6 +6352,9 @@ Also, foul language is filtered by default. If you want to turn that off,
 press  =1  and toggle the client option "censor_swearing". (Requires client
 version newer than 4.4.8a.)
 
+
+Sending private messages:
+-------------------------
 All normal text you type in the chat prompt becomes a global message, visible
 to everyone currently logged on (and possibly on IRC too, see (1.1b) for info).
 However, of course you can also send a private message to someone specific.
@@ -6377,6 +6380,72 @@ Another thing you can do in the chat prompt, aside from typing in an actual
 chat message, is to type in a 'slash command', that are certain commands that
 all begin on a "/", for example:  /afk   or   /ex
 You can see a list of slash commands in (0.2b).
+
+
+Leaving a private note to someone:
+----------------------------------
+To leave someone a note who is offline right now, for them to read it when they
+come online again, use the /note and /notes commands. The next time they log on
+the note will be displayed once (in bright red colour to make it hard to miss).
+Notes that a player received are stored and can be reviewed in the knowledge
+menu via  ~ n  .
+If the target player is currently online, they will actually see the note right
+away and additionally it will be displayed to them once the next time they log
+on. For more details about the note-commands, look them up in (0.2b).
+
+
+More ways of chatting:
+----------------------
+- To emote, use /me command, eg "/me frowns".
+- To say something only players close nearby can hear, use the /say command, or
+  the /sme (or /sayme) command to emote.
+- To whisper, use the /wh (or /whisper) command. Only players standing right
+  next to you can hear it.
+- To shout or scream, use /sho (or /shout or /yell) or /scr (/scream).
+  These will actually reduce sleep of monsters who hear it, and screaming will
+  immediately wake up monsters, and even 'aggravate' monsters in your line of
+  sight (see (5.9) -> scroll of aggravate monsters for the effect details).
+
+
+Chat modes:
+-----------
+After pressing ':' key to enter chat mode, you may press TAB key to switch
+between these four chat modes:
+-normal
+-party chat: All messages are sent exclusively to your own party.
+-level chat: All messages are sent to everyone on your dungeon level.
+-guild chat: All messages are sent to all your fellow guild members (if any).
+
+Note: While TAB cycles forward, you can also press CTRL+U to cycle backwards,
+CTRL+A to switch to 'normal' mode, CTRL+T to switch to 'party' (team) mode,
+CTRL+G for 'guild' mode and CTRL+F for floor mode (current dungeon level, or
+gets converted to a "/say" action if not in a dungeon).
+
+Also you can use the following prefices in the beginning of a chat line,
+to get similar behaviour as in one of the chat modes just for one line:
+!:      Sends the following text to your current party.
+$:      Sends the following text to your current guild.
+#:      Sends the following text to everyone on your dungeon level.
+        Note: While in town this will instead become a /say.
+%:      Sends the following text to yourself (eg for feedback in macros).
+%%:     Sends the following text to yourself, qualifies as 'chat message'.
++:      Sends the following text to the last person who whispered us a private
+        message, so it's sort of a 'reply' function.
+-:      Use this if you are in a specific chat mode but want to send a message
+        as normal chat message, ie global to everyone, without leaving the chat
+        mode for that. Has no effect if you are already in normal chat mode,
+        the message will then just be displayed normally too.
+Example:
+    You are in a party and in normal chat mode, now you press : to enter chat
+    and enter:
+        !:hi team!          It sends "hi team!" to your current party.
+    Now you press : again to enter chat, and press TAB key once, that will turn
+    the prompt light-green and say "Party:" now, to indicate you have switched
+    to party-chat mode. Now you enter:
+        hi people!          It sends "hi people!" again to your current party.
+    Now you press : again to enter chat, and enter:
+        -:hi everyone!      This now sends "hi everyone!" to everyone, not just
+                            your party.
 
 
 Colour codes
@@ -6442,38 +6511,6 @@ And indicating special character status:
                   Morgoth, the Lord of Darkness.
   Red             Player is a ghost (ie dead, maybe ask if he needs help)!
   Dark blue       Not a player but a game administrator.
-
-
-Chat modes:
------------
-After pressing ':' key to enter chat mode, you may press TAB key to switch
-between the three chat modes:
--normal
--party chat: All messages are sent exclusively to your own party.
--level chat: All messages are sent to everyone on your dungeon level.
--guild chat: All messages are sent to all your fellow guild members (if any).
-
-Note: While TAB cycles forward, you can also press CTRL+U to cycle backwards,
-CTRL+A to switch to 'normal' mode, CTRL+T to switch to 'party' (team) mode,
-CTRL+G for 'guild' mode and CTRL+F for floor mode (current dungeon level, or
-gets converted to a "/say" action if not in a dungeon).
-
-Also you can use the following prefices in the beginning of a chat line,
-to get similar behaviour as in one of the chat modes just for one line:
-!:      Sends the following text to your current party.
-$:      Sends the following text to your current guild.
-#:      Sends the following text to everyone on your dungeon level.
-        Note: While in town this will instead become a /say.
-%:      Sends the following text to yourself (eg for feedback in macros).
-%%:     Sends the following text to yourself, qualifies as 'chat message'.
-+:      Sends the following text to the last person who whispered us a private
-        message, so it's sort of a 'reply' function.
-
-Last but not last you can use the following slash commands for chat effects:
-/me     Sends an 'emote' chat message, eg "/me frowns".
-/s      short form of "/say", will say something locally that is only "audible"
-        aka visible to other players that are close to your current location.
-        Eg "/s hello there, so we meet in this place!".
 
 
 Copy/paste from and into chat:
