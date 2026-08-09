@@ -600,7 +600,6 @@ Command keys, Text editing keys, Slash commands.
 
 Command keys
 ------------
-
 Key combinations with CTRL key can be entered in the macro menu by prefixing
 the key with a '^' symbol. For example, a macro to force-stack an item in
 normal key set could be 'K0', but in rogue-like key set (where force-stack
@@ -3707,7 +3706,7 @@ Other well-known rogue-likes are Nethack, Larn, Moria, Angband.
 
 
 (1.2a) Where do I find more information about rogue-like games?
---------------------------------------------------------------
+---------------------------------------------------------------
 Links:
     http://www.thangorodrim.net/
 Newsgroups:
@@ -4666,7 +4665,7 @@ Compilation is straight-forward and similar to Linux:
 
 
 (2.2) Installing sound and music packs
----------------------------------------
+--------------------------------------
 Starting with version 4.4.5, TomeNET features a new SDL-based audio system,
 which provides sound effects and background music.
 
@@ -6772,7 +6771,7 @@ an annoyance etc.
 
 
 (3.4b) Start-up equipment
-------------------------
+-------------------------
 Every new player has some items right from the beginning, in the past those
 came stored in the inventory but nowadays they are immediately equipped.
 As a warrior you will have a chain mail and a weapon, for example a sword.
@@ -7395,7 +7394,7 @@ Hybrid macros don't work in shops.
 
 
 Delete macros:
-----------------
+--------------
 If you accidentally bound a macro to a key which wasn't free, for example
 the key 'r' which is used to read a scroll, you can reset the key by
 -pressing % to invoke the macro menu
@@ -8667,6 +8666,7 @@ deleted and thereby freed up again.
 
 (4) The world
 =============
+
 (4.1) Running, picking up items, fighting
 -----------------------------------------
 To move around, use the number pad keys 1,2,3; 4,6; 7,8,9.
@@ -12413,7 +12413,6 @@ Three time systems are relevant for the players' game experience:
 
 Real time:
 ----------
-
 Special events for example are usually measured in real-time, ie /evinfo
 command will return information that mentions minutes and seconds. This is,
 because event information is 'out-of-game' information that is supposed to
@@ -12432,7 +12431,6 @@ you as a player behind it.
 The in-game day time can be checked with /time or with /ex chat commands
 and runs at about 20x speed of real time and also features day/night change:
 ----------------------------------------------------------------------------
-
 Usually a whole day (day + night, ie full 24h in-game time cycle) will last for
 slightly more than one hour real time.
 The sun will usually rise at around 5am, while night falls at around 9pm, so
@@ -12459,7 +12457,6 @@ even a whole real-time year.
 More technical stuff about 'game turns' and how time for your character's
 actions passes, and actually passes more slowly on deeper dungeon levels:
 -------------------------------------------------------------------------
-
 Before explaining more about them, I'd like to interject that there is a second
 meaning to the term 'turns' in the game, which is used to describe frames of
 the game engine, usually running at 60 fps internally. Instead of just calling
@@ -12641,7 +12638,6 @@ load of heavy items.
 If you're really too heavy and want to operate in watery surroundings though?
 Here are ways to improve your swimming capabilities:
 ----------------------------------------------------
-
 Constitution or being undead (includes mimicked monster forms) will reduce the
 hit point damage, but not the drowning tick frequency.
 Strength and dexterity will randomly reduce the tick frequency but are still no
@@ -13548,7 +13544,7 @@ leaving approx. 400 damage.
 
 
 Global damage cap
-------------------
+-----------------
 Breath damage is capped, the number is given in the corresponding description
 and actual breath damage generally depends on the monster's current hit points.
 
@@ -17847,9 +17843,9 @@ Example:
 You kill a great wyrm of power on the deepest floor of Angband (-3050 ft), so
 floor level is 127 and race level is 85.
 (floor + race) / 2 = (127 + 85) / 2 = 106 (the result is always rounded down).
-Now the higher of the two (floor and race) is 127. The difference of the result
-(106) to 127 is 21. This gets capped at 13 and is the random 'tolerance' for
-each item dropped by the wyrm.
+Now the higher of the two (floor and race) is 127. The difference of the
+result (106) to 127 is 21. This gets capped at 13 and is the random 'tolerance'
+for each item dropped by the wyrm.
 The treasure class of the wyrm is 20% treasure and 80% combat.
 
 Let's look at 3 items it drops:
@@ -20189,14 +20185,14 @@ The simple way to create mixtures - using the slash command "/mix":
 This command has two different ways of specifying ingredients to mix.
 The clou is that you can actually combine both syntaxes as you wish!
 
-(1) With '@Cn' tags the items must be inscribed with, where the numbers 'n' on
+ 1) With '@Cn' tags the items must be inscribed with, where the numbers 'n' on
     the tags of the items are given to the /mix command.
     This is a safe way to craft, as it will be independent on the inventory
     position of the items. You do not need to tediously inscribe the chemicals
     manually, as there is an option 'auto_inscr_server_ch' which is enabled by
     default and will auto-inscribe ingredients you pick up.
 
-(2) by specifying inventory slot letters instead of tag-numbers in the command,
+ 2) by specifying inventory slot letters instead of tag-numbers in the command,
     with lower-case letters refering to items inside an Alchemy Satchel if you
     have one, and upper-case letters refering to items in normal inventory.
     This is a very fast way to craft things on the fly, but of course requires
@@ -20204,8 +20200,8 @@ The clou is that you can actually combine both syntaxes as you wish!
 
 Here are the two syntaxes in detail with examples:
 
-Syntax (1):
------------
+Syntax 1):
+----------
   /mix <tag numbers 'n' of chemicals inscribed '@Cn'> [<'*' to self-activate>]
 This command mixes chemicals and/or self-activates a mixture, which must all be
 inscribed @C<n> where <n> is a numerical tag from 0 to 9.
@@ -20218,8 +20214,8 @@ Tip: Since the @C9 tag is unused, you can inscribe oil flasks this way to
      include them in your numerical mix command, when you want to create blast
      charges via alternative formulas, ie based on ammonia salt and lamp oil.
 
-Syntax (2):
------------
+Syntax 2):
+----------
   /mix <satchel-lower-case / inven-upper-case slot letters> [<'*' activates>]
 Lower-case for alchemy satchel, upper-case for inventory:
 Example:
@@ -22730,7 +22726,7 @@ so you might want to create macros for them.
 
 Further, certain races get additional fixed abilities
 (even if they are not explicitely mentioned in ~7):
------------------------------------------------------
+---------------------------------------------------
 Bats            Feather falling.
 Elves           Resist light.
 Dark-Elves      Resist darkness.
@@ -25826,7 +25822,7 @@ used to be 0%:
 
 
 (7.9) Parties, Iron Teams, guilds
-----------------------------------
+---------------------------------
 Press 'P' to display the party menu.
 Here you can..
 
@@ -26197,7 +26193,7 @@ staff which was fused with the device.
 
 
 (7.11) Parrying and blocking
------------------------------
+----------------------------
 There are a couple of ways to reduce damage taken. One is simply to have high
 armour class (see (6.4) for details), another one is 'Dodging' skill
 (see (7.2) for details).
@@ -27845,7 +27841,7 @@ playing a hellish IDDC-exlusive mode character.
 
 
 (9.3) Golem creation
----------------------
+--------------------
 Players can create golems, mindless animated humanoids that will fight for
 them. As long as the golem is not in their way of moving, monsters won't
 attack golems, but instead the controlling player.
