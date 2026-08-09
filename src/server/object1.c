@@ -8198,7 +8198,7 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 
 	/* --- Gather meta info from the object --- */
 
-	/* Admin-generated items, avoid pointless output. */
+	/* Older non-imprinted items or admin-generated items, avoid pointless output. */
 	if (!o_ptr->find_id) return;
 
 	/* The time stamp can take up a lot of space, making the full line exceed 80 chars :/ */
