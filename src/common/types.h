@@ -4536,7 +4536,7 @@ struct player_type {
 	char warning_technique_melee, warning_technique_ranged;
 	char warning_hungry, warning_autopickup, warning_ranged_autoret;
 	/* note: a sort of "warning_skills" is already implemented, in a different manner */
-	char warning_cloak, warning_macros, warning_numpadmove;
+	char warning_cloak, warning_macros, warning_numpadmove, warning_form_macros;
 	char warning_ammotype, warning_ai_annoy;
 	char warning_fountain, warning_voidjumpgate, warning_staircase, warning_worldmap, warning_dungeon, warning_staircase_oneway, warning_staircase_iddc, warning_staircase_mandos;
 	/* For the 4.4.8.1.0.0 lua update crash bug */

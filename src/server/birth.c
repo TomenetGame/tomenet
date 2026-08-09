@@ -2978,7 +2978,7 @@ void disable_specific_warnings(player_type *p_ptr) {
 		p_ptr->warning_autopickup = PY_MAX_LEVEL;
 		p_ptr->warning_ranged_autoret = 1;
 		p_ptr->warning_cloak = 1;
-		p_ptr->warning_macros = 1;
+		p_ptr->warning_macros = p_ptr->warning_form_macros = 1;
 		p_ptr->warning_numpadmove = 1;
 		p_ptr->warning_ammotype = 1;
 		p_ptr->warning_ai_annoy = 1;
@@ -3208,7 +3208,7 @@ void disable_lowlevel_warnings(player_type *p_ptr) {
 		p_ptr->warning_rest = WARNING_REST_TIMES;
 #endif
 		p_ptr->warning_hungry = 1;
-		p_ptr->warning_macros = 1;
+		p_ptr->warning_macros = p_ptr->warning_form_macros = 1;
 		p_ptr->warning_edmt = 1;
 		p_ptr->warning_id = 1;
 		p_ptr->warning_fill = 1;

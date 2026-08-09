@@ -6795,9 +6795,17 @@ int Send_char_info(int Ind, int race, int class, int trait, int sex, u32b mode, 
 
 int Send_various(int Ind, int hgt, int wgt, int age, int sc, cptr body) {
 	connection_t *connp = Conn[Players[Ind]->conn], *connp2;
-	player_type *p_ptr2 = NULL;
+	player_type *p_ptr2 = NULL, *p_ptr = Players[Ind];
 
-	if (Players[Ind]->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
+	/* use 'body' transmission for warning_form_macros */
+	if (*body && strcmp(body, "Player") && !p_ptr->warning_form_macros) {
+		/* unfortunately on server-side we don't know whether the player already created a form-specific file or not (compare LOCAL_warning_form_macros) */
+		p_ptr->warning_form_macros = 1;
+		msg_print(Ind, "\374\377yHINT: You can create monster-form-specific macro sets by saving them in the");
+		msg_print(Ind, "\374\377y      macro menu ('\377o%\377y' key) via '\377oF\377y' key while in a specific monster form.");
+	}
+
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(0);
 	if (get_esp_link(Ind, LINKF_VIEW, &p_ptr2)) {
 		connp2 = Conn[p_ptr2->conn];
 		Packet_printf(&connp2->c, "%c%hu%hu%hu%hu%s", PKT_VARIOUS, hgt, wgt, age, sc, body);
@@ -6806,7 +6814,7 @@ int Send_various(int Ind, int hgt, int wgt, int age, int sc, cptr body) {
 	if (!BIT(connp->state, CONN_PLAYING | CONN_READY)) {
 		errno = 0;
 		plog(format("Connection not ready for various (%d.%d.%d)",
-			Ind, connp->state, connp->id));
+		    Ind, connp->state, connp->id));
 		return(0);
 	}
 	return(Packet_printf(&connp->c, "%c%hu%hu%hu%hu%s", PKT_VARIOUS, hgt, wgt, age, sc, body));

@@ -1539,31 +1539,39 @@ errr process_pref_file_manual(cptr name) {
 /* Wrapper to try and load both, the character name based macros
  * and the character name + monster form specific macros (if form-specific macros are disabled).
  * Returns 0 if no error occurred, process_pref_file() return codes otherwise. */
+//#define LOCAL_warning_form_macros /* Produce a purely client-side 'warning_form_macros'? Added a server-side version instead, so leave this commented out. */
 errr load_charspec_macros(void) {
 	char tmp[MAX_CHARS];
-	errr error1, error2;
+	errr error1;
+#ifdef LOCAL_warning_form_macros
+	errr error2;
 
 	static bool warning_form_macros = TRUE;
 	static char warning_charname[CNAME_LEN] = { 0 };
+#endif
 
 
 	/* Character name first */
 	sprintf(tmp, "%s.prf", cname);
 	error1 = process_pref_file(tmp);
 
+#ifdef LOCAL_warning_form_macros
 	/* Reset the monster-form-macros warning on character change */
 	if (!*warning_charname) strcpy(warning_charname, cname);
 	else if (strcmp(warning_charname, cname)) {
 		warning_form_macros = TRUE;
 		strcpy(warning_charname, cname);
 	}
+#endif
 
 	/* Then, if in a monster form, form-specific macros for that charactername^form combo */
 	if (c_cfg.load_form_macros && c_p_ptr->body_name[0] && strcmp(c_p_ptr->body_name, "Player")) {
 		sprintf(tmp, "%s%c%s.prf", cname, PRF_BODY_SEPARATOR, c_p_ptr->body_name);
+#ifndef LOCAL_warning_form_macros
+		process_pref_file(tmp);
+#else
 		error2 = process_pref_file(tmp);
 		/* ^ File exists or not? Doesn't matter, but we use it for a client-side warning to use form-macros :) */
-
 		/* Warn once per character, if newbie_hints are enabled and we are below max_plv 15 */
 		if (warning_form_macros) {
 			/* error -1 means file not found - the warning gets disabled once the player apparently created a form-specific file */
@@ -1574,6 +1582,7 @@ errr load_charspec_macros(void) {
 				c_msg_print("\374\377y      macro menu ('\377o%\377y' key) via '\377oF\377y' key while in a specific monster form.");
 			}
 		}
+#endif
 	}
 
 	return(error1);
