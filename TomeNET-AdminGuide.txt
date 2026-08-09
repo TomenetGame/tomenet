@@ -187,6 +187,8 @@ immediately, mainly for the file 'lib/scpt/custom.lua' (compare (4)).
                 This will reset a quest ('*' for all quests); use eg in case a
                 questor disappeared or some other problem broke a quest.
 
+/en             Enlightens the whole map (and detects traps nearby).
+
 
 
 (0.4) LUA commands
