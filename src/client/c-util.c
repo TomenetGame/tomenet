@@ -6849,6 +6849,7 @@ void interact_macros(void) {
 	int i, j = 0, l, l2, n, chain_type, i_stage, xoffs = 3;
 	static char tmp[MACRO_MAXLEN] = { 0 }, buf[MACRO_MAXLEN] = { 0 };
 	char buf2[MACRO_MAXLEN], *bptr, *b2ptr, chain_macro_buf[MACRO_MAXLEN], choice;
+	char localtmpact[MACRO_MAXLEN], localtmpacttxt[MACRO_MAXLEN];
 	bool were_recording = FALSE;
 	bool inkey_msg_old = inkey_msg; //just for cmd_message().. probably redundant and we could just remove the inkey_msg = TRUE at cmd_message() instead of doing these extra checks...
 #ifdef ENABLE_MACROSETS
@@ -9350,13 +9351,13 @@ Chain_Macro:
 							/* Also protect macro file set switching keys! */
 							for (n = 0; n < macro__num; n++) {
 								if (streq(macro__pat[n], buf)) {
-									strncpy(macro__buf, macro__act[n], MACRO_MAXLEN);
-									macro__buf[MACRO_MAXLEN - 1] = '\0';
-									ascii_to_text(tmp, macro__buf);
-									if (!*tmp) continue;
+									strncpy(localtmpact, macro__act[n], MACRO_MAXLEN);
+									localtmpact[MACRO_MAXLEN - 1] = '\0';
+									ascii_to_text(localtmpacttxt, localtmpact);
+									if (!*localtmpacttxt) continue;
 
 									/* That key holds a macro, check whether it is a set key macro */
-									if (strstr(tmp, SETFILEPOSTFIX)) {
+									if (strstr(localtmpacttxt, SETFILEPOSTFIX)) {
 										c_msg_print("\377yThat key already holds a macro-set switching key. Please try again.");
 										n = -1; //hack: continue-marker
 										break;
@@ -9503,13 +9504,13 @@ Chain_Macro:
 							/* Also protect macro file set switching keys! */
 							for (n = 0; n < macro__num; n++) {
 								if (streq(macro__pat[n], buf)) {
-									strncpy(macro__buf, macro__act[n], MACRO_MAXLEN);
-									macro__buf[MACRO_MAXLEN - 1] = '\0';
-									ascii_to_text(tmp, macro__buf);
-									if (!*tmp) continue;
+									strncpy(localtmpact, macro__act[n], MACRO_MAXLEN);
+									localtmpact[MACRO_MAXLEN - 1] = '\0';
+									ascii_to_text(localtmpacttxt, localtmpact);
+									if (!*localtmpacttxt) continue;
 
 									/* That key holds a macro, check whether it is a set key macro */
-									if (strstr(tmp, SETFILEPOSTFIX)) {
+									if (strstr(localtmpacttxt, SETFILEPOSTFIX)) {
 										c_msg_print("\377yThat key already holds a macro-set switching key. Please try again.");
 										n = -1; //hack: continue-marker
 										break;
@@ -11239,13 +11240,13 @@ Chain_Macro:
 						/* Also protect macro file set switching keys! */
 						for (n = 0; n < macro__num; n++) {
 							if (streq(macro__pat[n], buf)) {
-								strncpy(macro__buf, macro__act[n], MACRO_MAXLEN);
-								macro__buf[MACRO_MAXLEN - 1] = '\0';
-								ascii_to_text(tmp, macro__buf);
-								if (!*tmp) continue;
+								strncpy(localtmpact, macro__act[n], MACRO_MAXLEN);
+								localtmpact[MACRO_MAXLEN - 1] = '\0';
+								ascii_to_text(localtmpacttxt, localtmpact);
+								if (!*localtmpacttxt) continue;
 
 								/* That key holds a macro, check whether it is a set key macro */
-								if (strstr(tmp, SETFILEPOSTFIX)) {
+								if (strstr(localtmpacttxt, SETFILEPOSTFIX)) {
 									c_msg_print("\377yThat key already holds a macro-set switching key. Please try again.");
 									n = -1; //hack: continue-marker
 									break;
