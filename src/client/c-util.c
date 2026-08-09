@@ -10583,6 +10583,8 @@ Chain_Macro:
 								/* Write all active macros to active set/stage: */
 								sprintf(tmpbuf, "%s%s%d.prf", fileset[fileset_selected].basefilename, SETFILEPOSTFIX, fileset_stage_selected + 1);
 								(void)macro_dump(tmpbuf);
+								/* File exists now */
+								fileset[fileset_selected].stage[fileset_stage_selected].stage_file_exists = TRUE;
 								break;
 							}
 
