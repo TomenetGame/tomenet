@@ -7283,7 +7283,7 @@ void interact_macros(void) {
 		/* Add a '#:text' style on-loading comment line to a macro file; also view any such lines it already has */
 		else if (i == 'o') {
 			FILE *fp, *fp2;
-			char tmptmp[1024], tmptmp2[1024], buftmp[MACRO_MAXLEN];
+			char tmptmp[1024], tmptmp2[1024], buftmp[MACRO_MAXLEN], ch;
 			bool replace = FALSE;
 
 			/* Prompt */
@@ -7314,7 +7314,10 @@ void interact_macros(void) {
 			while (fgets(buftmp, MACRO_MAXLEN, fp))
 				if (buftmp[0] == '#' && buftmp[1] == ':') {
 					buftmp[strlen(buftmp) - 1] = 0; //trim trailing \r
-					c_msg_format("\377WFound existing comment:\377w %s", buftmp + 2);
+					if (*(buftmp + 2) == '{' && *(buftmp + 3) == '+')
+						c_msg_format("\377WFound existing chat comment:\377w %s", buftmp + 4);
+					else
+						c_msg_format("\377WFound existing comment:\377w %s", buftmp + 2);
 					replace = TRUE;
 				}
 			fclose(fp);
@@ -7344,8 +7347,18 @@ void interact_macros(void) {
 				continue;
 			}
 
-			/* Translate file again, just copying lines but skipping all comment lines, inserting the new comment line at the very beginning. */
-			if (*buf) fprintf(fp2, "#:%s\n", buf); /* Insert comment at the top */
+			/* Insert the new comment line at the very beginning. */
+			if (*buf) {
+				Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Make the comment a chat message (otherwise a normal message)? (y/N) ");
+				//Term_gotoxy(68, l + 3);
+				ch = inkey();
+
+				/* Insert comment at the top */
+				if (ch == 'y' || ch == 'Y') fprintf(fp2, "#:{+%s\n", buf); /* ..as chat message */
+				else fprintf(fp2, "#:%s\n", buf); /* ..as normal message */
+			}
+
+			/* Translate file again, just copying lines but skipping all comment lines. */
 			while (fgets(buftmp, MACRO_MAXLEN, fp)) { /* Forward rest of the file */
 				if (buftmp[0] == '#' && buftmp[1] == ':') continue; /* Discard all old comments */
 				fputs(buftmp, fp2);

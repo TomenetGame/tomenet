@@ -1370,10 +1370,15 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 
 	/* Process "#:<str>" -- new in 2026: Just allow printing an arbitrary message on file loading, aka 'loud comment'. */
 	case '#': {
-		char *cp, tmp[1024];
+		char *cp = buf, tmp[1024];
+		bool chat = FALSE;
 
+		/* Translate '{+' prefix to '\375' aka chat-window message instead of normal message */
+		if (*(cp + 2) == '{' && *(cp + 3) == '+') {
+			cp += 3;
+			chat = TRUE;
+		}
 		/* Translate colour codes in the format '{c' */
-		cp = buf;
 		while ((cp = strchr(cp + 1, '{')))
 			if (*(cp + 1) != '{') *cp = '\377'; /* Colour code */
 			else { /* Double '{' becomes just one regular '{' without colour code intention */
@@ -1381,7 +1386,8 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 				strcpy(cp, tmp);
 			}
 
-		c_msg_print(buf + 2);
+		if (chat) c_msg_format("\375%s", buf + 4); /* Treat as chat message */
+		else c_msg_print(buf + 2); /* Treat as normal message */
 		return(0); }
 
 	}
