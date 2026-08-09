@@ -2960,6 +2960,8 @@ To make the game parse an inscription as regexp, prefix it with a '$', eg
 If you use both '!' and '$', put the '!' first, eg: "!$drag.*mail".
 Regexps are always parsed case-insensitively.
 
+Auto-inscription loading order
+------------------------------
 Auto-inscription files can be saved and will be loaded automatically in a
 similar manner as macro files, if the filename matches your race, trait,
 class or character name (compare (3.6), 'Loading macros automatically').
@@ -7347,15 +7349,16 @@ graphics-<dimensions>.prf OR font-<dimensions>.prf
                              specified system)
 user-<operating system>.prf (loaded if under the specific operating system)
 
-These files can be used for saving your macros to without problems:
--------------------------------------------------------------------
+These files can be used for saving your macros to without problems,
+macro loading order is from top (first) to bottom (last):
+---------------------------------------------------------
 'global.prf' (is always loaded for any character the player logs in with.
                be sure to use all lower-case letters, not 'Global.prf'!)
 <race>.prf (for the specific race)
 <trait>.prf (for the specific trait, particularly useful for Maiar)
 <class>.prf (for the specific class)
-<character name>^<form name>.prf (for that character and its current form)
 <character name>.prf (for the specific character the player logged in with)
+<character name>^<form name>.prf (for that character and its current form)
 
 It is recommended to use only race/trait/class/character/character+form
 preference files for storing your macros.

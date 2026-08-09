@@ -1512,11 +1512,12 @@ errr load_charspec_macros(cptr cname) {
 	char tmp[MAX_CHARS];
 	errr error1;
 
+	/* Character name first */
 	sprintf(tmp, "%s.prf", cname);
 	error1 = process_pref_file(tmp);
 
+	/* Then, if in a monster form, form-specific macros for that charactername^form combo */
 	if (c_cfg.load_form_macros && strcmp(c_p_ptr->body_name, "Player")) {
-
 		sprintf(tmp, "%s%c%s.prf", cname, PRF_BODY_SEPARATOR, c_p_ptr->body_name);
 		(void)process_pref_file(tmp);
 	}
