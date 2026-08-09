@@ -3772,8 +3772,7 @@ bool make_attack_spell(int Ind, int m_idx) {
 		    || (p_ptr->mindboost && magik(p_ptr->mindboost_power))
 		    || (p_ptr->pclass == CLASS_MINDCRAFTER && magik(20)))
 			msg_print(Ind, "You resist the effects!");
-		else if (lose_all_info(Ind))
-			msg_print(Ind, "Your memories fade away.");
+		else if (lose_all_info(Ind)) msg_print(Ind, "Your memories fade away.");
 		break;
 
 	/* RF6_XXX6X6 */
@@ -6013,8 +6012,7 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		    || (p_ptr->mindboost && magik(p_ptr->mindboost_power))
 		    || (p_ptr->pclass == CLASS_MINDCRAFTER && magik(20)))
 			msg_print(Ind, "You resist the effects!");
-		else if (lose_all_info(Ind))
-			msg_print(Ind, "Your memories fade away.");
+		else if (lose_all_info(Ind)) msg_print(Ind, "Your memories fade away.");
 		break;
 
 	/* RF6_XXX6X6 */

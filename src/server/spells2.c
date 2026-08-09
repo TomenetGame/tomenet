@@ -1741,12 +1741,6 @@ bool lose_all_info(int Ind) {
 #endif
 
 	if (safe_area(Ind)) return(TRUE);
-	if (p_ptr->auto_id) {
-		/* Mega-Hack -- Forget the map */
-		wiz_dark(Ind);
-
-		return(TRUE); /* True, as we notice the map-darkening, except on unmappable floors, pft */
-	}
 
 	/* Forget info about objects */
 	i = 0;
@@ -1792,11 +1786,6 @@ bool lose_all_info(int Ind) {
 		if (!o_ptr->k_idx) continue;
 #endif
 
-#if 0 /* prob: Cannot *id* items that don't have hidden powers, and why should *id*ing help anyway */
-		/* Allow "protection" by the MENTAL flag */
-		if (o_ptr->ident & ID_MENTAL) continue;
-#endif
-
 		/* Remove "default inscriptions" */
 		if (o_ptr->note && (o_ptr->ident & ID_SENSE)) {
 			note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
@@ -1810,11 +1799,14 @@ bool lose_all_info(int Ind) {
 			note_toggle_empty(o_ptr, FALSE);
 		}
 
-		/* Hack -- Clear the "known" flag */
-		o_ptr->ident &= ~ID_KNOWN;
+		if (!p_ptr->auto_id) {
+			/* Hack -- Clear the "known" flag */
+			o_ptr->ident &= ~ID_KNOWN;
 
-		/* Hack -- Clear the "felt" flag */
-		o_ptr->ident &= ~(ID_SENSE | ID_SENSE_HEAVY);
+			/* Hack -- Clear the "felt" flag */
+			o_ptr->ident &= ~(ID_SENSE | ID_SENSE_HEAVY);
+		}
+		o_ptr->ident &= ~ID_MENTAL;
 	}
 
 	/* Recalculate boni */
