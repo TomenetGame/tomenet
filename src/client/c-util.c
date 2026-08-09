@@ -6050,7 +6050,7 @@ void macrofileset_rebuild_keys(int k) {
 		sprintf(fs->stage[f].macro__actbuf__cyclic,
 		    fs->macro__actbuf__cyclic_fmt, n + 1, fs->stages, n + 1);
 		/* Set cyclic macro action, machine format converted from human-readable format */
-		text_to_ascii(fs->stage[n].macro__act__cyclic,
+		text_to_ascii(fs->stage[f].macro__act__cyclic,
 		    fs->stage[f].macro__actbuf__cyclic);
 
 		/* Set free-switch macro action, human-readable format */
