@@ -2693,6 +2693,7 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 			init_search_type = 2;
 			strcpy(init_search_string, "Adventure modules");
 		} else if (my_strcasestr(buf, "guild") && my_strcasestr(buf, "hou")) strcpy(init_search_string, "Guild Halls");
+		else if (!strcasecmp("note", buf) || !strcasecmp("notes", buf)) strcpy(init_search_string, "/note");
 
 		/* clean up */
 		buf[0] = 0;
