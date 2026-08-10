@@ -3660,7 +3660,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 	bool in_iddc = in_irondeepdive(wpos);
  #endif
 #endif
-	bool no_specials = in_sector00(wpos);
+	bool no_specials = in_sector00(wpos), torched = FALSE;
 
 	int cfeat, web_power = (fibre_power * 2 + 1) / 3;
 	u32b cinfo, cinfo2;
@@ -3692,6 +3692,12 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 	cinfo2 = c_ptr->info2;
 	f_ptr = &f_info[cfeat];
 
+	/* Hack for webs: Fire helps greatly */
+	if (web_power < 50 && p_ptr->inventory[INVEN_LITE].tval == TV_LITE &&
+	    (p_ptr->inventory[INVEN_LITE].sval == SV_LITE_TORCH || p_ptr->inventory[INVEN_LITE].sval == SV_LITE_TORCH_EVER)) {
+		web_power = 50;
+		torched = TRUE;
+	}
 
 	/* find highest rune skill to determine our rune-proficiency */
 	if (Ind && !quiet_borer) {
@@ -4453,11 +4459,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		/* Is the mimicked feat un-tunnelable? */
 		if (!(f_info[featm].flags1 & FF1_TUNNELABLE) ||
 		    (f_info[featm].flags1 & FF1_PERMANENT)) {
-			if (Ind && !quiet_full) {
-				/* Message */
-				msg_print(Ind, f_text + f_info[featm].tunnel); 
-				p_ptr->energy -= level_speed(wpos) / 2;
-			}
+			if (Ind && !quiet_full) msg_print(Ind, f_text + f_info[featm].tunnel);
 			return;
 		}
 
@@ -4471,10 +4473,6 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 		case FEAT_WEB:
 			if (power < web_power) power = web_power;
 			diff = 100;
-			/* Hack for webs: Fire helps greatly */
-			if (power < 50 && p_ptr->inventory[INVEN_LITE].tval == TV_LITE &&
-			    (p_ptr->inventory[INVEN_LITE].sval == SV_LITE_TORCH || p_ptr->inventory[INVEN_LITE].sval == SV_LITE_TORCH_EVER))
-				power = 50;
 			break;
 		case FEAT_RUBBLE:
 			diff = 200;
@@ -4658,8 +4656,6 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 	}
 	/* Spider Webs */
 	else if (cfeat == FEAT_WEB) {
-		bool torched = FALSE;
-
 		*no_quake = TRUE;
 
 		/* Tunnel - hack: swords/axes help similarly as for trees/bushes/ivy */
@@ -4667,13 +4663,7 @@ void do_cmd_tunnel_aux(int Ind, struct worldpos *wpos, int x, int y, int power, 
 			if (o_ptr->sval == SV_SHOVEL || o_ptr->sval == SV_MATTOCK) power >>= 2;
 			else power >>= 3;
 		}
-
-		/* Hack for webs: Fire helps greatly */
-		if (power < 50 && p_ptr->inventory[INVEN_LITE].tval == TV_LITE &&
-		    (p_ptr->inventory[INVEN_LITE].sval == SV_LITE_TORCH || p_ptr->inventory[INVEN_LITE].sval == SV_LITE_TORCH_EVER)) {
-			power = 50;
-			torched = TRUE;
-		}
+		if (web_power < power) torched = FALSE;
 
 		if ((((power > web_power) ? power : web_power) > rand_int(100)) && twall(Ind, wpos, y, x, FEAT_DIRT)) {
 			if (Ind && !quiet_full && !quiet_borer) {
