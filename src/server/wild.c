@@ -2357,7 +2357,7 @@ struct terrain_type {
 
 /* Determine terrain level from terrain type, town radius and town level. */
 int terrain_level(int type, int radius, int town_level, bool is_night) {
-	int town_add = radius / 2 + town_level / 3, type_lev = 1, daynight_mul10 = 1;
+	int town_add = radius / 2 + town_level / 3, type_lev = 1, daynight_mul10 = 10;
 
 	switch (type) {
 	/* wasteland */
