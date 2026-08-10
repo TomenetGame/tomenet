@@ -8266,9 +8266,9 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 			FREE(m_ptr->r_ptr, monster_race);
 			WIPE(m_ptr, monster_type);
 			/* Forge source diz */
-			sprintf(source_acttime, "dropped%s", hr_time);
 			sprintf(source_from, "by %s", m_name);
-		}
+		} else strcpy(source_from, "by a monster");
+		sprintf(source_acttime, "dropped%s", hr_time);
 	}
 
 	/* Last ditch effort - was it bought from a shop? */
