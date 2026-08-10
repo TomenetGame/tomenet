@@ -8263,7 +8263,7 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 			m_ptr->ego = o_ptr->find_reidx;
 			monster_desc(0, m_name, m_idx, 0x88);
 			/* Delete it again 'manually' */
-			FREE(m_ptr->r_ptr, monster_race);
+			//FREE(m_ptr->r_ptr, monster_race); //redundant, as we don't set it
 			WIPE(m_ptr, monster_type);
 			/* Forge source diz */
 			sprintf(source_from, "by %s", m_name);
