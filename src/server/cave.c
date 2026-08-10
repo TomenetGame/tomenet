@@ -948,11 +948,19 @@ int getlevel(struct worldpos *wpos) {
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 
 	if (wpos->wz == 0) {
+#if 0 /* this ignores terrain types */
 		/* ground level */
-#ifdef WILD_LEVEL_DEPENDS_ON_TOWN
+ #ifdef WILD_LEVEL_DEPENDS_ON_TOWN
 		return(w_ptr->radius + w_ptr->town_lev / 3);
-#else
+ #else
 		return(w_ptr->radius);
+ #endif
+#else /* this uses terrain type specific monst_lev values, same as wilderness_gen_hack() does */
+		/* if not already set, determine the type of terrain -- paranoia or not? */
+		if (w_ptr->type == WILD_UNDEFINED) w_ptr->type = determine_wilderness_type(wpos);
+
+		// implies WILD_LEVEL_DEPENDS_ON_TOWN as terrain_level uses town level already implicitely
+		return(terrain_level(w_ptr->type, w_ptr->radius, w_ptr->town_lev));
 #endif
 	} else {
 		struct dungeon_type *d_ptr;

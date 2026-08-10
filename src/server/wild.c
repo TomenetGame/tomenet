@@ -772,10 +772,11 @@ void wild_add_monster(struct worldpos *wpos) {
 	/* Don't spawn during highlander tournament or global events in general (ancient D vs lvl 10 is silyl) */
 	if (sector000separation && in_sector000(wpos)) return;
 
-	/* reset the monster sorting function */
+	/* reset the monster sorting function, sets get_mon_num_hook to wild_monst_aux_<sector terrain type> at this wpos */
 	set_mon_num_hook_wild(wpos);
 
-	/* find a legal, unoccupied space */
+	/* find a legal, unoccupied space
+	   -- however, TODO: use creature_can_enter2() instead so monsters could also spawn on mountains if they can pass those etc! */
 	do {
 		monst_x = rand_int(MAX_WID);
 		monst_y = rand_int(MAX_HGT);
@@ -789,12 +790,14 @@ void wild_add_monster(struct worldpos *wpos) {
 		return;
 	}
 
-	/* Set the second hook according to the terrain type */
+	/* Set the second hook according to the very target feat's terrain type. */
+	 // TODO: this is atm only a 3-way distinction: water/lava+fire/other ground. TODO: use creature_can_enter2() instead!
 	set_mon_num2_hook(zcave[monst_y][monst_x].feat);
 
+	/* Sets probabilities for town distance vs mob types (animals, humans, humanoids), TODO: Should also use day/night to prefer wolves or birds etc */
 	get_mon_num_prep_wild(towndist(wpos->wx, wpos->wy, NULL), l_ptr ? l_ptr->uniques_killed : NULL);
 
-	/* get the monster */
+	/* get the monster fitting the level - note that monster_level was already set to terrain.monst_lev via wild_gen_nack(), our parent caller */
 	r_idx = get_mon_num(monster_level, monster_level);
 
 	/* place the monster */
@@ -2332,7 +2335,6 @@ int determine_wilderness_type(struct worldpos *wpos) {
 	return(w_ptr->type);
 }
 
-
 typedef struct terrain_type terrain_type;
 struct terrain_type {
 	int type;
@@ -2353,11 +2355,52 @@ struct terrain_type {
 	int monst_lev;
 };
 
+/* Determine terrain level from terrain type, town radius and town level. */
+int terrain_level(int type, int radius, int town_level) {
+	int town_add = radius / 2 + town_level / 3;
 
-/* determines terrain composition. seperated from gen_wilderness_aux for bleed functions.*/
-static void init_terrain(terrain_type *t_ptr, int radius) {
+	switch (type) {
+	/* wasteland */
+	case WILD_VOLCANO: return(20 + town_add);
+	case WILD_MOUNTAIN: return(20 + town_add);
+	case WILD_WASTELAND: return(20 + town_add);
+	case WILD_DESERT: return(10 + town_add);
+	case WILD_ICE: return(20 + town_add);
+	/*  dense forest */
+	case WILD_DENSEFOREST:
+		/* you don't want to go into an evil forst at night */
+		if (IS_NIGHT) return((15 + town_add) + 10);
+		return(15 + town_add);
+	/*  normal forest */
+	case WILD_FOREST:
+		if (IS_NIGHT) return((5 + town_add) + 10);
+		return(5 + town_add);
+	/* swamp */
+	case WILD_SWAMP:
+		/* you really don't want to go into swamps at night */
+		if (IS_NIGHT) return((12 + town_add) * 2);
+		return(12 + town_add);
+	/* water */
+	case WILD_OCEAN: //le krakenino?
+		if (IS_NIGHT) return((10 + town_add) * 2);
+		return(10 + town_add);
+	case WILD_RIVER:
+	case WILD_LAKE:
+		return(1 + town_add);
+	/* grassland / paranoia */
+	default: return(1 + town_add);
+	}
+}
+
+
+/* Determines terrain composition. seperated from gen_wilderness_aux for bleed functions.
+   If radius is -1, then radius and town_level are not used and the monst_lev is not set anew. */
+static void init_terrain(terrain_type *t_ptr, int radius, int town_level) {
 	/* init all at zero */
 	*t_ptr = (terrain_type) {t_ptr->type,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0};
+
+	/* Set level already via helper function */
+	if (radius != -1) t_ptr->monst_lev = terrain_level(t_ptr->type, radius, town_level);
 
 	switch (t_ptr->type) {
 	/* wasteland */
@@ -2374,7 +2417,6 @@ static void init_terrain(terrain_type *t_ptr, int radius) {
 		t_ptr->lava = rand_int(150) + 800;
 #endif
 		t_ptr->hotspot = rand_int(15) + 4;
-		t_ptr->monst_lev = 20 + (radius / 2);
 		break;
 	case WILD_MOUNTAIN:
 		t_ptr->grass = rand_int(100);
@@ -2389,7 +2431,6 @@ static void init_terrain(terrain_type *t_ptr, int radius) {
 		t_ptr->lava = rand_int(150) + 200;
 #endif
 		t_ptr->hotspot = rand_int(15) + 4;
-		t_ptr->monst_lev = 20 + (radius / 2);
 		break;
 	case WILD_WASTELAND:
 		t_ptr->grass = rand_int(100);
@@ -2398,19 +2439,16 @@ static void init_terrain(terrain_type *t_ptr, int radius) {
 #endif
 		t_ptr->deadtree = rand_int(4);
 		t_ptr->hotspot = rand_int(15) + 4;
-		t_ptr->monst_lev = 20 + (radius / 2);
 		break;
 	case WILD_DESERT:
 		t_ptr->sand = rand_int(10) + 990;
 		t_ptr->mountain = rand_int(1);
 		t_ptr->hotspot = rand_int(2);
-		t_ptr->monst_lev = 10 + (radius / 2);
 		break;
 	case WILD_ICE:
 		t_ptr->ice = 1000;
 		t_ptr->mountain = rand_int(5);
 		t_ptr->hotspot = rand_int(4) + 2;
-		t_ptr->monst_lev = 20 + (radius / 2);
 		break;
 	/*  dense forest */
 	case WILD_DENSEFOREST:
@@ -2420,9 +2458,6 @@ static void init_terrain(terrain_type *t_ptr, int radius) {
 		t_ptr->water = rand_int(15);
 		t_ptr->dwelling = 8;
 		t_ptr->hotspot = rand_int(15) + 4;
-		t_ptr->monst_lev = 15 + (radius / 2);
-		/* you don't want to go into an evil forst at night */
-		if (IS_NIGHT) t_ptr->monst_lev += 10;
 		break;
 	/*  normal forest */
 	case WILD_FOREST:
@@ -2432,7 +2467,6 @@ static void init_terrain(terrain_type *t_ptr, int radius) {
 		/*t_ptr->mud = rand_int(5);*/
 		t_ptr->dwelling = 37;
 		t_ptr->hotspot = rand_int(rand_int(10));
-		t_ptr->monst_lev = 5 + (radius / 2);
 		break;
 	/* swamp */
 	case WILD_SWAMP:
@@ -2442,20 +2476,16 @@ static void init_terrain(terrain_type *t_ptr, int radius) {
 		/*t_ptr->mud = rand_int(100);*/
 		t_ptr->dwelling = 8;
 		t_ptr->hotspot = rand_int(15) + 4;
-		t_ptr->monst_lev = 12 + (radius / 2);
-		/* you really don't want to go into swamps at night */
-		if (IS_NIGHT) t_ptr->monst_lev *= 2;
 		break;
-	/* lake */
-	case WILD_RIVER:
+	/* water */
 	case WILD_OCEAN:
+	case WILD_RIVER:
 	case WILD_LAKE:
 		t_ptr->grass = rand_int(900);
 		t_ptr->tree = rand_int(400);
 		t_ptr->water = rand_int(4) + 996;
 		t_ptr->dwelling = 25;
 		t_ptr->hotspot = rand_int(15) + 4;
-		t_ptr->monst_lev = 1 + (radius / 2);
 		break;
 	/* grassland / paranoia */
 	default:
@@ -2467,16 +2497,11 @@ static void init_terrain(terrain_type *t_ptr, int radius) {
 		t_ptr->water = rand_int(10);
 		t_ptr->dwelling = 100;
 		t_ptr->hotspot = rand_int(rand_int(6));
-		t_ptr->monst_lev = 1 + (radius / 2);
 		break;
 	}
-	/* HACK -- monster levels are now negative, to support
-	 * "wilderness only" monsters
-	 * XXX disabling this, causing problems.
-	 */
-	t_ptr->monst_lev *= 1;
 }
 
+/* Return a possible feat that could be generated on a sector's terrain type, depending on probabilities for all possible feats. */
 static u16b terrain_spot(terrain_type * terrain) {
 	u16b feat = FEAT_DIRT;
 	u32b tmp_seed;
@@ -2610,7 +2635,7 @@ static void wild_add_hotspot(struct worldpos *wpos) {
 		/* otherwise a mud pit */
 		else {
 			hot_terrain.type = WILD_SWAMP;
-			init_terrain(&hot_terrain, w_ptr->radius);
+			init_terrain(&hot_terrain, w_ptr->radius, w_ptr->town_lev);
 			hot_terrain.mud = rand_int(150) + 700;
 		}
 		break;
@@ -2642,7 +2667,7 @@ static void wild_add_hotspot(struct worldpos *wpos) {
 	case WILD_LAKE:
 		/* island */
 		hot_terrain.type = WILD_GRASSLAND;
-		init_terrain(&hot_terrain, w_ptr->radius);
+		init_terrain(&hot_terrain, w_ptr->radius, w_ptr->town_lev);
 		break;
 	default: hot_terrain.deadtree = rand_int(800) + 100;
 	}
@@ -2779,6 +2804,8 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 	int bleedmap[256 + 1], bleed_begin[MAX_WID], bleed_end[MAX_WID];
 	terrain_type terrain;
 	cave_type *c_ptr, **zcave_bleed_to = getcave(&((struct worldpos) {bleed_to_x, bleed_to_y, 0}));
+	wilderness_type *wfrom_ptr = &wild_info[bleed_from_y][bleed_from_x];
+	wilderness_type *w_ptr = &wild_info[bleed_to_y][bleed_to_x];
 #ifdef BLEED_ENHANCED_TOWN
 	int type = -1, i;
 #endif
@@ -2797,24 +2824,24 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 		}
 		switch (type) {
 		case TOWN_BREE:
-			wild_info[bleed_from_y][bleed_from_x].type = WILD_GRASSLAND;
-			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
+			wfrom_ptr->type = WILD_GRASSLAND;
+			//if (w_ptr->type != WILD_OCEAN) return;
 			break;
 		case TOWN_GONDOLIN:
-			wild_info[bleed_from_y][bleed_from_x].type = WILD_GRASSLAND;
-			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
+			wfrom_ptr->type = WILD_GRASSLAND;
+			//if (w_ptr->type != WILD_OCEAN) return;
 			break;
 		case TOWN_MINAS_ANOR:
-			wild_info[bleed_from_y][bleed_from_x].type = WILD_MOUNTAIN;
-			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
+			wfrom_ptr->type = WILD_MOUNTAIN;
+			//if (w_ptr->type != WILD_OCEAN) return;
 			break;
 		case TOWN_LOTHLORIEN:
-			wild_info[bleed_from_y][bleed_from_x].type = WILD_OCEAN;
-			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
+			wfrom_ptr->type = WILD_OCEAN;
+			//if (w_ptr->type != WILD_OCEAN) return;
 			break;
 		case TOWN_KHAZADDUM:
-			wild_info[bleed_from_y][bleed_from_x].type = WILD_VOLCANO;
-			//if (wild_info[bleed_to_y][bleed_to_x].type != WILD_OCEAN) return;
+			wfrom_ptr->type = WILD_VOLCANO;
+			//if (w_ptr->type != WILD_OCEAN) return;
 			break;
 		}
 	}
@@ -2824,24 +2851,23 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 	if (!zcave_bleed_to) {
 		s_printf("getcave() failed in wild_bleed_level\n");
 #ifdef BLEED_ENHANCED_TOWN
-		if (type != -1) wild_info[bleed_from_y][bleed_from_x].type = WILD_TOWN;
+		if (type != -1) wfrom_ptr->type = WILD_TOWN;
 #endif
 		return;
 	}
 
 	/* sanity check */
-	if (wild_info[bleed_from_y][bleed_from_x].type == wild_info[bleed_to_y][bleed_to_x].type) {
+	if (wfrom_ptr->type == w_ptr->type) {
 #ifdef BLEED_ENHANCED_TOWN
-		if (type != -1) wild_info[bleed_from_y][bleed_from_x].type = WILD_TOWN;
+		if (type != -1) wfrom_ptr->type = WILD_TOWN;
 #endif
 		return;
 	}
 
-	/* initiliaze the terrain type */
-	terrain.type = wild_info[bleed_from_y][bleed_from_x].type;
-
-	/* determine the terrain components */
-	init_terrain(&terrain, -1);
+	/* initiliaze the terrain type of the sector from which we're bleeding into this 'bleed_to' target sector */
+	terrain.type = wfrom_ptr->type;
+	/* determine the terrain components from the terrain we bleed to the current target 'bleed_to' sector */
+	init_terrain(&terrain, -1, -1); /* '-1': don't modify/set monst_lev, we're only interested in the terrain_spot() features here. */
 
 	/* generate the bleedmap */
 	wild_gen_bleedmap(bleedmap, dir, start, end);
@@ -2891,7 +2917,7 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 	}
 
 #ifdef BLEED_ENHANCED_TOWN
-	if (type != -1) wild_info[bleed_from_y][bleed_from_x].type = WILD_TOWN;
+	if (type != -1) wfrom_ptr->type = WILD_TOWN;
 #endif
 
 
@@ -2905,32 +2931,34 @@ static void wild_bleed_level(int bleed_to_x, int bleed_to_y, int bleed_from_x, i
 
 	/* need to use a priority list, if several different ambient-sfx-
 	   causing terrain types are bled into this sector: */
-	switch (wild_info[bleed_from_y][bleed_from_x].type) {
+	switch (wfrom_ptr->type) {
 	case WILD_OCEAN: //sea waves
-		wild_info[bleed_to_y][bleed_to_x].bled = WILD_OCEAN;
+		w_ptr->bled = WILD_OCEAN;
 		break;
 	case WILD_RIVER: case WILD_LAKE: case WILD_SWAMP: //crickets^^
-		if (wild_info[bleed_to_y][bleed_to_x].bled != WILD_OCEAN
-		    && wild_info[bleed_to_y][bleed_to_x].bled != WILD_VOLCANO) /* too hot for crickets */
-			wild_info[bleed_to_y][bleed_to_x].bled = WILD_LAKE;
+		if (w_ptr->bled != WILD_OCEAN
+		    && w_ptr->bled != WILD_VOLCANO) /* too hot for crickets */
+			w_ptr->bled = WILD_LAKE;
 		break;
 #if 0
 	case WILD_VOLCANO: //dunno oO
-		if (wild_info[bleed_to_y][bleed_to_x].bled != WILD_OCEAN &&
-		    wild_info[bleed_to_y][bleed_to_x].bled != WILD_LAKE)
-			wild_info[bleed_to_y][bleed_to_x].bled = WILD_VOLCANO;
+		if (w_ptr->bled != WILD_OCEAN &&
+		    w_ptr->bled != WILD_LAKE)
+			w_ptr->bled = WILD_VOLCANO;
 		break;
 #endif
 	}
 }
 
 /*
- * Old version of getlevel() from cave.c
- * Used for seeding the wilderness bleeding effects
- * Do not change this or house layout may change in some places
+ * Old version of getlevel() from cave.c.
+ * Used only for seeding the wilderness bleeding effects nowadays,
+ * while getlevel() is used for monster spawning levels.
+ * Do not change this or house layout may change in some places.
  */
 static int getlevel_wild_old(struct worldpos *wpos) {
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
+
 	return(w_ptr->radius);
 }
 
@@ -3656,7 +3684,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 
 	/* initialize the terrain */
 	terrain.type = w_ptr->type;
-	init_terrain(&terrain,w_ptr->radius);
+	init_terrain(&terrain, w_ptr->radius, w_ptr->town_lev);
 
 	/* hack -- set the monster level */
 	monster_level = terrain.monst_lev;

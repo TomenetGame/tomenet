@@ -9812,7 +9812,7 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				if (!o_ptr->timeout) o_ptr->timeout = 1;
 			}
  #endif
-			/* If thrown into fire, insta-trigger */
+			/* If thrown into fire, insta-trigger (or into a big ('acute') fire, not small campfire that it could 'miss' in local fluff^^...) */
 			if (feat_is_lava(zcave[y][x].feat) || feat_is_acute_fire(zcave[y][x].feat)) o_ptr->timeout = -1;
 		}
 	}

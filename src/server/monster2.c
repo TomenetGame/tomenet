@@ -1182,6 +1182,7 @@ errr get_mon_num_prep_wild(int town_distance, char *reject_monsters) {
 	animals_perc = 150 + town_distance * 10; /* This actually also boosts rarer animals as it flattens the chance differences against the cap of 10000 */
 	if (animals_perc > 300) animals_perc = 300;
 
+	/* TODO: Also have day/night _perc chances, eg more wolves/owls (but we don't have owls, just the sfx^^) in the night, more birds during the day, etc! */
 
 	/* Select the table based on dungeon type */
 	alloc_race_table = table;
@@ -6090,6 +6091,7 @@ static bool monster_ground(int r_idx) {
  * Also note that fountains mustn't count as safe haven for aquatic monsters,
  * or fountain guards without ranged attacks might be pretty helpless.
  */
+ // TODO: this is atm only a 3-way distinction: water/lava+fire/other ground. TODO: use creature_can_enter2() instead!
 bool monster_can_cross_terrain(u16b feat, monster_race *r_ptr, bool spawn, u32b info) {
 	/* Deep water */
 	if (feat_is_deep_water(feat)) {
@@ -6132,12 +6134,12 @@ bool monster_can_cross_terrain(u16b feat, monster_race *r_ptr, bool spawn, u32b 
 	return(TRUE);
 }
 
-
+ // TODO: this is atm only a 3-way distinction: water/lava+fire/other ground. TODO: use creature_can_enter2() instead!
 void set_mon_num2_hook(int feat) {
 	/* Set the monster list */
 	if (feat_is_shal_water(feat)) get_mon_num2_hook = monster_shallow_water;
 	else if (feat_is_deep_water(feat)) get_mon_num2_hook = monster_deep_water;
-	else if (feat_is_lava(feat) || feat_is_fire(feat)) //added the 'fires', dunno..
+	else if (feat_is_lava(feat) || feat_is_acute_fire(feat)) //added the 'fires', dunno..
 		get_mon_num2_hook = monster_lava;
 	else get_mon_num2_hook = monster_ground;
 }

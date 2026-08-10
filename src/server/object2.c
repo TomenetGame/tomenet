@@ -10421,7 +10421,7 @@ static bool dropped_the_one_ring(struct worldpos *wpos, cave_type *c_ptr) {
 
 	/* grid isn't lava or 'fire'? */
 	if (!feat_is_lava(c_ptr->feat) &&
-	    !feat_is_acute_fire(c_ptr->feat)) //allow 'fires' too
+	    !feat_is_acute_fire(c_ptr->feat)) //allow 'fires' too, but need to be BIG ('acute') fires, not small camp fires etc^^
 		return(FALSE);
 
 	/* lands safely on top of a loot pile? :-p */
