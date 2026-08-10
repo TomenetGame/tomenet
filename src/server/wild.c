@@ -2356,7 +2356,7 @@ struct terrain_type {
 };
 
 /* Determine terrain level from terrain type, town radius and town level. */
-int terrain_level(int type, int radius, int town_level) {
+int terrain_level(int type, int radius, int town_level, bool is_night) {
 	int town_add = radius / 2 + town_level / 3;
 
 	switch (type) {
@@ -2369,20 +2369,20 @@ int terrain_level(int type, int radius, int town_level) {
 	/*  dense forest */
 	case WILD_DENSEFOREST:
 		/* you don't want to go into an evil forst at night */
-		if (IS_NIGHT) return((15 + town_add) + 10);
+		if (is_night) return((15 + town_add) + 10);
 		return(15 + town_add);
 	/*  normal forest */
 	case WILD_FOREST:
-		if (IS_NIGHT) return((5 + town_add) + 10);
+		if (is_night) return((5 + town_add) + 10);
 		return(5 + town_add);
 	/* swamp */
 	case WILD_SWAMP:
 		/* you really don't want to go into swamps at night */
-		if (IS_NIGHT) return((12 + town_add) * 2);
+		if (is_night) return((12 + town_add) * 2);
 		return(12 + town_add);
 	/* water */
 	case WILD_OCEAN: //le krakenino?
-		if (IS_NIGHT) return((10 + town_add) * 2);
+		if (is_night) return((10 + town_add) * 2);
 		return(10 + town_add);
 	case WILD_RIVER:
 	case WILD_LAKE:
@@ -2400,7 +2400,7 @@ static void init_terrain(terrain_type *t_ptr, int radius, int town_level) {
 	*t_ptr = (terrain_type) {t_ptr->type,  0, 0, 0, 0,  0, 0, 0, 0,  0, 0, 0, 0};
 
 	/* Set level already via helper function */
-	if (radius != -1) t_ptr->monst_lev = terrain_level(t_ptr->type, radius, town_level);
+	if (radius != -1) t_ptr->monst_lev = terrain_level(t_ptr->type, radius, town_level, IS_NIGHT);
 
 	switch (t_ptr->type) {
 	/* wasteland */

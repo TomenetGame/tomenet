@@ -1095,7 +1095,7 @@ extern bool pos_in_weather(struct worldpos *wpos, int x, int y);
 extern void dunfound_reward(int Ind, dungeon_type *d_ptr);
 #endif
 extern void uhouse_light_unlight(house_type *h_ptr, bool els);
-extern int terrain_level(int type, int radius, int town_level);
+extern int terrain_level(int type, int radius, int town_level, bool is_night);
 
 /* init-txt.c */
 extern errr init_v_info_txt(FILE *fp, char *buf);

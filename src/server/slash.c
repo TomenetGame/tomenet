@@ -12749,6 +12749,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "lua-seen current date: %d-%d-%d", exec_lua(0, "return cur_year"), exec_lua(0, "return cur_month"), exec_lua(0, "return cur_day"));
 				return;
 			}
+			/* Display all information about the current worldmap sector focussing terrain - C. Blue */
+			else if (prefix(messagelc, "/debug-wpos")) {
+				worldpos *tpos = &p_ptr->wpos;
+				wilderness_type *w_ptr = &wild_info[tpos->wy][tpos->wx];
+
+				msg_format(Ind, "wpos (%d,%d,%d) info:", tpos->wx, tpos->wy, tpos->wz);
+				msg_format(Ind, "  terrain=%d, radius=%d, townlv=%d -> level=%d/%d (%s)",
+				    w_ptr->type, w_ptr->radius, w_ptr->town_lev,
+				    terrain_level(w_ptr->type, w_ptr->radius, w_ptr->town_lev, FALSE), //day
+				    terrain_level(w_ptr->type, w_ptr->radius, w_ptr->town_lev, TRUE), //night
+				    IS_NIGHT ? "N" : "d");
+				msg_format(Ind, "  town=%d, flags=%ld, LF1=%ld, LF2=%ld", w_ptr->town_idx, w_ptr->flags, w_ptr->surface.flags1, w_ptr->surface.flags2);
+				// not for now: weather_... / cloud_... and ambient_sfx_... info
+				return;
+			}
+			/* Display all information about the current worldmap sector focussing misc/dungeons*/
 			else if (prefix(messagelc, "/debug-wild")) {
 				//cptr wf = flags_str(wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags);
 
@@ -13388,6 +13404,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* weather: remove a cloud at current worldmap sector */
 			else if (prefix(messagelc, "/rmcloud")) {
 				wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+
 				for (i = 0; i < 10; i++) {
 					if (w_ptr->cloud_idx[i] == -1) continue;
 					break;
@@ -13410,6 +13427,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* weather: list all clouds at current worldmap sector */
 			else if (prefix(messagelc, "/lscloud")) {
 				wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+
 				msg_print(Ind, "Local wild_info cloud array:");
 				for (i = 0; i < 10; i++) {
 					if (w_ptr->cloud_idx[i] == -1) continue;
@@ -14429,6 +14447,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/ambient")) {
 				wilderness_type *w_ptr = &wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx];
+
 				w_ptr->ambient_sfx_counteddown = FALSE,
 				w_ptr->ambient_sfx = 0;
 				w_ptr->ambient_sfx_timer = 0;
