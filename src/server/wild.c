@@ -2357,39 +2357,47 @@ struct terrain_type {
 
 /* Determine terrain level from terrain type, town radius and town level. */
 int terrain_level(int type, int radius, int town_level, bool is_night) {
-	int town_add = radius / 2 + town_level / 3;
+	int town_add = radius / 2 + town_level / 3, type_lev = 1, daynight_mul10 = 1;
 
 	switch (type) {
 	/* wasteland */
-	case WILD_VOLCANO: return(20 + town_add);
-	case WILD_MOUNTAIN: return(20 + town_add);
-	case WILD_WASTELAND: return(20 + town_add);
-	case WILD_DESERT: return(10 + town_add);
-	case WILD_ICE: return(20 + town_add);
+	case WILD_VOLCANO:	type_lev = 20; break;
+	case WILD_MOUNTAIN:	type_lev = 20; break;
+	case WILD_WASTELAND:	type_lev = 20; break;
+	case WILD_DESERT:	type_lev = 10; break;
+	case WILD_ICE:		type_lev = 20; break;
 	/*  dense forest */
 	case WILD_DENSEFOREST:
 		/* you don't want to go into an evil forst at night */
-		if (is_night) return((15 + town_add) + 10);
-		return(15 + town_add);
+		if (is_night)	type_lev = 15 + 10;
+		else		type_lev = 15;
+		break;
 	/*  normal forest */
 	case WILD_FOREST:
-		if (is_night) return((5 + town_add) + 10);
-		return(5 + town_add);
+		if (is_night)	type_lev = 5 + 10;
+		else		type_lev = 5;
+		break;
 	/* swamp */
 	case WILD_SWAMP:
 		/* you really don't want to go into swamps at night */
-		if (is_night) return((12 + town_add) * 2);
-		return(12 + town_add);
+		if (is_night) {	type_lev = 12; daynight_mul10 = 15; }
+		else		type_lev = 12;
+		break;
 	/* water */
 	case WILD_OCEAN: //le krakenino?
-		if (is_night) return((10 + town_add) * 2);
-		return(10 + town_add);
+		if (is_night) {	type_lev = 10; daynight_mul10 = 15; }
+		else		type_lev = 10;
+		break;
 	case WILD_RIVER:
-	case WILD_LAKE:
-		return(1 + town_add);
+	case WILD_LAKE:		type_lev = 1; break;
 	/* grassland / paranoia */
-	default: return(1 + town_add);
+	default:		type_lev = 1; break;
 	}
+
+	/* Reduce terrain-type base level greatly if we're still within a town's housing area */
+	type_lev = (radius <= MAX_TOWNAREA ? 1 + type_lev / 5 : type_lev);
+
+	return(((type_lev + town_add) * daynight_mul10) / 10);
 }
 
 
