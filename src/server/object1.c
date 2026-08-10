@@ -8302,14 +8302,15 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 		return;
 	}
 
+	source_acttime[0] = toupper(source_acttime[0]);
 	if (*source_from) {
 		/* Probably doesn't fit into one line, and we don't want to require horizontal scrolling just for this... */
-		if (strlen(format("\n\377%c(It was %s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from)) >= 80 + 5)
-			fprintf(fff, "\n\377%c(It was %s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from);
+		if (strlen(format("\n\377%c(%s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from)) >= 80 + 5)
+			fprintf(fff, "\n\377%c(%s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from);
 		else /* it does fit */
-			fprintf(fff, "\n\377%c(It was %s %s %s)\n", META_DIZ_ATTR, source_acttime, loc_name, source_from);
+			fprintf(fff, "\n\377%c(%s %s %s)\n", META_DIZ_ATTR, source_acttime, loc_name, source_from);
 	}
-	else fprintf(fff, "\n\377%c(It was %s %s)\n", META_DIZ_ATTR, source_acttime, loc_name);
+	else fprintf(fff, "\n\377%c(%s %s)\n", META_DIZ_ATTR, source_acttime, loc_name);
 
 	//byte slain_bosses, slain_nazgul, slain_superuniques, slain_sauron, slain_morgoth, slain_zuaon;
 }
