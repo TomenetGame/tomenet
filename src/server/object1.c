@@ -4492,9 +4492,8 @@ static void display_weapon_damage(int Ind, object_type *o_ptr, FILE *fff, u32b f
 		if (f1 & TR1_BRAND_POIS) output_dam(Ind, fff, o_ptr, FACTOR_BRAND, FACTOR_BRAND_SUSC, FLAT_BRAND_BONUS, FLAT_BRAND_BONUS_POISON, "non poison resistant creatures", "poison susceptible creatures");
 
 		output_dam(Ind, fff, o_ptr, FACTOR_MULT, 0, 0, 0, (first) ? "all monsters" : "other monsters", NULL);
+		fprintf(fff, "\n");
 	}
-
-	fprintf(fff, "\n");
 
 	/* restore secondary weapon or shield */
 	object_copy(&p_ptr->inventory[INVEN_ARM], old_ptr2);
