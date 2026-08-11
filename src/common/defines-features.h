@@ -759,9 +759,11 @@
 
  #define ENABLE_ASSASSINATE	/* experimental fighting technique for rogues - devalues Backstabbing too much probably */
 
- #ifdef MAX_CLOUDS
-  #undef MAX_CLOUDS
-  #define MAX_CLOUDS 10		/* note that this number gets divided depending on season */
+ #ifndef CLIENT_SIDE /* Don't redefine it from 1000 to 10 for the actual client, but only on the test server */
+  #ifdef MAX_CLOUDS
+   #undef MAX_CLOUDS
+   #define MAX_CLOUDS 10		/* note that this number gets divided depending on season */
+  #endif
  #endif
 
  #define AUCTION_BETA		/* less restrictions while beta testing */
