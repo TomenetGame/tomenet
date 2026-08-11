@@ -430,7 +430,7 @@ void SGWHit(int read_fd, int arg) {
 }
 
 /* Checks whether GW connections should timeout */
-void SGWTimeout() {
+void SGWTimeout(void) {
 	int i;
 	gw_connection_t *gw_conn;
 	time_t now;
@@ -466,16 +466,14 @@ static sockbuf_t console_buf;
 /*
  * Return the list of players
  */
-static void console_status()
-{
+static void console_status(void) {
 	int k;
 
 	/* Packet header */
 	Packet_printf(&console_buf, "%c%d", CONSOLE_STATUS, NumPlayers);
 
 	/* Scan the player list */
-	for (k = 1; k <= NumPlayers; k++)
-	{
+	for (k = 1; k <= NumPlayers; k++) {
 		player_type *p_ptr = Players[k];
 
 		/* Skip disconnected players */
@@ -489,12 +487,10 @@ static void console_status()
 	}
 }
 
-static void console_player_info(int player)
-{
+static void console_player_info(int player) {
 }
 
-static void console_artifacts()
-{
+static void console_artifacts(void) {
 	int i, count = 0, z;
 	bool okay[MAX_A_IDX];
 	char base_name[ONAME_LEN];
@@ -557,8 +553,7 @@ static void console_artifacts()
 	}
 }
 
-static void console_uniques()
-{
+static void console_uniques(void) {
 	int k, count = 0;
 	char buf[1024];
 
@@ -637,8 +632,7 @@ static void console_change_artifact(int artifact, int status) {
 	Packet_printf(&console_buf, "%c%c", CONSOLE_CHANGE_ARTIFACT, 1);
 }
 
-static void console_change_unique(int unique, cptr killer)
-{
+static void console_change_unique(int unique, cptr killer) {
 	monster_race *r_ptr;
 	int kill_idx;
 	char buf[80];
@@ -679,8 +673,8 @@ static void console_change_unique(int unique, cptr killer)
 		/* Alive */
 
 		/* Tell people if the monster is respawning */
-		if (!r_ptr->max_num)
-		{	/* the_sandman: added colour */
+		if (!r_ptr->max_num) {
+			/* the_sandman: added colour */
 			snprintf(buf, 80, "\374\377v%s rises from the dead!",(r_name + r_ptr->name));
 
 			/* Tell every player */
@@ -693,8 +687,7 @@ static void console_change_unique(int unique, cptr killer)
 	Packet_printf(&console_buf, "%c%c", CONSOLE_CHANGE_UNIQUE, 1);
 }
 
-static void console_message(char *buf)
-{
+static void console_message(char *buf) {
 	/* Send the message */
 	player_talk(0, buf);
 
@@ -702,8 +695,7 @@ static void console_message(char *buf)
 	Packet_printf(&console_buf, "%c", CONSOLE_MESSAGE);
 }
 
-static void console_kick_player(char *name)
-{
+static void console_kick_player(char *name) {
 	int i;
 
 	/* Check the players in the game */
@@ -724,8 +716,7 @@ static void console_kick_player(char *name)
 	Packet_printf(&console_buf, "%c%c", CONSOLE_KICK_PLAYER, 0);
 }
 
-static void console_reload_server_preferences(void)
-{
+static void console_reload_server_preferences(void) {
 	/* Reload the server preferences */
 	load_server_cfg();
 
@@ -736,8 +727,7 @@ static void console_reload_server_preferences(void)
 	/* Write the output */
 	DgramReply(console_buf.sock, console_buf.ptr, console_buf.len);
 }
-static void console_shutdown(void)
-{
+static void console_shutdown(void) {
 	/* Packet header */
 	Packet_printf(&console_buf, "%c", CONSOLE_SHUTDOWN);
 
@@ -753,8 +743,7 @@ static void console_shutdown(void)
  * This is the response function when incoming data is received on the
  * control pipe.
  */
-void NewConsole(int read_fd, int arg)
-{
+void NewConsole(int read_fd, int arg) {
 	char ch = 0, passwd[MAX_CHARS] = {'\0'}, buf[MAX_CHARS] = {'\0'};
 	int i = 0, j = 0, bytes = 0;
 	static int newsock = 0;
@@ -764,16 +753,14 @@ void NewConsole(int read_fd, int arg)
 	 * If it has, then we have not created a connection with the client yet,
 	 * and so we must do so.
 	 */
-	if (read_fd == ConsoleSocket)
-	{
+	if (read_fd == ConsoleSocket) {
 		/* Hack -- make sure that two people haven't tried to use mangconsole
 		 * at the same time.  Since I am currently too lazy to support this,
 		 * we will remove the input of the first person when the second person
 		 * connects.
 		 */
 		if (newsock) remove_input(newsock);
-		if ((newsock = SocketAccept(read_fd)) == -1)
-		{
+		if ((newsock = SocketAccept(read_fd)) == -1) {
 			/* Clear socket if it failed */
 			newsock = 0;
 			quit("Couldn't accept console TCP connection.\n");
@@ -790,8 +777,7 @@ void NewConsole(int read_fd, int arg)
 	bytes = DgramReceiveAny(read_fd, console_buf.buf, console_buf.size);
 
 	/* Check for errors or our TCP connection closing */
-	if (bytes <= 0)
-	{
+	if (bytes <= 0) {
 		/* If this happens our TCP connection has probably been severed.
 		 * Remove the input.
 		 */
@@ -806,91 +792,83 @@ void NewConsole(int read_fd, int arg)
 	console_buf.len = bytes;
 
 	/* Get the password */
-	if (Packet_scanf(&console_buf, "%s", passwd) <= 0) {
+	if (Packet_scanf(&console_buf, "%s", passwd) <= 0)
 		goto input_error;
-	}
 
-	if (strcmp(passwd, cfg.console_password) != 0) {
+	if (strcmp(passwd, cfg.console_password) != 0)
 		goto input_error;
-	}
 	else s_printf("Valid console command from %s.\n", DgramLastname(read_fd));
 
 	/* Acquire command */
-	if (Packet_scanf(&console_buf, "%c", &ch) <= 0) {
+	if (Packet_scanf(&console_buf, "%c", &ch) <= 0)
 		goto input_error;
-	}
 
 	/* Determine what the command is */
 	switch (ch) {
-		/* Wants to see the player list */
-		case CONSOLE_STATUS:
-			console_status();
-			break;
+	/* Wants to see the player list */
+	case CONSOLE_STATUS:
+		console_status();
+		break;
 
-		/* Wants to see detailed player info */
-		case CONSOLE_PLAYER_INFO:
-			if (Packet_scanf(&console_buf, "%d", &i) <= 0) {
-				goto input_error;
-			}
-			console_player_info(i);
-			break;
+	/* Wants to see detailed player info */
+	case CONSOLE_PLAYER_INFO:
+		if (Packet_scanf(&console_buf, "%d", &i) <= 0)
+			goto input_error;
+		console_player_info(i);
+		break;
 
-		/* Wants to see the artifact list */
-		case CONSOLE_ARTIFACT_LIST:
-			console_artifacts();
-			break;
+	/* Wants to see the artifact list */
+	case CONSOLE_ARTIFACT_LIST:
+		console_artifacts();
+		break;
 
-		/* Wants to see the unique list */
-		case CONSOLE_UNIQUE_LIST:
-			console_uniques();
-			break;
+	/* Wants to see the unique list */
+	case CONSOLE_UNIQUE_LIST:
+		console_uniques();
+		break;
 
-		/* Wants to change artifact status */
-		case CONSOLE_CHANGE_ARTIFACT:
-			if (Packet_scanf(&console_buf, "%d%d", &i, &j) <= 0) {
-				goto input_error;
-			}
-			console_change_artifact(i, j);
-			break;
+	/* Wants to change artifact status */
+	case CONSOLE_CHANGE_ARTIFACT:
+		if (Packet_scanf(&console_buf, "%d%d", &i, &j) <= 0)
+			goto input_error;
+		console_change_artifact(i, j);
+		break;
 
-		/* Wants to change unique status */
-		case CONSOLE_CHANGE_UNIQUE:
-			if (Packet_scanf(&console_buf, "%d%s", &i, buf) <= 0) {
-				goto input_error;
-			}
-			console_change_unique(i, buf);
-			break;
+	/* Wants to change unique status */
+	case CONSOLE_CHANGE_UNIQUE:
+		if (Packet_scanf(&console_buf, "%d%s", &i, buf) <= 0)
+			goto input_error;
+		console_change_unique(i, buf);
+		break;
 
-		/* Wants to send a message */
-		case CONSOLE_MESSAGE:
-			if (Packet_scanf(&console_buf, "%s", buf) <= 0) {
-				goto input_error;
-			}
-			console_message(buf);
-			break;
+	/* Wants to send a message */
+	case CONSOLE_MESSAGE:
+		if (Packet_scanf(&console_buf, "%s", buf) <= 0)
+			goto input_error;
+		console_message(buf);
+		break;
 
-		/* Wants to kick a player */
-		case CONSOLE_KICK_PLAYER:
-			if (Packet_scanf(&console_buf, "%s", buf) <= 0) {
-				goto input_error;
-			}
-			console_kick_player(buf);
-			break;
+	/* Wants to kick a player */
+	case CONSOLE_KICK_PLAYER:
+		if (Packet_scanf(&console_buf, "%s", buf) <= 0)
+			goto input_error;
+		console_kick_player(buf);
+		break;
 
-		/* Wants to reload the server preferences */
-		case CONSOLE_RELOAD_SERVER_PREFERENCES:
-			console_reload_server_preferences();
-			break;
+	/* Wants to reload the server preferences */
+	case CONSOLE_RELOAD_SERVER_PREFERENCES:
+		console_reload_server_preferences();
+		break;
 
-		/* Wants to shut the server down */
-		case CONSOLE_SHUTDOWN:
-			console_shutdown();
-			break;
+	/* Wants to shut the server down */
+	case CONSOLE_SHUTDOWN:
+		console_shutdown();
+		break;
 
-		/* Strangeness */
-		default:
-			s_printf("Bizarre input on server console; ignoring.\n");
-			return;
+	/* Strangeness */
+	default:
+		s_printf("Bizarre input on server console; ignoring.\n");
+		return;
 	}
 
 	/* Write the response */

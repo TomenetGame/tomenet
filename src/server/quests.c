@@ -6156,7 +6156,7 @@ qi_monsterspawn *init_quest_monsterspawn(int q_idx, int stage, int num) {
 /* Hack: if a quest was disabled in q_info, this will have set the
    'disabled_on_load' flag of that quest, which tells us that we have to handle
    deleting its remaining questor(s) here, before the server finally starts up. */
-void quest_handle_disabled_on_startup() {
+void quest_handle_disabled_on_startup(void) {
 	int i, j, k;
 	quest_info *q_ptr;
 	bool questor;

@@ -1285,7 +1285,7 @@ bool GetAccountID(struct account *c_acc, u32b id, bool leavepass) {
 	return(FALSE);
 }
 
-static u32b new_accid() {
+static u32b new_accid(void) {
 	u32b id;
 	FILE *fp;
 	char *t_map;
@@ -4844,7 +4844,7 @@ void clockin_id(s32b id, int type, int parm, u32b parm2) {
 }
 
 /* dish out a valid new player ID */
-int newid() {
+int newid(void) {
 	int id;
 	int slot;
 	hash_entry *ptr;
@@ -5055,7 +5055,7 @@ static unsigned char *account_expiry_char = NULL;
 /*
  *  Called once every 24 hours. Deletes unused IDs.
  */
-void scan_characters() {
+void scan_characters(void) {
 	int slot, amt = 0, total = 0;
 	hash_entry *ptr, *pptr = NULL;
 	time_t now;
@@ -5135,7 +5135,7 @@ void scan_characters() {
  *  Unused means that there aren't any characters on it,
  *  and it's not been used to log in with for a certain amount of time. - C. Blue
  */
-void scan_accounts() {
+void scan_accounts(void) {
 	int total = 0, nondel = 0, active = 0, expired = 0, fixed = 0;
 	bool modified, valid;
 	FILE *fp;
@@ -6023,7 +6023,7 @@ bool pilot_set(int Ind, cptr name) {
 }
 #endif	// 0
 
-void strip_true_arts_from_hashed_players() {
+void strip_true_arts_from_hashed_players(void) {
 	int slot, i, j = 0;
 	hash_entry *ptr;
 	object_type *o_ptr;

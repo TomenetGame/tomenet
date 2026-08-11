@@ -1335,7 +1335,7 @@ static errr rd_store(store_type *st_ptr) {
 	return(0);
 }
 
-static void rd_bbs() {
+static void rd_bbs(void) {
 	int i, j;
 	s16b saved_lines, num_parties, num_guilds;
 	char dummy[MSG_LEN];
@@ -1396,7 +1396,7 @@ static void rd_bbs() {
 	}
 }
 
-static void rd_notes() {
+static void rd_notes(void) {
 	int i;
 	s16b j;
 	char dummy[MSG_LEN];
@@ -1447,7 +1447,7 @@ static void rd_notes() {
 	//omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
-static void rd_mail() {
+static void rd_mail(void) {
 	int i;
 	s16b j;
 
@@ -1504,7 +1504,7 @@ static void rd_mail() {
 #endif
 }
 
-static void rd_xorders() {
+static void rd_xorders(void) {
 	int i;
 
 	rd_s16b(&questid);
@@ -1518,7 +1518,7 @@ static void rd_xorders() {
 	}
 }
 
-static void rd_quests() {
+static void rd_quests(void) {
 	int i, j, k;
 	s16b max, questors;
 	byte flags = QI_FLAGS, tmpbyte;
@@ -1612,7 +1612,7 @@ static void rd_quests() {
 	fix_questors_on_startup();
 }
 
-static void rd_guilds() {
+static void rd_guilds(void) {
 	int i;
 	u16b tmp16u, num_guilds;
 	byte tmpbyte;
@@ -3263,7 +3263,7 @@ static errr rd_cave_memory(int Ind) {
 
 /* Reads auction data. */
 
-static void rd_auctions() {
+static void rd_auctions(void) {
 	int i, j;
 	u32b old_auction_alloc;
 	auction_type *auc_ptr;
@@ -3696,7 +3696,7 @@ static bool file_exist(char *buf) {
 /* Just discard exceeding data instead of terminating with incompatibility error?
    Currently only implemented for MAX_O_IDX. */
 #define ALLOW_EXCESS_DATA
-errr rd_server_savefile() {
+errr rd_server_savefile(void) {
 	unsigned int i;
 #ifdef MONSTER_ASTAR
 	int j;
@@ -4283,7 +4283,7 @@ errr rd_server_savefile() {
 	return(err);
 }
 
-void new_rd_wild() {
+void new_rd_wild(void) {
 	int x, y;
 #ifndef UNIQUES_KILLED_ARRAY
 	int i;
@@ -4501,11 +4501,11 @@ void new_rd_wild() {
 #endif
 }
 
-void new_rd_floors() {
+void new_rd_floors(void) {
 	while (!rd_floor());
 }
 
-void rd_towns() {
+void rd_towns(void) {
 	int i, j;
 
 	/* Dealloc stores first - mikaelh */
@@ -4952,7 +4952,7 @@ void load_banlist(void) {
    stage goals are not yet initialised. Oops.
    However, saving this quest data of random/varying lenght is a mess anyway,
    so it's good that we keep it far away from the server savefile. */
-static errr load_quests_file() {
+static errr load_quests_file(void) {
 	int i, j, k;
 	errr err = 0;
 	char savefile[MAX_PATH_LENGTH];

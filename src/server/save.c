@@ -109,7 +109,7 @@ void wr_string(cptr str) {
 	wr_byte(*str);
 }
 
-static void write_buffer() {
+static void write_buffer(void) {
 	if (fff_buf_pos > 0) {
 		if (fwrite(fff_buf, 1, fff_buf_pos, fff) < fff_buf_pos) {
 			s_printf("Writing to savefile failed: %s\n", feof(fff) ? "EOF" : strerror(ferror(fff)));
@@ -518,7 +518,7 @@ static void wr_store(store_type *st_ptr) {
 	}
 }
 
-static void wr_bbs() {
+static void wr_bbs(void) {
 	int i, j;
 
 	wr_s16b(BBS_LINES);
@@ -545,7 +545,7 @@ static void wr_bbs() {
 		}
 }
 
-static void wr_notes() {
+static void wr_notes(void) {
 	int i;
 
 	wr_s16b(MAX_NOTES);
@@ -573,7 +573,7 @@ static void wr_notes() {
 	//omitted (use custom.lua instead): admin_note[MAX_ADMINNOTES]
 }
 
-static void wr_mail() {
+static void wr_mail(void) {
 #ifdef ENABLE_MERCHANT_MAIL
 	int i;
 
@@ -593,8 +593,9 @@ static void wr_mail() {
 #endif
 }
 
-static void wr_xorders() {
+static void wr_xorders(void) {
 	int i;
+
 	wr_s16b(questid);
 	for (i = 0; i < MAX_XORDERS; i++) {
 		wr_s16b(xorders[i].active);
@@ -607,7 +608,7 @@ static void wr_xorders() {
 }
 
 #if 0 /* need to use separate function save_quests() now */
-static void wr_quests() {
+static void wr_quests(void) {
 	int i, j, k;
 
 	wr_s16b(max_q_idx);
@@ -664,7 +665,7 @@ static void wr_quests() {
 }
 #endif
 
-static void wr_guilds() {
+static void wr_guilds(void) {
 	int i, j;
 	u16b tmp16u;
 
@@ -2461,16 +2462,14 @@ static void wr_player_names(void) {
 	if (num) C_KILL(id_list, num, int);
 }
 
-static void wr_auctions()
-{
+static void wr_auctions(void) {
 	int i, j;
 	auction_type *auc_ptr;
 	bid_type *bid_ptr;
 
 	wr_u32b(auction_alloc);
 
-	for (i = 0; i < auction_alloc; i++)
-	{
+	for (i = 0; i < auction_alloc; i++) {
 		auc_ptr = &auctions[i];
 		wr_byte(auc_ptr->status);
 		wr_byte(auc_ptr->flags);
@@ -2495,7 +2494,7 @@ static void wr_auctions()
 	}
 }
 
-static bool wr_server_savefile() {
+static bool wr_server_savefile(void) {
 	int i;
 	u32b now;
 
@@ -2674,7 +2673,7 @@ static bool wr_server_savefile() {
 }
 
 /* write the wilderness and dungeon structure */
-static void new_wr_wild() {
+static void new_wr_wild(void) {
 	wilderness_type *w_ptr;
 	int x, y, i;
 	u32b temp;
@@ -2761,7 +2760,7 @@ static void new_wr_wild() {
 }
 
 /* write the actual dungeons */
-static void new_wr_floors() {
+static void new_wr_floors(void) {
 	struct worldpos cwpos;
 	wilderness_type *w_ptr;
 	struct dungeon_type *d_ptr;
@@ -3079,7 +3078,7 @@ bool load_server_info(void) {
 /*
  * Save the server state to a "server" savefile.
  */
-bool save_server_info() {
+bool save_server_info(void) {
 	int result = FALSE;
 	char safe[MAX_PATH_LENGTH];
 
@@ -3123,7 +3122,7 @@ bool save_server_info() {
 	return(result);
 }
 
-void wr_towns() {
+void wr_towns(void) {
 	int i, j;
 
 	wr_u16b(numtowns);

@@ -30,8 +30,9 @@
 #include "../common/z-form.h"
 #include "../common/z-rand.h"
 
+/* dead code, we're on the server-side here, neither client nor console... */
 #ifdef CLIENT
-#include "z-term.h"
+ #include "z-term.h"
 #endif
 
 

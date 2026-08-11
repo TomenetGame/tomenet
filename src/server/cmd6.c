@@ -8702,7 +8702,7 @@ void fortune(int Ind, byte mode) {
 
 }
 
-char random_colour() {
+char random_colour(void) {
 	//char tmp[] = "wWrRbBgGdDuUoyvs";
 	char tmp[] = "dwsorgbuDWvyRGBU";
 

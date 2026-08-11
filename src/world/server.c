@@ -63,7 +63,7 @@ int createsocket(int port, uint32_t ip) {
 	return(-1);
 }
 
-void loadservers() {
+void loadservers(void) {
 	FILE *fp;
 	int i = 0, j, n;
 	char flags[20], line[160];

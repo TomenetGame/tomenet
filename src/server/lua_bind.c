@@ -93,8 +93,9 @@ bool lua_spell_success(magic_power *spell, int stat, char *oups_fct) {
 /*
  * Create objects
  */
-object_type *new_object() {
+object_type *new_object(void) {
 	object_type *o_ptr;
+
 	MAKE(o_ptr, object_type);
 	return(o_ptr);
 }
@@ -819,17 +820,17 @@ char *lua_get_mon_name(int r_idx) {
 }
 
 /* Return the last chat line */
-inline char *lua_get_last_chat_line() {
+inline char *lua_get_last_chat_line(void) {
 	return(last_chat_line);
 }
 
 /* Return the last person who said the last chat line */
-char *lua_get_last_chat_owner() {
+char *lua_get_last_chat_owner(void) {
 	return(last_chat_owner);
 }
 
 /* Return the last person's account name who said the last chat line */
-char *lua_get_last_chat_account() {
+char *lua_get_last_chat_account(void) {
 	return(last_chat_account);
 }
 

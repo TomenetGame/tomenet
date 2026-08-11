@@ -2667,7 +2667,7 @@ errr get_rnd_line_from_memory(char **lines, int numentries, char *output, int ma
 /* it also doesnt respect non existent world positions */
 /* rewrite */
 /* k rewritten.. but not so better?	- Jir - */
-void wipeout_needless_objects() {
+void wipeout_needless_objects(void) {
 #if 0	// exit_game_panic version
 	int i = 1;
 	int j,k;

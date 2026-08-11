@@ -229,7 +229,7 @@ static bool kick_player(void) {
 	return(TRUE);
 }
 
-static bool reload_server_preferences() {
+static bool reload_server_preferences(void) {
 	Packet_printf(&ibuf, "%c", CONSOLE_RELOAD_SERVER_PREFERENCES);
 	return(TRUE);
 }

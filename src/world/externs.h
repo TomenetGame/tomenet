@@ -2,7 +2,7 @@ extern struct serverinfo slist[];
 extern int snum;
 extern struct list *clist;
 
-extern void initrand();
+extern void initrand(void);
 extern int createsocket(int port, uint32_t ip);
 extern void world(int ser);
 extern void l_account(struct wpacket *wpk, struct client *ccl);

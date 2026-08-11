@@ -900,7 +900,7 @@ extern void do_set_mycorrhiza(int Ind, int item);
 
 /* control.c */
 extern void SGWHit(int fd, int arg);
-extern void SGWTimeout();
+extern void SGWTimeout(void);
 #ifdef NEW_SERVER_CONSOLE
 extern void NewConsole(int fd, int arg);
 extern bool InitNewConsole(int write_fd);
@@ -2038,7 +2038,7 @@ void mixture_flavour(object_type *o_ptr, char *flavour);
 
 /* store.c */
 extern int store_debug_mode, store_debug_quickmotion, store_debug_startturn;
-extern void store_debug_stock();
+extern void store_debug_stock(void);
 
 extern void alloc_stores(int townval);
 extern void dealloc_stores(int townval);
@@ -2073,7 +2073,7 @@ extern s64b price_item_player_store(int Ind, object_type *o_ptr);
 extern void view_highest_levels(int Ind);
 
 #ifdef AUCTION_SYSTEM
-extern void process_auctions();
+extern void process_auctions(void);
 extern char *auction_format_time(time_t t);
 extern bool auction_mode_check(int Ind, int auction_id);
 extern void auction_player_joined(int Ind);
@@ -2350,7 +2350,7 @@ extern cptr get_ptitle2(player_type *p_ptr, bool short_form);
 #endif
 
 #ifdef DUNGEON_VISIT_BONUS
-extern void reindex_dungeons();
+extern void reindex_dungeons(void);
 extern void set_dungeon_bonus(int id, bool reset);
 #endif
 
@@ -2667,9 +2667,9 @@ void lua_strip_true_arts_from_floors(void);
 void lua_check_player_for_true_arts(int Ind);
 int lua_get_mon_lev(int r_idx);
 char *lua_get_mon_name(int r_idx);
-char *lua_get_last_chat_owner();
-char *lua_get_last_chat_line();
-char *lua_get_last_chat_account();
+char *lua_get_last_chat_owner(void);
+char *lua_get_last_chat_line(void);
+char *lua_get_last_chat_account(void);
 extern bool first_player_joined;
 void lua_towns_treset(void);
 long lua_player_exp(int level, int expfact);

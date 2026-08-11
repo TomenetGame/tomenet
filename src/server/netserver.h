@@ -202,6 +202,6 @@ int Send_sanity(int ind, byte attr, cptr msg, int cur, int max);
 
 char *compacttime(void);
 char *showtime(void);
-void init_players();
+void init_players(void);
 
 #endif

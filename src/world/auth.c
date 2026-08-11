@@ -16,7 +16,7 @@ char salt[21];
 uint32_t chk(unsigned char *s1, unsigned char *s2);
 char *rpgen(char *dest);
 
-void initrand(){
+void initrand(void) {
 	time_t now;
 	unsigned int x;
 

@@ -4331,7 +4331,7 @@ static char color_name[CLIENT_PALETTE_SIZE][8] = {
 	{"#aaaaaa", "#333388", },	/* TERMX_PURPLE */
 };
 #endif
-static void enable_common_colormap_x11() {
+static void enable_common_colormap_x11(void) {
 	int i;
 	unsigned long c;
 #ifdef EXTENDED_BG_COLOURS

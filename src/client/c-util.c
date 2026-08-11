@@ -3475,7 +3475,7 @@ int get_com_bk(cptr prompt, char *command) {
  * Note that this command is used both in the dungeon and in
  * stores, and must be careful to work in both situations.
  */
-void request_command() {
+void request_command(void) {
 	char cmd;
 
 

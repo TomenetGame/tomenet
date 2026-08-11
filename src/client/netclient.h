@@ -3,7 +3,7 @@
 
 extern int	receive_window_size;
 
-static int Net_packet();
+static int Net_packet(void);
 int Net_setup(void);
 int Net_verify(char *real, char *nick, char *pass);
 int Net_init(int fd);

@@ -8246,7 +8246,7 @@ void reward_deed_blessing(int Ind, int item) {
    May be called every 10 turns (since cfg.store_turns is multiplied by 10).
    Currently doesn't support cfg.dun_store_turns for dungeon stores, using normal cfg.store_turns for them.
    Currently doesn't support cfg.book_store_turns_perc. */
-void store_debug_stock() {
+void store_debug_stock(void) {
 	int i, j, n, maintain_num, what;
 	store_type *st_ptr;
 	object_type *o_ptr;

@@ -274,19 +274,18 @@ static int table[MAX_SKILLS][2];
 static int sel = 0;
 static int start = 0;
 static int max;
-void do_redraw_skills() {
+void do_redraw_skills(void) {
 	redraw_skills = FALSE;
 
-	if (hack_do_cmd_skill) {
+	if (hack_do_cmd_skill)
 		print_skills(table, max, sel, start);
-	}
 }
 
 /*
  * Interact with skills.
  */
 #define SKILL_SCREEN_PAD_TOP 4		/* The top n lines of the skill screen that don't contain skill lines but some other stuff/text/diz */
-void do_cmd_skill() {
+void do_cmd_skill(void) {
 	bool leave = FALSE;
 	char ch;
 	int i;
@@ -533,7 +532,7 @@ static void print_skill_batch(int *p, int start, int max, bool mode) {
 	screen_column_icky = 20 - 1;
 }
 
-static int do_cmd_activate_skill_aux() {
+static int do_cmd_activate_skill_aux(void) {
 	char which;
 	int max = 0, i, start = 0;
 	int ret;
@@ -1082,7 +1081,7 @@ void do_activate_skill(int x_idx, int item) {
 }
 
 /* Ask & execute a skill */
-void do_cmd_activate_skill() {
+void do_cmd_activate_skill(void) {
 	int x_idx = -1;
 
 	/* Get the skill, if available */

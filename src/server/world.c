@@ -85,7 +85,7 @@ struct list *remlist(struct list **head, struct list *dlp) {
 	return(dlp->next);
 }
 
-void world_update_players() {
+void world_update_players(void) {
 	int i;
 
 	for (i = 1; i <= NumPlayers; i++) {
@@ -710,7 +710,7 @@ void world_chat(uint32_t id, const char *text) {
 	send(WorldSocket, &spk, len, 0);
 }
 
-void world_reboot() {
+void world_reboot(void) {
 	int len;
 
 	if (WorldSocket == -1) return;

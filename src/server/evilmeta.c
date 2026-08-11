@@ -52,7 +52,7 @@ void callup(int val) {
 }
 
 /* signalled, so we call the meta */
-void callmeta() {
+void callmeta(void) {
 	int ser;
 	FILE *fp;
 	sigset_t sigset;

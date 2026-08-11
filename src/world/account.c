@@ -125,7 +125,7 @@ int GetAccountID(struct account *c_acc, uint32_t id) {
 	return(0);
 }
 
-static uint32_t new_accid() {
+static uint32_t new_accid(void) {
 	uint32_t id;
 	FILE *fp;
 	char *t_map;

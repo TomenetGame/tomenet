@@ -252,7 +252,7 @@ void show_building(int Ind, store_type *s_ptr) {
 
 #if 0
 
-static void reset_tim_flags() {
+static void reset_tim_flags(void) {
 	p_ptr->fast = 0;	/* Timed -- Fast */
 	p_ptr->slow = 0;	/* Timed -- Slow */
 	p_ptr->blind = 0;	/* Timed -- Blindness */

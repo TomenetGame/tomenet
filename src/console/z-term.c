@@ -461,7 +461,7 @@ static errr Term_text_hack(int x, int y, int n, byte a, cptr s) {
 /*
  * Some eye-candies from PernAngband :)		- Jir -
  */
-static char get_shimmer_color() {
+static char get_shimmer_color(void) {
 	switch (randint(7)) {
 	case 1:
 		return(TERM_RED);
@@ -2020,7 +2020,7 @@ errr Term_flush(void) {
 /*
  * Double the key queue size.
  */
-static void Term_increase_queue() {
+static void Term_increase_queue(void) {
 	char *new_queue;
 	int i, j;
 
@@ -2056,7 +2056,7 @@ static void Term_increase_queue() {
 /*
  * Cut the key queue size in half.
  */
-static void Term_decrease_queue() {
+static void Term_decrease_queue(void) {
 	char *new_queue;
 	int i, j;
 

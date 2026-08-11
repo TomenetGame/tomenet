@@ -1577,7 +1577,7 @@ int Net_fd(void) {
 	return(rbuf.sock);
 }
 
-unsigned char Net_login() {
+unsigned char Net_login(void) {
 	unsigned char tc;
 
 	Sockbuf_clear(&wbuf);
@@ -7861,7 +7861,7 @@ int Send_pray(int book, int spell) {
 }
 
 #if 0 /* instead, Send_telekinesis is used */
-int Send_mind() {
+int Send_mind(void) {
 	int n;
 
 	if ((n = Packet_printf(&wbuf, "%c", PKT_MIND)) <= 0) return(n);
@@ -9208,7 +9208,7 @@ int Send_font(void) {
 }
 
 /* Returns the amount of microseconds to the next frame (according to fps) - mikaelh */
-int next_frame() {
+int next_frame(void) {
 	struct timeval tv;
 	int time_between_frames = (1000000 / cfg_client_fps);
 	int us;

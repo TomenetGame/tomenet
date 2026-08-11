@@ -196,7 +196,7 @@ static const struct luaL_reg bitlib[] = {
 
 
 /* Set global lua variables that define the server type */
-void set_server_features() {
+void set_server_features(void) {
 	int oldtop = lua_gettop(L);
 
 	/* Server flags */
@@ -354,7 +354,7 @@ void set_server_features() {
 
 
 /* Initialize lua scripting */
-void init_lua() {
+void init_lua(void) {
 	int i, max;
 
 	/* Start the interpreter with default stack size */
@@ -442,21 +442,19 @@ void init_lua() {
 	ID_spell4 = exec_lua(0, "return BAGIDENTIFY");
 }
 
-void reinit_lua() {
+void reinit_lua(void) {
 	int i;
 
 	/* Close the old Lua state */
 	lua_close(L);
 
 	/* Free up school names */
-	for (i = 0; i < max_schools; i++) {
+	for (i = 0; i < max_schools; i++)
 		if (schools[i].name) string_free(schools[i].name);
-	}
 
 	/* Free up spell names */
-	for (i = 0; i < max_spells; i++) {
+	for (i = 0; i < max_spells; i++)
 		if (school_spells[i].name) string_free(school_spells[i].name);
-	}
 
 	/* Free up schools and spells */
 	C_KILL(schools, max_schools, school_type);
@@ -545,7 +543,7 @@ void master_script_begin(char *name, char mode) {
 		plog(format("Creating lua file %s in mode %c", buf, mode));
 }
 
-void master_script_end() {
+void master_script_end(void) {
 	my_fclose(lua_file);
 }
 

@@ -432,7 +432,7 @@ static void update_uniques_killed(struct worldpos *wpos) {
 #ifdef DEATH_FATE_SPECIAL
 /* (Note that new_players_on_depth() is always called when new_level_flag is set,
    so if we get called from process_player_change_wpos() then l_ptr->ondepth will be up to date.) */
-void check_df() {
+void check_df(void) {
 	struct dun_level;
 	int i;
 	player_type *p_ptr;
@@ -2069,7 +2069,7 @@ static void image_random(byte *ap, char32_t *cp, int Ind) {
 /*
  * Some eye-candies from PernAngband :)		- Jir -
  */
-char get_shimmer_color() {
+char get_shimmer_color(void) {
 	switch (randint(7)) {
 	case 1: return(TERM_RED);
 	case 2: return(TERM_L_RED);

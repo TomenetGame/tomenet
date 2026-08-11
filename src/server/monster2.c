@@ -792,7 +792,7 @@ void wipe_m_list_special(struct worldpos *wpos) {
 	compact_monsters(0, FALSE);
 }
 /* Avoid overcrowding of towns - C. Blue */
-void thin_surface_spawns() {
+void thin_surface_spawns(void) {
 	int i;
 	player_type *p_ptr;
 	cave_type **zcave;
@@ -844,7 +844,7 @@ void thin_surface_spawns() {
 	compact_monsters(0, FALSE);
 }
 /* Wipe all monsters in towns. (For seasonal events: Halloween) */
-void geno_towns() {
+void geno_towns(void) {
 	int i;
 
 	/* Delete all the monsters, except for target dummies and grid-occupying dummy */

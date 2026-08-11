@@ -1960,7 +1960,7 @@ static int near_hit(int m_idx, int *yp, int *xp, int rad) {
 
 #if 0
 	/* Start with adjacent locations, spread further */
-	for (d = 1; d < 4; d++){
+	for (d = 1; d < 4; d++) {
 		giveup = TRUE;
 
 		/* Check nearby locations */
@@ -9401,7 +9401,7 @@ static bool player_invis(int Ind, monster_type *m_ptr, int dist) {
  * Experimental
  * Evileye
  */
-void process_npcs() {
+void process_npcs(void) {
 #if 0
 	struct cave_type **zcave;
 

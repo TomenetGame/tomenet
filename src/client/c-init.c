@@ -377,7 +377,7 @@ void initialize_player_ins_files(void) {
 
 /* Init monster list for polymorph-by-name
    and also for displaying monster lore - C. Blue */
-static void init_monster_list() {
+static void init_monster_list(void) {
 	char buf[1024], *p1, *p2;
 	int v1 = 0, v2 = 0, v3 = 0;
 	FILE *fff;
@@ -1493,7 +1493,7 @@ void monster_stats_aux(int ridx, int rlidx, char paste_lines[18][MSG_LEN], bool 
 }
 
 /* Init kind list for displaying artifact lore with full item names - C. Blue */
-static void init_kind_list() {
+static void init_kind_list(void) {
 	char buf[1024], *p1, *p2;
 	int v1 = 0, v2 = 0, v3 = 0;
 	FILE *fff;
@@ -1640,7 +1640,7 @@ static void init_kind_list() {
 }
 
 /* Init artifact list for displaying artifact lore - C. Blue */
-static void init_artifact_list() {
+static void init_artifact_list(void) {
 	char buf[1024], *p1, *p2, art_name[MSG_LEN], buf2[1024];
 	FILE *fff;
 	int tval = 0, sval = 0, i, v1 = 0, v2 = 0, v3 = 0, rar, lev;
@@ -2741,7 +2741,7 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN], bool
 	my_fclose(fff);
 }
 
-static void init_monster_mapping() {
+static void init_monster_mapping(void) {
 	char buf[1024], *p1, *p2;
 	int v1 = 0, v2 = 0, v3 = 0, i;
 	FILE *fff;
@@ -3456,7 +3456,7 @@ static void quit_hook(cptr s) {
 }
 
 
-static void init_sound() {
+static void init_sound(void) {
 #ifdef USE_SOUND_2010
 	int i;
 
@@ -3508,7 +3508,7 @@ static void init_sound() {
 /* Try to re-init specifically SDL-audio.
    Purpose: Avoid need for client restart on switching audio packs live. */
 #ifdef USE_SOUND_2010
-int re_init_sound() {
+int re_init_sound(void) {
 	int i;
  #ifdef SOUND_SDL
 	int err;

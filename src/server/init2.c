@@ -2490,7 +2490,7 @@ static void prepare_distance(void) {
 	int d, y, x, count = 0;
 
 	/* Start with adjacent locations, spread further */
-	for (d = 0; d < PREPARE_RADIUS ; d++){
+	for (d = 0; d < PREPARE_RADIUS ; d++) {
 		/* Check nearby locations */
 		for (y = - d; y <= d; y++) {
 			for (x = - d; x <= d; x++) {

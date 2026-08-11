@@ -763,7 +763,7 @@ static errr Term_text_hack(int x, int y, int n, byte a, cptr s) {
 /*
  * Some eye-candies from PernAngband :)		- Jir -
  */
-static char get_shimmer_color() {
+static char get_shimmer_color(void) {
 	switch (randint(7)) {
 	case 1: return(TERM_RED);
 	case 2: return(TERM_L_RED);
@@ -3964,7 +3964,7 @@ errr Term_key_push_buf(cptr buf, int len) {
  * Add support for clone-map: copy of main window that
  * is always active - Lightman
  */
-errr refresh_clone_map() {
+errr refresh_clone_map(void) {
 	int i, j;
 	int w;
 	int h;

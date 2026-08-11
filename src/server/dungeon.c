@@ -2184,7 +2184,7 @@ void world_surface_night(struct worldpos *wpos) {
 }
 
 /* Day starts */
-static void sun_rises() {
+static void sun_rises(void) {
 	struct worldpos wrpos;
 	int wx, wy, i;
 	player_type *p_ptr;
@@ -2212,7 +2212,7 @@ static void sun_rises() {
 }
 
 /* Night starts */
-static void night_falls() {
+static void night_falls(void) {
 	struct worldpos wrpos;
 	int wx, wy, i;
 	player_type *p_ptr;
@@ -2891,7 +2891,7 @@ void set_pal_debug(int Ind, int k) {
 
 /* take care of day/night changes, on world surface.
    NOTE: assumes that it gets called every HOUR turns only! */
-static void process_day_and_night() {
+static void process_day_and_night(void) {
 	bool sunrise, nightfall;
 
 	/* Check for sunrise or nightfall */
@@ -2923,14 +2923,14 @@ static void process_day_and_night() {
 }
 
 /* Called when the server starts up */
-static void init_day_and_night() {
+static void init_day_and_night(void) {
 	if (IS_DAY)
 		sun_rises();
 	else /* assume IS_NIGHT ;) */
 		night_falls();
 }
 /* Called if time is manipulated by a god - via /settime, use with utmost care (mess up logs/stats etc), on TEST_SERVER only! */
-void verify_day_and_night() {
+void verify_day_and_night(void) {
 	if (IS_DAY && night_surface) sun_rises();
 	else if (IS_NIGHT && !night_surface) night_falls();
 }
@@ -7779,9 +7779,10 @@ static void do_unstat(struct worldpos *wpos, byte fast_unstat) {
  * 24 hourly scan of houses - should the odd house be owned by
  * a non player. Hopefully never, but best to save admin work.
  */
-static void scan_houses() {
+static void scan_houses(void) {
 	int i;
 	//int lval;
+
 	s_printf("Doing house maintenance\n");
 	for (i = 0; i < num_houses; i++) {
 		if (!houses[i].dna->owner) continue;
@@ -7817,7 +7818,7 @@ static void scan_houses() {
  * Deallocate all non static levels. (evileye)
  */
 /* - We get called every frame (ie 1/fps). - */
-static void purge_old() {
+static void purge_old(void) {
 	int x, y, i;
 	struct wilderness_type *w_ptr;
 	struct dungeon_type *d_ptr;
@@ -7920,7 +7921,7 @@ void cheeze(object_type *o_ptr) {
  * Traditional (Vanilla) houses version of cheeze()	- Jir -
  */
 #ifndef USE_MANG_HOUSE_ONLY
-void cheeze_trad_house() {
+void cheeze_trad_house(void) {
  #if CHEEZELOG_LEVEL > 3
 	int i, j;
 	house_type *h_ptr;
@@ -8009,7 +8010,7 @@ void house_contents_chmod(object_type *o_ptr) {
 
 /* Traditional (Vanilla) houses version */
 #ifndef USE_MANG_HOUSE_ONLY
-void tradhouse_contents_chmod() {
+void tradhouse_contents_chmod(void) {
 #if CHEEZELOG_LEVEL > 3
 	int i, j;
 	house_type *h_ptr;
@@ -8052,7 +8053,7 @@ void tradhouse_contents_chmod() {
  * We're called once per minute, from process_various().
  */
 //TODO: Do some work distribution over frames, this function seems CPU-hungry, looping through all items when it's called. */
-static void scan_objs() {
+static void scan_objs(void) {
 	int i, cnt = 0, dcnt = 0;
 	object_type *o_ptr;
 	cave_type **zcave;
@@ -8182,7 +8183,7 @@ static void scan_objs() {
  *
  * (However, this function can be called by admin characters)
  */
-void store_turnover() {
+void store_turnover(void) {
 	int i, n;
 
 	for (i = 0; i < numtowns; i++) {
@@ -11978,7 +11979,7 @@ void pack_overflow(int Ind) {
    aren't related to 'Global Events' routines - C. Blue
    (To be called every second.)
    Now also used for Go minigame. */
-void process_timers() {
+void process_timers(void) {
 	struct worldpos wpos;
 	cave_type **zcave;
 	int y, x, i;
@@ -12379,7 +12380,7 @@ void process_timers() {
 
 /* during new years eve, cast fireworks! - C. Blue
    NOTE: Called four times per second (if fireworks are enabled). */
-static void process_firework_creation() {
+static void process_firework_creation(void) {
 	int i;
 
 	if (!fireworks_delay) { /* fire! */
@@ -12407,7 +12408,7 @@ static void process_firework_creation() {
 #if defined(CLIENT_SIDE_WEATHER) && defined(CLIENT_WEATHER_GLOBAL)
 /* Update all affected (ie on worldmap surface) players' client-side weather.
    NOTE: Called on opportunity of _global_ weather undergoing any change. */
-static void players_weather() {
+static void players_weather(void) {
 	int i;
 
 	for (i = 1; i <= NumPlayers; i++) {
@@ -12426,7 +12427,7 @@ static void players_weather() {
 /* manage and toggle weather and wind state - C. Blue
    NOTE: Called once per second,
          and for CLIENT_SIDE_WEATHER only if also CLIENT_WEATHER_GLOBAL. */
-static void process_weather_control() {
+static void process_weather_control(void) {
 
  #ifdef CLIENT_SIDE_WEATHER
 /* NOTE: we are only supposed to get here if also CLIENT_WEATHER_GLOBAL. */
@@ -12546,7 +12547,7 @@ static void process_weather_control() {
    (animating/excising is then done in process_effects())
    NOTE: Called each turn. */
 #ifndef CLIENT_SIDE_WEATHER
-static void process_weather_effect_creation() {
+static void process_weather_effect_creation(void) {
 	/* clear skies or new years eve fireworks? do nothing */
 	if (!weather || fireworks) return;
 
@@ -12576,7 +12577,7 @@ static void process_weather_effect_creation() {
 #ifdef CLIENT_SIDE_WEATHER
  #ifndef CLIENT_WEATHER_GLOBAL
 /* initialize some weather-related variables */
-static void wild_weather_init() {
+static void wild_weather_init(void) {
 	wilderness_type *w_ptr;
 	int i, x, y;
 
@@ -12616,7 +12617,7 @@ static void wild_weather_init() {
    1..100: growing (decrementing, until reaching 1)
    -1..-100: shrinking (incrementing, until reaching -1 or critically low radius
 */
-static void process_wild_weather() {
+static void process_wild_weather(void) {
 	int i;
 
 	/* process clouds forming, dissolving

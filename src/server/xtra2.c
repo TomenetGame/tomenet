@@ -11994,9 +11994,10 @@ void resurrect_player(int Ind, int loss_factor) {
 		imprison(Ind, JAIL_OLD_CRIMES, "old crimes");
 }
 
-void check_xorders() {
+void check_xorders(void) {
 	int i, j;
 	struct player_type *q_ptr;
+
 	for (i = 0; i < MAX_XORDERS; i++) {
 		if (xorders[i].active && xorders[i].id) {
 			if ((turn - xorders[i].turn) > MAX_XORDER_TURNS) {

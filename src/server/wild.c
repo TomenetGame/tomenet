@@ -177,7 +177,7 @@ void init_wild_info_aux(int x, int y) {
 
 }
 
-void initwild() {
+void initwild(void) {
 	int i, j;
 
 	for (i = 0; i < MAX_WILD_X; i++)
@@ -270,7 +270,7 @@ void deltown(int Ind) {
 	numtowns--;
 }
 
-void wild_bulldoze() {
+void wild_bulldoze(void) {
 	int x, y;
 
 	/* inefficient? thats an understatement */
@@ -510,7 +510,7 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 	return(TRUE);
 }
 
-void init_wild_info() {
+void init_wild_info(void) {
 	int x, y;
 
 	memset(&wild_info[0][0], 0, sizeof(wilderness_type) * (MAX_WILD_Y * MAX_WILD_X));
@@ -4286,7 +4286,7 @@ static bool island(int y, int x, unsigned char type, unsigned char fill, int siz
 	return(added_decently);
 }
 
-static void makeland() {
+static void makeland(void) {
 	int p, i;
 	int x, y;
 	int density = MAXISLAND;
@@ -4317,7 +4317,7 @@ static unsigned short makecoast(unsigned char edge, unsigned char new, unsigned 
 	return(0);
 }
 
-static bool addhills() {
+static bool addhills(void) {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
@@ -4333,7 +4333,7 @@ static bool addhills() {
 	return(added);
 }
 
-static bool addlakes() {
+static bool addlakes(void) {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
@@ -4349,7 +4349,7 @@ static bool addlakes() {
 	return(added);
 }
 
-static bool addwaste() {
+static bool addwaste(void) {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
@@ -4365,7 +4365,7 @@ static bool addwaste() {
 	return(added);
 }
 
-static bool adddesert() {
+static bool adddesert(void) {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
@@ -4382,7 +4382,7 @@ static bool adddesert() {
 	return(added);
 }
 
-static bool addice() {
+static bool addice(void) {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
@@ -4399,7 +4399,7 @@ static bool addice() {
 	return(added);
 }
 
-static bool addislands() {
+static bool addislands(void) {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
@@ -4415,7 +4415,7 @@ static bool addislands() {
 	return(added);
 }
 
-static bool addforest() {
+static bool addforest(void) {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
@@ -4481,7 +4481,7 @@ static void river(int y, int x) {
 	}
 }
 
-static bool addrivers() {
+static bool addrivers(void) {
 	bool added = FALSE;
 	int i, p;
 	int x, y;
@@ -4499,7 +4499,7 @@ static bool addrivers() {
 }
 
 /* remove coastlines that aren't adjacent to any sort of sea terrain - C. Blue */
-static void fix_coasts() {
+static void fix_coasts(void) {
 	int x, y, d;
 	bool sea;
 

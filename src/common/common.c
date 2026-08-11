@@ -324,9 +324,8 @@ cptr longVersion, os_version;
 cptr shortVersion;
 
 /* Note: ANGBAND_DIR_USER must already be set to run this function. */
-void version_build() {
+void version_build(void) {
 	char temp[256], buf[1024];
-
 	int size;
 	FILE *fff;
 

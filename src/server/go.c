@@ -1643,7 +1643,7 @@ void go_challenge_cancel(void) {
 
 /* ------------------------------------------------------------------------- */
 
-static void go_engine_move_CPU() {
+static void go_engine_move_CPU(void) {
 	int Ind;
 	int tries = 5000, x = -1, y = -1, liberties;
 	bool random_move = FALSE;
@@ -2533,7 +2533,7 @@ static void go_engine_move_result(int move_result) {
 }
 
 /* Process incoming reply pieces to a previous command (Async read) */
-static int test_for_response() {
+static int test_for_response(void) {
 	int i;
 	char tmp[80];//, *tptr = tmp + 79;
 	char pipe_line_buf[160];
@@ -3042,7 +3042,7 @@ static void readFromPipe(char *buf, int *cont) {
 #if defined(ENGINE_FUEGO) || defined(HS_ENGINE_FUEGO) || defined(ENGINE_PACHI) || defined(HS_ENGINE_PACHI)
 /* Handle engine startup process.
    Blocking reading is ok, because server is just starting up. */
-static int handle_loading() {
+static int handle_loading(void) {
 	char lbuf[80], reply[240];
 	int cont = 0;
 

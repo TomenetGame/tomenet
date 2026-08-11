@@ -517,7 +517,7 @@ static int Init_setup(void) {
 	return(0);
 }
 
-void init_players() {
+void init_players(void) {
 	max_connections = MAX_SELECT_FD - 24; /* 999 connections at most */
 	/* Last player is the DM Edit player ! */
 	/* As no extra connection is required, */

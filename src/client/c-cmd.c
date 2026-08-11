@@ -267,7 +267,7 @@ static void cmd_all_in_one(void) {
 
 /* Handle all commands */
 
-void process_command() {
+void process_command(void) {
 	/* Parse the command */
 	switch (command_cmd) {
 	/* Ignore */
@@ -8325,7 +8325,7 @@ void cmd_message(void) {
 }
 
 /* set flags and options such as minlvl / auto-rejoin */
-static void cmd_guild_options() {
+static void cmd_guild_options(void) {
 	int i, acnt;
 	char buf[(NAME_LEN + 1) * 5 + 1], buf0[NAME_LEN + 1];
 	bool inkey_msg_old = inkey_msg;
@@ -9997,7 +9997,7 @@ static void cmd_master_aux_summon(void) {
 	inkey_msg = inkey_msg_old;
 }
 
-static bool cmd_master_aux_player() {
+static bool cmd_master_aux_player(void) {
 	char i = 0;
 	static char buf[80];
 	bool success = FALSE;
@@ -10099,7 +10099,7 @@ static bool cmd_master_aux_player() {
  * Upload/execute scripts
  */
 /* TODO: up-to-date check and download facility */
-static void cmd_script_upload() {
+static void cmd_script_upload(void) {
 	char name[81];
 	unsigned short chunksize;
 
@@ -10119,7 +10119,7 @@ static void cmd_script_upload() {
 /*
  * Upload/execute scripts
  */
-static void cmd_script_exec() {
+static void cmd_script_exec(void) {
 	char buf[81];
 
 	buf[0] = '\0';
@@ -10128,7 +10128,7 @@ static void cmd_script_exec() {
 	Send_master(MASTER_SCRIPTS, buf);
 }
 
-static void cmd_script_exec_local() {
+static void cmd_script_exec_local(void) {
 	char buf[81];
 
 	buf[0] = '\0';
@@ -10139,7 +10139,7 @@ static void cmd_script_exec_local() {
 
 
 /* Dirty implementation.. FIXME		- Jir - */
-static void cmd_master_aux_system() {
+static void cmd_master_aux_system(void) {
 	char i = 0;
 	bool inkey_msg_old = inkey_msg;
 
@@ -10297,13 +10297,13 @@ static void cmd_master(void) {
 	Flush_queue();
 }
 
-void cmd_king() {
+void cmd_king(void) {
 	if (!get_check2("Do you really want to own this land?", FALSE)) return;
 
 	Send_King(KING_OWN);
 }
 
-void cmd_spike() {
+void cmd_spike(void) {
 	int dir = command_dir;
 
 	if (!dir && !get_dir(&dir)) return;
@@ -10320,19 +10320,19 @@ void cmd_raw_key(int key) {
 	Send_raw_key(key);
 }
 
-void cmd_sip() {
+void cmd_sip(void) {
 	Send_sip();
 }
 
-void cmd_BBS() {
+void cmd_BBS(void) {
 	Send_BBS();
 }
 
-void cmd_telekinesis() {
+void cmd_telekinesis(void) {
 	Send_telekinesis();
 }
 
-void cmd_cloak() {
+void cmd_cloak(void) {
 	Send_cloak();
 }
 
@@ -10388,7 +10388,7 @@ void cmd_lagometer(void) {
 	Flush_queue();
 }
 
-void cmd_force_stack() {
+void cmd_force_stack(void) {
 	int item;
 
 	item_tester_hook = NULL;

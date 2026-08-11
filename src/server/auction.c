@@ -32,7 +32,7 @@ char* my_strcasestr(cptr haystack, cptr needle);
 #endif
 
 /* TODO: How badly can this mess up shopping? */
-void process_auctions()
+void process_auctions(void)
 {
 	int i, j, k;
 	auction_type *auc_ptr;
@@ -207,7 +207,7 @@ void process_auctions()
 	}
 }
 
-int new_auction()
+int new_auction(void)
 {
 	int i;
 	time_t now;

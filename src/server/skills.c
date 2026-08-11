@@ -18,7 +18,7 @@
 
 #if 0
 /* Initialze the s_info array at server start */
-bool init_s_info() {
+bool init_s_info(void) {
 	int i;
 	int order = 1;
 

@@ -31,7 +31,7 @@
 #include "../common/z-rand.h"
 
 #ifdef CLIENT
-#include "z-term.h"
+ #include "z-term.h"
 #endif
 
 

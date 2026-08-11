@@ -202,7 +202,7 @@ void delete_bound_socket(char *path) {
          strcpy(bound_socket[i], bound_socket[--num_bound_sockets]);
 }
 
-void SocketCloseAll() {
+void SocketCloseAll(void) {
    register int i;
 
    for (i = 0; i < num_bound_sockets; i++)

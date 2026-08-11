@@ -43,7 +43,7 @@ static void print_spells(object_type *o_ptr) {
 /* Query mimicry.lua functions to determine name, mana cost and fail rate
    instead of using hard-coded info from common/tables.c. - C. Blue */
 #define MIMIC_LUA
-static void print_mimic_spells() {
+static void print_mimic_spells(void) {
 	int i, col, j = 2, k, fail, j_max = 0;
 	char buf[90];
 #ifdef MIMIC_LUA
@@ -617,7 +617,7 @@ static int get_mimic_spell(int *sn) {
 }
 
 
-static void print_immunities() {
+static void print_immunities(void) {
 	int col = 13, j = 2;
 
 	/* Title the list */
@@ -657,7 +657,7 @@ static void print_immunities() {
 /*
  * Mimic
  */
-void do_mimic() {
+void do_mimic(void) {
 	int spell, j, dir, c = 0;
 	char out_val[MAX_CHARS];
 	bool uses_dir = FALSE;
@@ -1337,7 +1337,7 @@ void browse_school_spell(int item, int book, int pval) {
 	Term_load();
 }
 
-static void print_combatstances() {
+static void print_combatstances(void) {
 	int col = 20, j = 2;
 
 	/* Title the list */
@@ -1462,17 +1462,19 @@ static int get_combatstance(int *cs) {
 /*
  * Enter a combat stance (warriors) - C. Blue
  */
-void do_stance() {
+void do_stance(void) {
 	int stance;
+
 	/* Ask for the stance */
 	if (!get_combatstance(&stance)) return;
 	Send_activate_skill(MKEY_STANCE, stance, 0, 0, 0, 0);
 }
 
 
-static void print_melee_techniques() {
+static void print_melee_techniques(void) {
 	int i, col, j = 0;
 	char buf[90];
+
 	/* Print column */
 	col = 20;
 	/* Title the list */
@@ -1638,7 +1640,7 @@ static int get_melee_technique(int *sn) {
 	return(TRUE);
 }
 
-void do_melee_technique() {
+void do_melee_technique(void) {
 	int technique;
 
 	/* Ask for the technique */
@@ -1647,7 +1649,7 @@ void do_melee_technique() {
 	Send_activate_skill(MKEY_MELEE, 0, technique, 0, 0, 0);
 }
 
-static void print_ranged_techniques() {
+static void print_ranged_techniques(void) {
 	int i, col, j = 0;
 	char buf[90];
 
@@ -1816,7 +1818,7 @@ static int get_ranged_technique(int *sn) {
 	return(TRUE);
 }
 
-void do_ranged_technique() {
+void do_ranged_technique(void) {
 	int technique;
 
 	/* Ask for the technique */
@@ -1857,7 +1859,7 @@ bool item_tester_hook_rune_enchant(object_type *o_ptr) {
 	return(FALSE);
 }
 
-void do_runecraft() {
+void do_runecraft(void) {
 	u32b u = 0, u_prev[4] = { 0 };
 	int dir = -1, i = 0, step = 0;
 	bool done, redraw;
@@ -1932,7 +1934,7 @@ void do_runecraft() {
 	return;
 }
 
-static void print_breaths() {
+static void print_breaths(void) {
 	int col = 20, j = 2;
 
 	/* Title the list */
@@ -2111,7 +2113,7 @@ static int get_breath(int *br) {
 	return(TRUE);
 }
 
-void do_pick_breath() {
+void do_pick_breath(void) {
 	int br;
 
 	if (p_ptr->ptrait != TRAIT_MULTI && p_ptr->ptrait != TRAIT_POWER) {
@@ -2124,7 +2126,7 @@ void do_pick_breath() {
 	Send_activate_skill(MKEY_PICK_BREATH, br, 0, 0, 0, 0);
 }
 
-void do_breath() {
+void do_breath(void) {
 	int dir = 0;
 
 	if (!get_dir(&dir)) return;

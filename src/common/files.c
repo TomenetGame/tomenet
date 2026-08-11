@@ -103,7 +103,7 @@ static void remove_ft(struct ft_data *d_ft) {
 /* server and client need to be synchronised on this
    but for now, clashes are UNLIKELY in the extreme
    so they can generate their own. */
-static int new_fileid() {
+static int new_fileid(void) {
 	static int c_id = 0;
 
 	c_id++;
@@ -334,7 +334,7 @@ void kill_xfers(int ind) {
 
 /* handle all current SEND type file transfers */
 /* laid out long like this for testing. DO NOT CHANGE */
-void do_xfers() {
+void do_xfers(void) {
 	int x;
 	struct ft_data *trav = fdata;
 	unsigned short chunksize;
@@ -368,7 +368,7 @@ void do_xfers() {
  * Return the number of file transfers in progress
  * Can be used to check if all file transfers are complete.
  */
-int get_xfers_num() {
+int get_xfers_num(void) {
 	int num = 0;
 	struct ft_data *trav;
 

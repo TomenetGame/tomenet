@@ -44,7 +44,7 @@ char *crypass;
 
 int tfpos;
 
-int main() {
+int main(void) {
 	fp = fopen(fname, "rb");
 	if (fp == (FILE*)NULL) {
 		fprintf(stderr, "Cannot open %s\n", fname);
@@ -55,7 +55,7 @@ int main() {
 	return(0);
 }
 
-void setupscreen() {
+void setupscreen(void) {
 	attron(A_STANDOUT);
 	move(0, 0);
 	clrtoeol();
@@ -392,7 +392,7 @@ int ListAccounts(int fpos) {
 	return(fpos);
 }
 
-void editor() {
+void editor(void) {
 	int x;
 	int quit = 0;
 	char ch;

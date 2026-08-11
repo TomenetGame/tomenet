@@ -97,7 +97,7 @@ int in_banlist(char *acc, char *addr, int *time, char *reason) {
 	return(found);
 }
 
-void check_banlist() {
+void check_banlist(void) {
 	struct combo_ban *ptr, *new, *old = (struct combo_ban*)NULL;
 
 	ptr = banlist;
@@ -8147,7 +8147,7 @@ cptr get_ptitle2(player_type *p_ptr, bool short_form) {
 #endif
 
 #ifdef DUNGEON_VISIT_BONUS
-void reindex_dungeons() {
+void reindex_dungeons(void) {
 # ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
 	int i;
 # endif
@@ -10424,7 +10424,7 @@ void grid_affects_player(int Ind, int ox, int oy) {
 	    !(f_info[c_ptr->feat].flags2 & FF2_COVER) && //special: feat-protected, trees, walls, npc shops, doors offer cover
 	    !(c_ptr->info & CAVE_PROT)
 	    && !p_ptr->newly_created //hack to workaround login silliness of showing sunburn+respite messages instantly for newly created characters inside the inn
-	    ){
+	    ) {
 		if (!p_ptr->grid_sunlit) {
 			p_ptr->grid_sunlit = TRUE;
 			calc_boni(Ind);

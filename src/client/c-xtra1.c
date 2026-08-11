@@ -3648,7 +3648,7 @@ void display_lagometer(bool display_commands) {
 /*
  * Update the lag-o-meter if it's open.
  */
-void update_lagometer() {
+void update_lagometer(void) {
 	if (lagometer_open) {
 		display_lagometer(TRUE);
 

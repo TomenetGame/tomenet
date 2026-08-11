@@ -31,14 +31,14 @@ FILE *hook_file;
 static hooks_chain *hooks_heads[MAX_HOOKS];
 
 /* Wipe hooks and init them with quest hooks */
-void wipe_hooks() {
+void wipe_hooks(void) {
 	int i;
 
 	for (i = 0; i < MAX_HOOKS; i++)
 		hooks_heads[i] = NULL;
 }
 
-void dump_hooks() {
+void dump_hooks(void) {
 	int i;
 
 	for (i = 0; i < MAX_HOOKS; i++) {

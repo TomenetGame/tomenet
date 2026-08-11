@@ -280,7 +280,7 @@ bool init_lua_done = FALSE;
 bool open_lua_done = FALSE;
 
 /* Set global lua variables that define the server type */
-static void set_server_features() {
+static void set_server_features(void) {
 	char buf[80];
 	int oldtop;
 
@@ -345,7 +345,7 @@ static void set_server_features() {
 
 
 /* Initialize lua scripting */
-void init_lua() {
+void init_lua(void) {
 	char ind[80];
 	int oldtop;
 
@@ -402,7 +402,7 @@ in time, nor xml.lua/meta.lua which are needed earlier too, so we need to hard-c
 }
 
 /* Reinitialize Lua */
-void reinit_lua() {
+void reinit_lua(void) {
 	if (init_lua_done) {
 		/* Close the old Lua state */
 		lua_close(L);
@@ -413,7 +413,7 @@ void reinit_lua() {
 	init_lua();
 }
 
-void open_lua() {
+void open_lua(void) {
 	int i, max;
 	char out_val[160];
 
@@ -446,7 +446,7 @@ void open_lua() {
 	open_lua_done = TRUE;
 }
 
-void reopen_lua() {
+void reopen_lua(void) {
 	int i;
 
 	/* Free up school names */
@@ -561,7 +561,7 @@ void master_script_begin(char *name, char mode) {
 
 }
 
-void master_script_end() {
+void master_script_end(void) {
 	my_fclose(lua_file);
 }
 

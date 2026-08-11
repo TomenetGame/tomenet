@@ -90,7 +90,7 @@ extern void do_stance(void);
 extern void do_melee_technique(void);
 extern void do_ranged_technique(void);
 extern bool get_item_hook_find_spell(int *item, int mode);
-extern void do_runecraft();
+extern void do_runecraft(void);
 extern void do_breath(void);
 extern void do_pick_breath(void);
 
@@ -652,8 +652,8 @@ extern bool check_dir2(cptr s);
 extern void init_guide(void);
 extern void ask_for_graphics_generic(void);
 extern void do_save_chat(int res, bool ask_to_confirm_filename);
-extern void do_save_chatinput();
-extern void do_save_guidebookmarks();
+extern void do_save_chatinput(void);
+extern void do_save_guidebookmarks(void);
 
 /* c-inven.c */
 extern s16b index_to_label(int i);
@@ -696,7 +696,7 @@ extern void prt(cptr str, int row, int col);
 extern bool get_string(cptr prompt, char *buf, int len);
 extern bool get_com(cptr prompt, char *command);
 extern int get_com_bk(cptr prompt, char *command);
-extern void request_command();
+extern void request_command(void);
 extern bool get_dir(int *dp);
 extern void c_put_str(byte attr, cptr str, int row, int col);
 extern void c_put_str_vert(byte attr, cptr str, int row, int col);
@@ -1226,7 +1226,7 @@ extern int grid_weather_volume, grid_ambient_volume, grid_weather_volume_goal, g
 extern bool sound_hint;
 
 extern const struct module sound_modules[];
-extern int re_init_sound();
+extern int re_init_sound(void);
 
  #ifdef SOUND_SDL
  extern errr init_sound_sdl(int argc, char **argv);

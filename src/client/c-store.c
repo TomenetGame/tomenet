@@ -13,7 +13,7 @@ int store_top = 0;
 /*
  * ToME show_building, ripped for client	- Jir -
  */
-void display_store_action() {
+void display_store_action(void) {
 	int i, y = 2, y2 = 0;
 
 	/* BIG_MAP leads to big shops */
