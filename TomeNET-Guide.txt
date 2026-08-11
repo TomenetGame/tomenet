@@ -22354,7 +22354,7 @@ of Mimicry and Runecraft without that much expense of skill points.
 (7.6) Sanity (or insanity)
 --------------------------
 When your character loses sanity, temporary halluciations (flashbacks) may
-occur and become more frequent when you lose even more sanity, you will see the
+occur and become more frequent when you lose even more sanity, you will see
 the message "A flashback storms your head!".
 Hallucinations are not just visually confusing when things seem to pop up that
 don't really exist and things that do exist become unrecognizable. They will
@@ -22377,10 +22377,13 @@ You can type the '/snbar' slash command into chat to cycle through these.
 
 Monsters, traps or too much booze can reduce your sanity.
 Fortunately there are potions available that cure insanity, although they
-are not very common and cannot be bought in NPC shops. Wisdom helps against
-insanity by inceasing your 'sanity capacity'. As you gain levels, your sanity
-capacity will also increase. Certain classes such as priests or mindcrafters
-may (depending on their skills) be able to cure insanity too.
+are not very common and cannot be bought in NPC shops, with the exception
+of Potions of Curing which are quite expensive for healing only quite little
+sanity in exchange.
+Wisdom helps against insanity by inceasing your 'sanity capacity'.
+As you gain levels, your sanity capacity will also increase.
+Certain classes such as priests or mindcrafters may (depending on which skills
+they trained) be able to cure insanity too.
 
 When your sanity suffers from an attack, you'll see a message in the message
 window telling you so, instead of the usual white or yellow combat messages it
