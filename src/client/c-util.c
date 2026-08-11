@@ -42,6 +42,15 @@
 
 #define RAINY_TOMB /* Display rainy weather for the mood? +_+ - C. Blue */
 
+/* When reinitializing macros, also reload font/graf prefs?
+   Shoudln't be needed. */
+//#define FORGET_MACRO_VISUALS
+
+/* Enable the 'macro set' feature in the macro wizard? (%zS or %Z shortcut) */
+//#ifdef TEST_CLIENT
+ #define ENABLE_MACROSETS
+//#endif
+
 #ifdef ALLOW_NAVI_KEYS_IN_PROMPT
 static bool inkey_location_keys = FALSE;
   /* Navigation keys/special keys sequence initializer */
@@ -5436,14 +5445,6 @@ void macro_clear(void) {
 	macro__num = 0;
 	for (i = 0; i < 256; i++) macro__use[i] = 0;
 }
-
-/* When reinitializing macros, also reload font/graf prefs?
-   Shoudln't be needed. */
-//#define FORGET_MACRO_VISUALS
-
-//#ifdef TEST_CLIENT
- #define ENABLE_MACROSETS
-//#endif
 
 #ifndef ENABLE_MACROSETS
  /* Still define stuff to recognize macro files made with a set-enabled client */
