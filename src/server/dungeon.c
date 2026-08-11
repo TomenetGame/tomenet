@@ -8401,7 +8401,9 @@ static void process_various(void) {
 
 #ifdef TEST_SERVER /* Enable NR collapse? (Possibly either teleporting everyone out or killing everyone who didn't on his own teleport out?) */
  #warning "Collapsing Nether Realm"
-		/* Nether Realm completely collapses? -- To prohibit using this bottom floor as save operations base maybe */
+		/* Nether Realm completely collapses? --
+		   Reason: Prohibit abusing this bottom floor as 100% safe operations base,
+		           as NR-bottom can only spawn at level_generation_time. */
 		if (nether_realm_collapsing) {
 			struct worldpos wpos = {netherrealm_wpos_x, netherrealm_wpos_y, netherrealm_end_wz};
 
