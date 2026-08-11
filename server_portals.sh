@@ -1,3 +1,5 @@
+#!/bin/bash
+
 # Helper script for tomenet.server to send a player to a remote server
 # as 'guest', temporarily (SERVER_PORTALS feature) -  C. Blue
 
