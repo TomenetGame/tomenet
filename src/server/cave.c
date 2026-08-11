@@ -948,6 +948,7 @@ int getlevel(struct worldpos *wpos) {
 	wilderness_type *w_ptr = &wild_info[wpos->wy][wpos->wx];
 
 	if (wpos->wz == 0) {
+		/* Important: Bree must always return 0, or non-townie RF8_WILD_TOWN monsters will spawn */
 #if 0 /* this ignores terrain types */
 		/* ground level */
  #ifdef WILD_LEVEL_DEPENDS_ON_TOWN
