@@ -15353,22 +15353,29 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 #ifdef SERVER_PORTALS
 			else if (prefix(messagelc, "/relog")) { /* debugging/testing: Send PKT_RELOGIN request to our client */
-				char host[80];
-				s32b port = 18348;
-
 				if (tk != 1) {
 					msg_print(Ind, "Usage: /relog <servername>");
 					return;
 				}
-				strcpy(host, "localhost"); //testing
+				if (!server_portals) {
+					msg_print(Ind, "Error: No server portals registered.");
+					return;
+				}
+				for (n = 0; n < server_portals; n++)
+					if (!strcasecmp(message3, server_portal[n].name)) break;
+				if (n == server_portals) {
+					msg_print(Ind, "Error: Specified server name not found.");
+					return;
+				}
+				msg_format(Ind, "Recognized server '%s': <%s:%d>", server_portal[n].name, server_portal[n].host, server_portal[n].port);
 
 				/* Use '+' as prefix to account/character name, as this is an invalid symbol that cannot normally be used by players,
 				   so collisions with regularly existing players are impossible. */
-				s_printf("RELOGCMD: <%s>(<%s>) -> <%s>:<%d>\n", p_ptr->name, p_ptr->accountname, token[1], port);
+				s_printf("RELOGCMD: <%s>(<%s>) -> '%s' <%s:%d>\n", p_ptr->name, p_ptr->accountname, server_portal[n].name, server_portal[n].host, server_portal[n].port);
  #if 1 /* use basically valid acc/char names */
-				Relogin_connection(p_ptr->conn, message3, host, port, p_ptr->accountname, "temppass", p_ptr->name, "TEST(NORMAL)");
+				Relogin_connection(p_ptr->conn, server_portal[n].name, server_portal[n].host, server_portal[n].port, p_ptr->accountname, "temppass", p_ptr->name, "TEST(NORMAL)");
  #else /* use for normal logins 'invalid' acc/char names thanks to prefixed '+' which is an illegal symbol outside of SERVER_PORTALS */
-				Relogin_connection(p_ptr->conn, message3, host, port, format("+%s", p_ptr->accountname), "temppass", format("+%s", p_ptr->name), "TEST(EXT)");
+				Relogin_connection(p_ptr->conn, server_portal[n].name, server_portal[n].host, server_portal[n].port, format("+%s", p_ptr->accountname), "temppass", format("+%s", p_ptr->name), "TEST(EXT)");
  #endif
 				return;
 			}

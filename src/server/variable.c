@@ -231,6 +231,10 @@ struct combo_ban *banlist = NULL;
 struct swear_info swear[MAX_SWEAR];
 char nonswear[MAX_NONSWEAR][NAME_LEN];
 int nonswear_affix[MAX_NONSWEAR];
+#ifdef SERVER_PORTALS
+struct server_portal_info server_portal[SERVER_PORTALS];
+int server_portals = 0;
+#endif
 
 /* Server flags */
 u32b sflags3 = 0x0, sflags2 = 0x0, sflags1 = 0x0, sflags0 = 0x0;

@@ -805,7 +805,7 @@
      - save file is sent back with 'return ok' marker to its origin server.
      - original server overwrites the locked save file with this new version it receives, and corrects the name to normal name again (no #<idx> server marker), and unlocks the savefile (clearing its 'locked' flag).
  */
- #define SERVER_PORTALS
+ #define SERVER_PORTALS 10 /* Max amount of registered portals [10] */
 
  /* Harsh weather gives us trouble of some sort? */
  #define IRRITATING_WEATHER /* TODO: Fix weather code, see pos_in_weather() and two related code parts commented about there */

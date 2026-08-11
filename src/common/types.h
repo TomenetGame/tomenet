@@ -534,6 +534,14 @@ typedef struct swear_info {
 	int level;
 } swear_info;
 
+#ifdef SERVER_PORTALS
+typedef struct server_portal_info {
+	char name[MAX_CHARS];
+	char host[MAX_CHARS];
+	s32b port;
+} server_portal_info;
+#endif
+
 /* jk */
 /* name and description are in some other arrays */
 typedef struct trap_kind trap_kind;

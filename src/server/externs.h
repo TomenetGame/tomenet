@@ -355,6 +355,10 @@ extern swear_info swear[MAX_SWEAR];
 extern char nonswear[MAX_NONSWEAR][NAME_LEN];
 extern int nonswear_affix[MAX_NONSWEAR];
 extern struct combo_ban *banlist;
+#ifdef SERVER_PORTALS
+extern struct server_portal_info server_portal[SERVER_PORTALS];
+extern int server_portals;
+#endif
 extern u32b sflags3, sflags2, sflags1, sflags0, sflags_TEMP;
 extern player_type **Players;
 extern party_type parties[MAX_PARTIES];
@@ -1124,6 +1128,9 @@ extern bool load_server_cfg(void);
 extern void init_schools(s16b new_size);
 extern void init_spells(s16b new_size);
 extern void init_swearing(void);
+#ifdef SERVER_PORTALS
+extern void init_server_portals(void);
+#endif
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 extern int scan_iddc(void);
 #endif

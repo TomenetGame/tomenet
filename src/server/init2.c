@@ -2486,7 +2486,7 @@ static errr init_q_info(void) {
 
 /*** Initialize others ***/
 
-static void prepare_distance() {
+static void prepare_distance(void) {
 	int d, y, x, count = 0;
 
 	/* Start with adjacent locations, spread further */
@@ -2715,7 +2715,7 @@ static byte getiddctype(byte depth, byte last) {
 }
 
 //We could de-hardcode the depths of static towns, and iddc length, perhaps? - Kurzel
-static errr init_iddc() {
+static errr init_iddc(void) {
 	byte n = 0, i, j;
 	byte type = getiddctype(127, 0);
 	byte step = 0;
@@ -2801,7 +2801,7 @@ static errr init_iddc() {
 	return(0);
 }
 
-int scan_iddc() {
+int scan_iddc(void) {
 	/*
 	byte i;
 	struct worldpos wpos;
@@ -2829,7 +2829,7 @@ int scan_iddc() {
 }
 #endif
 
-void init_swearing() {
+void init_swearing(void) {
 	char buf[1024];
 	int i = 0, j;
 	FILE *fp;
@@ -2900,6 +2900,30 @@ void init_swearing() {
 
 	fclose(fp);
 }
+
+#ifdef SERVER_PORTALS
+void init_server_portals(void) {
+	char buf[1024];
+	int i = 0;
+	FILE *fp;
+
+	path_build(buf, 1024, ANGBAND_DIR_CONFIG, "server_portals.cfg");
+
+	fp = fopen(buf, "r");
+	if (!fp) s_printf("Failed to open server_portals.cfg\n");
+	do {
+		if (fscanf(fp, "%s%s%d\n", server_portal[i].name, server_portal[i].host, &server_portal[i].port) == EOF) {
+			if (!feof(fp)) s_printf("Failed to read server_portals.cfg: %s\n", strerror(ferror(fp)));
+		} else {
+			s_printf("Registered server portal %d: <%s> <%s:%d>\n", i, server_portal[i].name, server_portal[i].host, server_portal[i].port);
+			i++;
+		}
+	} while (!feof(fp) && i < SERVER_PORTALS);
+	if (!feof(fp)) s_printf("Too large server_portals.cfg, exceeding %d - 1 elements.\n", SERVER_PORTALS);
+	fclose(fp);
+	server_portals = i;
+}
+#endif
 
 /*
  * Read randart names from lib/text/randart.txt.
