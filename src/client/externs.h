@@ -403,7 +403,7 @@ extern bool global_c_cfg_big_map;
 extern u32b sflags3, sflags2, sflags1, sflags0;
 extern byte client_mode;
 
-extern u32b cfg_game_port;
+extern s32b cfg_game_port;
 
 extern skill_type s_info[MAX_SKILLS];
 
@@ -1314,6 +1314,7 @@ extern byte rl_connection_state;
 extern bool rl_msg_output;
 extern bool player_pref_files_loaded;
 extern char relogin_host[40], relogin_accname[ACCNAME_LEN], relogin_accpass[PASSWORD_LEN], relogin_charname[CNAME_LEN]; //max length of IPv6 addr is 39
+extern s32b relogin_port;
 #endif
 
 extern int guide_lastline, guide_errno;

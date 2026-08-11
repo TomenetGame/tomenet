@@ -443,7 +443,7 @@ extern cptr ANGBAND_DIR_GAME;
 extern cptr ANGBAND_DIR_SAVE;
 extern cptr ANGBAND_DIR_TEXT;
 extern cptr ANGBAND_DIR_USER;
-extern cptr MANGBAND_CFG;
+extern cptr TOMENET_CFG;
 extern bool item_tester_full;
 extern byte item_tester_tval;
 extern bool (*item_tester_hook)(object_type *o_ptr);
@@ -1416,7 +1416,7 @@ extern void Check_evilmeta(void);
 extern int Setup_net_server(void);
 extern bool Destroy_connection(int Ind, char *reason);
 #ifdef SERVER_PORTALS
-extern bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char *relogin_accpass, char *relogin_charname, char *reason_orig); //SERVER_PORTALS/PKT_RELOGIN
+extern bool Relogin_connection(int ind, char *relogin_servername, char *relogin_host, s32b relogin_port, char *relogin_accname, char *relogin_accpass, char *relogin_charname, char *reason_orig); //SERVER_PORTALS/PKT_RELOGIN
 #endif
 
 extern sockbuf_t *get_conn_q(int Ind);

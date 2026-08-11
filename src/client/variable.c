@@ -257,7 +257,7 @@ bool global_c_cfg_big_map = FALSE;
 u32b sflags3 = 0x0, sflags2 = 0x0, sflags1 = 0x0, sflags0 = 0x0;
 byte client_mode = CLIENT_NORMAL;
 
-u32b cfg_game_port = 18348;
+s32b cfg_game_port = 18348;
 
 skill_type s_info[MAX_SKILLS];
 
@@ -707,6 +707,7 @@ byte rl_connection_state = 0;
 bool rl_msg_output = FALSE;
 bool player_pref_files_loaded = FALSE;
 char relogin_host[40] = { 0 }, relogin_accname[ACCNAME_LEN], relogin_accpass[PASSWORD_LEN], relogin_charname[CNAME_LEN]; //max length of IPv6 addr is 39
+s32b relogin_port = 18348;
 #endif
 
 /* For in-client guide search */

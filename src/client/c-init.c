@@ -3727,6 +3727,7 @@ void client_init(char *argv1, bool skip) {
 	if (relogin_host[0]) {
 		strcpy(server_name, relogin_host);
 		relogin_host[0] = 0;
+		cfg_game_port = server_port = relogin_port;
 		strcpy(nick, relogin_accname);
 		strcpy(pass, relogin_accpass);
 		strcpy(cname, relogin_charname);

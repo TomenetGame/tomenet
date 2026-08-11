@@ -3,7 +3,7 @@
 ulimit -c unlimited
 
 while :; do
-	./mangband
+	./tomenet.server
 	if [ -f core ] ; then
 		mv core cores/`/bin/date +"%Y%m%d%I%M%S"`
 	fi

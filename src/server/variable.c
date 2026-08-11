@@ -571,7 +571,7 @@ cptr ANGBAND_DIR_SCPT;
 
 /*
  * Various data files for the game, such as the high score and
- * the mangband logs.
+ * the tomenet logs.
  */
 cptr ANGBAND_DIR_DATA;
 
@@ -605,10 +605,10 @@ cptr ANGBAND_DIR_SAVE;
 cptr ANGBAND_DIR_USER;
 
 /*
- * Mangband configuration file
+ * TomeNET configuration file
  * Usually it's 'tomenet.cfg'
  */
-cptr MANGBAND_CFG;
+cptr TOMENET_CFG;
 
 /*
  * Total Hack -- allow all items to be listed (even empty ones)

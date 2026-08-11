@@ -300,7 +300,7 @@ int main(int argc, char *argv[]) {
 #endif
 
 	path_build(buf, 1024, ANGBAND_DIR_CONFIG, "tomenet.cfg");
-	MANGBAND_CFG = string_make(buf);
+	TOMENET_CFG = string_make(buf);
 
 	/* Process the command line arguments */
 	for (--argc, ++argv; argc > 0; --argc, ++argv) {
@@ -362,7 +362,7 @@ int main(int argc, char *argv[]) {
 			break;
 
 		case 'm':
-			MANGBAND_CFG = &argv[0][2];
+			TOMENET_CFG = &argv[0][2];
 			config_specified = TRUE;
 			break;
 

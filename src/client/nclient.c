@@ -2050,7 +2050,7 @@ int Receive_relogin(void) {
 	topline_icky = FALSE;
 
 	/* 'reason' is an optional parameter - no real reason for this though (badumtsh) */
-	if (Packet_scanf(&rbuf, "%c%s%s%s%s%s%c", &pkt, relogin_host, relogin_accname, relogin_accpass, relogin_charname, reason, &delay) != 7) {
+	if (Packet_scanf(&rbuf, "%c%s%d%s%s%s%s%c", &pkt, relogin_host, &relogin_port, relogin_accname, relogin_accpass, relogin_charname, reason, &delay) != 8) {
 		errno = 0;
 		plog("Can't read relogin packet");
 		return(-1);
@@ -2061,7 +2061,7 @@ int Receive_relogin(void) {
 	rl_connection_state = 2;
  #endif
 
-	quit(format("Relog to %s\n(%s)", relogin_host, reason));
+	quit(format("Relog to %s:%d\n(%s)", relogin_host, relogin_port, reason));
  #ifdef WINDOWS
 	Sleep(delay * 100); //ms
  #else

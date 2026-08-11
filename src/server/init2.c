@@ -3524,12 +3524,12 @@ bool load_server_cfg(void) {
 
 	/* Attempt to open the file */
 	//cfg = fopen("tomenet.cfg", "r");
-	cfg_file = fopen(MANGBAND_CFG, "r");
+	cfg_file = fopen(TOMENET_CFG, "r");
 
 	/* Failure */
 	if (cfg_file == (FILE*)NULL) {
 		//s_printf("Error : cannot open file tomenet.cfg\n");
-		s_printf("Error : cannot open file '%s'\n", MANGBAND_CFG);
+		s_printf("Error : cannot open file '%s'\n", TOMENET_CFG);
 		return(FALSE);
 	}
 

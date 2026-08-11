@@ -2945,7 +2945,7 @@ static bool load_server_info_classic(void) {
 
 		s_printf("Reading a %d.%d.%d server savefile...\n", sf_major, sf_minor, sf_patch);
 
-		/* Parse "MAngband" savefiles */
+		/* Parse "TomeNET" savefiles */
 		/* If I ever catch the one that put that STUPID UGLY IDIOT
 		 * HACK there he will know what *WRATH* means ... -- DG
 		 */

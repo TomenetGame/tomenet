@@ -6,7 +6,7 @@
 # Arguments format:
 # (1) Remote server, (2) account name (modified, temp), (3) account password (new, temp), (4) character name (modified, temp), (5) savegame filename
 
-# This source server's (arbitrary) name
+# This source server's (arbitrary) name (consistent with entries in lib/config/server_portals.cfg)
 SOURCESERVER=xxx
 
 # -----------------------------------------------------------------------------
@@ -24,18 +24,27 @@ echo $2 > server_portals.tmp
 echo $3 >> server_portals.tmp
 echo $4 >> server_portals.tmp
 
-# Configure all known remote servers and their specific game paths
+# Configure all known remote servers (ie their own, local, arbitrary SOURCESERVER names)
+# with their specific game paths and IP addresses (or hostnames)
 case "$1" in
-xxx.tomenet.zz)
+yyy)
+    REMOTEHOST=some.host.name
     REMOTEPATH=/home/tomenet
+    REMOTESAVEPATH=lib/save/server_portals
+    ;;
+case "$1" in
+zzz)
+    REMOTEHOST=or.some.ip.address
+    REMOTEPATH=/home/tomenet
+    REMOTESAVEPATH=lib/save/server_portals
     ;;
 esac
 
 REMOTESAVEPATH=$REMOTEPATH/lib/save/server_portals
 
 # Send the savegame file
-scp -q $5 tomenet@$1:$REMOTESAVEPATH/$SAVEFILE
+scp -q $5 tomenet@$REMOTEHOST:$REMOTEPATH/$REMOTESAVEPATH/$SAVEFILE
 # Send info about temporary account name, temporary password, temporary character name
-scp -q server_portals.tmp tomenet@$1:$REMOTESAVEPATH/$INFOFILE
+scp -q server_portals.tmp tomenet@$REMOTEHOST:$REMOTEPATH/$REMOTESAVEPATH/$INFOFILE
 
 rm server_portals.tmp

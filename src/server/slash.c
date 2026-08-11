@@ -1919,14 +1919,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (tk && is_admin(p_ptr)) {
 				//if (strstr(token[1], "log") && is_admin(p_ptr))
 				{
-					//path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "mangband.log");
+					//path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_TEXT, "tomenet.log");
 					path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, token[1]);
 					do_cmd_check_other_prepare(Ind, path, "");
 					return;
 				}
 				//else if (strstr(token[1], "rfe") &&
 			}
-			/* default is "mangband.rfe" */
+			/* default is "tomenet.rfe" */
 			else if ((is_admin(p_ptr) || cfg.public_rfe)) {
 				path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_DATA, "tomenet.rfe");
 				do_cmd_check_other_prepare(Ind, path, "RFE/Bug file");
@@ -8128,12 +8128,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/reload-config") || prefix(messagelc, "/cfg")) {
 				if (tk) {
-					if (MANGBAND_CFG != NULL) string_free(MANGBAND_CFG);
-					MANGBAND_CFG = string_make(token[1]);
+					if (TOMENET_CFG != NULL) string_free(TOMENET_CFG);
+					TOMENET_CFG = string_make(token[1]);
 				}
 
 				//				msg_print(Ind, "Reloading server option(tomenet.cfg).");
-				msg_format(Ind, "Reloading server option(%s).", MANGBAND_CFG);
+				msg_format(Ind, "Reloading server option(%s).", TOMENET_CFG);
 
 				/* Reload the server preferences */
 				load_server_cfg();
@@ -15353,16 +15353,22 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 #ifdef SERVER_PORTALS
 			else if (prefix(messagelc, "/relog")) { /* debugging/testing: Send PKT_RELOGIN request to our client */
-				if (!message3[0]) {
-					msg_print(Ind, "Usage: /relog <hostname/ip>");
+				char host[80];
+				s32b port = 18348;
+
+				if (tk != 1) {
+					msg_print(Ind, "Usage: /relog <servername>");
 					return;
 				}
+				strcpy(host, "localhost"); //testing
+
 				/* Use '+' as prefix to account/character name, as this is an invalid symbol that cannot normally be used by players,
 				   so collisions with regularly existing players are impossible. */
+				s_printf("RELOGCMD: <%s>(<%s>) -> <%s>:<%d>\n", p_ptr->name, p_ptr->accountname, token[1], port);
  #if 1 /* use basically valid acc/char names */
-				Relogin_connection(p_ptr->conn, message3, p_ptr->accountname, "temppass", p_ptr->name, "TEST(NORMAL)");
+				Relogin_connection(p_ptr->conn, message3, host, port, p_ptr->accountname, "temppass", p_ptr->name, "TEST(NORMAL)");
  #else /* use for normal logins 'invalid' acc/char names thanks to prefixed '+' which is an illegal symbol outside of SERVER_PORTALS */
-				Relogin_connection(p_ptr->conn, message3, format("+%s", p_ptr->accountname), "temppass", format("+%s", p_ptr->name), "TEST(EXT)");
+				Relogin_connection(p_ptr->conn, message3, host, port, format("+%s", p_ptr->accountname), "temppass", format("+%s", p_ptr->name), "TEST(EXT)");
  #endif
 				return;
 			}

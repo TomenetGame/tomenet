@@ -1855,11 +1855,12 @@ bool Destroy_connection(int ind, char *reason_orig) {
 }
 
 #ifdef SERVER_PORTALS
-bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char *relogin_accpass, char *relogin_charname, char *reason_orig) {
+/* Tell player's client to relogin to another server, as it passed through a local 'server portal' leading to that remote server. */
+bool Relogin_connection(int ind, char *relogin_servername, char *relogin_host, s32b relogin_port, char *relogin_accname, char *relogin_accpass, char *relogin_charname, char *reason_orig) {
 	connection_t	*connp = Conn[ind];
 	int		id = -1, len, sock;
 	char		pkt[MAX_CHARS_WIDE];
-	char		*reason, *host, *accname, *accpass, *charname;
+	char		*reason, *servername, *host, *accname, *accpass, *charname;
 	int		i, player = 0;
 	char		traffic[50 + 1];
 	player_type	*p_ptr = NULL;
@@ -1887,7 +1888,8 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 		return(Destroy_connection(ind, "Relogin process failed."));
 
 	/* (see 'reason' comment above) */
-	host = (char*)string_make(relogin_host);
+	servername = (char*)string_make(relogin_servername); /* for server_portals.sh, arbitrary code name each server has */
+	host = (char*)string_make(relogin_host); /* for the client to connect to */
 	accname = (char*)string_make(relogin_accname);
 	accpass = (char*)string_make(relogin_accpass);
 	charname = (char*)string_make(relogin_charname);
@@ -1905,7 +1907,7 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 	WriteAccount(&acc, FALSE);
 
 	/* Send savefile to remote server, where it will auto-detect it */
-	i = system(format("sh ./server_portals.sh \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &", host, accname, accpass, charname, p_ptr->savefile));
+	i = system(format("sh ./server_portals.sh \"%s\" \"%s\" \"%s\" \"%s\" \"%s\" &", servername, accname, accpass, charname, p_ptr->savefile));
 
 	kill_xfers(ind); /* don't waste time sending to a dead connection ( or crash! ) */
 
@@ -1923,6 +1925,11 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 	len += strlen(&pkt[len]);
 	pkt[len] = 0;
 	len++;
+
+	pkt[len] = relogin_port >> 24; len++;
+	pkt[len] = relogin_port >> 16; len++;
+	pkt[len] = relogin_port >> 8; len++;
+	pkt[len] = relogin_port; len++;
 
 	strcpy(&pkt[len], accname);
 	len += strlen(&pkt[len]);
@@ -2036,6 +2043,11 @@ bool Relogin_connection(int ind, char *relogin_host, char *relogin_accname, char
 	if (sock != -1) DgramClose(sock);
 
 	string_free(reason);
+	string_free(servername);
+	string_free(host);
+	string_free(accname);
+	string_free(accpass);
+	string_free(charname);
 
 	return(TRUE);
 }
