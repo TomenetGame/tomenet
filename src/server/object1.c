@@ -8205,13 +8205,13 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 	/* Full length time stamp - this is probably just TMI anyway oO */
 	sprintf(hr_time, " on %d%s %s %04d at %02d:%02dh",
 	    ctl->tm_mday, ctl->tm_mday == 1 ? "st" : (ctl->tm_mday == 2 ? "nd" : (ctl->tm_mday == 3 ? "rd" : "th")),
-	    month[ctl->tm_mon + 1], 1900 + ctl->tm_year,
+	    month[ctl->tm_mon], 1900 + ctl->tm_year,
 	    ctl->tm_hour, ctl->tm_min);
 #elif 1 /* <- seems ideal. We go 2-lines with the info, then everythings fits fine anyway */
 	/* Only show date, not time, to save space */
 	sprintf(hr_time, " on %d%s %s %04d",
 	    ctl->tm_mday, ctl->tm_mday == 1 ? "st" : (ctl->tm_mday == 2 ? "nd" : (ctl->tm_mday == 3 ? "rd" : "th")),
-	    month[ctl->tm_mon + 1], 1900 + ctl->tm_year);
+	    month[ctl->tm_mon], 1900 + ctl->tm_year);
 #elif 0
 	/* Only show date, and in purely numerical format to save more space */
 	sprintf(hr_time, " %04d-%02d-%02d", 1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday);
