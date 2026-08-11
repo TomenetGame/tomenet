@@ -8191,7 +8191,7 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 	char hr_time[MAX_CHARS]; /* human-readable time/date stamp */
 	char loc_name[MAX_CHARS]; /* dungeon name */
 	char source_acttime[MAX_CHARS], source_from[MAX_CHARS];
-	char tmp[MAX_CHARS];
+	char tmp[MAX_CHARS_WIDE];
 
 
 	/* --- Gather meta info from the object --- */
