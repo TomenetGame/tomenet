@@ -6798,6 +6798,9 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	}
 #endif
 
+	/* linebreak before misc info: discount, appraised value, hidden-powers note, history fluff */
+	fprintf(fff, "\n");
+
 	if (o_ptr->discount) fprintf(fff, "\377WThe value of this item is %d%% less than usual.\n", o_ptr->discount);
 
 #ifdef PLAYER_STORES
@@ -8188,6 +8191,7 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 	char hr_time[MAX_CHARS]; /* human-readable time/date stamp */
 	char loc_name[MAX_CHARS]; /* dungeon name */
 	char source_acttime[MAX_CHARS], source_from[MAX_CHARS];
+	char tmp[MAX_CHARS];
 
 
 	/* --- Gather meta info from the object --- */
@@ -8298,13 +8302,14 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 
 	source_acttime[0] = toupper(source_acttime[0]);
 	if (*source_from) {
+		sprintf(tmp, "\377%c(%s %s %s)\n", META_DIZ_ATTR, source_acttime, loc_name, source_from);
 		/* Probably doesn't fit into one line, and we don't want to require horizontal scrolling just for this... */
-		if (strlen(format("\n\377%c(%s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from)) >= 80 + 5)
-			fprintf(fff, "\n\377%c(%s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from);
+		if (strlen(tmp) > 80 + 3)
+			fprintf(fff, "\377%c(%s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from);
 		else /* it does fit */
-			fprintf(fff, "\n\377%c(%s %s %s)\n", META_DIZ_ATTR, source_acttime, loc_name, source_from);
+			fprintf(fff, "%s", tmp);
 	}
-	else fprintf(fff, "\n\377%c(%s %s)\n", META_DIZ_ATTR, source_acttime, loc_name);
+	else fprintf(fff, "\377%c(%s %s)\n", META_DIZ_ATTR, source_acttime, loc_name);
 
 	//byte slain_bosses, slain_nazgul, slain_superuniques, slain_sauron, slain_morgoth, slain_zuaon;
 }
