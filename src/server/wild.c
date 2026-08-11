@@ -1171,7 +1171,7 @@ static void wild_furnish_dwelling(struct worldpos *wpos, int x1, int y1, int x2,
 			y = rand_range(y1,y2);
 
 			if (cave_clean_bold(zcave,y,x)) {
-				object_level = w_ptr->radius / 2 +1;
+				object_level = w_ptr->radius / 2 + 1;
 				place_object(0, wpos, y, x, FALSE, FALSE, FALSE, RESF_MASK_LOW, default_obj_theme, 0, ITEM_REMOVAL_NEVER, FALSE);
 				num_objects--;
 			}
@@ -2357,9 +2357,12 @@ struct terrain_type {
 
 /* Determine terrain level from terrain type, town radius and town level. */
 int terrain_level(int type, int radius, int town_level, bool is_night) {
-	int town_add = radius / 2 + town_level / 3, type_lev = 1, daynight_mul10 = 10;
+	int type_lev, daynight_mul10 = 10;
+	int town_add = radius + town_level / 3; //or radius/2?
 
 	switch (type) {
+	/* town, especially Bree, to generate level 0 townies (some other >0 monsters also have RF8_WILD_TOWN flag, ew) */
+	case WILD_TOWN:		type_lev = 0; break;
 	/* wasteland */
 	case WILD_VOLCANO:	type_lev = 20; break;
 	case WILD_MOUNTAIN:	type_lev = 20; break;
@@ -2395,7 +2398,7 @@ int terrain_level(int type, int radius, int town_level, bool is_night) {
 	}
 
 	/* Reduce terrain-type base level greatly if we're still within a town's housing area */
-	type_lev = (radius <= MAX_TOWNAREA ? 1 + type_lev / 5 : type_lev);
+	type_lev = (radius <= MAX_TOWNAREA ? type_lev / 5 : type_lev);
 
 	return(((type_lev + town_add) * daynight_mul10) / 10);
 }
