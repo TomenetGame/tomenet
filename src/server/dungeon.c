@@ -6767,7 +6767,7 @@ static bool process_player_end_aux(int Ind) {
 	/* and DG_CURSE randomly summons a monster (non-unique) */
 	if (p_ptr->dg_curse && (rand_int(300) == 0) && !townarea && !dungeontown &&
 	    (get_skill(p_ptr, SKILL_HSUPPORT) < 40)) {
-		int anti_Ind = world_check_antimagic(Ind);
+		int anti_Ind = world_check_antimagic(Ind, 100);
 
 		if (anti_Ind) {
 #ifdef USE_SOUND_2010

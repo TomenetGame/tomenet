@@ -1465,9 +1465,9 @@ bool teleport_player(int Ind, int dis, bool ignore_pvp) {
 					 * The latter limitation is to avoid
 					 * totally unkillable suckers...
 					 */
-					if (!(m_list[m_idx].csleep) && mon_will_run(Ind, m_idx) == FALSE) {
+					if (!(m_list[m_idx].csleep) && !mon_will_run(Ind, m_idx)) {
 						/* "Skill" test */
-						if (randint(100) < r_ptr->level)
+						if (randint(100) < r_ptr->level && !monst_check_antimagic(Ind, m_idx, 40))
 							teleport_to_player(Ind, m_idx);
 					}
 				}

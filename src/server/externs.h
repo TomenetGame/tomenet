@@ -1165,6 +1165,7 @@ extern void load_recent_deaths(void);
 extern cptr desc_moan_halloween[];
 extern void do_trigger_reactive(int Ind, int m_idx, cptr m_name, bool *fear, bool *alive);
 /* melee2.c */
+extern bool monst_check_antimagic(int Ind, int m_idx, int perc);
 extern bool monst_check_grab(int m_idx, int mod, cptr desc);
 extern int mon_will_run(int Ind, int m_idx);
 extern bool monster_attack_normal(int m_idx, int tm_idx);
@@ -1178,7 +1179,7 @@ extern void process_monsters_astar(void);
 extern void curse_equipment(int Ind, int chance, int heavy_chance);
 extern void process_npcs(void);
 extern bool mon_allowed_pickup(int tval);
-extern int world_check_antimagic(int Ind);
+extern int world_check_antimagic(int Ind, int perc);
 extern void ball_noInd(int m_idx, int typ, int dam_hp, struct worldpos *wpos, int y, int x, int rad);
 extern void mon_meteor_swarm(int Ind, int m_idx, int typ, int dam, int x, int y, int rad);
 extern int calc_grab_chance(player_type *p_ptr, int mod, int rlev);

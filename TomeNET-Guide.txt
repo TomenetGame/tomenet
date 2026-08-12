@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 9. August 2026 - written by C. Blue (c_blue@gmx.net)      |
+| Latest update: 12. August 2026 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -17705,6 +17705,7 @@ TPORT           Not only allows a monster to teleport at will, but also will
                 To teleport-follow, when the player initiates teleportation,
                 the monster must stand adjacent to player (ie in melee range)
                 and not have RES_TELE or IM_TELE flag.
+                Anti-magic may hinder this follow-teleportation.
                 Also the monster must not be asleep or running from the player.
                 Finally the monster will have to succeed a d100 roll against
                 its racial base level.
