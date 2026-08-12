@@ -3326,7 +3326,7 @@ int Receive_char(void) {
 int Receive_message(void) {
 	int n, c;
 	char ch;
-	char buf[MSG_LEN], *bptr, *sptr, *bnptr;
+	char buf[MSG_LEN] = { 0 }, *bptr, *sptr, *bnptr;
 	char l_buf[MSG_LEN], l_cname[NAME_LEN], *ptr, l_nick[NAME_LEN], called_name[NAME_LEN];
 	static bool got_note = FALSE;
 
