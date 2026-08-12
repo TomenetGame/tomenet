@@ -571,15 +571,25 @@ static void rd_item(object_type *o_ptr) {
 		rd_s16b(&o_ptr->find_wpos.wx);
 		rd_s16b(&o_ptr->find_wpos.wy);
 		rd_s16b(&o_ptr->find_wpos.wz);
-		rd_byte(&tmpbyte);
-		o_ptr->find_dun = (char)tmpbyte;
-		rd_byte(&o_ptr->dummyB1); //hole
-		rd_s32b(&o_ptr->find_player_turndiff);
-		rd_u16b(&o_ptr->find_ridx);
-		rd_u16b(&o_ptr->find_reidx);
-		rd_s16b(&o_ptr->find_special);
-		rd_byte(&tmpbyte);
-		o_ptr->find_reward = (char)tmpbyte;
+		if (!older_than(4, 9, 27)) {
+			rd_s16b(&o_ptr->find_reward);
+			rd_s32b(&o_ptr->find_player_turndiff);
+			rd_u16b(&o_ptr->find_ridx);
+			rd_u16b(&o_ptr->find_reidx);
+			rd_s16b(&o_ptr->find_special);
+			rd_byte(&tmpbyte);
+			o_ptr->find_dun = (char)tmpbyte;
+		} else {
+			rd_byte(&tmpbyte);
+			o_ptr->find_dun = (char)tmpbyte;
+			strip_bytes(1); //was dummyB1 (hole)
+			rd_s32b(&o_ptr->find_player_turndiff);
+			rd_u16b(&o_ptr->find_ridx);
+			rd_u16b(&o_ptr->find_reidx);
+			rd_s16b(&o_ptr->find_special);
+			rd_byte(&tmpbyte);
+			o_ptr->find_reward = (char)tmpbyte;
+		}
 	}
 
 	if (!older_than(4, 9, 10)) {

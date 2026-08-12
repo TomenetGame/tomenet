@@ -850,7 +850,7 @@ struct object_type {
 	u16b find_ridx, find_reidx;	/* Found from this [ego] monster */
 	s16b find_special;		/* Found from digging (10000+feat), disarming (11000+trap_idx), in a chest (sval*1000+lev)...
 					   Maybe not, as this would overwrite the interesting origins above: bought from store(-stidx-1), stolen from store (-stidx-1000), bought from player store(-2000). */
-	signed char find_reward;	/* Received as pvp(121-127), event(1<=n<=119), extermination quest 120, /quest(<0) reward? */
+	s16b find_reward;		/* Received as pvp(121-127), event(1<=n<=120), extermination order (1000 + r_idx), /quest(<0) reward? */
 
 	/* not yet implemented, for future tracking */
 	u32b slain_monsters, slain_uniques, slain_players, times_activated, time_equipped, time_carried; //time in seconds is enough for ~130+ years
@@ -871,7 +871,6 @@ struct object_type {
 	byte is_mushroom;		/* If server sends us the info that this is a mushroom, save that knowledge for do_mycorrhiza(). */
 
 	/* (Future use/hole) */
-	byte dummyB1;
 	s32b dummyL1, dummyL2;
 };
 typedef struct object_type_v9 object_type_v9;

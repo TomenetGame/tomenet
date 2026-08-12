@@ -12134,8 +12134,6 @@ void kill_xorder(int Ind) {
 		/* Preliminary reward item */
 		acquirement_direct(Ind, o_ptr, &p_ptr->wpos, great, verygreat, resf);
 		val = object_value_real(0, o_ptr) * o_ptr->number;
-		imprint_object_fully(o_ptr, p_ptr);
-		o_ptr->find_reward = 120;
 
 		/* New: Sometimes generate consumables instead --- maybe TODO: Don't generate teleporting items in NO_TELE dungeons (Halls of Mandos) */
 		if (val < 1000 && rand_int(3)) { /* eg instead of basic (non-ego) enchanted armour/weapon */
@@ -12254,6 +12252,20 @@ void kill_xorder(int Ind) {
 		o_ptr->iron_turn = turn;
 		o_ptr->note = unique_quark;
 		o_ptr->note_utag = strlen(quark_str(unique_quark)); /* mark this note as 'unique monster quark' */
+
+		imprint_object_fully(o_ptr, p_ptr);
+		o_ptr->find_reward = 1000 + xorders[pos].type;
+		if (p_ptr->wpos.wz) {
+			dungeon_type *d_ptr = getdungeon(&p_ptr->wpos);
+
+			o_ptr->find_dun =
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+			    in_irondeepdive(&p_ptr->wpos) ? -iddc[ABS(p_ptr->wpos.wz)].type :
+#endif
+			    (
+			    //d_ptr->theme ? d_ptr->theme :
+			    (d_ptr->type ? d_ptr->type : -128)); //-128 encodes 0 aka 'Wilderness' dungeon
+		}
 
 		s_printf("object awarded %d,%d,%d (x%d)\n", o_ptr->tval, o_ptr->sval, o_ptr->k_idx, o_ptr->number);
 		inven_carry(Ind, o_ptr);

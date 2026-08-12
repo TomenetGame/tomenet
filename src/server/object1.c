@@ -8211,13 +8211,30 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 	*hr_time = 0;
 #endif
 
-	if (o_ptr->find_reward >= 121) {
+	if (o_ptr->find_reward >= 1000) {
+		int m_idx = m_pop();
+
+		/* Build fake monster just to generate its name */
+		if (m_idx) {
+			char m_name[MAX_CHARS]; /* full monster name */
+			monster_type *m_ptr = &m_list[m_idx];
+
+			m_ptr->r_idx = o_ptr->find_reward - 1000;
+			m_ptr->ego = 0;
+			monster_desc(0, m_name, m_idx, 0x88);
+			/* Delete it again 'manually' */
+			//FREE(m_ptr->r_ptr, monster_race); //redundant, as we don't set it
+			WIPE(m_ptr, monster_type);
+			/* Forge source diz */
+			sprintf(tmp, "%s", m_name);
+		} else strcpy(tmp, "an");
+
+		sprintf(source_acttime, "rewarded%s", hr_time);
+		sprintf(source_from, "from %s extermination order", tmp);
+		//switch(o_ptr->find_reward) {
+	} else if (o_ptr->find_reward >= 121) {
 		sprintf(source_acttime, "rewarded%s", hr_time);
 		sprintf(source_from, "for PvP");
-		//switch(o_ptr->find_reward) {
-	} else if (o_ptr->find_reward == 120) {
-		sprintf(source_acttime, "rewarded%s", hr_time);
-		sprintf(source_from, "from an extermination order");
 		//switch(o_ptr->find_reward) {
 	} else if (o_ptr->find_reward > 0) {
 		sprintf(source_acttime, "rewarded%s", hr_time);
