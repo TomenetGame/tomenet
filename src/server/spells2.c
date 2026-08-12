@@ -678,6 +678,8 @@ bool do_shadow_gate(int Ind, int range) {
 	}
 	if (tx == -1) {
 		msg_print(Ind, "There is no adversary close enough to you.");
+		/* Refund some energy */
+		p_ptr->energy += level_speed(&p_ptr->wpos) / 2;
 		return(FALSE);
 	}
 
@@ -685,6 +687,8 @@ bool do_shadow_gate(int Ind, int range) {
 	/* Grant a critical attack */
 	p_ptr->melee_crit_dual = midx;
 	p_ptr->melee_timeout_crit_dual = cfg.fps; //use level_speeds instead?
+	/* Actually refund some energy in any case, thereby reducing the energy cost of Shadow Gate from 1 turn to less! */
+	p_ptr->energy += level_speed(&p_ptr->wpos) / 2;
 	return(TRUE);
 }
 #endif
