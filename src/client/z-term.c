@@ -3200,7 +3200,7 @@ errr Term_addch(byte a, char c) {
 	if (!c) return(-2);
 
 	/* Queue the given character for display */
-	QueueAttrChar(Term->scr->cx, Term->scr->cy, a, (char32_t)c);
+	QueueAttrChar(Term->scr->cx, Term->scr->cy, a, (char32_t)((unsigned char)c));
 
 	/* Advance the cursor */
 	Term->scr->cx++;
@@ -3256,7 +3256,7 @@ errr Term_addstr(int n, byte a, cptr s) {
 	/* Copy string characters to array of char32_t. */
 	char32_t wcs[n + 1];
 	wcs[n] = 0;
-	for (int i = 0; i < n; i++) wcs[i] = (char32_t)s[i];
+	for (int i = 0; i < n; i++) wcs[i] = (char32_t)((unsigned char)s[i]);
 
 	/* Queue the first "n" characters for display */
 	QueueAttrChars(Term->scr->cx, Term->scr->cy, n, a, wcs);
