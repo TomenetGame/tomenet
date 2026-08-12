@@ -8291,11 +8291,8 @@ u64b place_object_restrictor = RESF_NONE;
 
 /*
  * Attempt to place an object (normal or good/great) at the given location.
- *
  * This routine plays nasty games to generate the "special artifacts".
- *
  * This routine uses "object_level" for the "generation level".
- *
  * This routine requires a clean floor grid destination.
  */
 //void place_object(struct worldpos *wpos, int y, int x, bool good, bool great)
@@ -8523,11 +8520,12 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 	/* Object memory fluff */
 	if (opening_chest) forge.find_special = opening_chest_sval * 1000 + opening_chest_lev;
 	/* If it's a new, unowned item, just imprint the dungeon already where it just dropped */
-	if (!forge.find_id && wpos->wz) { /* check 'find_id' instead of 'owner' to detect 'unowned' state despite maybe being 'force-preowned' */
-		dungeon_type *d_ptr = getdungeon(wpos);
-
-		forge.find_dun = d_ptr->type ? d_ptr->type : (d_ptr->theme ? -d_ptr->theme : -128); //-128 encodes 0 aka 'Wilderness' dungeon
-	}
+	if (wpos->wz)
+		forge.find_dun =
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		    in_irondeepdive(wpos) ? -iddc[ABS(wpos->wz)].type :
+#endif
+		    (d_ptr->theme ? d_ptr->theme : (d_ptr->type ? d_ptr->type : -128)); //-128 encodes 0 aka 'Wilderness' dungeon
 	if (monster_death_ridx) { /* Paranoia? */
 		forge.find_ridx = monster_death_ridx;
 		forge.find_reidx = monster_death_reidx;
@@ -11195,7 +11193,11 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 	if (!o_ptr->find_id && wpos->wz) { /* check 'find_id' instead of 'owner' to detect 'unowned' state despite maybe being 'force-preowned' */
 		dungeon_type *d_ptr = getdungeon(wpos);
 
-		o_ptr->find_dun = d_ptr->type ? d_ptr->type : (d_ptr->theme ? -d_ptr->theme : -128); //-128 encodes 0 aka 'Wilderness' dungeon
+		o_ptr->find_dun =
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		    in_irondeepdive(wpos) ? -iddc[ABS(wpos->wz)].type :
+#endif
+		    (d_ptr->theme ? d_ptr->theme : (d_ptr->type ? d_ptr->type : -128)); //-128 encodes 0 aka 'Wilderness' dungeon
 	}
 	if (monster_death_ridx) {
 		o_ptr->find_ridx = monster_death_ridx;

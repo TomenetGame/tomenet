@@ -8215,6 +8215,10 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 		sprintf(source_acttime, "rewarded%s", hr_time);
 		sprintf(source_from, "for PvP");
 		//switch(o_ptr->find_reward) {
+	} else if (o_ptr->find_reward == 120) {
+		sprintf(source_acttime, "rewarded%s", hr_time);
+		sprintf(source_from, "from an extermination order");
+		//switch(o_ptr->find_reward) {
 	} else if (o_ptr->find_reward > 0) {
 		sprintf(source_acttime, "rewarded%s", hr_time);
 		sprintf(source_from, "from an event");
@@ -8280,6 +8284,7 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 
 	// if (!o_ptr->find_wpos.wx && !o_ptr->find_wpos.wy) ; /* hm */
 	if (o_ptr->find_dun > 0) sprintf(loc_name, "on %dft in %s", o_ptr->find_wpos.wz * 50, d_name + d_info[o_ptr->find_dun].name);
+	else if (o_ptr->find_dun == -128) sprintf(loc_name, "on %dft in %s", o_ptr->find_wpos.wz * 50, d_name + d_info[0].name); /* that is "The Wilderness" */
 	else if (o_ptr->find_dun < 0) sprintf(loc_name, "on %dft in the IDDC (%s)", o_ptr->find_wpos.wz * 50, d_name + d_info[-o_ptr->find_dun].name);
 	else sprintf(loc_name, "in sector %d,%d", o_ptr->find_wpos.wx, o_ptr->find_wpos.wy);
 

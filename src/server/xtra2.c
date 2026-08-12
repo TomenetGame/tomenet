@@ -12134,6 +12134,8 @@ void kill_xorder(int Ind) {
 		/* Preliminary reward item */
 		acquirement_direct(Ind, o_ptr, &p_ptr->wpos, great, verygreat, resf);
 		val = object_value_real(0, o_ptr) * o_ptr->number;
+		imprint_object_fully(o_ptr, p_ptr);
+		o_ptr->find_reward = 120;
 
 		/* New: Sometimes generate consumables instead --- maybe TODO: Don't generate teleporting items in NO_TELE dungeons (Halls of Mandos) */
 		if (val < 1000 && rand_int(3)) { /* eg instead of basic (non-ego) enchanted armour/weapon */
