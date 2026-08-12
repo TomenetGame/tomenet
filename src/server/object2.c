@@ -8525,7 +8525,9 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		    in_irondeepdive(wpos) ? -iddc[ABS(wpos->wz)].type :
 #endif
-		    (d_ptr->theme ? d_ptr->theme : (d_ptr->type ? d_ptr->type : -128)); //-128 encodes 0 aka 'Wilderness' dungeon
+		    (
+		    //d_ptr->theme ? d_ptr->theme :
+		    (d_ptr->type ? d_ptr->type : -128)); //-128 encodes 0 aka 'Wilderness' dungeon
 	if (monster_death_ridx) { /* Paranoia? */
 		forge.find_ridx = monster_death_ridx;
 		forge.find_reidx = monster_death_reidx;
@@ -11197,7 +11199,9 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 #ifdef IRONDEEPDIVE_MIXED_TYPES
 		    in_irondeepdive(wpos) ? -iddc[ABS(wpos->wz)].type :
 #endif
-		    (d_ptr->theme ? d_ptr->theme : (d_ptr->type ? d_ptr->type : -128)); //-128 encodes 0 aka 'Wilderness' dungeon
+		    (
+		    //d_ptr->theme ? d_ptr->theme :
+		    (d_ptr->type ? d_ptr->type : -128)); //-128 encodes 0 aka 'Wilderness' dungeon
 	}
 	if (monster_death_ridx) {
 		o_ptr->find_ridx = monster_death_ridx;

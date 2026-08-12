@@ -8283,11 +8283,10 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 	}
 
 	// if (!o_ptr->find_wpos.wx && !o_ptr->find_wpos.wy) ; /* hm */
-	if (o_ptr->find_dun > 0) sprintf(loc_name, "on %dft in %s", o_ptr->find_wpos.wz * 50, d_name + d_info[o_ptr->find_dun].name);
-	else if (o_ptr->find_dun == -128) sprintf(loc_name, "on %dft in %s", o_ptr->find_wpos.wz * 50, d_name + d_info[0].name); /* that is "The Wilderness" */
+	if (o_ptr->find_dun == -128) sprintf(loc_name, "on %dft in %s", o_ptr->find_wpos.wz * 50, d_name + d_info[0].name); /* that is "The Wilderness" encoded (as it would be 0) */
 	else if (o_ptr->find_dun < 0) sprintf(loc_name, "on %dft in the IDDC (%s)", o_ptr->find_wpos.wz * 50, d_name + d_info[-o_ptr->find_dun].name);
+	else if (o_ptr->find_dun > 0) sprintf(loc_name, "on %dft in %s", o_ptr->find_wpos.wz * 50, d_name + d_info[o_ptr->find_dun].name);
 	else sprintf(loc_name, "in sector %d,%d", o_ptr->find_wpos.wx, o_ptr->find_wpos.wy);
-
 
 	/* --- Actually add meta info to the infofile --- */
 
