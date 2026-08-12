@@ -1181,8 +1181,8 @@ static void fix_monster(int Ind) {
 
 /*
  * Calculate the player's sanity
+ * Min 8 (level 1, 3 WIS), max 630 (level 50, 18/220 WIS).
  */
-
 static void calc_sanity(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int bonus, msane;
