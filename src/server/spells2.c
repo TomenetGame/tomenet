@@ -1810,7 +1810,7 @@ bool lose_all_info(int Ind) {
 			/* Hack -- Clear the "felt" flag */
 			o_ptr->ident &= ~(ID_SENSE | ID_SENSE_HEAVY);
 		}
-		o_ptr->ident &= ~ID_MENTAL;
+		o_ptr->ident &= ~(ID_MENTAL | ID_NO_HIDDEN);
 	}
 
 	/* Recalculate boni */
