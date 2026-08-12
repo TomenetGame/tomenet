@@ -1256,7 +1256,7 @@ void do_mimic_power_aux(int Ind, int dir) {
 // RF5_SLOW			0x40000000	/* Slow Player */
     case 62:
 	sprintf(p_ptr->attacker, " concentrates on your body");
-	fire_grid_bolt(Ind, GF_OLD_SLOW, dir, damroll(2, 6) + (rlev / 3), p_ptr->attacker);
+	fire_grid_bolt(Ind, GF_OLD_SLOW, dir, damroll(6, 6) + (rlev / 2), p_ptr->attacker);
 	break;
 // RF5_HOLD			0x80000000	/* Paralyze Player */
     case 63:
