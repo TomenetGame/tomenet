@@ -24334,7 +24334,7 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     at 30%.
                     Required skill level for first spell level: 30.
 
-    Restoration     Restores draind stats and experience.      (auto-project)
+    Restoration     Restores drained stats and experience.     (auto-project)
                     Required skill level for first spell level: 31.
 
     BONI:           Improves HP regeneration rate extraordinarily the further
