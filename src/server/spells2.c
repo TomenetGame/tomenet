@@ -1790,6 +1790,9 @@ bool lose_all_info(int Ind) {
 		if (!o_ptr->k_idx) continue;
 #endif
 
+		/* Allow "protection" by the MENTAL flag */
+		if ((o_ptr->ident & ID_MENTAL) && magik(75)) continue;
+
 		/* Remove "default inscriptions" */
 		if (o_ptr->note && (o_ptr->ident & ID_SENSE)) {
 			note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
