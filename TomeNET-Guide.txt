@@ -17895,7 +17895,7 @@ Example (same monster and depth as under 'A'):
 
 You kill a great wyrm of power on the deepest floor of Angband (-3050 ft), so
 floor level is 127 and race level is 85.
-(floor + race * 2) / 3 = (127 + 85) / 3 = 99 (the result is always rounded down).
+(floor + race * 2) / 3 = (127 + 85) / 3 = 99 (result is always rounded down).
 Now the higher of the two (floor and race) is 127. The difference of the
 result (99) to 127 is 28. This gets capped at 20 and is the random 'tolerance'
 for each item dropped by the wyrm.
@@ -24318,6 +24318,8 @@ In general, holy schools are somewhat less affected by anti-magic fields.)
                     Tier III: Level 40.
 
     Faithful Focus  Cure hallucinations and insanity.          (auto-project)
+                    Insanity is healed up to a maximum value that depends on
+                    your proficiency in Holy Curing, capping at 50.000.
                     Required skill level for first spell level: 21.
 
     Soul Curing     Cures Black Breath (See (4.11a) for more information about
@@ -25066,6 +25068,8 @@ In general, mindcraft schools are less affected by anti-magic fields.)
                     Cures some insanity and removes effects:   (auto-project)
                     -Fear and confusion at level 5,
                     -Hallucinations at level 10.
+                    Insanity is healed up to a maximum value that depends on
+                    your proficiency in Attunement, capping at 50.000.
                     Required skill level for first spell level: 25.
                     This spell can be used even while confused or blind.
 

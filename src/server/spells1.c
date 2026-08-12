@@ -5134,12 +5134,17 @@ int divide_spell_damage(int dam, int div, int typ) {
 		   just make sure in any case that we never break the 9999 hack for heal-monster wands: */
 		if (dam == 9999) return(9999);
 		break;
+	case GF_SANITY_PLAYER:
+		if (dam < 0) return(-(((-dam) % 1000) / div) + (dam / 1000) * 1000);
+		break;
 	}
 
 	/* normal magical damage spells */
 
+#if 0
 	/* Hack -- always do at least one point of damage -- paranoia/meddling? */
 	if (dam <= 0) dam = 1;
+#endif
 	/* Hack -- Never do excessive damage */
 	if (dam > MAGICAL_CAP && !proj_dam_uncapped) dam = MAGICAL_CAP;
 
@@ -12980,7 +12985,7 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		dam = 0;
 		break;
 
-	case GF_SANITY_PLAYER:
+	case GF_SANITY_PLAYER: /* Note: ONLY comes from spells, does not exist as potion_smash_effect() */
 		msg_format(Ind, "%s waves over your eyes, murmuring some words..", killer);
 		set_afraid(Ind, 0);
 		/* Stay bold for some turns */
@@ -12988,24 +12993,35 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 		(void)set_confused(Ind, 0);
 		(void)set_image(Ind, 0);
 
+		/*   Hack: If 'val' is negative, it translates into positive healing just as normal,
+		           but also encodes the caster-player level, indicating that it was caused
+		           by a player spell and may be subject to additional restrictions here: */
+#define PY_HEAL_SANITY_LEVELLIMIT /* Restrict player spells to heal not above a caster-level-dependant max threshold? */
+		if (dam < 0) {
+#ifdef PY_HEAL_SANITY_LEVELLIMIT
+			int max_msane = ((-dam / 1000) * 126) / 10; /* Heal sanity up to caster school level * 12.6 -> 630 at level 50. */
+#endif
+
+			dam = (-dam) % 1000;
+#ifdef PY_HEAL_SANITY_LEVELLIMIT
+			if (p_ptr->csane + dam > max_msane && p_ptr->csane < p_ptr->msane) {
+				dam = max_msane - p_ptr->csane;
+				if (dam <= 0) {
+					if (IS_PLAYER(-who)) msg_format(-who, "Your spell is too weak to cure %s further.", p_ptr->name);
+					msg_print(Ind, "A restoring spell touches your mind but is too weak to cure you further.");
+					break;
+				}
+			}
+#endif
+		}
+
 		if (dam > 0) {
-#if 1
-			/* Testing new version that increases sanity - mikaelh */
 			p_ptr->csane += dam;
 			if (p_ptr->csane > p_ptr->msane) p_ptr->csane = p_ptr->msane;
 			p_ptr->update |= PU_SANITY;
 			p_ptr->redraw |= PR_SANITY;
 			p_ptr->window |= (PW_PLAYER);
-#else
-			if (p_ptr->csane < p_ptr->msane * dam / 12) {
-				p_ptr->csane = p_ptr->msane * dam / 12;
-				/* the_sandman mika's addition, really */
-				if (p_ptr->csane>p_ptr->msane) p_ptr->csane = p_ptr->msane;
-				p_ptr->update |= PU_SANITY;
-				p_ptr->redraw |= PR_SANITY;
-				p_ptr->window |= (PW_PLAYER);
-			}
-#endif
+
 			/* Give feedback to the healer so he knows when he may stop - C. Blue */
 			if (p_ptr->csane == p_ptr->msane) msg_format_near(Ind, "%s appears to be in full command of %s mental faculties.", p_ptr->name, p_ptr->male ? "his" : "her");
 		}

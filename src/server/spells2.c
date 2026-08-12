@@ -9879,9 +9879,33 @@ bool summon_cyber(int Ind, int s_clone, int clone_summoning) {
 	return(ok);
 }
 
-/* Heal insanity. */
+/* Heal insanity.
+   Hack: If 'val' is negative, it translates into positive healing just as normal,
+         but indicating that it was caused by a player spell and may be subject to
+         additional restrictions here: */
+/* Restrict player spells to heal not above a caster-level-dependant max threshold? */
+#define PY_HEAL_SANITY_LEVELLIMIT
 bool heal_insanity(int Ind, int val) {
 	player_type *p_ptr = Players[Ind];
+
+	if (p_ptr->csane == p_ptr->msane) return(FALSE);
+
+	if (val < 0) {
+#ifdef PY_HEAL_SANITY_LEVELLIMIT
+		int max_msane = ((-val / 1000) * 126) / 10; /* Heal sanity up to caster school level * 12.6 -> 630 at level 50. */
+#endif
+
+		val = (-val) % 1000;
+#ifdef PY_HEAL_SANITY_LEVELLIMIT
+		if (p_ptr->csane + val > max_msane) {
+			val = max_msane - p_ptr->csane;
+			if (val <= 0) {
+				msg_print(Ind, "The restoring magic touches your mind but is too weak to cure you further.");
+				return(TRUE); //welll... should be FALSE as we didn't 'notice' an effect, but then we just saw above message -_-
+			}
+		}
+#endif
+	}
 
 	if (p_ptr->csane < p_ptr->msane) {
 		p_ptr->csane += val;

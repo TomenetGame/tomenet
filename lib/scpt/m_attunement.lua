@@ -145,15 +145,15 @@ MSANITY = add_spell {
 			set_confused(Ind, 0)
 			set_image(Ind, 0)
 
-			heal_insanity(Ind, 15 + get_level(Ind, MSANITY, 55))
+			heal_insanity(Ind, -(15 + get_level(Ind, MSANITY, 55) - ((player.s_info[SKILL_ATTUNEMENT + 1].value / 1000) * 1000)))
 			if player.csane == player.msane then
 				msg_print(Ind, "You are in full command of your mental faculties.")
 			end
 
-			fire_ball(Ind, GF_SANITY_PLAYER, 0, 30 + get_level(Ind, MSANITY, 110), 1, " focusses on your mind.")
+			fire_ball(Ind, GF_SANITY_PLAYER, 0, -(30 + get_level(Ind, MSANITY, 110)) - ((player.s_info[SKILL_ATTUNEMENT + 1].value / 1000) * 1000), 1, " focusses on your mind.")
 			end,
 	["info"] = 	function()
-			return "cures "..(15 + get_level(Ind, MSANITY, 55)).." SN"
+			return "cures "..(15 + get_level(Ind, MSANITY, 55)).." SN up to "..(((player.s_info[SKILL_ATTUNEMENT + 1].value / 1000) * 126) / 10)
 			end,
 	["desc"] = 	{
 			"Cures some insanity and removes malicious effects.",
