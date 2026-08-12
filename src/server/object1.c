@@ -6240,11 +6240,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 			}
 
  #if 1 /* display trigger chance for magic devices? */
-			if ((is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE))
-  #ifdef ENABLE_DEMOLITIONIST
-			    && o_ptr->tval != TV_CHEMICAL && o_ptr->tval != TV_CHARGE
-  #endif
-			    && o_ptr->tval != TV_BOOK) {
+			if ((is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE)) && !(f1 & TR1_NOT_MDEV)) {
 				if (!get_skill(pt_ptr, SKILL_ANTIMAGIC)) {
 					byte chance, permille;
 
@@ -6777,11 +6773,7 @@ bool identify_combo_aux(int Ind, object_type *o_ptr, bool full, int slot, int In
 	}
 
 #if 1 /* display trigger chance for magic devices? */
-	if ((eff_full && (is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE)))
- #ifdef ENABLE_DEMOLITIONIST
-	    && o_ptr->tval != TV_CHEMICAL && o_ptr->tval != TV_CHARGE
- #endif
-	    && o_ptr->tval != TV_BOOK) {
+	if (eff_full && (is_magic_device(o_ptr->tval) || (f3 & TR3_ACTIVATE)) && !(f1 & TR1_NOT_MDEV)) {
 		if (!get_skill(pt_ptr, SKILL_ANTIMAGIC)) {
 			byte chance, permille;
 

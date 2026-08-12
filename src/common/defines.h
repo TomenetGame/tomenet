@@ -6067,8 +6067,7 @@
 #define TR1_CON				0x00000010U	/* CON += "pval" */
 #define TR1_CHR				0x00000020U	/* CHR += "pval" */
 #define TR1_MANA			0x00000040U	/* SP += "pval" * SP / 10 */
-//#define TR1_xxx			0x00000080U	/* */
-// HOLE
+#define TR1_NOT_MDEV			0x00000080U	/* Item is not a magic device, so not a 'magical activation' - used with TR3_ACTIVATE for correct message on inspection. */
 #define TR1_STEALTH		0x00000100U	/* Stealth += "pval" */
 #define TR1_SEARCH		0x00000200U	/* Search += "pval" */
 #define TR1_INFRA		0x00000400U	/* Infra += "pval" */

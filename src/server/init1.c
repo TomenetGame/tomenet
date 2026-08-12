@@ -699,7 +699,7 @@ static cptr k_info_flags1[] = {
 	"CON",
 	"CHR",
 	"MANA",
-	"XXXUNUSED", //hole
+	"NOT_MDEV",
 	"STEALTH",
 	"SEARCH",
 	"INFRA",
