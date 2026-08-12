@@ -631,7 +631,10 @@ int count_open_fds2(int max) {
 
 	if (max <= 0) return(0); //paranoia
 
-	for (i = 0; i < max; i++) fds[i].events = 0;
+	for (i = 0; i < max; i++) {
+		fds[i].fd = 0;
+		fds[i].events = 0;
+	}
 
 	ret = poll(fds, max, 0);
 	if (ret <= 0) return(0);
