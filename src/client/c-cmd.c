@@ -4760,10 +4760,14 @@ void cmd_the_guide(byte init_search_type, int init_lineno, char* init_search_str
 		}
 	}
 
+	/* We actually never reach this point. Instead we exit at 'case ESCAPE' ^^. */
 #ifndef BUFFER_GUIDE
 	my_fclose(fff);
 #endif
 	Term_load();
+#ifdef REGEX_SEARCH
+	if (!ires) regfree(&re_src);
+#endif
 	inkey_interact_macros = FALSE;
 }
 
@@ -5821,6 +5825,7 @@ c_msg_format("<%s>, lpr/lpb %d/%d, lc %d, lps %d", lastsearch[remembrance_index]
 			if (!ires) regfree(&re_src);
 #endif
 			inkey_interact_macros = FALSE;
+			free(local_file_line);
 			return;
 
 		case KTRL('K'): /* copy current chat line to clipboard */
@@ -5863,11 +5868,16 @@ c_msg_format("<%s>, lpr/lpb %d/%d, lc %d, lps %d", lastsearch[remembrance_index]
 		}
 	}
 
+	/* We actually never reach this point. Instead we exit at 'case ESCAPE' ^^. */
 #ifndef BUFFER_LOCAL_FILE
 	my_fclose(fff);
 #endif
 	Term_load();
+#ifdef REGEX_SEARCH
+	if (!ires) regfree(&re_src);
+#endif
 	inkey_interact_macros = FALSE;
+	free(local_file_line);
 }
 
 void cmd_help(void) {
