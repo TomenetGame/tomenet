@@ -12152,7 +12152,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				o_ptr = &p_ptr->inventory[k];
 
-				o_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL);
+				o_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL | ID_NO_HIDDEN);
 				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
 
 				/* Commented out, to keep character's pseudo-id knowledge of the general flavour of that item type: */
@@ -12189,7 +12189,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				o_ptr = &p_ptr->inventory[k];
 
-				o_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL);
+				o_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL | ID_NO_HIDDEN);
 				o_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
 
 				p_ptr->obj_aware[o_ptr->k_idx] = FALSE;
@@ -12214,7 +12214,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							if (!os_ptr->tval) break;
 							if (os_ptr->k_idx == o_ptr->k_idx) {
 								found = TRUE;
-								os_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL);
+								os_ptr->ident &= ~(ID_FIXED | ID_EMPTY | ID_KNOWN | ID_RUMOUR | ID_MENTAL | ID_NO_HIDDEN);
 								os_ptr->ident &= ~(ID_SENSE | ID_SENSED_ONCE | ID_SENSE_HEAVY);
 
 								p_ptr->obj_aware[os_ptr->k_idx] = FALSE;
