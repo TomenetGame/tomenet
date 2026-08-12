@@ -6925,7 +6925,7 @@ int Send_inven(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
 	if (in_irondeepdive(&p_ptr->wpos))
-		uses_dir |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
+		uses_dir |= ((!p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade)) ? 0x8 : 0x0);
 
 	if (o_ptr->tval == TV_BOOK) {
 		/* For custom books, transmit the total amount of spells it can hold */
@@ -6990,7 +6990,7 @@ int Send_subinven(int Ind, char ipos, char pos, byte attr, int wgt, object_type 
 
 	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
 	if (in_irondeepdive(&p_ptr->wpos))
-		uses_dir |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
+		uses_dir |= ((!p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade)) ? 0x8 : 0x0);
 
 	/* Hack: Abuse uses_dir to also store ID / *ID* status */
 	uses_dir_mod = ((object_known_p(Ind, o_ptr) && object_aware_p(Ind, o_ptr)) ? 0x2 : 0x0)
@@ -7147,7 +7147,7 @@ int Send_equip(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, cptr n
 
 	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
 	if (in_irondeepdive(&p_ptr->wpos))
-		uses_dir |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
+		uses_dir |= ((!p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade)) ? 0x8 : 0x0);
 
 	if (o_ptr->tval == TV_BOOK) {
 		/* For custom books, transmit the total amount of spells it can hold */
@@ -7259,7 +7259,7 @@ int Send_equip_wide(int Ind, char pos, byte attr, int wgt, object_type *o_ptr, c
 
 	/* Also encode iddc-tradability, no protocol compat needed! (started in 4.9.0.7)  */
 	if (in_irondeepdive(&p_ptr->wpos))
-		uses_dir |= !p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade) ? 0x8 : 0x0;
+		uses_dir |= ((!p_ptr->iron_trade || (o_ptr->iron_trade != p_ptr->iron_trade)) ? 0x8 : 0x0);
 
 	if (o_ptr->tval == TV_BOOK) {
 		/* For custom books, transmit the total amount of spells it can hold */
