@@ -2226,6 +2226,10 @@ static void display_equip(void) {
 		/* Start with an empty "index" */
 		tmp_val[0] = tmp_val[1] = tmp_val[2] = ' ';
 
+		/* Terminate - Term_putstr could otherwise read past the end of the buffer
+		 * when it looks for a color code (valgrind complained about that). - mikaelh */
+		tmp_val[3] = '\0';
+
 		/* Is this item acceptable? */
 		if (item_tester_okay(o_ptr)) {
 			/* Prepare an "index" */
@@ -2304,9 +2308,7 @@ void show_inven_header(void) {
 	long int totalwgt = 0;
 
 	object_type *o_ptr;
-
 	char tmp_val[80];
-
 	int out_index[23];
 
 
@@ -2595,6 +2597,7 @@ void show_subinven(int islot) {
 
 	object_type *i_ptr = &inventory[islot];
 	int subinven_size = i_ptr->bpval;
+
 
 #ifdef USE_SOUND_2010
  #if 0 /* actually too spammy because the inventory is opened for a lot of fast-paced actions all the time. */
