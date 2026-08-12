@@ -12236,6 +12236,35 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				return;
 			}
+			/* remove ID_NO_HIDDEN flag from all items, reallowing to *ID* them all, in any case (added to fix lose_all_memories() rework glitch)  */
+			else if (prefix(messagelc, "/fixlam")) {
+				object_type *o_ptr, *os_ptr;
+				player_type *p_ptr;
+
+				k = name_lookup(Ind, message3, FALSE, TRUE, FALSE);
+				if (!k) return;
+				p_ptr = Players[k];
+
+				for (i = 0; i < INVEN_TOTAL; i++) {
+					o_ptr = &p_ptr->inventory[i];
+					if (!o_ptr->k_idx) continue;
+					o_ptr->ident &= ~ID_NO_HIDDEN;
+					//o_ptr->changed = !o_ptr->changed;//touch for refresh
+#ifdef ENABLE_SUBINVEN
+					if (o_ptr->tval == TV_SUBINVEN) {
+						for (j = 0; j < o_ptr->bpval; j++) {
+							os_ptr = &p_ptr->subinventory[i][j];
+							if (!os_ptr->tval) break;
+							os_ptr->ident &= ~ID_NO_HIDDEN;
+							//os_ptr->changed = !os_ptr->changed;//touch for refresh
+						}
+						display_subinven(Ind, i);
+					}
+#endif
+				}
+				p_ptr->window |= PW_INVEN | PW_SUBINVEN;
+				return;
+			}
 			/* curses an item */
 			else if (prefix(messagelc, "/curse")) {
 				object_type *o_ptr;
