@@ -170,6 +170,7 @@ struct server_opts
 /*	bool worldd_ircchat; */
 	bool worldd_events;
 	byte leak_info;
+	byte loot_level_calc;
 };
 
 extern s32b turn;

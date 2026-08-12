@@ -2886,6 +2886,8 @@ void do_cmd_check_server_settings(int Ind) {
 		fprintf(fff, "Monsters' exp value is affected by highest attacking or targetted player.\n");
 		break;
 	}
+	if (!cfg.loot_level_calc) fprintf(fff, "Monster loot level is calculated via 'equal-priority' method.\n");
+	else fprintf(fff, "Monster loot level is calculated via 'monster-priority' method.\n");
 
 	fprintf(fff, "\n");
 

@@ -3438,6 +3438,8 @@ static void set_server_option(char * option, char * value) {
 		cfg.worldd_events = str_to_boolean(value);
 	else if (!strcmp(option, "LEAK_INFO"))
 		cfg.leak_info = atoi(value);
+	else if (!strcmp(option, "LOOT_LEVEL_CALC"))
+		cfg.loot_level_calc = atoi(value);
 
 	else s_printf("Error : unrecognized tomenet.cfg option %s\n", option);
 }

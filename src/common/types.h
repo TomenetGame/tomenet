@@ -4953,6 +4953,7 @@ struct server_opts {
 	s16b item_awareness;	/* How easily the player becomes aware of unknown items (id scroll/shop/..)-C. Blue */
 	bool worldd_pubchat, worldd_privchat, worldd_broadcast, worldd_lvlup, worldd_unideath, worldd_pwin, worldd_pdeath, worldd_pjoin, worldd_pleave, worldd_plist, worldd_events;//worldd_ircchat;
 	byte leak_info;
+	byte loot_level_calc;
 };
 
 /* Client option struct */

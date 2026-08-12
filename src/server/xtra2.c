@@ -59,14 +59,22 @@
 #define DEATH_PACK_ITEM_NICE
 
 /* Loot item level is average of monster level and floor level - C. Blue
-   Note: Imho the more floor level is taken into account, the more will
-         melee chars who aim at high level weapons and (esp. royal) armour be
+   Note: The more floor level is taken into account, the more will melee
+         chars who aim at high level weapons and (esp. royal) armour be
          at a disadvantage, compared to light armour dropping everywhere.
          Also, floor level determines monster level of spawns anyway.
-         However, contra side of disabling this is cheezy high unique
+         However, the effect is only significant for lower/mid dungeons,
+         and reverses for high-level dungeons. In NR the levels are so deep
+         that it stops mattering altogether for high-level monster kills.
+
+         The contra side of disabling this is cheezy high unique
          farming on harmless floors via vaults for great loot.
+         However, this does not affect higher-level dungeons much.
+         And even on mid-dungeons it's not really terrible.
+
+         My conclusion atm: Stay with equal-priority calc aka traditional. - C. Blue
    Disabling this def will cause loot to depend by 2/3 on monster level: */
-#define TRADITIONAL_LOOT_LEVEL
+// was define TRADITIONAL_LOOT_LEVEL, changed to: cfg.loot_level_calc
 
 /* Should be defined to allow finding top-level items on non-NR floors
    in cases where you just cannot find monsters of high enough level so
@@ -75,8 +83,9 @@
    Without this, if TRADITIONAL_LOOT_LEVEL is on, no loot above klevel 108
    could drop outside of NR anymore (Star Blade being highest normal monster
    at 90).
-   Without TRADITIONAL_LOOT_LEVEL the situation becomes worse and usually no
-   loot above klevel 102 could drop anymore (again Star Blades lv90 assumed).
+   Without this and without TRADITIONAL_LOOT_LEVEL the situation becomes worse
+   and usually no loot above klevel 102 could drop outside NR anymore (again
+   Star Blades lv90 assumed).
    Note: Items of klevel > 115 usually cannot drop outside of NR, even with
    this on.
    EXCEPTIONS to all the above stuff:
@@ -7253,25 +7262,25 @@ bool monster_death(int Ind, int m_idx) {
 			/* Hack -- handle creeping coins */
 			coin_type = force_coin;
 
-#ifdef TRADITIONAL_LOOT_LEVEL
-			/* Average dungeon and monster levels */
-			object_level = (dlev + rlev) / 2;
- #ifdef RANDOMIZED_LOOT_LEVEL
-			if (object_level < rlev) tol_lev = rlev - object_level;
-			else tol_lev = dlev - object_level;
-			if (tol_lev > 13) tol_lev = 13; /* need +12 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
-			object_level += rand_int(tol_lev);
- #endif
-#else
-			/* Monster level is more important than floor level */
-			object_level = (dlev + rlev * 2) / 3;
- #ifdef RANDOMIZED_LOOT_LEVEL
-			if (object_level < rlev) tol_lev = rlev - object_level;
-			else tol_lev = dlev - object_level;
-			if (tol_lev > 21) tol_lev = 21; /* need +20 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
-			object_level += rand_int(tol_lev);
- #endif
+			if (!cfg.loot_level_calc) {
+				/* Average dungeon and monster levels */
+				object_level = (dlev + rlev) / 2;
+#ifdef RANDOMIZED_LOOT_LEVEL
+				if (object_level < rlev) tol_lev = rlev - object_level;
+				else tol_lev = dlev - object_level;
+				if (tol_lev > 13) tol_lev = 13; /* need +12 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
+				object_level += rand_int(tol_lev);
 #endif
+			} else {
+				/* Monster level is more important than floor level */
+				object_level = (dlev + rlev * 2) / 3;
+#ifdef RANDOMIZED_LOOT_LEVEL
+				if (object_level < rlev) tol_lev = rlev - object_level;
+				else tol_lev = dlev - object_level;
+				if (tol_lev > 21) tol_lev = 21; /* need +20 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
+				object_level += rand_int(tol_lev);
+#endif
+			}
 
 			/* No easy item hunting in towns.. */
 			if (wpos->wz == 0) object_level = rlev / 2;
@@ -13427,25 +13436,25 @@ void monster_death_mon(int am_idx, int m_idx) {
 			/* Hack -- handle creeping coins */
 			coin_type = force_coin;
 
-#ifdef TRADITIONAL_LOOT_LEVEL
-			/* Average dungeon and monster levels */
-			object_level = (dlev + rlev) / 2;
- #ifdef RANDOMIZED_LOOT_LEVEL
-			if (object_level < rlev) tol_lev = rlev - object_level;
-			else tol_lev = dlev - object_level;
-			if (tol_lev > 13) tol_lev = 13; /* need +12 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
-			object_level += rand_int(tol_lev);
- #endif
-#else
-			/* Monster level is more important than floor level */
-			object_level = (dlev + rlev * 2) / 3;
- #ifdef RANDOMIZED_LOOT_LEVEL
-			if (object_level < rlev) tol_lev = rlev - object_level;
-			else tol_lev = dlev - object_level;
-			if (tol_lev > 21) tol_lev = 21; /* need +20 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
-			object_level += rand_int(tol_lev);
- #endif
+			if (!cfg.loot_level_calc) {
+				/* Average dungeon and monster levels */
+				object_level = (dlev + rlev) / 2;
+#ifdef RANDOMIZED_LOOT_LEVEL
+				if (object_level < rlev) tol_lev = rlev - object_level;
+				else tol_lev = dlev - object_level;
+				if (tol_lev > 13) tol_lev = 13; /* need +12 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
+				object_level += rand_int(tol_lev);
 #endif
+			} else {
+				/* Monster level is more important than floor level */
+				object_level = (dlev + rlev * 2) / 3;
+#ifdef RANDOMIZED_LOOT_LEVEL
+				if (object_level < rlev) tol_lev = rlev - object_level;
+				else tol_lev = dlev - object_level;
+				if (tol_lev > 21) tol_lev = 21; /* need +20 levels of tolerance to allow depth-115 items to drop from level 80 monsters on bottom angband (127) */
+				object_level += rand_int(tol_lev);
+#endif
+			}
 
 			/* No easy item hunting in towns.. */
 			if (wpos->wz == 0) object_level = rlev / 2;

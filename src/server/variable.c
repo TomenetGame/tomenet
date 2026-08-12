@@ -225,6 +225,7 @@ server_opts cfg = {
 					    0 = normal, 1 = seeing in standard town shop (1 to 6), 2 = seeing in any shop while carrying it, 3 = seeing in any shop */
 	TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,TRUE,	/* types of messages which will be transmitted through the world server (if available). */
 	0,		/* leak_info */
+	0,		/* loot_level_calc */
 };
 
 struct combo_ban *banlist = NULL;
