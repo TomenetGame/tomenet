@@ -3300,10 +3300,10 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 	int b;
 	int count = 0;
 	static bool semaphore = FALSE;
+	bool initial_a = TRUE;
 
-	/* remember old colour, client-side version of "{-" feature - C. Blue */
-	byte prev_a = a;//, first_a = a;
-	//bool first_colour_code_set = TRUE;
+	/* remember old colour, client-side version of "{-" and "{." feature - C. Blue */
+	byte prev_a = a, first_a = a;
 
 	/* Move first */
 	if ((res = Term_gotoxy(x, y)) != 0) return(res);
@@ -3334,6 +3334,7 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 
 	/* Look for color codes */
 	ptr = strchr(s, '\377');
+	if (ptr != s) initial_a = FALSE;
 
 	if (!ptr) {
 		/* No color codes, just add the whole string */
@@ -3354,18 +3355,31 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 			Term_addch(a, '{');
 			ptr++;
 		} else {
-#if 1 /* enable {- for local client-side messages that don't pass through the server's {- feature filter already */
+			/* enable {- for local client-side messages that don't pass through the server's {- feature filter already */
+
 			if (*ptr == '-') {
+				/* bonus: can also switch back with {. from this one */
+				prev_a = a;
+
 				/* restore previous colour (on server-side this restores chat messages to _first_ colour actually) */
-				a = prev_a;
+				a = first_a;
 				ptr++;
 			} else if (*ptr == '.') {
-				/* restore previous colour (on client-side, this is same as '{-' above) */
+				byte tmp = a; /* bonus: able to switch back and forth as it swaps values with current a instead of just assigning it */
+
+				/* restore previous colour */
 				a = prev_a;
+				prev_a = tmp;
 				ptr++;
 			} else
-#endif
-			if ((b = color_char_to_attr(*ptr)) != -1) {
+
+			/* usual client-side colour code handling */
+
+			if (*ptr == '%') ptr++; /* '{%': 'neutral' colour code that does nothing */
+			else if ((b = color_char_to_attr(*ptr)) != -1) {
+				/* remember first visible colour */
+				if (initial_a) first_a = b;
+
 				/* remember old colour */
 				prev_a = a;
 
@@ -3379,6 +3393,8 @@ errr Term_putstr(int x, int y, int n, byte a, char *s) {
 
 		/* Find the next color code */
 		next_ptr = strchr(ptr, '\377');
+		/* Any actual text to print means we got the initial attr fixed now */
+		if (next_ptr - ptr) initial_a = FALSE;
 
 		if (next_ptr) {
 			/* Check whether next_ptr is past the maximum number of characters */

@@ -3006,6 +3006,7 @@ void msg_print(int Ind, cptr msg_raw) {
 					if (color_char_to_attr(msg[msg_scan + 1]) == -1
 					    && msg[msg_scan + 1] != '-' /* {-, {. and {{ are handled (further) below */
 					    && msg[msg_scan + 1] != '.'
+					    && msg[msg_scan + 1] != '%'
 					    && msg[msg_scan + 1] != '\377') {
 						msg_scan++;
 						continue;
@@ -3018,10 +3019,22 @@ void msg_print(int Ind, cptr msg_raw) {
 
 						/* needed for rune sigil on items, pasted to chat */
 						if (msg[msg_scan] == '.') {
+							char tmp = colour_code; /* bonus: swap instead of just assign, to allow switching back and forth */
+
 							msg[msg_scan] = colour_code = prev_colour_code;
+							prev_colour_code = tmp;
 						/* needed for new '\377-' feature in multi-line messages: resolve it to actual colour */
 						} else if (msg[msg_scan] == '-') {
+							prev_colour_code = colour_code; /* hm, remember prev code to allow switching back from this too */
 							msg[msg_scan] = colour_code = first_colour_code;
+						} else if (msg[msg_scan] == '%') { /* 'neutral' colour code - does nothing */
+							/* hack - don't set colour_code here */
+							msg_scan++;
+
+							msg_minibuf[1] = '%';
+							msg_minibuf[2] = '\0';
+							strcat(msg_buf, msg_minibuf);
+							break;
 						} else {
 							prev_colour_code = colour_code;
 							colour_code = msg[msg_scan];
