@@ -1722,6 +1722,40 @@ void cmd_uninscribe(byte flag) {
 	Send_uninscribe(item);
 }
 
+static void apply_all_auto_inscriptions(void) {
+	int i, tv;
+#ifdef ENABLE_SUBINVEN
+	int s;
+#endif
+
+#if 0
+	if (c_cfg.auto_inscr_off) return;
+#endif
+
+	for (i = 0; i < INVEN_TOTAL; i++) {
+		/* First check for client-side autoinscriptions (& list) */
+		tv = inventory[i].tval;
+		if (!apply_auto_inscriptions_aux(i, -1, TRUE)
+		    /* Then if desired and there is not already an inscription, apply any server-side inscription */
+		    && (c_cfg.auto_inscr_server || (c_cfg.auto_inscr_server_ch && tv == TV_CHEMICAL))) {
+			if (inventory_inscription_len[i]) continue;
+			Send_autoinscribe(i);
+		}
+#ifdef ENABLE_SUBINVEN
+		if (inventory[i].tval == TV_SUBINVEN)
+			for (s = 0; s < inventory[i].bpval; s++) {
+				tv = subinventory[i][s].tval;
+				if (!apply_auto_inscriptions_aux((i + 1) * SUBINVEN_INVEN_MUL + s, -1, TRUE)
+				    /* Then if desired and there is not already an inscription, apply any server-side inscription */
+				    && (c_cfg.auto_inscr_server || (c_cfg.auto_inscr_server_ch && tv == TV_CHEMICAL))) {
+					if (subinventory_inscription_len[i][s]) continue;
+					Send_autoinscribe((i + 1) * SUBINVEN_INVEN_MUL + s);
+				}
+			}
+#endif
+	}
+}
+
 void cmd_apply_autoins(void) {
 	int item, tv;
 
@@ -8324,6 +8358,10 @@ void cmd_message(void) {
 				c_msg_format("\377yStandard wager must be at least %d Au.", std_wager);
 			}
 			c_msg_format("\377yYour standard wager is now %d Au.", std_wager);
+			inkey_msg = FALSE;
+			return;
+		} else if (!strcasecmp(buf, "/apply_auto_inscriptions") || !strcasecmp(buf, "/aai")) { /* same as doing 'H' key (CTRL+G) on all items */
+			apply_all_auto_inscriptions();
 			inkey_msg = FALSE;
 			return;
 		}

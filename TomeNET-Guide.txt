@@ -1294,6 +1294,17 @@ CTRL+L      Pastes current OS clipboard as chat line (erasing any existing
 There are also some commands that can be entered with ':' like a chat line.
 They all start with a slash '/' hence they're called slash commands:
 
+/apply_auto_inscriptions
+/aai        Applies all auto-inscriptions to all items (ignoring the state of
+            the client option 'auto_inscr_off').
+            First it tries to apply a client-side auto-inscription ('&' menu)
+            to an item. If there is no applicable inscription and you have the
+            option 'auto_inscr_server' enabled (or 'auto_inscr_server_ch' if
+            the item is a chemical), it then attempts to apply any server-side
+            inscription to the item.
+            This command does basically the same as if you used 'H' key (CTRL+G
+            for rogue-like key set) on all your items.
+
 /acolours
 /acolors
 /acol       Display a table of all animated colours.
