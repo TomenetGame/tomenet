@@ -16261,6 +16261,8 @@ void toggle_weather(void) {
 /* Select folders for music/sound pack to load, from a selection of all eligible folders within lib/xtra */
 #define MAX_PACKS 100
 #define PACKS_SCREEN 10
+/* Skip file reference and only count true files when counting a pack's files? */
+//#define SKIP_REFS
 void audio_pack_selector(void) {
 	int k, soundpacks = 0, musicpacks = 0;
 	int old_cfg_soundpack_subset = cfg_soundpack_subset, old_cfg_musicpack_subset = cfg_musicpack_subset;
@@ -16274,6 +16276,8 @@ void audio_pack_selector(void) {
 	char sp_diz[MAX_PACKS][MAX_CHARS * 3], mp_diz[MAX_PACKS][MAX_CHARS * 3];
 	char sp_version[MAX_PACKS][MAX_CHARS], mp_version[MAX_PACKS][MAX_CHARS];
 	char *ckey, *cval;
+	int sp_events[MAX_PACKS], mp_events[MAX_PACKS];
+	int sp_files[MAX_PACKS], mp_files[MAX_PACKS];
 
 	bool inkey_msg_old = inkey_msg;
 
@@ -16362,6 +16366,8 @@ void audio_pack_selector(void) {
 #endif
 				fff2 = fopen(path, "r");
 				if (!fff2) continue;
+
+				sp_events[soundpacks] = sp_files[soundpacks] = 0;
 				while (!feof(fff2)) {
 					if (!fgets(buf, 1024, fff2)) break;
 					buf[strlen(buf) - 1] = 0;
@@ -16369,6 +16375,11 @@ void audio_pack_selector(void) {
 					/* Trim leading spaces/tabs */
 					ckey = buf;
 					while (*ckey == ' ' || *ckey == '\t') ckey++;
+
+					/* Line is just a comment? */
+					if (*ckey == '#') continue;
+					if (!strncmp(ckey, "-#", 2)) continue;
+					if (!strncmp(ckey, "--#", 3)) continue;
 
 					/* Search for key separator */
 					if (!(cval = strchr(ckey, '='))) continue;
@@ -16379,22 +16390,82 @@ void audio_pack_selector(void) {
 					while (*cval == ' ' || *cval == '\t') cval++;
 					while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
 
+					/* Line has only a key but no actual values, ie ends after '=' ? */
+					if (!*cval) continue;
+
 					/* Scan for pack info */
 					if (!strcmp(ckey, "packname")) {
 						strncpy(sp_name[soundpacks], cval, MAX_CHARS);
 						continue;
-					}
-					if (!strcmp(ckey, "author")) {
+					} else if (!strcmp(ckey, "author")) {
 						strncpy(sp_author[soundpacks], cval, MAX_CHARS);
 						continue;
-					}
-					if (!strcmp(ckey, "description")) {
+					} else if (!strcmp(ckey, "description")) {
 						strncpy(sp_diz[soundpacks], cval, MAX_CHARS * 3);
 						continue;
-					}
-					if (!strcmp(ckey, "version")) {
+					} else if (!strcmp(ckey, "version")) {
 						strncpy(sp_version[soundpacks], cval, MAX_CHARS);
 						continue;
+					} else {
+						/* Count sound pack events and files */
+						bool in_unquoted_filename = FALSE, in_quotes = FALSE, skip_ref = FALSE;
+
+						/* count actual sound event */
+						sp_events[soundpacks]++;
+
+						/* count files in this event */
+						while (*cval) {
+							/* comment? skip rest of line */
+							if (!in_quotes && !in_unquoted_filename) {
+								if (*cval == '#') break;
+								if (!strncmp(cval, "-#", 2)) break;
+								if (!strncmp(cval, "--#", 3)) break;
+							}
+
+							/* quoted file names */
+							if (*cval == '"') {
+								in_quotes = !in_quotes;
+
+								/* These were the terminating quotes of a file name in quotes? */
+								if (!in_quotes) {
+									if (!skip_ref) sp_files[soundpacks]++;
+									else skip_ref = FALSE;
+								}
+
+								cval++;
+#ifdef SKIP_REFS
+								/* Skip references, only count real files? */
+								if (in_quotes && *(cval + 1) == '+') skip_ref = TRUE;
+#endif
+								continue;
+							} else if (in_quotes) {
+								cval++;
+								continue;
+							}
+
+							/* unquoted file names */
+							switch (*cval) {
+							case ' ': case '\t':
+								/* This was the terminating white space of an unquoted file name? */
+								if (in_unquoted_filename) {
+									if (!skip_ref) sp_files[soundpacks]++;
+									else skip_ref = FALSE;
+									in_unquoted_filename = FALSE;
+								}
+
+								cval++;
+								break;
+							default:
+								if (!in_unquoted_filename) {
+									in_unquoted_filename = TRUE;
+#ifdef SKIP_REFS
+									/* Skip references, only count real files? */
+									if (*(cval + 1) == '+') skip_ref = TRUE;
+#endif
+								}
+								cval++;
+							}
+						}
 					}
 				}
 				fclose(fff2);
@@ -16422,6 +16493,8 @@ void audio_pack_selector(void) {
 #endif
 				fff2 = fopen(path, "r");
 				if (!fff2) continue;
+
+				mp_events[musicpacks] = mp_files[musicpacks] = 0;
 				while (!feof(fff2)) {
 					if (!fgets(buf, 1024, fff2)) break;
 					buf[strlen(buf) - 1] = 0;
@@ -16429,6 +16502,11 @@ void audio_pack_selector(void) {
 					/* Trim leading spaces/tabs */
 					ckey = buf;
 					while (*ckey == ' ' || *ckey == '\t') ckey++;
+
+					/* Line is just a comment? */
+					if (*ckey == '#') continue;
+					if (!strncmp(ckey, "-#", 2)) continue;
+					if (!strncmp(ckey, "--#", 3)) continue;
 
 					/* Search for key separator */
 					if (!(cval = strchr(ckey, '='))) continue;
@@ -16439,22 +16517,82 @@ void audio_pack_selector(void) {
 					while (*cval == ' ' || *cval == '\t') cval++;
 					while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
 
+					/* Line has only a key but no actual values, ie ends after '=' ? */
+					if (!*cval) continue;
+
 					/* Scan for pack info */
 					if (!strcmp(ckey, "packname")) {
 						strncpy(mp_name[musicpacks], cval, MAX_CHARS);
 						continue;
-					}
-					if (!strcmp(ckey, "author")) {
+					} else if (!strcmp(ckey, "author")) {
 						strncpy(mp_author[musicpacks], cval, MAX_CHARS);
 						continue;
-					}
-					if (!strcmp(ckey, "description")) {
+					} else if (!strcmp(ckey, "description")) {
 						strncpy(mp_diz[musicpacks], cval, MAX_CHARS * 3);
 						continue;
-					}
-					if (!strcmp(ckey, "version")) {
+					} else if (!strcmp(ckey, "version")) {
 						strncpy(mp_version[musicpacks], cval, MAX_CHARS);
 						continue;
+					} else {
+						/* Count music pack events and files */
+						bool in_unquoted_filename = FALSE, in_quotes = FALSE, skip_ref = FALSE;
+
+						/* count actual music event */
+						mp_events[musicpacks]++;
+
+						/* count files in this event */
+						while (*cval) {
+							/* comment? skip rest of line */
+							if (!in_quotes && !in_unquoted_filename) {
+								if (*cval == '#') break;
+								if (!strncmp(cval, "-#", 2)) break;
+								if (!strncmp(cval, "--#", 3)) break;
+							}
+
+							/* quoted file names */
+							if (*cval == '"') {
+								in_quotes = !in_quotes;
+
+								/* These were the terminating quotes of a file name in quotes? */
+								if (!in_quotes) {
+									if (!skip_ref) mp_files[musicpacks]++;
+									else skip_ref = FALSE;
+								}
+
+								cval++;
+#ifdef SKIP_REFS
+								/* Skip references, only count real files? */
+								if (in_quotes && *(cval + 1) == '+') skip_ref = TRUE;
+#endif
+								continue;
+							} else if (in_quotes) {
+								cval++;
+								continue;
+							}
+
+							/* unquoted file names */
+							switch (*cval) {
+							case ' ': case '\t':
+								/* This was the terminating white space of an unquoted file name? */
+								if (in_unquoted_filename) {
+									if (!skip_ref) mp_files[musicpacks]++;
+									else skip_ref = FALSE;
+									in_unquoted_filename = FALSE;
+								}
+
+								cval++;
+								break;
+							default:
+								if (!in_unquoted_filename) {
+									in_unquoted_filename = TRUE;
+#ifdef SKIP_REFS
+									/* Skip references, only count real files? */
+									if (*(cval + 1) == '+') skip_ref = TRUE;
+#endif
+								}
+								cval++;
+							}
+						}
 					}
 				}
 				fclose(fff2);
@@ -16496,32 +16634,36 @@ void audio_pack_selector(void) {
 			//Term_putstr(1, 1, -1, TERM_L_WHITE, "Press \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377yESC\377w to accept.");
 			//for now music subsets only:
 			Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377y+\377w/\377y-\377w for subsets.");
-			Term_putstr(0, 3, -1, TERM_L_UMBER, "Available sound packs:");
+			Term_putstr(0, 3, -1, TERM_L_UMBER, "Sound packs             (Events/Files)");
 
 			if (!strcmp(cfg_soundpackfolder, sp_dir[cur_sp])
 			    && soundpack_subsets > 1)
-				Term_putstr(23, 3, -1, TERM_SELECTOR, format("(Set %d of %d)", cfg_soundpack_subset, soundpack_subsets));
-			else Term_putstr(23, 3, -1, TERM_DARK, "                ");
+				Term_putstr(12, 3, -1, TERM_SELECTOR, format("[Set %d/%d]", cfg_soundpack_subset, soundpack_subsets));
+			else Term_putstr(12, 3, -1, TERM_DARK, "           ");
 
-			Term_putstr(40, 3, -1, TERM_L_UMBER, "Available music packs:");
+			Term_putstr(40, 3, -1, TERM_L_UMBER, "Music packs            (Events/Files)");
 			if (!strcmp(cfg_musicpackfolder, mp_dir[cur_mp])
 			    && musicpack_subsets > 1)
-				Term_putstr(63, 3, -1, TERM_SELECTOR, format("(Set %d of %d)", cfg_musicpack_subset, musicpack_subsets));
-			else Term_putstr(63, 3, -1, TERM_DARK, "                ");
+				Term_putstr(52, 3, -1, TERM_SELECTOR, format("[Set %d/%d]", cfg_musicpack_subset, musicpack_subsets));
+			else Term_putstr(52, 3, -1, TERM_DARK, "           ");
 
 			for (k = 0; k < PACKS_SCREEN; k++) {
 				if (k - cur_sy + cur_sp >= soundpacks) break;
 				if (k == cur_sy)
-					Term_putstr(0, 4 + k, -1, TERM_SELECTOR, sp_dir[cur_sp + k - cur_sy]);
+					Term_putstr(0, 4 + k, -1, TERM_SELECTOR, format("%-27s %4d %4d",
+					    sp_dir[cur_sp + k - cur_sy], sp_events[cur_sp + k - cur_sy], sp_files[cur_sp + k - cur_sy]));
 				else
-					Term_putstr(0, 4 + k, -1, TERM_WHITE, sp_dir[cur_sp + k - cur_sy]);
+					Term_putstr(0, 4 + k, -1, TERM_WHITE, format("%-27s %4d %4d",
+					    sp_dir[cur_sp + k - cur_sy], sp_events[cur_sp + k - cur_sy], sp_files[cur_sp + k - cur_sy]));
 			}
 			for (k = 0; k < PACKS_SCREEN; k++) {
 				if (k - cur_my + cur_mp >= musicpacks) break;
 				if (k == cur_my)
-					Term_putstr(40, 4 + k, -1, TERM_SELECTOR, mp_dir[cur_mp + k - cur_my]);
+					Term_putstr(40, 4 + k, -1, TERM_SELECTOR, format("%-27s %4d %4d",
+					    mp_dir[cur_mp + k - cur_my], mp_events[cur_mp + k - cur_my], mp_files[cur_mp + k - cur_my]));
 				else
-					Term_putstr(40, 4 + k, -1, TERM_WHITE, mp_dir[cur_mp + k - cur_my]);
+					Term_putstr(40, 4 + k, -1, TERM_WHITE, format("%-27s %4d %4d",
+					    mp_dir[cur_mp + k - cur_my], mp_events[cur_mp + k - cur_my], mp_files[cur_mp + k - cur_my]));
 			}
 
 			Term_putstr(0, 15, -1, TERM_L_UMBER, "Selected SP:");
