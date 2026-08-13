@@ -825,6 +825,7 @@ struct object_type {
 					    0x04 too, for preventing the !W induced alarm if the object was dropped by the player.
 					    0x08 active steamblast charge (for chests)
 					    0x10 distinguish a trapkit-load-democharge from 'normal' planted demo charges.
+					    0x20 shop-marker for MODE_DED_IDDC induced discount to visually allow to distinguish from normal discount (QoL)
 					*/
 
 	/* For IDDC_IRON_COOP || IRON_IRON_TEAM : */

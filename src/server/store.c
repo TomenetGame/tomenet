@@ -3146,7 +3146,10 @@ static void display_entry(int Ind, int pos) {
 		if ((p_ptr->mode & MODE_DED_IDDC) && !p_ptr->iron_winner_ded && in_bree(&p_ptr->wpos)) {
 			wgt = o_ptr->discount;
 			/* IDDC-mode characters get at least a 50% discount on all town store items in Bree */
+ #if 0 /* actually show true discount instead of this, we got o_ptr->temp |= 0x20 for that now */
 			if (o_ptr->discount < 50) o_ptr->discount = 50;
+ #endif
+			o_ptr->temp |= 0x20; /* QoL: Just visually indicate to the player that this discount is 'artificial' */
 		}
 #endif
 #ifdef PLAYER_STORES
@@ -3199,7 +3202,10 @@ static void display_entry(int Ind, int pos) {
 
 #ifdef IDDC_DED_DISCOUNT
 		/* Restore hacked discount */
-		if (wgt != -1) o_ptr->discount = wgt;
+		if (wgt != -1) {
+			o_ptr->discount = wgt;
+			o_ptr->temp &= ~0x20;
+		}
 #endif
 #ifdef PLAYER_STORES
 		if (ps_sign) attr = TERM_VIOLET;

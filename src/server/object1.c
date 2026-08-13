@@ -3665,6 +3665,11 @@ void object_desc(int Ind, char *buf, object_type *o_ptr, int pref, int mode) {
 		strcat(tmp_val, "% off");
 	}
 
+	if (o_ptr->temp & 0x20) { /* MODE_DED_IDDC */
+		if (o_ptr->discount) strcat(tmp_val, " \377y<50%>\377-");
+		else strcat(tmp_val, "\377y<50%>\377-");
+	}
+
 	/* Append the inscription, if any */
 	if (tmp_val[0]) {
 		int n;
