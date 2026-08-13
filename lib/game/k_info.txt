@@ -1789,7 +1789,7 @@ I:70:5:0
 W:15:0:5:0
 A:15/1
 d:Summons random hostile, non-unique, undead monsters next to you.
-D:Only works in dungeons and not on a staircase or on a void jump gate.
+d:Only works in dungeons and not on a staircase or on a void jump gate.
 
 N:217:Blessing
 G:?:d

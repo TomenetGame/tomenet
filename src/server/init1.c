@@ -2880,7 +2880,8 @@ errr init_k_info_txt(FILE *fp, char *buf) {
 			/* Next... */
 			continue;
 		}
-		/* Process 'd' for "trivial Description" - any d-lines must come AFTER any D-lines! */
+		/* Process 'd' for "trivial Description" - any d-lines must come AFTER any D-lines!
+		   Because the whole diz in msg_print() will get cropped after first '\377w\377w' marker. */
 		if (buf[0] == 'd') {
 #ifdef KIND_DIZ
 			/* Acquire the text */
