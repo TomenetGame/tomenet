@@ -6490,7 +6490,9 @@ There are extended colour codes available since 4.5.2 (some in later clients)
     2  lamp light       3  dark lamp light  4  menu selector    5  palette test
 
 To return to the previous colour, instead of specifying it you can also just
-use '{-', for example: {rRed Text{gGreen now{-Red again.
+use '{.', for example: {rRed Text{gGreen now{-Red again.
+To return to the first colour used in the chat line, use '{-'.
+There is also a 'neutral' colour code that doesn't do anything: '{%'.
 
 Note: 'multi' colour is also the 'chaos' colour for any chaos-based attacks.
 
