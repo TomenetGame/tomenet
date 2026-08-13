@@ -388,6 +388,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
  #ifdef SMART_COMPOUND_ELEMENTS
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_PLAS;
 		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BO_PLAS;
+		if (int_outof(r_ptr, 50)) f0 &= ~RF0_BA_PLAS;
  #endif
 	} else if ((smart & SM_OPP_ELEC) && (smart & SM_RES_ELEC)) {
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_ELEC;
@@ -396,6 +397,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
  #ifdef SMART_COMPOUND_ELEMENTS
 		if (int_outof(r_ptr, 35)) f4 &= ~RF4_BR_PLAS;
 		if (int_outof(r_ptr, 35)) f5 &= ~RF5_BO_PLAS;
+		if (int_outof(r_ptr, 35)) f0 &= ~RF0_BA_PLAS;
  #endif
 	} else if ((smart & SM_OPP_ELEC) || (smart & SM_RES_ELEC)) {
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_ELEC;
@@ -404,6 +406,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
  #ifdef SMART_COMPOUND_ELEMENTS
 		if (int_outof(r_ptr, 20)) f4 &= ~RF4_BR_PLAS;
 		if (int_outof(r_ptr, 20)) f5 &= ~RF5_BO_PLAS;
+		if (int_outof(r_ptr, 20)) f0 &= ~RF0_BA_PLAS;
  #endif
 	}
 
@@ -415,6 +418,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
  #ifdef SMART_COMPOUND_ELEMENTS
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_PLAS;
 		if (int_outof(r_ptr, 50)) f5 &= ~RF5_BO_PLAS;
+		if (int_outof(r_ptr, 50)) f0 &= ~RF0_BA_PLAS;
  #endif
 	} else if ((smart & SM_OPP_FIRE) && (smart & SM_RES_FIRE)) {
 		if (int_outof(r_ptr, 80)) f4 &= ~RF4_BR_FIRE;
@@ -424,6 +428,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
  #ifdef SMART_COMPOUND_ELEMENTS
 		if (int_outof(r_ptr, 35)) f4 &= ~RF4_BR_PLAS;
 		if (int_outof(r_ptr, 35)) f5 &= ~RF5_BO_PLAS;
+		if (int_outof(r_ptr, 35)) f0 &= ~RF0_BA_PLAS;
  #endif
 	} else if ((smart & SM_OPP_FIRE) || (smart & SM_RES_FIRE)) {
 		if (int_outof(r_ptr, 30)) f4 &= ~RF4_BR_FIRE;
@@ -433,6 +438,7 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
  #ifdef SMART_COMPOUND_ELEMENTS
 		if (int_outof(r_ptr, 20)) f4 &= ~RF4_BR_PLAS;
 		if (int_outof(r_ptr, 20)) f5 &= ~RF5_BO_PLAS;
+		if (int_outof(r_ptr, 20)) f0 &= ~RF0_BA_PLAS;
  #endif
 	}
 
@@ -542,6 +548,8 @@ static void remove_bad_spells(int m_idx, u32b *f4p, u32b *f5p, u32b *f6p, u32b *
 
 	if (smart & SM_RES_TIME) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_TIME;
+		if (int_outof(r_ptr, 50)) f4 &= ~RF0_BO_TIME;
+		if (int_outof(r_ptr, 50)) f0 &= ~RF0_BA_TIME;
 	}
 	if (smart & SM_RES_MANA) {
 		if (int_outof(r_ptr, 50)) f4 &= ~RF4_BR_MANA;
@@ -4175,6 +4183,39 @@ bool make_attack_spell(int Ind, int m_idx) {
 		//update_smart_learn(Ind, m_idx, DRS_PSI);
 		break;
 
+	/* RF0_BA_PLAS */
+	case RF0_OFFSET + 20:
+		if (monst_check_antimagic(Ind, m_idx, 100)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a plasma ball of", m_name);
+		ball(Ind, m_idx, GF_PLASMA, randint(rlev * 7 / 2) + 10, y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_FIRE);
+		update_smart_learn(Ind, m_idx, DRS_ELEC);
+		break;
+
+	/* RF0_BA_TIME */
+	case RF0_OFFSET + 21:
+		if (monst_check_antimagic(Ind, m_idx, 100)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a time ball of", m_name);
+		ball(Ind, m_idx, GF_TIME, randint(rlev * 3 / 2) + 10, y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_TIME);
+		break;
+
+	/* RF0_BO_TIME */
+	case RF0_OFFSET + 22:
+		if (monst_check_antimagic(Ind, m_idx, 100)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a time bolt of", m_name);
+		bolt(Ind, m_idx, GF_TIME, 10 + damroll(4, 7) + (rlev), SFX_BOLT_MAGIC);
+		update_smart_learn(Ind, m_idx, DRS_TIME);
+		break;
+
+	// hole
+
 	/* RF0_BR_ICE */
 	case RF0_OFFSET + 24:
 		disturb(Ind, 1, 0);
@@ -6414,6 +6455,39 @@ bool make_attack_spell_mirror(int Ind, int m_idx) {
 		grid_bolt(Ind, m_idx, GF_PSI, 30 + damroll(5, 5) + (rlev * 3) / 2, SFX_BOLT_MAGIC);
 		//update_smart_learn(Ind, m_idx, DRS_PSI);
 		break;
+
+	/* RF0_BA_PLAS */
+	case RF0_OFFSET + 20:
+		if (monst_check_antimagic(Ind, m_idx, 100)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a plasma ball of", m_name);
+		ball(Ind, m_idx, GF_PLASMA, randint(rlev * 7 / 2) + 10, y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_FIRE);
+		update_smart_learn(Ind, m_idx, DRS_ELEC);
+		break;
+
+	/* RF0_BA_TIME */
+	case RF0_OFFSET + 21:
+		if (monst_check_antimagic(Ind, m_idx, 100)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a time ball of", m_name);
+		ball(Ind, m_idx, GF_TIME, randint(rlev * 3 / 2) + 10, y, x, srad);
+		update_smart_learn(Ind, m_idx, DRS_TIME);
+		break;
+
+	/* RF0_BO_TIME */
+	case RF0_OFFSET + 22:
+		if (monst_check_antimagic(Ind, m_idx, 100)) break;
+		disturb(Ind, 1, 0);
+		if (blind) msg_format(Ind, "%^s mumbles.", m_name);
+		snprintf(p_ptr->attacker, sizeof(p_ptr->attacker), "%s casts a time bolt of", m_name);
+		bolt(Ind, m_idx, GF_TIME, 10 + damroll(4, 7) + (rlev), SFX_BOLT_MAGIC);
+		update_smart_learn(Ind, m_idx, DRS_TIME);
+		break;
+
+	// hole
 
 	/* RF0_BR_ICE */
 	case RF0_OFFSET + 24:

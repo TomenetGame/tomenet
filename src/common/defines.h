@@ -7067,8 +7067,12 @@
 #define RF0_BO_CHAOS		0x00020000U		/* Mirror: Chaos Bolt (Shadow/HOff) */
 #define RF0_DRAIN_LIFE		0x00040000U		/* Mirror: Drain Life (Shadow/Necro) */
 #define RF0_BO_PSI		0x00080000U		/* Mirror: Psionic Blast [+Psi Storm] */
+//unused, just added them to use BA_PLAS/BA_TIME for the unused 'The Physics Teacher' now oO')
+#define RF0_BA_PLAS			0x00100000U
+#define RF0_BA_TIME			0x00200000U
+#define RF0_BO_TIME			0x00400000U
 //hole
-/* Spells that cannot fail (because they are skills rather than magic): */
+/* Spells that cannot fail (because they are skills (eg breaths) rather than magic (eg balls)): */
 #define RF0_NONFAIL_LIMITER	24			/* note! Starting at RF0_OFFSET + this value: Spells that cannot fail on casting, because they are not cast spells but 'skills'. */
 #define RF0_BR_ICE		0x01000000U		/* For Bahamuth */
 #define RF0_BR_WATER		0x02000000U		/* Finally no more antimagic field vs water hounds :p */
@@ -7081,8 +7085,8 @@
 
 /* Note: Even if RF0_HEAL_PHYS was ever enabled for non-mirror monsters, it is still NOT a player-spell ever,
          as it intrinsically depends on an item (potion of healing */
-#define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER)
-#define RF0_RADIUS_SPELLS (RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER | RF0_BA_LITE | RF0_BA_HELLFIRE | RF0_WATERPOISON | RF0_ICEPOISON)
+#define RF0_PLAYER_SPELLS (RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER | RF0_BA_PLAS | RF0_BA_TIME)
+#define RF0_RADIUS_SPELLS (RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER | RF0_BA_LITE | RF0_BA_HELLFIRE | RF0_WATERPOISON | RF0_ICEPOISON | RF0_BA_PLAS | RF0_BA_TIME)
 
 
 /* Additional basic flags (ie not spell-flags, 'S:') */
@@ -7170,7 +7174,7 @@
 	 RF6_FORGET)
 
 #define RF0_DIRECT_MASK \
-	(RF0_BO_DISE | RF0_BO_WALL | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | RF0_BO_CHAOS | RF0_DRAIN_LIFE | RF0_BO_PSI)
+	(RF0_BO_DISE | RF0_BO_WALL | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | RF0_BO_CHAOS | RF0_DRAIN_LIFE | RF0_BO_PSI | RF0_BO_TIME)
 
 
 /*
@@ -7249,9 +7253,9 @@
 	(RF6_HAND_DOOM)
 
 #define RF0_ATTACK_MASK \
-	(RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER | \
+	(RF0_BO_DISE | RF0_BA_DISE | RF0_BR_ICE | RF0_BR_WATER | RF0_BA_PLAS | RF0_BA_TIME | \
 	RF0_BA_LITE | RF0_BO_WALL | RF0_BA_HELLFIRE | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | \
-	RF0_WATERPOISON | RF0_ICEPOISON | RF0_BO_CHAOS | RF0_DRAIN_LIFE | RF0_BO_PSI)
+	RF0_WATERPOISON | RF0_ICEPOISON | RF0_BO_CHAOS | RF0_DRAIN_LIFE | RF0_BO_PSI | RF0_BO_TIME)
 
 /*
  * Spells that improve the caster's tactical position
@@ -7340,8 +7344,8 @@
 	RF6_S_HI_UNDEAD | RF6_S_HI_DRAGONS | RF6_S_NAZGUL | RF6_S_UNIQUE | RF6_S_ANIMAL)
 
 #define RF0_SPELLCASTER_MASK \
-	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | \
-	RF0_BA_LITE | RF0_BO_WALL | RF0_BA_HELLFIRE | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | RF0_WATERPOISON | RF0_ICEPOISON | RF0_BO_CHAOS | RF0_DRAIN_LIFE | RF0_BO_PSI | \
+	(RF0_S_HI_MONSTER | RF0_S_HI_MONSTERS | RF0_S_HI_UNIQUE | RF0_BO_DISE | RF0_BA_DISE | RF0_BA_PLAS | RF0_BA_TIME | RF0_S_DEMONS | RF0_S_DRAGONS | RF0_S_HI_DEMON | RF0_S_HI_DRAGON | \
+	RF0_BA_LITE | RF0_BO_WALL | RF0_BA_HELLFIRE | RF0_BO_LITE | RF0_BO_DARK | RF0_DISPEL | RF0_WATERPOISON | RF0_ICEPOISON | RF0_BO_CHAOS | RF0_DRAIN_LIFE | RF0_BO_PSI | RF0_BO_TIME | \
 	RF0_HEAL_PHYS | RF0_BLINK_PHYS | RF0_TPORT_PHYS)
 
 

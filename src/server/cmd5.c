@@ -782,6 +782,12 @@ static void do_mimic_power(int Ind, int power, int dir) {
     case 96 + 3:
 //#define RF0_BA_DISE
     case 96 + 4:
+//#define RF0_BA_PLAS
+    case 96 + 20:
+//#define RF0_BA_TIME
+    case 96 + 21:
+//#define RF0_BO_TIME
+    case 96 + 22:
 //#define RF0_BR_ICE
     case 96 + 24:
 //#define RF0_BR_WATER
@@ -1293,12 +1299,30 @@ void do_mimic_power_aux(int Ind, int dir) {
 	//fire_bolt(Ind, GF_DISENCHANT, dir, damroll(7, 8) + (rlev / 3) + rlev_bonus / 3, p_ptr->attacker);
 	fire_bolt(Ind, GF_DISENCHANT, dir, 25 + damroll(4, 5) + (rlev * 3) / 2 + rlev_bonus / 3, p_ptr->attacker);
 	break;
-// RF0_BA_DISE			0x00010000	/* Acid Bolt */
+// RF0_BA_DISE
     case 96 + 4:
 	sprintf(p_ptr->attacker, " casts a disenchantment ball");
-	msg_print(Ind, "You cast a  disenchantment ball.");
+	msg_print(Ind, "You cast a disenchantment ball.");
 	//fire_ball(Ind, GF_DISENCHANT, dir, (rlev * 2) + damroll(10, 10) + rlev_bonus, 4, p_ptr->attacker);
 	fire_ball(Ind, GF_DISENCHANT, dir, 60 + damroll(10, 10) + rlev + rlev_bonus, rad, p_ptr->attacker);
+	break;
+// RF0_BA_PLAS
+    case 96 + 20:
+	sprintf(p_ptr->attacker, " casts a plasma ball");
+	msg_print(Ind, "You cast a plasma ball.");
+	fire_ball(Ind, GF_PLASMA, dir, 40 + damroll(10, 10) + rlev + rlev_bonus, rad, p_ptr->attacker);
+	break;
+/* RF0_BO_PLAS */
+    case 96 + 21:
+	sprintf(p_ptr->attacker, " casts a plasma bolt for");
+	msg_print(Ind, "You cast a plasma bolt.");
+	fire_bolt(Ind, GF_PLASMA, dir, 20 + damroll(4, 5) + (rlev * 3) / 2 + rlev_bonus / 3, p_ptr->attacker);
+	break;
+/* RF0_BO_TIME */
+    case 96 + 22:
+	sprintf(p_ptr->attacker, " casts a time bolt for");
+	msg_print(Ind, "You cast a time bolt.");
+	fire_bolt(Ind, GF_TIME, dir, 15 + damroll(4, 5) + (rlev * 3) / 3 + rlev_bonus / 4, p_ptr->attacker);
 	break;
 // RF0_BR_ICE
     case 96 + 24:

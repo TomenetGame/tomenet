@@ -401,12 +401,12 @@ magic_type innate_powers[128] = {
 // RF0_XXX5                     0x00200000      /* (unavailable) */
   {0, 0, 0, 0, 0},
 
-// RF0_XXX5                     0x01000000      /* (unavailable) */
-  {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x02000000      /* (unavailable) */
-  {0, 0, 0, 0, 0},
-// RF0_XXX5                     0x04000000      /* (unavailable) */
-  {0, 0, 0, 0, 0},
+// RF0_BA_PLAS                  0x01000000
+  {0, 17, 30, 0, 2},
+// RF0_BA_TIME                  0x02000000
+  {0, 30, 40, 0, 1},
+// RF0_BO_TIME                  0x04000000
+  {0, 15, 20, 0, 1},
 // RF0_XXX5                     0x80000000      /* (unavailable) */
   {0, 0, 0, 0, 0},
 

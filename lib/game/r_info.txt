@@ -8206,7 +8206,7 @@ F:UNIQUE | FORCE_SLEEP | FORCE_MAXHP | CAN_SWIM | AQUATIC | ANIMAL |
 F:RES_ACID | RES_COLD | RES_POIS | RES_WATE | RES_TELE | DROP_CORPSE |
 F:NO_CONF | NO_SLEEP | NO_FEAR | EVIL | COLD_BLOOD | BASEANGBAND |
 F:ONLY_ITEM | DROP_GOOD | DROP_4D2 | DROP_1D2 | SPECIAL_GENE
-S:1_IN_5 | BA_WATE | BO_WATE | HOLD | BR_POIS | BO_ICEE | TELE_TO
+S:1_IN_5 | BR_WATER | BO_WATE | HOLD | BR_POIS | BO_ICEE | TELE_TO
 D:A vile creature which seems to consist mostly of tentacles, it seeks to
 D:drag people to their doom in the water. Few have ever escaped its grasp.
 
@@ -9626,7 +9626,7 @@ F:UNIQUE | FEMALE | FORCE_SLEEP | FORCE_MAXHP | POWERFUL |
 F:NO_CONF | NO_SLEEP |
 F:MORTAL | CTHANGBAND
 S:1_IN_7 |
-S:S_HYDRAS | S_DEMON | DARKNESS | BA_WATE | BO_ACID | BA_ACID
+S:S_HYDRAS | S_DEMON | DARKNESS | BR_WATER | BO_ACID | BR_ACID
 D:The queen of the deep ones. "Vast, Polyphemus-like, and loathsome, it
 D:darted like a stupendous monster of nightmares..."
 
@@ -9986,7 +9986,7 @@ F:KILL_ITEM | KILL_BODY | BASH_DOOR | POWERFUL |
 F:IM_ACID | IM_FIRE | IM_POIS | IM_COLD | RES_LITE | RES_DARK
 F:NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | NO_CUT | IM_WATER
 S:1_IN_3 |
-S:BO_ICEE | BO_WATE | BA_COLD | BA_WATE
+S:BO_ICEE | BO_WATE | BR_COLD | BR_WATER
 D:A towering water elemental, Waldern is master of all things liquid.
 D:Wave after wave drowns your frail body.
 
@@ -11047,7 +11047,7 @@ F:SMART | POWERFUL | MOVE_BODY | NEVER_MOVE |
 F:IM_ACID | RES_FIRE | RES_COLD | IM_WATER | COLD_BLOOD |
 F:RES_ELEC | IM_POIS | NO_CONF | NO_SLEEP | NO_STUN | ZANGBAND
 S:1_IN_5 |
-S:BA_WATE
+S:BR_WATER
 D:A monstrous dweller of the depths; its hungry maw has been the doom
 D:of innumerable sailors!
 
@@ -12522,7 +12522,7 @@ F:BASH_DOOR | POWERFUL | MOVE_BODY | SMART | IM_WATER |
 F:EVIL | RES_ELEC | NO_CONF | NO_SLEEP | IM_POIS | RES_COLD | BASEANGBAND
 S:1_IN_4 |
 S:BLIND | CONF | SCARE | CURSE |
-S:BA_WATE | DARKNESS | BR_DARK | TELE_TO
+S:BR_WATER | DARKNESS | BR_DARK | TELE_TO
 D:An enormously fearsome and powerful inhabitant of the depths. It
 D:resembles a gargantuan octopus and its evil is almost tangible.
 
@@ -12885,7 +12885,7 @@ F:EVIL | DEMON | IM_COLD | IM_POIS | HURT_LITE | NO_CONF | NO_SLEEP |
 F:RES_TELE | CTHANGBAND
 S:1_IN_3 |
 S:BLIND | HOLD | SCARE | CURSE | DRAIN_MANA |
-S:BRAIN_SMASH | BA_WATE | S_DEMON | HASTE |
+S:BRAIN_SMASH | BR_WATER | S_DEMON | HASTE |
 S:TPORT | TELE_AWAY | TELE_TO | HEAL | BR_DARK | BR_NETH
 D:Its form is partially that of a reptile, partially that of a gigantic
 D:octopus. It will destroy you.
@@ -13301,7 +13301,7 @@ F:BASH_DOOR | POWERFUL | MOVE_BODY | SMART | RES_WATE | IM_WATER
 F:EVIL | IM_ELEC | NO_CONF | NO_SLEEP | IM_POIS | RES_COLD | BASEANGBAND
 S:1_IN_3 |
 S:BLIND | CONF | SCARE | CURSE | TELE_TO | TELE_AWAY |
-S:BA_WATE | DARKNESS | BR_DARK | BR_ACID | BR_POIS
+S:BR_WATER | DARKNESS | BR_DARK | BR_ACID | BR_POIS
 D:An enormously fearsome and powerful inhabitant of the depths. It
 D:resembles a gargantuan octopus and its evil is almost tangible.
 
@@ -13444,7 +13444,7 @@ F:FORCE_SLEEP | FORCE_MAXHP | AQUATIC | WILD_TOO | WILD_OCEAN |
 F:IM_FIRE | IM_ACID | IM_COLD | IM_POIS |
 F:ANIMAL | NO_CONF | NO_SLEEP | NO_FEAR | DROP_CORPSE | BASEANGBAND | IM_WATER
 S:1_IN_9
-S:BR_FIRE | BR_ACID | BR_DARK | BR_POIS | BA_WATE |
+S:BR_FIRE | BR_ACID | BR_DARK | BR_POIS | BR_WATER |
 S:S_DRAGON | S_HYDRAS | HEAL | CONF | DARKNESS
 D:An enormous, terrible sea-monster, the true master of the ocean.
 
@@ -13577,7 +13577,7 @@ F:FORCE_SLEEP | FORCE_MAXHP | EVIL | SMART | DEMON |
 F:ONLY_ITEM | DROP_2D2 | DROP_3D2 | DROP_4D2 | DROP_GOOD |
 F:NO_SLEEP | NO_CONF | NO_STUN | IM_POIS | IM_COLD | IM_ACID | CTHANGBAND
 S:1_IN_5
-S:BA_WATE | S_HYDRAS | S_DRAGON | S_DEMON | SCARE |
+S:BR_WATER | S_HYDRAS | S_DRAGON | S_DEMON | SCARE |
 S:BLIND | CONF | CURSE | BR_POIS
 D:"From an oval body protruded countless thin, pointed spines of
 D:multi-colored metal; at the more rounded end of the oval a
@@ -16161,7 +16161,7 @@ F:FORCE_SLEEP | FORCE_MAXHP | RES_TELE | AQUATIC | WILD_TOO | WILD_OCEAN |
 F:IM_FIRE | IM_ACID | RES_COLD | IM_POIS | NO_STUN
 F:DRAGON | NO_CONF | NO_SLEEP | NO_FEAR | BASEANGBAND | ATTR_MULTI
 S:1_IN_6 |
-S:BR_FIRE | BR_ACID | BR_SOUN | BA_WATE
+S:BR_FIRE | BR_ACID | BR_SOUN | BR_WATER
 D:A huge aquatic dragon-turtle, its shell is as large as a small island.
 
 N:916:Undead stargazer
@@ -16262,7 +16262,7 @@ F:WILD_OCEAN | WILD_TOO | COLD_BLOOD |
 F:BASH_DOOR | RES_COLD | RES_ELEC | RES_POIS | ANIMAL | AQUATIC |
 F:NO_CONF | NO_SLEEP |
 F:MORTAL | JOKEANGBAND
-S:1_IN_6 | BA_WATE
+S:1_IN_6 | BR_WATER
 D:The mightiest whale of the seas, he has sunk many ships in his time. With
 D:a mere flick of his tail he can create a mighty whirlpool, to the ruin
 D:of all who would travel the ocean.
@@ -17274,8 +17274,7 @@ F:PASS_WALL | MOVE_BODY | AURA_FIRE |
 F:SMART | OPEN_DOOR | BASH_DOOR |
 F:EVIL | ANIMAL | DEMON | UNDEAD | JOKEANGBAND | NO_CUT | IM_POIS
 S:1_IN_3
-S:BR_FIRE | BR_PLAS | BR_TIME | BA_WATE | ROCKET |
-S:FORGET
+S:BA_FIRE | BA_PLAS | BA_TIME | BA_WATE | ROCKET | FORGET
 D:A keeper of forbidden wisdom, this Teacher bombards you with his mastery
 D:over elements of matter.
 
@@ -20093,7 +20092,7 @@ F:CAN_SWIM | IM_POIS | IM_ACID | NO_FEAR | NO_CONF | NO_SLEEP | NO_STUN
 F:ANIMAL | AQUATIC
 F:DROP_4D2 | DROP_CORPSE | BASH_DOOR | MORTAL | BLUEBAND
 S:1_IN_7
-S:BA_WATE | BR_POIS | BR_ACID | SCARE
+S:BR_WATER | BR_POIS | BR_ACID | SCARE
 D:A huge snake-like reptile with scales coloured like the sea in
 D:which it dwells.
 
