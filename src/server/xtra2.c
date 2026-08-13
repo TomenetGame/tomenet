@@ -7143,7 +7143,10 @@ bool monster_death(int Ind, int m_idx) {
 			if (rand_int(3)) resf_drops |= RESF_COND_DARKSWORD;
 			resf_drops |= RESF_COND2_HARMOUR;
 			break;
-		case 505: //Groo, the Wanderer!
+		case RI_GROO: //Groo, the Wanderer!
+			/* Weapons already handled via RF1_DROP_CHOSEN */
+			resf_drops |= RESF_COND2_LARMOUR;
+			break;
 		case 116:  //rogues with FRIENDS
 		case 44: case 150: case 199: case 376: case 516: case 696: //rogues
 			resf_drops |= RESF_COND_LSWORD;
@@ -8435,6 +8438,26 @@ bool monster_death(int Ind, int m_idx) {
 			qq_ptr = &forge;
 			object_wipe(qq_ptr);
 			invcopy(qq_ptr, lookup_kind(TV_BOW, SV_LONG_BOW));
+			qq_ptr->number = 1;
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_chosen);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
+
+		/* finally Groo in 2026 */
+		} else if (r_idx == RI_GROO) {
+			qq_ptr = &forge;
+			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_SWORD, SV_KATANA));
+			qq_ptr->number = 1;
+			qq_ptr->note = local_quark;
+			qq_ptr->note_utag = strlen(quark_str(local_quark));
+			apply_magic(wpos, qq_ptr, -1, TRUE, TRUE, TRUE, TRUE, resf_chosen);
+			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
+
+			qq_ptr = &forge;
+			object_wipe(qq_ptr);
+			invcopy(qq_ptr, lookup_kind(TV_SWORD, SV_KATANA));
 			qq_ptr->number = 1;
 			qq_ptr->note = local_quark;
 			qq_ptr->note_utag = strlen(quark_str(local_quark));
