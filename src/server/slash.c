@@ -931,7 +931,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 		/* add inscription to inventory items */
 		else if (prefix(messagelc, "/tag") || prefix(messagelc, "/t ") || (prefix(messagelc, "/t") && !message[2])
-		    || prefix(messagelc, "/tagx") || prefix(messagelc, "/tx ") || (prefix(messagelc, "/tx") && !message[3])) {
+		    || prefix(messagelc, "/tx ") || (prefix(messagelc, "/tx") && !message[3])) {
 			object_type *o_ptr;
 
 			char powins[POW_INSCR_LEN];
@@ -945,6 +945,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #endif
 
 
+			if (tagx) {
+				char *cq;
+
+				/* Swap parm order: Inscription first, then item */
+				cq = token[1];
+				token[1] = token[2];
+				token[2] = cq;
+
+				/* 'x' variant REQUIRES an inscription if an item is specified, so it requires two tokens - or zero for default operation */
+				if (tk != 0 && tk != 2) {
+					msg_print(Ind, "\377oUsage: /tagx [<inscription> <a..n|+|*>]");
+					return;
+				}
+			}
+
 			if (tk >= 2 && (pi_pos = strstr(token[2], "@@"))) {
 				/* Check for redux version of power inscription */
 				if ((pir_pos = strstr(token[2], "@@@"))) {
@@ -956,7 +971,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			if (tk && (token[1][0] != '*')) {
 				h = -1;
-				if (message3[0] == '+') {
+				if (token[1][0] == '+') {
 					if (p_ptr->item_newest >= 0) h = p_ptr->item_newest;
 				} else h = a2slot(Ind, token[1][0], token[1][1], TRUE, FALSE);
 				j = h;
@@ -1176,14 +1191,29 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 		/* add inscription to equipment items */
 		else if (prefix(messagelc, "/etag") || prefix(messagelc, "/et ") || (prefix(messagelc, "/et") && !message[3])
-		    || prefix(messagelc, "/etagx") || prefix(messagelc, "/etx ") || (prefix(messagelc, "/etx") && !message[4])) {
+		    || prefix(messagelc, "/etx ") || (prefix(messagelc, "/etx") && !message[4])) {
 			object_type *o_ptr;
 
 			char powins[POW_INSCR_LEN];
 			char o_name[ONAME_LEN];
 			char *pi_pos = NULL, *pir_pos;
-			bool redux = FALSE, tagx = prefix(messagelc, "/etagx") || prefix(messagelc, "/etx ") || (prefix(messagelc, "/etx") && !message[4]);
+			bool redux = FALSE, etagx = prefix(messagelc, "/etagx") || prefix(messagelc, "/etx ") || (prefix(messagelc, "/etx") && !message[4]);
 
+
+			if (etagx) {
+				char *cq;
+
+				/* Swap parm order: Inscription first, then item */
+				cq = token[1];
+				token[1] = token[2];
+				token[2] = cq;
+
+				/* 'x' variant REQUIRES an inscription if an item is specified, so it requires two tokens - or zero for default operation */
+				if (tk != 0 && tk != 2) {
+					msg_print(Ind, "\377oUsage: /etagx [<inscription> <a..n|+|*>]");
+					return;
+				}
+			}
 
 			if (tk >= 2 && (pi_pos = strstr(token[2], "@@"))) {
 				/* Check for redux version of power inscription */
@@ -1196,11 +1226,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			if (tk && (token[1][0] != '*')) {
 				h = -1;
-				if (message3[0] == '+') {
+				if (token[1][0] == '+') {
 					if (p_ptr->item_newest >= 0) h = p_ptr->item_newest;
-				} else h = a2slot(Ind, token[1][0] - 'a' + 'A', 0, FALSE, TRUE);
+				} else h = a2slot(Ind, token[1][0] - 'a' + 'A' + 1, 0, FALSE, TRUE);
 				j = h;
-				if (h < INVEN_WIELD || h >= INVEN_TOTAL) {
+				if (h < INVEN_WIELD || h >= INVEN_TOTAL || token[1][1]) {
 					msg_print(Ind, "\377oUsage: /etag [a..n|+|* [<inscription>]]");
 					return;
 				}
@@ -1211,7 +1241,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			for (i = h; i <= j; i++) {
 				o_ptr = &(p_ptr->inventory[i]);
-				if (!o_ptr->tval) break;
 
 				/* skip inscribed items, except if we designated one item in particular (j==h) */
 				if (o_ptr->note &&
@@ -1282,7 +1311,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		/* remove specific inscription.
 		   If '*' is given, all pseudo-id tags are removed,
 		   if no parameter is given, '!k' is the default. */
-		else if (prefix(messagelc, "/unetag") || prefix(messagelc, "/uet")) {
+		else if (prefix(messagelc, "/euntag") || prefix(messagelc, "/eut")) {
 			object_type *o_ptr;
 			//cptr ax = token[1] ? token[1] : "!k";
 			cptr ax = tk ? message3 : "!k";

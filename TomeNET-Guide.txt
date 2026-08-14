@@ -1616,6 +1616,13 @@ They all start with a slash '/' hence they're called slash commands:
 /etag [a..w|+|* [inscription]]
 /et         Same as /tag but for equipment instead of inventory.
 
+/etagx [<inscription> a..w|+|*]
+/etx        Same as /etag but swapped parameters. As a consequence, it does
+            not accept one parmameter, but either zero or two.
+
+/euntag [<inscription>]
+/eut        Same as /untag but for equipment instead of inventory.
+
 /evinfo     Displays information about all ongoing events.
 
 /evinfo <#>
@@ -2200,6 +2207,10 @@ They all start with a slash '/' hence they're called slash commands:
             of adding a tag to it.
             For more information on power inscriptions see '@@' in (0.3).
 
+/tagx [<inscription> a..w|+|*]
+/tx         Same as /tag but swapped parameters. As a consequence, it does
+            not accept one parmameter, but either zero or two.
+
 /target <x> <y>
 /tar        Allows you to target a specific grid specified by X,Y as offset
             to your current character position.
@@ -2318,9 +2329,6 @@ They all start with a slash '/' hence they're called slash commands:
             Note: This will work on equipped items too!
 
 /untag u    Will remove all unique-loot tags from your inventory items.
-
-/unetag [<inscription>]
-/uet        Same as /untag but for equipment instead of inventory.
 
 /uptime     Displays time passed since the TomeNET server started up (running).
 
