@@ -934,7 +934,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		    || prefix(messagelc, "/tx ") || (prefix(messagelc, "/tx") && !message[3])) {
 			object_type *o_ptr;
 
-			char powins[POW_INSCR_LEN];
+			char powins[POW_INSCR_LEN], tmp[MAX_CHARS];
 			char o_name[ONAME_LEN];
 			char *pi_pos = NULL, *pir_pos;
 			bool redux = FALSE, tagx = prefix(messagelc, "/tagx") || prefix(messagelc, "/tx ") || (prefix(messagelc, "/tx") && !message[3]);
@@ -1066,13 +1066,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						}
 					}
 				} else {
+					if (pi_pos) { /* We got a power-inscription but cannot apply it? (Cause item isn't *ID*ed) Still inscribe the rest if any. */
+						/* Append the rest of the inscription, if any */
+						strcpy(tmp, pi_pos + (redux ? 3 : 2));
+					} else strcpy(tmp, token[2]);
+
 					/* Normal tagging */
 					if (!o_ptr->note)
-						o_ptr->note = quark_add(tk < 2 ? "!k" : token[2]);
+						o_ptr->note = quark_add(tk < 2 ? "!k" : tmp);
 					else
 						o_ptr->note = quark_add(tk < 2 ?
 						    format("%s-!k", quark_str(o_ptr->note)) :
-						    format("%s-%s", quark_str(o_ptr->note), token[2]));
+						    format("%s-%s", quark_str(o_ptr->note), tmp));
 				}
 			}
 			/* Window stuff */
@@ -1194,7 +1199,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 		    || prefix(messagelc, "/etx ") || (prefix(messagelc, "/etx") && !message[4])) {
 			object_type *o_ptr;
 
-			char powins[POW_INSCR_LEN];
+			char powins[POW_INSCR_LEN], tmp[MAX_CHARS];
 			char o_name[ONAME_LEN];
 			char *pi_pos = NULL, *pir_pos;
 			bool redux = FALSE, etagx = prefix(messagelc, "/etagx") || prefix(messagelc, "/etx ") || (prefix(messagelc, "/etx") && !message[4]);
@@ -1292,13 +1297,18 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						}
 					}
 				} else {
+					if (pi_pos) { /* We got a power-inscription but cannot apply it? (Cause item isn't *ID*ed) Still inscribe the rest if any. */
+						/* Append the rest of the inscription, if any */
+						strcpy(tmp, pi_pos + (redux ? 3 : 2));
+					} else strcpy(tmp, token[2]);
+
 					/* Normal tagging */
 					if (!o_ptr->note)
-						o_ptr->note = quark_add(tk < 2 ? "!k" : token[2]);
+						o_ptr->note = quark_add(tk < 2 ? "!k" : tmp);
 					else
 						o_ptr->note = quark_add(tk < 2 ?
 						    format("%s-!k", quark_str(o_ptr->note)) :
-						    format("%s-%s", quark_str(o_ptr->note), token[2]));
+						    format("%s-%s", quark_str(o_ptr->note), tmp));
 				}
 			}
 			/* Window stuff */
