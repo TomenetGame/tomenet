@@ -16261,9 +16261,18 @@ void toggle_weather(void) {
 /* Select folders for music/sound pack to load, from a selection of all eligible folders within lib/xtra */
 #define MAX_PACKS 100
 #define PACKS_SCREEN 10
-/* Skip file reference and only count true files when counting a pack's files? */
-//#define SKIP_REFS
+/* Skip duplicate file names? */
+#define SKIP_DUPFILES
+#ifdef SKIP_DUPFILES
+ /* Skip file reference and only count true files when counting a pack's files? */
+ #define SKIP_REFS
+#endif
 void audio_pack_selector(void) {
+#ifdef SKIP_DUPFILES
+	int i, j;
+	char *cval_start;
+	char sp_filename[MAX_PACKS][SOUND_MAX_2010][MAX_CHARS], mp_filename[MAX_PACKS][MUSIC_MAX][MAX_CHARS];
+#endif
 	int k, soundpacks = 0, musicpacks = 0;
 	int old_cfg_soundpack_subset = cfg_soundpack_subset, old_cfg_musicpack_subset = cfg_musicpack_subset;
 	static int cur_sp = 0, cur_mp = 0, cur_sy = 0, cur_my = 0;
@@ -16408,64 +16417,10 @@ void audio_pack_selector(void) {
 						continue;
 					} else {
 						/* Count sound pack events and files */
-						bool in_unquoted_filename = FALSE, in_quotes = FALSE, skip_ref = FALSE;
-
-						/* count actual sound event */
-						sp_events[soundpacks]++;
+						//bool in_unquoted_filename = FALSE, in_quotes = FALSE, skip_ref = FALSE, event_is_defined = FALSE;
 
 						/* count files in this event */
-						while (*cval) {
-							/* comment? skip rest of line */
-							if (!in_quotes && !in_unquoted_filename) {
-								if (*cval == '#') break;
-								if (!strncmp(cval, "-#", 2)) break;
-								if (!strncmp(cval, "--#", 3)) break;
-							}
-
-							/* quoted file names */
-							if (*cval == '"') {
-								in_quotes = !in_quotes;
-
-								/* These were the terminating quotes of a file name in quotes? */
-								if (!in_quotes) {
-									if (!skip_ref) sp_files[soundpacks]++;
-									else skip_ref = FALSE;
-								}
-
-								cval++;
-#ifdef SKIP_REFS
-								/* Skip references, only count real files? */
-								if (in_quotes && *(cval + 1) == '+') skip_ref = TRUE;
-#endif
-								continue;
-							} else if (in_quotes) {
-								cval++;
-								continue;
-							}
-
-							/* unquoted file names */
-							switch (*cval) {
-							case ' ': case '\t':
-								/* This was the terminating white space of an unquoted file name? */
-								if (in_unquoted_filename) {
-									if (!skip_ref) sp_files[soundpacks]++;
-									else skip_ref = FALSE;
-									in_unquoted_filename = FALSE;
-								}
-
-								cval++;
-								break;
-							default:
-								if (!in_unquoted_filename) {
-									in_unquoted_filename = TRUE;
-#ifdef SKIP_REFS
-									/* Skip references, only count real files? */
-									if (*(cval + 1) == '+') skip_ref = TRUE;
-#endif
-								}
-								cval++;
-							}
-						}
+						//multiline_cont_sp:
 					}
 				}
 				fclose(fff2);
@@ -16535,12 +16490,10 @@ void audio_pack_selector(void) {
 						continue;
 					} else {
 						/* Count music pack events and files */
-						bool in_unquoted_filename = FALSE, in_quotes = FALSE, skip_ref = FALSE;
-
-						/* count actual music event */
-						mp_events[musicpacks]++;
+						bool in_unquoted_filename = FALSE, in_quotes = FALSE, skip_ref = FALSE, event_is_defined = FALSE;
 
 						/* count files in this event */
+						multiline_cont_mp:
 						while (*cval) {
 							/* comment? skip rest of line */
 							if (!in_quotes && !in_unquoted_filename) {
@@ -16552,20 +16505,38 @@ void audio_pack_selector(void) {
 							/* quoted file names */
 							if (*cval == '"') {
 								in_quotes = !in_quotes;
+								cval++;
 
 								/* These were the terminating quotes of a file name in quotes? */
 								if (!in_quotes) {
-									if (!skip_ref) mp_files[musicpacks]++;
-									else skip_ref = FALSE;
+									if (!skip_ref) {
+#ifdef SKIP_DUPFILES
+										strncpy(mp_filename[musicpacks][mp_files[musicpacks]], cval_start, cval - 1 - cval_start);
+#endif
+										mp_files[musicpacks]++;
+									} else skip_ref = FALSE;
+
+									/* count actual music event (even if it's just a reference) */
+									if (!event_is_defined) {
+										event_is_defined = TRUE;
+										mp_events[musicpacks]++;
+									}
+								} else {
+#ifdef SKIP_REFS
+									/* Skip references, only count real files? */
+									if (*cval == '+') skip_ref = TRUE;
+#endif
+									/* skip '+' and '!' */
+									if (*cval == '+' || *cval == '!') cval++;
+#ifdef SKIP_DUPFILES
+									cval_start = cval;
+#endif
 								}
 
 								cval++;
-#ifdef SKIP_REFS
-								/* Skip references, only count real files? */
-								if (in_quotes && *(cval + 1) == '+') skip_ref = TRUE;
-#endif
 								continue;
 							} else if (in_quotes) {
+								/* Nothing to do while we're inside quotes, moving along a file name... */
 								cval++;
 								continue;
 							}
@@ -16575,22 +16546,78 @@ void audio_pack_selector(void) {
 							case ' ': case '\t':
 								/* This was the terminating white space of an unquoted file name? */
 								if (in_unquoted_filename) {
-									if (!skip_ref) mp_files[musicpacks]++;
-									else skip_ref = FALSE;
 									in_unquoted_filename = FALSE;
+
+									if (!skip_ref) {
+#ifdef SKIP_DUPFILES
+										strncpy(mp_filename[musicpacks][mp_files[musicpacks]], cval_start, cval - cval_start);
+#endif
+										mp_files[musicpacks]++;
+
+									} else skip_ref = FALSE;
+
+									/* count actual music event (even if it's just a reference) */
+									if (!event_is_defined) {
+										event_is_defined = TRUE;
+										mp_events[musicpacks]++;
+									}
 								}
 
 								cval++;
-								break;
+								continue;
 							default:
+								/* Catch 'multiline backslash', must be final char of the line */
+								if (*cval == '\\' && !*(cval + 1)) {
+									char *c_trim;
+
+									*cval = 0; /* Cause 'while' to break */
+
+									/* Read the next line and process it too, as it's still using the same old ckey */
+									if (!fgets(buf, 1024, fff2)) break;
+									buf[strlen(buf) - 1] = 0;
+
+									/* Trim leading spaces/tabs */
+									c_trim = buf;
+									while (*c_trim == ' ' || *c_trim == '\t') c_trim++;
+
+									/* Line is just a comment? */
+									if (*c_trim == '#') continue;
+									if (!strncmp(c_trim, "-#", 2)) continue;
+									if (!strncmp(c_trim, "--#", 3)) continue;
+
+									/* There is no key separator as this line continues with the old ckey */
+									cval = c_trim;
+
+									/* Trim spaces/tabs */
+									while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
+
+									/* Line has only a key but no actual values, ie ends after '=' ? */
+									if (!*cval) continue;
+
+									in_unquoted_filename = in_quotes = skip_ref = FALSE;
+									goto multiline_cont_mp;
+								}
+
+								/* Could be file name or '+' or '!' prefix */
 								if (!in_unquoted_filename) {
-									in_unquoted_filename = TRUE;
 #ifdef SKIP_REFS
 									/* Skip references, only count real files? */
-									if (*(cval + 1) == '+') skip_ref = TRUE;
+									if (*cval == '+') skip_ref = TRUE;
 #endif
+									/* Skip '+' and '!' prefices */
+									if (*cval == '+' || *cval == '!') {
+										cval++;
+										continue;
+									}
+
+#ifdef SKIP_DUPFILES
+									cval_start = cval;
+#endif
+									in_unquoted_filename = TRUE;
 								}
+
 								cval++;
+								continue;
 							}
 						}
 					}
@@ -16607,6 +16634,38 @@ void audio_pack_selector(void) {
 	(void)r; //slay compiler warning -_-;;;
 #else
 	remove("__tomenethelper.bat");
+#endif
+
+#ifdef SKIP_DUPFILES
+ #if 0
+	/* Go through list of all files and remove duplicates from total count */
+	for (k = 0; k < soundpacks; k++) {
+		for (i = 1; i < sp_files[k]; i++) {
+			for (j = 0; j < i; j++) {
+				if (!strcmp(sp_filename[k][j], sp_filename[k][i])) {
+					strcpy(sp_filename[k][i], sp_filename[k][sp_files[k] - 1]);
+					sp_files[k]--;
+					i--;
+					break;
+				}
+			}
+		}
+	}
+ #endif
+ #if 1
+	for (k = 0; k < musicpacks; k++) {
+		for (i = 1; i < mp_files[k]; i++) {
+			for (j = 0; j < i; j++) {
+				if (!strcmp(mp_filename[k][j], mp_filename[k][i])) {
+					strcpy(mp_filename[k][i], mp_filename[k][mp_files[k] - 1]);
+					mp_files[k]--;
+					i--;
+					break;
+				}
+			}
+		}
+	}
+ #endif
 #endif
 
 	/* Save screen */
