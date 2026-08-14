@@ -16259,7 +16259,7 @@ void toggle_weather(void) {
 
 #ifdef USE_SOUND_2010
 /* Select folders for music/sound pack to load, from a selection of all eligible folders within lib/xtra */
-#define MAX_PACKS 100
+#define MAX_PACKS 20
 #define PACKS_SCREEN 10
 /* Skip duplicate file names? */
 #define SKIP_DUPFILES
@@ -16271,7 +16271,7 @@ void audio_pack_selector(void) {
 #ifdef SKIP_DUPFILES
 	int i, j;
 	char *cval_start;
-	char sp_filename[MAX_PACKS][SOUND_MAX_2010][MAX_CHARS], mp_filename[MAX_PACKS][MUSIC_MAX][MAX_CHARS];
+	char sp_filename[MAX_PACKS][SOUND_MAX_2010][MAX_CHARS_WIDE], mp_filename[MAX_PACKS][MUSIC_MAX][MAX_CHARS_WIDE];
 #endif
 	int k, soundpacks = 0, musicpacks = 0;
 	int old_cfg_soundpack_subset = cfg_soundpack_subset, old_cfg_musicpack_subset = cfg_musicpack_subset;
@@ -16285,8 +16285,8 @@ void audio_pack_selector(void) {
 	char sp_diz[MAX_PACKS][MAX_CHARS * 3], mp_diz[MAX_PACKS][MAX_CHARS * 3];
 	char sp_version[MAX_PACKS][MAX_CHARS], mp_version[MAX_PACKS][MAX_CHARS];
 	char *ckey, *cval;
-	int sp_events[MAX_PACKS], mp_events[MAX_PACKS];
-	int sp_files[MAX_PACKS], mp_files[MAX_PACKS];
+	int sp_events[MAX_PACKS] = { 0 }, mp_events[MAX_PACKS] = { 0 };
+	int sp_files[MAX_PACKS] = { 0 }, mp_files[MAX_PACKS] = { 0 };
 
 	bool inkey_msg_old = inkey_msg;
 
@@ -16341,6 +16341,12 @@ void audio_pack_selector(void) {
 		c_message_add("\377oError: Couldn't read temporary file.");
 		return;
 	}
+
+#ifdef SKIP_DUPFILES
+	memset(sp_filename, 0, sizeof(sp_filename));
+	memset(mp_filename, 0, sizeof(mp_filename));
+#endif
+
 	while (!feof(fff)) {
 		if (!fgets(buf, 1024, fff)) break;
 #ifndef WINDOWS
@@ -16385,6 +16391,9 @@ void audio_pack_selector(void) {
 					ckey = buf;
 					while (*ckey == ' ' || *ckey == '\t') ckey++;
 
+					/* Actually process 'disabled' lines too */
+					if (*ckey == ';') ckey++;
+
 					/* Line is just a comment? */
 					if (*ckey == '#') continue;
 					if (!strncmp(ckey, "-#", 2)) continue;
@@ -16417,10 +16426,156 @@ void audio_pack_selector(void) {
 						continue;
 					} else {
 						/* Count sound pack events and files */
-						//bool in_unquoted_filename = FALSE, in_quotes = FALSE, skip_ref = FALSE, event_is_defined = FALSE;
+						bool in_unquoted_filename = FALSE, in_quotes = FALSE, skip_ref = FALSE, event_is_defined = FALSE;
 
 						/* count files in this event */
-						//multiline_cont_sp:
+						multiline_cont_sp:
+						while (*cval) {
+							/* comment? skip rest of line */
+							if (!in_quotes && !in_unquoted_filename) {
+								if (*cval == '#') break;
+								if (!strncmp(cval, "-#", 2)) break;
+								if (!strncmp(cval, "--#", 3)) break;
+							}
+
+							/* quoted file names */
+							if (*cval == '"') {
+								in_quotes = !in_quotes;
+								cval++;
+
+								/* These were the terminating quotes of a file name in quotes? */
+								if (!in_quotes) {
+									if (!skip_ref) {
+#ifdef SKIP_DUPFILES
+										strncpy(sp_filename[soundpacks][sp_files[soundpacks]], cval_start, cval - 1 - cval_start);
+#endif
+										sp_files[soundpacks]++;
+									} else skip_ref = FALSE;
+
+									/* count actual sound event (even if it's just a reference) */
+									if (!event_is_defined) {
+										event_is_defined = TRUE;
+										sp_events[soundpacks]++;
+									}
+								} else {
+#ifdef SKIP_REFS
+									/* Skip references, only count real files? */
+									if (*cval == '+') skip_ref = TRUE;
+#endif
+									/* skip '+' and '!' */
+									if (*cval == '+' || *cval == '!') cval++;
+#ifdef SKIP_DUPFILES
+									cval_start = cval;
+#endif
+								}
+
+								cval++;
+								continue;
+							} else if (in_quotes) {
+								/* Nothing to do while we're inside quotes, moving along a file name... */
+								cval++;
+								continue;
+							}
+
+							/* unquoted file names */
+							switch (*cval) {
+							case ' ': case '\t':
+								/* This was the terminating white space of an unquoted file name? */
+								if (in_unquoted_filename) {
+									in_unquoted_filename = FALSE;
+
+									if (!skip_ref) {
+#ifdef SKIP_DUPFILES
+										strncpy(sp_filename[soundpacks][sp_files[soundpacks]], cval_start, cval - cval_start);
+#endif
+										sp_files[soundpacks]++;
+									} else skip_ref = FALSE;
+
+									/* count actual sound event (even if it's just a reference) */
+									if (!event_is_defined) {
+										event_is_defined = TRUE;
+										sp_events[soundpacks]++;
+									}
+								}
+
+								cval++;
+								continue;
+							default:
+								/* Catch 'multiline backslash', must be final char of the line */
+								if (*cval == '\\' && !*(cval + 1)) {
+									char *c_trim;
+
+									*cval = 0; /* Cause 'while' to break */
+
+									/* Read the next line and process it too, as it's still using the same old ckey */
+									if (!fgets(buf, 1024, fff2)) break;
+									buf[strlen(buf) - 1] = 0;
+
+									/* Trim leading spaces/tabs */
+									c_trim = buf;
+									while (*c_trim == ' ' || *c_trim == '\t') c_trim++;
+
+									/* Actually process 'disabled' lines too */
+									if (*c_trim == ';') c_trim++;
+
+									/* Line is just a comment? */
+									if (*c_trim == '#') continue;
+									if (!strncmp(c_trim, "-#", 2)) continue;
+									if (!strncmp(c_trim, "--#", 3)) continue;
+
+									/* There is no key separator as this line continues with the old ckey */
+									cval = c_trim;
+
+									/* Trim spaces/tabs */
+									while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
+
+									/* Line has only a key but no actual values, ie ends after '=' ? */
+									if (!*cval) continue;
+
+									in_unquoted_filename = in_quotes = skip_ref = FALSE;
+									goto multiline_cont_sp;
+								}
+
+								/* Could be file name or '+' or '!' prefix */
+								if (!in_unquoted_filename) {
+#ifdef SKIP_REFS
+									/* Skip references, only count real files? */
+									if (*cval == '+') skip_ref = TRUE;
+#endif
+									/* Skip '+' and '!' prefices */
+									if (*cval == '+' || *cval == '!') {
+										cval++;
+										continue;
+									}
+
+#ifdef SKIP_DUPFILES
+									cval_start = cval;
+#endif
+									in_unquoted_filename = TRUE;
+								}
+
+								cval++;
+								/* If filename ends with the line, handle it */
+								if (in_unquoted_filename && !*cval) {
+									in_unquoted_filename = FALSE;
+
+									if (!skip_ref) {
+#ifdef SKIP_DUPFILES
+										strncpy(sp_filename[soundpacks][sp_files[soundpacks]], cval_start, cval - cval_start);
+#endif
+										sp_files[soundpacks]++;
+
+									} else skip_ref = FALSE;
+
+									/* count actual sound event (even if it's just a reference) */
+									if (!event_is_defined) {
+										event_is_defined = TRUE;
+										sp_events[soundpacks]++;
+									}
+								}
+								continue;
+							}
+						}
 					}
 				}
 				fclose(fff2);
@@ -16457,6 +16612,9 @@ void audio_pack_selector(void) {
 					/* Trim leading spaces/tabs */
 					ckey = buf;
 					while (*ckey == ' ' || *ckey == '\t') ckey++;
+
+					/* Actually process 'disabled' lines too */
+					if (*ckey == ';') ckey++;
 
 					/* Line is just a comment? */
 					if (*ckey == '#') continue;
@@ -16553,7 +16711,6 @@ void audio_pack_selector(void) {
 										strncpy(mp_filename[musicpacks][mp_files[musicpacks]], cval_start, cval - cval_start);
 #endif
 										mp_files[musicpacks]++;
-
 									} else skip_ref = FALSE;
 
 									/* count actual music event (even if it's just a reference) */
@@ -16579,6 +16736,9 @@ void audio_pack_selector(void) {
 									/* Trim leading spaces/tabs */
 									c_trim = buf;
 									while (*c_trim == ' ' || *c_trim == '\t') c_trim++;
+
+									/* Actually process 'disabled' lines too */
+									if (*c_trim == ';') c_trim++;
 
 									/* Line is just a comment? */
 									if (*c_trim == '#') continue;
@@ -16617,6 +16777,24 @@ void audio_pack_selector(void) {
 								}
 
 								cval++;
+								/* If filename ends with the line, handle it */
+								if (in_unquoted_filename && !*cval) {
+									in_unquoted_filename = FALSE;
+
+									if (!skip_ref) {
+#ifdef SKIP_DUPFILES
+										strncpy(mp_filename[musicpacks][mp_files[musicpacks]], cval_start, cval - cval_start);
+#endif
+										mp_files[musicpacks]++;
+
+									} else skip_ref = FALSE;
+
+									/* count actual music event (even if it's just a reference) */
+									if (!event_is_defined) {
+										event_is_defined = TRUE;
+										mp_events[musicpacks]++;
+									}
+								}
 								continue;
 							}
 						}
@@ -16637,13 +16815,12 @@ void audio_pack_selector(void) {
 #endif
 
 #ifdef SKIP_DUPFILES
- #if 0
 	/* Go through list of all files and remove duplicates from total count */
 	for (k = 0; k < soundpacks; k++) {
 		for (i = 1; i < sp_files[k]; i++) {
 			for (j = 0; j < i; j++) {
 				if (!strcmp(sp_filename[k][j], sp_filename[k][i])) {
-					strcpy(sp_filename[k][i], sp_filename[k][sp_files[k] - 1]);
+					if (i != sp_files[k] - 1) strcpy(sp_filename[k][i], sp_filename[k][sp_files[k] - 1]);
 					sp_files[k]--;
 					i--;
 					break;
@@ -16651,13 +16828,11 @@ void audio_pack_selector(void) {
 			}
 		}
 	}
- #endif
- #if 1
 	for (k = 0; k < musicpacks; k++) {
 		for (i = 1; i < mp_files[k]; i++) {
 			for (j = 0; j < i; j++) {
 				if (!strcmp(mp_filename[k][j], mp_filename[k][i])) {
-					strcpy(mp_filename[k][i], mp_filename[k][mp_files[k] - 1]);
+					if (i != mp_files[k] - 1) strcpy(mp_filename[k][i], mp_filename[k][mp_files[k] - 1]);
 					mp_files[k]--;
 					i--;
 					break;
@@ -16665,7 +16840,6 @@ void audio_pack_selector(void) {
 			}
 		}
 	}
- #endif
 #endif
 
 	/* Save screen */
