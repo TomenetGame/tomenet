@@ -2549,9 +2549,15 @@ player_class class_info[MAX_CLASS] = {
 			'+', 0,
 			'+', 1000, },
 #endif
+#if 0 /* now that trauma also grants other synergies eg Blood Frenzy, this should be enabled */
 		{ SKILL_TRAUMATURGY,
 			'%', 0,
 			'%', 0, },
+#else
+		{ SKILL_TRAUMATURGY,
+			'+', 0,
+			'+', 1000, },
+#endif
 		{ SKILL_AURA_FEAR,
 			'+', 0,
 			'+', 1000, },
@@ -2966,10 +2972,10 @@ player_class class_info[MAX_CLASS] = {
 		{ SKILL_NECROMANCY,
 			'+', 0,
 			'+', 1000, },
+#endif
 		{ SKILL_TRAUMATURGY,
 			'+', 0,
 			'+', 1000, },
-#endif
 		{ SKILL_AURA_FEAR,
 			'+', 0,
 			'+', 1000, },
