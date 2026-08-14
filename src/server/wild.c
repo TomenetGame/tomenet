@@ -5403,6 +5403,9 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
   #ifndef DUNFOUND_REWARDS_MONEY /* Item reward */
 		invcopy(&forge, lookup_kind(TV_POTION, SV_POTION_STAR_HEALING));
 		forge.number = damroll(6, 2);
+		/* Don't go crazy for jail dungeons -- currently no effect as those are always DF1_UNLISTED giving no reward */
+		if (d_ptr->flags3 & DF3_JAIL_DUNGEON) forge.number = (forge.number > 2 ? 2 : forge.number);
+
 		/* Optional: For enchantable items */
 		apply_magic(&p_ptr->wpos, &forge, 0, TRUE, TRUE, TRUE, TRUE, make_resf(p_ptr));
 		object_aware(Ind, &forge);
@@ -5422,8 +5425,13 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 		s_printf("DUNFOUND_REWARD(2): %s gains '%s'.\n", p_ptr->name, o_name);
 		msg_format(Ind, "You notice %s lying on the ground!", o_name);
    #endif
+
   #else /* Monetary reward */
+
 		reward = damroll(4000, 50);
+		/* Don't go crazy for jail dungeons -- currently no effect as those are always DF1_UNLISTED giving no reward */
+		if (d_ptr->flags3 & DF3_JAIL_DUNGEON) reward = (reward > 3000 ? 3000 : reward);
+
    #ifndef DUNFOUND_REWARDS_MONEY_DROP /* Auto-pick it up? */
 		msg_format(Ind, "The Mathom House sends %d gold pieces to support your exploration efforts!", reward);
 		s_printf("DUNFOUND_REWARD(3): %s gains %d Au.\n", p_ptr->name, reward);
@@ -5458,9 +5466,11 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 	reward = 1 + 72 / (((dun_total_normal - dun_total_normal_known) * 9 + 1) / 10); // scales from 4 (none of 27 found) to 73 (last two remaining of 27)
 
 	invcopy(&forge, lookup_kind(TV_POTION, SV_POTION_STAR_HEALING));
+	if (!forge.k_idx) return;
 	forge.number = (reward * 1357) / 1000; // 5..99
+	/* Don't go crazy for Bree dungeons, everyone instantly "discovers" those ~~ */
+	if (d_ptr->type == DI_TRAINING_TOWER || d_ptr->type == DI_BARROW_DOWNS) forge.number = (forge.number > 2 ? 2 : forge.number);
 
-	if (!forge.k_idx) return; //paranoia (as Bree is always TF_KNOWN)
 	/* Optional: For enchantable items */
 	apply_magic(&p_ptr->wpos, &forge, 0, TRUE, TRUE, TRUE, TRUE, make_resf(p_ptr));
 	object_aware(Ind, &forge);
@@ -5481,11 +5491,16 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 	s_printf("DUNFOUND_REWARD(6): %s gains '%s'.\n", p_ptr->name, o_name);
 	msg_format(Ind, "You notice %s lying on the ground!", o_name);
   #endif
+
  #else /* Monetary reward */
+
 	//reward = 80646 * (1 + 30 / ((dun_total_normal - dun_total_normal_known + 1) / 2 + 0)); // scales from 242k (none of 27 found) to 2.5M (last two remaining of 27)
 	//reward = 67568 * (1 + 36 / (((dun_total_normal - dun_total_normal_known) * 2 + 1) / 3)); // scales from 203k (none of 27 found) to 2.5M (last two remaining of 27)
 	//reward = 55556 * (1 + 44 / (((dun_total_normal - dun_total_normal_known) * 5 + 1) / 6)); // scales from 167k (none of 27 found) to 2.5M (last two remaining of 27)
 	reward = 34247 * (1 + 72 / (((dun_total_normal - dun_total_normal_known) * 9 + 1) / 10)); // scales from 137k (none of 27 found) to 2.5M (last two remaining of 27)
+	/* Don't go crazy for Bree dungeons, everyone instantly "discovers" those ~~ */
+	if (d_ptr->type == DI_TRAINING_TOWER || d_ptr->type == DI_BARROW_DOWNS) reward = (reward > 3000 ? 3000 : reward);
+
   #ifndef DUNFOUND_REWARDS_MONEY_DROP /* Auto-pick it up? */
 	msg_format(Ind, "The Mathom House sends %d gold pieces to support your exploration efforts!", reward);
 	s_printf("DUNFOUND_REWARD(7): %s gains %d Au.\n", Players[Ind]->name, reward);

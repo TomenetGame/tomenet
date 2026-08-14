@@ -1636,6 +1636,7 @@
 /* Dungeon indices (d_ptr->type) hardcoded from d_info.txt file: */
 #define DI_MIRKWOOD		1
 #define DI_MT_DOOM		5
+#define DI_BARROW_DOWNS		4
 #define DI_NETHER_REALM		6
 #define DI_SUBMERGED_RUINS	7
 #define DI_HALLS_OF_MANDOS	8
@@ -1646,6 +1647,7 @@
 #define DI_SANDWORM_LAIR	27
 #define DI_DEATH_FATE		28
 #define DI_HELCARAXE		29
+#define DI_TRAINING_TOWER	30
 #define DI_VALINOR		31
 #define DI_CLOUD_PLANES		32
 
