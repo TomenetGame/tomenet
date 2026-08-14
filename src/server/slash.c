@@ -9242,8 +9242,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				wild_info[y][x].town_idx = numtowns;
 				wild_info[y][x].radius = base;
 
-				addtown(y1, x1, town_profile[b + 1].dun_base, 0, b + 1);
-				addtown(y2, x2, town_profile[a + 1].dun_base, 0, a + 1);
+				addtown(y1, x1, town_profile[b + 1].dun_base, town_profile[b + 1].flags1, b + 1);
+				addtown(y2, x2, town_profile[a + 1].dun_base, town_profile[a + 1].flags1, a + 1);
 				return;
 			}
 #endif

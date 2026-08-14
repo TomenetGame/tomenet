@@ -332,7 +332,7 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 			i--;
 			continue;
 		}
-		addtown(y, x, town_profile[i].dun_base, 0, i);	/* base town */
+		addtown(y, x, town_profile[i].dun_base, town_profile[i].flags1, i);	/* base town */
 	}
 
 	s_printf("Placing dungeons...\n");
@@ -519,7 +519,7 @@ void init_wild_info(void) {
 	initwild();
 
 	/* Jir tests new town allocator */
-	addtown(cfg.town_y, cfg.town_x, cfg.town_base, 0, 1);	/* base town */
+	addtown(cfg.town_y, cfg.town_x, cfg.town_base, town_profile[1].flags1, 1); /* base town: Bree. Clash of cfg.town_base vs town_profile[1].dun_base here. */
 	//if (new) wild_spawn_towns(lowdun_near_Bree);
 
 	//init_wild_info_aux(0,0);
