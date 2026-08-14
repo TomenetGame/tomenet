@@ -550,7 +550,7 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "clone_to_stdout",		"Clone client chat and messages to stdout" },
 	{ &c_cfg.clone_to_file,		FALSE,	1,	0, 146, TRUE,
 	    "clone_to_file",		"Clone client chat and messages to 'stdout.txt'" },
-	{ &c_cfg.first_song,		FALSE,	5,	0, 147, TRUE,
+	{ &c_cfg.first_song,		TRUE,	5,	0, 147, TRUE,
 	    "first_song",		"Start with first eligible song of a music event" },
 	{ &c_cfg.equip_text_colour,	FALSE,	6,	0, 148, TRUE,
 	    "equip_text_colour",	"Display equipment indices/weight in yellow" },
