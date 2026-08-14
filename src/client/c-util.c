@@ -16472,6 +16472,9 @@ void audio_pack_selector(void) {
 					/* Actually process 'disabled' lines too */
 					if (*ckey == ';') ckey++;
 
+					/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
+					if (*ckey >= 0 && *ckey <= 9 && *(ckey + 1) == '|') ckey += 2;
+
 					/* Line is just a comment? */
 					if (*ckey == '#') continue;
 					if (!strncmp(ckey, "-#", 2)) continue;
@@ -16596,6 +16599,9 @@ void audio_pack_selector(void) {
 									/* Actually process 'disabled' lines too */
 									if (*c_trim == ';') c_trim++;
 
+									/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
+									if (*c_trim >= 0 && *c_trim <= 9 && *(c_trim + 1) == '|') c_trim += 2;
+
 									/* Line is just a comment? */
 									if (*c_trim == '#') continue;
 									if (!strncmp(c_trim, "-#", 2)) continue;
@@ -16693,6 +16699,9 @@ void audio_pack_selector(void) {
 
 					/* Actually process 'disabled' lines too */
 					if (*ckey == ';') ckey++;
+
+					/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
+					if (*ckey >= 0 && *ckey <= 9 && *(ckey + 1) == '|') ckey += 2;
 
 					/* Line is just a comment? */
 					if (*ckey == '#') continue;
@@ -16817,6 +16826,9 @@ void audio_pack_selector(void) {
 
 									/* Actually process 'disabled' lines too */
 									if (*c_trim == ';') c_trim++;
+
+									/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
+									if (*c_trim >= 0 && *c_trim <= 9 && *(c_trim + 1) == '|') c_trim += 2;
 
 									/* Line is just a comment? */
 									if (*c_trim == '#') continue;
@@ -16944,7 +16956,10 @@ void audio_pack_selector(void) {
 			Term_putstr(25,  0, -1, TERM_L_UMBER, "*** Audio Pack Selector ***");
 			//Term_putstr(1, 1, -1, TERM_L_WHITE, "Press \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377yESC\377w to accept.");
 			//for now music subsets only:
-			Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377y+\377w/\377y-\377w for subsets.");
+			if (quiet_mode) {
+				Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs");
+				Term_putstr(0, 2, -1, TERM_YELLOW, " (Subset-switching is not available because client is running in 'quiet mode')");
+			} else Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377y+\377w/\377y-\377w for subsets.");
 			Term_putstr(0, 3, -1, TERM_L_UMBER, "Sound packs             (Events/Files)");
 
 			if (!strcmp(cfg_soundpackfolder, sp_dir[cur_sp])
@@ -17034,9 +17049,11 @@ void audio_pack_selector(void) {
 			//redraw = FALSE;
 			break;
 		case '+':
+			if (quiet_mode) break;
 			cfg_musicpack_subset = (cfg_musicpack_subset % musicpack_subsets) + 1;
 			break;
 		case '-':
+			if (quiet_mode) break;
 			cfg_musicpack_subset--;
 			if (!cfg_musicpack_subset) cfg_musicpack_subset = musicpack_subsets;
 			break;
