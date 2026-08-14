@@ -5319,6 +5319,7 @@ cptr month_name[9] = {
 /* FIXME: Dungeons don't match the Tolkien themes;
  * they're simply used to match the necessity
  * { cptr name, u16b feat1, u16b feat2, byte ratio (percent of feat1), byte wild_req, u16b dungeons[2], u16b dun_base, u16b dun_max, bool tower, u32b flags1, u32b flags2 }
+ * NOTE: town_profile[].flags1 are transferred via addtown() to become town[].flags, but town_profile[].flags2 currently go into Nirvana ^^'.
  */
 town_extra town_profile[6]= {
 	/* Vanilla */
