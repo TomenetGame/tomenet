@@ -16328,11 +16328,21 @@ void toggle_weather(void) {
 }
 
 /* We always refer to the "string"'s starting position, never within it somewhere, so x is always 0 and we can omit it. */
-static int sp_offset(int z, int y) { //, int x) {
+#define AUDIO_EVENT_NAMELEN 40
+#define AUDIO_EVENTS_MAX 500
+static int sp_offset_fn(int z, int y) { //, int x) {
 	return (z * SOUND_MAX_2010 * MAX_CHARS_WIDE) + (y * MAX_CHARS_WIDE);// + x;
 }
-static int mp_offset(int z, int y) { //, int x) {
+static int mp_offset_fn(int z, int y) { //, int x) {
 	return (z * MUSIC_MAX * MAX_CHARS_WIDE) + (y * MAX_CHARS_WIDE);// + x;
+}
+#if 0 /* Currently subsets are only available for music packs */
+static int sp_offset_ev(int z, int y) { //, int x) {
+	return (z * AUDIO_EVENTS_MAX * AUDIO_EVENT_NAMELEN) + (y * AUDIO_EVENT_NAMELEN);// + x;
+}
+#endif
+static int mp_offset_ev(int z, int y) { //, int x) {
+	return (z * AUDIO_EVENTS_MAX * AUDIO_EVENT_NAMELEN) + (y * AUDIO_EVENT_NAMELEN);// + x;
 }
 
 /* Select folders for music/sound pack to load, from a selection of all eligible folders within lib/xtra */
@@ -16349,6 +16359,7 @@ void audio_pack_selector(void) {
 	int i, j;
 	char *cval_start;
 	char *sp_filename, *mp_filename; /* We cannot just use 3d-char arrays here, as it would exceed Windows stack size easily, need calloc() instead. */
+	char *mp_eventname; //*sp_eventname
 #endif
 	int k, soundpacks = 0, musicpacks = 0;
 	int old_cfg_soundpack_subset = cfg_soundpack_subset, old_cfg_musicpack_subset = cfg_musicpack_subset;
@@ -16423,6 +16434,8 @@ void audio_pack_selector(void) {
 	/* NOTE: The '1' must be sizeof(char), or sp_offs()/mp_offs() need to be adjusted. */
 	sp_filename = calloc(MAX_PACKS * SOUND_MAX_2010 * MAX_CHARS_WIDE, 1);
 	mp_filename = calloc(MAX_PACKS * MUSIC_MAX * MAX_CHARS_WIDE, 1);
+	//sp_eventname = calloc(MAX_PACKS * AUDIO_EVENTS_MAX * AUDIO_EVENT_NAMELEN, 1);
+	mp_eventname = calloc(MAX_PACKS * AUDIO_EVENTS_MAX * AUDIO_EVENT_NAMELEN, 1);
 #endif
 
 	while (!feof(fff)) {
@@ -16509,6 +16522,15 @@ void audio_pack_selector(void) {
 						/* Count sound pack events and files */
 						bool in_unquoted_filename = FALSE, in_quotes = FALSE, skip_ref = FALSE, event_is_defined = FALSE;
 
+#if 0 /* Currently, the subset feature is only available for music packs */
+						/* Check for duplicate event names, which is a consequence of the subset feature, count each event only once */
+						for (i = 0; i < sp_events[soundpacks]; i++)
+							if (!strcmp(ckey, sp_eventname + sp_offset_ev(soundpacks, i))) {
+								event_is_defined = TRUE;
+								break;
+							}
+#endif
+
 						/* count files in this event */
 						multiline_cont_sp:
 						while (*cval) {
@@ -16528,7 +16550,7 @@ void audio_pack_selector(void) {
 								if (!in_quotes) {
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks]), cval_start, cval - 1 - cval_start);
+										strncpy(sp_filename + sp_offset_fn(soundpacks, sp_files[soundpacks]), cval_start, cval - 1 - cval_start);
 #endif
 										sp_files[soundpacks]++;
 									} else skip_ref = FALSE;
@@ -16536,6 +16558,7 @@ void audio_pack_selector(void) {
 									/* count actual sound event (even if it's just a reference) */
 									if (!event_is_defined) {
 										event_is_defined = TRUE;
+										//strcpy(sp_eventname + sp_offset_ev(soundpacks, sp_events[soundpacks]), ckey);
 										sp_events[soundpacks]++;
 									}
 								} else {
@@ -16567,7 +16590,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks]), cval_start, cval - cval_start);
+										strncpy(sp_filename + sp_offset_fn(soundpacks, sp_files[soundpacks]), cval_start, cval - cval_start);
 #endif
 										sp_files[soundpacks]++;
 									} else skip_ref = FALSE;
@@ -16575,6 +16598,7 @@ void audio_pack_selector(void) {
 									/* count actual sound event (even if it's just a reference) */
 									if (!event_is_defined) {
 										event_is_defined = TRUE;
+										//strcpy(sp_eventname + sp_offset_ev(soundpacks, sp_events[soundpacks]), ckey);
 										sp_events[soundpacks]++;
 									}
 								}
@@ -16645,7 +16669,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks]), cval_start, cval - cval_start);
+										strncpy(sp_filename + sp_offset_fn(soundpacks, sp_files[soundpacks]), cval_start, cval - cval_start);
 #endif
 										sp_files[soundpacks]++;
 
@@ -16654,6 +16678,7 @@ void audio_pack_selector(void) {
 									/* count actual sound event (even if it's just a reference) */
 									if (!event_is_defined) {
 										event_is_defined = TRUE;
+										//strcpy(sp_eventname + sp_offset_ev(soundpacks, sp_events[soundpacks]), ckey);
 										sp_events[soundpacks]++;
 									}
 								}
@@ -16737,6 +16762,13 @@ void audio_pack_selector(void) {
 						/* Count music pack events and files */
 						bool in_unquoted_filename = FALSE, in_quotes = FALSE, skip_ref = FALSE, event_is_defined = FALSE;
 
+						/* Check for duplicate event names, which is a consequence of the subset feature, count each event only once */
+						for (i = 0; i < mp_events[musicpacks]; i++)
+							if (!strcmp(ckey, mp_eventname + mp_offset_ev(musicpacks, i))) {
+								event_is_defined = TRUE;
+								break;
+							}
+
 						/* count files in this event */
 						multiline_cont_mp:
 						while (*cval) {
@@ -16756,7 +16788,7 @@ void audio_pack_selector(void) {
 								if (!in_quotes) {
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks]), cval_start, cval - 1 - cval_start);
+										strncpy(mp_filename + mp_offset_fn(musicpacks, mp_files[musicpacks]), cval_start, cval - 1 - cval_start);
 #endif
 										mp_files[musicpacks]++;
 									} else skip_ref = FALSE;
@@ -16764,6 +16796,7 @@ void audio_pack_selector(void) {
 									/* count actual music event (even if it's just a reference) */
 									if (!event_is_defined) {
 										event_is_defined = TRUE;
+										strcpy(mp_eventname + mp_offset_ev(musicpacks, mp_events[musicpacks]), ckey);
 										mp_events[musicpacks]++;
 									}
 								} else {
@@ -16795,7 +16828,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks]), cval_start, cval - cval_start);
+										strncpy(mp_filename + mp_offset_fn(musicpacks, mp_files[musicpacks]), cval_start, cval - cval_start);
 #endif
 										mp_files[musicpacks]++;
 									} else skip_ref = FALSE;
@@ -16803,6 +16836,7 @@ void audio_pack_selector(void) {
 									/* count actual music event (even if it's just a reference) */
 									if (!event_is_defined) {
 										event_is_defined = TRUE;
+										strcpy(mp_eventname + mp_offset_ev(musicpacks, mp_events[musicpacks]), ckey);
 										mp_events[musicpacks]++;
 									}
 								}
@@ -16873,7 +16907,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks]), cval_start, cval - cval_start);
+										strncpy(mp_filename + mp_offset_fn(musicpacks, mp_files[musicpacks]), cval_start, cval - cval_start);
 #endif
 										mp_files[musicpacks]++;
 
@@ -16882,6 +16916,7 @@ void audio_pack_selector(void) {
 									/* count actual music event (even if it's just a reference) */
 									if (!event_is_defined) {
 										event_is_defined = TRUE;
+										strcpy(mp_eventname + mp_offset_ev(musicpacks, mp_events[musicpacks]), ckey);
 										mp_events[musicpacks]++;
 									}
 								}
@@ -16909,8 +16944,8 @@ void audio_pack_selector(void) {
 	for (k = 0; k < soundpacks; k++) {
 		for (i = 1; i < sp_files[k]; i++) {
 			for (j = 0; j < i; j++) {
-				if (!strcmp(sp_filename + sp_offset(k, j), sp_filename + sp_offset(k, i))) {
-					if (i != sp_files[k] - 1) strcpy(sp_filename + sp_offset(k, i), sp_filename + sp_offset(k, sp_files[k] - 1));
+				if (!strcmp(sp_filename + sp_offset_fn(k, j), sp_filename + sp_offset_fn(k, i))) {
+					if (i != sp_files[k] - 1) strcpy(sp_filename + sp_offset_fn(k, i), sp_filename + sp_offset_fn(k, sp_files[k] - 1));
 					sp_files[k]--;
 					i--;
 					break;
@@ -16922,8 +16957,8 @@ void audio_pack_selector(void) {
 	for (k = 0; k < musicpacks; k++) {
 		for (i = 1; i < mp_files[k]; i++) {
 			for (j = 0; j < i; j++) {
-				if (!strcmp(mp_filename + mp_offset(k, j), mp_filename + mp_offset(k, i))) {
-					if (i != mp_files[k] - 1) strcpy(mp_filename + mp_offset(k, i), mp_filename + mp_offset(k, mp_files[k] - 1));
+				if (!strcmp(mp_filename + mp_offset_fn(k, j), mp_filename + mp_offset_fn(k, i))) {
+					if (i != mp_files[k] - 1) strcpy(mp_filename + mp_offset_fn(k, i), mp_filename + mp_offset_fn(k, mp_files[k] - 1));
 					mp_files[k]--;
 					i--;
 					break;
