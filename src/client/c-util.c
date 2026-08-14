@@ -16327,11 +16327,12 @@ void toggle_weather(void) {
 	set_mixing();
 }
 
-static int sp_offset(int z, int y, int x) {
-	return (z * SOUND_MAX_2010 * MAX_CHARS_WIDE) + (y * MAX_CHARS_WIDE) + x;
+/* We always refer to the "string"'s starting position, never within it somewhere, so x is always 0 and we can omit it. */
+static int sp_offset(int z, int y) { //, int x) {
+	return (z * SOUND_MAX_2010 * MAX_CHARS_WIDE) + (y * MAX_CHARS_WIDE);// + x;
 }
-static int mp_offset(int z, int y, int x) {
-	return (z * MUSIC_MAX * MAX_CHARS_WIDE) + (y * MAX_CHARS_WIDE) + x;
+static int mp_offset(int z, int y) { //, int x) {
+	return (z * MUSIC_MAX * MAX_CHARS_WIDE) + (y * MAX_CHARS_WIDE);// + x;
 }
 
 /* Select folders for music/sound pack to load, from a selection of all eligible folders within lib/xtra */
@@ -16524,7 +16525,7 @@ void audio_pack_selector(void) {
 								if (!in_quotes) {
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks], 0), cval_start, cval - 1 - cval_start);
+										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks]), cval_start, cval - 1 - cval_start);
 #endif
 										sp_files[soundpacks]++;
 									} else skip_ref = FALSE;
@@ -16563,7 +16564,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks], 0), cval_start, cval - cval_start);
+										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks]), cval_start, cval - cval_start);
 #endif
 										sp_files[soundpacks]++;
 									} else skip_ref = FALSE;
@@ -16638,7 +16639,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks], 0), cval_start, cval - cval_start);
+										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks]), cval_start, cval - cval_start);
 #endif
 										sp_files[soundpacks]++;
 
@@ -16746,7 +16747,7 @@ void audio_pack_selector(void) {
 								if (!in_quotes) {
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks], 0), cval_start, cval - 1 - cval_start);
+										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks]), cval_start, cval - 1 - cval_start);
 #endif
 										mp_files[musicpacks]++;
 									} else skip_ref = FALSE;
@@ -16785,7 +16786,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks], 0), cval_start, cval - cval_start);
+										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks]), cval_start, cval - cval_start);
 #endif
 										mp_files[musicpacks]++;
 									} else skip_ref = FALSE;
@@ -16860,7 +16861,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks], 0), cval_start, cval - cval_start);
+										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks]), cval_start, cval - cval_start);
 #endif
 										mp_files[musicpacks]++;
 
@@ -16896,8 +16897,8 @@ void audio_pack_selector(void) {
 	for (k = 0; k < soundpacks; k++) {
 		for (i = 1; i < sp_files[k]; i++) {
 			for (j = 0; j < i; j++) {
-				if (!strcmp(sp_filename + sp_offset(k, j, 0), sp_filename + sp_offset(k, i, 0))) {
-					if (i != sp_files[k] - 1) strcpy(sp_filename + sp_offset(k, i, 0), sp_filename + sp_offset(k, sp_files[k] - 1, 0));
+				if (!strcmp(sp_filename + sp_offset(k, j), sp_filename + sp_offset(k, i))) {
+					if (i != sp_files[k] - 1) strcpy(sp_filename + sp_offset(k, i), sp_filename + sp_offset(k, sp_files[k] - 1));
 					sp_files[k]--;
 					i--;
 					break;
@@ -16908,8 +16909,8 @@ void audio_pack_selector(void) {
 	for (k = 0; k < musicpacks; k++) {
 		for (i = 1; i < mp_files[k]; i++) {
 			for (j = 0; j < i; j++) {
-				if (!strcmp(mp_filename + mp_offset(k, j, 0), mp_filename + mp_offset(k, i, 0))) {
-					if (i != mp_files[k] - 1) strcpy(mp_filename + mp_offset(k, i, 0), mp_filename + mp_offset(k, mp_files[k] - 1, 0));
+				if (!strcmp(mp_filename + mp_offset(k, j), mp_filename + mp_offset(k, i))) {
+					if (i != mp_files[k] - 1) strcpy(mp_filename + mp_offset(k, i), mp_filename + mp_offset(k, mp_files[k] - 1));
 					mp_files[k]--;
 					i--;
 					break;
@@ -17109,8 +17110,8 @@ void audio_pack_selector(void) {
 	//c_message_add("\377RAfter changing audio packs, a game client restart is required!");
 
 #ifdef SKIP_DUPFILES
-		free(sp_filename);
-		free(mp_filename);
+	free(sp_filename);
+	free(mp_filename);
 #endif
 }
 #endif // USE_SOUND_2010
