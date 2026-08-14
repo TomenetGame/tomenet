@@ -2,9 +2,12 @@
 -------------------------------
 
 -- Special features:
+	--disable scheduled artifact resets in favour of fluent (rolling) resets?
+	FLUENT_ARTIFACT_RESETS = 1
 	--reset true artifacts every n months (must be one of 1,2,3,4,6)
 	art_reset_freq = 6
-	censor_swearing = 0
+	censor_swearing = 1
+	jails_enabled = 1
 
 -- Helper variables
 	cur_month = -1
