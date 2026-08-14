@@ -16326,9 +16326,14 @@ void toggle_weather(void) {
 	//c_message_add(format("\377yWeather sound effects are now %s.", cfg_audio_weather ? "ON" : "OFF"));
 	set_mixing();
 }
-#endif
 
-#ifdef USE_SOUND_2010
+static int sp_offset(int z, int y, int x) {
+	return (z * SOUND_MAX_2010 * MAX_CHARS_WIDE) + (y * MAX_CHARS_WIDE) + x;
+}
+static int mp_offset(int z, int y, int x) {
+	return (z * MUSIC_MAX * MAX_CHARS_WIDE) + (y * MAX_CHARS_WIDE) + x;
+}
+
 /* Select folders for music/sound pack to load, from a selection of all eligible folders within lib/xtra */
 #define MAX_PACKS 20
 #define PACKS_SCREEN 10
@@ -16342,7 +16347,7 @@ void audio_pack_selector(void) {
 #ifdef SKIP_DUPFILES
 	int i, j;
 	char *cval_start;
-	char sp_filename[MAX_PACKS][SOUND_MAX_2010][MAX_CHARS_WIDE], mp_filename[MAX_PACKS][MUSIC_MAX][MAX_CHARS_WIDE];
+	char *sp_filename, *mp_filename; /* We cannot just use 3d-char arrays here, as it would exceed Windows stack size easily, need calloc() instead. */
 #endif
 	int k, soundpacks = 0, musicpacks = 0;
 	int old_cfg_soundpack_subset = cfg_soundpack_subset, old_cfg_musicpack_subset = cfg_musicpack_subset;
@@ -16414,8 +16419,9 @@ void audio_pack_selector(void) {
 	}
 
 #ifdef SKIP_DUPFILES
-	memset(sp_filename, 0, sizeof(sp_filename));
-	memset(mp_filename, 0, sizeof(mp_filename));
+	/* NOTE: The '1' must be sizeof(char), or sp_offs()/mp_offs() need to be adjusted. */
+	sp_filename = calloc(MAX_PACKS * SOUND_MAX_2010 * MAX_CHARS_WIDE, 1);
+	mp_filename = calloc(MAX_PACKS * MUSIC_MAX * MAX_CHARS_WIDE, 1);
 #endif
 
 	while (!feof(fff)) {
@@ -16518,7 +16524,7 @@ void audio_pack_selector(void) {
 								if (!in_quotes) {
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(sp_filename[soundpacks][sp_files[soundpacks]], cval_start, cval - 1 - cval_start);
+										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks], 0), cval_start, cval - 1 - cval_start);
 #endif
 										sp_files[soundpacks]++;
 									} else skip_ref = FALSE;
@@ -16557,7 +16563,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(sp_filename[soundpacks][sp_files[soundpacks]], cval_start, cval - cval_start);
+										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks], 0), cval_start, cval - cval_start);
 #endif
 										sp_files[soundpacks]++;
 									} else skip_ref = FALSE;
@@ -16632,7 +16638,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(sp_filename[soundpacks][sp_files[soundpacks]], cval_start, cval - cval_start);
+										strncpy(sp_filename + sp_offset(soundpacks, sp_files[soundpacks], 0), cval_start, cval - cval_start);
 #endif
 										sp_files[soundpacks]++;
 
@@ -16740,7 +16746,7 @@ void audio_pack_selector(void) {
 								if (!in_quotes) {
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(mp_filename[musicpacks][mp_files[musicpacks]], cval_start, cval - 1 - cval_start);
+										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks], 0), cval_start, cval - 1 - cval_start);
 #endif
 										mp_files[musicpacks]++;
 									} else skip_ref = FALSE;
@@ -16779,7 +16785,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(mp_filename[musicpacks][mp_files[musicpacks]], cval_start, cval - cval_start);
+										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks], 0), cval_start, cval - cval_start);
 #endif
 										mp_files[musicpacks]++;
 									} else skip_ref = FALSE;
@@ -16854,7 +16860,7 @@ void audio_pack_selector(void) {
 
 									if (!skip_ref) {
 #ifdef SKIP_DUPFILES
-										strncpy(mp_filename[musicpacks][mp_files[musicpacks]], cval_start, cval - cval_start);
+										strncpy(mp_filename + mp_offset(musicpacks, mp_files[musicpacks], 0), cval_start, cval - cval_start);
 #endif
 										mp_files[musicpacks]++;
 
@@ -16890,8 +16896,8 @@ void audio_pack_selector(void) {
 	for (k = 0; k < soundpacks; k++) {
 		for (i = 1; i < sp_files[k]; i++) {
 			for (j = 0; j < i; j++) {
-				if (!strcmp(sp_filename[k][j], sp_filename[k][i])) {
-					if (i != sp_files[k] - 1) strcpy(sp_filename[k][i], sp_filename[k][sp_files[k] - 1]);
+				if (!strcmp(sp_filename + sp_offset(k, j, 0), sp_filename + sp_offset(k, i, 0))) {
+					if (i != sp_files[k] - 1) strcpy(sp_filename + sp_offset(k, i, 0), sp_filename + sp_offset(k, sp_files[k] - 1, 0));
 					sp_files[k]--;
 					i--;
 					break;
@@ -16902,8 +16908,8 @@ void audio_pack_selector(void) {
 	for (k = 0; k < musicpacks; k++) {
 		for (i = 1; i < mp_files[k]; i++) {
 			for (j = 0; j < i; j++) {
-				if (!strcmp(mp_filename[k][j], mp_filename[k][i])) {
-					if (i != mp_files[k] - 1) strcpy(mp_filename[k][i], mp_filename[k][mp_files[k] - 1]);
+				if (!strcmp(mp_filename + mp_offset(k, j, 0), mp_filename + mp_offset(k, i, 0))) {
+					if (i != mp_files[k] - 1) strcpy(mp_filename + mp_offset(k, i, 0), mp_filename + mp_offset(k, mp_files[k] - 1, 0));
 					mp_files[k]--;
 					i--;
 					break;
@@ -17055,6 +17061,11 @@ void audio_pack_selector(void) {
 		/* Re-enable hybrid macros */
 		inkey_msg = inkey_msg_old;
 
+#ifdef SKIP_DUPFILES
+		free(sp_filename);
+		free(mp_filename);
+#endif
+
 		return;
 	}
 
@@ -17096,8 +17107,14 @@ void audio_pack_selector(void) {
 
 	//No longer true (for SDL, our only sound sytem at this point basically):
 	//c_message_add("\377RAfter changing audio packs, a game client restart is required!");
-}
+
+#ifdef SKIP_DUPFILES
+		free(sp_filename);
+		free(mp_filename);
 #endif
+}
+#endif // USE_SOUND_2010
+
 
 /* For pasting monster lore into chat, also usable for item-pasting. - C. Blue
    Important feature: Replaces first ':' by '::' if sending to normal chat. */
