@@ -8830,7 +8830,7 @@ Chain_Macro:
 						force_normal = FALSE;
 						l = ystart;
 						//Term_putstr(10, l++, -1, TERM_GREEN, "Please choose one of these common commands and functions:"); --make room for one more entry instead
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "a) chat and voice");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "a) chat and voice, self-messaging");
 						//Term_putstr(2, l++, -1, TERM_L_GREEN, "b) load a .prf file (from lib/user/ folder) with feedback    %l ... : ...");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "b) load a .prf file (from lib/user/ folder) with feedback    \\e)\"...");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "c) toggle AFK state                                          :/afk\\r");
@@ -8893,6 +8893,8 @@ Chain_Macro:
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) repeat previous chat command or message                   :^P\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "c) cough (reduces sleep of monsters nearby)                  :/cough\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "d) shout (breaks sleep of monsters nearby)                   :/shout\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) display message to yourself                               :%:...\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) display chat-message to yourself                          :%%:...\\r");
 								while (TRUE) {
 									switch (choice = inkey()) {
 									case ESCAPE:
@@ -8911,7 +8913,7 @@ Chain_Macro:
 										continue;
 									default:
 										/* invalid action -> exit wizard */
-										if (choice < 'a' || choice > 'd') {
+										if (choice < 'a' || choice > 'f') {
 											//i_stage = -1;
 											continue;
 										}
@@ -8932,6 +8934,30 @@ Chain_Macro:
 								case 'b': strcpy(buf2, ":^P\\r"); break;
 								case 'c': strcpy(buf2, ":/cough\\r"); break;
 								case 'd': strcpy(buf2, ":/shout\\r"); break;
+								case 'e':
+									clear_from(ystart);
+									l = ystart + 2;
+									Term_putstr(5, l++, -1, TERM_GREEN, "Please enter the comment:");
+									Term_gotoxy(31, l - 1);
+									strcpy(buf, "");
+									if (!askfor_aux(buf, 159, 0)) {
+										i_stage = -2;
+										break;
+									}
+									sprintf(buf2, ":%%:%s\\r", buf);
+									break;
+								case 'f':
+									clear_from(ystart);
+									l = ystart + 2;
+									Term_putstr(5, l++, -1, TERM_GREEN, "Please enter the comment:");
+									Term_gotoxy(31, l - 1);
+									strcpy(buf, "");
+									if (!askfor_aux(buf, 159, 0)) {
+										i_stage = -2;
+										break;
+									}
+									sprintf(buf2, ":%%%%:%s\\r", buf);
+									break;
 								}
 								break;
 							}
