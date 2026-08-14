@@ -929,15 +929,15 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 
-		/* add inscription to everything */
-		else if (prefix(messagelc, "/tag") ||
-		    prefix(messagelc, "/t ") || (prefix(messagelc, "/t") && !message[2])) {
+		/* add inscription to inventory items */
+		else if (prefix(messagelc, "/tag") || prefix(messagelc, "/t ") || (prefix(messagelc, "/t") && !message[2])
+		    || prefix(messagelc, "/tagx") || prefix(messagelc, "/tx ") || (prefix(messagelc, "/tx") && !message[3])) {
 			object_type *o_ptr;
 
 			char powins[POW_INSCR_LEN];
 			char o_name[ONAME_LEN];
 			char *pi_pos = NULL, *pir_pos;
-			bool redux = FALSE;
+			bool redux = FALSE, tagx = prefix(messagelc, "/tagx") || prefix(messagelc, "/tx ") || (prefix(messagelc, "/tx") && !message[3]);
 
 #ifdef ENABLE_SUBINVEN
 			bool within_subinven = FALSE;
@@ -1065,7 +1065,6 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 #if 0 /* not this? */
 			p_ptr->notice |= (PN_COMBINE);
 #endif
-
 			return;
 		}
 		/* remove specific inscription.
@@ -1174,6 +1173,193 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			return;
 		}
+
+		/* add inscription to equipment items */
+		else if (prefix(messagelc, "/etag") || prefix(messagelc, "/et ") || (prefix(messagelc, "/et") && !message[3])
+		    || prefix(messagelc, "/etagx") || prefix(messagelc, "/etx ") || (prefix(messagelc, "/etx") && !message[4])) {
+			object_type *o_ptr;
+
+			char powins[POW_INSCR_LEN];
+			char o_name[ONAME_LEN];
+			char *pi_pos = NULL, *pir_pos;
+			bool redux = FALSE, tagx = prefix(messagelc, "/etagx") || prefix(messagelc, "/etx ") || (prefix(messagelc, "/etx") && !message[4]);
+
+
+			if (tk >= 2 && (pi_pos = strstr(token[2], "@@"))) {
+				/* Check for redux version of power inscription */
+				if ((pir_pos = strstr(token[2], "@@@"))) {
+					pi_pos = pir_pos;
+					redux = TRUE;
+				}
+			}
+			//reduxx = strstr(inscription, "@@@@");
+
+			if (tk && (token[1][0] != '*')) {
+				h = -1;
+				if (message3[0] == '+') {
+					if (p_ptr->item_newest >= 0) h = p_ptr->item_newest;
+				} else h = a2slot(Ind, token[1][0] - 'a' + 'A', 0, FALSE, TRUE);
+				j = h;
+				if (h < INVEN_WIELD || h >= INVEN_TOTAL) {
+					msg_print(Ind, "\377oUsage: /etag [a..n|+|* [<inscription>]]");
+					return;
+				}
+			} else {
+				h = INVEN_WIELD;
+				j = INVEN_TOTAL - 1;
+			}
+
+			for (i = h; i <= j; i++) {
+				o_ptr = &(p_ptr->inventory[i]);
+				if (!o_ptr->tval) break;
+
+				/* skip inscribed items, except if we designated one item in particular (j==h) */
+				if (o_ptr->note &&
+				    strcmp(quark_str(o_ptr->note), "terrible") &&
+				    strcmp(quark_str(o_ptr->note), "broken") &&
+				    strcmp(quark_str(o_ptr->note), "good") &&
+				    strcmp(quark_str(o_ptr->note), "worthless") &&
+				    !DISCARDABLE_INSCR_FLOOR(quark_str(o_ptr->note))) {
+					if (j != h) continue; /* skip inscribed items when mass-tagging */
+					else o_ptr->note = 0; /* hack to overwrite its inscription */
+				}
+
+				/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
+				   Side note: If @@@ is present, an additional @@ will simply be ignored.
+				   NOTE: In case of 'tagging' this actually won't tag but rather overwrite the existing inscription. */
+				if (pi_pos && !maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) {
+					object_desc(Ind, o_name, o_ptr, TRUE, 3);
+					msg_format(Ind, "Power-inscribing %s.", o_name);
+					//msg_print(Ind, NULL);
+
+					/* Copy part of the inscription before @@/@@@ */
+					strcpy(powins, token[2]);
+					powins[pi_pos - token[2]] = 0;
+
+#ifdef POWINS_DYNAMIC
+					strcat(powins, redux ? "@^" : "@&");
+#endif
+					power_inscribe(o_ptr, redux, powins);
+#ifdef POWINS_DYNAMIC
+					strcat(powins, redux ? "@^" : "@&");
+#endif
+
+					/* Append the rest of the inscription, if any */
+					strcat(powins, pi_pos + (redux ? 3 : 2));
+
+					/* Watch total object name length */
+					o_ptr->note = o_ptr->note_utag = 0;
+					/* Not just an empty inscription aka no notable powers? */
+					if (powins[4]) {
+						/* Prepare to inscribe */
+						object_desc(Ind, o_name, o_ptr, TRUE, 3);
+						if (ONAME_LEN - ((int)strlen(o_name)) - 1 >= 0) { /* paranoia -- item name not too long already, leaving no room for an inscription at all? */
+							/* inscription too long? cut it down */
+							if (strlen(o_name) + strlen(powins) >= ONAME_LEN) powins[ONAME_LEN - strlen(o_name) - 1] = 0;
+
+							/* Save the inscription */
+							o_ptr->note = quark_add(powins);
+							o_ptr->note_utag = 0;
+						}
+					}
+				} else {
+					/* Normal tagging */
+					if (!o_ptr->note)
+						o_ptr->note = quark_add(tk < 2 ? "!k" : token[2]);
+					else
+						o_ptr->note = quark_add(tk < 2 ?
+						    format("%s-!k", quark_str(o_ptr->note)) :
+						    format("%s-%s", quark_str(o_ptr->note), token[2]));
+				}
+			}
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+#if 0 /* not this? */
+			p_ptr->notice |= (PN_COMBINE);
+#endif
+			return;
+		}
+		/* remove specific inscription.
+		   If '*' is given, all pseudo-id tags are removed,
+		   if no parameter is given, '!k' is the default. */
+		else if (prefix(messagelc, "/unetag") || prefix(messagelc, "/uet")) {
+			object_type *o_ptr;
+			//cptr ax = token[1] ? token[1] : "!k";
+			cptr ax = tk ? message3 : "!k";
+			char note2[80], noteid[10];
+			bool remove_all = !strcmp(ax, "*");
+			bool remove_pseudo = !strcmp(ax, "p");
+			bool remove_unique = !strcmp(ax, "u");
+
+			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
+				o_ptr = &(p_ptr->inventory[i]);
+
+				/* Skip empty slots */
+				if (!o_ptr->tval) continue;
+
+				/* skip uninscribed items */
+				if (!o_ptr->note) continue;
+
+				/* remove all inscriptions? */
+				if (remove_all) {
+					o_ptr->note = 0;
+					o_ptr->note_utag = 0;
+					continue;
+				}
+
+				if (remove_unique && o_ptr->note_utag) {
+					j = strlen(quark_str(o_ptr->note)) - o_ptr->note_utag;
+					if (j >= 0) { /* bugfix hack */
+//s_printf("j: %d, strlen: %d, note_utag: %d, i: %d.\n", j, strlen(quark_str(o_ptr->note)), o_ptr->note_utag, i);
+						strncpy(note2, quark_str(o_ptr->note), j);
+						if (j > 0 && note2[j - 1] == '-') j--; /* absorb '-' orphaned spacers */
+						note2[j] = 0; /* terminate string */
+						o_ptr->note_utag = 0;
+						if (note2[0]) o_ptr->note = quark_add(note2);
+						else o_ptr->note = 0;
+					} else o_ptr->note_utag = 0; //paranoia?
+					continue;
+				}
+
+				/* just remove pseudo-id tags? */
+				if (remove_pseudo) {
+					/* prevent 'empty' inscriptions from being erased by this */
+					if ((quark_str(o_ptr->note))[0] == '\0') continue;
+
+					note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
+					if (!note2[0]) {
+						o_ptr->note = 0;
+						o_ptr->note_utag = 0; //paranoia
+					} else o_ptr->note = quark_add(note2);
+					continue;
+				}
+
+				/* ignore pseudo-id inscriptions */
+				note_crop_pseudoid(note2, noteid, quark_str(o_ptr->note));
+
+				/* skip non-matching tags */
+				if (strcmp(note2, ax)) continue;
+
+				if (!noteid[0]) {
+					/* tag removed, no more inscription */
+					o_ptr->note = 0;
+					o_ptr->note_utag = 0; //in case tag == unique name
+				} else {
+					/* tag removed, keeping pseudo-id inscription */
+					o_ptr->note = quark_add(noteid);
+					o_ptr->note_utag = 0; //in case tag == unique name
+				}
+			}
+
+			/* Combine the pack */
+			p_ptr->notice |= (PN_COMBINE);
+
+			/* Window stuff */
+			p_ptr->window |= (PW_INVEN | PW_EQUIP);
+
+			return;
+		}
+
 #if 0 /* new '/cast' version below this one - C. Blue (also would need a proper energy+packetrequeue check!) */
 		/* '/cast' code is written by Asclep(DEG). thx! */
 		else if (prefix(messagelc, "/cast")) {
