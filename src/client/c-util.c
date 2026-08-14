@@ -16473,7 +16473,7 @@ void audio_pack_selector(void) {
 					if (*ckey == ';') ckey++;
 
 					/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
-					if (*ckey >= 0 && *ckey <= 9 && *(ckey + 1) == '|') ckey += 2;
+					if (*ckey >= '0' && *ckey <= '9' && *(ckey + 1) == '|') ckey += 2;
 
 					/* Line is just a comment? */
 					if (*ckey == '#') continue;
@@ -16600,7 +16600,7 @@ void audio_pack_selector(void) {
 									if (*c_trim == ';') c_trim++;
 
 									/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
-									if (*c_trim >= 0 && *c_trim <= 9 && *(c_trim + 1) == '|') c_trim += 2;
+									if (*c_trim >= '0' && *c_trim <= '9' && *(c_trim + 1) == '|') c_trim += 2;
 
 									/* Line is just a comment? */
 									if (*c_trim == '#') continue;
@@ -16701,7 +16701,7 @@ void audio_pack_selector(void) {
 					if (*ckey == ';') ckey++;
 
 					/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
-					if (*ckey >= 0 && *ckey <= 9 && *(ckey + 1) == '|') ckey += 2;
+					if (*ckey >= '0' && *ckey <= '9' && *(ckey + 1) == '|') ckey += 2;
 
 					/* Line is just a comment? */
 					if (*ckey == '#') continue;
@@ -16828,7 +16828,7 @@ void audio_pack_selector(void) {
 									if (*c_trim == ';') c_trim++;
 
 									/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
-									if (*c_trim >= 0 && *c_trim <= 9 && *(c_trim + 1) == '|') c_trim += 2;
+									if (*c_trim >= '0' && *c_trim <= '9' && *(c_trim + 1) == '|') c_trim += 2;
 
 									/* Line is just a comment? */
 									if (*c_trim == '#') continue;
@@ -16918,6 +16918,7 @@ void audio_pack_selector(void) {
 			}
 		}
 	}
+
 	for (k = 0; k < musicpacks; k++) {
 		for (i = 1; i < mp_files[k]; i++) {
 			for (j = 0; j < i; j++) {
