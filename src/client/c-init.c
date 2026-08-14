@@ -1789,8 +1789,8 @@ static void init_artifact_list(void) {
 #if 1 /* we cannot predict the attr for flavoured items! (rings, amulets) */
 			/* For insta-arts: Those that don't have a specific colour are 'd' in k_info to indicate that they
 			   are ok with receiving a random flavour. Have to substitute that for something readable here. */
-			/* Note: The \377- will cause charactermode-specific colour when chat-pasting, so it'll be replaced live from paste_lines on actual pasting. */
-			strcpy(buf, format("\377%c%c\377-  ", kind_list_attr[i] == 'd' ? 's' : kind_list_attr[i], kind_list_char[i]));
+			/* Note: The \377. will cause charactermode-specific colour when chat-pasting, so it'll be replaced live from paste_lines on actual pasting. */
+			strcpy(buf, format("\377%c%c\377.  ", kind_list_attr[i] == 'd' ? 's' : kind_list_attr[i], kind_list_char[i]));
 #else
 			strcpy(buf, format("%c  ", kind_list_char[i]));
 #endif
@@ -1897,8 +1897,8 @@ void artifact_lore_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN], bool 
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_YELLOW, p2 + 1);
 		strcpy(paste_lines[++pl], format("\377U%s", artifact_list_name[alidx]));
-		/* Glitch fix: Replace \377- by \377U so we don't fall back on charactermode-specific colour */
-		if ((tmpc = strstr(paste_lines[pl], "\377-"))) *(tmpc + 1) = 'U';
+		/* Glitch fix: Replace \37.- by \377U so we don't fall back on charactermode-specific colour */
+		if ((tmpc = strstr(paste_lines[pl], "\377."))) *(tmpc + 1) = 'U';
 		/* Display artifact name at the 'top' of the lore text/specs */
 		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
@@ -2274,8 +2274,8 @@ void artifact_stats_aux(int aidx, int alidx, char paste_lines[18][MSG_LEN], bool
 		/* name */
 		//Term_putstr(5, 5, -1, TERM_L_UMBER, p2 + 1);
 		strcpy(paste_lines[++pl], format("\377U%s", artifact_list_name[alidx]));
-		/* Glitch fix: Replace \377- by \377U so we don't fall back on charactermode-specific colour */
-		if ((tmpc = strstr(paste_lines[pl], "\377-"))) *(tmpc + 1) = 'U';
+		/* Glitch fix: Replace \377. by \377U so we don't fall back on charactermode-specific colour */
+		if ((tmpc = strstr(paste_lines[pl], "\377."))) *(tmpc + 1) = 'U';
 		/* Display artifact name at the 'top' of the lore text/specs */
 		Term_putstr(5, 5, -1, TERM_L_UMBER, paste_lines[pl] + 2); /* no need for \377U */
 		/* Hack: Custom mapping? -> Overwrite the basic font symbol with the mapped one, allowing for graphical tiles too: */
