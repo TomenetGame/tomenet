@@ -5951,6 +5951,15 @@ void do_cmd_subinven_move(int Ind, int islot, int amt) {
 			last_ok_slot = i;
 			break;
 		}
+		/* Just for correct stowing feedback message:
+		   If we were trying to store an 'amt' < o_ptr->number, and we got that full amount stored, it's "all" to us! */
+		else if (t < 0
+		    && last_num - i_ptr->number == amt) {
+			all = TRUE;
+			last_ok_slot = i;
+			break;
+		}
+		/* If we were able to stow anything at all in this slot, we found an ok slot */
 		if (last_num - i_ptr->number) last_ok_slot = i;
  #ifdef SUBINVEN_LIMIT_GROUP
 		//break;  -- replaced by 'continue;' further above
@@ -6160,7 +6169,7 @@ void subinven_remove_aux(int Ind, int islot, int slot, int amt) {
 	i = inven_carry(Ind, o_ptr);
 	o_ptr->ident &= ~ID_NO_AUTOINSC;
 	if (i != -1) { /* Paranoia, as this function ASSUMES that there is free space. */
-		object_desc(Ind, o_name, o_ptr, TRUE, 3);
+		object_desc(Ind, o_name, &p_ptr->inventory[i], TRUE, 3);
 		msg_format(Ind, "You have %s (%c).", o_name, index_to_label(i));
  #ifdef USE_SOUND_2010
 		sound_item(Ind, o_ptr->tval, o_ptr->sval, "pickup_");
