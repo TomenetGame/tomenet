@@ -16346,7 +16346,7 @@ void toggle_weather(void) {
 }
 
 /* We always refer to the "string"'s starting position, never within it somewhere, so x is always 0 and we can omit it. */
-#define AUDIO_EVENT_NAMELEN 40
+#define AUDIO_EVENT_NAMELEN 50
 #define AUDIO_EVENTS_MAX 500
 static int sp_offset_fn(int z, int y) { //, int x) {
 	return (z * SOUND_MAX_2010 * MAX_CHARS_WIDE) + (y * MAX_CHARS_WIDE);// + x;
