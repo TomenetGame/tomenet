@@ -946,13 +946,13 @@ void do_trap(int item_kit) {
 	get_item_extra_hook = get_item_hook_find_obj;
 #ifdef ENABLE_SUBINVEN
 	/* Allow getting magic devices from a device bag (and any load item from chests, as a consequence too) */
-	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | NO_FAIL_MSG | USE_SUBINVEN))) {
+	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | NO_FAIL_MSG | USE_SUBINVEN | UNPREFER_SUBINVEN))) {
 		if (item_load == -2) c_msg_print("You have nothing to load that trap with.");
 		if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
 		return;
 	}
 #else
-	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+	if (!c_get_item(&item_load, "Load with what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | NO_FAIL_MSG | UNPREFER_SUBINVEN))) {
 		if (item_load == -2) c_msg_print("You have nothing to load that trap with.");
 		if (parse_macro && c_cfg.safe_macros) flush_now();//Term_flush();
 		return;
@@ -1050,7 +1050,7 @@ void do_activate_skill(int x_idx, int item) {
 			item_tester_tval = s_info[x_idx].tval;
 			if (!c_get_item(&item, "Cast from which book? ", (USE_INVEN |
 			    USE_EQUIP | /* for WIELD_BOOKS */
-			    NO_FAIL_MSG))) {
+			    NO_FAIL_MSG | UNPREFER_SUBINVEN))) {
 				if (item == -2) c_msg_print("You have no books that you can cast from.");
 				return;
 			}
@@ -1067,7 +1067,7 @@ void do_activate_skill(int x_idx, int item) {
 
 	if (item < 0 && s_info[x_idx].flags1 & SKF1_MKEY_ITEM) {
 		item_tester_tval = s_info[x_idx].tval;
-		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN)))
+		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN | UNPREFER_SUBINVEN)))
 			return;
 	}
 

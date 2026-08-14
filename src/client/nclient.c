@@ -3865,7 +3865,7 @@ int Receive_item(void) {
 			item_tester_hook = item_tester_hook_rune_enchant;
 			get_item_hook_find_obj_what = "Which item? ";
 			clear_topline(); // Hack: EQUIP ONLY - Kurzel
-			if (!c_get_item(&item, "Which item? ", USE_EQUIP)) return(1);
+			if (!c_get_item(&item, "Which item? ", USE_EQUIP | UNPREFER_SUBINVEN)) return(1);
 			Send_item(item);
 			return(1);
 			break;
@@ -3909,10 +3909,10 @@ int Receive_item(void) {
 		clear_topline();
 #ifdef ENABLE_SUBINVEN
 		if (using_subinven == -1) {
-			if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN))) return(1);
+			if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN | UNPREFER_SUBINVEN))) return(1);
 		} else
 #endif
-		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return(1);
+		if (!c_get_item(&item, "Which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | UNPREFER_SUBINVEN))) return(1);
 		Send_item(item);
 	} else {
 		if (is_newer_than(&server_version, 4, 5, 2, 0, 0, 0)) {

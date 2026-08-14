@@ -1086,14 +1086,14 @@ s32b get_school_spell(cptr do_what, int *item_book) {
 		if (sflags1 & SFLG1_LIMIT_SPELLS) {
 			if (!c_get_item(&item, out_val, (USE_INVEN |
 			    USE_EQUIP | /* for WIELD_BOOKS */
-			    USE_EXTRA | USE_LIMIT | NO_FAIL_MSG) )) {
+			    USE_EXTRA | USE_LIMIT | NO_FAIL_MSG | UNPREFER_SUBINVEN) )) {
 				if (item == -2) c_msg_format("%s", buf2);
 				return(-1);
 			}
 		} else {
 			if (!c_get_item(&item, out_val, (USE_INVEN |
 			    USE_EQUIP | /* for WIELD_BOOKS */
-			    USE_EXTRA | NO_FAIL_MSG) )) {
+			    USE_EXTRA | NO_FAIL_MSG | UNPREFER_SUBINVEN) )) {
 				if (item == -2) c_msg_format("%s", buf2);
 				return(-1);
 			}

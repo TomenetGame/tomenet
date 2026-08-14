@@ -1089,7 +1089,7 @@ bool get_item_hook_find_obj(int *item, int mode) {
 //#define AUTO_LIST_BAGS
 bool (*get_item_extra_hook)(int *cp, int mode);
 /* (pmt = prompt, for measuring total prompt length and possibly shorten some things to find into the line) */
-bool c_get_item(int *cp, cptr pmt, int mode) {
+bool c_get_item(int *cp, cptr pmt, u32b mode) {
 	//char n1, n2;
 	char which = ' ';
 
@@ -1374,7 +1374,7 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 
 	/* If we already found at least one eligible target item in a bag and prefer subinven items over normal inventory, display the bag now.
 	   Otherwise check out normal inven and equip here... */
-	if (autoswitch_subinven == -1 || !c_cfg.prefer_subinven) {
+	if (autoswitch_subinven == -1 || !c_cfg.prefer_subinven || (mode & UNPREFER_SUBINVEN)) {
 		/* Automatically switch to equipment or to bags (or to inventory/bags if we started out in equipment)
 		   if no eligible item was found in our starter inventory screen */
 		if (c_cfg.autoswitch_inven && using_subinven == -1) {

@@ -666,7 +666,7 @@ extern bool get_item_hook_find_obj(int *item, int mode);
 extern bool get_item_hook_find_obj(int *item, int mode);
 #endif
 extern bool (*get_item_extra_hook)(int *cp, int mode);
-extern bool c_get_item(int *cp, cptr pmt, int mode);
+extern bool c_get_item(int *cp, cptr pmt, u32b mode);
 extern bool verified_item;
 extern int hack_force_spell_level;
 extern void redraw_newest(void);

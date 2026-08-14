@@ -66,9 +66,9 @@ static void cmd_all_in_one(void) {
 	get_item_extra_hook = get_item_hook_find_obj;
 
 #ifdef ENABLE_SUBINVEN
-	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN | CHECK_CHARGED))) { // also process charged state for magic devices
+	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN | CHECK_CHARGED | UNPREFER_SUBINVEN))) { // also process charged state for magic devices
 #else
-	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | CHECK_CHARGED))) { // also process charged state for magic devices
+	if (!c_get_item(&item, "Use which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | CHECK_CHARGED | UNPREFER_SUBINVEN))) { // also process charged state for magic devices
 #endif
 		if (item == -2) c_msg_print("You don't have any items.");
 		return;
@@ -904,7 +904,7 @@ static void cmd_subinven_move(void) {
 		return;
 	}
 
-	if (!c_get_item(&item, "Stow what? ", (USE_INVEN | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Stow what? ", (USE_INVEN | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 	/* Get an amount */
 	num = inventory[item].number;
@@ -1388,7 +1388,7 @@ void cmd_drop(byte flag) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Drop what? ", (flag | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Drop what? ", (flag | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
@@ -1481,7 +1481,7 @@ void cmd_wield(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 	/* Send it */
 	Send_wield(item);
@@ -1494,7 +1494,7 @@ void cmd_wield2(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Wear/Wield which item? ", (USE_INVEN | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 	/* Send it */
 	Send_wield2(item);
@@ -1507,7 +1507,7 @@ void cmd_observe(byte mode) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Examine which item? ", (mode | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Examine which item? ", (mode | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 	/* Send it */
 	Send_observe(item);
@@ -1520,7 +1520,7 @@ void cmd_take_off(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Takeoff which item? ", (USE_EQUIP | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Takeoff which item? ", (USE_EQUIP | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 #ifdef ENABLE_SUBINVEN
 	if (item >= SUBINVEN_INVEN_MUL) num = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].number;
 	else
@@ -1547,7 +1547,7 @@ void cmd_swap(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Swap which item? ", (USE_INVEN | USE_EQUIP | INVEN_FIRST | USE_EXTRA | CHECK_MULTI))) return;
+	if (!c_get_item(&item, "Swap which item? ", (USE_INVEN | USE_EQUIP | INVEN_FIRST | USE_EXTRA | CHECK_MULTI | UNPREFER_SUBINVEN))) return;
 
 	/* For items that can go into multiple slots (weapons and rings),
 	   check @xN inscriptions on source and destination to pick slot */
@@ -1614,7 +1614,7 @@ void cmd_destroy(byte flag) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Destroy what? ", (flag | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Destroy what? ", (flag | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1) {
@@ -1686,7 +1686,7 @@ void cmd_inscribe(byte flag) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Inscribe what? ", (flag | USE_EXTRA | SPECIAL_REQ))) {
+	if (!c_get_item(&item, "Inscribe what? ", (flag | USE_EXTRA | SPECIAL_REQ | UNPREFER_SUBINVEN))) {
 		if (item != -3) return;
 
 		/* '-3' hack: Get inscription before item (SPECIAL_REQ) */
@@ -1696,7 +1696,7 @@ void cmd_inscribe(byte flag) {
 		if (!get_string("Inscription: ", buf, 59)) return;
 
 		/* Get the item afterwards */
-		if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
+		if (!c_get_item(&item, "Inscribe what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 		Send_inscribe(item, buf);
 		return;
@@ -1716,7 +1716,7 @@ void cmd_uninscribe(byte flag) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Uninscribe what? ", (flag | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Uninscribe what? ", (flag | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 	/* Send it */
 	Send_uninscribe(item);
@@ -1764,7 +1764,7 @@ void cmd_apply_autoins(void) {
 	get_item_extra_hook = get_item_hook_find_obj;
 
 	/* Get the item */
-	if (!c_get_item(&item, "Inscribe which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Inscribe which item? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 #ifdef ENABLE_SUBINVEN
 	if (item >= SUBINVEN_INVEN_MUL) tv = subinventory[item / SUBINVEN_INVEN_MUL - 1][item % SUBINVEN_INVEN_MUL].tval;
@@ -1843,7 +1843,7 @@ void cmd_read_scroll(void) {
 	get_item_hook_find_obj_what = "Scroll name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Read which scroll? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG))) {
+	if (!c_get_item(&item, "Read which scroll? ", (USE_INVEN | USE_EXTRA | NO_FAIL_MSG | UNPREFER_SUBINVEN))) {
 		if (item == -2) c_msg_print("You don't have any scrolls.");
 		return;
 	}
@@ -1859,7 +1859,7 @@ void cmd_aim_wand(void) {
 	get_item_hook_find_obj_what = "Wand name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG
+	if (!c_get_item(&item, "Aim which wand? ", (USE_INVEN | USE_EXTRA | CHECK_CHARGED | NO_FAIL_MSG | UNPREFER_SUBINVEN
 	    | USE_EQUIP))) { //WIELD_DEVICES
 		if (item == -2) c_msg_print("You don't have any wands.");
 		return;
@@ -1948,11 +1948,11 @@ void cmd_refill(void) {
 	if (inventory[INVEN_LITE].sval == SV_LITE_TORCH || inventory[INVEN_LITE].sval == SV_LITE_TORCH_EVER) { /* @Everburning: Might be ego 'of Fading' */
 		item_tester_hook = item_tester_torch_fuel;
 		get_item_hook_find_obj_what = "Torch? ";
-		if (!c_get_item(&item, "Refill with which torch? ", (USE_INVEN | USE_EXTRA))) return;
+		if (!c_get_item(&item, "Refill with which torch? ", (USE_INVEN | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 	} else { /* Assume lantern */
 		item_tester_hook = item_tester_lantern_fuel;
 		get_item_hook_find_obj_what = "Light source/oil? ";
-		if (!c_get_item(&item, "Refill with which oil/lantern? ", (USE_INVEN | USE_EXTRA))) return;
+		if (!c_get_item(&item, "Refill with which oil/lantern? ", (USE_INVEN | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 	}
 
 	/* Send it */
@@ -1997,12 +1997,12 @@ void cmd_activate(void) {
 	   Exceptions are: Custom books, book of the dead, golem scrolls and runes. */
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven == -1) {
-		if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN))) return;
+		if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | USE_SUBINVEN | UNPREFER_SUBINVEN))) return;
 		if (item >= SUBINVEN_INVEN_MUL) sub = item / SUBINVEN_INVEN_MUL - 1;
 	} else
 #endif
-	//if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | EQUIP_FIRST | USE_EXTRA)))
-	if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA))) return;
+	//if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | EQUIP_FIRST | USE_EXTRA | UNPREFER_SUBINVEN)))
+	if (!c_get_item(&item, "Activate what? ", (USE_EQUIP | USE_INVEN | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 #ifdef ENABLE_SUBINVEN
 	if (using_subinven != -1 || sub != -1) {
@@ -8116,7 +8116,7 @@ void cmd_message(void) {
 			item_tester_hook = NULL;
 			get_item_hook_find_obj_what = "Item name? ";
 			get_item_extra_hook = get_item_hook_find_obj;
-			if (!c_get_item(&i, "Which item? ", (USE_INVEN | USE_EQUIP | USE_EXTRA | USE_SUBINVEN))) return;
+			if (!c_get_item(&i, "Which item? ", (USE_INVEN | USE_EQUIP | USE_EXTRA | USE_SUBINVEN | UNPREFER_SUBINVEN))) return;
 			if (i < 0 || i >= INVEN_TOTAL) return;
 			item_newest = i;
 			c_msg_format("Newest item now: %s", inventory_name[i]);
@@ -8136,7 +8136,7 @@ void cmd_message(void) {
 				item_tester_hook = NULL;
 				get_item_hook_find_obj_what = "Item name? ";
 				get_item_extra_hook = get_item_hook_find_obj;
-				if (!c_get_item(&i, "Which item? ", (USE_INVEN | USE_EQUIP | USE_EXTRA | USE_SUBINVEN))) return;
+				if (!c_get_item(&i, "Which item? ", (USE_INVEN | USE_EQUIP | USE_EXTRA | USE_SUBINVEN | UNPREFER_SUBINVEN))) return;
 				if (i < 0 || i >= INVEN_TOTAL) return;
 				item_newest = i;
 				c_msg_format("Newest item now: %s", inventory_name[i]);
@@ -8720,7 +8720,7 @@ void cmd_throw(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 
 	/* USE_INVEN: Since we can throw equipped weapons now, it seems more likely that if inven and equip items match the inscription, we prefer to throw from inven first! */
-	if (!c_get_item(&item, "Throw what? ", (INVEN_FIRST | USE_INVEN | USE_EQUIP | USE_EXTRA))) return;
+	if (!c_get_item(&item, "Throw what? ", (INVEN_FIRST | USE_INVEN | USE_EQUIP | USE_EXTRA | UNPREFER_SUBINVEN))) return;
 
 	if (!get_dir(&dir)) return;
 
@@ -8783,7 +8783,7 @@ void cmd_browse(int item) {
 
 		if (!c_get_item(&item, "Browse which book/container? ", (USE_INVEN | EXCLUDE_SUBINVEN |
 		    USE_EQUIP | /* for WIELD_BOOKS */
-		    USE_EXTRA | NO_FAIL_MSG))) {
+		    USE_EXTRA | NO_FAIL_MSG | UNPREFER_SUBINVEN))) {
 			if (item == -2) c_msg_print("You have no books that you can read, nor containers to peruse.");
 			return;
 		}
@@ -8795,7 +8795,7 @@ void cmd_browse(int item) {
 
 		if (!c_get_item(&item, "Browse which book? ", (USE_INVEN |
 		    USE_EQUIP | /* for WIELD_BOOKS */
-		    USE_EXTRA | NO_FAIL_MSG))) {
+		    USE_EXTRA | NO_FAIL_MSG | UNPREFER_SUBINVEN))) {
 			if (item == -2) c_msg_print("You have no books that you can read.");
 			return;
 		}
@@ -10443,7 +10443,7 @@ void cmd_force_stack(void) {
 	get_item_hook_find_obj_what = "Item name? ";
 	get_item_extra_hook = get_item_hook_find_obj;
 
-	if (!c_get_item(&item, "Forcibly stack (or split) what? ", USE_INVEN | USE_EXTRA | CAPS_ALT)) return;
+	if (!c_get_item(&item, "Forcibly stack (or split) what? ", USE_INVEN | USE_EXTRA | CAPS_ALT | UNPREFER_SUBINVEN)) return;
 
 	/* Check for CAPS_ALT mode: Instead of stacking, we split an existing stack */
 	if (item < -1) {
