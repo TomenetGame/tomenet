@@ -18726,11 +18726,12 @@ stated.
         .Axe-mastery            See Sword-mastery, just substitute axes.
          (1.000)                Additionally:
                                 If you are dual-wielding two axes, Traumaturgy
-                                will grant you blood frenzy at 17.000 or higher
-                                after a couple of attacks, the earlier the
-                                higher your Traumaturgy skill, provided your
-                                enemies can actually bleed. Blood frenzy will
-                                temporarily grant 1 extra attack while active.
+                                will grant you the Blood Frenzy perk at 17.000
+                                or higher after a couple of attacks, the
+                                earlier the higher your Traumaturgy skill,
+                                provided your enemies can actually bleed.
+                                Blood Frenzy will temporarily grant 1 extra
+                                attack while active.
 
         .Blunt-mastery          See Sword-mastery, just substitute blunts.
          (1.000)
@@ -18880,11 +18881,12 @@ stated.
                                 leave main-hand mode automatically from that.
 
                                 If you are dual-wielding two axes, Traumaturgy
-                                will grant you blood frenzy at 17.000 or higher
-                                after a couple of attacks, the earlier the
-                                higher your Traumaturgy skill, provided your
-                                enemies can actually bleed. Blood frenzy will
-                                temporarily grant 1 extra attack while active.
+                                will grant you the Blood Frenzy perk at 17.000
+                                or higher after a couple of attacks, the
+                                earlier the higher your Traumaturgy skill,
+                                provided your enemies can actually bleed.
+                                Blood frenzy will temporarily grant 1 extra
+                                attack while active.
 
     .Martial Arts               Ability to fight with bare hands.
      (0.228)                    Martial Arts users do not and cannot wield any
