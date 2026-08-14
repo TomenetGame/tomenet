@@ -19,11 +19,14 @@ void display_store_action(void) {
 	/* BIG_MAP leads to big shops */
 	int spacer = (screen_hgt == MAX_SCREEN_HGT) ? 14 : 0;
 
+	//actually erase any remaining store action strings from previous store we entered. This could really use cleaning up.
 	for (i = 0; i < MAX_STORE_ACTIONS; i++) {
-		//actually erase any remaining store action strings from previous store we entered. This could really use cleaning up.
 		if (i < 8) c_put_str(c_store.action_attr[i], "                          ", y + y2 + 18 + spacer + (i / 2), 20 + (30 * (i % 2)));
 		else c_put_str(c_store.action_attr[i], "              ", y + y2 + 18 + spacer + (i / 2), 20 + (30 * (i % 2)));
+	}
 
+	// print all existing store actions
+	for (i = 0; i < MAX_STORE_ACTIONS; i++) {
 		if (!c_store.actions[i]) continue;
 
 		if (i < 8) c_put_str(c_store.action_attr[i], c_store.action_name[i], y + y2 + 18 + spacer + (i / 2), 20 + (30 * (i % 2)));
