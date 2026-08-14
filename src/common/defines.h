@@ -8667,7 +8667,7 @@ extern int PlayerUID;
  #define AUDIO_VOLUME_DEFAULT 70
 
  #define SOUND_MAX_2010	500 /*for experimenting purpose - C. Blue*/
- #define MUSIC_MAX	350 /*for experimenting purpose - C. Blue*/
+ #define MUSIC_MAX	1000 /*for experimenting purpose - C. Blue - (increased to 1000 for Kurzel to be safe >,>) */
  #define REFERENCES_MAX	MUSIC_MAX
 
  #define AUDIO_SUBSETS_MAX	9	/* At most this number of different subsets to switch to, index starting from '1', to this number. */
