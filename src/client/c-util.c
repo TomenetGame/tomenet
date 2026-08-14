@@ -8829,6 +8829,8 @@ Chain_Macro:
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "n) display in-game time (daylight is 6am-10pm)               :/time\\r");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "o) cast spell 'a)' from a book '@m1' (w/ or w/o target)      \\e)*tm@11\\r1a-");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "p) cast spell 'a)' from a book '@m2' (w/ or w/o target)      \\e)*tm@11\\r2a-");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "q) commands for looting (tagging, destroying, toggling auto-inscriptions)");
+
 						/* Hack: Hide the cursor */
 						Term->scr->cx = Term->wid;
 						Term->scr->cu = 1;
@@ -8851,7 +8853,7 @@ Chain_Macro:
 								continue;
 							default:
 								/* invalid action -> exit wizard */
-								if (choice < 'a' || choice > 'p') {
+								if (choice < 'a' || choice > 'q') {
 									//i_stage = -1;
 									continue;
 								}
@@ -9195,6 +9197,78 @@ Chain_Macro:
 						case 'n': strcpy(buf2, ":/time\\r"); break;
 						case 'o': strcpy(buf2, "\\e)*tm@11\\r1a-"); break;
 						case 'p': strcpy(buf2, "\\e)*tm@11\\r2a-"); break;
+						case 'q':
+							while (TRUE) {
+								clear_from(ystart);
+								l = ystart + 2;
+								Term_putstr(2, l++, -1, TERM_GREEN, "Select one of the following:");
+								l++;
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "a) tag all your loot (in inventory) '!k'                     :/t\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) untag all your '!k'-inscribed loot again                  {-!=LM@m0\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "c) use '/dis' to destroy all items pseudo-ided up to 'good'  :/dis\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "d) use '/dis a' to destroy ALL uninscribed inventory items   :/dis a\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) use '/dis fa' to destroy an item at your feet             :/dis fa\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) use '/dis Fa' to destroy a whole item pile at your feet   :/dis Fa\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "g) toggle option 'auto_destroy'                              :/adestroy\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "h) toggle option 'auto_pickup'                               :/apickup\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "i) toggle option 'auto_inscr_off'                 :/optt auto_inscr_off\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "j) apply all auto-inscriptions to all your items             :/aai\\r");
+								/* Hack: Hide the cursor */
+								Term->scr->cx = Term->wid;
+								Term->scr->cu = 1;
+
+								while (TRUE) {
+									switch (choice = inkey()) {
+									case ESCAPE:
+									case 'p':
+									case '\010': /* backspace */
+										i_stage = -2; /* leave */
+										break;
+									case ':': /* Allow chatting */
+										cmd_message();
+										/* Restore top line */
+										Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
+										continue;
+									case KTRL('T'):
+										/* Take a screenshot */
+										xhtml_screenshot("screenshot????", 2);
+										continue;
+									default:
+										/* invalid action -> exit wizard */
+										if (choice < 'a' || choice > 'j') {
+											//i_stage = -1;
+											continue;
+										}
+									}
+									break;
+								}
+								/* exit? */
+								if (i_stage == -2) {
+									/* hack before we abort: restart menu choice 'common' */
+									i_stage = -3;
+									choice = mw_common;
+									break;
+								}
+
+								l++;
+								switch (choice) {
+								case 'a':
+									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)*tt-");
+									else strcpy(buf2, "\\e)*tf-");
+									break;
+								case 'b': strcpy(buf2, "{-!=LM@m0\\r"); break;
+								case 'c': strcpy(buf2, "\\e)*tv1-"); break;
+								case 'd': strcpy(buf2, "{-!=L@v1\\r"); break;
+								case 'e': strcpy(buf2, "\\e)*tv@{bad}\r-"); break;
+								case 'f': strcpy(buf2, ":/edmt\\r"); break;
+								case 'g': strcpy(buf2, ":/edmt\\r"); break;
+								case 'h': strcpy(buf2, ":/edmt\\r"); break;
+								case 'i': strcpy(buf2, ":/edmt\\r"); break;
+								case 'j': strcpy(buf2, ":/edmt\\r"); break;
+								}
+								break;
+							}
+							break;
 						}
 
 						/* hack before we exit: remember menu choice 'common' */
