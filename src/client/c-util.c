@@ -3096,6 +3096,7 @@ bool askfor_aux(char *buf, int len, char mode) {
 			copy_to_clipboard(buf, TRUE);
 			break;
 		case KTRL('L'): /* paste current clipboard to chat */
+			*tmpbuf = 0;
 			if (!paste_from_clipboard(tmpbuf, chat_mode == CHAT_MODE_NORMAL && !((tmpc = strchr(buf, ':')) && tmpc - buf < l))) { //emulate strnstr()
 				bell();
 				break;
@@ -3106,11 +3107,21 @@ bool askfor_aux(char *buf, int len, char mode) {
 				bell();
 				break;
 			}
+
+			/* -- Crop tmpbuf down if too long -- */
 			tmpl = strlen(tmpbuf);
+			/* Limit to 'len' too */
+			if (strlen(buf) + tmpl >= len) {
+				tmpbuf[len - strlen(buf)] = 0;
+				bell(); //still warn, as stuff got cut off..
+				if (!*tmpbuf) break;
+			}
+			/* Limit against general MSG_LEN */
 			if (strlen(buf) + tmpl >= MSG_LEN) {
 				bell(); //still warn, as stuff got cut off..
 				tmpbuf[MSG_LEN - strlen(buf)] = 0;
 			}
+			tmpl = strlen(tmpbuf);
 
 			/* Paste at end of line and increment k and l */
 			if (k == l) {
@@ -3239,8 +3250,15 @@ bool askfor_aux(char *buf, int len, char mode) {
 				Term_putstr(x, y, -1, TERM_WHITE, buf);
 #endif
 		} else {
+			int n;
+
 			if (len > k) Term_erase(x + k, y, len - k);
+#if 0 /* this works if chars are entered one by one, but for a CTRL+L paste it'll just draw one 'x' at the end and the other pasted letters will be blank */
 			if (k) Term_putch(x + k - 1, y, TERM_WHITE, 'x');
+#else /* so instead just fill up the whole line with 'x'es */
+			for (n = 0; n < k; n++)
+				Term_putch(x + n, y, TERM_WHITE, 'x');
+#endif
 		}
 	}
 
