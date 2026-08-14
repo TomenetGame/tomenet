@@ -16956,7 +16956,7 @@ void audio_pack_selector(void) {
 			Term_putstr(25,  0, -1, TERM_L_UMBER, "*** Audio Pack Selector ***");
 			//Term_putstr(1, 1, -1, TERM_L_WHITE, "Press \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377yESC\377w to accept.");
 			//for now music subsets only:
-			if (quiet_mode) {
+			if (quiet_mode) { /* Client would currently crash if we try to switch subsets while in quiet_mode, as they didn't get initialized via sound_sdl_init() in snd-sdl.c */
 				Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs");
 				Term_putstr(0, 2, -1, TERM_YELLOW, " (Subset-switching is not available because client is running in 'quiet mode')");
 			} else Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377y+\377w/\377y-\377w for subsets.");
