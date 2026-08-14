@@ -639,6 +639,8 @@ option_type option_info[OPT_MAX] = { // there is room for 22 options per page on
 	    "log_music",		"Log game-initiated music to 'Messages' window" },
 	{ &c_cfg.misc_no_flicker,	FALSE,	1,	0, 186, TRUE,
 	    "misc_no_flicker",		"Only animate colours for main screen and messages" },
+	{ &c_cfg.prefer_subinven,	TRUE,	6,	0, 187, TRUE,
+	    "prefer_subinven",		"Prefer using items in bags over inventory items" },
 };
 
 cptr melee_techniques[16] = {

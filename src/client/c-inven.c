@@ -1372,40 +1372,44 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 	/* Start with equipment? ('A'ctivate command) */
 	if (equip_first) command_wrk = TRUE;
 
-	/* Automatically switch to equipment or to bags (or to inventory/bags if we started out in equipment)
-	   if no eligible item was found in our starter inventory screen */
-	if (c_cfg.autoswitch_inven && using_subinven == -1) {
-		if (command_wrk) { /* we start out in equipment */
-			if (e1 > e2) { /* no eligible item in the equipment? */
-				if (i1 > i2) { /* no eligible item in the inventory either? */
-					if (found_subinven) { //found_subinven must be TRUE if i1>i2, or we should've returned further above already
-						/* start out with subinventory */
+	/* If we already found at least one eligible target item in a bag and prefer subinven items over normal inventory, display the bag now.
+	   Otherwise check out normal inven and equip here... */
+	if (autoswitch_subinven == -1 || !c_cfg.prefer_subinven) {
+		/* Automatically switch to equipment or to bags (or to inventory/bags if we started out in equipment)
+		   if no eligible item was found in our starter inventory screen */
+		if (c_cfg.autoswitch_inven && using_subinven == -1) {
+			if (command_wrk) { /* we start out in equipment */
+				if (e1 > e2) { /* no eligible item in the equipment? */
+					if (i1 > i2) { /* no eligible item in the inventory either? */
+						if (found_subinven) { //found_subinven must be TRUE if i1>i2, or we should've returned further above already
+							/* start out with subinventory */
+							command_wrk = FALSE; /* don't start in the equipment anymore */
+							//c_msg_format("SWITCHED->subinv(%d)", using_subinven);
+						}
+					} else {
+						/* start out with inventory */
 						command_wrk = FALSE; /* don't start in the equipment anymore */
-						//c_msg_format("SWITCHED->subinv(%d)", using_subinven);
+						//c_msg_print("SWITCHED->inv");
+						autoswitch_subinven = -1; /* don't start in a bag */
 					}
-				} else {
-					/* start out with inventory */
-					command_wrk = FALSE; /* don't start in the equipment anymore */
-					//c_msg_print("SWITCHED->inv");
-					autoswitch_subinven = -1; /* don't start in a bag */
-				}
-			} else autoswitch_subinven = -1; /* don't start in a bag */
-		} else { /* we start out in inventory (standard) */
-			if (i1 > i2) { /* no eligible item in the inventory? */
-				if (e1 > e2) { /* no eligible item in the equipment either? */
-					if (found_subinven) { //found_subinven must be TRUE if i1>i2, or we should've returned further above already
-						/* start out with subinventory */
-						//c_msg_format("SWITCHED->subinv(%d)", using_subinven);
+				} else autoswitch_subinven = -1; /* don't start in a bag */
+			} else { /* we start out in inventory (standard) */
+				if (i1 > i2) { /* no eligible item in the inventory? */
+					if (e1 > e2) { /* no eligible item in the equipment either? */
+						if (found_subinven) { //found_subinven must be TRUE if i1>i2, or we should've returned further above already
+							/* start out with subinventory */
+							//c_msg_format("SWITCHED->subinv(%d)", using_subinven);
+						}
+					} else {
+						/* start out in the equipment screen */
+						command_wrk = TRUE;
+						//c_msg_print("SWITCHED->eq");
+						autoswitch_subinven = -1; /* don't start in a bag */
 					}
-				} else {
-					/* start out in the equipment screen */
-					command_wrk = TRUE;
-					//c_msg_print("SWITCHED->eq");
-					autoswitch_subinven = -1; /* don't start in a bag */
-				}
-			} else autoswitch_subinven = -1; /* don't start in a bag */
-		}
-	} else autoswitch_subinven = -1; /* don't start in a bag */
+				} else autoswitch_subinven = -1; /* don't start in a bag */
+			}
+		} else autoswitch_subinven = -1; /* don't start in a bag */
+	}
 
 	/* Redraw inventory */
 	p_ptr->window |= PW_INVEN;

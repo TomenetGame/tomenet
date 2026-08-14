@@ -60,6 +60,7 @@ Y:always_show_lists
 X:player_list
 X:player_list2
 Y:autoswitch_inven
+Y:prefer_subinven
 
 Y:flash_player
 X:highlight_player

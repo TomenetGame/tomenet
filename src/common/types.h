@@ -5165,6 +5165,7 @@ struct client_opts {
 	bool autoloot_dunonly;
 	bool autoloot_dununown;
 	bool autoswitch_inven;
+	bool prefer_subinven;
 
 	bool equip_text_colour;
 	bool equip_set_colour;
