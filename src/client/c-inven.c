@@ -1764,11 +1764,26 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 		case '0':
 		case '1': case '2': case '3':
 		case '4': case '5': case '6':
-		case '7': case '8': case '9':
+		case '7': case '8': case '9': {
+			int using_subinven_old;
+			bool inven_old, equip_old;
+
+			/* Hack (1/2): Calling an item by name should not be subinven-dependant but just scan the complete inventory, equipment and all bags. */
+			using_subinven_old = using_subinven;
+			using_subinven = -1;
+			inven_old = inven;
+			inven = TRUE;
+			equip_old = equip;
+			equip = TRUE;
+
 			/* XXX XXX Look up that tag */
-			if (!get_tag(&k, which, inven | subinven, equip, mode)) {
+			//if (!get_tag(&k, which, inven | subinven, equip, mode)) {
+			if (!get_tag(&k, which, TRUE, TRUE, (mode & ~EXCLUDE_SUBINVEN) | USE_INVEN | USE_EQUIP | USE_SUBINVEN)) { /* Hack (2/2) */
 				if (c_cfg.item_error_beep) bell();
 				else bell_silent();
+				using_subinven = using_subinven_old; /* Unhack */
+				inven = inven_old;
+				equip = equip_old;
 				break;
 			}
 #ifdef ENABLE_SUBINVEN
@@ -1779,6 +1794,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				if (k < using_subinven_size && !subinven) {
 					if (c_cfg.item_error_beep) bell();
 					else bell_silent();
+					using_subinven = using_subinven_old; /* Unhack */
+					inven = inven_old;
+					equip = equip_old;
 					break;
 				}
 			} else if (k >= SUBINVEN_INVEN_MUL) {
@@ -1786,6 +1804,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				if (!inven && !subinven) {
 					if (c_cfg.item_error_beep) bell();
 					else bell_silent();
+					using_subinven = using_subinven_old; /* Unhack */
+					inven = inven_old;
+					equip = equip_old;
 					break;
 				}
 			} else
@@ -1794,6 +1815,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			if ((k < INVEN_WIELD) ? !inven : !equip) {
 				if (c_cfg.item_error_beep) bell();
 				else bell_silent();
+				using_subinven = using_subinven_old; /* Unhack */
+				inven = inven_old;
+				equip = equip_old;
 				break;
 			}
 
@@ -1801,12 +1825,18 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			if (!get_item_okay(k)) {
 				if (c_cfg.item_error_beep) bell();
 				else bell_silent();
+				using_subinven = using_subinven_old; /* Unhack */
+				inven = inven_old;
+				equip = equip_old;
 				break;
 			}
 
 #if 0
 			if (!get_item_allow(k)) {
 				done = TRUE;
+				using_subinven = using_subinven_old; /* Unhack */
+				inven = inven_old;
+				equip = equip_old;
 				break;
 			}
 #endif
@@ -1818,7 +1848,10 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 #endif
 			item = TRUE;
 			done = TRUE;
-			break;
+			using_subinven = using_subinven_old; /* Unhack */
+			inven = inven_old;
+			equip = equip_old;
+			break; }
 
 		case '\n':
 		case '\r':
@@ -1851,9 +1884,13 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 			done = TRUE;
 			break;
 
-		case '@':
-		{
+		case '@': {
 			int i;
+			int using_subinven_old;
+
+			/* Hack: Calling an item by name should not be subinven-dependant but just scan the complete inventory, equipment and all bags. */
+			using_subinven_old = using_subinven;
+			using_subinven = -1;
 
 			if (extra && get_item_extra_hook(&i, mode)) {
 				(*cp) = i;
@@ -1864,8 +1901,9 @@ bool c_get_item(int *cp, cptr pmt, int mode) {
 				done = TRUE;
 			} else if (c_cfg.item_error_beep) bell();
 			else bell_silent();
-			break;
-		}
+
+			using_subinven = using_subinven_old; /* Unhack */
+			break; }
 
 		case '#':
 			if (!limit) {
