@@ -6,16 +6,16 @@ bool c_quit = FALSE;
 
 char meta_address[MAX_CHARS] = "", meta_buf[80192];
 int meta_socket = -1, meta_i = 0;
-char nick[MAX_CHARS] = "";
-char pass[MAX_CHARS] = "";
+char nick[MAX_CHARS] = ""; //ACCNAME_LEN
+char pass[MAX_CHARS] = ""; //PASSWORD_LEN
 char svname[MAX_CHARS] = "";
 char path[1024] = "";
-char real_name[MAX_CHARS] = "";
-char server_name[MAX_CHARS] = "";
+char real_name[MAX_CHARS] = ""; //REALNAME_LEN
+char server_name[MAX_CHARS] = ""; //HOSTNAME_LEN (todo see defines.h)
 s32b server_port;
 char ip_ihost[MAX_CHARS] = "", ip_iface[MAX_CHARS] = "";
 unsigned char ip_iaddr[6] = { 0 };
-char cname[MAX_CHARS] = "", prev_cname[MAX_CHARS];
+char cname[MAX_CHARS] = "", prev_cname[MAX_CHARS]; //CNAME_LEN
 bool reincarnate_previous = FALSE;
 
 int max_chars_per_account = 11;
