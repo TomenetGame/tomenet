@@ -10,6 +10,9 @@
 # One of the samples will be randomly picked, up to 100 samples may be specified.
 # If sample name contains spaces then it must be put in quotes.
 #
+# Example:
+# hit_weapon = player/combat/hit.wav "player/combat/hit steel.wav"
+#
 # Supported sound formats are OGG, WAVE, AIFF, RIFF, and VOC.
 #
 # To disable a sound effect, put a ';' in front of the line!
@@ -20,9 +23,6 @@
 #
 # You can concatenate multiple lines by ending a line on ' \' (line-wrap),
 # they will be treated as if they were a single, long line.
-#
-# Example:
-# hit_weapon = player/combat/hit.wav "player/combat/hit steel.wav"
 #
 #
 # Audio pack naming and meta data conventions:
