@@ -17205,15 +17205,11 @@ void audio_pack_selector(void) {
 			Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377y+\377w/\377y-\377w for subsets.");
 			Term_putstr(0, 3, -1, TERM_L_UMBER, "Sound packs             (Events/Files)");
 
-			if (!strcmp(cfg_soundpackfolder, sp_dir[cur_sp])
-			    && soundpack_subsets > 1)
-				Term_putstr(12, 3, -1, TERM_SELECTOR, format("[Set %d/%d]", cfg_soundpack_subset, soundpack_subsets));
+			if (sp_subsets[cur_sp] > 1) Term_putstr(12, 3, -1, TERM_SELECTOR, format("[Set %d/%d]", sp_subset_wanted[cur_sp], sp_subsets[cur_sp]));
 			else Term_putstr(12, 3, -1, TERM_DARK, "           ");
 
 			Term_putstr(40, 3, -1, TERM_L_UMBER, "Music packs            (Events/Files)");
-			if (!strcmp(cfg_musicpackfolder, mp_dir[cur_mp])
-			    && musicpack_subsets > 1)
-				Term_putstr(52, 3, -1, TERM_SELECTOR, format("[Set %d/%d]", cfg_musicpack_subset, musicpack_subsets));
+			if (mp_subsets[cur_mp] > 1) Term_putstr(52, 3, -1, TERM_SELECTOR, format("[Set %d/%d]", mp_subset_wanted[cur_mp], mp_subsets[cur_mp]));
 			else Term_putstr(52, 3, -1, TERM_DARK, "           ");
 
 			for (k = 0; k < PACKS_SCREEN; k++) {
