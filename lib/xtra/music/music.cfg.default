@@ -13,11 +13,11 @@
 # Supported music formats are OGG, MP3, WAVE, MOD (includes S3M, IT, XM), MIDI.
 # However, guaranteed to work with every future release are just OGG and MP3.
 #
-# To disable a song, put a ';' in front of the line!
+# To disable a music event, put a ';' in front of the line!
 # This is preferable over commenting out a line with '#', because the server
 # won't think that your music pack is outdated and possibly send you the wrong
 # music codes as a consequence!
-# There is no functional difference between '--#' (or '-#') and just '#'.
+# There is no functional difference between '--#' or '-#' and just '#'.
 #
 # You can concatenate multiple lines by ending a line on ' \' (line-wrap),
 # they will be treated as if they were a single, long line.
@@ -26,6 +26,7 @@
 # One of these will be played first when a music event starts, and it will not
 # be looped. When it ends, non-initial (ie normal) songs are picked (and may be
 # looped, depending on 'shuffle_music' and 'play_all' client options).
+# (If there are no further non-initial songs then there will just be silence.)
 # For filenames enclosed in quotes the '!' mark must come before the quotes,
 # eg: !"my music.mp3" .
 #
@@ -36,6 +37,24 @@
 #
 # Example (with partially made up filenames/folders):
 # BarrowDowns = dungeons/bd1.mp3 "otherstuff/da dee doo.ogg"
+#
+# Subsets:
+# A music pack can have none or up to 9 'sets' that the player can switch
+# between in the audio pack selector (by pressing '=X' in the game).
+# Only music events that are not set-dependant or that belong to the currently
+# active set are used. To restrict a music event to a specific set, prefix it:
+#   <set number>|<music event> = <files etc...>
+# Example entries in a fictionally assumed music.cfg:
+#   1|Bree = cities/Bree.ogg
+#   2|Bree = cities/Bree_alternative_version.ogg
+#   Gondolin = cities/Gondolin.ogg
+# So depending on whether the user activates set '1' or set '2', Bree will play
+# a different music file in this example. Gondolin in turn would always play
+# its same one file, as it's independant of any set setting.
+# However, set prefixes are ONLY allowed for lines containing either of these:
+#  - a music event line
+#  - the meta information 'packname'
+#  - the meta information 'description'.
 #
 #
 # Audio pack naming and meta data conventions:

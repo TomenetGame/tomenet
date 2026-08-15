@@ -16,7 +16,7 @@
 # This is preferable over commenting out a line with '#', because the server
 # won't think that your sound pack is outdated and possibly send you the wrong
 # sound codes as a consequence!
-# There is no functional difference between '--#' (or '-#') and just '#'.
+# There is no functional difference between '--#' or '-#' and just '#'.
 #
 # You can concatenate multiple lines by ending a line on ' \' (line-wrap),
 # they will be treated as if they were a single, long line.
