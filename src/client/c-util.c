@@ -16422,6 +16422,12 @@ void audio_pack_selector(void) {
 	int sp_events[MAX_PACKS] = { 0 }, mp_events[MAX_PACKS] = { 0 };
 	int sp_files[MAX_PACKS] = { 0 }, mp_files[MAX_PACKS] = { 0 };
 
+	int read_set;
+	static int mp_subset_wanted[MAX_PACKS], sp_subset_wanted[MAX_PACKS];
+	static int mp_subsets[MAX_PACKS], sp_subsets[MAX_PACKS];
+	char mp_name_set[MAX_PACKS][AUDIO_SUBSETS_MAX + 1][MAX_CHARS], sp_name_set[MAX_PACKS][AUDIO_SUBSETS_MAX + 1][MAX_CHARS];
+	char mp_diz_set[MAX_PACKS][AUDIO_SUBSETS_MAX + 1][MAX_CHARS * 3], sp_diz_set[MAX_PACKS][AUDIO_SUBSETS_MAX + 1][MAX_CHARS * 3];
+
 	bool inkey_msg_old = inkey_msg;
 
 	FILE *fff, *fff2;
@@ -16429,6 +16435,12 @@ void audio_pack_selector(void) {
 	int r;
 #endif
 
+
+	/* init these, note that they init to '1' ! (As '0' is not a valid subset value, it means 'no subsets available' instead.) */
+	for (i = 0; i < MAX_PACKS; i++) {
+		if (!mp_subset_wanted[i]) mp_subset_wanted[i] = 1;
+		if (!sp_subset_wanted[i]) sp_subset_wanted[i] = 1;
+	}
 
 	/* Get list of all folders starting on 'music' or 'sound' within lib/xtra */
 	fff = fopen("__tomenet.tmp", "w"); //just make sure the file always exists, for easier file-reading handling.. pft */
@@ -16504,6 +16516,7 @@ void audio_pack_selector(void) {
 				if (!strcmp(buf, cfg_soundpackfolder)) {
 					cur_sp = soundpacks; //currently used pack
 					cur_sp_y = cur_sp > PACKS_SCREEN ? PACKS_SCREEN : cur_sp;
+					sp_subset_wanted[soundpacks] = cfg_soundpack_subset;
 				}
 				strcpy(sp_dir[soundpacks], buf);
 				/* read [Title] metadata */
@@ -16532,7 +16545,13 @@ void audio_pack_selector(void) {
 					if (*ckey == ';') ckey++;
 
 					/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
-					if (*ckey >= '0' && *ckey <= '9' && *(ckey + 1) == '|') ckey += 2;
+					read_set = -1;
+					if (*ckey >= '0' && *ckey <= '9' && *(ckey + 1) == '|') {
+						read_set = atoi(ckey);
+						if (read_set > AUDIO_SUBSETS_MAX) continue; //excess sets? discard
+						if (read_set > sp_subsets[soundpacks]) sp_subsets[soundpacks] = read_set;
+						ckey += 2;
+					}
 
 					/* Line is just a comment? */
 					if (*ckey == '#') continue;
@@ -16553,13 +16572,15 @@ void audio_pack_selector(void) {
 
 					/* Scan for pack info */
 					if (!strcmp(ckey, "packname")) {
-						strncpy(sp_name[soundpacks], cval, MAX_CHARS);
+						if (read_set == -1) strncpy(sp_name[soundpacks], cval, MAX_CHARS);
+						else strncpy(sp_name_set[soundpacks][read_set], cval, MAX_CHARS);
 						continue;
 					} else if (!strcmp(ckey, "author")) {
 						strncpy(sp_author[soundpacks], cval, MAX_CHARS);
 						continue;
 					} else if (!strcmp(ckey, "description")) {
-						strncpy(sp_diz[soundpacks], cval, MAX_CHARS * 3);
+						if (read_set == -1) strncpy(sp_diz[soundpacks], cval, MAX_CHARS * 3);
+						else strncpy(sp_diz_set[soundpacks][read_set], cval, MAX_CHARS * 3);
 						continue;
 					} else if (!strcmp(ckey, "version")) {
 						strncpy(sp_version[soundpacks], cval, MAX_CHARS);
@@ -16670,7 +16691,12 @@ void audio_pack_selector(void) {
 									if (*c_trim == ';') c_trim++;
 
 									/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
-									if (*c_trim >= '0' && *c_trim <= '9' && *(c_trim + 1) == '|') c_trim += 2;
+									if (*c_trim >= '0' && *c_trim <= '9' && *(c_trim + 1) == '|') {
+										read_set = atoi(c_trim);
+										if (read_set > AUDIO_SUBSETS_MAX) continue; //excess sets? discard
+										if (read_set > sp_subsets[soundpacks]) sp_subsets[soundpacks] = read_set;
+										c_trim += 2;
+									}
 
 									/* Line is just a comment? */
 									if (*c_trim == '#') continue;
@@ -16744,6 +16770,7 @@ void audio_pack_selector(void) {
 				if (!strcmp(buf, cfg_musicpackfolder)) {
 					cur_mp = musicpacks; //currently used pack
 					cur_mp_y = cur_mp > PACKS_SCREEN ? PACKS_SCREEN : cur_mp;
+					mp_subset_wanted[musicpacks] = cfg_musicpack_subset;
 				}
 				strcpy(mp_dir[musicpacks], buf);
 				/* read [Title] metadata */
@@ -16772,7 +16799,13 @@ void audio_pack_selector(void) {
 					if (*ckey == ';') ckey++;
 
 					/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
-					if (*ckey >= '0' && *ckey <= '9' && *(ckey + 1) == '|') ckey += 2;
+					read_set = -1;
+					if (*ckey >= '0' && *ckey <= '9' && *(ckey + 1) == '|') {
+						read_set = atoi(ckey);
+						if (read_set > AUDIO_SUBSETS_MAX) continue; //excess sets? discard
+						if (read_set > mp_subsets[musicpacks]) mp_subsets[musicpacks] = read_set;
+						ckey += 2;
+					}
 
 					/* Line is just a comment? */
 					if (*ckey == '#') continue;
@@ -16793,13 +16826,15 @@ void audio_pack_selector(void) {
 
 					/* Scan for pack info */
 					if (!strcmp(ckey, "packname")) {
-						strncpy(mp_name[musicpacks], cval, MAX_CHARS);
+						if (read_set == -1) strncpy(mp_name[musicpacks], cval, MAX_CHARS);
+						else strncpy(mp_name_set[musicpacks][read_set], cval, MAX_CHARS);
 						continue;
 					} else if (!strcmp(ckey, "author")) {
 						strncpy(mp_author[musicpacks], cval, MAX_CHARS);
 						continue;
 					} else if (!strcmp(ckey, "description")) {
-						strncpy(mp_diz[musicpacks], cval, MAX_CHARS * 3);
+						if (read_set == -1) strncpy(mp_diz[musicpacks], cval, MAX_CHARS * 3);
+						else strncpy(mp_diz_set[musicpacks][read_set], cval, MAX_CHARS);
 						continue;
 					} else if (!strcmp(ckey, "version")) {
 						strncpy(mp_version[musicpacks], cval, MAX_CHARS);
@@ -16908,7 +16943,12 @@ void audio_pack_selector(void) {
 									if (*c_trim == ';') c_trim++;
 
 									/* Skip any 'subset' tags (AUDIO_SUBSETS_MAX is 9, so it's just one digit) */
-									if (*c_trim >= '0' && *c_trim <= '9' && *(c_trim + 1) == '|') c_trim += 2;
+									if (*c_trim >= '0' && *c_trim <= '9' && *(c_trim + 1) == '|') {
+										read_set = atoi(c_trim);
+										if (read_set > AUDIO_SUBSETS_MAX) continue; //excess sets? discard
+										if (read_set > mp_subsets[musicpacks]) mp_subsets[musicpacks] = read_set;
+										c_trim += 2;
+									}
 
 									/* Line is just a comment? */
 									if (*c_trim == '#') continue;
@@ -17024,12 +17064,16 @@ void audio_pack_selector(void) {
 	if (cur_mp_org == -1) cur_mp_org = cur_mp;
 	if (cur_sp_org == -1) cur_sp_org = cur_sp;
 
-	while (1) {
-		//strcpy(sp_name[cur_sp_org], soundpack_packname[cfg_soundpack_subset]);
-		//strcpy(sp_diz[cur_sp_org], soundpack_description[cfg_soundpack_subset]);
-		strcpy(mp_name[cur_mp_org], musicpack_packname[(int)cfg_musicpack_subset]);
-		strcpy(mp_diz[cur_mp_org], musicpack_description[(int)cfg_musicpack_subset]);
+	/* Initially apply chosen subsets to all packs */
+	for (i = 0; i < musicpacks; i++) {
+		/* Pack name and pack description meta info might depend on subset, so update them to currently selected subset here */
+		if (*mp_name_set[i][mp_subset_wanted[i]])
+			strcpy(mp_name[i], mp_name_set[i][mp_subset_wanted[i]]);
+		if (*mp_diz_set[i][mp_subset_wanted[i]])
+			strcpy(mp_diz[i], mp_diz_set[i][mp_subset_wanted[i]]);
+	}
 
+	while (1) {
 		if (redraw) {
 			/* Clear screen */
 			Term_clear();
@@ -17037,11 +17081,9 @@ void audio_pack_selector(void) {
 			/* Describe */
 			Term_putstr(25,  0, -1, TERM_L_UMBER, "*** Audio Pack Selector ***");
 			//Term_putstr(1, 1, -1, TERM_L_WHITE, "Press \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377yESC\377w to accept.");
-			//for now music subsets only:
-			if (quiet_mode) { /* Client would currently crash if we try to switch subsets while in quiet_mode, as they didn't get initialized via sound_sdl_init() in snd-sdl.c */
-				Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs");
-				Term_putstr(0, 2, -1, TERM_YELLOW, " (Subset-switching is not available because client is running in 'quiet mode')");
-			} else Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377y+\377w/\377y-\377w for subsets.");
+
+			// (For now, only  music packs have subsets:)
+			Term_putstr(0, 1, -1, TERM_L_WHITE, "   \377yq\377w/\377ya\377w to navigate sound packs, \377yw\377w/\377ys\377w to navigate music packs, \377y+\377w/\377y-\377w for subsets.");
 			Term_putstr(0, 3, -1, TERM_L_UMBER, "Sound packs             (Events/Files)");
 
 			if (!strcmp(cfg_soundpackfolder, sp_dir[cur_sp])
@@ -17131,13 +17173,38 @@ void audio_pack_selector(void) {
 			//redraw = FALSE;
 			break;
 		case '+':
-			if (quiet_mode) break;
-			cfg_musicpack_subset = (cfg_musicpack_subset % musicpack_subsets) + 1;
+			if (!mp_subsets[cur_mp]) break;
+
+			/* Switch selected pack's 'intended' set */
+			mp_subset_wanted[cur_mp] = (mp_subset_wanted[cur_mp] % mp_subsets[cur_mp]) + 1;
+
+			/* Do we switch the currently playing pack's set? */
+			if (cur_mp_org == cur_mp) cfg_musicpack_subset = (cfg_musicpack_subset % musicpack_subsets) + 1;
+
+			/* Pack name and pack description meta info might depend on subset, so update them to currently selected subset here */
+			if (*musicpack_packname[mp_subset_wanted[cur_mp]])
+				strcpy(mp_name[cur_mp], musicpack_packname[mp_subset_wanted[cur_mp]]);
+			if (*musicpack_description[mp_subset_wanted[cur_mp]])
+				strcpy(mp_diz[cur_mp], musicpack_description[mp_subset_wanted[cur_mp]]);
 			break;
 		case '-':
-			if (quiet_mode) break;
-			cfg_musicpack_subset--;
-			if (!cfg_musicpack_subset) cfg_musicpack_subset = musicpack_subsets;
+			if (!mp_subsets[cur_mp]) break;
+
+			/* Switch selected pack's 'intended' set */
+			mp_subset_wanted[cur_mp]--;
+			if (!mp_subset_wanted[cur_mp]) mp_subset_wanted[cur_mp] = mp_subsets[cur_mp];
+
+			/* Do we switch the currently playing pack's set? */
+			if (cur_mp_org == cur_mp) {
+				cfg_musicpack_subset--;
+				if (!cfg_musicpack_subset) cfg_musicpack_subset = musicpack_subsets;
+			}
+
+			/* Pack name and pack description meta info might depend on subset, so update them to currently selected subset here */
+			if (*musicpack_packname[mp_subset_wanted[cur_mp]])
+				strcpy(mp_name[cur_mp], musicpack_packname[mp_subset_wanted[cur_mp]]);
+			if (*musicpack_description[mp_subset_wanted[cur_mp]])
+				strcpy(mp_diz[cur_mp], musicpack_description[mp_subset_wanted[cur_mp]]);
 			break;
 		default:
 			/* Oops */
@@ -17202,8 +17269,14 @@ void audio_pack_selector(void) {
 
 	/* Switch it live! */
 	if (re_init_sound() == 0) c_message_add("Audio packs have been reloaded and audio been reinitialized successfully.");
-	if (changed_sfx) do_cmd_options_sfx(TRUE);
-	if (changed_music) do_cmd_options_mus(TRUE);
+	if (changed_sfx) {
+		do_cmd_options_sfx(TRUE);
+		cur_sp_org = -1; /* reset, so it'll change to currently active pack */
+	}
+	if (changed_music) {
+		do_cmd_options_mus(TRUE);
+		cur_mp_org = -1; /* reset, so it'll change to currently active pack */
+	}
 
 	//No longer true (for SDL, our only sound sytem at this point basically):
 	//c_message_add("\377RAfter changing audio packs, a game client restart is required!");

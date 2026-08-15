@@ -732,6 +732,12 @@ static bool sound_sdl_init(bool no_cache) {
 	/* Initialize sound-fx channel management */
 	for (i = 0; i < cfg_max_channels; i++) channel_sample[i] = -1;
 
+	/* Ensure subset names and descriptions are initialized to 0. */
+	//memset(soundpack_description, 0, sizeof(soundpack_description));
+	//memset(soundpack_packname, 0, sizeof(soundpack_packname));
+	memset(musicpack_description, 0, sizeof(musicpack_description));
+	memset(musicpack_packname, 0, sizeof(musicpack_packname));
+
 
 	/* ------------------------------- Init Sounds */
 
