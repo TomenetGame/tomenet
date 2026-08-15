@@ -16409,7 +16409,7 @@ void audio_pack_selector(void) {
 #endif
 	int k, soundpacks = 0, musicpacks = 0;
 	int old_cfg_soundpack_subset = cfg_soundpack_subset, old_cfg_musicpack_subset = cfg_musicpack_subset;
-	static int cur_sp = 0, cur_mp = 0, cur_sy = 0, cur_my = 0;
+	static int cur_sp = 0, cur_mp = 0, cur_sp_y = 0, cur_mp_y = 0;
 	static int cur_mp_org = -1, cur_sp_org = -1;
 	bool redraw = TRUE, quit = FALSE, changed_music = FALSE, changed_sfx = FALSE;
 	char buf[1024], path[1024];
@@ -16503,7 +16503,7 @@ void audio_pack_selector(void) {
 			if (soundpacks < MAX_PACKS) {
 				if (!strcmp(buf, cfg_soundpackfolder)) {
 					cur_sp = soundpacks; //currently used pack
-					cur_sy = cur_sp > PACKS_SCREEN ? PACKS_SCREEN : cur_sp;
+					cur_sp_y = cur_sp > PACKS_SCREEN ? PACKS_SCREEN : cur_sp;
 				}
 				strcpy(sp_dir[soundpacks], buf);
 				/* read [Title] metadata */
@@ -16743,7 +16743,7 @@ void audio_pack_selector(void) {
 			if (musicpacks < MAX_PACKS) {
 				if (!strcmp(buf, cfg_musicpackfolder)) {
 					cur_mp = musicpacks; //currently used pack
-					cur_my = cur_mp > PACKS_SCREEN ? PACKS_SCREEN : cur_mp;
+					cur_mp_y = cur_mp > PACKS_SCREEN ? PACKS_SCREEN : cur_mp;
 				}
 				strcpy(mp_dir[musicpacks], buf);
 				/* read [Title] metadata */
@@ -17056,22 +17056,22 @@ void audio_pack_selector(void) {
 			else Term_putstr(52, 3, -1, TERM_DARK, "           ");
 
 			for (k = 0; k < PACKS_SCREEN; k++) {
-				if (k - cur_sy + cur_sp >= soundpacks) break;
-				if (k == cur_sy)
+				if (k - cur_sp_y + cur_sp >= soundpacks) break;
+				if (k == cur_sp_y)
 					Term_putstr(0, 4 + k, -1, TERM_SELECTOR, format("%-27s %4d %4d",
-					    sp_dir[cur_sp + k - cur_sy], sp_events[cur_sp + k - cur_sy], sp_files[cur_sp + k - cur_sy]));
+					    sp_dir[cur_sp + k - cur_sp_y], sp_events[cur_sp + k - cur_sp_y], sp_files[cur_sp + k - cur_sp_y]));
 				else
 					Term_putstr(0, 4 + k, -1, TERM_WHITE, format("%-27s %4d %4d",
-					    sp_dir[cur_sp + k - cur_sy], sp_events[cur_sp + k - cur_sy], sp_files[cur_sp + k - cur_sy]));
+					    sp_dir[cur_sp + k - cur_sp_y], sp_events[cur_sp + k - cur_sp_y], sp_files[cur_sp + k - cur_sp_y]));
 			}
 			for (k = 0; k < PACKS_SCREEN; k++) {
-				if (k - cur_my + cur_mp >= musicpacks) break;
-				if (k == cur_my)
+				if (k - cur_mp_y + cur_mp >= musicpacks) break;
+				if (k == cur_mp_y)
 					Term_putstr(40, 4 + k, -1, TERM_SELECTOR, format("%-27s %4d %4d",
-					    mp_dir[cur_mp + k - cur_my], mp_events[cur_mp + k - cur_my], mp_files[cur_mp + k - cur_my]));
+					    mp_dir[cur_mp + k - cur_mp_y], mp_events[cur_mp + k - cur_mp_y], mp_files[cur_mp + k - cur_mp_y]));
 				else
 					Term_putstr(40, 4 + k, -1, TERM_WHITE, format("%-27s %4d %4d",
-					    mp_dir[cur_mp + k - cur_my], mp_events[cur_mp + k - cur_my], mp_files[cur_mp + k - cur_my]));
+					    mp_dir[cur_mp + k - cur_mp_y], mp_events[cur_mp + k - cur_mp_y], mp_files[cur_mp + k - cur_mp_y]));
 			}
 
 			Term_putstr(0, 15, -1, TERM_L_UMBER, "Selected SP:");
@@ -17105,28 +17105,28 @@ void audio_pack_selector(void) {
 		case 'a':
 			if (cur_sp < soundpacks - 1) {
 				cur_sp++;
-				if (cur_sy < PACKS_SCREEN - 1) cur_sy++;
+				if (cur_sp_y < PACKS_SCREEN - 1) cur_sp_y++;
 			}
 			//redraw = FALSE;
 			break;
 		case 'q':
 			if (cur_sp) {
 				cur_sp--;
-				if (cur_sy) cur_sy--;
+				if (cur_sp_y) cur_sp_y--;
 			}
 			//redraw = FALSE;
 			break;
 		case 's':
 			if (cur_mp < musicpacks - 1) {
 				cur_mp++;
-				if (cur_my < PACKS_SCREEN - 1) cur_my++;
+				if (cur_mp_y < PACKS_SCREEN - 1) cur_mp_y++;
 			}
 			//redraw = FALSE;
 			break;
 		case 'w':
 			if (cur_mp) {
 				cur_mp--;
-				if (cur_my) cur_my--;
+				if (cur_mp_y) cur_mp_y--;
 			}
 			//redraw = FALSE;
 			break;

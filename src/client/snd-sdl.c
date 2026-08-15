@@ -900,7 +900,7 @@ static bool sound_sdl_init(bool no_cache) {
 		/* Skip anything not beginning with an alphabetic character */
 		if (!buffer[0] || !isalpha((unsigned char)buffer[0])) continue;
 
-		/* Skip meta data that we don't need here -- this is for [title] tag introduced in 4.7.1b+ */
+		/* Skip meta data that we don't need here -- this is for [title] section introduced in 4.7.1b+ */
 		if (!strncmp(buffer, "packname", 8) || !strncmp(buffer, "author", 6) || !strncmp(buffer, "description", 11) || !strncmp(buffer, "version", 7)) {
 			char *ckey = buffer, *cval;
 
@@ -1325,7 +1325,7 @@ static bool sound_sdl_init(bool no_cache) {
 		/* Skip anything not beginning with an alphabetic character */
 		if (!buffer[0] || !isalpha((unsigned char)buffer[0])) continue;
 
-		/* Skip meta data that we don't need here -- this is for [title] tag introduced in 4.7.1b+ */
+		/* Skip meta data that we don't need here -- this is for [title] section introduced in 4.7.1b+ */
 		if (!strncmp(buffer, "packname", 8) || !strncmp(buffer, "author", 6) || !strncmp(buffer, "description", 11) || !strncmp(buffer, "version", 7)) {
 			char *ckey = buffer, *cval;
 
