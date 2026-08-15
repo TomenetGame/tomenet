@@ -16440,6 +16440,9 @@ void audio_pack_selector(void) {
 	for (i = 0; i < MAX_PACKS; i++) {
 		if (!mp_subset_wanted[i]) mp_subset_wanted[i] = 1;
 		if (!sp_subset_wanted[i]) sp_subset_wanted[i] = 1;
+		/* and fail-safe, in case someone changed the packs on disk while the client was still running */
+		if (mp_subset_wanted[i] > AUDIO_SUBSETS_MAX) mp_subset_wanted[i] = 1;
+		if (sp_subset_wanted[i] > AUDIO_SUBSETS_MAX) sp_subset_wanted[i] = 1;
 	}
 
 	/* Get list of all folders starting on 'music' or 'sound' within lib/xtra */
