@@ -10484,3 +10484,14 @@ extern int PlayerUID;
 	  (o_ptr)->find_turn = turn; \
 	  (o_ptr)->find_time = time(NULL); \
 	  (o_ptr)->find_wpos = (p_ptr)->wpos; }
+
+/* Overwrite info where/when the chest was opened to drop this item with info where/when the actual chest was dropped.
+   The only info set differently on the loot item is 'find_special', now pointing out the chest. */
+#define imprint_chest_content(o_ptr) \
+	{ (o_ptr)->find_special = opening_chest_forge.sval * 1000 + opening_chest_forge.level; \
+	  (o_ptr)->find_wpos = opening_chest_forge.find_wpos; \
+	  (o_ptr)->find_id = opening_chest_forge.find_id; \
+	  strcpy((o_ptr)->find_name, opening_chest_forge.find_name); \
+	  (o_ptr)->find_turn = opening_chest_forge.find_turn; \
+	  (o_ptr)->find_time = opening_chest_forge.find_time; \
+	  (o_ptr)->find_dun = opening_chest_forge.find_dun; }

@@ -262,7 +262,7 @@ extern bool inkey_scan;
 extern bool inkey_flag;
 extern s16b coin_type;
 extern s32b opening_chest;
-extern int opening_chest_sval, opening_chest_lev;
+extern object_type opening_chest_forge;
 extern int monster_death_ridx, monster_death_reidx;
 extern bool scan_monsters;
 extern bool scan_objects;

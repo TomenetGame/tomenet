@@ -1882,8 +1882,7 @@ static void chest_death(int Ind, int y, int x, object_type *o_ptr) {
 		/* Opening a chest -- this hack makes sure we don't find a chest in a chest, even though yo like chests */
 		if (!o_ptr->iron_turn) opening_chest = turn; //by now all existing chests should long have iron_turn set to something, so this check might not be needed anymore
 		else opening_chest = o_ptr->iron_turn;
-		opening_chest_sval = o_ptr->sval;
-		opening_chest_lev = o_ptr->level;
+		opening_chest_forge = *o_ptr;
 
 		/* Determine the "value" of the items */
 		//object_level = ABS(o_ptr->pval) + 10;

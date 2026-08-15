@@ -8518,7 +8518,7 @@ void place_object(int Ind, struct worldpos *wpos, int y, int x, bool good, bool 
 		}
 	}
 	/* Object memory fluff */
-	if (opening_chest) forge.find_special = opening_chest_sval * 1000 + opening_chest_lev;
+	if (opening_chest) imprint_chest_content(&forge);
 	/* If it's a new, unowned item, just imprint the dungeon already where it just dropped */
 	if (wpos->wz)
 		forge.find_dun =
@@ -11190,7 +11190,7 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 #endif
 
 	/* Object memory fluff */
-	if (opening_chest) o_ptr->find_special = opening_chest_sval * 1000 + opening_chest_lev;
+	if (opening_chest) imprint_chest_content(o_ptr);
 	/* If it's a new, unowned item, just imprint the dungeon already where it just dropped */
 	if (!o_ptr->find_id && wpos->wz) { /* check 'find_id' instead of 'owner' to detect 'unowned' state despite maybe being 'force-preowned' */
 		dungeon_type *d_ptr = getdungeon(wpos);
