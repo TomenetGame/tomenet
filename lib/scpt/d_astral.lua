@@ -357,8 +357,8 @@ VENGEANCE = add_spell {
 	["school"] = 	SCHOOL_ASTRAL,
 	["spell_power"] = 0,
 	["level"] = 	30,
-	["mana"] = 	80,
-	["mana_max"] =  80,
+	["mana"] = 	70,
+	["mana_max"] =  70,
 	["fail"] = 	102,
 	["stat"] = 	A_WIS,
 	["direction"] = FALSE,
@@ -371,7 +371,7 @@ VENGEANCE = add_spell {
 	["desc"] = 	{
 			"Enlightened: summons party members on your floor to you and teleports monsters",
 			"in sight to you, plus summons an additional monster per player you summoned.",
-			"Corrupted: damages all monsters in sight.",
+			"Corrupted: dispels all monsters in sight.",
 		}
 }
 EMPOWERMENT = add_spell {
