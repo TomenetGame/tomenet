@@ -130,7 +130,7 @@
 #define PKT_MAP			99
 
 #define PKT_SEARCH_MODE		100
-#define PKT_FIGHT		101
+#define PKT_FIGHT		101	/* unused */
 #define PKT_CLOSE		103
 #define PKT_GAIN		104
 #define PKT_GO_UP		105
