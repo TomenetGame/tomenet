@@ -83,7 +83,7 @@ static char sourceid[] =
 #endif
 #endif
 
-/* 
+/*
  * Socklib Includes And Definitions
  *
  * Change the value of the second include correctly.

@@ -5029,7 +5029,7 @@ static void term_force_font(int term_idx, cptr fnt_name) {
 		}
 		FREE(new_font, infofnt);
 		return;
-	} 
+	}
 
 	/* New font was successfully initialized, free the old one and use the new one. */
 	if (td->fnt->name) string_free(td->fnt->name);

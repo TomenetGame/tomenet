@@ -459,7 +459,7 @@ bool set_tim_ffall(int Ind, int v) {
 			msg_print(Ind, "You feel very light.");
 			notice = TRUE;
 		} else if (p_ptr->tim_lev > 5 && v <= 5)
-			msg_print(Ind, "\377BYour lightness starts to fade..."); 
+			msg_print(Ind, "\377BYour lightness starts to fade...");
 	}
 	/* Shut */
 	else {

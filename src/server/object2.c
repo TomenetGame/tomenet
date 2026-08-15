@@ -14475,7 +14475,7 @@ void inverse_cursed(object_type *o_ptr) {
 			if (o_ptr->bpval > 5) o_ptr->bpval = 5;
 		}
 	} else {
-		// note: could also consider (-o_ptr->pval + 2) / 3 for 
+		// note: could also consider (-o_ptr->pval + 2) / 3 for
 		if (o_ptr->pval < 0) {
 			o_ptr->pval_org = o_ptr->pval;
 			if ((e_info[o_ptr->name2].fego1[0] | e_info[o_ptr->name2b].fego1[0]) & ETR1_PVAL_FLIPFULLY) o_ptr->pval = -o_ptr->pval;

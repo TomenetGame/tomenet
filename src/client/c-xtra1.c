@@ -3220,7 +3220,7 @@ void fix_playerlist(void) {
 		/* List players */
 		Term_clear();
 		//prt(format("- [Players Online (%d)] -", NumPlayers), 1, 6);
-		if (NumPlayers == 1) 
+		if (NumPlayers == 1)
 			c_prt(TERM_L_WHITE, " 1 Player Online:", 0, 1);
 		else
 			c_prt(TERM_L_WHITE, format(" %d Players Online%c", NumPlayers, NumPlayers ? ':' : '.'), 0, 1);
