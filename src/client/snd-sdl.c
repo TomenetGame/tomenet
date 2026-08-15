@@ -1344,9 +1344,10 @@ static bool sound_sdl_init(bool no_cache) {
 			while (*cval == ' ' || *cval == '\t') cval++;
 			while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
 
-			if (!strncmp(buffer, "packname", 8)) strncpy(cfg_musicpack_name, cval, MAX_CHARS);
+			/* Name and description are subset-dependant! */
+			if (!strncmp(buffer, "packname", 8) && (!set || !*cfg_musicpack_name)) strncpy(cfg_musicpack_name, cval, MAX_CHARS);
+			//if (!strncmp(buffer, "description", 11) && (!set || !*cfg_musicpack_version)) ;
 			//if (!strncmp(buffer, "author", 6)) ;
-			//if (!strncmp(buffer, "description", 11)) ;
 			if (!strncmp(buffer, "version", 7)) strncpy(cfg_musicpack_version, cval, MAX_CHARS);
 
 			/* Remember all relevant [title] info at least, for subset selection menu */

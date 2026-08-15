@@ -16440,6 +16440,11 @@ void audio_pack_selector(void) {
 	for (i = 0; i < MAX_PACKS; i++) {
 		if (!mp_subset_wanted[i]) mp_subset_wanted[i] = 1;
 		if (!sp_subset_wanted[i]) sp_subset_wanted[i] = 1;
+		/* Also zero these. for replacing 'No name' and 'No description' with actual subset text, if available... */
+		for (j = 0; j <= AUDIO_SUBSETS_MAX; j++) {
+			*mp_name_set[i][j] = 0;
+			*mp_diz_set[i][j] = 0;
+		}
 	}
 
 	/* Get list of all folders starting on 'music' or 'sound' within lib/xtra */
@@ -16579,8 +16584,62 @@ void audio_pack_selector(void) {
 						strncpy(sp_author[soundpacks], cval, MAX_CHARS);
 						continue;
 					} else if (!strcmp(ckey, "description")) {
-						if (read_set == -1) strncpy(sp_diz[soundpacks], cval, MAX_CHARS * 3);
-						else strncpy(sp_diz_set[soundpacks][read_set], cval, MAX_CHARS * 3);
+						bool multiline;
+
+						/* Init first. For multi-line cat'ting via '\' line suffix... */
+						if (read_set == -1) *sp_diz[soundpacks] = 0;
+						else *sp_diz_set[soundpacks][read_set] = 0;
+						diz_cont_sp:
+						multiline = FALSE;
+
+						/* Catch 'multiline backslash', must be final char of the line */
+						if (cval[strlen(cval) - 1] == '\\') {
+							multiline = TRUE;
+							/* Crop that '\', doesn't belong to actual description text */
+							cval[strlen(cval) - 1] = 0;
+						}
+
+						/* Process description */
+						if (read_set == -1) strncat(sp_diz[soundpacks], cval, MAX_CHARS * 3);
+						else strncat(sp_diz_set[soundpacks][read_set], cval, MAX_CHARS);
+
+						/* Add the subsequent line to this description? */
+						if (multiline) {
+							char *c_trim;
+
+							/* Read the next line and process it too, as it's still using the same old ckey */
+							//diz_cont_skip_sp:
+							if (!fgets(buf, 1024, fff2)) break;
+							buf[strlen(buf) - 1] = 0;
+
+							/* Trim leading spaces/tabs */
+							c_trim = buf;
+							while (*c_trim == ' ' || *c_trim == '\t') c_trim++;
+
+#if 0							/* Actually process 'disabled' lines too -- hm maybe not for description? Weird edge case anyway */
+							if (*c_trim == ';') c_trim++;
+#elif 0							/* ...instead, just skip the line, but do check for subsequent '\' again? */
+							if (*c_trim == ';' && buf[strlen(buf) - 1] == '\\') goto diz_cont_skip_sp;
+#else							/* Just skip the line, safely */
+							if (*c_trim == ';') continue;
+#endif
+
+							/* Line is just a comment? */
+							if (*c_trim == '#') continue;
+							if (!strncmp(c_trim, "-#", 2)) continue;
+							if (!strncmp(c_trim, "--#", 3)) continue;
+
+							/* There is no key separator as this line continues with the old ckey */
+							cval = c_trim;
+
+							/* Trim spaces/tabs */
+							while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
+
+							/* Line has only a key but no actual values, ie ends after '=' ? */
+							if (!*cval) continue;
+
+							goto diz_cont_sp;
+						}
 						continue;
 					} else if (!strcmp(ckey, "version")) {
 						strncpy(sp_version[soundpacks], cval, MAX_CHARS);
@@ -16833,8 +16892,62 @@ void audio_pack_selector(void) {
 						strncpy(mp_author[musicpacks], cval, MAX_CHARS);
 						continue;
 					} else if (!strcmp(ckey, "description")) {
-						if (read_set == -1) strncpy(mp_diz[musicpacks], cval, MAX_CHARS * 3);
-						else strncpy(mp_diz_set[musicpacks][read_set], cval, MAX_CHARS);
+						bool multiline;
+
+						/* Init first. For multi-line cat'ting via '\' line suffix... */
+						if (read_set == -1) *mp_diz[musicpacks] = 0;
+						else *mp_diz_set[musicpacks][read_set] = 0;
+						diz_cont_mp:
+						multiline = FALSE;
+
+						/* Catch 'multiline backslash', must be final char of the line */
+						if (cval[strlen(cval) - 1] == '\\') {
+							multiline = TRUE;
+							/* Crop that '\', doesn't belong to actual description text */
+							cval[strlen(cval) - 1] = 0;
+						}
+
+						/* Process description */
+						if (read_set == -1) strncat(mp_diz[musicpacks], cval, MAX_CHARS * 3);
+						else strncat(mp_diz_set[musicpacks][read_set], cval, MAX_CHARS);
+
+						/* Add the subsequent line to this description? */
+						if (multiline) {
+							char *c_trim;
+
+							/* Read the next line and process it too, as it's still using the same old ckey */
+							//diz_cont_skip_mp:
+							if (!fgets(buf, 1024, fff2)) break;
+							buf[strlen(buf) - 1] = 0;
+
+							/* Trim leading spaces/tabs */
+							c_trim = buf;
+							while (*c_trim == ' ' || *c_trim == '\t') c_trim++;
+
+#if 0							/* Actually process 'disabled' lines too -- hm maybe not for description? Weird edge case anyway */
+							if (*c_trim == ';') c_trim++;
+#elif 0							/* ...instead, just skip the line, but do check for subsequent '\' again? */
+							if (*c_trim == ';' && buf[strlen(buf) - 1] == '\\') goto diz_cont_skip_mp;
+#else							/* Just skip the line, safely */
+							if (*c_trim == ';') continue;
+#endif
+
+							/* Line is just a comment? */
+							if (*c_trim == '#') continue;
+							if (!strncmp(c_trim, "-#", 2)) continue;
+							if (!strncmp(c_trim, "--#", 3)) continue;
+
+							/* There is no key separator as this line continues with the old ckey */
+							cval = c_trim;
+
+							/* Trim spaces/tabs */
+							while (strlen(cval) && (cval[strlen(cval) - 1] == ' ' || cval[strlen(cval) - 1] == '\t')) cval[strlen(cval) - 1] = 0;
+
+							/* Line has only a key but no actual values, ie ends after '=' ? */
+							if (!*cval) continue;
+
+							goto diz_cont_mp;
+						}
 						continue;
 					} else if (!strcmp(ckey, "version")) {
 						strncpy(mp_version[musicpacks], cval, MAX_CHARS);
@@ -17248,13 +17361,20 @@ void audio_pack_selector(void) {
 		strcpy(cfg_soundpackfolder, sp_dir[cur_sp]);
 		strcpy(cfg_soundpack_name, sp_name[cur_sp]);
 		strcpy(cfg_soundpack_version, sp_version[cur_sp]);
+		//copy diz too?
 		changed_sfx = TRUE;
 	}
 	if (strcmp(cfg_musicpackfolder, mp_dir[cur_mp])) {
 		c_message_add(format("Switched music pack to '%s'.", mp_dir[cur_mp]));
+
+		cfg_musicpack_subset = mp_subset_wanted[cur_mp];
+
 		strcpy(cfg_musicpackfolder, mp_dir[cur_mp]);
 		strcpy(cfg_musicpack_name, mp_name[cur_mp]);
+		if (streq(cfg_musicpack_name, "No name") && *mp_name_set[cur_mp][cfg_musicpack_subset])
+			strcpy(cfg_musicpack_name, mp_name_set[cur_mp][cfg_musicpack_subset]);
 		strcpy(cfg_musicpack_version, mp_version[cur_mp]);
+		//copy diz too?
 		changed_music = TRUE;
 	}
 
