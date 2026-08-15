@@ -2694,6 +2694,8 @@ static char *ai_fgets(char *buf, int len, FILE *fp) {
 		if (tmp[0] == '#' && tmp[1] == '#' && tmp[2] == '#') continue;
 		/* trim trailing newline from fgets() */
 		if (*tmp && tmp[strlen(tmp) - 1] == '\n') tmp[strlen(tmp) - 1] = 0;
+		/* Windows-OS newline too -_- */
+		if (*tmp && tmp[strlen(tmp) - 1] == '\r') tmp[strlen(tmp) - 1] = 0;
 		break;
 	}
 
@@ -2723,6 +2725,8 @@ bool load_auto_inscriptions(cptr name) {
 	regex_t re_src;
 	char *regptr;
 #endif
+	/* badderino hax to repair files saved with older versions of 493test and were in fact version4, but header is indistinguishable from version5: */
+	bool REPAIR493TEST = FALSE, REPAIR493TEST_do_retry = FALSE;
 
 	strncpy(file_name, name, 249);
 	file_name[249] = '\0';
@@ -2826,6 +2830,17 @@ bool load_auto_inscriptions(cptr name) {
 				int res;
 
 				if (ai_fgets(buf, MAX_CHARS, fp) == NULL) break;
+
+				if (buf[0] != ' ') {
+					c_msg_print("Trying to convert a 4.9.3-Test .ins file of outdated structure (1).");
+					REPAIR493TEST = TRUE;
+					version = 4;
+					if (ai_fgets(buf, 5, fp) == NULL) break;
+					if (ai_fgets(buf, 5, fp) == NULL) break;
+					if (ai_fgets(buf, 5, fp) == NULL) break;
+					continue;
+				}
+
 				res = sscanf(buf, "  %c,%c,%c,%c\n", &aif, &aiidp, &ais, &aid);
 				if (res != 4) break;
 			}
@@ -2878,6 +2893,34 @@ bool load_auto_inscriptions(cptr name) {
 				int res;
 
 				if (ai_fgets(buf, MAX_CHARS, fp) == NULL) break;
+				if (buf[0] != ' ') {
+					c_msg_print("Trying to convert a 4.9.3-Test .ins file of outdated structure (2).");
+					REPAIR493TEST = TRUE;
+					version = 4;
+
+					auto_inscription_ignore[j] = FALSE;
+
+					tmp = atoi(buf);
+					if (tmp >= 2) {
+						auto_inscription_ignore[j] = TRUE;
+						tmp -= 2;
+					}
+					auto_inscription_autopickup[j] = tmp;
+
+					if (ai_fgets(buf, 5, fp) == NULL) break;
+					auto_inscription_autodestroy[j] = atoi(buf);
+
+					/* try to read 'bags-only' and 'disabled' flags */
+					if (ai_fgets(buf, 5, fp) == NULL) break;
+					auto_inscription_subinven[j] = atoi(buf);
+					if (ai_fgets(buf, 5, fp) == NULL) break;
+					auto_inscription_disabled[j] = atoi(buf);
+
+					replaced = TRUE;
+					loaded_something = TRUE;
+					break;
+				}
+
 				res = sscanf(buf, "  %c,%c,%c,%c\n", &aif, &aiidp, &ais, &aid);
 				if (res != 4) break;
 
@@ -2896,9 +2939,16 @@ bool load_auto_inscriptions(cptr name) {
 			loaded_something = TRUE;
 			break;
 		}
+		if (REPAIR493TEST_do_retry) {
+			REPAIR493TEST_do_retry = false;
+			continue;
+		}
 		if (replaced) continue;
 
-		if (j < MAX_AUTO_INSCRIPTIONS) break; //premature ending -> broken .ins file
+		if (j < MAX_AUTO_INSCRIPTIONS) {
+			c_msg_format("Error reading auto-inscription file %s: Only found %d of %d entries.", name, j, MAX_AUTO_INSCRIPTIONS);
+			break; //premature ending -> broken .ins file
+		}
 
 		/* search for free match-slot */
 		if (c >= 0) {
@@ -2916,6 +2966,7 @@ bool load_auto_inscriptions(cptr name) {
 		loaded_something = TRUE;
 		strcpy(auto_inscription_match[c_eff], bufptr);
 		auto_inscription_force[c_eff] = force;
+
 #ifdef REGEX_SEARCH
 		/* Actually test regexp for validity right away, so we can avoid spam/annoyance/searching later. */
 		/* Check for '$' prefix, forcing regexp interpretation */
@@ -2964,6 +3015,41 @@ bool load_auto_inscriptions(cptr name) {
 			int res;
 
 			if (ai_fgets(buf, MAX_CHARS, fp) == NULL) break;
+
+			if (buf[0] != ' ') {
+				c_msg_print("Trying to convert a 4.9.3-Test .ins file of outdated structure (3).");
+				REPAIR493TEST = TRUE;
+				version = 4;
+
+				if (auto_inscription_match[c_eff][0] == '!') {
+					char tmpconv[1024];
+
+					strcpy(tmpconv, &auto_inscription_match[c_eff][1]);
+					strcpy(auto_inscription_match[c_eff], tmpconv);
+					auto_inscription_force[c_eff] = TRUE;
+				}
+
+				auto_inscription_ignore[c_eff] = FALSE;
+
+				tmp = atoi(buf);
+				if (tmp >= 2) {
+					auto_inscription_ignore[c_eff] = TRUE;
+					tmp -= 2;
+				}
+				auto_inscription_autopickup[c_eff] = tmp;
+
+				if (ai_fgets(buf, 5, fp) == NULL) break;
+				auto_inscription_autodestroy[c_eff] = atoi(buf);
+
+				/* try to read 'bags-only' and 'disabled' flags */
+				if (ai_fgets(buf, 5, fp) == NULL) break;
+				auto_inscription_subinven[c_eff] = atoi(buf);
+				if (ai_fgets(buf, 5, fp) == NULL) break;
+				auto_inscription_disabled[c_eff] = atoi(buf);
+
+				goto REPAIR493TEST_skip;
+			}
+
 			res = sscanf(buf, "  %c,%c,%c,%c\n", &aif, &aiidp, &ais, &aid);
 			if (res != 4) break;
 
@@ -2977,6 +3063,7 @@ bool load_auto_inscriptions(cptr name) {
 			auto_inscription_subinven[c_eff] = (ais == 'b');
 			auto_inscription_disabled[c_eff] = (aid == 'X');
 		}
+		REPAIR493TEST_skip:
 
 		if (c >= 0) c++;
 	}
@@ -2995,8 +3082,12 @@ bool load_auto_inscriptions(cptr name) {
 		c_message_add("Old auto-inscriptions updated to support bags-only/disabled flags."); //welllll, not exactly :-s
 		/* fall through */
 	case 4:
-		c_message_add("Old auto-inscriptions updated to new file format."); //welllll, not exactly :-s
+		if (REPAIR493TEST) c_message_add("Auto-inscriptions from deprecated 4.9.3-Test version converted to new format."); //bad hax
+		else c_message_add("Old auto-inscriptions updated to new file format."); //welllll, not exactly :-s
 		/* fall through */
+
+		/* Mention it so we know which file was questionable */
+		c_msg_format("Auto-inscriptions file processed was '%s'.", name);
 
 		/* Always re-save the converted inscriptions to update them to the latest version */
 		save_auto_inscriptions(name);
