@@ -4505,7 +4505,6 @@ bool ask_for_bigmap_generic(void) {
 	}
 
 	/* Remember that we got the hint */
-	bigmap_hint = FALSE;
 #ifdef WINDOWS
 	WritePrivateProfileString("Base", "HintBigmap", "0", ini_file);
 #else //assume POSIX
