@@ -17188,10 +17188,10 @@ void audio_pack_selector(void) {
 			if (cur_mp_org == cur_mp) cfg_musicpack_subset = (cfg_musicpack_subset % musicpack_subsets) + 1;
 
 			/* Pack name and pack description meta info might depend on subset, so update them to currently selected subset here */
-			if (*musicpack_packname[mp_subset_wanted[cur_mp]])
-				strcpy(mp_name[cur_mp], musicpack_packname[mp_subset_wanted[cur_mp]]);
-			if (*musicpack_description[mp_subset_wanted[cur_mp]])
-				strcpy(mp_diz[cur_mp], musicpack_description[mp_subset_wanted[cur_mp]]);
+			if (*mp_name_set[cur_mp][mp_subset_wanted[cur_mp]])
+				strcpy(mp_name[cur_mp], mp_name_set[cur_mp][mp_subset_wanted[cur_mp]]);
+			if (*mp_diz_set[cur_mp][mp_subset_wanted[cur_mp]])
+				strcpy(mp_diz[cur_mp], mp_diz_set[cur_mp][mp_subset_wanted[cur_mp]]);
 			break;
 		case '-':
 			if (!mp_subsets[cur_mp]) break;
@@ -17207,10 +17207,10 @@ void audio_pack_selector(void) {
 			}
 
 			/* Pack name and pack description meta info might depend on subset, so update them to currently selected subset here */
-			if (*musicpack_packname[mp_subset_wanted[cur_mp]])
-				strcpy(mp_name[cur_mp], musicpack_packname[mp_subset_wanted[cur_mp]]);
-			if (*musicpack_description[mp_subset_wanted[cur_mp]])
-				strcpy(mp_diz[cur_mp], musicpack_description[mp_subset_wanted[cur_mp]]);
+			if (*mp_name_set[cur_mp][mp_subset_wanted[cur_mp]])
+				strcpy(mp_name[cur_mp], mp_name_set[cur_mp][mp_subset_wanted[cur_mp]]);
+			if (*mp_diz_set[cur_mp][mp_subset_wanted[cur_mp]])
+				strcpy(mp_diz[cur_mp], mp_diz_set[cur_mp][mp_subset_wanted[cur_mp]]);
 			break;
 		default:
 			/* Oops */
