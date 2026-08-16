@@ -489,7 +489,18 @@ administrator menu:
                                    "Generate hidden library?" y,
                                    "Custom DF1/2/3 flags" 0.
     (2) Building Commands
-    (3) Summoning Commands
+    (3) Summoning Commands     -- use this to spawn target dummies in town:
+                                  -> "(5) Specific", type "1101" (compare
+                                  file lib/game/r_info.txt), -> "(1) X here",
+                                  when asked "Summon how many?" type "1" to
+                                  spawn one dummy. Hit ESC to leave menu and
+                                  move with your DM character into the dummy
+                                  to move it to the exact desired grid. Make
+                                  sure you aren't wielding the DM-Scythe or
+                                  you will instead attack the dummy.
+                                  The second dummy type, the "Armoured" one,
+                                  is r_idx "1144" (also see in-game spoiler
+                                  menu '~lr' and then 's' to search.)
     (4) Generation Commands
     (5) Player Commands
         (6) Delete player      -- fully deletes an account and all its chars.
