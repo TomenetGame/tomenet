@@ -6354,6 +6354,8 @@ static int home_object_similar(int Ind, object_type *j_ptr, object_type *o_ptr, 
 	if (o_ptr->tval == TV_SPECIAL && o_ptr->sval == SV_QUEST) return(FALSE);
 	/* Don't stack quest items if not from same quest AND stage! */
 	if (o_ptr->quest != j_ptr->quest || o_ptr->quest_stage != j_ptr->quest_stage) return(FALSE);
+	/* Don't stack gold piles (new in 2026: Can drop gold piles in list houses) */
+	if (o_ptr->tval == TV_GOLD) return(FALSE);
 
 
 	/* Don't stack potions of blood because of their timeout */
@@ -6965,6 +6967,16 @@ void home_sell(int Ind, int item, int amt) {
 
 		o_ptr->iron_trade = p_ptr->iron_trade; /* gold cannot be traded in IDDC anyway, so this has no effect.. - and we aren't in the IDDC to begin with */
 		o_ptr->iron_turn = turn;
+
+		/* Is there room in the store (or the home?) */
+		if (!home_check_num(Ind, h_ptr, o_ptr)) {
+			msg_print(Ind, "\377yYour home is full.");
+
+			/* clear the overflow slot */
+			o_ptr->tval = o_ptr->k_idx = 0;
+
+			return;
+		}
 
 		/* Subtract from the player's gold */
 		p_ptr->au -= amt;
