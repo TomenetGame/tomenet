@@ -1471,17 +1471,14 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	}
 #endif
 
-	if (outdated) {
-		if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yFile '%s' has outdated option names. Overwrite/delete it to fix.", name);
-		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' has outdated option names. Overwrite/delete it to fix.\n", name));
-		cfg_outdated = 1;
-	}
-
 	if (err == 2) {
 		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Grave error: Couldn't allocate memory when parsing '%s'.\n", name));
 		//plog(format("!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!\n", name)); //might be deadly if it happens in live game ^^' so instead just:
 		c_msg_format("\377R!!! GRAVE ERROR: Couldn't allocate memory when parsing file '%s' !!!", name);
 	} else err = 0;
+
+	/* Close the file */
+	my_fclose(fp);
 
 #if 0 /* actually don't do this as it would mess up separate .prf files by putting all currently loaded stuff from any of them into this one file */
 	/* Try to auto-fix errors simply by re-saving the file */
@@ -1497,8 +1494,24 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 	}
 #endif
 
-	/* Close the file */
-	my_fclose(fp);
+	if (outdated) {
+#if 0
+		/* Just give a hint about outdated option names and to overwrite/delete it */
+		if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yFile '%s' has outdated option names. Overwrite/delete it to fix.", name);
+		if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' has outdated option names. Overwrite/delete it to fix.\n", name));
+#else
+		/* Automatically re-save the file to overwrite it with valid option names (only)
+		   - ONLY do that for .opt files or options.prf (loaded via pref.prf), as macro files would get messed up! */
+		if ((suffix(name , ".opt") || streq(name, "options.prf")) && !options_dump(name)) { /* Success */
+			if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yFile '%s' had outdated option names and was auto-converted.", name);
+			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' had outdated option names and was auto-converted.\n", name));
+		} else { /* Couldn't re-write opt file for some reason. At least warn about the outdatedness then. */
+			if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yFile '%s' has outdated option names. Overwrite/delete it to fix.", name);
+			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("File '%s' has outdated option names. Overwrite/delete it to fix.\n", name));
+		}
+#endif
+		cfg_outdated = 1;
+	}
 
 	/* Success */
 	return(err);
