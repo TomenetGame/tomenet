@@ -5764,8 +5764,8 @@ int macrofileset_scan(void) {
 
 	/* ---------- (b) Disk operations: Read macro files from TomeNET's user folder ---------- */
 
-	getcwd(cwd, sizeof(cwd)); //Remember TomeNET working directory
-	chdir(ANGBAND_DIR_USER); //Change to TomeNET user folder
+	(void)getcwd(cwd, sizeof(cwd)); //Remember TomeNET working directory
+	(void)chdir(ANGBAND_DIR_USER); //Change to TomeNET user folder
 
 	/* For cyclic sets: These don't have keys to switch to each stage, but only 1 key that switches to the next stage.
 	   So to actually find all stages of a cyclic set, we therefore need to scan for all actually existing stage-filenames derived from the base filename.
@@ -5793,11 +5793,11 @@ c_msg_print("(1)nothing");
 				strcpy(buf_basename, *p);
 #else
 		hFind = FindFirstFile(format("*%s?.prf", SETFILEPOSTFIX), &FindFileData);
-		if (hFind == INVALID_HANDLE_VALUE) //;
+		if (hFind == INVALID_HANDLE_VALUE) {
  #ifdef TEST_CLIENT
 c_msg_format("(2)FindFirstFile failed (%ld)", GetLastError());
  #endif
-		else {
+		} else {
 			strcpy(buf_basename, FindFileData.cFileName);
 			n = 0;
 			while (TRUE) {
@@ -5840,11 +5840,11 @@ c_msg_format("(1)set (%d) <%s> registered stage %d", k, fileset[k].basefilename,
 #ifndef WINDOWS
 	glob(format("*%s?.prf", SETFILEPOSTFIX), 0, 0, &glob_res);
 	glob_size = glob_res.gl_pathc;
-	if (glob_size < 1) //; /* No macro files found at all */
+	if (glob_size < 1) { /* No macro files found at all */
  #ifdef TEST_CLIENT
 c_msg_print("(2)nothing");
  #endif
-	else { /* Found 'n' macro files */
+	} else { /* Found 'n' macro files */
 		for (p = glob_res.gl_pathv; glob_size; p++, glob_size--) {
 			/* Acquire base name and stage */
 			strcpy(buf_basename, *p);
@@ -5952,7 +5952,7 @@ c_msg_format("(2)existing disk-set (%d) <%s> adds stage %d", k, fileset[k].basef
 	if (hFind != INVALID_HANDLE_VALUE) FindClose(hFind);
 #endif
 	/* End of 'user' folder disk operations */
-	chdir(cwd); //Return to TomeNET working directory
+	(void)chdir(cwd); //Return to TomeNET working directory
 
 
 	/* ---------- For all known macro sets, now check whether macro files for all/some stages are missing ---------- */
