@@ -606,7 +606,6 @@ static void write_mangrc_aux_line(int t, cptr sec_name_write, cptr sec_name, cha
    Already existing nick+pass will only be updated if update_creds is TRUE.
    If audiopacks_only is TRUE, all other settings except for sound+music pack will be skipped. */
 bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
-	int i;
 	char config_name2[100];
 	FILE *config, *config2;
 	char buf[1024];
@@ -620,8 +619,11 @@ bool write_mangrc(bool creds_only, bool update_creds, bool audiopacks_only) {
 #endif
 	bool explicit_save = !(creds_only == TRUE && update_creds == FALSE) /* Don't execute if we got called from client_init(). */
 	    && !(creds_only == TRUE && update_creds == TRUE); /* Don't execute if we got called from store_crecedentials(). */
+#if defined(USE_X11) || defined(WINDOWS) /* Ie not on pure USE_GCU/ANDROID -- (redundant though: WINDOWS doesn't use this function as it doesn't use .rc files) */
+	int i;
 	char *old_term_names[ANGBAND_TERM_MAX] = { "Mainwindow", "Mirrorwindow", "Recallwindow", "Choicewindow", "Term-4window", "Term-5window", "Term-6window", "Term-7window", "Term-8window", "Term-9window" };
 	char *term_names[ANGBAND_TERM_MAX] = { "Term-Main", "Term-1", "Term-2", "Term-3", "Term-4", "Term-5", "Term-6", "Term-7", "Term-8", "Term-9" };
+#endif
 #ifdef USE_X11
 	char **use_term_names;
 #endif

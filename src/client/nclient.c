@@ -64,7 +64,9 @@
  /* - WiP -
     visuals do not scale if font size isn't identical to tile size (results in blackness usually)
     and visuals get [partially] erased after animation finishes, as they count as 'empty space' as the client has no memory of them being there: */
-#define TEST_RAWPICT
+#if defined(USE_X11) || defined(WINDOWS) /* Ie not on pure USE_GCU/ANDROID */
+ #define TEST_RAWPICT
+#endif
 //#endif
 
 
