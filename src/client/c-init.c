@@ -4285,14 +4285,14 @@ again:
 	rl_msg_output = TRUE; //hack: allow msg output about prf/opt file problems
 #endif
 	initialize_main_pref_files();
-#ifdef RETRY_LOGIN
-	rl_msg_output = FALSE; //unhack
-#endif
 
 	/* Pre-initialize character-specific options, just for sending early censor_swearing to the server,
 	   so we can receive private/party/guild notes in the desired format. */
 	sprintf(buf, "%s.opt", cname);
 	process_pref_file(buf);
+#ifdef RETRY_LOGIN
+	rl_msg_output = FALSE; //unhack
+#endif
 	/* ..and while we're on it, apply this fix earliest usable here, for graphics mode */
 	if (use_graphics && c_cfg.font_map_solid_walls) {
 		if (c_cfg.gfx_autooff_fmsw) {
