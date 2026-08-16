@@ -217,15 +217,22 @@ SERVER_EXTRA_LIBS = -lcrypt
 ## Only support "main-gcu.c" (not "main-x11.c")
 ## This is a command-line client that relies on ncurses.
 ##
+
 ## With SDL
-tomenet: CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char
-tomenet: LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
-tomenet.test: CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char
-tomenet.test: LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
-##
+tomenet:	CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char -D CLIENT_SIDE
+tomenet.test:	CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char -D CLIENT_SIDE
+tomenet:	LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
+tomenet.test:	LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
+
+
 ## Without SDL
+#tomenet:	CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char -D CLIENT_SIDE
+#tomenet.test:	CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char -D CLIENT_SIDE
+#tomenet:	LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
+#tomenet.test:	LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
 tomenet.server: CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -fsigned-char
 tomenet.server: LIBS = -L/usr/pkg/lib -lncurses -lm
+
 
 # Optional: Compile with Link Time Optimization (LTO)
 #CFLAGS += -flto=auto
@@ -293,7 +300,9 @@ tomenet.server: LIBS = -L/usr/pkg/lib -lncurses -lm
 #LIBS = -lsocket -lnsl -lcurses
 
 
-CFLAGS += -Wno-format-overflow -Wno-format-truncation
+tomenet:	CFLAGS += -Wno-format-overflow -Wno-format-truncation
+tomenet.test:	CFLAGS += -Wno-format-overflow -Wno-format-truncation
+tomenet.server:	CFLAGS += -Wno-format-overflow -Wno-format-truncation
 
 # Some Linux distributions have a separate libtinfo, attempt to detect it
 HAVE_TINFO = $(shell ldconfig -p | grep -c libtinfo)
@@ -303,27 +312,32 @@ ifneq (${HAVE_TINFO}, 0)
 endif
 
 # Security hardening
-CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
+tomenet:	CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
+tomenet.test:	CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
+tomenet.server:	CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
 LDFLAGS += -Wl,-z,relro -Wl,-z,now
 
 
 
 ## Test for OS type
-CFLAGS += $(shell ./os-check.sh)
+tomenet:	CFLAGS += $(shell ./os-check.sh)
+tomenet.test:	CFLAGS += $(shell ./os-check.sh)
+tomenet.server:	CFLAGS += $(shell ./os-check.sh)
 
-# Compile a client with 'test client' version/tag
-tomenet.test: CFLAGS += -DTEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow -DCLIENT_SIDE
 #disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
-tomenet.test: PPFLAGS = -DTEST_CLIENT
+tomenet.test:	CFLAGS += -D TEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
+PPFLAGS =
 
-tomenet: CFLAGS += -DCLIENT_SIDE
-
-# Server is compiled with optimizations
-tomenet.server: CFLAGS += -g -O2
 accedit: CFLAGS += -g -O2
 
 # Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
-CFLAGS += -Wformat
+tomenet:	CFLAGS += -Wformat
+tomenet.test:	CFLAGS += -Wformat
+tomenet.server:	CFLAGS += -Wformat
+
+# tolua is just a command-line tool, no need for SDL/X11
+LUACFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-macro-redefined
+LUALIBS = -L/usr/pkg/lib -lncurses -lm
 
 # Lua
 SRCS += $(LUASRCS)
@@ -334,13 +348,11 @@ SERV_OBJS += $(TOLUAOBJS)
 CLI_OBJS += $(CLI_LUAOBJS)
 CLI_SRCS += $(TOLUASRCS)
 CLI_OBJS += $(TOLUAOBJS)
-CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
+tomenet:	CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
+tomenet.test:	CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
+tomenet.server:	CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
-
-# tolua is just a command-line tool, no need for SDL/X11
-LUACFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-macro-redefined
-LUALIBS = -L/usr/pkg/lib -lncurses -lm
 
 all: tomenet.server tomenet accedit
 	@echo Now you need to move the binaries from the src directory up one level, or run \"make install\".
@@ -400,7 +412,7 @@ tomenet: $(CLI_OBJS)
 	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet $(CLI_OBJS) $(LIBS)
 
 tomenet.test: $(CLI_OBJS)
-	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet $(CLI_OBJS) $(LIBS)
+	$(CC) $(CFLAGS) $(LDFLAGS) -o tomenet.test $(CLI_OBJS) $(LIBS)
 
 
 #
