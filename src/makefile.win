@@ -182,6 +182,12 @@ CLI_LUAOBJS = \
 ##
 
 
+# Just empty inits, for "+=" operations later
+CFLAGS =
+PPFLAGS =
+LIBS =
+
+
 #
 # This is my compiler of choice, it seems to work most everywhere
 #
@@ -234,26 +240,23 @@ WINDRES = windres
 ##
 ## Variation -- Cygwin
 ##
-## With SDL
-tomenet.exe: CFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=19937 -DSOUND_SDL -DWINVER=0x0501 -Wno-unused-but-set-variable -DACC32
-tomenet.exe: LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer
-tomenet.test.exe: CFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=19937 -DSOUND_SDL -DWINVER=0x0501 -Wno-unused-but-set-variable -DACC32
-tomenet.test.exe: LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm -lSDL -lSDL_mixer
-##
-## Without SDL
-tomenet.server.exe: CFLAGS = -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=19937
-tomenet.server.exe: LIBS = -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
 
+CFLAGS += -O2 -g -Wall -D__USE_W32_SOCKETS -DWIN32 -DDUMB_WIN -DCYGWIN -DMEXP=19937 -DACC32 -DWINVER=0x0501 -Wno-unused-but-set-variable
+LIBS += -lkernel32 -luser32 -lwsock32 -lgdi32 -lcomdlg32 -lwinmm
+
+## With SDL for audio support
+tomenet.exe: CFLAGS += -DSOUND_SDL
+tomenet.exe: LIBS += -lSDL -lSDL_mixer
+tomenet.test.exe: CFLAGS += -DSOUND_SDL
+tomenet.test.exe: LIBS += -lSDL -lSDL_mixer
 
 
 ## Test for OS type -- not for Windows targets
 #CFLAGS += $(shell ./os-check.sh)
 
-# Compile a client with 'test client' version/tag
-tomenet.test.exe: CFLAGS += -DTEST_CLIENT -O0 -DCLIENT_SIDE
-tomenet.test.exe: PPFLAGS = -DTEST_CLIENT
-
 tomenet.exe: CFLAGS += -DCLIENT_SIDE
+# Compile a client with 'test client' version/tag, and max debuggability
+tomenet.test.exe: CFLAGS += -DCLIENT_SIDE -DTEST_CLIENT -O0 -g3
 
 CFLAGS += -Wno-format-overflow -Wno-format-truncation
 # Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
