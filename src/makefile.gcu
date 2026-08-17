@@ -218,20 +218,19 @@ SERVER_EXTRA_LIBS = -lcrypt
 ## This is a command-line client that relies on ncurses.
 ##
 
-## With SDL
-tomenet:	CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char -D CLIENT_SIDE
-tomenet.test:	CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char -D CLIENT_SIDE
-tomenet:	LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
-tomenet.test:	LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
+CFLAGS = -g -O2 -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -fsigned-char
+PPFLAGS =
+LIBS = -L/usr/pkg/lib -lm
+tomenet:	CFLAGS += -DCLIENT_SIDE
+tomenet.test:	CFLAGS += -DCLIENT_SIDE
+tomenet:	LIBS += -lncurses
+tomenet.test:	LIBS += -lncurses
 
-
-## Without SDL
-#tomenet:	CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char -D CLIENT_SIDE
-#tomenet.test:	CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -DSOUND_SDL `sdl2-config --cflags` -fsigned-char -D CLIENT_SIDE
-#tomenet:	LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
-#tomenet.test:	LIBS = -L/usr/pkg/lib -lncurses -lm `sdl2-config --libs` -lSDL2_mixer
-tomenet.server: CFLAGS = -O2 -g -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_DEFAULT_SOURCE -DMEXP=19937 -std=c99 -fsigned-char
-tomenet.server: LIBS = -L/usr/pkg/lib -lncurses -lm
+## Add audio via SDL: (Comment these lines out to compile without SDL audio support)
+tomenet:	CFLAGS += -DSOUND_SDL `sdl2-config --cflags`
+tomenet.test:	CFLAGS += -DSOUND_SDL `sdl2-config --cflags`
+tomenet:	LIBS += `sdl2-config --libs` -lSDL2_mixer
+tomenet.test:	LIBS += `sdl2-config --libs` -lSDL2_mixer
 
 
 # Optional: Compile with Link Time Optimization (LTO)
@@ -300,9 +299,8 @@ tomenet.server: LIBS = -L/usr/pkg/lib -lncurses -lm
 #LIBS = -lsocket -lnsl -lcurses
 
 
-tomenet:	CFLAGS += -Wno-format-overflow -Wno-format-truncation
-tomenet.test:	CFLAGS += -Wno-format-overflow -Wno-format-truncation
-tomenet.server:	CFLAGS += -Wno-format-overflow -Wno-format-truncation
+## Test for OS type
+CFLAGS += $(shell ./os-check.sh)
 
 # Some Linux distributions have a separate libtinfo, attempt to detect it
 HAVE_TINFO = $(shell ldconfig -p | grep -c libtinfo)
@@ -312,28 +310,17 @@ ifneq (${HAVE_TINFO}, 0)
 endif
 
 # Security hardening
-tomenet:	CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
-tomenet.test:	CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
-tomenet.server:	CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
+CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
 LDFLAGS += -Wl,-z,relro -Wl,-z,now
 
-
-
-## Test for OS type
-tomenet:	CFLAGS += $(shell ./os-check.sh)
-tomenet.test:	CFLAGS += $(shell ./os-check.sh)
-tomenet.server:	CFLAGS += $(shell ./os-check.sh)
-
-#disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
-tomenet.test:	CFLAGS += -D TEST_CLIENT -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
-PPFLAGS =
-
-accedit: CFLAGS += -g -O2
+# disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
+CFLAGS += -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
 
 # Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
-tomenet:	CFLAGS += -Wformat
-tomenet.test:	CFLAGS += -Wformat
-tomenet.server:	CFLAGS += -Wformat
+CFLAGS += -Wformat
+
+# make test client extra debuggable
+tomenet.test: CFLAGS += -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
 
 # tolua is just a command-line tool, no need for SDL/X11
 LUACFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-macro-redefined
@@ -348,9 +335,7 @@ SERV_OBJS += $(TOLUAOBJS)
 CLI_OBJS += $(CLI_LUAOBJS)
 CLI_SRCS += $(TOLUASRCS)
 CLI_OBJS += $(TOLUAOBJS)
-tomenet:	CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
-tomenet.test:	CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
-tomenet.server:	CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
+CFLAGS += $(LUAFLAGS) -Iserver -Iserver/lua
 
 TOLUA = server/tolua
 
