@@ -333,7 +333,7 @@ tomenet.test: CFLAGS += -g3 -O0
 
 # tolua is just a command-line tool, no need for SDL/X11
 LUACFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-macro-redefined
-LUALIBS = -L/usr/pkg/lib -lncurses -lm
+LUALIBS = -L/usr/pkg/lib -lm
 
 # Lua
 SRCS += $(LUASRCS)
