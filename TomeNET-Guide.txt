@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 14. August 2026 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 17. August 2026 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -59,11 +59,12 @@ Contents
     (1.4)   History of TomeNET development
 (2) Installation & setup
     (2.1)   Installing/updating TomeNET (Windows/Linux/Mac OS X)
-    (2.1a)  Windows (custom/compilation)
-    (2.1b)  Linux (custom/compilation)
-    (2.1c)  Mac OS X (custom/compilation)
-    (2.1d)  FreeBSD (custom/compilation)
-    (2.1e)  Android (custom/compilation)
+    (2.1a)  Copying your settings from backup to fresh installation
+    (2.1c)  Windows (custom/compilation)
+    (2.1d)  Linux (custom/compilation)
+    (2.1e)  Mac OS X (custom/compilation)
+    (2.1e)  FreeBSD (custom/compilation)
+    (2.1f)  Android (custom/compilation)
     (2.2)   Installing sound and music packs
     (2.2a)  Audio controls and config options
     (2.2b)  Editing sound and music manually/Creating own packs
@@ -4161,7 +4162,63 @@ redownload it.
 Covered in the following are Windows, Linux, Mac OS X, FreeBSD and Android:
 
 
-(2.1a) Windows (custom/compilation)
+(2.1a) Copying your settings from backup to fresh installation
+--------------------------------------------------------------
+If you install TomeNET freshly and want to copy over your settings from an
+older TomeNET installation you kept in a backup location, here are the
+relevant files you might want to copy over into the new TomeNET folders.
+
+Note that the exact folders may depend on your Windows version and how you
+customized them on installation. What IS defininitly relevant are the actual
+file names at the end. So if a folder path turns out wrong, just search for
+the actual file to locate it.
+
+- Your window setup (locations, size), fonts and graphics settings:
+
+   WINDOWS OS:
+    File: TomeNET.ini
+    Example path: C:\Program Files (x86)\TomeNET\TomeNET.ini
+
+   POSIX (Linux, Mac):
+    File: .tomenetrc
+    Example path: In your home folder.
+
+- Your macros:
+  Files: *.prf  (ie all files ending on ".prf")
+
+- Your option settings (ie settings in the = menu):
+  Files: *.opt
+
+- Your auto-inscription files if you created any (& menu):
+  Files: *.ins
+
+- Your reincarnation info (not really important though):
+  Files: *.dna
+
+   WINDOWS OS:
+    Example path: C:\Users\yourusername\tomenet-user\*.prf
+   POSIX:
+    Example path: tomenet/lib/user
+
+In general, that 'tomenet-user' folder (Windows OS only) or 'tomenet/lib/user'
+folder (POSIX systems only) listed above contains all your personal stuff
+asides from just macros, options, inscriptions and reincarnations, which is...
+
+- screenshots:
+  *.xhtml files for text-based screenshots, readable in web browers
+  *.png files for screenshots as real images
+
+- character dumps (death dumps / victory dumps / manual dumps):
+  *.txt files
+
+- chat logs:
+  *.txt files
+
+- logs of private notes you received:
+  notes-*.txt files
+
+
+(2.1b) Windows (custom/compilation)
 -----------------------------------
 It is recommended to get the installer package instead of the zip archives.
 You can safely install TomeNET over an already existing installation (just
@@ -4294,7 +4351,7 @@ make tomenet.exe
 (Or for the server: make tomenet.server.exe)
 
 
-(2.1b) Linux (custom/compilation)
+(2.1c) Linux (custom/compilation)
 ---------------------------------
 
 Linux (using pre-compiled client):
@@ -4448,7 +4505,7 @@ Example:
 (Skip down to (2.4) to continue reading.)
 
 
-(2.1c) Mac OS X (custom/compilation)
+(2.1d) Mac OS X (custom/compilation)
 ------------------------------------
 
 Mac OS X (using pre-compiled binary; tested with Snow Leopard 10.6.6):
@@ -4557,7 +4614,7 @@ Mac OS X also uses the ".tomenetrc" configuration file which should be in your
 home folder, same as Linux.
 
 
-(2.1d) FreeBSD (custom/compilation)
+(2.1e) FreeBSD (custom/compilation)
 -----------------------------------
 Should be same as on Linux, except that the "8x13" standard font might not get
 found, preventing TomeNET from starting. A fix according to "N der Fuenfte":
@@ -4566,7 +4623,7 @@ found, preventing TomeNET from starting. A fix according to "N der Fuenfte":
   root% # restart X server, if in doubt, just reboot PC.
 
 
-(2.1e) Android (custom/compilation)
+(2.1f) Android (custom/compilation)
 -----------------------------------
 Compilation is straight-forward and similar to Linux:
 
@@ -29979,6 +30036,6 @@ Solution:   If your client uses SDL2, make sure you have the "normal" sdl2
             packages installed and NOT the 'sdl2-compat' ones.
 
 PROBLEM 81: On Android, audio stopped working after an Android sytem update.
-Solution:   Check (2.1e) for exporting SDL_AUDIODRIVER and "AAudio" fix.
+Solution:   Check (2.1f) for exporting SDL_AUDIODRIVER and "AAudio" fix.
 
 ===============================================================================
