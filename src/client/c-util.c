@@ -6865,7 +6865,7 @@ void macroinfo_ascii(int macro_idx, char *macropat, char *fff) {
 
 
 void interact_macros(void) {
-	int i, j = 0, l, l2, n, chain_type, i_stage, xoffs = 3;
+	int i, j = 0, l, l2, n, chain_type, i_stage = 0, xoffs = 3;
 	static char tmp[MACRO_MAXLEN] = { 0 }, buf[MACRO_MAXLEN] = { 0 };
 	char buf2[MACRO_MAXLEN], *bptr, *b2ptr, chain_macro_buf[MACRO_MAXLEN], choice;
 	char localtmpact[MACRO_MAXLEN], localtmpacttxt[MACRO_MAXLEN];
@@ -8010,7 +8010,7 @@ void interact_macros(void) {
 
 		else if (i == 'z' || i == 'Z') {
 			int target_dir = '5', ystart = 6;
-			bool should_wait, force_normal;
+			bool should_wait, force_normal = FALSE;
 #define mw_quaff 'a'
 #define mw_read 'b'
 #define mw_fire 'c'
@@ -8827,7 +8827,6 @@ Chain_Macro:
 						break;
 
 					case mw_common:
-						force_normal = FALSE;
 						l = ystart;
 						//Term_putstr(10, l++, -1, TERM_GREEN, "Please choose one of these common commands and functions:"); --make room for one more entry instead
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "a) chat and voice, self-messaging");
@@ -9196,7 +9195,7 @@ Chain_Macro:
 						case 'j': strcpy(buf2, ":/pvp\\r"); break;
 						case 'k': strcpy(buf2, "\\e)*t/1-"); break;
 						case 'l': {
-							int delay, num = 1;
+							int delay = 0, num = 1;
 
 							clear_from(ystart);
 							l = ystart + 1;
