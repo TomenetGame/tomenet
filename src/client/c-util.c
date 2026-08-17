@@ -11291,6 +11291,7 @@ Chain_Macro:
 						if (!strcmp(buf, "\e")) {
 							c_msg_print("\377yKeys <ESC> and '%' aren't allowed to carry a macro.");
 							if (!strcmp(buf, "\e")) {
+								force_normal = FALSE; //paranoia
 								i_stage = -2; /* leave */
 								break;
 							}
@@ -11402,6 +11403,7 @@ Chain_Macro:
 						/* Message */
 						c_msg_print("Created a new command macro.");
 					} else if (force_normal) {
+						force_normal = FALSE; //paranoia
 						/* make it a normal macro */
 						/* Link the macro */
 						macro_add(buf, macro__buf, FALSE, FALSE);
