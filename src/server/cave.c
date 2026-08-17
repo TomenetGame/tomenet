@@ -569,12 +569,18 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		l_ptr->ondepth = (inc ? l_ptr->ondepth + value : value);
 		if (l_ptr->ondepth < 0) l_ptr->ondepth = 0;
 
-		if (!l_ptr->ondepth) l_ptr->lastused = 0;
+		if (!l_ptr->ondepth) {
+			l_ptr->lastused = 0;
+			heal_m_list(wpos);
+		}
 		if (value > 0) l_ptr->lastused = now;
 	} else {
 		w_ptr->surface.ondepth = (inc ? w_ptr->surface.ondepth + value : value);
 		if (w_ptr->surface.ondepth < 0) w_ptr->surface.ondepth = 0;
-		if (!w_ptr->surface.ondepth) w_ptr->surface.lastused = 0;
+		if (!w_ptr->surface.ondepth) {
+			w_ptr->surface.lastused = 0;
+			heal_m_list(wpos);
+		}
 		if (value > 0) w_ptr->surface.lastused = now;
 		/* remove 'deposited' true artefacts if last player leaves a level,
 		   and if true artefacts aren't allowed to be stored (in houses for example) */

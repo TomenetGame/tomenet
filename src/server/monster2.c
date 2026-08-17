@@ -888,21 +888,25 @@ void wipe_m_list_roaming(struct worldpos *wpos) {
  * Heal up every monster on the depth, so that a player
  * cannot abuse stair-GoI and anti-scum.	- Jir -
  */
-#if 0
 void heal_m_list(struct worldpos *wpos) {
 	int i;
+	monster_type *m_ptr;
 
 	/* Heal all the monsters */
 	for (i = m_max - 1; i >= 1; i--) {
-		monster_type *m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
 
-		if (inarea(&m_ptr->wpos,wpos)) m_ptr->hp = m_ptr->maxhp; //delete_monster_idx(i);
+		/* Skip dead monsters */
+		if (!m_ptr->r_idx) continue;
+		/* Skip monsters not here */
+		if (!inarea(&m_ptr->wpos,wpos)) continue;
+
+		/* Heal monster */
+		m_ptr->hp = m_ptr->maxhp;
+		/* Reset its highest-player encounter imprintment */
+		m_ptr->henc = m_ptr->henc_top = 0;
 	}
-
-	/* Compact the monster list */
-	//compact_monsters(0);
 }
-#endif	// 0
 
 
 /*
