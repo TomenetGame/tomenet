@@ -453,7 +453,7 @@ TOLUA = server/tolua
 
 # tolua is just a command-line tool, no need for SDL/X11
 LUACFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-macro-redefined
-LUALIBS = -L/usr/pkg/lib -lncurses -lm
+LUALIBS = -L/usr/pkg/lib -lm
 
 all: tomenet.server tomenet accedit
 	@echo Now you need to move the binaries from the src directory up one level, or run \"make install\".
