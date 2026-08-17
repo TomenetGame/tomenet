@@ -164,8 +164,8 @@ CLI_LUAOBJS = \
 #
 # This is my compiler of choice, it seems to work most everywhere
 #
-#CC = gcc
-CC = clang
+CC = gcc
+#CC = clang
 
 # For allowing #if..#else..#endif constructs in LUA files - C. Blue
 # Note: The flags must contain
@@ -313,14 +313,20 @@ endif
 CFLAGS += -fstack-protector -D_FORTIFY_SOURCE=2 -fPIE
 LDFLAGS += -Wl,-z,relro -Wl,-z,now
 
-# disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
-CFLAGS += -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
-
 # Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
 CFLAGS += -Wformat
 
+# disable 3 warning spams: 'accessing n bytes in a region of size m', '_FORTIFY_SOURCE requires compiling with optimization', 'directive writing up to 159 bytes into a region of size'
+CFLAGS += -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
+
+# Don't warn about unused function results even if (void)'ed, don't warn about copying only parts of strings or via format strings
+CFLAGS += -Wno-unused-result -Wno-stringop-truncation -Wno-format-truncation
+
+# Caused by copying strings of different indices from message...[] arrays
+CFLAGS += -Wno-restrict
+
 # make test client extra debuggable
-tomenet.test: CFLAGS += -g3 -O0 -Wno-stringop-overflow -Wno-cpp -Wno-format-overflow
+tomenet.test: CFLAGS += -g3 -O0
 
 # tolua is just a command-line tool, no need for SDL/X11
 LUACFLAGS = -pipe -Wall -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -D_DEFAULT_SOURCE -DACC32 -fPIE -fsigned-char -Wno-macro-redefined
