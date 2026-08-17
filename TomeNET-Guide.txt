@@ -2134,7 +2134,7 @@ They all start with a slash '/' hence they're called slash commands:
              B) for Windows clients the .NET framework.
 
             The screenshots are saved to the "lib/user" folder on POSIX clients
-            (Linux/OSX) and to the "tomenet-user" folder on Windows clients.
+            (Linux/OSX) and to the "TomeNET-user" folder on Windows clients.
 
 /shuffle    See further up, above /deal command.
 
@@ -3763,7 +3763,7 @@ Queen respectively, or Emperor/Empress if their character is of unworldly or
 hellish mode. A player must be at least level 40 to get credit for this.
 
 When you win the game, an automatic chardump is generated in the "/lib/user"
-folder on Linux/OSX clients or the "tomenet-user" folder on Windows clients,
+folder on Linux/OSX clients or the "TomeNET-user" folder on Windows clients,
 called '<charname>-victory.txt' (see (9.2)) which you can view with any text
 editor.
 Also, a screenshot is made automatically in the same folder, displaying your
@@ -4196,11 +4196,11 @@ the actual file to locate it.
   Files: *.dna
 
    WINDOWS OS:
-    Example path: C:\Users\yourusername\tomenet-user
+    Example path: C:\Users\yourusername\TomeNET-user
    POSIX:
     Example path: tomenet/lib/user
 
-In general, that 'tomenet-user' folder (Windows OS only) or 'tomenet/lib/user'
+In general, that 'TomeNET-user' folder (Windows OS only) or 'tomenet/lib/user'
 folder (POSIX systems only) listed above contains all your personal stuff
 asides from just macros, options, inscriptions and reincarnations, which is...
 
@@ -6814,7 +6814,7 @@ A few generic commands are always available from within subinventory:
   - Screenshot (CTRL+T for xhtml file, CTRL+SHIFT+T for PNG image file).
     The xhtml files take up extremely little space and can be viewed in any
     web browser. The screenshots are saved to the lib/user folder on POSIX
-    clients (Linux/OSX) and to the tomenet-user folder on Windows clients.
+    clients (Linux/OSX) and to the TomeNET-user folder on Windows clients.
   - Inspect (aka examine) an item (x).
   - Drop an item (d).
   - Destroy (kill) an item (k or CTRL+D).
