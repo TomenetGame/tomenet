@@ -2573,21 +2573,12 @@ void power_inscribe(object_type *o_ptr, bool redux, char *powins) {
    Ind is 0 if this is called from inverse_cursed()/reverse_cursed() for item-flipping. */
 bool check_power_inscribe(int Ind, object_type *o_ptr, char *o_name_old, cptr inscription) {
 	char *pi_pos = NULL;
-	const char *pi_pos_src = inscription;
+	//const char *pi_pos_src = inscription;
 
 	bool redux = FALSE;
 	char o_name[ONAME_LEN], powins[POW_INSCR_LEN], *pir_pos; //even more than just MAX_CHARS_WIDE, let's play it safe..
 	player_type *p_ptr;
 
-
-	/* Exception: "@@" is not a power inscription if it belongs to a preceeding '\' */
-	while ((pi_pos = strstr(pi_pos_src, "@@"))) {
-		pi_pos_src += 2;
-		if (pi_pos == inscription) break; /* at beginning of string is always genuine */
-		if (*(pi_pos - 1) == '\\') continue; /* belongs to a '\@@' tag, revoke */
-		break; /* genuine '@@' or '@@@', accept */
-	}
-	if (!pi_pos) return(FALSE);
 
 	/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
 	   Side note: If @@@ is present, an additional @@ will simply be ignored. */
@@ -2741,12 +2732,12 @@ void do_cmd_uninscribe(int Ind, int item) {
  * Inscribe an object with a comment
  */
 void do_cmd_inscribe(int Ind, int item, cptr inscription) {
-	char tmp[INSCR_LEN];
+	char tmp[INSCR_LEN], modins[INSCR_LEN];
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
-	char o_name[ONAME_LEN], modins[INSCR_LEN];
-	const char *qins;
-	char *c;
+	char o_name[ONAME_LEN];
+	char *c, c_tag = 0, is_tag, *ct;
+	int mode = 0;
 
 	/* Get the item (in the pack) */
 	if (!get_inven_item(Ind, item, &o_ptr)) return;
@@ -2816,111 +2807,207 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 	/* hack to fix auto-inscriptions: convert empty inscription to a #-type inscription */
 	if (inscription[0] == '\0') inscription = "#";
 
-	/* Comfort hack for reinscribing items:
-	   Trigger with '\' as first character.
-	   Then replace the part starting on first letter, until an usual delimiter char is found.
-	   '\@@' or '\!!' will erase the corresponding tag from the inscription. */
-	/* catch empty item inscription */
-	if (!o_ptr->note && inscription[0] == '\\' && inscription[1] != '\\') {
-		/* cannot delete anything in an empty inscription */
-		if ((inscription[1] == '@' || inscription[1] == '!' || inscription [1] == '#')
-		    && inscription[2] == inscription[1])
-			return;
-		/* clear '\' special feature trigger */
-		while (inscription[0] == '\\') inscription++;
-	}
+
+	/* --- Comfort hack for reinscribing items, trigger with '\' as first character: ---
+	   a) '\...': Appends this inscription to an already existing inscription. If none exists, create a new one.
+	   b) '\\@...', '\\!...', '\\#...': Crop out this tag or string, matching exactly all the characters we specified.
+	      For @ it deletes the complete tag that must be exactly matching up to a delimiter char or end of line.
+	      For ! it keeps tag intact with any other following letters until eligible delimiter char is found or line ends, eg:
+	      For # it deletes the complete tag that must exactly match the complete rest of the line.
+	      '!Udv' inscription with '\!Ud' inscribing results in '!v' inscription.
+	      Otherwise just crops out the exact string.
+	   c) '\\\@', '\\\!', '\\\#': (a tag letter may follow \\\@)
+	      For @ with a letter following it deletes the full tag starting on that letter.
+	      For @ (without anything, ie end of line) and ! and # it deletes all of them.
+	      Stops at line end.
+	   d) '\\\\@<tag>...', '\\\\!...', '\\\\#...':
+	      For @ it takes one more character after the '@' as the tag letter, this kind of tag will be replaced on its first occurance.
+	      For ! it replaces the first occurance.
+	      For # it replaces it.
+	      Subject to delimiter chars or line end. */
+
+	/* Catch empty item inscription */
 	if (inscription[0] == '\\') {
-		/* force append? */
+		mode++;
 		if (inscription[1] == '\\') {
-			if (o_ptr->note) strcpy(modins, quark_str(o_ptr->note));
-			else modins[0] = 0;
-			if (strlen(modins) + strlen(inscription) - 1 > MAX_CHARS) {
-				msg_print(Ind, "Inscription would become too long.");
-				return;
+			mode++;
+			if (inscription[2] == '\\') {
+				mode++;
+				if (inscription[3] == '\\') mode++;
 			}
-			strcat(modins, inscription + 2);
-			inscription = modins;
-		} else {
-			bool append = TRUE;
-			char modsrc[3];
-
-			qins = quark_str(o_ptr->note);
-			strcpy(modins, qins);
-
-			modsrc[0] = inscription[1];
-			/* search for specific @-tag to replace? */
-			if (inscription[1] == '@') {
-				/* duplicate tag, aka "delete!" ? */
-				if (inscription[2] == '@') modsrc[1] = inscription[3];
-				/* normal tag (replace or append) */
-				else modsrc[1] = inscription[2];
-				modsrc[2] = 0;
-			}
-			/* search for first !-tag to replace? */
-			else modsrc[1] = 0;
-
-			/* append or replace a @/!/# part? */
-			if (inscription[1] == '@' || inscription[1] == '!' || inscription [1] == '#') {
-				char *start = strstr(modins, modsrc);
-				bool delete = FALSE;
-
-				/* delete? */
-				if (inscription[2] == inscription[1]) {
-					delete = TRUE;
-					/* definitely don't append: in case tag does not exist yet */
-					append = FALSE;
-				}
-
-				/* replace? (or delete) */
-				if (start) {
-					const char *delimiter;
-					const char *deltmp;
-
-					append = FALSE;
-
-					/* after '#' the line is always completely replaced;
-					   same for @P because player names can contain spaces. */
-					if (inscription[1] != '#' &&
-					    !(inscription[1] == '@' && inscription[2] == 'P')) {
-						deltmp = qins + (start - modins) + strlen(modsrc);
-						while (*deltmp) {
-							delimiter = strchr(" @!#", *deltmp);
-							if (delimiter) break;
-							deltmp++;
-						}
-						//if (!delimiter) delimiter = qins + strlen(qins); //point to zero terminator char
-					} else deltmp = qins + strlen(qins);
-					//delimiter = qins + strlen(qins); //point to zero terminator char
-
-					if (delete) strcpy(start, deltmp);
-					else { /* try to replace */
-						//if ((start - modins) + strlen(inscription + 1) + strlen(delimiter) > MAX_CHARS) {
-						if ((start - modins) + strlen(inscription + 1) + strlen(deltmp) > MAX_CHARS) {
-							msg_print(Ind, "Inscription would become too long.");
-							return;
-						}
-
-						/* replace */
-						strcpy(start, inscription + 1);
-						//strcat(start, delimiter);
-						strcat(start, deltmp);
-					}
-				}
-
-				/* new: trim trailing spaces, if anything was deleted */
-				if (delete && *modins) while (modins[strlen(modins) - 1] == ' ') modins[strlen(modins) - 1] = 0;
-			}
-			/* append? */
-			if (append) {
-				if (strlen(modins) + strlen(inscription) > MAX_CHARS) {
-					msg_print(Ind, "Inscription would become too long.");
-					return;
-				}
-				strcat(modins, inscription + 1);
-			}
-			inscription = modins;
 		}
 	}
+	inscription += mode;
+	if (!*inscription) return; /* No inscription specified? */
+
+	is_tag = (inscription[0] == '@' || inscription[0] == '!' || inscription[0] == '#') ? inscription[0] : 0;
+	if (is_tag == '@') c_tag = inscription[1];
+
+	switch (mode) {
+	case 1: /* Append/create */
+		if (o_ptr->note) strcpy(modins, quark_str(o_ptr->note));
+		else modins[0] = 0;
+		if (strlen(modins) + strlen(inscription) - 1 > MAX_CHARS) {
+			msg_print(Ind, "Inscription would become too long.");
+			return;
+		}
+		strcat(modins, inscription);
+		inscription = modins;
+		break;
+
+	case 2: /* Delete exact */
+		if (!o_ptr->note) return; /* Object has no inscription to delete */
+		if (!(c = strstr(quark_str(o_ptr->note), inscription))) return; /* No matching inscription found */
+
+		/* Exact match, but also make sure the existing inscription on the item really ended here and didn't proceed any longer.
+		   Exceptions:
+		     '@P<player name> inscriptions can contain ' ' and '#' in the player name! So spaces cannot count as delimiters then.
+		     '#' aka fake-artifact inscriptions can contain ANY characters, so there are no delimiter chars at all, only end of line. */
+		switch (is_tag) {
+		case '@':
+			switch (*(c + strlen(inscription))) {
+			case 0:
+				break; /* end of quark, valid */
+			case ' ':
+				if (inscription[0] == '#') return; /* invalid */
+				/* '@P' inscriptions may contain spaces, so they cannot be delimiter chars */
+				if (inscription[0] == '@' && inscription[1] == 'P') return; /* invalid */
+				else break; /* end of segment, valid */
+			case '#':
+				if (inscription[0] == '#') return; /* invalid */
+				/* '@P' inscriptions may contain hashes, so they cannot be delimiter chars */
+				if (inscription[0] == '@' && inscription[1] == 'P') return; /* invalid */
+				break; /* end of segment, valid */
+			case '@': case '-':
+				if (inscription[0] == '#') return; /* invalid */
+				break; /* end of segment, valid */
+			case '!':
+				if (inscription[0] == '#') return; /* invalid */
+				break; /* specialty: also ends a previous segment, valid */
+			default:
+				return; /* invalid, tag still continues on the item */
+			}
+			/* Crop it out */
+			strcpy(modins, quark_str(o_ptr->note));
+			strcpy(modins + (c - quark_str(o_ptr->note)), c + strlen(inscription));
+			break;
+		case '!':
+			/* Check if the matching ! tag expands further after our match, then repair it accordingly by keeping the '!' in the beginning */
+			ct = c;
+			while (*++ct) {
+				switch (*ct) {
+				case 0: break; /* end of quark, valid */
+				case ' ': case '@': case '#': case '-': break; /* end of segment, valid */
+				case '!': break; /* specialty: also ends a previous segment, valid */
+				}
+			}
+			strcpy(modins, quark_str(o_ptr->note));
+			if (ct - c > 1) /* Tag still continued? Then leave initial '!' in place */
+				strcpy(modins + (c - quark_str(o_ptr->note)) + 1, c + strlen(inscription));
+			else /* Tag was exact match? Then remove it all */
+				strcpy(modins + (c - quark_str(o_ptr->note)), c + strlen(inscription));
+			break;
+		case '#':
+			if (*(c + strlen(inscription)) != 0) return; /* invalid - # line must match completely (equivalence)! */
+			/* Crop it out */
+			strcpy(modins, quark_str(o_ptr->note));
+			strcpy(modins + (c - quark_str(o_ptr->note)), c + strlen(inscription));
+			break;
+		default: /* just a generic string - no special processing needed */
+			/* Crop it out */
+			strcpy(modins, quark_str(o_ptr->note));
+			strcpy(modins + (c - quark_str(o_ptr->note)), c + strlen(inscription));
+		}
+		/* Maybe QoL: Trim trailing spaces */
+		if (*modins) while (modins[strlen(modins) - 1] == ' ') modins[strlen(modins) - 1] = 0;
+		inscription = modins;
+		break;
+
+	case 3: /* Delete any */
+		if (!o_ptr->note) return; /* Object has no inscription to delete */
+		if (!is_tag || !strstr(quark_str(o_ptr->note), inscription)) return; /* No matching inscription found */
+
+		switch (is_tag) {
+		case '!':
+			if (inscription[1]) return; // illegal syntax. Must just be '\\\!'
+			//fall through
+		case '@':
+			if (c_tag && inscription[2]) return; // illegal syntax. 1 tag char is allowed, but not more.
+
+			strcpy(modins, quark_str(o_ptr->note));
+			*tmp = 0;
+			while ((c = strstr(modins, inscription))) {
+				ct = c;
+				while (*++ct) {
+					switch (*ct) {
+					case 0: break; /* end of quark, valid */
+					case ' ': case '@': case '#': case '-': break; /* end of segment, valid */
+					case '!': break; /* specialty: also ends a previous segment, valid */
+					default: continue;
+					}
+					break;
+				}
+				/* Avoid creating duplicate spaces ('xyz !k !d !s abc' -> 'xyz abc') */
+				if (*tmp && tmp[strlen(tmp) - 1] == ' ' && *ct == ' ') ct++;
+
+				strcpy(tmp, modins);
+				strcpy(tmp + (c - modins), ct);
+				strcpy(modins, tmp);
+			}
+			break;
+		case '#':
+			if (*inscription) return; // illegal syntax. Must just be '\\\!'
+			if (!(c = strchr(quark_str(o_ptr->note), '#'))) return; /* No matching inscription found */
+			strcpy(modins, quark_str(o_ptr->note));
+			modins[c - quark_str(o_ptr->note)] = 0;
+			break;
+		}
+		/* Maybe QoL: Trim trailing spaces */
+		if (*modins) while (modins[strlen(modins) - 1] == ' ') modins[strlen(modins) - 1] = 0;
+		inscription = modins;
+		break;
+
+	case 4: /* Replace */
+		if (!o_ptr->note) return; /* Object has no inscription to delete */
+		if (!is_tag || !(c = strchr(quark_str(o_ptr->note), is_tag))) return; /* No matching inscription found */
+
+		switch (is_tag) {
+		case '@':
+			*tmp = '@';
+			*(tmp + 1) = c_tag;
+			*(tmp + 2) = 0;
+			if (!(c = strstr(quark_str(o_ptr->note), tmp))) return; /* No matching tag found */
+			// fall through
+		case '!':
+			ct = c;
+			while (*++ct) {
+				switch (*ct) {
+				case 0: break; /* end of quark, valid */
+				case ' ': case '@': case '#': case '-': break; /* end of segment, valid */
+				case '!': break; /* specialty: also ends a previous segment, valid */
+				default: continue;
+				}
+				break;
+			}
+			strcpy(modins, quark_str(o_ptr->note));
+			strcpy(modins + (c - quark_str(o_ptr->note)), inscription);
+
+			/* Avoid creating duplicate spaces ('xyz !k !d !s abc' -> 'xyz abc') */
+			if (*modins && modins[strlen(modins) - 1] == ' ' && *ct == ' ') ct++;
+
+			strcat(modins, ct);
+			break;
+		case '#':
+			strcpy(modins, quark_str(o_ptr->note));
+			strcpy(modins + (c - quark_str(o_ptr->note)), inscription);
+			break;
+		}
+		/* Maybe QoL: Trim trailing spaces */
+		if (*modins) while (modins[strlen(modins) - 1] == ' ') modins[strlen(modins) - 1] = 0;
+		inscription = modins;
+		break;
+	}
+
 
 	/* Save the inscription */
 	o_ptr->note = quark_add(inscription);

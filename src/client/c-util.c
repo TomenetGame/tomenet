@@ -9249,14 +9249,17 @@ Chain_Macro:
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "a) tag all your uninscribed items in inventory '!k'          :/t\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) untag all your '!k'-inscribed loot again                  :/ut\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "c) redux-power-inscribe and tag all your equipment '!+'      :/etag * @@@!+\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "d) use '/dis' to destroy all items pseudo-ided up to 'good'  :/dis\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) use '/dis a' to destroy ALL uninscribed inventory items   :/dis a\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) use '/dis fa' to destroy an item at your feet             :/dis fa\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "g) use '/dis Fa' to destroy a whole item pile at your feet   :/dis Fa\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "h) toggle option 'auto_destroy'                              :/adestroy\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "i) toggle option 'auto_pickup'                               :/apickup\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "j) toggle option 'auto_inscr_off'                 :/optt auto_inscr_off\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "k) apply all auto-inscriptions to all your items             :/aai\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "d) redux-power-inscribe and tag all your equipment '!*'      :/etag * @@@!*\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) add '!U*' tag to an item of your choice                   {-\\!Uk");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) remove '!U*' tag from an item of your choice              {-\\\\!Uk");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "g) use '/dis' to destroy all items pseudo-ided up to 'good'  :/dis\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "h) use '/dis a' to destroy ALL uninscribed inventory items   :/dis a\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "i) use '/dis fa' to destroy an item at your feet             :/dis fa\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "j) use '/dis Fa' to destroy a whole item pile at your feet   :/dis Fa\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "k) toggle option 'auto_destroy'                              :/adestroy\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "l) toggle option 'auto_pickup'                               :/apickup\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "m) toggle option 'auto_inscr_off'                 :/optt auto_inscr_off\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "n) apply all auto-inscriptions to all your items             :/aai\\r");
 								/* Hack: Hide the cursor */
 								Term->scr->cx = Term->wid;
 								Term->scr->cu = 1;
@@ -9279,7 +9282,7 @@ Chain_Macro:
 										continue;
 									default:
 										/* invalid action -> exit wizard */
-										if (choice < 'a' || choice > 'k') {
+										if (choice < 'a' || choice > 'n') {
 											//i_stage = -1;
 											continue;
 										}
@@ -9299,14 +9302,17 @@ Chain_Macro:
 								case 'a': strcpy(buf2, ":/t\\r"); break;
 								case 'b': strcpy(buf2, ":/ut\\r"); break;
 								case 'c': strcpy(buf2, ":/etag\\s*\\s@@@!+\\r"); break;
-								case 'd': strcpy(buf2, ":/dis\\r"); break;
-								case 'e': strcpy(buf2, ":/dis\\sa\\r"); break;
-								case 'f': strcpy(buf2, ":/dis\\sfa\\r"); break;
-								case 'g': strcpy(buf2, ":/dis\\sFa\\r"); break;
-								case 'h': strcpy(buf2, ":/adestroy\\r"); break;
-								case 'i': strcpy(buf2, ":/apickup\\r"); break;
-								case 'j': strcpy(buf2, ":/optt auto_inscr_off\\r"); break;
-								case 'k': strcpy(buf2, ":/aai\\r"); break;
+								case 'd': strcpy(buf2, ":/etag\\s*\\s@@@!*\\r"); break;
+								case 'e': strcpy(buf2, "{-\\!Uk"); break;
+								case 'f': strcpy(buf2, "{-\\\\!Uk"); break;
+								case 'g': strcpy(buf2, ":/dis\\r"); break;
+								case 'h': strcpy(buf2, ":/dis\\sa\\r"); break;
+								case 'i': strcpy(buf2, ":/dis\\sfa\\r"); break;
+								case 'j': strcpy(buf2, ":/dis\\sFa\\r"); break;
+								case 'k': strcpy(buf2, ":/adestroy\\r"); break;
+								case 'l': strcpy(buf2, ":/apickup\\r"); break;
+								case 'm': strcpy(buf2, ":/optt auto_inscr_off\\r"); break;
+								case 'n': strcpy(buf2, ":/aai\\r"); break;
 								}
 								break;
 							}

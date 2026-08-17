@@ -1013,28 +1013,43 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
 
 {       inscribe an item.
 
-        If the first character is a backslash '\', then instead of overwriting
-        an existing inscription the new inscription will either replace a part
-        of the current one or otherwise be appended at its end.
-        Replacing happens if the backslash is followed by either @<letter> or !
-        or # which indicate special inscription "parts".
-        Examples:
-        An inscription "abc !k @S- xyz" that is inscribed "\@S50k" will turn
-        out "abc !k @S50k xyz". If it is instead inscribed "\!ds" then it will
-        turn out "abc !ds @S- xyz".
-        When replacing the # part or an @P part, the whole rest of the
-        inscription is replaced. For @P this is so because player names may
-        contain spaces, so those cannot be used as reliable delimiters.
+        The inscription can start on backslashes '\' for special modes:
 
-        Instead of replacing a tag, you can also remove it by doubling the tag
-        type character, examples:
-        "\@@S" will remove the price tag from an item.
-        "\@@" will remove the first @-tag of any type.
-        "\!!" will remove an "!" tag.
-        "\##" will remove the whole part that follows after the '#' character.
+        \      Append.
+               Instead of overwriting an existing inscription the new
+               inscription will be appended to the existing one.
+               If the item had no inscription yet, it will just be inscribed.
 
-        To simply append a new inscription to an existing inscription, enter
-        '\\' at the beginning of the new inscription.
+        \\     Delete exact match.
+
+               For \\@ it deletes the complete tag that must be exactly
+               matching up to a delimiter char (@,!,#,-,' ') or end of line.
+
+               For ! it keeps tag intact with any other following letters until
+               an eligible delimiter symbol is found or the line ends, eg:
+               Existing '!Udv' inscription, inscribing '\\!Ud' results in '!v'.
+
+               For # it deletes the complete tag that must exactly match the
+               complete rest of the inscription we're applying.
+
+               For any other inscriptions, it just crops out the exact string.
+
+        \\\    Delete any.
+
+               For \\\@ with a letter following the @ it deletes any tag
+               starting on that letter.
+               For \\\@ without a letter and for \\\! and \\\# it deletes all
+               of the tags.
+
+        \\\\   Replace.
+
+              For @ it takes one more character after the '@' as the tag letter
+              eg \\\\@t... - this first occurance of this kind of tag will be
+              replaced.
+
+              For \\\\!... it replaces the first occurance of a '!' tag.
+
+              For \\\\#... it replaces the complete #-tag.
 
         To learn more about functional inscriptions, see (0.3).
 
