@@ -6253,6 +6253,7 @@ void do_cmd_walk(int Ind, int dir, int pickup) {
 	bool more = FALSE;
 	cave_type **zcave;
 
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return;
 	if (!(zcave = getcave(&p_ptr->wpos))) return;
 
 	if (!p_ptr->warning_numpadmove &&
@@ -6429,6 +6430,7 @@ int do_cmd_run(int Ind, int dir) {
 	/* slower 'running' movement over certain terrain */
 	int real_speed = cfg.running_speed;
 
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return(2);
 	if (!(zcave = getcave(&p_ptr->wpos))) return(FALSE);
 	c_ptr = &zcave[p_ptr->py][p_ptr->px];
 
