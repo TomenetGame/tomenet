@@ -550,12 +550,30 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 	object_type *o_ptr;
 	char o_name[ONAME_LEN];
 
+
 	now = time(&now);
 
 	w_ptr = &wild_info[wpos->wy][wpos->wx];
 #if DEBUG_LEVEL > 2
 	s_printf("new_players_on_depth.. %s  now:%ld value:%d inc:%s\n", wpos_format(0, wpos), now, value, inc ? "TRUE" : "FALSE");
 #endif
+
+	/* Actually check whether there is a real player here still */
+	for (i = 1; i <= NumPlayers; i++) {
+		p_ptr = Players[i];
+
+		/* skip disconnected players */
+		if (p_ptr->conn == NOT_CONNECTED) continue;
+		/* skip admins */
+		if (admin_p(i)) continue;
+		/* player on this depth? */
+		if (!inarea(&p_ptr->wpos, wpos)) continue;
+
+		/* someone is still here in person */
+		break;
+	}
+	/* Noone is really here in person right now? */
+	if (i == NumPlayers + 1) heal_m_list(wpos);
 
 	if (wpos->wz) {
 		struct dungeon_type *d_ptr;
@@ -568,20 +586,14 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 
 		l_ptr->ondepth = (inc ? l_ptr->ondepth + value : value);
 		if (l_ptr->ondepth < 0) l_ptr->ondepth = 0;
-
-		if (!l_ptr->ondepth) {
-			l_ptr->lastused = 0;
-			heal_m_list(wpos);
-		}
+		if (!l_ptr->ondepth) l_ptr->lastused = 0;
 		if (value > 0) l_ptr->lastused = now;
 	} else {
 		w_ptr->surface.ondepth = (inc ? w_ptr->surface.ondepth + value : value);
 		if (w_ptr->surface.ondepth < 0) w_ptr->surface.ondepth = 0;
-		if (!w_ptr->surface.ondepth) {
-			w_ptr->surface.lastused = 0;
-			heal_m_list(wpos);
-		}
+		if (!w_ptr->surface.ondepth) w_ptr->surface.lastused = 0;
 		if (value > 0) w_ptr->surface.lastused = now;
+
 		/* remove 'deposited' true artefacts if last player leaves a level,
 		   and if true artefacts aren't allowed to be stored (in houses for example) */
 		if (!w_ptr->surface.ondepth && cfg.anti_arts_wild) {
@@ -624,7 +636,6 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		}
 	}
 
-
 	update_uniques_killed(wpos);
 
 	/* Perform henc_strictness anti-cheeze - mode 4 : monster is on the same dungeon level as a player */
@@ -637,12 +648,9 @@ void new_players_on_depth(struct worldpos *wpos, int value, bool inc) {
 		p_ptr = Players[i];
 
 		/* skip disconnected players */
-		if (p_ptr->conn == NOT_CONNECTED)
-			continue;
-
+		if (p_ptr->conn == NOT_CONNECTED) continue;
 		/* skip admins */
 		if (admin_p(i)) continue;
-
 		/* player on this depth? */
 		if (!inarea(&p_ptr->wpos, wpos)) continue;
 
