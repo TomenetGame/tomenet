@@ -4177,7 +4177,7 @@ the actual file to locate it.
 
    WINDOWS OS:
     File: TomeNET.ini
-    Example path: C:\Program Files (x86)\TomeNET\TomeNET.ini
+    Example path: C:\Program Files (x86)\TomeNET
 
    POSIX (Linux, Mac):
     File: .tomenetrc
@@ -4196,7 +4196,7 @@ the actual file to locate it.
   Files: *.dna
 
    WINDOWS OS:
-    Example path: C:\Users\yourusername\tomenet-user\*.prf
+    Example path: C:\Users\yourusername\tomenet-user
    POSIX:
     Example path: tomenet/lib/user
 
