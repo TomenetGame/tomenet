@@ -9250,8 +9250,8 @@ Chain_Macro:
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) untag all your '!k'-inscribed loot again                  :/ut\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "c) redux-power-inscribe and tag all your equipment '!+'      :/etag * @@@!+\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "d) redux-power-inscribe and tag all your equipment '!*'      :/etag * @@@!*\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) add '!U*' tag to an item of your choice                   {-\\!Uk");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) remove '!U*' tag from an item of your choice              {-\\\\!Uk");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) add '!Uk' tag to an item of your choice                   {-\\!Uk");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) remove '!Uk' tag from an item of your choice              {-\\\\!Uk");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "g) use '/dis' to destroy all items pseudo-ided up to 'good'  :/dis\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "h) use '/dis a' to destroy ALL uninscribed inventory items   :/dis a\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "i) use '/dis fa' to destroy an item at your feet             :/dis fa\\r");
