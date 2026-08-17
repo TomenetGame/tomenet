@@ -127,6 +127,12 @@ CLI_LUAOBJS = \
 ##
 
 
+# Just empty inits, for "+=" operations later
+CFLAGS =
+PPFLAGS =
+LIBS =
+
+
 #
 # This is my compiler of choice, it seems to work most everywhere
 #
@@ -150,89 +156,66 @@ X11BASE = /opt/X11
 ##
 ## You can compile the client without X11 support by removing -DUSE_X11 from
 ## CFLAGS and -lX11 from LIBS
+
+
 ##
-## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl-config --cflags`
-#LIBS = -lX11 -lm -lSDL_mixer
-#LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
+## For X11 + ncurses (gcu)
+##
+
+CFLAGS += -pipe -Wall -DOSX -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DACC32
+LDFLAGS += -L/usr/local/lib
+LIBS += -lm
+
+### With SDL2 for audio support
+
+#  With sdl2-config
+tomenet: CFLAGS += -DUSE_X11 -I${X11BASE}/include -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl2-config --cflags`
+tomenet: LDFLAGS += -L${X11BASE}/lib `sdl2-config --libs`
+tomenet: LIBS += -lX11 -lncurses -lSDL2_mixer
+tomenet: CFLAGS += -DUSE_X11 -I${X11BASE}/include -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl2-config --cflags`
+tomenet: LDFLAGS += -L${X11BASE}/lib `sdl2-config --libs`
+tomenet: LIBS += -lX11 -lncurses -lSDL2_mixer
+
+#  With manually set prefix
+#CFLAGS += -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL -I/usr/local/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT -DACC32
+#LIBS += -lX11 -lncurses -lm -lSDL2_mixer
+#LDFLAGS += -L${X11BASE}/lib -L/usr/lib -pthread -lSDL2
+
 #-lXtst (for numlock - obsolete)
 ## Uncomment this if you want to bundle libraries with the client
 #LDFLAGS += -Wl,-rpath,\$$ORIGIN
 ##
-## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_X11 -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0
-#LIBS = -lX11 -lm
-#LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib
 
-
-##
-## Variant for x11+ncurses (gcu)
-##
-## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl-config --cflags` -DACC32
-#LIBS = -lX11 -lncurses -lm -lSDL_mixer
-#LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl-config --libs`
-#-lXtst (for numlock - obsolete)
-## Uncomment this if you want to bundle libraries with the client
-#LDFLAGS += -Wl,-rpath,\$$ORIGIN
-##
-## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0
-#LIBS = -lX11 -lncurses -lm
-#LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib
-
-# With SDL2
-#  With sdl2-config
-tomenet: CFLAGS = -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl2-config --cflags` -DACC32
-tomenet.test: LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl2-config --libs`
-#  With manually set prefix
-#CFLAGS = -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL -I/usr/local/include/SDL2 -I/usr/include/SDL2 -D_REENTRANT -DACC32
-#  With sdl2-config
-tomenet: LIBS = -lX11 -lncurses -lm -lSDL2_mixer
-tomenet: LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib `sdl2-config --libs`
-tomenet.test: LIBS = -lX11 -lncurses -lm -lSDL2_mixer
-tomenet.test: CFLAGS = -pipe -Wall -DOSX -DUSE_X11 -DUSE_GCU -I${X11BASE}/include -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl2-config --cflags` -DACC32
-#  With manually set prefix
-#LIBS = -lX11 -lncurses -lm -lSDL2_mixer
-#LDFLAGS = -L${X11BASE}/lib -L/usr/local/lib -L/usr/lib -pthread -lSDL2
-
-# Without SDL:
-tomenet.server: CFLAGS = -pipe -Wall -DOSX -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DACC32
-tomenet.server: LIBS = -lncurses -lm
-tomenet.server: LDFLAGS = -L/usr/local/lib
 
 
 ##
 ## Variant for ncurses (gcu) only
 ##
 ## With SDL
-#CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl-config --cflags`
-#LIBS = -lncurses -lm -lSDL_mixer
-#LDFLAGS = -L/usr/local/lib `sdl-config --libs`
+#CFLAGS += -O2 -g -pipe -Wall -DOSX -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DSOUND_SDL `sdl-config --cflags`
+#LIBS += -lncurses -lm -lSDL_mixer
+#LDFLAGS += -L/usr/local/lib `sdl-config --libs`
 #-lXtst (for numlock - obsolete)
 ## Uncomment this if you want to bundle libraries with the client
 #LDFLAGS += -Wl,-rpath,\$$ORIGIN
 ##
 ## Without SDL
-#CFLAGS = -O2 -g -pipe -Wall -DOSX -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0
-#LIBS = -lncurses -lm
-#LDFLAGS=-L${X11BASE}/lib -L/usr/local/lib
+#CFLAGS += -O2 -g -pipe -Wall -DOSX -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0
+#LIBS += -lncurses -lm
+#LDFLAGS += -L${X11BASE}/lib -L/usr/local/lib
+
 
 
 CFLAGS += -Wno-format-overflow -Wno-format-truncation
 # Warn about wrongly sized data types (Linux64 vs Windows 64 bit types)
 CFLAGS += -Wformat
 
-
-
 ## Test for OS type
 CFLAGS += $(shell ./os-check.sh)
 
-# Compile a client with 'test client' version/tag
-tomenet.test: CFLAGS += -DTEST_CLIENT -O0 -DCLIENT_SIDE
-tomenet.test: PPFLAGS = -DTEST_CLIENT
-
 tomenet: CFLAGS += -DCLIENT_SIDE
+# Compile a client with 'test client' version/tag, also max debug capability
+tomenet.test: CFLAGS += -DCLIENT_SIDE -DTEST_CLIENT -g3 -O0
 
 # Lua
 SRCS += $(LUASRCS)
@@ -249,7 +232,7 @@ TOLUA = server/tolua
 
 # tolua is just a command-line tool, no need for SDL/X11
 LUACFLAGS = -pipe -Wall -DOSX -DUSE_GCU -D_XOPEN_SOURCE -D_BSD_SOURCE -DMEXP=19937 -std=c99 -DNCURSES_OPAQUE=0 -DACC32
-LUALIBS = -L/usr/pkg/lib -lncurses -lm
+LUALIBS = -L/usr/pkg/lib -lm
 
 all: tomenet.server tomenet accedit
 	@echo Now you need to move the binaries from the src directory up one level, or run \"make install\".
