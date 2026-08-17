@@ -2902,7 +2902,7 @@ void do_cmd_inscribe(int Ind, int item, cptr inscription) {
 				}
 			}
 			strcpy(modins, quark_str(o_ptr->note));
-			if (ct - c > 1) /* Tag still continued? Then leave initial '!' in place */
+			if (ct - c > strlen(inscription) + 1) /* Tag still continued? Then leave initial '!' in place */
 				strcpy(modins + (c - quark_str(o_ptr->note)) + 1, c + strlen(inscription));
 			else /* Tag was exact match? Then remove it all */
 				strcpy(modins + (c - quark_str(o_ptr->note)), c + strlen(inscription));

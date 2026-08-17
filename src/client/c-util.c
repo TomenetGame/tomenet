@@ -9250,8 +9250,8 @@ Chain_Macro:
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) untag all your '!k'-inscribed loot again                  :/ut\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "c) redux-power-inscribe and tag all your equipment '!+'      :/etag * @@@!+\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "d) redux-power-inscribe and tag all your equipment '!*'      :/etag * @@@!*\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) add '!Uk' tag to an item of your choice                   {-\\!Uk");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) remove '!Uk' tag from an item of your choice              {-\\\\!Uk");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) add '!Uk' tag to an item of your choice                   {-\\\\!Uk\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) remove '!Uk' tag from an item of your choice              {-\\\\\\\\!Uk\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "g) use '/dis' to destroy all items pseudo-ided up to 'good'  :/dis\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "h) use '/dis a' to destroy ALL uninscribed inventory items   :/dis a\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "i) use '/dis fa' to destroy an item at your feet             :/dis fa\\r");
@@ -9303,8 +9303,8 @@ Chain_Macro:
 								case 'b': strcpy(buf2, ":/ut\\r"); break;
 								case 'c': strcpy(buf2, ":/etag\\s*\\s@@@!+\\r"); break;
 								case 'd': strcpy(buf2, ":/etag\\s*\\s@@@!*\\r"); break;
-								case 'e': strcpy(buf2, "{-\\!Uk"); break;
-								case 'f': strcpy(buf2, "{-\\\\!Uk"); break;
+								case 'e': strcpy(buf2, "{-\\\\!Uk\r"); break;
+								case 'f': strcpy(buf2, "{-\\\\\\\\!Uk\r"); break;
 								case 'g': strcpy(buf2, ":/dis\\r"); break;
 								case 'h': strcpy(buf2, ":/dis\\sa\\r"); break;
 								case 'i': strcpy(buf2, ":/dis\\sfa\\r"); break;
