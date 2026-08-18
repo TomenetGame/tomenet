@@ -13093,6 +13093,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				return;
 			}
+			else if (prefix(messagelc, "/spawn-max")) {
+				admin_max_spawnrate = TRUE;
+				return;
+			}
+			else if (prefix(messagelc, "/spawn-norm")) {
+				admin_max_spawnrate = FALSE;
+				return;
+			}
 			else if (prefix(messagelc, "/fix-wildflock")) {
 				/* erase WILD_F_..LOCK flags from when the server crashed during dungeon removal (??) */
 				if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_LOCKDOWN) {
