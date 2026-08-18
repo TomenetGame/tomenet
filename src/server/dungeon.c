@@ -2957,7 +2957,8 @@ static void process_world_player(int Ind) {
 	    ((!istown(&p_ptr->wpos) && (rand_int(MAX_M_ALLOC_CHANCE) == 0)) ||
 	    (!season_halloween && istown(&p_ptr->wpos) && (rand_int(TOWNIE_RESPAWN_CHANCE) == 0)) ||
 	    (season_halloween && istown(&p_ptr->wpos) &&
-	    (rand_int(in_bree(&p_ptr->wpos) ? HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) == 0)))
+	    (rand_int(in_bree(&p_ptr->wpos) ? HALLOWEEN_TOWNIE_RESPAWN_CHANCE : TOWNIE_RESPAWN_CHANCE) == 0)) ||
+	    admin_max_spawnrate)
 	    /* avoid admins spawning stuff */
 	    && !(p_ptr->admin_dm || p_ptr->admin_wiz)) {
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);

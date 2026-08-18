@@ -974,6 +974,8 @@ int getlevel(struct worldpos *wpos) {
 		/* if not already set, determine the type of terrain -- paranoia or not? */
 		if (w_ptr->type == WILD_UNDEFINED) w_ptr->type = determine_wilderness_type(wpos);
 
+		if (w_ptr->type == WILD_TOWN) return(town[w_ptr->town_idx].baselevel);
+
 		// implies WILD_LEVEL_DEPENDS_ON_TOWN as terrain_level uses town level already implicitely
 		return(terrain_level(w_ptr->type, w_ptr->radius, w_ptr->town_lev, IS_NIGHT));
 #endif

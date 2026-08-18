@@ -2400,7 +2400,13 @@ int terrain_level(int type, int radius, int town_level, bool is_night) {
 	/* Reduce terrain-type base level greatly if we're still within a town's housing area */
 	type_lev = (radius <= MAX_TOWNAREA ? type_lev / 5 : type_lev);
 
-	return(((type_lev + town_add) * daynight_mul10) / 10);
+	/* Add town-radius/level factors and day/night time to terrain value */
+	type_lev = ((type_lev + town_add) * daynight_mul10) / 10;
+
+	/* Limit wilderness levels to sane values (could otherwise go as high as around 115, maybe more) */
+	if (type_lev > 70) type_lev = 70;
+
+	return(type_lev);
 }
 
 
