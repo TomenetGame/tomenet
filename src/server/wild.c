@@ -307,6 +307,9 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 	s_printf("Placing towns...\n");
 
 	/* Place towns */
+	/* Bree (1) is skipped here and instead initialized by init_wild_info(),
+	   which uses baselevel 0 instead of town_profile's baselevel 1,
+	   important for 't'ownie generation or Bree would be populated by monsters! */
 	for (i = 1 + 1; i < TOWNS; i++) {
 		retry = FALSE;
 

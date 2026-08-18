@@ -5353,7 +5353,7 @@ town_extra town_profile[6]= {
 			30,	/* Training Tower */
 		},
 
-		1,
+		1,	/* Gets overridden by cfg.town_base, which must be 0, or Bree will be populated by non-townies */
 		60,
 		FALSE,
 		TF_KNOWN,
