@@ -2358,7 +2358,7 @@ struct terrain_type {
 /* Determine terrain level from terrain type, town radius and town level. */
 int terrain_level(int type, int radius, int town_level, bool is_night) {
 	int type_lev, daynight_mul10 = 10;
-	int town_add = radius + town_level / 2; //or radius/2?
+	//int town_add = radius + town_level / 2; //or radius/2?
 
 	switch (type) {
 	/* town, especially Bree, to generate level 0 townies (some other >0 monsters also have RF8_WILD_TOWN flag, ew) */
@@ -2377,18 +2377,18 @@ int terrain_level(int type, int radius, int town_level, bool is_night) {
 		break;
 	/*  normal forest */
 	case WILD_FOREST:
-		if (is_night)	type_lev = 5 + 10;
+		if (is_night)	type_lev = 5 + 7;
 		else		type_lev = 5;
 		break;
 	/* swamp */
 	case WILD_SWAMP:
 		/* you really don't want to go into swamps at night */
-		if (is_night) {	type_lev = 12; daynight_mul10 = 15; }
+		if (is_night) {	type_lev = 12 + 10; }//daynight_mul10 = 15; }
 		else		type_lev = 12;
 		break;
 	/* water */
 	case WILD_OCEAN: //le krakenino?
-		if (is_night) {	type_lev = 10; daynight_mul10 = 15; }
+		if (is_night) {	type_lev = 10 + 10; }//daynight_mul10 = 15; }
 		else		type_lev = 10;
 		break;
 	case WILD_RIVER:
@@ -2401,7 +2401,11 @@ int terrain_level(int type, int radius, int town_level, bool is_night) {
 	type_lev = (radius <= MAX_TOWNAREA ? type_lev / 5 : type_lev);
 
 	/* Add town-radius/level factors and day/night time to terrain value */
+#if 0 /* multiplying the radius with daynight_mul10 is too much? */
 	type_lev = ((type_lev + town_add) * daynight_mul10) / 10;
+#else
+	type_lev = radius + town_level / 2 + (type_lev * daynight_mul10) / 10;
+#endif
 
 	/* Limit wilderness levels to sane values (could otherwise go as high as around 115, maybe more) */
 	if (type_lev > 70) type_lev = 70;
