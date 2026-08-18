@@ -2358,7 +2358,7 @@ struct terrain_type {
 /* Determine terrain level from terrain type, town radius and town level. */
 int terrain_level(int type, int radius, int town_level, bool is_night) {
 	int type_lev, daynight_mul10 = 10;
-	int town_add = radius + town_level / 3; //or radius/2?
+	int town_add = radius + town_level / 2; //or radius/2?
 
 	switch (type) {
 	/* town, especially Bree, to generate level 0 townies (some other >0 monsters also have RF8_WILD_TOWN flag, ew) */

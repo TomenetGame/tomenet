@@ -966,7 +966,7 @@ int getlevel(struct worldpos *wpos) {
 #if 0 /* this ignores terrain types */
 		/* ground level */
  #ifdef WILD_LEVEL_DEPENDS_ON_TOWN
-		return(w_ptr->radius + w_ptr->town_lev / 3);
+		return(w_ptr->radius + w_ptr->town_lev / 2);
  #else
 		return(w_ptr->radius);
  #endif
