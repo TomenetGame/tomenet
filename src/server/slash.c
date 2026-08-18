@@ -13043,7 +13043,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				tpos.wz = 0;
 
-				fp = fopen("wild-hotmap_day.txt", "w");
+				fp = fopen("wild-heatmap_day.txt", "w");
 				for (wy = MAX_WILD_Y - 1; wy != -1; wy--) {
 					for (wx = 0; wx != MAX_WILD_X; wx++) {
 						tpos.wx = wx;
@@ -13066,7 +13066,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				fclose(fp);
 
-				fp = fopen("wild-hotmap_night.txt", "w");
+				fp = fopen("wild-heatmap_night.txt", "w");
 				for (wy = MAX_WILD_Y - 1; wy != -1; wy--) {
 					for (wx = 0; wx != MAX_WILD_X; wx++) {
 						tpos.wx = wx;
