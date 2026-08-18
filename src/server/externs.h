@@ -2981,3 +2981,4 @@ extern int debug_drain_hp, debug_drain_mp;
 #ifdef ENABLE_SUBINVEN
 extern int inventory_pack_max, inventory_total_max;
 #endif
+extern bool admin_max_spawnrate;
