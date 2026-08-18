@@ -13034,6 +13034,65 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "  townrad:   %d", wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].radius);
 				return;
 			}
+			/* Generate wild-level heatmap */
+			else if (prefix(messagelc, "/wild-heatmap")) {
+				int wx, wy;
+				worldpos tpos;
+				wilderness_type *w_ptr;
+				FILE *fp;
+
+				tpos.wz = 0;
+
+				fp = fopen("wild-hotmap_day.txt", "w");
+				for (wy = MAX_WILD_Y - 1; wy != -1; wy--) {
+					for (wx = 0; wx != MAX_WILD_X; wx++) {
+						tpos.wx = wx;
+						tpos.wy = wy;
+						w_ptr = &wild_info[tpos.wy][tpos.wx];
+						if (w_ptr->type == WILD_UNDEFINED) {
+							msg_format(Ind, "WILD_UNDEFINED: %d, %d.", wx, wy);
+							w_ptr->type = determine_wilderness_type(&tpos);
+						}
+
+						if (w_ptr->type == WILD_TOWN) {
+							k = town[w_ptr->town_idx].baselevel;
+							fprintf(fp, "[%2d]", k);
+						} else {
+							k = terrain_level(w_ptr->type, w_ptr->radius, w_ptr->town_lev, FALSE); //day
+							fprintf(fp, "%4d", k);
+						}
+					}
+					fprintf(fp, "\n");
+				}
+				fclose(fp);
+
+				fp = fopen("wild-hotmap_night.txt", "w");
+				for (wy = MAX_WILD_Y - 1; wy != -1; wy--) {
+					for (wx = 0; wx != MAX_WILD_X; wx++) {
+						tpos.wx = wx;
+						tpos.wy = wy;
+						w_ptr = &wild_info[tpos.wy][tpos.wx];
+#if 0 // all defined now, by the day-loop above
+						if (w_ptr->type == WILD_UNDEFINED) {
+							msg_format(Ind, "WILD_UNDEFINED: %d, %d.", wx, wy);
+							w_ptr->type = determine_wilderness_type(&tpos);
+						}
+#endif
+
+						if (w_ptr->type == WILD_TOWN) {
+							k = town[w_ptr->town_idx].baselevel;
+							fprintf(fp, "[%2d]", k);
+						} else {
+							k = terrain_level(w_ptr->type, w_ptr->radius, w_ptr->town_lev, TRUE); //night
+							fprintf(fp, "%4d", k);
+						}
+					}
+					fprintf(fp, "\n");
+				}
+				fclose(fp);
+
+				return;
+			}
 			else if (prefix(messagelc, "/fix-wildflock")) {
 				/* erase WILD_F_..LOCK flags from when the server crashed during dungeon removal (??) */
 				if (wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].flags & WILD_F_LOCKDOWN) {
