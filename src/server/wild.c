@@ -4081,6 +4081,14 @@ static void decorate_dungeon_entrance(struct worldpos *wpos, struct dungeon_type
 	Rand_value = tmp_seed;
 }
 
+#if 0 /* Currently done by thin_surface_spawns(). However, might be nicer to not clear a fixed % each time interval, but rather limit to a max # monsters per sector or sth? */
+/* Reduces amount of monsters on this wpos to non-crazy levels.
+   To be called before generating a bunch of new monsters.
+   (Kinda similar like thin_surface_spawns() for towns.) */
+static void wild_cull_monsters(struct worldpos *wpos) {
+}
+#endif
+
 /* Generates a wilderness level. */
 void wilderness_gen(struct worldpos *wpos) {
 	int i, y, x;
@@ -4141,6 +4149,8 @@ void wilderness_gen(struct worldpos *wpos) {
 	if (IS_DAY) {
 		/* Make some day-time residents */
 		if (!(w_ptr->flags & WILD_F_INHABITED)) {
+			//wild_cull_monsters(wpos);
+			/* Add new monsters */
 			//for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
 			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos);
 			w_ptr->flags |= WILD_F_INHABITED;
@@ -4150,6 +4160,8 @@ void wilderness_gen(struct worldpos *wpos) {
 	else {
 		/* Make some night-time residents */
 		if (!(w_ptr->flags & WILD_F_INHABITED)) {
+			//wild_cull_monsters(wpos);
+			/* Add new monsters */
 			//for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
 			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos);
 			w_ptr->flags |= WILD_F_INHABITED;
