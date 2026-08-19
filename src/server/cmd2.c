@@ -155,6 +155,7 @@ void do_cmd_go_up(int Ind) {
 	bool iddc = (p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y && 1 == WPOS_IRONDEEPDIVE_Z);
 	bool mandos = (p_ptr->wpos.wx == hallsofmandos_wpos_x && p_ptr->wpos.wy == hallsofmandos_wpos_y && 1 == hallsofmandos_wpos_z);
 
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return;
 	if (!(zcave = getcave(wpos))) return;
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	l_ptr = getfloor(wpos);
@@ -1012,6 +1013,7 @@ void do_cmd_go_down(int Ind) {
 	bool iddc = (p_ptr->wpos.wx == WPOS_IRONDEEPDIVE_X && p_ptr->wpos.wy == WPOS_IRONDEEPDIVE_Y && 0 -1 == WPOS_IRONDEEPDIVE_Z);
 	bool mandos = (p_ptr->wpos.wx == hallsofmandos_wpos_x && p_ptr->wpos.wy == hallsofmandos_wpos_y && -1 == hallsofmandos_wpos_z);
 
+	if (p_ptr->esp_link_flags & LINKF_VIEW_DEDICATED) return;
 	if (!(zcave = getcave(wpos))) return;
 #ifdef NOMAGIC_INHIBITS_LEVEL_PROBTRAVEL
 	l_ptr = getfloor(wpos);
