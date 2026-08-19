@@ -1715,8 +1715,8 @@ extern bool sound_bell(void) {
 		if (on_demand_loading || no_cache_audio) {
 			if (!(wave = load_sample(bell_sound_idx, s))) {
 				/* we really failed to load it */
-				plog(format("SDL sound load failed (%d, %d) [2].", bell_sound_idx, s));
-				puts(format("SDL sound load failed (%d, %d) [2].", bell_sound_idx, s));
+				plog(format("SDL sound load failed (%d, %d) [2] <%s>.", bell_sound_idx, s, SDL_GetError()));
+				puts(format("SDL sound load failed (%d, %d) [2] <%s>.", bell_sound_idx, s, SDL_GetError()));
 				return(FALSE);
 			}
 		} else {
@@ -1767,8 +1767,8 @@ extern bool sound_page(void) {
 		if (on_demand_loading || no_cache_audio) {
 			if (!(wave = load_sample(page_sound_idx, s))) {
 				/* we really failed to load it */
-				plog(format("SDL sound load failed (%d, %d) [3].", page_sound_idx, s));
-				puts(format("SDL sound load failed (%d, %d) [3].", page_sound_idx, s));
+				plog(format("SDL sound load failed (%d, %d) [3] <%s>.", page_sound_idx, s, SDL_GetError()));
+				puts(format("SDL sound load failed (%d, %d) [3] <%s>.", page_sound_idx, s, SDL_GetError()));
 				return(FALSE);
 			}
 		} else {
@@ -1819,8 +1819,8 @@ extern bool sound_warning(void) {
 		if (on_demand_loading || no_cache_audio) {
 			if (!(wave = load_sample(warning_sound_idx, s))) {
 				/* we really failed to load it */
-				plog(format("SDL sound load failed (%d, %d) [4].", warning_sound_idx, s));
-				puts(format("SDL sound load failed (%d, %d) [4].", warning_sound_idx, s));
+				plog(format("SDL sound load failed (%d, %d) [4] <%s>.", warning_sound_idx, s, SDL_GetError()));
+				puts(format("SDL sound load failed (%d, %d) [4] <%s>.", warning_sound_idx, s, SDL_GetError()));
 				return(FALSE);
 			}
 		} else {
@@ -1961,8 +1961,8 @@ static bool play_sound(int event, int type, int vol, s32b player_id, int dist_x,
 		if (on_demand_loading || no_cache_audio) {
 			if (!(wave = load_sample(event, s))) {
 				/* we really failed to load it */
-				plog(format("SDL sound load failed (%d, %d) [1].", event, s));
-				puts(format("SDL sound load failed (%d, %d) [1].", event, s));
+				plog(format("SDL sound load failed (%d, %d) [1] <%s>.", event, s, SDL_GetError()));
+				puts(format("SDL sound load failed (%d, %d) [1] <%s>.", event, s, SDL_GetError()));
 				return(FALSE);
 			}
 		} else {
@@ -2160,8 +2160,8 @@ static void play_sound_weather(int event) {
 		if (on_demand_loading || no_cache_audio) {
 			if (!(wave = load_sample(event, s))) {
 				/* we really failed to load it */
-				plog(format("SDL sound load failed (%d, %d) [5].", event, s));
-				puts(format("SDL sound load failed (%d, %d) [5].", event, s));
+				plog(format("SDL sound load failed (%d, %d) [5] <%s>.", event, s, SDL_GetError()));
+				puts(format("SDL sound load failed (%d, %d) [5] <%s>.", event, s, SDL_GetError()));
 				return;
 			}
 		} else {
@@ -2357,8 +2357,8 @@ static void play_sound_weather_vol(int event, int vol) {
 		if (on_demand_loading || no_cache_audio) {
 			if (!(wave = load_sample(event, s))) {
 				/* we really failed to load it */
-				plog(format("SDL sound load failed (%d, %d) [6].", event, s));
-				puts(format("SDL sound load failed (%d, %d) [6].", event, s));
+				plog(format("SDL sound load failed (%d, %d) [6] <%s>.", event, s, SDL_GetError()));
+				puts(format("SDL sound load failed (%d, %d) [6] <%s>.", event, s, SDL_GetError()));
 				return;
 			}
 		} else {
@@ -2561,8 +2561,8 @@ static void play_sound_ambient(int event) {
 #endif
 			if (!(wave = load_sample(event, s))) {
 				/* we really failed to load it */
-				plog(format("SDL sound load failed (%d, %d) [7].", event, s));
-				puts(format("SDL sound load failed (%d, %d) [7].", event, s));
+				plog(format("SDL sound load failed (%d, %d) [7] <%s>.", event, s, SDL_GetError()));
+				puts(format("SDL sound load failed (%d, %d) [7] <%s>.", event, s, SDL_GetError()));
 				return;
 			}
 #if 0 /* see above */
@@ -3122,8 +3122,8 @@ static void fadein_next_music(void) {
 		/* Try loading it, if it's not cached */
 		if (!wave && !(wave = load_song(music_cur, music_cur_song))) {
 			/* we really failed to load it */
-			plog(format("SDL music load failed (%d, %d) [1].", music_cur, music_cur_song));
-			puts(format("SDL music load failed (%d, %d) [1].", music_cur, music_cur_song));
+			plog(format("SDL music load failed (%d, %d) [1] <%s>.", music_cur, music_cur_song, SDL_GetError()));
+			puts(format("SDL music load failed (%d, %d) [1] <%s>.", music_cur, music_cur_song, SDL_GetError()));
 			return;
 		}
 
@@ -3234,8 +3234,8 @@ static void fadein_next_music(void) {
 	/* Try loading it, if it's not cached */
 	if (!wave && !(wave = load_song(music_next, music_next_song))) {
 		/* we really failed to load it */
-		plog(format("SDL music load failed (%d, %d) <%s> [2].", music_next, music_next_song, songs[music_next].paths[music_next_song]));
-		puts(format("SDL music load failed (%d, %d) <%s> [2].", music_next, music_next_song, songs[music_next].paths[music_next_song]));
+		plog(format("SDL music load failed (%d, %d) <%s> [2] <%s>.", music_next, music_next_song, songs[music_next].paths[music_next_song], SDL_GetError()));
+		puts(format("SDL music load failed (%d, %d) <%s> [2] <%s>.", music_next, music_next_song, songs[music_next].paths[music_next_song], SDL_GetError()));
 		return;
 	}
 
@@ -3375,8 +3375,8 @@ static bool play_music_instantly(int event, bool override_log) {
 	/* Try loading it, if it's not cached */
 	if (!wave && !(wave = load_song(music_cur, music_cur_song))) {
 		/* we really failed to load it */
-		plog(format("SDL music load failed (%d, %d) [3].", music_cur, music_cur_song));
-		puts(format("SDL music load failed (%d, %d) [3].", music_cur, music_cur_song));
+		plog(format("SDL music load failed (%d, %d) [3] <%s>.", music_cur, music_cur_song, SDL_GetError()));
+		puts(format("SDL music load failed (%d, %d) [3] <%s>.", music_cur, music_cur_song, SDL_GetError()));
 		return(FALSE);
 	}
 
@@ -5117,8 +5117,8 @@ void do_cmd_options_mus_sdl(bool reset) {
 						/* Try loading it, if it's not cached */
 						if (!wave && !(wave = load_song(music_cur, music_cur_song))) {
 							/* we really failed to load it */
-							plog(format("SDL music load failed (%d, %d) [1].", music_cur, music_cur_song));
-							puts(format("SDL music load failed (%d, %d) [1].", music_cur, music_cur_song));
+							plog(format("SDL music load failed (%d, %d) [4] <%s>.", music_cur, music_cur_song, SDL_GetError()));
+							puts(format("SDL music load failed (%d, %d) [4] <%s>.", music_cur, music_cur_song, SDL_GetError()));
 							return;
 						}
 						/* In case the current music was played via play_music_vol() at reduced volume */
