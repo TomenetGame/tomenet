@@ -3709,8 +3709,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 	/* initialize the terrain */
 	terrain.type = w_ptr->type;
 	init_terrain(&terrain, w_ptr->radius, w_ptr->town_lev);
-
-	/* hack -- set the monster level */
+	/* hack -- set the monster level (which in turn was set by above 'init_terrain()'! */
 	monster_level = terrain.monst_lev;
 
 	/* Hack -- Start with basic floors */
