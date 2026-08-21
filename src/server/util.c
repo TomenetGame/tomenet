@@ -1828,9 +1828,27 @@ void handle_music(int Ind) {
 		return;
 #ifdef DM_MODULES
 	} else if (in_module(&p_ptr->wpos)) {
+		int m, m2, m3;
+
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
-		Send_music(Ind, exec_lua(0, format("return adventure_locale(%d, 4)", p_ptr->wpos.wz)), 0, 0);
+
+		m = exec_lua(0, format("return get_music_index(adventure_locale(%d, 4))", p_ptr->wpos.wz));
+		m2 = exec_lua(0, format("return get_music_index(adventure_locale(%d, 5))", p_ptr->wpos.wz));
+		m3 = exec_lua(0, format("return get_music_index(adventure_locale(%d, 6))", p_ptr->wpos.wz));
+
+		/* In case the main music is not yet defined on server side (ie during module development stage), skip to safe choice in default music pack: */
+		if (m2 == -1) {
+			m2 = m3;
+			m3 = -1;
+		}
+		if (m == -1) {
+			m = m2;
+			m2 = m3;
+			m3 = -1;
+		}
+
+		Send_music(Ind, m, m2, m3);
 		return;
 #endif
 	} else if (in_pvparena(&p_ptr->wpos)) {
@@ -2305,7 +2323,7 @@ void handle_ambient_sfx(int Ind, cave_type *c_ptr, struct worldpos *wpos, bool s
 		return;
 #ifdef DM_MODULES
 	} else if (in_module(wpos)) {
-		Send_sfx_ambient(Ind, exec_lua(0, format("return adventure_locale(%d, 5)", wpos->wz)), TRUE);
+		Send_sfx_ambient(Ind, exec_lua(0, format("return adventure_locale(%d, 7)", wpos->wz)), TRUE);
 		return;
 #endif
 	}

@@ -620,15 +620,16 @@ audio_bgm = {
     "Nazgul_Khamul_slain",
     "Nazgul_Witchking_slain",
 
-    "event_Halloween_done",--248
-    "TheAshMountains",--249
+    "event_Halloween_done",
+    "TheAshMountains",
+    "module_UnderNanElmoth", --250
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end
 --    if getn(audio_bgm) < idx then return "" end
     return (audio_bgm[idx + 1])
 end
---just for do_cmd_options_mus_sdl():
+--for do_cmd_options_mus_sdl() and adventure_locale():
 function get_music_index(name)
     local i
 

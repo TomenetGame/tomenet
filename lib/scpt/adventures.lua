@@ -38,9 +38,9 @@ SPEED_RAIN = 3
 
 -- TABLES
 
-LOCALE_00 = { -- dlvl loc_pre desc music ambient
+LOCALE_00 = { -- dlvl loc_pre desc music_event_name music_event_name_alt music_event_name_alt2 ambient
 -- Under Elmoth
-[2] = {50,"under","Nan Elmoth",32,SFX_AMBIENT_NONE}, -- Mirkwood
+[2] = {50,"under","Nan Elmoth","module_UnderNanElmoth","Mirkwood","",SFX_AMBIENT_NONE}, -- Mirkwood
 -- Stormy Isle
 [3] = {150,"at the","Stormy Isle",35,SFX_AMBIENT_SHORE}, -- Submerged Ruins
 -- Unoccupied
