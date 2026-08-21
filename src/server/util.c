@@ -1835,6 +1835,10 @@ void handle_music(int Ind) {
 		cm3 = string_exec_lua(0, format("return(adventure_locale(%d, 6))", p_ptr->wpos.wz));
 
 		//hack: init music as 'higher priority than boss-specific':
+		/* Notes: This should probably not be here,
+		   but just be set once when a player enters a module for the first time, ie in xtra1.c when players are teleported to the module.
+		   This is a bit hypothetical as nobody can be teleported into a module while Morgoth's music_monster is running or sth,
+		   but maybe inside a module we actually want monster-specific boss music, so it should not be set to -2 in handle_music() on each invocation. */
 		p_ptr->music_monster = -2;
 
 		Send_named_music(Ind, cm, cm2, cm3);
