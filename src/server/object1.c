@@ -8332,3 +8332,21 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 	//byte slain_bosses, slain_nazgul, slain_superuniques, slain_sauron, slain_morgoth, slain_zuaon;
 }
 #endif
+
+void imprint_object_dun_mon(object_type *o_ptr, struct worldpos *wpos) {
+	if (wpos && wpos->wz) {
+		dungeon_type *d_ptr = getdungeon(wpos);
+
+		o_ptr->find_dun =
+#ifdef IRONDEEPDIVE_MIXED_TYPES
+		    in_irondeepdive(wpos) ? -iddc[ABS(wpos->wz)].type :
+#endif
+		    (
+		    //d_ptr->theme ? d_ptr->theme :
+		    (d_ptr->type ? d_ptr->type : -128)); //-128 encodes 0 aka 'Wilderness' dungeon
+	}
+	if (monster_death_ridx) {
+		o_ptr->find_ridx = monster_death_ridx;
+		o_ptr->find_reidx = monster_death_reidx;
+	}
+}

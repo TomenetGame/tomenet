@@ -8146,14 +8146,20 @@ bool monster_death(int Ind, int m_idx) {
 					qq_ptr->iron_trade = p_ptr->iron_trade;
 					qq_ptr->iron_turn = turn;
 					determine_artifact_timeout(a_idx, wpos);
+
+					/* as we get pre-owned, we need to force-imprint here */
+					imprint_object_fully(qq_ptr, p_ptr);
+					/* same as above @ pre-owned reason, as find_id is already set, also force-imprint this (dungeon+monster info) */
+					imprint_object_dun_mon(qq_ptr, wpos);
 				}
 #endif
+
 				drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 				s_printf("..dropped.\n");
 				no_art = FALSE;
 			} else s_printf("..failed.\n");
 		}
-		/* If a dungeon boss doesn't have or drop an artifact, drop a stat potion! (Spider) */
+		/* If a dungeon boss doesn't have or drop an artifact, drop a stat potion! (Thanks to Spider (Arjen) for the suggestion) */
 		if (no_art) {
 			qq_ptr = &forge;
 			object_wipe(qq_ptr);
@@ -8212,7 +8218,13 @@ bool monster_death(int Ind, int m_idx) {
 			if (true_artifact_p(qq_ptr)) determine_artifact_timeout(qq_ptr->name1, wpos);
 			/* One-time imprint "*identifyability*" for client's ITH_STARID/item_tester_hook_starid: */
 			if (!maybe_hidden_powers(Ind, qq_ptr, FALSE, NULL)) qq_ptr->ident |= ID_NO_HIDDEN;
+
+			/* as we get pre-owned, we need to force-imprint here */
+			imprint_object_fully(qq_ptr, p_ptr);
+			/* same as above @ pre-owned reason, as find_id is already set, also force-imprint this (dungeon+monster info) */
+			imprint_object_dun_mon(qq_ptr, wpos);
 #endif
+
 			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 			s_printf("..dropped.\n");
 		}
@@ -8497,6 +8509,11 @@ bool monster_death(int Ind, int m_idx) {
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade; //not sure if Nazgul rings should really be tradeable in IDDC..
 			qq_ptr->iron_turn = -1;
+
+			/* as we get pre-owned, we need to force-imprint here */
+			imprint_object_fully(qq_ptr, p_ptr);
+			/* same as above @ pre-owned reason, as find_id is already set, also force-imprint this (dungeon+monster info) */
+			imprint_object_dun_mon(qq_ptr, wpos);
 #endif
 			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
@@ -8559,6 +8576,11 @@ bool monster_death(int Ind, int m_idx) {
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade;
 			qq_ptr->iron_turn = -1;
+
+			/* as we get pre-owned, we need to force-imprint here */
+			imprint_object_fully(qq_ptr, p_ptr);
+			/* same as above @ pre-owned reason, as find_id is already set, also force-imprint this (dungeon+monster info) */
+			imprint_object_dun_mon(qq_ptr, wpos);
 #endif
 
 			qq_ptr->ident |= ID_CURSED;
@@ -8656,6 +8678,11 @@ bool monster_death(int Ind, int m_idx) {
 			qq_ptr->mode = p_ptr->mode;
 			qq_ptr->iron_trade = p_ptr->iron_trade;
 			qq_ptr->iron_turn = -1;
+
+			/* as we get pre-owned, we need to force-imprint here */
+			imprint_object_fully(qq_ptr, p_ptr);
+			/* same as above @ pre-owned reason, as find_id is already set, also force-imprint this (dungeon+monster info) */
+			imprint_object_dun_mon(qq_ptr, wpos);
  #endif
 
 			/* Drop it in the dungeon */
@@ -8727,6 +8754,11 @@ bool monster_death(int Ind, int m_idx) {
 				qq_ptr->iron_trade = p_ptr->iron_trade;
 				qq_ptr->iron_turn = -1;
 				determine_artifact_timeout(i, wpos);
+
+				/* as we get pre-owned, we need to force-imprint here */
+				imprint_object_fully(qq_ptr, p_ptr);
+				/* same as above @ pre-owned reason, as find_id is already set, also force-imprint this (dungeon+monster info) */
+				imprint_object_dun_mon(qq_ptr, wpos);
  #endif
 #endif
 
@@ -8907,6 +8939,12 @@ bool monster_death(int Ind, int m_idx) {
 			//qq_ptr->iron_trade = p_ptr->iron_trade;
 			qq_ptr->iron_turn = -1;
 //#endif
+
+			/* as we get pre-owned, we need to force-imprint here */
+			imprint_object_fully(qq_ptr, p_ptr);
+			/* same as above @ pre-owned reason, as find_id is already set, also force-imprint this (dungeon+monster info) */
+			imprint_object_dun_mon(qq_ptr, wpos);
+
 			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		} else if (r_idx == RI_DOR) {
@@ -8995,6 +9033,12 @@ bool monster_death(int Ind, int m_idx) {
 			//qq_ptr->iron_trade = p_ptr->iron_trade;
 			qq_ptr->iron_turn = -1;
 //#endif
+
+			/* as we get pre-owned, we need to force-imprint here */
+			imprint_object_fully(qq_ptr, p_ptr);
+			/* same as above @ pre-owned reason, as find_id is already set, also force-imprint this (dungeon+monster info) */
+			imprint_object_dun_mon(qq_ptr, wpos);
+
 			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
 		} else if (r_idx == RI_MIRROR) {
@@ -9007,6 +9051,11 @@ bool monster_death(int Ind, int m_idx) {
 			qq_ptr->mode = p_ptr->mode;
 			//qq_ptr->iron_trade = p_ptr->iron_trade;  --needed?
 			//qq_ptr->iron_turn = -1;
+
+			/* as we get pre-owned, we need to force-imprint here */
+			imprint_object_fully(qq_ptr, p_ptr);
+			/* same as above @ pre-owned reason, as find_id is already set, also force-imprint this (dungeon+monster info) */
+			imprint_object_dun_mon(qq_ptr, wpos);
 
 			drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 
@@ -9150,6 +9199,11 @@ bool monster_death(int Ind, int m_idx) {
 					qq_ptr->iron_trade = p_ptr->iron_trade;
 					qq_ptr->iron_turn = turn;
 					determine_artifact_timeout(a_idx, wpos);
+
+					/* as we get pre-owned, we need to force-imprint here */
+					imprint_object_fully(qq_ptr, p_ptr);
+					/* same as above @ pre-owned reason, as find_id is already set, also force-imprint this (dungeon+monster info) */
+					imprint_object_dun_mon(qq_ptr, wpos);
 #endif
 					drop_near(TRUE, 0, qq_ptr, -1, wpos, y, x);
 				}

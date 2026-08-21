@@ -11192,21 +11192,8 @@ int drop_near(bool handle_d, int Ind, object_type *o_ptr, int chance, struct wor
 	/* Object memory fluff */
 	if (opening_chest) imprint_chest_content(o_ptr);
 	/* If it's a new, unowned item, just imprint the dungeon already where it just dropped */
-	if (!o_ptr->find_id && wpos->wz) { /* check 'find_id' instead of 'owner' to detect 'unowned' state despite maybe being 'force-preowned' */
-		dungeon_type *d_ptr = getdungeon(wpos);
-
-		o_ptr->find_dun =
-#ifdef IRONDEEPDIVE_MIXED_TYPES
-		    in_irondeepdive(wpos) ? -iddc[ABS(wpos->wz)].type :
-#endif
-		    (
-		    //d_ptr->theme ? d_ptr->theme :
-		    (d_ptr->type ? d_ptr->type : -128)); //-128 encodes 0 aka 'Wilderness' dungeon
-	}
-	if (monster_death_ridx) {
-		o_ptr->find_ridx = monster_death_ridx;
-		o_ptr->find_reidx = monster_death_reidx;
-	}
+	/* We check 'find_id' instead of 'owner' to detect 'unowned' state despite maybe being 'force-preowned' */
+	imprint_object_dun_mon(o_ptr, !o_ptr->find_id ? wpos : NULL);
 
 	/* Result */
 	return(o_idx);

@@ -1447,6 +1447,7 @@ extern cptr wand_adj[MAX_METALS], rod_adj[MAX_METALS];
 extern bool object_has_flavor(int k_idx);
 extern void clear_comboset(object_type *o_ptr);
 extern bool is_empty_magicdevice(object_type *o_ptr);
+extern void imprint_object_dun_mon(object_type *o_ptr, struct worldpos *wpos);
 
 /* object2.c */
 extern int charge_wand_fix[256], charge_wand_rnd[256], charge_staff_fix[256], charge_staff_rnd[256];
