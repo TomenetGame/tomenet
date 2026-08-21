@@ -39,43 +39,47 @@ SPEED_RAIN = 3
 -- TABLES
 
 LOCALE_00 = { -- dlvl loc_pre desc music_event_name music_event_name_alt music_event_name_alt2 ambient
--- Under Elmoth
-[2] = {50,"under","Nan Elmoth","module_UnderNanElmoth","Mirkwood","",SFX_AMBIENT_NONE}, -- Mirkwood
--- Stormy Isle
-[3] = {150,"at the","Stormy Isle",35,SFX_AMBIENT_SHORE}, -- Submerged Ruins
--- Unoccupied
-[4] = {-2,"","",0,SFX_AMBIENT_NONE},
-[5] = {-2,"","",0,SFX_AMBIENT_NONE},
-[6] = {-2,"","",0,SFX_AMBIENT_NONE},
-[7] = {-2,"","",0,SFX_AMBIENT_NONE},
-[8] = {-2,"","",0,SFX_AMBIENT_NONE},
-[9] = {-2,"","",0,SFX_AMBIENT_NONE},
-[10] = {-2,"","",0,SFX_AMBIENT_NONE}
+ -- Under Elmoth
+  [2] = {50,"under","Nan Elmoth","module_UnderNanElmoth","Mirkwood","",SFX_AMBIENT_NONE},
+ -- Stormy Isle
+  [3] = {150,"at the","Stormy Isle","module_StormyIsle","SubmergedRuins","",SFX_AMBIENT_SHORE},
+ -- Unoccupied
+  [4] = {-2,"","","","","",SFX_AMBIENT_NONE},
+  [5] = {-2,"","","","","",SFX_AMBIENT_NONE},
+  [6] = {-2,"","","","","",SFX_AMBIENT_NONE},
+  [7] = {-2,"","","","","",SFX_AMBIENT_NONE},
+  [8] = {-2,"","","","","",SFX_AMBIENT_NONE},
+  [9] = {-2,"","","","","",SFX_AMBIENT_NONE},
+ [10] = {-2,"","","","","",SFX_AMBIENT_NONE}
 } -- dlvl = depth level for apply_magic() / place_item_module() chests, etc.
 
 WEATHER_00 = { -- weather wind season intensity speed
--- Under Elmoth
-[2] = {0,0,0,0,0},
--- Stormy Isle
-[3] = {WEATHER_RAIN,WIND_WINDY,SEASON_NORMAL,INTENSE_WIND,SPEED_RAIN}, -- Light Rain
--- Unoccupied
-[4] = {0,0,0,0,0},
-[5] = {0,0,0,0,0},
-[6] = {0,0,0,0,0},
-[7] = {0,0,0,0,0},
-[8] = {0,0,0,0,0},
-[9] = {0,0,0,0,0},
-[10] = {0,0,0,0,0}
+ -- Under Elmoth
+  [2] = {0,0,0,0,0},
+ -- Stormy Isle
+  [3] = {WEATHER_RAIN,WIND_WINDY,SEASON_NORMAL,INTENSE_WIND,SPEED_RAIN}, -- Light Rain
+ -- Unoccupied
+  [4] = {0,0,0,0,0},
+  [5] = {0,0,0,0,0},
+  [6] = {0,0,0,0,0},
+  [7] = {0,0,0,0,0},
+  [8] = {0,0,0,0,0},
+  [9] = {0,0,0,0,0},
+ [10] = {0,0,0,0,0}
 }
 
 GE_TYPE = { -- announcement_time signup_time end_turn min_participants limited noghost challenge
-["Under Elmoth"] = {2,0,32,1,6,1,1}, -- ge->signup_begins_announcement = (challenge ? 1 : 0)
-["Stormy Isle"] = {2,0,42,1,0,0,0}
+ ["Under Elmoth"] = {2,0,32,1,6,1,1}, -- ge->signup_begins_announcement = (challenge ? 1 : 0)
+ ["Stormy Isle"]  = {2,0,42,1,0,0,0},
+
+ [""]   = {0,0, 0,0,0,0,0},
 } -- time in minutes; "sensible announcement_time" of 5m minimum avoids double announce and uninitialized ge->*
 
 GE_EXTRA = { -- INDEX level req. (min,max) 00depth (min,max,entry,exit)
-["Under Elmoth"] = {1,0,1,2,2,2,2}, -- min 0 = newly created level 1 only
-["Stormy Isle"] = {2,1,21,3,3,3,3}
+ ["Under Elmoth"] = {1,0, 1,2,2,2,2}, -- min 0 = newly created level 1 only
+ ["Stormy Isle"]  = {2,1,21,3,3,3,3},
+
+ [""]   = {0,0, 0,0,0,0,0},
 } -- reordering this ? find GE_EXTRA to update ge->extra[i-1] hardcode, xtra1.c
 
 GE_DESCRIPTION = { -- description (lines [0,9])
@@ -102,7 +106,9 @@ GE_DESCRIPTION = { -- description (lines [0,9])
 "",
 "",
 "",
-""}
+""},
+
+[""] = { "", "", "", "", "", "", "", "", "", "" },
 }
 
 -- FUNCTIONS
