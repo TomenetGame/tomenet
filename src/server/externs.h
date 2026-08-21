@@ -1354,6 +1354,7 @@ extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s3
 #ifdef USE_SOUND_2010
 extern int Send_music(int ind, int music, int musicalt, int musicalt2);
 extern int Send_music_vol(int ind, int music, int musicalt, int musicalt2, char vol);
+extern int Send_named_music(int ind, cptr music, cptr musicalt, cptr musicalt2);
 extern int Send_sfx_ambient(int ind, int sfx_ambient, bool smooth);
 extern int Send_sfx_volume(int ind, char sfx_ambient_volume, char sfx_weather_volume);
 #endif

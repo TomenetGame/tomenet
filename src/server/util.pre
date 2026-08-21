@@ -399,6 +399,18 @@ extern int timer_falling_star;
 /* for fun with client-side weather */
 extern int Send_weather(int ind, int weather_type, int weather_wind, int weather_gen_speed, int weather_intensity, int weather_speed, bool update_clouds, bool revoke_clouds);
 
+/* Audio - added just for Send_music() to be accessible from within adventure modules via custom_...() functions - C. Blue */
+extern int Send_sound(int ind, int sound, int alternative, int type, int vol, s32b player_id, int dist_x, int dist_y);
+#ifdef USE_SOUND_2010
+extern int Send_music(int ind, int music, int musicalt, int musicalt2);
+extern int Send_music_vol(int ind, int music, int musicalt, int musicalt2, char vol);
+extern int Send_named_music(int ind, cptr music, cptr musicalt, cptr musicalt2);
+extern int Send_sfx_ambient(int ind, int sfx_ambient, bool smooth);
+extern int Send_sfx_volume(int ind, char sfx_ambient_volume, char sfx_weather_volume);
+#endif
+extern int Send_beep(int ind);
+extern int Send_warning_beep(int ind);
+
 /* Allow LUA scripts to restart the server (seasonal events) */
 extern void timed_shutdown(int k, bool terminate);
 extern void geno_towns(void);

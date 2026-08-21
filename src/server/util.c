@@ -1828,27 +1828,16 @@ void handle_music(int Ind) {
 		return;
 #ifdef DM_MODULES
 	} else if (in_module(&p_ptr->wpos)) {
-		int m, m2, m3;
+		cptr cm, cm2, cm3;
+
+		cm = string_exec_lua(0, format("return(adventure_locale(%d, 4))", p_ptr->wpos.wz));
+		cm2 = string_exec_lua(0, format("return(adventure_locale(%d, 5))", p_ptr->wpos.wz));
+		cm3 = string_exec_lua(0, format("return(adventure_locale(%d, 6))", p_ptr->wpos.wz));
 
 		//hack: init music as 'higher priority than boss-specific':
 		p_ptr->music_monster = -2;
 
-		m = exec_lua(0, format("return get_music_index(adventure_locale(%d, 4))", p_ptr->wpos.wz));
-		m2 = exec_lua(0, format("return get_music_index(adventure_locale(%d, 5))", p_ptr->wpos.wz));
-		m3 = exec_lua(0, format("return get_music_index(adventure_locale(%d, 6))", p_ptr->wpos.wz));
-
-		/* In case the main music is not yet defined on server side (ie during module development stage), skip to safe choice in default music pack: */
-		if (m2 == -1) {
-			m2 = m3;
-			m3 = -1;
-		}
-		if (m == -1) {
-			m = m2;
-			m2 = m3;
-			m3 = -1;
-		}
-
-		Send_music(Ind, m, m2, m3);
+		Send_named_music(Ind, cm, cm2, cm3);
 		return;
 #endif
 	} else if (in_pvparena(&p_ptr->wpos)) {

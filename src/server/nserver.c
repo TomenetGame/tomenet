@@ -10208,6 +10208,29 @@ int Send_music_vol(int Ind, int music, int musicalt, int musicalt2, char vol) {
 	p_ptr->music_vol = 100;
 	return(Packet_printf(&connp->c, "%c%c", PKT_MUSIC, music));
 }
+/* For adventure modules:
+   Almost same as Send_music() but takes the 3 songs as event-strings instead of index numbers.
+   'music' strings may be NULL or "" for 'no music defined'. */
+int Send_named_music(int Ind, cptr music, cptr musicalt, cptr musicalt2) {
+	int m, m2, m3;
+
+	m = (music ? exec_lua(0, format("return get_music_index(\"%s\")", music)) : -1);
+	m2 = (musicalt ? exec_lua(0, format("return get_music_index(\"%s\")", musicalt)) : -1);
+	m3 = (musicalt2 ? exec_lua(0, format("return get_music_index(\"%s\")", musicalt2)) : -1);
+
+	/* In case the main music is not yet defined on server side (ie during module development stage), skip to safe choice in default music pack: */
+	if (m2 == -1) {
+		m2 = m3;
+		m3 = -1;
+	}
+	if (m == -1) {
+		m = m2;
+		m2 = m3;
+		m3 = -1;
+	}
+
+	return(Send_music(Ind, m, m2, m3));
+}
 int Send_sfx_ambient(int Ind, int sfx_ambient, bool smooth) {
 	player_type *p_ptr = Players[Ind];
 	cave_type *c_ptr, **zcave;
