@@ -2116,8 +2116,10 @@ void lore_treasure(int m_idx, int num_item, int num_gold)
 
 /*
  * Here comes insanity from PernAngband.. hehehe.. - Jir -
+ * Clarification: This is not the normal sanity-damage routine (take_sanity_hit())
+ * but a special routine for getting mentally shocked by spotting an ELDRITCH_HORROR.
+ * 'necro': Unused - for when this function is invoked by the (non-existant) Necronomicon instead of a monster.
  */
-//void sanity_blast(int Ind, monster_type * m_ptr, bool necro)
 static void sanity_blast(int Ind, int m_idx, bool necro) {
 	player_type *p_ptr = Players[Ind];
 	monster_type    *m_ptr = &m_list[m_idx];
