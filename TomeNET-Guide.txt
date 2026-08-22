@@ -19218,8 +19218,6 @@ stated.
                                 Mastery adds 33% (at 0.000) to 75% chance for
                                 shots to ricochet, randomly from once up to 3
                                 times (at 50.000), hitting multiple enemies.
-                                Note that magic and ethereal ammo fades away
-                                the moment it hits, and never ricochets.
                                 At mastery skill 20.000 you will be skillful
                                 enough to make your shots ricochet at nearby
                                 enemies instead of completely random directions

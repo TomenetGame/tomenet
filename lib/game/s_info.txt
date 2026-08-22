@@ -278,8 +278,8 @@ I:1000:0
 #F:HIDDEN
 
 N:39:Boomerang-mastery
-D:Allows more skillful use of boomerangs.
-D:Reduces chance of boomerangs to break or to not return.
+D:Allows more skillful use of boomerangs and increases general throwing skill.
+D:Reduces chance of boomerangs to not return. Improves ricochetting.
 #A:4:Toggle fire-till-kill mode
 I:1000:0
 
