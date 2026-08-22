@@ -948,15 +948,17 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (tagx) {
 				char *cq;
 
-				/* Swap parm order: Inscription first, then item */
-				cq = token[1];
-				token[1] = token[2];
-				token[2] = cq;
-
 				/* 'x' variant REQUIRES an inscription if an item is specified, so it requires two tokens - or zero for default operation */
 				if (tk != 0 && tk != 2) {
 					msg_print(Ind, "\377oUsage: /tagx [<inscription> <a..n|+|*>]");
 					return;
+				}
+
+				/* Swap parm order: Inscription first, then item */
+				if (tk == 2) {
+					cq = token[1];
+					token[1] = token[2];
+					token[2] = cq;
 				}
 			}
 
@@ -1030,7 +1032,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
 				   Side note: If @@@ is present, an additional @@ will simply be ignored.
 				   NOTE: In case of 'tagging' this actually won't tag but rather overwrite the existing inscription. */
-				if (pi_pos && !maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) {
+				if (pi_pos && !maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) { //Note: pi_pos implies tk >= 2
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "Power-inscribing %s.", o_name);
 					//msg_print(Ind, NULL);
@@ -1069,7 +1071,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (pi_pos) { /* We got a power-inscription but cannot apply it? (Cause item isn't *ID*ed) Still inscribe the rest if any. */
 						/* Append the rest of the inscription, if any */
 						strcpy(tmp, pi_pos + (redux ? 3 : 2));
-					} else strcpy(tmp, token[2]);
+					} else if (tk >= 2) strcpy(tmp, token[2]);
 
 					/* Normal tagging */
 					if (!o_ptr->note)
@@ -1208,16 +1210,16 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			if (etagx) {
 				char *cq;
 
-				/* Swap parm order: Inscription first, then item */
-				cq = token[1];
-				token[1] = token[2];
-				token[2] = cq;
-
 				/* 'x' variant REQUIRES an inscription if an item is specified, so it requires two tokens - or zero for default operation */
 				if (tk != 0 && tk != 2) {
 					msg_print(Ind, "\377oUsage: /etagx [<inscription> <a..n|+|*>]");
 					return;
 				}
+
+				/* Swap parm order: Inscription first, then item */
+				cq = token[1];
+				token[1] = token[2];
+				token[2] = cq;
 			}
 
 			if (tk >= 2 && (pi_pos = strstr(token[2], "@@"))) {
@@ -1261,7 +1263,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Special hack: Inscribing '@@' applies an automatic item-powers inscription.
 				   Side note: If @@@ is present, an additional @@ will simply be ignored.
 				   NOTE: In case of 'tagging' this actually won't tag but rather overwrite the existing inscription. */
-				if (pi_pos && !maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) {
+				if (pi_pos && !maybe_hidden_powers(Ind, o_ptr, FALSE, NULL)) { //Note: pi_pos implies tk >= 2
 					object_desc(Ind, o_name, o_ptr, TRUE, 3);
 					msg_format(Ind, "Power-inscribing %s.", o_name);
 					//msg_print(Ind, NULL);
@@ -1300,7 +1302,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					if (pi_pos) { /* We got a power-inscription but cannot apply it? (Cause item isn't *ID*ed) Still inscribe the rest if any. */
 						/* Append the rest of the inscription, if any */
 						strcpy(tmp, pi_pos + (redux ? 3 : 2));
-					} else strcpy(tmp, token[2]);
+					} else if (tk >= 2) strcpy(tmp, token[2]);
 
 					/* Normal tagging */
 					if (!o_ptr->note)
