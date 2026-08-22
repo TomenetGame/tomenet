@@ -623,6 +623,9 @@ audio_bgm = {
     "event_Halloween_done",
     "TheAshMountains",
     "module_UnderNanElmoth", --250
+    "module_StormyIsle",
+    "module_extra1", --optional
+    "module_extra2", --optional
 }
 function get_music_name(idx)
     if audio_bgm[idx + 1] == nil then return "" end
