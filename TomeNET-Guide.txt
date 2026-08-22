@@ -18654,7 +18654,7 @@ stated.
                                 average, good, excellent or special.
                                 At the beginning you will only feel 'cursed'
                                 or 'good', and only for melee weapons, armour,
-                                boomerangs, digging tools, and veryrarely for
+                                boomerangs, digging tools, and very rarely for
                                 ranged weapons and ammunition.
                                 Raise combat skill to at least 10 to get more
                                 distinctive feelings about melee weapons,
