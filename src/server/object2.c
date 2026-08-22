@@ -6508,7 +6508,7 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 		   an ego power from a_m_aux_3() above. */
 		if (make_artifact(wpos, o_ptr_bak ? o_ptr_bak : o_ptr, resf)) {
 			if (o_ptr_bak) object_copy(o_ptr, o_ptr_bak);
-			s_printf("ART_ROLL: %d,%d succeeded roll %d/%d\n", o_ptr->tval, o_ptr->sval, i, rolls);
+			s_printf("ART_ROLL: %d,%d succeeded roll %d/%d\n", o_ptr->tval, o_ptr->sval, i + 1, rolls);
 			break;
 		}
 		//s_printf("ART_ROLL: %d,%d failed roll %d/%d\n", o_ptr->tval, o_ptr->sval, i, rolls); //spammy, as it will work on any item even those who cannot become arts
