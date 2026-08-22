@@ -353,9 +353,24 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
  #else /* New (2026): Also count how many '-' are there up to 'max' xp and only paint those (and full symbols before those) yellow, so we can see how much we got drained roughtly: */
 		else if (level < max_lev) Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO_DRAINED, "---------");
 		else  {
-			/* Amount of remaining-before-levelup XP in current bar to be painted in 'drained' colour: */
-			int got_drained = ((max - cur) * 20 + half_exp) / scale, i;
+			int i;
 			char tmp_drained[32];
+
+			/* Amount of remaining-before-levelup XP in current bar to be painted in 'drained' colour
+			   (we ignore half_exp as it is only transmitted for cur xp anyway, not also for max xp as we'd need,
+			   and also it will never be practically significant for this kind of display): */
+  #if 0 //rounding issues
+			int got_drained = ((max - cur) * 20) / scale;
+  #else
+			int got_cur = ((cur - adv_prev) * 20) / scale;
+			int got_max = ((max - adv_prev) * 20) / scale;
+			int got_drained = got_max - got_cur;
+  #endif
+
+
+			// Here at the end '*2' beause we'll get '/2' in the for-loop again,
+			// but we need to print +1 more char (where the dark blue extra bubble used to be, in undrained state)
+			if (got_org != 19) got_drained += (got_org % 2) * 2;
 
 			Term_putstr(COL_EXP + 3, ROW_EXP, -1, EXP_BAR_NO, "---------");
 
