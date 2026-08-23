@@ -2573,7 +2573,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 						break;
 					}
 					case 6: case 7: case 8: case 9: {
-						int stat = rand_int(6);
+						int stat = rand_int(C_ATTRIBUTES);
 
 						switch (stat) {
 							case A_STR: act = "strong"; break;
