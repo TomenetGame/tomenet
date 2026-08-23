@@ -1390,6 +1390,41 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 		else c_msg_print(buf + 2); /* Treat as normal message */
 		return(0); }
 
+	/* Process "!:<str>" -- new in 2026: Just allow auto-executing a macro-action line on file loading ('command macro' type). */
+	case '!': {
+		char *cp = buf, tmp[1024];
+		int n;
+
+		/* Translate colour codes in the format '{c' */
+		while ((cp = strchr(cp + 1, '{')))
+			if (*(cp + 1) != '{') *cp = '\377'; /* Colour code */
+			else { /* Double '{' becomes just one regular '{' without colour code intention */
+				strcpy(tmp, cp + 1);
+				strcpy(cp, tmp);
+			}
+
+		/* Execute the macro directly! */
+		text_to_ascii(tmp, buf + 2);
+
+		/* We are now inside a macro */
+		parse_macro = TRUE;
+		inkey_sleep_semaphore = FALSE; //init semaphore for macros containing \wXX
+		/* Assume that the macro has no problems with possibly missing items so far */
+		macro_missing_item = 0;
+		/* Paranoia: Make sure that the macro won't instantly fail because something failed before */
+		abort_prompt = FALSE;
+
+		/* Push the "macro complete" key */
+		if (Term_key_push(29)) return(0);
+
+		/* Get the length of the action */
+		n = strlen(tmp);
+
+		/* Push the macro "action" onto the key queue */
+		Term_key_push_buf(tmp, n); /* Push all at once */
+
+		return(0); }
+
 	}
 
 	/* Failure */
@@ -1553,7 +1588,10 @@ errr process_pref_file_manual(cptr name) {
  * and the character name + monster form specific macros (if form-specific macros are disabled).
  * Returns 0 if no error occurred, process_pref_file() return codes otherwise. */
 //#define LOCAL_warning_form_macros /* Produce a purely client-side 'warning_form_macros'? Added a server-side version instead, so leave this commented out. */
-errr load_charspec_macros(void) {
+/* Added parms:
+   'base': load character-name based macro file
+   'form': load form-specific macro file. */
+errr load_charspec_macros(bool base, bool form) {
 	char tmp[MAX_CHARS];
 	errr error1;
 #ifdef LOCAL_warning_form_macros
@@ -1564,9 +1602,11 @@ errr load_charspec_macros(void) {
 #endif
 
 
-	/* Character name first */
-	sprintf(tmp, "%s.prf", cname);
-	error1 = process_pref_file(tmp);
+	if (base) {
+		/* Character name first */
+		sprintf(tmp, "%s.prf", cname);
+		error1 = process_pref_file(tmp);
+	} else error1 = 0;
 
 #ifdef LOCAL_warning_form_macros
 	/* Reset the monster-form-macros warning on character change */
@@ -1577,25 +1617,27 @@ errr load_charspec_macros(void) {
 	}
 #endif
 
-	/* Then, if in a monster form, form-specific macros for that charactername^form combo */
-	if (c_cfg.load_form_macros && c_p_ptr->body_name[0] && strcmp(c_p_ptr->body_name, "Player")) {
-		sprintf(tmp, "%s%c%s.prf", cname, PRF_BODY_SEPARATOR, c_p_ptr->body_name);
+	if (form) {
+		/* Then, if in a monster form, form-specific macros for that charactername^form combo */
+		if (c_cfg.load_form_macros && c_p_ptr->body_name[0] && strcmp(c_p_ptr->body_name, "Player")) {
+			sprintf(tmp, "%s%c%s.prf", cname, PRF_BODY_SEPARATOR, c_p_ptr->body_name);
 #ifndef LOCAL_warning_form_macros
-		process_pref_file(tmp);
+			process_pref_file(tmp);
 #else
-		error2 = process_pref_file(tmp);
-		/* ^ File exists or not? Doesn't matter, but we use it for a client-side warning to use form-macros :) */
-		/* Warn once per character, if newbie_hints are enabled and we are below max_plv 15 */
-		if (warning_form_macros) {
-			/* error -1 means file not found - the warning gets disabled once the player apparently created a form-specific file */
-			if (error2 != -1 || !c_cfg.newbie_hints || p_ptr->max_plv >= 15) warning_form_macros = FALSE;
-			else {
-				warning_form_macros = FALSE; /* only one-time warning */
-				c_msg_print("\374\377yHINT: You can create monster-form-specific macro sets by saving them in the");
-				c_msg_print("\374\377y      macro menu ('\377o%\377y' key) via '\377oF\377y' key while in a specific monster form.");
+			error2 = process_pref_file(tmp);
+			/* ^ File exists or not? Doesn't matter, but we use it for a client-side warning to use form-macros :) */
+			/* Warn once per character, if newbie_hints are enabled and we are below max_plv 15 */
+			if (warning_form_macros) {
+				/* error -1 means file not found - the warning gets disabled once the player apparently created a form-specific file */
+				if (error2 != -1 || !c_cfg.newbie_hints || p_ptr->max_plv >= 15) warning_form_macros = FALSE;
+				else {
+					warning_form_macros = FALSE; /* only one-time warning */
+					c_msg_print("\374\377yHINT: You can create monster-form-specific macro sets by saving them in the");
+					c_msg_print("\374\377y      macro menu ('\377o%\377y' key) via '\377oF\377y' key while in a specific monster form.");
+				}
 			}
-		}
 #endif
+		}
 	}
 
 	return(error1);

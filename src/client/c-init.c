@@ -317,7 +317,8 @@ void initialize_player_pref_files(void) {
 	}
 
 	/* Access the "character" pref file */
-	load_charspec_macros();
+	strcpy(c_p_ptr->body_name, "Player"); /* Init: Assume non-monster-form body. Server will instantly after char-login send us Send_various() with form, if we are in any. */
+	load_charspec_macros(TRUE, FALSE);
 
 	/* Finally give the actual info how to check the tomenet log for details */
 	if (cfg_outdated == 1) cfg_outdated = 2;
@@ -3753,6 +3754,7 @@ void client_init(char *argv1, bool skip) {
 
 	/* also wipe all previously loaded macros, so they don't accidentally get merged */
 	macro_clear();
+	player_pref_files_loaded = FALSE;
 
 	status = 0; //not required, paranoia?
 	race = class = trait = sex = 0;

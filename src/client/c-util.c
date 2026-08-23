@@ -6923,7 +6923,7 @@ void interact_macros(void) {
 		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yp\377w) Paste currently shown macro action to chat");
 		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yw\377w) Swap the macro(s) of two keys");
 		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yd\377w) Delete a macro from a key   (restores a key's normal behaviour)");
-		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yo\377w) Add an on-loading comment line to a macro file");
+		Term_putstr(xoffs, l++, -1, TERM_WHITE, "(\377yo\377w/\377yO\377w) Add an on-loading comment line / auto-action (command-type) to a macro file");
 		l++;
 		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377ya\377w) Enter a new macro action manually. Afterwards..");
 		Term_putstr(xoffs, l++, -1, TERM_SLATE, "(\377yh\377w) ..create a hybrid macro     (usually preferable over command/normal)");
@@ -7357,7 +7357,7 @@ void interact_macros(void) {
 
 			/* Ask for new comment, hint that old comments will be discarded if confirmed */
 			if (replace) {
-				Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Replace on-load comment line to a macro file");
+				Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Replace on-load comment line in a macro file");
 				Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Replace comment: ");
 			} else Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Add new comment: ");
 				Term_gotoxy(17, l + 3);
@@ -7389,6 +7389,86 @@ void interact_macros(void) {
 			rename(tmptmp2, tmptmp);
 			if (!*buf) c_msg_print("Comment has been removed from the file.");
 			else c_msg_print("Comment has been set.");
+		}
+
+		/* Add a '!:action' style on-loading macro auto-executing action line to a macro file; also view any such lines it already has */
+		else if (i == 'O') {
+			FILE *fp, *fp2;
+			char tmptmp[1024], tmptmp2[1024], buftmp[MACRO_MAXLEN];
+			bool replace = FALSE;
+
+			/* Prompt */
+			Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Add on-load auto-action to a macro file");
+
+			/* Get a filename, handle ESCAPE */
+			Term_putstr(0, l + 1, -1, TERM_WHITE, "File: ");
+
+			/* Ask for a file */
+			/* Use the character name by default */
+			if (!*tmp) sprintf(tmp, "%s.prf", cname);
+			if (!askfor_aux(tmp, 70, 0)) continue;
+
+			/* Read file, forward to temp file */
+			path_build(tmptmp, 1024, ANGBAND_DIR_USER, tmp);
+			path_build(tmptmp2, 1024, ANGBAND_DIR_USER, format("%s_temp", tmp));
+			if (!my_fexists(tmptmp)) {
+				c_msg_format("\377yError: No such file '%s'.", tmptmp);
+				continue;
+			}
+
+			/* Scan file for auto-action lines only, print them out */
+			fp = fopen(tmptmp, "r");
+			if (!fp) {
+				c_msg_format("\377yError: Cannot open file '%s'.", tmptmp);
+				continue;
+			}
+			while (fgets(buftmp, MACRO_MAXLEN, fp))
+				if (buftmp[0] == '!' && buftmp[1] == ':') {
+					buftmp[strlen(buftmp) - 1] = 0; //trim trailing \r
+					c_msg_format("\377WFound existing auto-action:\377w %s", buftmp + 2);
+					replace = TRUE;
+				}
+			fclose(fp);
+
+			/* Re-open files, this time to prepare for translation to strip existing auto-actions and adding a new one */
+			fp = fopen(tmptmp, "r");
+			if (!fp) {
+				c_msg_format("\377yError: Cannot reopen file '%s'.", tmptmp);
+				continue;
+			}
+			fp2 = fopen(tmptmp2, "w");
+			if (!fp2) {
+				fclose(fp);
+				c_msg_format("\377yError: Cannot create file '%s'.", tmptmp2);
+				continue;
+			}
+
+			/* Ask for new comment, hint that old auto-actions will be discarded if confirmed */
+			if (replace) {
+				Term_putstr(0, l, -1, TERM_L_GREEN, "Command: Replace on-load auto-action in a macro file");
+				Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Replace action: ");
+			} else Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Add new action: ");
+				Term_gotoxy(17, l + 3);
+			if (!askfor_aux(buf, MACRO_MAXLEN - 1, 0)) {
+				fclose(fp);
+				fclose(fp2);
+				continue;
+			}
+
+			/* Insert the new auto-action line at the very beginning. */
+			if (*buf) fprintf(fp2, "!:%s\n", buf);
+
+			/* Translate file again, just copying lines but skipping all auto-action lines. */
+			while (fgets(buftmp, MACRO_MAXLEN, fp)) { /* Forward rest of the file */
+				if (buftmp[0] == '!' && buftmp[1] == ':') continue; /* Discard all old auto-actions */
+				fputs(buftmp, fp2);
+			}
+			fclose(fp);
+			fclose(fp2);
+			/* Replace original file with the modified version that has the new auto-action or got the auto-action deleted */
+			rename(tmptmp2, tmptmp);
+			if (!*buf) c_msg_print("Auto-action has been removed from the file.");
+			else c_msg_print("Auto-action has been set.");
 		}
 
 		/* Create an empty macro */
@@ -7792,7 +7872,7 @@ void interact_macros(void) {
 				process_pref_file(buf);
 			}
 			/* Access the "character" pref file */
-			load_charspec_macros();
+			load_charspec_macros(TRUE, TRUE);
 
 			macro_processing_exclusive = FALSE;
 			c_msg_print("Reninitialized all macros, omitting 'global.prf'");
@@ -7836,7 +7916,7 @@ void interact_macros(void) {
 			}
 #if 0 /* skip exactly these here */
 			/* Access the "character" pref file */
-			load_charspec_macros();
+			load_charspec_macros(TRUE, TRUE);
 #endif
 
 			macro_processing_exclusive = FALSE;
@@ -7883,7 +7963,7 @@ void interact_macros(void) {
 			}
 #if 0 /* skip these here */
 			/* Access the "character" pref file */
-			load_charspec_macros();
+			load_charspec_macros(TRUE, TRUE);
 #endif
 
 			macro_processing_exclusive = FALSE;
@@ -7928,7 +8008,7 @@ void interact_macros(void) {
 				process_pref_file(buf);
 			}
 			/* Access the "character" pref file */
-			load_charspec_macros();
+			load_charspec_macros(TRUE, TRUE);
 #endif
 
 			macro_processing_exclusive = FALSE;
@@ -7986,7 +8066,7 @@ void interact_macros(void) {
 				process_pref_file(buf);
 			}
 			/* Access the "character" pref file */
-			load_charspec_macros();
+			load_charspec_macros(TRUE, TRUE);
 
 
 			macro_processing_exclusive = FALSE;
@@ -12254,7 +12334,7 @@ void options_immediate(bool init) {
 		prt_gold(p_ptr->au);
 		prt_level(p_ptr->lev, p_ptr->max_lev, p_ptr->max_plv, p_ptr->max_exp, p_ptr->exp, exp_adv, exp_adv_prev);
 	}
-	if (changed7 != c_cfg.load_form_macros && c_cfg.load_form_macros) load_charspec_macros();
+	if (changed7 != c_cfg.load_form_macros && c_cfg.load_form_macros) load_charspec_macros(TRUE, TRUE);
 	if (changed8 != c_cfg.auto_inscr_off && !c_cfg.auto_inscr_off) apply_auto_inscriptions(-1);
 	if (changed9a != c_cfg.ascii_feats || changed9b != c_cfg.ascii_items || changed9c != c_cfg.ascii_monsters || changed9d != c_cfg.ascii_uniques) Send_redraw(0);
 }
