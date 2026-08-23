@@ -8196,6 +8196,12 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 	/* Older non-imprinted items or admin-generated items, avoid pointless output. */
 	if (!o_ptr->find_id) return;
 
+	/* Not for wrapped gifts or seals */
+	if (o_ptr->tval == TV_SPECIAL && (
+	    o_ptr->sval == SV_SEAL ||
+	    (o_ptr->sval >= SV_GIFT_WRAPPING_START && o_ptr->sval <= SV_GIFT_WRAPPING_END)))
+		return;
+
 	/* The time stamp can take up a lot of space, making the full line exceed 80 chars :/ */
 #if 0
 	/* Full length time stamp - this is probably just TMI anyway oO */
