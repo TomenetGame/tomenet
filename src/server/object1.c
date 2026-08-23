@@ -8262,7 +8262,7 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 		sprintf(source_from, "by %s", o_ptr->find_name);
 	} else if (o_ptr->find_special == 12000) {
 		sprintf(source_acttime, "created%s", hr_time);
-		sprintf(source_from, "");
+		*source_from = 0;
 	} else if (o_ptr->find_special >= 11000) {
 		sprintf(source_acttime, "found%s", hr_time);
 		sprintf(source_from, "by disarming a trap");
