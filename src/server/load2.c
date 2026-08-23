@@ -990,7 +990,7 @@ static void rd_item(object_type *o_ptr) {
 	/* fix ruined royal armour */
 	//if (is_armour(o_ptr->tval) /* && o_ptr->tval != TV_SHIELD */ && !o_ptr->level && (k_info[o_ptr->k_idx].flags5 & TR5_WINNERS_ONLY)) o_ptr->level = 51;
 	/* fix low level dsms etc */
-	if (is_armour(o_ptr->tval) && o_ptr->level && o_ptr->level <= 20 && k_info[o_ptr->k_idx].cost > 2000) determine_level_req(-9999, o_ptr);
+	//if (is_armour(o_ptr->tval) && o_ptr->level && o_ptr->level <= 20 && k_info[o_ptr->k_idx].cost > 2000) determine_level_req(-9999, o_ptr);
 
 
 	/* anti-cheeze */
@@ -1020,8 +1020,7 @@ static void rd_item(object_type *o_ptr) {
 	}
  #endif
 	/* fix weapons too while at it.. */
-	if (is_melee_weapon(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level == 20 && k_info[o_ptr->k_idx].cost > 1000)
-		determine_level_req(-9999, o_ptr);
+	//if (is_melee_weapon(o_ptr->tval) && !o_ptr->name1 && !o_ptr->name2 && o_ptr->level && o_ptr->level == 20 && k_info[o_ptr->k_idx].cost > 1000) determine_level_req(-9999, o_ptr);
 #endif
 
 	/* fix rods stuck in charging state (from recharge spell) */
