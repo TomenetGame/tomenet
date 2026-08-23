@@ -1943,6 +1943,12 @@ void do_cmd_fill_bottle(int Ind, int force_slot) {
 
 			get_inven_item(Ind, item, &q_ptr);
 			object_desc(Ind, o_name, q_ptr, TRUE, 3);
+#ifdef ENABLE_SUBINVEN
+			if (item >= SUBINVEN_INVEN_MUL)
+				msg_format(Ind, "You have %s (%c)(%c).", o_name,
+				    index_to_label(item / SUBINVEN_INVEN_MUL - 1), index_to_label(item % SUBINVEN_INVEN_MUL));
+			else
+#endif
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
 		}
 		p_ptr->energy -= level_speed(&p_ptr->wpos);
@@ -2039,6 +2045,12 @@ void do_cmd_fill_bottle(int Ind, int force_slot) {
 			char o_name[ONAME_LEN];
 
 			object_desc(Ind, o_name, q_ptr, TRUE, 3);
+#ifdef ENABLE_SUBINVEN
+			if (item >= SUBINVEN_INVEN_MUL)
+				msg_format(Ind, "You have %s (%c)(%c).", o_name,
+				    index_to_label(item / SUBINVEN_INVEN_MUL - 1), index_to_label(item % SUBINVEN_INVEN_MUL));
+			else
+#endif
 			msg_format(Ind, "You have %s (%c).", o_name, index_to_label(item));
 		}
 	}
