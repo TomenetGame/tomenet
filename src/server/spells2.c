@@ -1757,7 +1757,7 @@ bool lose_all_info(int Ind) {
 				continue;
 			}
 
-			/* Skip non-items */
+			/* Skip non-items (normal inventory) */
 			i++;
 			if (!o_ptr->k_idx) continue;
 		} else {
@@ -1766,22 +1766,24 @@ bool lose_all_info(int Ind) {
 				/* Hack: Subinventories are currently not auto-redrawn, so we have to do it manually */
 				display_subinven(Ind, i);
 
+				/* Continue with normal inventory */
 				within_subinven = -1;
 				i++;
 				continue;
 			}
 
 			o_ptr = &p_ptr->subinventory[i][within_subinven];
-			within_subinven++;
 			/* No more items in current subinventory? */
 			if (!o_ptr->tval) {
 				/* Hack: Subinventories are currently not auto-redrawn, so we have to do it manually */
-				if (within_subinven) display_subinven(Ind, i);
+				display_subinven(Ind, i);
 
+				/* Skip non-items - ie continue with normal inventory */
 				within_subinven = -1;
 				i++;
 				continue;
 			}
+			within_subinven++;
 		}
 #else
 		o_ptr = &p_ptr->inventory[i];
