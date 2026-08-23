@@ -1791,7 +1791,7 @@ bool lose_all_info(int Ind) {
 #endif
 
 		/* Allow "protection" by the MENTAL flag */
-		if ((o_ptr->ident & ID_MENTAL) && magik(90)) continue;
+		if ((o_ptr->ident & ID_MENTAL) && magik(95)) continue;
 
 		/* Remove "default inscriptions" */
 		if (o_ptr->note && (o_ptr->ident & ID_SENSE)) {
