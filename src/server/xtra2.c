@@ -8163,7 +8163,7 @@ bool monster_death(int Ind, int m_idx) {
 		if (no_art) {
 			qq_ptr = &forge;
 			object_wipe(qq_ptr);
-			switch (rand_int(6)) {
+			switch (rand_int(C_ATTRIBUTES)) {
 			case 0: i = SV_POTION_INC_STR; break;
 			case 1: i = SV_POTION_INC_INT; break;
 			case 2: i = SV_POTION_INC_WIS; break;

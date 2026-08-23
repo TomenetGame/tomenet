@@ -4968,8 +4968,8 @@ static void apply_nexus(int Ind, monster_type *m_ptr, int Ind_attacker) {
 		msg_print(Ind, "\376\377oYour body starts to scramble...");
 
 		/* Pick a pair of stats */
-		ii = rand_int(6);
-		for (jj = ii; jj == ii; jj = rand_int(6)) /* loop */;
+		ii = rand_int(C_ATTRIBUTES);
+		for (jj = ii; jj == ii; jj = rand_int(C_ATTRIBUTES)) /* loop */;
 		max1 = p_ptr->stat_max[ii];
 		cur1 = p_ptr->stat_cur[ii];
 		max2 = p_ptr->stat_max[jj];
@@ -5036,8 +5036,8 @@ static void apply_morph(int Ind, int power, char *killer, int Ind_attacker) {
 		msg_print(Ind, "\376\377oYour body starts to scramble...");
 
 		/* Pick a pair of stats */
-		ii = rand_int(6);
-		for (jj = ii; jj == ii; jj = rand_int(6)) /* loop */;
+		ii = rand_int(C_ATTRIBUTES);
+		for (jj = ii; jj == ii; jj = rand_int(C_ATTRIBUTES)) /* loop */;
 
 		max1 = p_ptr->stat_max[ii];
 		cur1 = p_ptr->stat_cur[ii];
@@ -12287,14 +12287,14 @@ static bool project_p(int Ind, int who, int r, struct worldpos *wpos, int y, int
 
 		case 6: case 7: case 8: case 9:
 			/* Sustenance slightly helps (50%) */
-			do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 50, p_ptr->resist_time ? 1 : 2, TRUE);
+			do_dec_stat_time(Ind, rand_int(C_ATTRIBUTES), STAT_DEC_NORMAL, 50, p_ptr->resist_time ? 1 : 2, TRUE);
 			break;
 
 		case 10:
 			msg_print(Ind, "You're not as powerful as you used to be...");
 			for (k = 0; k < C_ATTRIBUTES; k++) {
 				/* Sustenance slightly helps (50%) */
-				do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 50, p_ptr->resist_time ? 1 : 3, FALSE);
+				do_dec_stat_time(Ind, rand_int(C_ATTRIBUTES), STAT_DEC_NORMAL, 50, p_ptr->resist_time ? 1 : 3, FALSE);
 			}
 			break;
 		}

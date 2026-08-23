@@ -2795,7 +2795,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 
 	if (fego1 & ETR1_SUSTAIN) {
 		/* Make a random sustain */
-		switch (randint(6)) {
+		switch (randint(C_ATTRIBUTES)) {
 		case 1: a_ptr->flags2 |= TR2_SUST_STR; break;
 		case 2: a_ptr->flags2 |= TR2_SUST_INT; break;
 		case 3: a_ptr->flags2 |= TR2_SUST_WIS; break;
@@ -3061,7 +3061,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 	}
 	if (fego1 & ETR1_R_STAT) {
 		/* Add a random stat */
-		switch (randint(6)) {
+		switch (randint(C_ATTRIBUTES)) {
 		case 1: a_ptr->flags1 |= TR1_STR; break;
 		case 2: a_ptr->flags1 |= TR1_INT; break;
 		case 3: a_ptr->flags1 |= TR1_WIS; break;
@@ -3072,7 +3072,7 @@ void add_random_ego_flag(artifact_type *a_ptr, u32b fego1, u32b fego2, bool *lim
 	}
 	if (fego1 & ETR1_R_STAT_SUST) {
 		/* Add a random stat and sustain it */
-		switch (randint(6)) {
+		switch (randint(C_ATTRIBUTES)) {
 		case 1:
 			a_ptr->flags1 |= TR1_STR;
 			a_ptr->flags2 |= TR2_SUST_STR;

@@ -1158,7 +1158,7 @@ static bool choose_stat_order(void) {
 			while (1) {
 				put_str("Choose your stat order (* for random, Q to quit): ", 20, 0);
 				if (hazard) {
-					j = rand_int(6);
+					j = rand_int(C_ATTRIBUTES);
 				} else {
 					Term->scr->cx = Term->wid;
 					Term->scr->cu = 1;

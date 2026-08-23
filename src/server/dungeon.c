@@ -6757,11 +6757,11 @@ static bool process_player_end_aux(int Ind) {
 			msg_print(Ind, "An ancient foul curse shakes your body!");
 #if 0
 			if (rand_int(2))
-			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+			(void)do_dec_stat(Ind, rand_int(C_ATTRIBUTES), STAT_DEC_NORMAL);
 			else if (!p_ptr->keep_life) lose_exp(Ind, (p_ptr->exp / 100) * MON_DRAIN_LIFE);
 			/* take_xp_hit(Ind, 1 + p_ptr->lev / 5 + p_ptr->max_exp / 50000L, "an ancient foul curse", TRUE, TRUE, TRUE, 0); */
 #else
-			(void)do_dec_stat(Ind, rand_int(6), STAT_DEC_NORMAL);
+			(void)do_dec_stat(Ind, rand_int(C_ATTRIBUTES), STAT_DEC_NORMAL);
 #endif
 		}
 	}
@@ -6801,7 +6801,7 @@ static bool process_player_end_aux(int Ind) {
 	if (p_ptr->black_breath &&
 	    rand_int((get_skill(p_ptr, SKILL_HCURING) >= 50) ? 250 : 150) <
 	    (p_ptr->prace == RACE_HOBBIT || p_ptr->body_monster == RI_HALFLING_SLINGER || p_ptr->body_monster == RI_SLHOBBIT || p_ptr->suscep_life ? 2 : 5)) {
-		(void)do_dec_stat_time(Ind, rand_int(6), STAT_DEC_NORMAL, 25, 0, TRUE);
+		(void)do_dec_stat_time(Ind, rand_int(C_ATTRIBUTES), STAT_DEC_NORMAL, 25, 0, TRUE);
 		take_xp_hit(Ind, 1 + p_ptr->lev * 3 + p_ptr->max_exp / 5000L,
 		    "Black Breath", TRUE, TRUE, TRUE, 0);
 	}
