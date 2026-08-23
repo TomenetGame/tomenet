@@ -15885,6 +15885,55 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				print_debug_drops_freq(Ind);
 				return;
 			}
+			else if (prefix(messagelc, "/table-stat")) { /* Print stat of all char/race combos, added for Saving Throw review - C. Blue */
+				int pc, pr, ps, min;
+				int pc_org = p_ptr->pclass, pr_org = p_ptr->prace, ps_org[C_ATTRIBUTES];
+				char tmp[MAX_CHARS];
+
+				for (i = 0; i < C_ATTRIBUTES; i++) ps_org[i] = p_ptr->stat_ind[i];
+
+				p_ptr->temp_misc_3 |= 0x02; //hax: don't recalc stat_ind[] array again during calc_boni()
+
+				for (pr = 0; pr < MAX_RACE; pr++) {
+					p_ptr->prace = pr;
+					p_ptr->rp_ptr = &race_info[pr];
+					//s_printf("Race %d, '%s':\n", pr, race_info[pr].title);
+					s_printf("Race %d, '%s'  -", pr, race_info[pr].title);
+
+					for (pc = 0; pc < MAX_CLASS; pc++) {
+						p_ptr->pclass = pc;
+						p_ptr->cp_ptr = &class_info[pc];
+						s_printf("  Class %d, '%s':\n", pc, class_info[pc].title);
+
+						//skip true lowest stat value '0' and instead start at '1' just so we can reach the max stat value of 37 if we're incrementing by more than just 1 -_-
+						for (ps = 0 + 1; ps <= 18 + 220 / 10 - 3; ps += 18) {
+							strcpy(tmp, "    Stats:");
+							for (i = 0; i < C_ATTRIBUTES; i++) {
+								p_ptr->stat_ind[i] = ps;
+
+								/* just obey minimum possible for a class/race combo */
+								min = 3 + p_ptr->rp_ptr->r_adj[i] + p_ptr->cp_ptr->c_adj[i];
+								if (p_ptr->stat_ind[i] < min) p_ptr->stat_ind[i] = min;
+
+								strcat(tmp, format(" %3d", p_ptr->stat_ind[i]));
+							}
+							calc_boni(Ind);
+
+							strcat(tmp, format(" -> %3d", p_ptr->skill_sav));
+							s_printf("%s\n", tmp);
+						}
+					}
+				}
+				p_ptr->temp_misc_3 &= ~0x02; //unhax
+
+				p_ptr->pclass = pc_org;
+				p_ptr->prace = pr_org;
+				p_ptr->cp_ptr = &class_info[pc_org];
+				p_ptr->rp_ptr = &race_info[pr_org];
+				for (i = 0; i < C_ATTRIBUTES; i++) p_ptr->stat_ind[i] = ps_org[i];
+				calc_boni(Ind);
+				return;
+			}
 		}
 	}
 

@@ -5168,6 +5168,7 @@ void calc_boni(int Ind) {
 
 
 	/* Calculate stats */
+	if (!(p_ptr->temp_misc_3 & 0x02)) //balance-testing hax
 	for (i = 0; i < C_ATTRIBUTES; i++) {
 		int top, use, ind;
 
