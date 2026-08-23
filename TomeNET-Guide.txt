@@ -8856,7 +8856,7 @@ The recommended and standard setting is 'on':
    This is where this new option, if enabled, comes in:
    As soon as a character has completed at least one turn of auto-retaliation
    or of firing-till-kill, it will gain an internal extra turn of energy for
-   free, which is reserved solely for the purpose of performing a movement
+   free, which is reserved solely for the purpose of performing an escape
    action, specifically phase/blink/teleport or taking staircases.
    This means that no matter which fraction of a turn has passed after casting
    a spell, the character will always be able to trigger such an action
