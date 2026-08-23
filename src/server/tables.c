@@ -2229,7 +2229,7 @@ player_race race_info[MAX_RACE] = {
  */
 	{ "Maia",
 		{ 1,  3, 3,  1,  0, 2 }, //boosted int/wisdom/dex
-		3, 20, 3, 0,  5, 1, 15, 5,
+		3, 20, 6, 0,  5, 1, 15, 5,
 		11, 400,//too low == bad since you need the quest mobs
 		255, 250,
 		71,  6, 160, 15, //copy-paste from half-elf, as they can be human or elf in appearance
@@ -2455,7 +2455,7 @@ char *special_prace_lookup2[MAX_RACE] = {
  *   {STR,INT,WIS,DEX,CON,CHR},
  *   {STR,INT,WIS,DEX,CON,CHR} recommended minimum values,
  *   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
- *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
+ *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,		NOTE: x_sav is unused
  *   HD, Exp
  */
 /* TODO: let's move them to p_info.txt */
@@ -2590,7 +2590,7 @@ player_class class_info[MAX_CLASS] = {
 		{-5, 3, 0, 1, -2, 1},
 		{0, 0 + 100, 0, 0, 0, 0},
 		25, 36, 30, 2,  16, 20, 34, 20,
-		7,  10, 9,  0,  0,  0,  15, 15,
+		7,  10, 10,  0,  0,  0,  15, 15,
 		0, 35,//0,30
 		//3, 35,
 
@@ -2697,8 +2697,8 @@ player_class class_info[MAX_CLASS] = {
 #else
 		{0, 0, 0 + 100, 0, 0, 0},
 #endif
-		20, 25, 32, 2,  16, 8, 48, 35,
-		7,   9, 12, 0,  0,  0, 20, 15,
+		20, 25, 40, 2,  16, 8, 48, 35,
+		7,   9, 10, 0,  0,  0, 20, 15,
 		5, 20, //2, 20,//4,20
 		//7, 20,
 
@@ -3111,7 +3111,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 21, 54, 1,  13, 16, 60, 40, //was c_thb 29
+		10, 21, 50, 1,  13, 16, 60, 40, //was c_thb 29
 		2, 8,  10, 0,  0,  2,  35, 10,
 		8, 30,//5, 30,//7,30
 		//10, 30,
@@ -3679,7 +3679,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		15, 30, 30,  4, 20, 30, 45, 23,
+		15, 30, 35,  4, 20, 30, 45, 23,
 		 0, 10, 10,  0,  3,  5, 20, 12,
 		3, 40, //3, 45
 
@@ -4123,7 +4123,7 @@ player_class class_info[MAX_CLASS] = {
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
 		30, 28, 36,  3, 35, 14, 55, 45,
-		 0, 9,  5,  0,  3,  3, 26, 25,
+		 0, 9,  10,  0,  3,  3, 26, 25,
 		7, 25,
 
 		{{ SKILL_COMBAT, /* Combat tree */
@@ -4243,7 +4243,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 28, 54, 1,  13, 16, 60, 40,
+		10, 28, 45, 1,  13, 16, 60, 40,
 		2, 8,  10, 0,  0,  2,  35, 10,
 		8, 30,
 
@@ -4374,7 +4374,7 @@ player_class class_info[MAX_CLASS] = {
 /*   c_dis, c_dev, c_sav, c_stl, c_srh, c_fos, c_thn, c_thb,
  *   x_dis, x_dev, x_sav, x_stl, x_srh, x_fos, x_thn, x_thb,
  *   HD, Exp*/
-		10, 25, 54, 1,  13, 16, 60, 40,
+		10, 25, 45, 1,  13, 16, 60, 40,
 		2, 8,  10, 0,  0,  2,  35, 10,
 		8, 30,
 
@@ -4506,8 +4506,8 @@ player_class class_info[MAX_CLASS] = {
 #else
 		{0, 0, 0 + 100, 0, 0, 0},
 #endif
-		20, 25, 32, 2,  16, 8, 48, 35,
-		7,   9, 12, 0,  0,  0, 20, 15,
+		20, 25, 35, 2,  16, 8, 48, 35,
+		7,   9, 10, 0,  0,  0, 20, 15,
 		5, 20, //2, 20,//4,20
 		//7, 20,
 
