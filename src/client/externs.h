@@ -281,6 +281,8 @@ extern char *macro__buf;
 extern char recorded_macro[MACRO_MAXLEN];
 extern bool recording_macro;
 
+extern bool processing_bodymonster_macros;
+
 extern s32b message__next;
 extern s32b message__last;
 extern s32b message__head;

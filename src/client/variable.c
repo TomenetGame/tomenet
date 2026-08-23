@@ -140,6 +140,8 @@ char *macro__buf;
 char recorded_macro[MACRO_MAXLEN];
 bool recording_macro = FALSE;
 
+bool processing_bodymonster_macros = FALSE;
+
 s32b message__next;
 s32b message__last;
 s32b message__head;

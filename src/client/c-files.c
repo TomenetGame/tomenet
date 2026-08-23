@@ -1391,6 +1391,8 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 		return(0); }
 
 	/* Process "!:<str>" -- new in 2026: Just allow auto-executing a macro-action line on file loading ('command macro' type). */
+	case '?': if (processing_bodymonster_macros) return(0);
+		/* fall through */
 	case '!': {
 		char *cp = buf, tmp[1024];
 		int n;

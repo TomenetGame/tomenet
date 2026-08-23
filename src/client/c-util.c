@@ -7368,6 +7368,7 @@ void interact_macros(void) {
 			}
 
 			/* Insert the new comment line at the very beginning. */
+
 			if (*buf) {
 				Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Make the comment a chat message (otherwise a normal message)? (y/N) ");
 				//Term_gotoxy(68, l + 3);
@@ -7391,10 +7392,10 @@ void interact_macros(void) {
 			else c_msg_print("Comment has been set.");
 		}
 
-		/* Add a '!:action' style on-loading macro auto-executing action line to a macro file; also view any such lines it already has */
+		/* Add a '!:action' (or '?:action') style on-loading macro auto-executing action line to a macro file; also view any such lines it already has */
 		else if (i == 'O') {
 			FILE *fp, *fp2;
-			char tmptmp[1024], tmptmp2[1024], buftmp[MACRO_MAXLEN];
+			char tmptmp[1024], tmptmp2[1024], buftmp[MACRO_MAXLEN], ch;
 			bool replace = FALSE;
 
 			/* Prompt */
@@ -7425,7 +7426,11 @@ void interact_macros(void) {
 			while (fgets(buftmp, MACRO_MAXLEN, fp))
 				if (buftmp[0] == '!' && buftmp[1] == ':') {
 					buftmp[strlen(buftmp) - 1] = 0; //trim trailing \r
-					c_msg_format("\377WFound existing auto-action:\377w %s", buftmp + 2);
+					c_msg_format("\377WFound existing action:\377w %s", buftmp + 2);
+					replace = TRUE;
+				} else if (buftmp[0] == '?' && buftmp[1] == ':') {
+					buftmp[strlen(buftmp) - 1] = 0; //trim trailing \r
+					c_msg_format("\377WFound existing non-form action:\377w %s", buftmp + 2);
 					replace = TRUE;
 				}
 			fclose(fp);
@@ -7456,7 +7461,16 @@ void interact_macros(void) {
 			}
 
 			/* Insert the new auto-action line at the very beginning. */
-			if (*buf) fprintf(fp2, "!:%s\n", buf);
+
+			if (*buf) {
+				Term_putstr(0, l + 3, -1, TERM_L_GREEN, "Don't execute on form change  (otherwise execute always)? (y/N) ");
+				//Term_gotoxy(68, l + 3);
+				ch = inkey();
+
+				/* Insert comment at the top */
+				if (ch == 'y' || ch == 'Y') fprintf(fp2, "?:%s\n", buf); /* don't execute this on loading of form-specific macros */
+				else fprintf(fp2, "!:%s\n", buf); /* always execute */
+			}
 
 			/* Translate file again, just copying lines but skipping all auto-action lines. */
 			while (fgets(buftmp, MACRO_MAXLEN, fp)) { /* Forward rest of the file */

@@ -2910,8 +2910,10 @@ int Receive_various(void) {
 
 	if (c_cfg.load_form_macros && strcmp(c_p_ptr->body_name, buf)) {
 		strcpy(c_p_ptr->body_name, buf);
+		processing_bodymonster_macros = TRUE;
 		if (streq(buf, "Player")) load_charspec_macros(TRUE, FALSE);
 		else load_charspec_macros(FALSE, TRUE);
+		processing_bodymonster_macros = FALSE;
 	} else strcpy(c_p_ptr->body_name, buf);
 
 	/*printf("Received various info: height %d, weight %d, age %d, sc %d\n", hgt, wgt, age, sc);*/
