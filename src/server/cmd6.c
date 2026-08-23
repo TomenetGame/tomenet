@@ -7816,6 +7816,8 @@ void do_cmd_activate(int Ind, int item, int dir) {
 
 						object_aware(Ind, o_ptr);
 						object_known(o_ptr);
+						imprint_object_fully(o_ptr, p_ptr);
+						o_ptr->find_special = 12001;
 
 						/* log it */
 						s_printf("POLYRING_CREATE: %s -> %s (L%d/%d, %dt, %d Au).\n",
