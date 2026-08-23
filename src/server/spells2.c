@@ -4041,6 +4041,7 @@ bool create_artifact_aux(int Ind, int item) {
 	   apply_magic() is used to set level requirements, and copy the a_ptr to o_ptr. */
 	apply_magic(&p_ptr->wpos, o_ptr, 50, FALSE, FALSE, FALSE, FALSE, RESF_NONE);
 	imprint_object_fully(o_ptr, p_ptr);
+	o_ptr->find_special = 12000;
 	o_ptr->owner = old_owner;
 	//o_ptr->find_id = old_find_id;
 	//strcpy(o_ptr->find_name, old_find_name);

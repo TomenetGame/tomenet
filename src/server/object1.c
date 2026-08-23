@@ -8257,7 +8257,11 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 		//switch(-o_ptr->find_reward) {
 	}
 
-	else if (o_ptr->find_special >= 11000) {
+	else if (o_ptr->find_special == 12000) {
+		sprintf(source_acttime, "created%s", hr_time);
+		sprintf(source_from, "");
+		//could also add the trap type, if we have ID'ed it
+	} else if (o_ptr->find_special >= 11000) {
 		sprintf(source_acttime, "found%s", hr_time);
 		sprintf(source_from, "by disarming a trap");
 		//could also add the trap type, if we have ID'ed it

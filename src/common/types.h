@@ -849,7 +849,7 @@ struct object_type {
 	s32b find_player_id;		/* not implemented -- Received from a player / taken from a player's death loot oO */
 	s32b find_player_turndiff;	/* not implemented -- ^ when? just use the diff to 'find_turn'! */
 	u16b find_ridx, find_reidx;	/* Found from this [ego] monster */
-	s16b find_special;		/* Found from digging (10000+feat), disarming (11000+trap_idx), in a chest (sval*1000+lev)...
+	s16b find_special;		/* Found in a chest (sval*1000+lev), from digging (10000+feat), disarming (11000+trap_idx), from artifact creation (12000),
 					   Maybe not, as this would overwrite the interesting origins above: bought from store(-stidx-1), stolen from store (-stidx-1000), bought from player store(-2000). */
 	s16b find_reward;		/* Received as pvp(121-127), event(1<=n<=120), extermination order (1000 + r_idx), /quest(<0) reward? */
 
