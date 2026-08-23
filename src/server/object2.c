@@ -6532,25 +6532,6 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 			return;
 		}
 
-		/* determine level-requirement */
-		determine_level_req(lev, o_ptr);
-
-		/* Override level requirements? */
-		if ((o_ptr->name1 == ART_RANDART) &&
-		    (cfg.arts_level_req >= 3))
-			o_ptr->level = 0;
-		else if ((a_ptr->flags4 & TR4_SPECIAL_GENE) &&
-		    (cfg.arts_level_req >= 1))
-			o_ptr->level = 0;
-		else if (cfg.arts_level_req >= 2)
-			o_ptr->level = 0;
-
-		/* Hack -- Mark the artifact as "created" */
-		if (true_artifact_p(o_ptr)) handle_art_inumpara(o_ptr->name1);
-
-		/* Info */
-		/* s_printf("Created artifact %d.\n", o_ptr->name1); */
-
 		/* Extract the other fields */
 		o_ptr->pval = a_ptr->pval;
 		o_ptr->ac = a_ptr->ac;
@@ -6583,6 +6564,25 @@ void apply_magic(struct worldpos *wpos, object_type *o_ptr, int lev, bool okay, 
 
 		/* Hack -- extract the "cursed" flag */
 		if (a_ptr->flags3 & TR3_CURSED) o_ptr->ident |= ID_CURSED;
+
+		/* determine level-requirement */
+		determine_level_req(lev, o_ptr);
+
+		/* Override level requirements? */
+		if ((o_ptr->name1 == ART_RANDART) &&
+		    (cfg.arts_level_req >= 3))
+			o_ptr->level = 0;
+		else if ((a_ptr->flags4 & TR4_SPECIAL_GENE) &&
+		    (cfg.arts_level_req >= 1))
+			o_ptr->level = 0;
+		else if (cfg.arts_level_req >= 2)
+			o_ptr->level = 0;
+
+		/* Hack -- Mark the artifact as "created" */
+		if (true_artifact_p(o_ptr)) handle_art_inumpara(o_ptr->name1);
+
+		/* Info */
+		/* s_printf("Created artifact %d.\n", o_ptr->name1); */
 
 		/* Done */
 		return;
