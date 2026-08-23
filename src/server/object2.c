@@ -5742,7 +5742,7 @@ static void a_m_aux_3(object_type *o_ptr, int level, int power, u64b resf) {
 			o_ptr->pval = 0;
 			o_ptr->timeout_magic = 0;
 
-			if (magik(45)) {
+			if (magik(55)) {
 				monster_race *r_ptr;
 
 				while (tries++ != 1000) {
