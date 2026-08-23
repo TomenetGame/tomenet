@@ -367,6 +367,8 @@ void prt_level(int level, int max_lev, int max_plv, s32b max, s32b cur, s32b adv
 			int got_drained = got_max - got_cur;
   #endif
 
+			/* Edge case: Perfect match (full XP), not sure when exactly it happens, but it can: */
+			if (got_drained == 20) got_drained = 19; // cap to max XP bar length
 
 			// Here at the end '*2' beause we'll get '/2' in the for-loop again,
 			// but we need to print +1 more char (where the dark blue extra bubble used to be, in undrained state)
