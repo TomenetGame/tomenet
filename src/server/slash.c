@@ -15527,7 +15527,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						msg_print(Ind, "\377WYour floor is \377ypermanently\377- static (LF2_STATIC).");
 						(*lflags2) |= LF2_STATIC;
 					} else {
-						msg_print(Ind, "\377WYour floor is not permanently static (LF2_STATIC).");
+						msg_print(Ind, "\377WYour floor is not permanently static (~LF2_STATIC).");
 						(*lflags2) &= ~LF2_STATIC;
 					}
 				} else {
@@ -15535,8 +15535,42 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						msg_print(Ind, "\377WYour floor is no longer permanently static (LF2_STATIC).");
 						(*lflags2) &= ~LF2_STATIC;
 					} else {
-						msg_print(Ind, "\377WYour floor is now \377ypermanently\377- static (LF2_STATIC).");
+						msg_print(Ind, "\377WYour floor is now \377ypermanently\377- static (~LF2_STATIC).");
 						(*lflags2) |= LF2_STATIC;
+					}
+				}
+				return;
+			}
+			/* Toggle no-livespawn state of a floor via LF2_NO_LIVE_SPAWN flag that prevents any monster generation on a floor until the flag is cleared again.
+			   Usage: /nlive [0|1]   - 0 = normal (not flagged), 1 = (no spawn possible), no parm = toggle. */
+			else if (prefix(messagelc, "/nlive")) {
+				struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+				u32b *lflags2;
+
+				/* Paranoia */
+				if (!l_ptr) {
+					msg_print(Ind, "\377oError: Your wpos has no l_ptr.");
+					return;
+				}
+
+				//if (in_sector000(&p_ptr->wpos)) lflags2 = &sector000flags2; else
+				lflags2 = &l_ptr->flags2;
+
+				if (tk) {
+					if (k) {
+						msg_print(Ind, "\377WYour floor is \377yspawn-free\377- (LF2_NO_LIVE_SPAWN).");
+						(*lflags2) |= LF2_NO_LIVE_SPAWN;
+					} else {
+						msg_print(Ind, "\377WYour floor is not spawn-free (~LF2_NO_LIVE_SPAWN).");
+						(*lflags2) &= ~LF2_NO_LIVE_SPAWN;
+					}
+				} else {
+					if ((*lflags2) & LF2_NO_LIVE_SPAWN) {
+						msg_print(Ind, "\377WYour floor is no longer spawn-free (LF2_NO_LIVE_SPAWN).");
+						(*lflags2) &= ~LF2_NO_LIVE_SPAWN;
+					} else {
+						msg_print(Ind, "\377WYour floor is now \377yspawn-free\377- (~LF2_NO_LIVE_SPAWN).");
+						(*lflags2) |= LF2_NO_LIVE_SPAWN;
 					}
 				}
 				return;
