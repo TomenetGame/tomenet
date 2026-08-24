@@ -8332,14 +8332,15 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 
 	source_acttime[0] = toupper(source_acttime[0]);
 	if (*source_from) {
-		sprintf(tmp, "\377%c(%s %s %s)\n", META_DIZ_ATTR, source_acttime, loc_name, source_from);
+		sprintf(tmp, "\377%c%s %s %s\n", META_DIZ_ATTR, source_acttime, loc_name, source_from);
 		/* Probably doesn't fit into one line, and we don't want to require horizontal scrolling just for this... */
-		if (strlen(tmp) > 80 + 3)
-			fprintf(fff, "\377%c(%s %s\n\377%c %s)\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from);
-		else /* it does fit */
+		if (strlen(tmp) > 80 + 3) // +3 for the non-printable chars: colour code (2 chars) and linebreak (1 char)
+			/* too long? Then split it up into two lines at some arbitrary point */
+			fprintf(fff, "\377%c%s %s\n\377%c %s\n", META_DIZ_ATTR, source_acttime, loc_name, META_DIZ_ATTR, source_from);
+		else /* it does fit into one line */
 			fprintf(fff, "%s", tmp);
 	}
-	else fprintf(fff, "\377%c(%s %s)\n", META_DIZ_ATTR, source_acttime, loc_name);
+	else fprintf(fff, "\377%c%s %s\n", META_DIZ_ATTR, source_acttime, loc_name);
 
 	//byte slain_bosses, slain_nazgul, slain_superuniques, slain_sauron, slain_morgoth, slain_zuaon;
 }
