@@ -7293,6 +7293,7 @@ static void process_games(int Ind) {
  */
 static void process_player_end(int Ind) {
 	player_type *p_ptr = Players[Ind];
+	int levspd = level_speed(&p_ptr->wpos);
 
 	//int x, y, i, j, new_depth, new_world_x, new_world_y;
 	//int regen_amount, NumPlayers_old = NumPlayers;
@@ -7435,7 +7436,6 @@ static void process_player_end(int Ind) {
 	old_triggered_auto_attacking = p_ptr->triggered_auto_attacking;
 	/* Mind Fusion/Control disables the char's automatic 'background' behaviour: No auto-retaliation and no running. */
 	if (!(p_ptr->esp_link && p_ptr->esp_link_type && (p_ptr->esp_link_flags & LINKF_OBJ))) {
-		int ls = level_speed(&p_ptr->wpos);
 		bool can_ret = !p_ptr->confused && !p_ptr->resting && !p_ptr->paralyzed && p_ptr->stun <= 100 && !p_ptr->suspended; /* <- MUST check these for NEW_AUTORET_2_ENERGY */
 
 		/* Check for fire-till-kill and auto-retaliation */
@@ -7465,7 +7465,7 @@ static void process_player_end(int Ind) {
 			/* If RESTRICT_DOUBLE_ENERGY_1 is NOT defined: Old way - get the usual 'double initial attack' in.
 			   Drawback: Have to wait for nearly a full turn (1-(1/attacksperround))
 			   for FTK/meleeret to break out for performing a different action. -- this should be fixed now. May break out in 1/attacksperround now.) */
-			if (p_ptr->energy >= ls) {
+			if (p_ptr->energy >= levspd) {
 				/* assume nothing will happen here */
 				p_ptr->auto_retaliating = FALSE;
 #ifdef NEW_AUTORET_2_ENERGY
@@ -7486,7 +7486,7 @@ static void process_player_end(int Ind) {
 #endif
 #ifdef RESTRICT_DOUBLE_ENERGY_2
 						/* Any actions (here: attacking) besides walking/running will clear one-turn-excess energy */
-						if (p_ptr->energy > level_speed(&p_ptr->wpos)) p_ptr->energy = level_speed(&p_ptr->wpos);
+						if (p_ptr->energy > levspd) p_ptr->energy = levspd;
 #endif
 
 						if (p_ptr->shoot_till_kill_spell) {
@@ -7525,7 +7525,7 @@ static void process_player_end(int Ind) {
 					int old_energy = p_ptr->energy;
 
 					/* Any actions (here: attacking) besides walking/running will clear one-turn-excess energy */
-					if (p_ptr->energy > level_speed(&p_ptr->wpos)) p_ptr->energy = level_speed(&p_ptr->wpos);
+					if (p_ptr->energy > levspd) p_ptr->energy = levspd;
 #endif
 
 					/* Check for nearby monsters and try to kill them */
@@ -7544,13 +7544,13 @@ static void process_player_end(int Ind) {
 						if (attackstatus) p_ptr->double_energy = 0;
 #endif
 						/* Use energy */
-						//p_ptr->energy -= level_speed(p_ptr->dun_depth);
+						//p_ptr->energy -= levspd;
 					}
 					p_ptr->auto_retaliaty = FALSE;
 
 #ifdef RESTRICT_DOUBLE_ENERGY_2
 					/* If we didn't auto-retaliate, restore our original energy (which could exceed one full turn) */
-					if (p_ptr->energy == level_speed(&p_ptr->wpos)) p_ptr->energy = old_energy;
+					if (p_ptr->energy == levspd) p_ptr->energy = old_energy;
 #endif
 				}
 
@@ -7568,27 +7568,27 @@ static void process_player_end(int Ind) {
 		/* ('Handle running' from above was originally at this place) */
 		/* Handle running -- 5 times the speed of walking */
 #ifdef RESTRICT_DOUBLE_ENERGY_1
-		while (p_ptr->running && p_ptr->energy + p_ptr->double_energy >= (ls * (real_speed + 1)) / real_speed) {
+		while (p_ptr->running && p_ptr->energy + p_ptr->double_energy >= (levspd * (real_speed + 1)) / real_speed) {
 #else
-		while (p_ptr->running && p_ptr->energy >= (ls * (real_speed + 1)) / real_speed) {
+		while (p_ptr->running && p_ptr->energy >= (levspd * (real_speed + 1)) / real_speed) {
 #endif
 			char consume_full_energy;
 
 			run_step(Ind, 0, &consume_full_energy);
 			if (consume_full_energy)
 				/* Consume a full turn of energy in case we have e.g. attacked a monster */
-				p_ptr->energy -= ls;
+				p_ptr->energy -= levspd;
 			else
-				p_ptr->energy -= ls / real_speed;
+				p_ptr->energy -= levspd / real_speed;
 
 #ifdef RESTRICT_DOUBLE_ENERGY_1
 			/* Re-split energy into both reservoirs */
 			p_ptr->energy += p_ptr->double_energy;
 			p_ptr->double_energy = 0;
-			if (p_ptr->energy > ls) {
-				p_ptr->double_energy = (p_ptr->energy - ls);
-				p_ptr->energy = ls;
-				if (p_ptr->double_energy > ls - 1) p_ptr->double_energy = ls - 1;
+			if (p_ptr->energy > levspd) {
+				p_ptr->double_energy = (p_ptr->energy - levspd);
+				p_ptr->energy = levspd;
+				if (p_ptr->double_energy > levspd - 1) p_ptr->double_energy = levspd - 1;
 			}
 #endif
 		}
@@ -7598,7 +7598,7 @@ static void process_player_end(int Ind) {
 	/* On FTK or AR, gain a full extra turn of energy for use specifically with escape mechanisms */
 	if (p_ptr->new_retaliator) {
 		if (!old_triggered_auto_attacking && p_ptr->triggered_auto_attacking)
-			p_ptr->reserve_energy = (level_speed(&p_ptr->wpos) * NEW_AUTORET_2_ENERGY) / 100; //alternatively done in dungeon.c via extract_energy[] gain
+			p_ptr->reserve_energy = (levspd * NEW_AUTORET_2_ENERGY) / 100; //alternatively done in dungeon.c via extract_energy[] gain
 		else if (!p_ptr->triggered_auto_attacking)
 			p_ptr->reserve_energy = 0;
 	} else p_ptr->reserve_energy = 0; //paranoia?
