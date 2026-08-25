@@ -12871,33 +12871,34 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
    Make sure they don't have too much, but let them store up some extra.
    Storing up extra energy lets us perform actions while we are running */
 void limit_energy(player_type *p_ptr) {
+	int levspd = level_speed(&p_ptr->wpos);
+
 #ifdef RESTRICT_DOUBLE_ENERGY_1
 	/* Only fill up energy up to 1 turn, spill-over everything else up to the usual limit (2 turns - 1) into a separate reservoir,
 	   which is available specifically only for running and walking (especially intended: not for attacking). */
-	int ls = level_speed(&p_ptr->wpos);
 
  #if 0
-	if (p_ptr->energy > ls) {
-		p_ptr->double_energy += (p_ptr->energy - ls);
-		p_ptr->energy = ls;
-		if (p_ptr->double_energy > ls - 1) p_ptr->double_energy = ls - 1;
+	if (p_ptr->energy > levspd) {
+		p_ptr->double_energy += (p_ptr->energy - levspd);
+		p_ptr->energy = levspd;
+		if (p_ptr->double_energy > levspd - 1) p_ptr->double_energy = levspd - 1;
 	}
 	//else p_ptr->double_energy = 0; //paranoia cleanup  -- no, instead: any other action besids walking/running should zero this.
  #else
 	/* Like above, but redirect any energy from p_ptr->double_energy into p_ptr->energy reservoir first, if p_ptr->energy is currently < ls. */
 	p_ptr->energy += p_ptr->double_energy;
 	p_ptr->double_energy = 0;
-	if (p_ptr->energy > ls) {
-		p_ptr->double_energy = (p_ptr->energy - ls);
-		p_ptr->energy = ls;
-		if (p_ptr->double_energy > ls - 1) p_ptr->double_energy = ls - 1;
+	if (p_ptr->energy > levspd) {
+		p_ptr->double_energy = (p_ptr->energy - levspd);
+		p_ptr->energy = levspd;
+		if (p_ptr->double_energy > levspd - 1) p_ptr->double_energy = levspd - 1;
 	}
  #endif
 #else
 	//if (p_ptr->energy > (level_speed(p_ptr->dun_depth) * 6) / 5)
 	//	p_ptr->energy = (level_speed(p_ptr->dun_depth) * 6) / 5;
-	if (p_ptr->energy > (level_speed(&p_ptr->wpos) * 2) - 1)
-		p_ptr->energy = (level_speed(&p_ptr->wpos) * 2) - 1;
+	if (p_ptr->energy > (levspd * 2) - 1)
+		p_ptr->energy = (levspd * 2) - 1;
 #endif
 }
 

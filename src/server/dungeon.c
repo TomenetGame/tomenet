@@ -7544,7 +7544,7 @@ static void process_player_end(int Ind) {
 						if (attackstatus) p_ptr->double_energy = 0;
 #endif
 						/* Use energy */
-						//p_ptr->energy -= levspd;
+						//p_ptr->energy -= level_speed(p_ptr->dun_depth);
 					}
 					p_ptr->auto_retaliaty = FALSE;
 
