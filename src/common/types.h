@@ -3998,6 +3998,9 @@ struct player_type {
 #ifdef RESTRICT_DOUBLE_ENERGY_1
 	s16b double_energy; //excess energy (above 1 turn, ie gained a 2nd turn of energy on top) kept here for use when running/walking
 #endif
+#ifdef DOUBLE_ENERGY_SMOOTH_AR_ENERGY
+	s16b energy_prev_frame; //energy we had in the previous frame
+#endif
 
 	s16b food;			/* Current nutrition */
 

@@ -12877,7 +12877,7 @@ void limit_energy(player_type *p_ptr) {
 	/* Only fill up energy up to 1 turn, spill-over everything else up to the usual limit (2 turns - 1) into a separate reservoir,
 	   which is available specifically only for running and walking (especially intended: not for attacking). */
 
- #if 0
+ #if 0 /* don't use! also lacks DOUBLE_ENERGY_SMOOTH_AR_ENERGY handling! */
 	if (p_ptr->energy > levspd) {
 		p_ptr->double_energy += (p_ptr->energy - levspd);
 		p_ptr->energy = levspd;
@@ -12885,6 +12885,18 @@ void limit_energy(player_type *p_ptr) {
 	}
 	//else p_ptr->double_energy = 0; //paranoia cleanup  -- no, instead: any other action besids walking/running should zero this.
  #else
+  #ifdef DOUBLE_ENERGY_SMOOTH_AR_ENERGY
+	int levspd_bonus = (p_ptr->energy_prev_frame < levspd ? extract_energy[p_ptr->pspeed] - 1 : 0);
+
+	/* Like above, but redirect any energy from p_ptr->double_energy into p_ptr->energy reservoir first, if p_ptr->energy is currently < levspd. */
+	p_ptr->energy += p_ptr->double_energy;
+	p_ptr->double_energy = 0;
+	if (p_ptr->energy > levspd + lvspd_bonus) {
+		p_ptr->double_energy = (p_ptr->energy - levspd - levspd_bonus);
+		p_ptr->energy = levspd + levspd_bonus;
+		if (p_ptr->double_energy > levspd - 1) p_ptr->double_energy = levspd - 1;
+	}
+  #else
 	/* Like above, but redirect any energy from p_ptr->double_energy into p_ptr->energy reservoir first, if p_ptr->energy is currently < levspd. */
 	p_ptr->energy += p_ptr->double_energy;
 	p_ptr->double_energy = 0;
@@ -12893,6 +12905,7 @@ void limit_energy(player_type *p_ptr) {
 		p_ptr->energy = levspd;
 		if (p_ptr->double_energy > levspd - 1) p_ptr->double_energy = levspd - 1;
 	}
+  #endif
  #endif
 #else
 	//if (p_ptr->energy > (level_speed(p_ptr->dun_depth) * 6) / 5)

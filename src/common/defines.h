@@ -1329,7 +1329,9 @@
   #define RESTRICT_DOUBLE_ENERGY_2
  #endif
 #endif
-
+/* Allow gaining turn-exceeding energy from per-frame energy recovery, if our energy was below a full turn in the previous frame?
+   This is done to smoothen out auto-retaliation effectiveness instead of generating a 'staircase graph' full of speed/bpr break points that is usually below manual-bump-attack effectiveness. */
+#define DOUBLE_ENERGY_SMOOTH_AR_ENERGY
 
 /* Does a projection 'explode' ON a wall grid it hits, or BEFORE the wall grid?
    Exploding before it means that players standing in walls will only take 50%

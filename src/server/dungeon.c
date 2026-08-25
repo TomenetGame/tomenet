@@ -7294,6 +7294,9 @@ static void process_games(int Ind) {
 static void process_player_end(int Ind) {
 	player_type *p_ptr = Players[Ind];
 	int levspd = level_speed(&p_ptr->wpos);
+#ifdef DOUBLE_ENERGY_SMOOTH_AR_ENERGY
+	int levspd_bonus = (p_ptr->energy_prev_frame < levspd ? extract_energy[p_ptr->pspeed] - 1 : 0);
+#endif
 
 	//int x, y, i, j, new_depth, new_world_x, new_world_y;
 	//int regen_amount, NumPlayers_old = NumPlayers;
@@ -7486,7 +7489,11 @@ static void process_player_end(int Ind) {
 #endif
 #ifdef RESTRICT_DOUBLE_ENERGY_2
 						/* Any actions (here: attacking) besides walking/running will clear one-turn-excess energy */
+ #ifdef DOUBLE_ENERGY_SMOOTH_AR_ENERGY
+						if (p_ptr->energy > levspd + levspd_bonus) p_ptr->energy = levspd + levspd_bonus;
+ #else
 						if (p_ptr->energy > levspd) p_ptr->energy = levspd;
+ #endif
 #endif
 
 						if (p_ptr->shoot_till_kill_spell) {
@@ -7525,7 +7532,11 @@ static void process_player_end(int Ind) {
 					int old_energy = p_ptr->energy;
 
 					/* Any actions (here: attacking) besides walking/running will clear one-turn-excess energy */
+ #ifdef DOUBLE_ENERGY_SMOOTH_AR_ENERGY
+					if (p_ptr->energy > levspd + levspd_bonus) p_ptr->energy = levspd + levspd_bonus;
+ #else
 					if (p_ptr->energy > levspd) p_ptr->energy = levspd;
+ #endif
 #endif
 
 					/* Check for nearby monsters and try to kill them */
@@ -7593,6 +7604,10 @@ static void process_player_end(int Ind) {
 #endif
 		}
 	}
+
+#ifdef DOUBLE_ENERGY_SMOOTH_AR_ENERGY
+	p_ptr->energy_prev_frame = p_ptr->energy;
+#endif
 
 #ifdef NEW_AUTORET_2_ENERGY
 	/* On FTK or AR, gain a full extra turn of energy for use specifically with escape mechanisms */
