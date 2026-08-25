@@ -12885,7 +12885,7 @@ void limit_energy(player_type *p_ptr) {
 	}
 	//else p_ptr->double_energy = 0; //paranoia cleanup  -- no, instead: any other action besids walking/running should zero this.
  #else
-	/* Like above, but redirect any energy from p_ptr->double_energy into p_ptr->energy reservoir first, if p_ptr->energy is currently < ls. */
+	/* Like above, but redirect any energy from p_ptr->double_energy into p_ptr->energy reservoir first, if p_ptr->energy is currently < levspd. */
 	p_ptr->energy += p_ptr->double_energy;
 	p_ptr->double_energy = 0;
 	if (p_ptr->energy > levspd) {
