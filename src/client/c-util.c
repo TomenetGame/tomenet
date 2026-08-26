@@ -7474,7 +7474,7 @@ void interact_macros(void) {
 
 			/* Translate file again, just copying lines but skipping all auto-action lines. */
 			while (fgets(buftmp, MACRO_MAXLEN, fp)) { /* Forward rest of the file */
-				if (buftmp[0] == '!' && buftmp[1] == ':') continue; /* Discard all old auto-actions */
+				if ((buftmp[0] == '!' || buftmp[0] == '?') && buftmp[1] == ':') continue; /* Discard all old auto-actions */
 				fputs(buftmp, fp2);
 			}
 			fclose(fp);
