@@ -15532,10 +15532,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				} else {
 					if ((*lflags2) & LF2_STATIC) {
-						msg_print(Ind, "\377WYour floor is no longer permanently static (LF2_STATIC).");
+						msg_print(Ind, "\377WYour floor is no longer permanently static (~LF2_STATIC).");
 						(*lflags2) &= ~LF2_STATIC;
 					} else {
-						msg_print(Ind, "\377WYour floor is now \377ypermanently\377- static (~LF2_STATIC).");
+						msg_print(Ind, "\377WYour floor is now \377ypermanently\377- static (LF2_STATIC).");
 						(*lflags2) |= LF2_STATIC;
 					}
 				}
@@ -15566,11 +15566,44 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					}
 				} else {
 					if ((*lflags2) & LF2_NO_LIVE_SPAWN) {
-						msg_print(Ind, "\377WYour floor is no longer spawn-free (LF2_NO_LIVE_SPAWN).");
+						msg_print(Ind, "\377WYour floor is no longer spawn-free (~LF2_NO_LIVE_SPAWN).");
 						(*lflags2) &= ~LF2_NO_LIVE_SPAWN;
 					} else {
-						msg_print(Ind, "\377WYour floor is now \377yspawn-free\377- (~LF2_NO_LIVE_SPAWN).");
+						msg_print(Ind, "\377WYour floor is now \377yspawn-free\377- (LF2_NO_LIVE_SPAWN).");
 						(*lflags2) |= LF2_NO_LIVE_SPAWN;
+					}
+				}
+				return;
+			}
+			/* Make floor not affect dungeon-specific (or any) max-depth of players entering it, via LF1_NO_DEPTH_GAIN */
+			else if (prefix(messagelc, "/ndepth")) {
+				struct dun_level *l_ptr = getfloor(&p_ptr->wpos);
+				u32b *lflags1;
+
+				/* Paranoia */
+				if (!l_ptr) {
+					msg_print(Ind, "\377oError: Your wpos has no l_ptr.");
+					return;
+				}
+
+				//if (in_sector000(&p_ptr->wpos)) lflags2 = &sector000flags2; else
+				lflags1 = &l_ptr->flags1;
+
+				if (tk) {
+					if (k) {
+						msg_print(Ind, "\377WYour floor does \377yNOT GRANT DEPTH\377- (LF1_NO_DEPTH_GAIN).");
+						(*lflags1) |= LF1_NO_DEPTH_GAIN;
+					} else {
+						msg_print(Ind, "\377WYour floor grants depth as it would normally (~LF1_NO_DEPTH_GAIN).");
+						(*lflags1) &= ~LF1_NO_DEPTH_GAIN;
+					}
+				} else {
+					if ((*lflags1) & LF1_NO_DEPTH_GAIN) {
+						msg_print(Ind, "\377WYour floor now grants depth as it would normally (~LF1_NO_DEPTH_GAIN).");
+						(*lflags1) &= ~LF1_NO_DEPTH_GAIN;
+					} else {
+						msg_print(Ind, "\377WYour floor now does \377yNOT GRANT DEPTH\377- (LF1_NO_DEPTH_GAIN).");
+						(*lflags1) |= LF1_NO_DEPTH_GAIN;
 					}
 				}
 				return;

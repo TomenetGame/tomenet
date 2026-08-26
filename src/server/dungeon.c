@@ -9513,16 +9513,6 @@ void process_player_change_wpos(int Ind) {
 	if (p_ptr->esp_link_type && p_ptr->esp_link)
 		change_mind(Ind, FALSE);
 
-	/* Check "maximum depth" to make sure it's still correct */
-	if (wpos->wz != 0 && (!p_ptr->ghost || p_ptr->admin_dm)) {
-		if (dlv > p_ptr->max_dlv) p_ptr->max_dlv = dlv;
-
-#ifdef SEPARATE_RECALL_DEPTHS
-		j = recall_depth_idx(wpos, p_ptr);
-		if (ABS(wpos->wz) > p_ptr->max_depth[j]) p_ptr->max_depth[j] = ABS(wpos->wz);
-#endif
-	}
-
 	/* Make sure the server doesn't think the player is in a store */
 	if (p_ptr->store_num != -1) {
 		handle_store_leave(Ind);
@@ -9613,6 +9603,18 @@ void process_player_change_wpos(int Ind) {
 
 	zcave = getcave(wpos);
 	l_ptr = getfloor(wpos);
+
+	/* Check "maximum depth" to make sure it's still correct */
+	if (!l_ptr || !(l_ptr->flags1 & LF1_NO_DEPTH_GAIN)) {
+		if (wpos->wz != 0 && (!p_ptr->ghost || p_ptr->admin_dm)) {
+			if (dlv > p_ptr->max_dlv) p_ptr->max_dlv = dlv;
+
+#ifdef SEPARATE_RECALL_DEPTHS
+			j = recall_depth_idx(wpos, p_ptr);
+			if (ABS(wpos->wz) > p_ptr->max_depth[j]) p_ptr->max_depth[j] = ABS(wpos->wz);
+#endif
+		}
+	}
 
 	/* Detect wrong dungeon generation:
 	   All admin-created dungeons via master_level() get DF2_RANDOM flag,

@@ -1340,11 +1340,11 @@ static cptr v_info_flags1[] = {
 	"NO_MAGIC_MAP",
 	"NO_DESTROY",
 	"NO_MAGIC",
-	"XXX1",		// ASK_LEAVE
 	"XXX1",
 	"XXX1",
 	"XXX1",
-	"XXX1",		// DESC
+	"XXX1",
+	"XXX1",
 	"XXX1",
 	"XXX1",
 	"XXX1",
