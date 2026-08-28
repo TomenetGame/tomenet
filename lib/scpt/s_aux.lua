@@ -837,6 +837,21 @@ function get_spell_stat(s)
 	else return __tmp_spells[s].stat end
 end
 
+function test_mp_school_spell(i, s, no_cost, book)
+	if not no_cost then
+		-- Level requirements met?
+		if (get_level(i, s, 50, -50) < 1) then
+			return 0
+		end
+
+		-- Enough mana
+		if (get_mana(i, s, book) > get_power(i, s)) then
+			return 0
+		end
+	end
+	return 1
+end
+
 -- XXX server only
 -- one question.. why this should be LUA anyway?
 -- because accessing lua table is so badly easier in lua

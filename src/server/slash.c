@@ -1786,6 +1786,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!p_ptr->word_recall) set_recall_timer(Ind, 1);
 				else set_recall_timer(Ind, 0);
 			} else {
+				int item_scroll = -1; //prioritize rods over scrolls - the rods come AFTER scrolls in inventory sorting order, scrolls are 2nd to last and rods are last item type
 				int item = -1, spell = -1, spell_rec = -1, spell_rel = -1;
 				bool spell_rec_found = FALSE, spell_rel_found = FALSE;
 				int found_empty = 0;
@@ -1820,8 +1821,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Turn off resting mode */
 				disturb(Ind, 0, 0);
 
-				//for (i = 0; i < INVEN_PACK; i++)
-				for (i = 0; i < INVEN_TOTAL; i++) { /* allow to activate equipped items for recall (some art(s)!) */
+				for (i = INVEN_WIELD; i != INVEN_PACK; i++) { /* allow to activate equipped items for recall (some art(s)!) */
+					/* Wrap around from equip to inven */
+					if (i == INVEN_TOTAL) {
+						i = -1;
+						continue;
+					}
+
 					o_ptr = &(p_ptr->inventory[i]);
 					if (!o_ptr->tval) continue;
 
@@ -1849,6 +1855,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							break;
 						}
 						if (item == -1) continue;
+
 						/* We found our rod, leave outer loop too */
 						break;
 					}
@@ -1874,6 +1881,13 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 									/* Just continue&ignore instead of return, since we
 									   might just have picked up someone else's book! */
 									continue;
+
+								/* Experimental - Extra special leeway:
+								   If not enough mana then fall back to other method.
+								   Note that we do not check for blind/confusion as that would be too much automation. */
+								if (!exec_lua(Ind, format("return test_mp_school_spell(%d, %d, nil, %d)", Ind, o_ptr->pval, i)))
+									continue;
+
 								/* If so then use it */
 								spell = o_ptr->pval;
 							} else {
@@ -1906,19 +1920,37 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 									return;
 								}
 							}
+
 							/* Have we learned this spell yet at all? */
-							if (spell_rec_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell_rec)))
+							/* Experimental - Extra special leeway:
+							   If not enough mana then fall back to other method.
+							   Note that we do not check for blind/confusion as that would be too much automation. */
+							if (spell_rec_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell_rec))
+							    && exec_lua(Ind, format("return test_mp_school_spell(%d, %d, nil, %d)", Ind, spell_rec, i)))
 								spell = spell_rec;
-							if (spell_rel_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell_rel)))
+							if (spell_rel_found && exec_lua(Ind, format("return is_ok_spell(%d, %d)", Ind, spell_rel))
+							    && exec_lua(Ind, format("return test_mp_school_spell(%d, %d, nil, %d)", Ind, spell_rel, i)))
 								spell = spell_rel;
+
 							/* Just continue&ignore instead of return, since we
 							   might just have picked up someone else's book! */
 							if (spell == -1) continue;
 						}
 					}
 
+					/* Prioritize rods in normal inventory over scrolls (see comment further above) */
+					if (o_ptr->tval == TV_SCROLL) {
+						item_scroll = i;
+						continue;
+					}
+					//we found any other item? then just stop and use it, the sorting order for everything else is already fine by default
 					item = i;
 					break;
+				}
+				/* If our attempt to prioritize rods over scrolls failed, restore proper order of all item types */
+				if (item == -1) {
+					item = item_scroll;
+					o_ptr = &p_ptr->inventory[item];
 				}
 
 				if (item == -1) {
@@ -1933,7 +1965,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				/* ALERT! Hard-coded! */
 #ifdef MSTAFF_MDEV_COMBO
-				if (o_ptr->tval == TV_MSTAFF) {
+				if (item == INVEN_WIELD && o_ptr->tval == TV_MSTAFF) {
 					if (o_ptr->xtra1) {
 						tv = TV_STAFF;
 						item += 10000;
