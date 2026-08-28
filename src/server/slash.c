@@ -1787,6 +1787,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				else set_recall_timer(Ind, 0);
 			} else {
 				int item_scroll = -1; //prioritize rods over scrolls - the rods come AFTER scrolls in inventory sorting order, scrolls are 2nd to last and rods are last item type
+				int item_spell_rec = -1, item_spell_rel = -1; //also prioritize rods (in normal inventory, in bags they are already first in line after wielded device) over spells
 				int item = -1, spell = -1, spell_rec = -1, spell_rel = -1;
 				bool spell_rec_found = FALSE, spell_rel_found = FALSE;
 				int found_empty = 0;
@@ -1890,6 +1891,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 								/* If so then use it */
 								spell = o_ptr->pval;
+
+								/* Prioritize rods in normal inventory over spells (see comment further above), so we need to remember and just 'continue' here */
+								if (spell == spell_rec) item_spell_rec = i;
+								if (spell == spell_rel) item_spell_rel = i;
+								continue;
 							} else {
 								/* "No recall spell found in this book!" */
 								//continue;
@@ -1935,22 +1941,37 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 							/* Just continue&ignore instead of return, since we
 							   might just have picked up someone else's book! */
 							if (spell == -1) continue;
+
+							/* Prioritize rods in normal inventory over spells (see comment further above), so we need to remember and just 'continue' here */
+							if (spell == spell_rec) item_spell_rec = i;
+							if (spell == spell_rel) item_spell_rel = i;
+							continue;
 						}
 					}
 
-					/* Prioritize rods in normal inventory over scrolls (see comment further above) */
+					/* Prioritize rods in normal inventory over scrolls (see comment further above), so we need to remember and just 'continue' here */
 					if (o_ptr->tval == TV_SCROLL) {
 						item_scroll = i;
 						continue;
 					}
-					//we found any other item? then just stop and use it, the sorting order for everything else is already fine by default
+
+					/* We found any other item/item in intended order? then just stop and use it, the sorting order for everything else is already fine by default! */
 					item = i;
 					break;
 				}
-				/* If our attempt to prioritize rods over scrolls failed, restore proper order of all item types */
+
+				/* If our attempt to prioritize rods over scrolls or spells failed, restore proper order of all item types (and prioritize spells over scrolls) */
 				if (item == -1) {
-					item = item_scroll;
-					o_ptr = &p_ptr->inventory[item];
+					if (item_spell_rec != -1) {
+						item = item_spell_rec;
+						o_ptr = &p_ptr->inventory[item];
+					} else if (item_spell_rel != -1) {
+						item = item_spell_rel;
+						o_ptr = &p_ptr->inventory[item];
+					} else if (item_scroll != -1) {
+						item = item_scroll;
+						o_ptr = &p_ptr->inventory[item];
+					}
 				}
 
 				if (item == -1) {
