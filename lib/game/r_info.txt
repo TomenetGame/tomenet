@@ -11697,7 +11697,7 @@ D:carrying explosives and making terrorist strikes...
 N:701:Dracolich
 G:D:G
 I:130:35d100:25:120:80
-W:55:2:180000:14000
+W:55:2:180000:17000
 E:0:1:2:6:1:2
 O:10:50:40:0
 B:CLAW:HURT:4d12
@@ -11743,7 +11743,7 @@ D:defiance.
 N:703:Dracolisk
 G:D:R
 I:130:35d100:25:120:80
-W:55:2:180000:18000
+W:55:2:180000:16000
 E:0:1:2:6:1:2
 O:0:50:40:10
 B:CLAW:HURT:4d12
@@ -12249,7 +12249,7 @@ D:itself seems to cry out against it.
 N:728:Great storm wyrm
 G:D:e
 I:130:40d100:30:150:80
-W:63:2:190000:20000
+W:63:2:190000:13000
 E:0:1:2:6:1:2
 O:20:80:0:0
 B:CLAW:HURT:4d12
@@ -12527,7 +12527,7 @@ D:resembles a gargantuan octopus and its evil is almost tangible.
 N:741:Great ice wyrm
 G:D:c
 I:130:40d100:30:150:80
-W:63:2:190000:20000
+W:63:2:190000:14000
 E:0:1:2:6:1:2
 O:20:80:0:0
 B:CLAW:HURT:4d12
@@ -12847,7 +12847,7 @@ N:756:Great hell wyrm
 #new def: ember
 G:D:Z
 I:130:50d100:30:150:80
-W:67:2:190000:23000
+W:67:2:190000:15000
 E:0:1:2:6:1:2
 O:20:80:0:0
 B:CLAW:HURT:4d12
@@ -13612,7 +13612,7 @@ D:Dragonwing came to defend Morgoth! He is an evil and powerful Dragonrider.
 N:790:Great wyrm of many colours
 G:D:v
 I:130:70d100:40:170:255
-W:80:2:190000:31000
+W:80:2:190000:24000
 E:0:1:2:6:1:2
 O:20:80:0:0
 B:CLAW:HURT:6d12
@@ -16509,7 +16509,7 @@ N:938:Great swamp wyrm
 #G:D:p
 G:D:K
 I:130:40d100:30:150:80
-W:63:2:190000:20000
+W:63:2:190000:14000
 E:0:1:2:6:1:2
 O:20:80:0:0
 B:CLAW:HURT:4d12
@@ -16531,7 +16531,7 @@ N:939:Great bile wyrm
 #G:D:a
 G:D:A
 I:130:50d100:30:150:80
-W:67:2:190000:23000
+W:67:2:190000:15000
 E:0:1:2:6:1:2
 O:20:80:0:0
 B:CLAW:HURT:4d12
@@ -17733,7 +17733,7 @@ D:himself to hear so well that it nearly makes up for his disability.
 N:1002:Great wyrm of perplexity
 G:D:C
 I:130:40d100:30:170:80
-W:63:2:190000:20000
+W:63:2:190000:18000
 E:0:1:2:6:1:2
 O:20:80:0:0
 B:CLAW:HURT:4d12
@@ -17775,7 +17775,7 @@ N:1004:Great wyrm of thunder
 G:D:S
 #G:D:L
 I:130:50d100:30:170:80
-W:67:2:190000:23000
+W:67:2:190000:19000
 E:0:1:2:6:1:2
 O:20:80:0:0
 B:CLAW:HURT:4d12
@@ -19796,7 +19796,7 @@ N:1110:Great wyrm of radiance
 #G:D:a
 G:D:q
 I:130:46d100:30:170:80
-W:65:2:190000:22000
+W:65:2:190000:18500
 E:0:1:2:6:1:2
 O:20:80:0:0
 B:CLAW:HURT:4d12
