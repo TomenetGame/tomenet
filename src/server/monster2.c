@@ -1223,7 +1223,7 @@ errr get_mon_num_prep_wild(int town_distance, char *reject_monsters) {
 				entry->prob2 = (entry->prob2 * animals_perc) / 100;
 				if (entry->prob2 > 10000) entry->prob2 = 10000;
 			} else if ((r_info[r_idx].flags8 & RF8_DUNGEON) // ie not for WILD_ONLY (RF8_DUNGEON == !RF8_WILD_ONLY) flag monsters such as Woodsman
-			    && !(r_info[r_idx].flags8 & RF8_WILD_TOO)) { // ie not for WILD_TOO flag monsters such as Dark-elven druid or Bandit
+			    && !(r_info[r_idx].flags8 & (RF8_WILD_TOO_MASK & ~RF8_WILD_EASY_MASK))) { // ie not for WILD_xxx flag monsters such as Dark-elven druid or Bandit, except if they ONLY occur in 'easy/town' areas.
 				switch (r_info[r_idx].d_char) { /* Handle all people/humanoids that are supposed to be 'close to towns' */
 				case 'p': // people; 'h' too? or leave them to 'humanoids' below
 					entry->prob2 = (entry->prob2 * people_perc) / 100;
