@@ -8658,7 +8658,9 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 	struct worldpos *wpos = &p_ptr->wpos;
 
 	int i, j, y, x, ny, nx, ty, tx, wall_x, wall_y;
-	int chance, tdam, tdis, k2, k3, vorpal_cut = 0, chaos_effect = 0, instakills;
+	int chance, tdam, tdis, k3, vorpal_cut = 0, instakills;
+#pragma message "do_cmd_throw() - todo: apply chaos_effect and k2->vampirism"
+	int k2, chaos_effect = 0; //TODO: actually apply chaos_effect and k2->vampirism
 	int mul, div;
 	int cur_dis, visible, real_dis;
 	int moved_number = 1, original_number;
@@ -9042,11 +9044,11 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 				p_ptr->scr_info[dispy][dispx].a = missile_attr;
 
 				/* Tell the client */
-#ifdef GRAPHICS_BG_MASK
+ #ifdef GRAPHICS_BG_MASK
 				Send_char(i, dispx, dispy, missile_attr, missile_char, 0, 0);
-#else
+ #else
 				Send_char(i, dispx, dispy, missile_attr, missile_char);
-#endif
+ #endif
 
 				/* Flush and wait */
 				if (cur_dis % 2) Send_flush(i);
@@ -9265,6 +9267,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 						/* Note: No rune nimbus application */
 
 						//TODO: actually apply chaos_effect and k2->vampirism
+						(void)k2; //just slay compiler warning until then
+						(void)chaos_effect; //just slay compiler warning until then
 
 					} else if (is_melee_item(o_ptr->tval)) {
 						tdam = (tdam * 2) / 3; /* assumption: Melee weapon dice/damage are meant for 'proper use', while other items get dice defined in k_info exactly for the purpose of throwing! */
@@ -9532,6 +9536,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 					k2 = tdam;
 
 					//TODO: apply chaos_effect and k2-vampirism later
+					(void)k2; //just slay compiler warning until then
+					(void)chaos_effect; //just slay compiler warning until then
 
 					/* Note: No rune nimbus application */
 
