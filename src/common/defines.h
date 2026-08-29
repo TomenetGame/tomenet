@@ -6981,7 +6981,7 @@
 /*
  * Monster race flags
  */
-#define RF8_DUNGEON		0x00000001U	/* inverse of non-existing 'RF8_WILD_ONLY' */
+#define RF8_DUNGEON		0x00000001U	/* inverse of non-existing 'RF8_WILD_ONLY' aka, 'may also spawn in dungeons' */
 #define RF8_WILD_TOWN		0x00000002U
 #define RF8_WILD_EASY		0x00000004U	/* Easily traversable wilderness terrain only (not even forests, nor icy waste/desert etc); add WILD_LAKE maybe? */
 #define RF8_WILD_SHORE		0x00000008U
