@@ -1223,12 +1223,21 @@ errr get_mon_num_prep_wild(int town_distance, char *reject_monsters) {
 				entry->prob2 = (entry->prob2 * animals_perc) / 100;
 				if (entry->prob2 > 10000) entry->prob2 = 10000;
 			} else if (r_info[r_idx].flags8 & RF8_DUNGEON) { // ie not for WILD_ONLY flag monsters such as Woodsman
-				if (r_info[r_idx].d_char == 'p') // 'h' too? or leave them to 'humanoids' below
+				switch (r_info[r_idx].d_char) { /* Handle all people/humanoids that are supposed to be 'close to towns' */
+				case 'p': // people; 'h' too? or leave them to 'humanoids' below
 					entry->prob2 = (entry->prob2 * people_perc) / 100;
-				else
+					break;
+				case 'h': case 'y': // standard humanoids expected to rather hang around towns
+				/* More secluded or distant humanoids and undead humanoids - not affected by 'must be close to town': */
+				//case 'k': case 'o': case 'O': case 'P': case 'T': case 'Y':
+				//case 'n': case 'H':
+				//case 'z': case 's': case 'V': case 'W':
 					entry->prob2 = (entry->prob2 * humanoids_perc) / 100;
+					break;
+				}
 				if (!entry->prob2) entry->prob2 = 1;
 			}
+			/* (All other monsters (not animals, people or humanoids) just keep their normal probability) */
 		}
 
 		/* Do not use this monster */
