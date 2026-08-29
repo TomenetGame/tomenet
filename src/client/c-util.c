@@ -9363,7 +9363,8 @@ Chain_Macro:
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "h) prompt for a guide quick search                           :/? ");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "i) swap two items (eg inventory and equipment) or equip/unequip one item");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "j) enter/leave the PvP arena (PvP mode only)                 :/pvp\\r");
-						Term_putstr(2, l++, -1, TERM_L_GREEN, "k) use an item inscribed '@/1' (w/ or w/o target)            \\e)*t/1-");
+						//Term_putstr(2, l++, -1, TERM_L_GREEN, "k) use an item inscribed '@/1' (w/ or w/o target)            \\e)*t/1-");
+						Term_putstr(2, l++, -1, TERM_L_GREEN, "k) all-in-one use an item ('/' command), with or without target");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "l) steal from shop more of the last interacted-with item     Z+\\wNN");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "m) display some extra information                            :/ex\\r");
 						Term_putstr(2, l++, -1, TERM_L_GREEN, "n) display in-game time (daylight is 6am-10pm)               :/time\\r");
@@ -9716,7 +9717,67 @@ Chain_Macro:
 							}
 							break;
 						case 'j': strcpy(buf2, ":/pvp\\r"); break;
-						case 'k': strcpy(buf2, "\\e)*t/1-"); break;
+						case 'k':
+							while (TRUE) {
+								clear_from(ystart);
+								l = ystart + 2;
+								Term_putstr(2, l++, -1, TERM_GREEN, "Select one of the following:");
+								l++;
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "a) use an item inscribed '@/1' with optional target          \\e)*t/1-");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "A) use an item inscribed '@/1' without target (eg bandage)   \\e)/1");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) use an item inscribed '@/2' with optional target          \\e)*t/2-");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "B) use an item inscribed '@/2' without target (eg bandage)   \\e)/2");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "c) use an item inscribed '@/3' with optional target          \\e)*t/3-");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "C) use an item inscribed '@/3' without target (eg bandage)   \\e)/3");
+								/* Hack: Hide the cursor */
+								Term->scr->cx = Term->wid;
+								Term->scr->cu = 1;
+
+								while (TRUE) {
+									switch (choice = inkey()) {
+									case ESCAPE:
+									case 'p':
+									case '\010': /* backspace */
+										i_stage = -2; /* leave */
+										break;
+									case ':': /* Allow chatting */
+										cmd_message();
+										/* Restore top line */
+										Term_putstr(29, 0, -1, TERM_L_UMBER, "*** Macro Wizard ***");
+										continue;
+									case KTRL('T'):
+										/* Take a screenshot */
+										xhtml_screenshot("screenshot????", 2);
+										continue;
+									default:
+										/* invalid action -> exit wizard */
+										if ((choice < 'a' || choice > 'c') && (choice < 'A' || choice > 'C')) {
+											//i_stage = -1;
+											continue;
+										}
+									}
+									break;
+								}
+								/* exit? */
+								if (i_stage == -2) {
+									/* hack before we abort: restart menu choice 'common' */
+									i_stage = -3;
+									choice = mw_common;
+									break;
+								}
+
+								l++;
+								switch (choice) {
+								case 'a': strcpy(buf2, "\\e)*t/1-"); break;
+								case 'A': strcpy(buf2, "\\e)/1"); break;
+								case 'b': strcpy(buf2, "\\e)*t/2-"); break;
+								case 'B': strcpy(buf2, "\\e)/2"); break;
+								case 'c': strcpy(buf2, "\\e)*t/3-"); break;
+								case 'C': strcpy(buf2, "\\e)/3"); break;
+								}
+								break;
+							}
+							break;
 						case 'l': {
 							int delay = 0, num = 1;
 
