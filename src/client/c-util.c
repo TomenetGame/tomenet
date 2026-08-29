@@ -14845,7 +14845,7 @@ static void do_cmd_options_tilesets(void) {
 
    #ifdef USE_X11
 		resize_y = l;
-		Term_putstr(1, l++, -1, TERM_WHITE, format("Resize type is: '\377y%s\377w' (%s) ('\377yr\377w' to cycle)" , interpolation_list[gfx_resize_type].name, interpolation_list[gfx_resize_type].description));
+		Term_putstr(1, l++, -1, resize_type_color, format("Resize type is: '\377y%s\377w' (%s) ('\377yr\377w' to cycle)" , interpolation_list[gfx_resize_type].name, interpolation_list[gfx_resize_type].description));
 		l++;
    #elif defined(USE_SDL3)
 		Term_putstr(1, l++, -1, resize_type_color, format("Resize type is: '\377y%s\377w' (%s) ('\377yr\377w' to cycle)", interpolation_list[sdl3_gfx_resize_type_new].name, interpolation_list[sdl3_gfx_resize_type_new].description));
