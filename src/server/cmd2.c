@@ -9592,6 +9592,8 @@ void do_cmd_throw(int Ind, int dir, int item, char bashing) {
 
 #if 0 //todo
 				//TODO: apply chaos_effect and k2-vampirism here
+				(void)k2; //just slay compiler warning until then
+				(void)chaos_effect; //just slay compiler warning until then
 
 				/* May it clone the monster ? */
 				if (((f4 & TR4_CLONE) && randint(1000) == 1)
