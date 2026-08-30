@@ -145,7 +145,7 @@ MSANITY = add_spell {
 			set_confused(Ind, 0)
 			set_image(Ind, 0)
 
-			heal_insanity(Ind, -(15 + get_level(Ind, MSANITY, 55) - ((player.s_info[SKILL_ATTUNEMENT + 1].value / 1000) * 1000)))
+			heal_insanity(Ind, -(15 + get_level(Ind, MSANITY, 55)) - ((player.s_info[SKILL_ATTUNEMENT + 1].value / 1000) * 1000))
 			if player.csane == player.msane then
 				msg_print(Ind, "You are in full command of your mental faculties.")
 			end
