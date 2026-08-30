@@ -8008,7 +8008,11 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					teleport_to_player(Ind, m_idx);
 					found = TRUE;
 				}
-				if (!found) (void)summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, RI_PANDA, 0, 1);
+				if (!found) {
+					m_idx = summon_specific_race(&p_ptr->wpos, p_ptr->py, p_ptr->px, RI_PANDA, 0, 1);
+					if (m_idx) msg_print_near_monster(m_idx, "\377WA wild panda appeared!");
+					else msg_print(Ind, "\377ySummoning panda failed.");
+				} else msg_print(Ind, "\377yPanda already there.");
 				return;
 			}
 			else if (prefix(messagelc, "/pandabye")) { /* removes the panda from current floor */
@@ -8021,6 +8025,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					m_idx = m_fast[k];
 					m_ptr = &m_list[m_idx];
 					if (m_ptr->r_idx != RI_PANDA || !inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+					msg_print_near_monster(m_idx, "\377WThe panda suddenly runs away.");
 					delete_monster_idx(m_idx, TRUE);
 					i++;
 				}
@@ -9212,7 +9217,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				/* Set the monster generation depth */
 				monster_level = getlevel(&p_ptr->wpos);
 				msg_format(Ind, "Respawning monsters of level %d here.", monster_level);
-				if (p_ptr->wpos.wz) alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
+				if (p_ptr->wpos.wz) (void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
 				else wild_add_monster(&p_ptr->wpos);
 				return;
 			}

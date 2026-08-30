@@ -4494,9 +4494,9 @@ bool place_monster(struct worldpos *wpos, int y, int x, bool slp, bool grp) {
  *
  * Use "monster_level" for the monster level
  */
-bool alloc_monster(struct worldpos *wpos, int dis, int slp) {
-	int		     y, x, i, d, min_dis = 999;
-	int		     tries = 0;
+int alloc_monster(struct worldpos *wpos, int dis, int slp) {
+	int	y, x, i, d, min_dis = 999;
+	int	tries = 0;
 	player_type *p_ptr;
 	cave_type **zcave;
 
@@ -4519,19 +4519,16 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp) {
 			p_ptr = Players[i];
 
 			/* Skip him if he's not playing */
-			if (p_ptr->conn == NOT_CONNECTED)
-				continue;
+			if (p_ptr->conn == NOT_CONNECTED) continue;
 
 			/* Skip him if he's not on this depth */
-			if (!inarea(wpos, &p_ptr->wpos))
-				continue;
+			if (!inarea(wpos, &p_ptr->wpos)) continue;
 
 			if ((d = distance(y, x, p_ptr->py, p_ptr->px)) < min_dis)
 				min_dis = d;
 		}
 
-		if (min_dis >= dis)
-			break;
+		if (min_dis >= dis) break;
 	}
 
 	/* Abort */
@@ -4540,7 +4537,7 @@ bool alloc_monster(struct worldpos *wpos, int dis, int slp) {
 	/* s_printf("Trying to place a monster at %d, %d.\n", y, x); */
 
 	/* Attempt to place the monster, allow groups */
-	if (place_monster(wpos, y, x, slp, TRUE)) return(TRUE);
+	if (place_monster(wpos, y, x, slp, TRUE)) return(zcave[y][x].m_idx);
 
 	/* Nope */
 	return(FALSE);
@@ -4554,7 +4551,7 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 	cave_type **zcave;
 	dun_level *l_ptr = getfloor(wpos);
 
-	if (!(zcave = getcave(wpos))) return(-1);
+	if (!(zcave = getcave(wpos))) return(0);
 
 	/* Find a legal, distant, unoccupied, space */
 	while (--tries) { /* try especially hard to succeed */
@@ -4613,12 +4610,10 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 			p_ptr = Players[i];
 
 			/* Skip him if he's not playing */
-			if (p_ptr->conn == NOT_CONNECTED)
-				continue;
+			if (p_ptr->conn == NOT_CONNECTED) continue;
 
 			/* Skip him if he's not on this depth */
-			if (!inarea(wpos, &p_ptr->wpos))
-				continue;
+			if (!inarea(wpos, &p_ptr->wpos)) continue;
 
 			if ((d = distance(y, x, p_ptr->py, p_ptr->px)) < min_dis)
 				min_dis = d;
@@ -4638,13 +4633,13 @@ int alloc_monster_specific(struct worldpos *wpos, int r_idx, int dis, int slp) {
 	}
 
 	/* Attempt to place the monster, allow groups */
-	if ((res = place_monster_aux(wpos, y, x, r_idx, FALSE, slp, TRUE, FALSE, 0)) == 0) return(0);
+	if ((res = place_monster_aux(wpos, y, x, r_idx, FALSE, slp, TRUE, FALSE, 0)) == 0) return(zcave[y][x].m_idx); //success
 
 	/* Nope */
 	if (res != 37) /* no spam for players who have killed the boss already */
 		s_printf("allocate_monster_specific()->place_monster_aux() failed for r_idx %d on %s (%d).\n", r_idx, wpos_format(0, wpos), res);
 
-	return(res);
+	return(-res); //failure
 }
 
 /*
@@ -4931,7 +4926,7 @@ static bool summon_specific_okay(int r_idx) {
  * 'lev' can be negative:
  * In that case, -lev is used as exact value for get_mon_num(), instead of getting averaged with dlev.
  */
-bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type, int allow_sidekicks, int clone_summoning) {
+int summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone, int type, int allow_sidekicks, int clone_summoning) {
 	int i, x, y, r_idx, dis;
 	dun_level *l_ptr;
 	cave_type **zcave;
@@ -4993,13 +4988,13 @@ bool summon_specific(struct worldpos *wpos, int y1, int x1, int lev, int s_clone
 	if (place_monster_aux(wpos, y, x, r_idx, FALSE, FALSE, allow_sidekicks ? TRUE : FALSE, s_clone, clone_summoning)) return(FALSE);
 
 	/* Success */
-	return(TRUE);
+	return(zcave[y][x].m_idx);
 }
 
 /* summon a specific race near this location */
 /* summon until we can't find a location or we have summoned size */
-bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int s_clone, unsigned char size) {
-	int c, i, x, y, ret;
+int summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int s_clone, unsigned char size) {
+	int c, i, x, y, ret, m_idx;
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -5037,16 +5032,16 @@ bool summon_specific_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 			s_printf("summon_specific_race() failed, place_monster_aux() returned %d\n", ret);
 			return(FALSE);
 		}
-
+		m_idx = zcave[y][x].m_idx;
 	}
 
 	/* Success */
-	return(TRUE);
+	return(m_idx);
 }
 
 // Added an ego version for modules - Kurzel
-bool summon_detailed_race(struct worldpos *wpos, int y1, int x1, int r_idx, int e_idx, int s_clone, unsigned char size) {
-	int c, i, x, y;
+int summon_detailed_race(struct worldpos *wpos, int y1, int x1, int r_idx, int e_idx, int s_clone, unsigned char size) {
+	int c, i, x, y, m_idx;
 	cave_type **zcave;
 
 	if (!(zcave = getcave(wpos))) return(FALSE);
@@ -5080,17 +5075,17 @@ bool summon_detailed_race(struct worldpos *wpos, int y1, int x1, int r_idx, int 
 
 		/* Attempt to place the monster (awake, don't allow groups) */
 		if (place_monster_one(wpos, y, x, r_idx, e_idx, 0, 0, 0, 0)) return(FALSE);
-
+		m_idx = zcave[y][x].m_idx;
 	}
 
 	/* Success */
-	return(TRUE);
+	return(m_idx);
 }
 
 /* summon a specific race at a random location */
-bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clone, unsigned char size) {
-	int		     y, x;
-	int		     tries = 0;
+int summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clone, unsigned char size) {
+	int	y, x;
+	int	tries = 0;
 
 	cave_type **zcave;
 
@@ -5120,14 +5115,13 @@ bool summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int s_clon
 #endif
 
 	/* Attempt to place the monster */
-	if (summon_specific_race(wpos, y, x, r_idx, s_clone, size)) return(TRUE);
-	return(FALSE);
+	return(summon_specific_race(wpos, y, x, r_idx, s_clone, size));
 }
 
 /* summon a single monster in every detail in a random location */
 int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, bool slp, int s_clone) {
-	int		     y, x;
-	int		     tries = 0;
+	int	y, x;
+	int	tries = 0;
 
 	cave_type **zcave;
 
