@@ -7973,12 +7973,12 @@ void view_exploration_history(int Ind) {
 			dun_total_normal++;
 
 			/* Count how many of these are already known */
-			if (d_ptr->known & 0x1) dun_total_normal_known++;
+			if (d_ptr->known & DKF_SEEN) dun_total_normal_known++;
 		}
  #endif
 
 		known = d_ptr->known;
-		if (admin) known = 0x1 + 0x2 + 0x4 + 0x8;
+		if (admin) known = DKF_KNOWN;
 		if (!known) continue;
 
 		none = FALSE;
@@ -8013,7 +8013,7 @@ void view_exploration_history(int Ind) {
 			else if (dungeon_x[i] == WPOS_DF_X && dungeon_y[i] == WPOS_DF_Y) {
 				strcpy(bn, "???");
 				/* Hack - it seems otherwise the DF is never fully known. (This is the flag  to display the 'boss' state.) */
-				known |= 0x8;
+				known |= DKF_BOSS;
 			} else strcpy(bn, "- no guardian -");
 		}
 
@@ -8029,9 +8029,9 @@ void view_exploration_history(int Ind) {
 		    get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i],
 		    getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1})), 0, TRUE),
 		    dungeon_x[i], dungeon_y[i],
-		    (known & 0x2) ? format("%4dft", d_ptr->baselevel * 50) : "      ",
-		    (known & 0x4) ? format("-%4dft", (d_ptr->baselevel + d_ptr->maxdepth - 1) * 50) : "       ",
-		    (known & 0x8) ? bn : ""); /* We assume that the boss can only be known if the max depth is known, otherwise formatting might suck a bit */
+		    (known & DKF_MINDEPTH) ? format("%4dft", d_ptr->baselevel * 50) : "      ",
+		    (known & DKF_MAXDEPTH) ? format("-%4dft", (d_ptr->baselevel + d_ptr->maxdepth - 1) * 50) : "       ",
+		    (known & DKF_BOSS) ? bn : ""); /* We assume that the boss can only be known if the max depth is known, otherwise formatting might suck a bit */
 	}
 
 	if (none) fprintf(fff, "\n\377u    Nobody has ever discovered a dungeon in this town's history!\n");

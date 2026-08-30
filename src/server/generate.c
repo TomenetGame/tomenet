@@ -9747,9 +9747,9 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 	/* we now 'learned' the max depth of this dungeon */
 	if (d_ptr->maxdepth == ABS(wpos->wz) && p_ptr && !is_admin(p_ptr)) {
-		d_ptr->known |= 0x4;
+		d_ptr->known |= DKF_MAXDEPTH;
 		/* automatically learn if there is no dungeon boss */
-		if (!k) d_ptr->known |= 0x8;
+		if (!k) d_ptr->known |= DKF_BOSS;
 	}
 #endif
 
@@ -11671,7 +11671,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 		d_ptr->flags3 |= DF3_NO_DUNGEON_BONUS | DF3_EXP_20 | DF3_LUCK_PROG_IDDC;
 		/* Dungeon is fully known right from the start without requiring discovery:
 		   Entrance seen, base level known, depth known, 'boss' known. */
-		d_ptr->known = 0x1 | 0x2 | 0x4 | 0x8;
+		d_ptr->known = DKF_KNOWN;
 	}
 
 #ifdef RPG_SERVER /* Make towers/dungeons harder - C. Blue */

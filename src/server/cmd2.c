@@ -524,7 +524,7 @@ void do_cmd_go_up(int Ind) {
 #endif
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			/* we now 'learned' the base level of this dungeon */
-			if (!is_admin(p_ptr)) d_ptr->known |= 0x2;
+			if (!is_admin(p_ptr)) d_ptr->known |= DKF_MINDEPTH;
 #endif
 			/* for jail dungeons, not actually needed, just to stay clean */
 			p_ptr->house_num = 0;
@@ -680,7 +680,7 @@ void do_cmd_go_up(int Ind) {
 			msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			/* we now 'learned' the base level of this dungeon */
-			if (!is_admin(p_ptr)) wild_info[wpos->wy][wpos->wx].tower->known |= 0x2;
+			if (!is_admin(p_ptr)) wild_info[wpos->wy][wpos->wx].tower->known |= DKF_MINDEPTH;
 #endif
 		}
 		else if (wpos->wz == -1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
@@ -1502,7 +1502,7 @@ void do_cmd_go_down(int Ind) {
 #endif
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			/* we now 'learned' the base level of this dungeon */
-			if (!is_admin(p_ptr)) d_ptr->known |= 0x2;
+			if (!is_admin(p_ptr)) d_ptr->known |= DKF_MINDEPTH;
 #endif
 			/* for jail dungeons, not actually needed, just to stay clean */
 			p_ptr->house_num = 0;
@@ -1657,7 +1657,7 @@ void do_cmd_go_down(int Ind) {
 			msg_format(Ind, "\377%cYou float into %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, FALSE, wild_info[wpos->wy][wpos->wx].dungeon, 0, FALSE));
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 			/* we now 'learned' the base level of this dungeon */
-			if (!is_admin(p_ptr)) wild_info[wpos->wy][wpos->wx].dungeon->known |= 0x2;
+			if (!is_admin(p_ptr)) wild_info[wpos->wy][wpos->wx].dungeon->known |= DKF_MINDEPTH;
 #endif
 		}
 		else if (wpos->wz == 1) msg_format(Ind, "\377%cYou float out of %s..", COLOUR_DUNGEON, get_dun_name(wpos->wx, wpos->wy, TRUE, wild_info[wpos->wy][wpos->wx].tower, 0, FALSE));

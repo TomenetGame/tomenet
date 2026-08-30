@@ -2436,13 +2436,13 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 					if (p_ptr->depth_in_feet)
 						fprintf(fff, "  t \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max %6dft",
-								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
-								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
+								(d_ptr->known & DKF_MINDEPTH) ? 'w' : 'D', d_ptr->baselevel,
+								(d_ptr->known & DKF_MAXDEPTH) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, 50 * get_recall_depth(&wpos, p_ptr));
 					else
 						fprintf(fff, "  t \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max Lv%4d",
-								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
-								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
+								(d_ptr->known & DKF_MINDEPTH) ? 'w' : 'D', d_ptr->baselevel,
+								(d_ptr->known & DKF_MAXDEPTH) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, get_recall_depth(&wpos, p_ptr));
  #else
 					if (p_ptr->depth_in_feet)
@@ -2495,7 +2495,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 								50 * get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian
    #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-								&& (d_ptr->known & 0x8)
+								&& (d_ptr->known & DKF_BOSS)
    #endif
 								) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
@@ -2505,7 +2505,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 								get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian
    #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-								&& (d_ptr->known & 0x8)
+								&& (d_ptr->known & DKF_BOSS)
    #endif
 								) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
@@ -2557,13 +2557,13 @@ void do_cmd_knowledge_dungeons(int Ind) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 					if (p_ptr->depth_in_feet)
 						fprintf(fff, "  D \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max %6dft",
-								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
-								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
+								(d_ptr->known & DKF_MINDEPTH) ? 'w' : 'D', d_ptr->baselevel,
+								(d_ptr->known & DKF_MAXDEPTH) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, -50 * get_recall_depth(&wpos, p_ptr));
 					else
 						fprintf(fff, "  D \377%c%3d\377%c-%3d\377w  R %3d  t %3d  Max Lv%4d",
-								(d_ptr->known & 0x2) ? 'w' : 'D', d_ptr->baselevel,
-								(d_ptr->known & 0x4) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
+								(d_ptr->known & DKF_MINDEPTH) ? 'w' : 'D', d_ptr->baselevel,
+								(d_ptr->known & DKF_MAXDEPTH) ? 'w' : 'D', d_ptr->baselevel + d_ptr->maxdepth - 1,
 								d_info[i].min_plev, i, -get_recall_depth(&wpos, p_ptr));
  #else
 					if (p_ptr->depth_in_feet)
@@ -2616,7 +2616,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 								-50 * get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian
    #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-								&& (d_ptr->known & 0x8)
+								&& (d_ptr->known & DKF_BOSS)
    #endif
 								) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?
@@ -2626,7 +2626,7 @@ void do_cmd_knowledge_dungeons(int Ind) {
 								-get_recall_depth(&wpos, p_ptr),
 								(i && d_info[i].final_guardian
    #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-								&& (d_ptr->known & 0x8)
+								&& (d_ptr->known & DKF_BOSS)
    #endif
 								) ?
 								(p_ptr->r_killed[d_info[i].final_guardian] == 1 ?

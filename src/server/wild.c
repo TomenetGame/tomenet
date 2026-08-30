@@ -5416,7 +5416,7 @@ void dunfound_reward(int Ind, dungeon_type *d_ptr) {
 		dun_total_normal++;
 
 		/* Count how many of these are already known */
-		if (d2_ptr->known & 0x1) dun_total_normal_known++;
+		if (d2_ptr->known & DKF_KNOWN) dun_total_normal_known++;
 	}
 	/* The dungeon we're checking is itself not a 'normal' dungeon even, nothing to do then */
 	if (!normal) {

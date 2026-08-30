@@ -4391,9 +4391,9 @@ void new_rd_wild(void) {
 				if (!s_older_than(4, 6, 7)) rd_byte(&d_ptr->known);
 				else
  #if 0
-					d_ptr->known = 0x1; //assume server has been running for so long that all dungeons have actually been discovered by now
+					d_ptr->known = DKF_SEEN; //assume server has been running for so long that all dungeons have actually been discovered by now
  #else
-					d_ptr->known = 0x0; //watch live as the knowledge accumulates
+					d_ptr->known = DKF_UNKNOWN; //watch live as the knowledge accumulates
  #endif
 #else
 				if (!s_older_than(4, 6, 7)) strip_bytes(1);
@@ -4485,9 +4485,9 @@ void new_rd_wild(void) {
 				if (!s_older_than(4, 6, 7)) rd_byte(&d_ptr->known);
 				else
  #if 0
-					d_ptr->known = 0x1; //assume server has been running for so long that all dungeons have actually been discovered by now
+					d_ptr->known = DKF_SEEN; //assume server has been running for so long that all dungeons have actually been discovered by now
  #else
-					d_ptr->known = 0x0; //watch live as the knowledge accumulates
+					d_ptr->known = DKF_UNKNOWN; //watch live as the knowledge accumulates
  #endif
 #else
 				if (!s_older_than(4, 6, 7)) strip_bytes(1);

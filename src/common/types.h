@@ -2774,7 +2774,7 @@ struct dungeon_type {
 					   to keep track of quest-items on offline chars without loading all savegames in order to scan them for deprecated quest items. */
 
 #ifdef GLOBAL_DUNGEON_KNOWLEDGE
-	byte known;		/* optional: Bits: 0x1 seen, 0x2 mindepth, 0x4 maxdepth, 0x8 boss seen */
+	byte known;		/* optional: Bits: 0x1 seen, 0x2 mindepth, 0x4 maxdepth, 0x8 boss seen : DKF_xxx flags */
 #endif
 
 	struct dun_level *level;	/* array of dungeon levels */

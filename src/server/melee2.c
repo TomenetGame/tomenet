@@ -12957,8 +12957,8 @@ void process_monsters(void) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 						/* we now 'learned' who is the boss of this dungeon */
 						if (!is_admin(p_ptr)) {
-							if (p_ptr->wpos.wz > 0) wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->known |= 0x8;
-							else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
+							if (p_ptr->wpos.wz > 0) wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->known |= DKF_BOSS;
+							else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= DKF_BOSS;
 						}
  #endif
 						Send_music(pl, (p_ptr->music_monster = 43), -1, -1);
@@ -12972,8 +12972,8 @@ void process_monsters(void) {
  #ifdef GLOBAL_DUNGEON_KNOWLEDGE
 							/* we now 'learned' who is the boss of this dungeon */
 							if (!is_admin(p_ptr)) {
-								if (p_ptr->wpos.wz > 0) wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->known |= 0x8;
-								else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= 0x8;
+								if (p_ptr->wpos.wz > 0) wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].tower->known |= DKF_BOSS;
+								else wild_info[p_ptr->wpos.wy][p_ptr->wpos.wx].dungeon->known |= DKF_BOSS;
 							}
  #endif
 							switch (m_ptr->r_idx) {

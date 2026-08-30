@@ -2120,7 +2120,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 					for (i = 1; i <= dungeon_id_max; ++i) {
 						d_ptr = getdungeon(&((struct worldpos) {dungeon_x[i], dungeon_y[i], dungeon_tower[i] ? 1 : -1}));
-						if (!(d_ptr->known & 0x1) && !admin) continue;
+						if (!(d_ptr->known & DKF_SEEN) && !admin) continue;
 						candidate_destination = get_dun_name(dungeon_x[i], dungeon_y[i], dungeon_tower[i], d_ptr, 0, TRUE);
 						if (!strncmp(candidate_destination, "The ", 4) && strlen(candidate_destination) > 4) candidate_destination += 4;
 						if (!strcasecmp(candidate_destination, msgptr)) { // perfect match
@@ -9809,7 +9809,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (!d_ptr) return;
 
-				d_ptr->known = 0x0;
+				d_ptr->known = DKF_UNKNOWN;
 				msg_print(Ind, "\377rDungeon is know UNKNOWN.");
 				return;
 			}
@@ -9819,7 +9819,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 				if (!d_ptr) return;
 
-				d_ptr->known = 0x1 | 0x2 | 0x4 | 0x8; /* Entrance seen, base level known, depth known, boss known */
+				d_ptr->known = DKF_KNOWN; /* Entrance seen, base level known, depth known, boss known */
 				msg_print(Ind, "\377GDungeon is know FULLY KNOWN.");
 				return;
 			}

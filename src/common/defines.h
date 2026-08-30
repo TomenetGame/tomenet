@@ -9780,6 +9780,16 @@ extern int PlayerUID;
    where I added the discovery-knowledge for the exploration_history - C. Blue */
 #define TF_KNOWN	0x0001
 
+#ifdef GLOBAL_DUNGEON_KNOWLEDGE
+/* Dungeon-known flags (byte) */
+ #define DKF_UNKNOWN		0x00
+ #define DKF_SEEN		0x01
+ #define DKF_MINDEPTH		0x02
+ #define DKF_MAXDEPTH		0x04
+ #define DKF_BOSS		0x08
+ #define DKF_KNOWN		0x0F
+#endif
+
 /* Limit terraforming in towns, to preserve intended layout somewhat?
  *  0 = not allowed to change
  *  32000 = no limit
