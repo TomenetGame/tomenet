@@ -2099,6 +2099,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				h = 0;
 				n = 256; // n holds best (ie earliest) match starting location in candidate name string
 				for (i = 0; i < numtowns; ++i) {
+					if (!(town[i].flags & TF_KNOWN) && !admin) continue;
 					candidate_destination = town_profile[town[i].type].name;
 					if (!strcasecmp(candidate_destination, msgptr)) { // perfect match
 						h = i;
