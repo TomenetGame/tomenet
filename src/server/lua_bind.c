@@ -853,16 +853,17 @@ void lua_towns_treset(void) {
 }
 
 /* To do some connection magik ! */
-long lua_player_exp(int level, int expfact) {
+long lua_player_exp(int Ind, int level, int expfact) {
+	player_type *p_ptr = Players[Ind];
 	s64b adv;
 
 	if (level < 1) level = 1;
 	if (level > PY_MAX_LEVEL) level = PY_MAX_LEVEL;
 
 #ifndef ALT_EXPRATIO
-	adv = ((s64b)player_exp[level - 2] * (s64b)expfact / 100L);
+	adv = ((s64b)(*(p_ptr->player_exp))[level - 2] * (s64b)expfact / 100L);
 #else
-	adv = (s64b)player_exp[level - 2];
+	adv = (s64b)(*(p_ptr->player_exp))[level - 2];
 #endif
 
 	return(adv);

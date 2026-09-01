@@ -6735,11 +6735,11 @@ static bool process_player_end_aux(int Ind) {
 
 		/* Cap it against level thresholds */
 #ifdef ALT_EXPRATIO
-		if ((p_ptr->lev >= 2) && (player_exp[p_ptr->lev - 2] > p_ptr->exp - exploss))
-			exploss = p_ptr->exp - player_exp[p_ptr->lev - 2];
+		if ((p_ptr->lev >= 2) && ((*(p_ptr->player_exp))[p_ptr->lev - 2] > p_ptr->exp - exploss))
+			exploss = p_ptr->exp - (*(p_ptr->player_exp))[p_ptr->lev - 2];
 #else
-		if ((p_ptr->lev >= 2) && ((((s64b)player_exp[p_ptr->lev - 2]) * ((s64b)p_ptr->expfact)) / 100L > p_ptr->exp - exploss))
-			exploss = p_ptr->exp - player_exp[p_ptr->lev - 2];
+		if ((p_ptr->lev >= 2) && ((((s64b)(*(p_ptr->player_exp))[p_ptr->lev - 2]) * ((s64b)p_ptr->expfact)) / 100L > p_ptr->exp - exploss))
+			exploss = p_ptr->exp - (*(p_ptr->player_exp))[p_ptr->lev - 2];
 #endif
 
 		/* Drain it! */

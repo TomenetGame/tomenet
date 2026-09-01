@@ -3597,6 +3597,13 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 	p_ptr->mode &= ~MODE_PVP;
 #endif
 
+#ifdef PLAYER_EXP_SLOWER_START
+	p_ptr->mode |= MODE_EXP_SLOWER_START;
+	p_ptr->player_exp = &player_exp_SLOWER;
+#else
+	p_ptr->player_exp = &player_exp;
+#endif
+
 	/* Set his ID */
 	p_ptr->id = newid();
 	s_printf("New ID: %d\n", p_ptr->id);
@@ -3642,9 +3649,9 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		}
 
 #ifndef ALT_EXPRATIO
-		p_ptr->exp = ((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact) / 100L;
+		p_ptr->exp = ((s64b)(*(p_ptr->player_exp))[p_ptr->lev - 2] * (s64b)p_ptr->expfact) / 100L;
 #else
-		p_ptr->exp = (s64b)player_exp[p_ptr->lev - 2];
+		p_ptr->exp = (s64b)(*(p_ptr->player_exp))[p_ptr->lev - 2];
 #endif
 		p_ptr->au = 9950 + rand_int(101);
 

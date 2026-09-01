@@ -4786,6 +4786,9 @@ void clockin(int Ind, int type) {
 			case 11:
 				ptr->max_plv = p_ptr->max_plv;
 				break;
+			case 12:
+				ptr->mode = p_ptr->mode;
+				break;
 			}
 			break;
 		}

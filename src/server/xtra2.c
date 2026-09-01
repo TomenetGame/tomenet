@@ -5027,10 +5027,10 @@ void check_experience(int Ind) {
 #ifdef LEVEL_GAINING_LIMIT
 	/* upper limit */
  #ifndef ALT_EXPRATIO
-	limit = (s64b)((s64b)player_exp[p_ptr->max_plv] *
+	limit = (s64b)((s64b)(*(p_ptr->player_exp))[p_ptr->max_plv] *
 			(s64b)p_ptr->expfact / 100L) - 1;
  #else
-	limit = (s64b)(player_exp[p_ptr->max_plv] - 1);
+	limit = (s64b)((*(p_ptr->player_exp))[p_ptr->max_plv] - 1);
  #endif
 	/* Hack -- upper limit */
 	if (p_ptr->exp > limit) p_ptr->exp = limit;
@@ -5053,10 +5053,10 @@ void check_experience(int Ind) {
 	/* Lose levels while possible */
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->lev > 1) &&
-	    (p_ptr->exp < ((s64b)((s64b)player_exp[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L))))
+	    (p_ptr->exp < ((s64b)((s64b)(*(p_ptr->player_exp))[p_ptr->lev - 2] * (s64b)p_ptr->expfact / 100L))))
 #else
 	while ((p_ptr->lev > 1) &&
-	    (p_ptr->exp < (s64b)player_exp[p_ptr->lev - 2]))
+	    (p_ptr->exp < (s64b)(*(p_ptr->player_exp))[p_ptr->lev - 2]))
 #endif
 	{
 		/* Lose a level */
@@ -5070,10 +5070,10 @@ void check_experience(int Ind) {
 	/* Remember maximum level (the one displayed if life levels were restored right now) */
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->max_lev > 1) &&
-	    (p_ptr->max_exp < ((s64b)((s64b)player_exp[p_ptr->max_lev - 2] * (s64b)p_ptr->expfact / 100L))))
+	    (p_ptr->max_exp < ((s64b)((s64b)(*(p_ptr->player_exp))[p_ptr->max_lev - 2] * (s64b)p_ptr->expfact / 100L))))
 #else
 	while ((p_ptr->max_lev > 1) &&
-	    (p_ptr->max_exp < (s64b)player_exp[p_ptr->max_lev - 2]))
+	    (p_ptr->max_exp < (s64b)(*(p_ptr->player_exp))[p_ptr->max_lev - 2]))
 #endif
 	{
 		/* Lose a level */
@@ -5086,10 +5086,10 @@ void check_experience(int Ind) {
 	/* Gain levels while possible */
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	    (p_ptr->exp >= ((s64b)(((s64b)player_exp[p_ptr->lev - 1] * (s64b)p_ptr->expfact) / 100L))))
+	    (p_ptr->exp >= ((s64b)(((s64b)(*(p_ptr->player_exp))[p_ptr->lev - 1] * (s64b)p_ptr->expfact) / 100L))))
 #else
 	while ((p_ptr->lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	    (p_ptr->exp >= (s64b)player_exp[p_ptr->lev - 1]))
+	    (p_ptr->exp >= (s64b)(*(p_ptr->player_exp))[p_ptr->lev - 1]))
 #endif
 	{
 		if (p_ptr->inval && p_ptr->lev >= 25) {
@@ -5129,7 +5129,7 @@ void check_experience(int Ind) {
 			distribution so that characters gain 250..300
 			skill points in total (TLRanger..YeekWarrior)*/
 			for (i = 50; i < 69; i++) {
-				if ((((s64b)player_exp[i - 1] * (s64b)p_ptr->expfact) / 100L) > 21240000) break;
+				if ((((s64b)(*(p_ptr->player_exp))[i - 1] * (s64b)p_ptr->expfact) / 100L) > 21240000) break;
 			}
 			i--;/* i now contains the maximum reachable level for
 			    this character, due to exp cap 21240000 */
@@ -5182,10 +5182,10 @@ void check_experience(int Ind) {
 	/* Remember maximum level (the one displayed if life levels were restored right now) */
 #ifndef ALT_EXPRATIO
 	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	    (p_ptr->max_exp >= ((s64b)(((s64b)player_exp[p_ptr->max_lev - 1] * (s64b)p_ptr->expfact) / 100L))))
+	    (p_ptr->max_exp >= ((s64b)(((s64b)(*(p_ptr->player_exp))[p_ptr->max_lev - 1] * (s64b)p_ptr->expfact) / 100L))))
 #else
 	while ((p_ptr->max_lev < (is_admin(p_ptr) ? PY_MAX_LEVEL : PY_MAX_PLAYER_LEVEL)) &&
-	    (p_ptr->max_exp >= (s64b)player_exp[p_ptr->max_lev - 1]))
+	    (p_ptr->max_exp >= (s64b)(*(p_ptr->player_exp))[p_ptr->max_lev - 1]))
 #endif
 	{
 		/* Gain a level */
@@ -5877,18 +5877,18 @@ return;
 	   otherwise stop 1 exp point before 51 */
  #ifndef ALT_EXPRATIO
 	if ((!p_ptr->total_winner) && (p_ptr->exp + amount + 1 >=
-	    ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)))) {
+	    ((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] * (s64b)p_ptr->expfact / 100L)))) {
 		if (p_ptr->exp + 1 >=
-		    ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)))
+		    ((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] * (s64b)p_ptr->expfact / 100L)))
 			return;
-		amount = ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
+		amount = ((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
 		amount--;
 	}
  #else
-	if ((!p_ptr->total_winner) && (p_ptr->exp + amount + 1 >= ((s64b)player_exp[50 - 1]))) {
-		if (p_ptr->exp + 1 >= ((s64b)player_exp[50 - 1]))
+	if ((!p_ptr->total_winner) && (p_ptr->exp + amount + 1 >= ((s64b)(*(p_ptr->player_exp))[50 - 1]))) {
+		if (p_ptr->exp + 1 >= ((s64b)(*(p_ptr->player_exp))[50 - 1]))
 			return;
-		amount = ((s64b)player_exp[50 - 1]) - p_ptr->exp;
+		amount = ((s64b)(*(p_ptr->player_exp))[50 - 1]) - p_ptr->exp;
 		amount--;
 	}
  #endif
@@ -5905,19 +5905,19 @@ return;
 	/* PvP-mode players have a level limit */
 	if (p_ptr->mode & MODE_PVP) {
 #ifndef ALT_EXPRATIO
-		if (p_ptr->exp + amount + 1 >= ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] *
+		if (p_ptr->exp + amount + 1 >= ((s64b)((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1] *
 					    (s64b)p_ptr->expfact / 100L))) {
-			if (p_ptr->exp + 1 >= ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] *
+			if (p_ptr->exp + 1 >= ((s64b)((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1] *
 					    (s64b)p_ptr->expfact / 100L)))
 				return;
-			amount = ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
+			amount = ((s64b)((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
 			amount--;
 		}
 #else
-		if (p_ptr->exp + amount + 1 >= ((s64b)player_exp[MAX_PVP_LEVEL - 1])) {
-			if (p_ptr->exp + 1 >= ((s64b)player_exp[MAX_PVP_LEVEL - 1]))
+		if (p_ptr->exp + amount + 1 >= ((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1])) {
+			if (p_ptr->exp + 1 >= ((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1]))
 				return;
-			amount = ((s64b)player_exp[MAX_PVP_LEVEL - 1]) - p_ptr->exp;
+			amount = ((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1]) - p_ptr->exp;
 			amount--;
 		}
 #endif
@@ -5951,19 +5951,19 @@ void apply_exp(int Ind) {
 #ifdef KINGCAP_LEV
 		/* You must defeat morgoth before beong allowed level > 50 */
  #ifndef ALT_EXPRATIO
-		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)((s64b)player_exp[50 - 1] *
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] *
 		   (s64b)p_ptr->expfact / 100L)))) {
-			if (p_ptr->max_exp >= ((s64b)((s64b)player_exp[50 - 1] *
+			if (p_ptr->max_exp >= ((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] *
 			   (s64b)p_ptr->expfact / 100L)))
 				return;
-			amount = (((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->max_exp);
+			amount = (((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->max_exp);
 			amount--;
 		}
  #else
-		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)player_exp[50 - 1]))) {
-			if (p_ptr->max_exp >= ((s64b)player_exp[50 - 1]))
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)(*(p_ptr->player_exp))[50 - 1]))) {
+			if (p_ptr->max_exp >= ((s64b)(*(p_ptr->player_exp))[50 - 1]))
 				return;
-			amount = (((s64b)player_exp[50 - 1]) - p_ptr->max_exp);
+			amount = (((s64b)(*(p_ptr->player_exp))[50 - 1]) - p_ptr->max_exp);
 			amount--;
 		}
  #endif
@@ -6091,18 +6091,18 @@ return;
 	   otherwise stop 1 exp point before 51 */
  #ifndef ALT_EXPRATIO
 	if ((!p_ptr->total_winner) && (p_ptr->exp + amount + 1 >=
-	    ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)))) {
+	    ((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] * (s64b)p_ptr->expfact / 100L)))) {
 		if (p_ptr->exp + 1 >=
-		    ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)))
+		    ((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] * (s64b)p_ptr->expfact / 100L)))
 			return;
-		amount = ((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
+		amount = ((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
 		amount--;
 	}
  #else
-	if ((!p_ptr->total_winner) && (p_ptr->exp + amount + 1 >= ((s64b)player_exp[50 - 1]))) {
-		if (p_ptr->exp + 1 >= ((s64b)player_exp[50 - 1]))
+	if ((!p_ptr->total_winner) && (p_ptr->exp + amount + 1 >= ((s64b)(*(p_ptr->player_exp))[50 - 1]))) {
+		if (p_ptr->exp + 1 >= ((s64b)(*(p_ptr->player_exp))[50 - 1]))
 			return;
-		amount = ((s64b)player_exp[50 - 1]) - p_ptr->exp;
+		amount = ((s64b)(*(p_ptr->player_exp))[50 - 1]) - p_ptr->exp;
 		amount--;
 	}
  #endif
@@ -6119,19 +6119,19 @@ return;
 	/* PvP-mode players have a level limit */
 	if (p_ptr->mode & MODE_PVP) {
 #ifndef ALT_EXPRATIO
-		if (p_ptr->exp + amount + 1 >= ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] *
+		if (p_ptr->exp + amount + 1 >= ((s64b)((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1] *
 					    (s64b)p_ptr->expfact / 100L))) {
-			if (p_ptr->exp + 1 >= ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] *
+			if (p_ptr->exp + 1 >= ((s64b)((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1] *
 					    (s64b)p_ptr->expfact / 100L)))
 				return;
-			amount = ((s64b)((s64b)player_exp[MAX_PVP_LEVEL - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
+			amount = ((s64b)((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->exp;
 			amount--;
 		}
 #else
-		if (p_ptr->exp + amount + 1 >= ((s64b)player_exp[MAX_PVP_LEVEL - 1])) {
-			if (p_ptr->exp + 1 >= ((s64b)player_exp[MAX_PVP_LEVEL - 1]))
+		if (p_ptr->exp + amount + 1 >= ((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1])) {
+			if (p_ptr->exp + 1 >= ((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1]))
 				return;
-			amount = ((s64b)player_exp[MAX_PVP_LEVEL - 1]) - p_ptr->exp;
+			amount = ((s64b)(*(p_ptr->player_exp))[MAX_PVP_LEVEL - 1]) - p_ptr->exp;
 			amount--;
 		}
 #endif
@@ -6151,19 +6151,19 @@ return;
 #ifdef KINGCAP_LEV
 		/* You must defeat morgoth before beong allowed level > 50 */
  #ifndef ALT_EXPRATIO
-		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)((s64b)player_exp[50 - 1] *
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] *
 		   (s64b)p_ptr->expfact / 100L)))) {
-			if (p_ptr->max_exp >= ((s64b)((s64b)player_exp[50 - 1] *
+			if (p_ptr->max_exp >= ((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] *
 			   (s64b)p_ptr->expfact / 100L)))
 				return;
-			amount = (((s64b)((s64b)player_exp[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->max_exp);
+			amount = (((s64b)((s64b)(*(p_ptr->player_exp))[50 - 1] * (s64b)p_ptr->expfact / 100L)) - p_ptr->max_exp);
 			amount--;
 		}
  #else
-		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)player_exp[50 - 1]))) {
-			if (p_ptr->max_exp >= ((s64b)player_exp[50 - 1]))
+		if ((!p_ptr->total_winner) && (p_ptr->max_exp + (amount / XP_DRAIN_RECOVERY) + 1 >= ((s64b)(*(p_ptr->player_exp))[50 - 1]))) {
+			if (p_ptr->max_exp >= ((s64b)(*(p_ptr->player_exp))[50 - 1]))
 				return;
-			amount = (((s64b)player_exp[50 - 1]) - p_ptr->max_exp);
+			amount = (((s64b)(*(p_ptr->player_exp))[50 - 1]) - p_ptr->max_exp);
 			amount--;
 		}
  #endif
@@ -6287,13 +6287,14 @@ void lose_exp(int Ind, s32b amount) {
 
 /* helper function to boost a character to a specific level (for Dungeon Keeper event) */
 void gain_exp_to_level(int Ind, int level) {
+	player_type *p_ptr = Players[Ind];
 	u32b k = 0;
 
 	if (level <= 1) return;
-	k = player_exp[level - 2];
-	if (Players[Ind]->max_exp < k)
+	k = (*(p_ptr->player_exp))[level - 2];
+	if (p_ptr->max_exp < k)
 		/* make up for rounding error (+99) */
-		gain_exp(Ind, ((k - Players[Ind]->max_exp) * Players[Ind]->expfact + 99) / 100);
+		gain_exp(Ind, ((k - p_ptr->max_exp) * p_ptr->expfact + 99) / 100);
 }
 
 
@@ -11271,16 +11272,16 @@ void player_death(int Ind) {
 #if 0 /* only reward exp for killing same level or higher players */
 				if (pk_ptr->max_plv <= p_ptr->max_plv) {
 					/* note how expfact isn't multiplied, so a difference between the races remains :) */
-					gain_exp(killer, (player_exp[pk_ptr->lev - 1] - player_exp[pk_ptr->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (pk_ptr->lev - 5)));
+					gain_exp(killer, ((*(p_ptr->player_exp))[pk_ptr->lev - 1] - (*(p_ptr->player_exp))[pk_ptr->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (pk_ptr->lev - 5)));
 				}
 #else /* reward exp for all player-kills, but less for killing lower level chars */
 				if (pk_ptr->max_plv <= p_ptr->max_plv) {
 					/* note how expfact isn't multiplied, so a difference between the races/classes remains, as usual */
-					gain_exp(killer, (player_exp[pk_ptr->lev - 1] - player_exp[pk_ptr->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (pk_ptr->lev - 5)));
+					gain_exp(killer, ((*(p_ptr->player_exp))[pk_ptr->lev - 1] - (*(p_ptr->player_exp))[pk_ptr->lev - 2]) * (1 + (p_ptr->max_plv - 5) / (pk_ptr->lev - 5)));
 				} else {
 					/* get less exp if player was lower than killer, dropping rapidly */
 					k = 2 + pk_ptr->lev - p_ptr->max_plv;//2+k; k*k+0; *12/
-					gain_exp(killer, ((player_exp[pk_ptr->lev - 1] - player_exp[pk_ptr->lev - 2]) * 10) / ((k * k) - 2));
+					gain_exp(killer, (((*(p_ptr->player_exp))[pk_ptr->lev - 1] - (*(p_ptr->player_exp))[pk_ptr->lev - 2]) * 10) / ((k * k) - 2));
 				}
 #endif
 

@@ -77,7 +77,7 @@ function setexp(name, modif)
 --	players(p).max_exp = 0
 --    else
 --        players(p).exp = player_exp[players(p).lev - 2] * players(p).expfact / 100 - modif
-	players(p).exp = lua_player_exp(players(p).lev, players(p).expfact)
+	players(p).exp = lua_player_exp(p, players(p).lev, players(p).expfact)
         players(p).max_exp = players(p).exp
 --    end
 end
@@ -94,7 +94,7 @@ function setlev(name, l)
 	players(p).exp = 0
 	players(p).max_exp = 0
     else
-	players(p).exp = lua_player_exp(l, players(p).expfact)
+	players(p).exp = lua_player_exp(p, l, players(p).expfact)
         players(p).max_exp = players(p).exp
     end
 end

@@ -4212,28 +4212,28 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "\377B[@] \377oUsage: /auction set <inventory slot> <starting price> <buyout price> <duration>");
 					msg_print(Ind, "\377B[@] \377wSets up an auction.");
 					msg_print(Ind, "\377B[@] \377wInventory slot is the item's letter in your inventory.");
-#ifdef AUCTION_MINIMUM_STARTING_PRICE
+ #ifdef AUCTION_MINIMUM_STARTING_PRICE
 					msg_format(Ind, "\377B[@] \377wMinimum starting price is %d%% of the item's real value.", AUCTION_MINIMUM_STARTING_PRICE);
-#endif
-#ifdef AUCTION_MAXIMUM_STARTING_PRICE
+ #endif
+ #ifdef AUCTION_MAXIMUM_STARTING_PRICE
 					msg_format(Ind, "\377B[@] \377wMaximum starting price is %d%% of the item's real value.", AUCTION_MAXIMUM_STARTING_PRICE);
-#endif
-#ifdef AUCTION_MINIMUM_BUYOUT_PRICE
+ #endif
+ #ifdef AUCTION_MINIMUM_BUYOUT_PRICE
 					msg_format(Ind, "\377B[@] \377wMinimum buyout price is %d%% of the item's real value.", AUCTION_MINIMUM_BUYOUT_PRICE);
-#endif
-#ifdef AUCTION_MAXIMUM_BUYOUT_PRICE
+ #endif
+ #ifdef AUCTION_MAXIMUM_BUYOUT_PRICE
 					msg_format(Ind, "\377B[@] \377wMaximum buyout price is %d%% of the item's real value.", AUCTION_MAXIMUM_BUYOUT_PRICE);
-#endif
-#ifdef AUCTION_MINIMUM_DURATION
+ #endif
+ #ifdef AUCTION_MINIMUM_DURATION
 					time_string = auction_format_time(AUCTION_MINIMUM_DURATION);
 					msg_format(Ind, "\377B[@] \377wShortest duration allowed is %s.", time_string);
 					C_KILL(time_string, strlen(time_string), char);
-#endif
-#ifdef AUCTION_MAXIMUM_DURATION
+ #endif
+ #ifdef AUCTION_MAXIMUM_DURATION
 					time_string = auction_format_time(AUCTION_MAXIMUM_DURATION);
 					msg_format(Ind, "\377B[@] \377wLongest duration allowed is %s.", time_string);
 					C_KILL(time_string, strlen(time_string), char);
-#endif
+ #endif
 				} else if (!strcmp("start", token[2])) {
 					msg_print(Ind, "\377B[@] \377oUsage: /auction start");
 					msg_print(Ind, "\377B[@] \377wConfirms that you want to start start an auction.");
@@ -5392,7 +5392,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			/* check what's possible for us to convert into */
 			ok = check_account(p_ptr->accountname, "", &err_Ind);
-			s_printf("CONVEXCL: '%s' (%d) -> %d\n", p_ptr->name, p_ptr->mode, ok);
+			s_printf("CONVEXCL: '%s' (Acc:'%s', R:%s, C:%s, %d) -> %d\n", p_ptr->name, p_ptr->accountname, race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, p_ptr->mode, ok);
 
 			/* We want to convert into ded.pvp? */
 			if ((p_ptr->mode & MODE_PVP)) {
@@ -7012,7 +7012,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_format(Ind, "   - impending expiry of a character (~%dd) or account (~%dd) of yours.", EMAIL_NOTIFICATION_EXPIRY_CHAR, EMAIL_NOTIFICATION_EXPIRY_ACC);
  #elif defined(EMAIL_NOTIFICATION_EXPIRY_CHAR)
 					msg_format(Ind, "   - impending expiry of a character of yours (in ~%d days).", EMAIL_NOTIFICATION_EXPIRY_CHAR);
-  #elif defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
+ #elif defined(EMAIL_NOTIFICATION_EXPIRY_ACC)
 					msg_format(Ind, "   - impending expiry of an account of yours (in ~%d days).", EMAIL_NOTIFICATION_EXPIRY_ACC);
  #endif
  #ifdef EMAIL_NOTIFICATION_RELEASE
@@ -7098,6 +7098,35 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 
 			do_set_mycorrhiza(Ind, k);
+			return;
+		}
+#endif
+#ifdef PLAYER_EXP_SLOWER_START_OPTIN
+		/* Specialty: Convert current character into a PLAYER_EXP_SLOWER_START test char, using the slower player_exp_SLOW[] table */
+		else if (prefix(messagelc, "/convertslower")) {
+			if (p_ptr->max_exp || p_ptr->max_plv > 1) {
+				msg_print(Ind, "\377yYou must have zero experience points to be eligible to convert to EXP_SLOWER_START!");
+				s_printf("FAILED.\n");
+				return;
+			}
+
+			if (!tk || strcmp(p_ptr->name, message3)) {
+				msg_print(Ind, "\377oThis command converts your CURRENT character into a 'EXP_SLOWER_START' character!");
+				msg_print(Ind, "\377oUsage:    /convertslower <your-current-character-name>");
+				msg_format(Ind, "\377oExample:  /convertslower %s", p_ptr->name);
+				msg_format(Ind, "\377RWarning: This process is NOT REVERSIBLE!");
+				return;
+			}
+			if (p_ptr->mode & MODE_EXP_SLOWER_START) {
+				msg_print(Ind, "\377yThis character is already an EXP_SLOWER_START character.");
+				return;
+			}
+
+			s_printf("CONVSLOWER: '%s' (Acc:'%s', R:%s, C:%s, %d)\n", p_ptr->name, p_ptr->accountname, race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, p_ptr->mode);
+			msg_print(Ind, "\377yYour character has been converted to an EXP_SLOWER_START character!");
+			p_ptr->mode |= MODE_EXP_SLOWER_START;
+			p_ptr->player_exp = &player_exp_SLOWER;
+			clockin(Ind, 12);
 			return;
 		}
 #endif
@@ -9282,7 +9311,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				wpos2.wy = town[b].y;
 				wpos2.wz = 0;
 
-#if 0
+ #if 0
 				for (x = wpos1.wx - wild_info[wpos1.wy][wpos1.wx].radius;
 				    x <= wpos1.wx + wild_info[wpos1.wy][wpos1.wx].radius; x++)
 				for (y = wpos1.wy - wild_info[wpos1.wy][wpos1.wx].radius;
@@ -9291,7 +9320,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 						wild_info[wpos1.wy][wpos1.wx].radius = towndist(wpos1.wy, wpos1.wx);
 						wild_info[wpos1.wy][wpos1.wx].town_idx = wild_gettown(wpos1.wx, wpos1.wy);
 					}
-#endif
+ #endif
 
 				wild_info[wpos1.wy][wpos1.wx].type = WILD_UNDEFINED; /* re-generate */
 				wild_info[wpos1.wy][wpos1.wx].radius = towndist(wpos1.wy, wpos1.wx);
@@ -11641,12 +11670,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					j_ptr->held_m_idx = m_idx;
 					j_ptr->next_o_idx = m_ptr->hold_o_idx;
 					m_ptr->hold_o_idx = o_idx;
-#if 1 /* only transfer 1 item instead of a whole stack? */
+ #if 1 /* only transfer 1 item instead of a whole stack? */
 					j_ptr->number = 1;
 					inven_item_increase(Ind, k, -1);
-#else
+ #else
 					inven_item_increase(Ind, k, -j_ptr->number);
-#endif
+ #endif
 					inven_item_optimize(Ind, k);
 					msg_print(Ind, "Monster-carry successfully completed.");
 				} else msg_print(Ind, "No more objects available.");
@@ -15086,8 +15115,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 #endif
-//#ifdef TEST_SERVER
-#if 1
+#if 1 //#ifdef TEST_SERVER
 			else if (prefix(messagelc, "/settime")) {
 				int h, m, hc, mc;
 				u64b turn_old = turn, turn_diff;
@@ -16058,6 +16086,33 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				p_ptr->rp_ptr = &race_info[pr_org];
 				for (i = 0; i < C_ATTRIBUTES; i++) p_ptr->stat_ind[i] = ps_org[i];
 				calc_boni(Ind);
+				return;
+			}
+			/* Specialty: Convert current character into a PLAYER_EXP_SLOWER_START test char, using the slower player_exp_SLOW[] table */
+			else if (prefix(messagelc, "/convertslower")) {
+				if (p_ptr->max_exp || p_ptr->max_plv > 1) {
+					msg_print(Ind, "\377yYou must have zero experience points to be eligible to convert to EXP_SLOWER_START!");
+					s_printf("FAILED.\n");
+					return;
+				}
+
+				if (!tk || strcmp(p_ptr->name, message3)) {
+					msg_print(Ind, "\377oThis command converts your CURRENT character into a 'EXP_SLOWER_START' character!");
+					msg_print(Ind, "\377oUsage:    /convertslower <your-current-character-name>");
+					msg_format(Ind, "\377oExample:  /convertslower %s", p_ptr->name);
+					msg_format(Ind, "\377RWarning: This process is NOT REVERSIBLE!");
+					return;
+				}
+				if (p_ptr->mode & MODE_EXP_SLOWER_START) {
+					msg_print(Ind, "\377yThis character is already an EXP_SLOWER_START character.");
+					return;
+				}
+
+				s_printf("CONVSLOWER: '%s' (Acc:'%s', R:%s, C:%s, %d)\n", p_ptr->name, p_ptr->accountname, race_info[p_ptr->prace].title, class_info[p_ptr->pclass].title, p_ptr->mode);
+				msg_print(Ind, "\377yYour character has been converted to an EXP_SLOWER_START character!");
+				p_ptr->mode |= MODE_EXP_SLOWER_START;
+				p_ptr->player_exp = &player_exp_SLOWER;
+				clockin(Ind, 12);
 				return;
 			}
 		}

@@ -877,6 +877,14 @@
 #define MAX_PVP_LEVEL	30
 
 
+/* Keep fast 1-5 startup, slower early-mid leveling, make level 50 take 2x as much XP, but return back to usual XP amounts around 60-65, with last small diffs practically disappearing at 68-71 */
+#if 0 /* Enable it mandatorily? */
+ #define PLAYER_EXP_SLOWER_START
+#elif 1 /* Enable it optionally? */
+ #define PLAYER_EXP_SLOWER_START_OPTIN
+#endif
+
+
 /* For flash player 2 option, cfg.fps/n, for short range teleport [8] */
 #define FLASH_SELF_DIVS 8
 /* For flash player option, cfg.fps/n, for teleport [4] */
@@ -8840,6 +8848,7 @@ extern int PlayerUID;
 #define MODE_VPRIVILEGED	0x00080000U	/* privileged >= 2 */
 #define MODE_RESTRICTED		0x00100000U	/* restricted == 1 */
 #define MODE_VRESTRICTED	0x00200000U	/* restricted == 2 */
+#define MODE_EXP_SLOWER_START	0x00400000U	/* for PLAYER_EXP_SLOWER_START/PLAYER_EXP_SLOWER_START_OPTIN/ */
 
 #define MODE_MASK		(MODE_SOLO | MODE_HARD | MODE_NO_GHOST | MODE_EVERLASTING | MODE_PVP)       /* "real" character modes, rather than 'softer modifiers' */
 

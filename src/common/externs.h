@@ -57,6 +57,7 @@ extern byte blows_table[12][12];
 extern owner_type owners[MAX_BASE_STORES][MAX_STORE_OWNERS];
 extern s16b extract_energy[256];
 extern s32b player_exp[PY_MAX_LEVEL];
+extern s32b player_exp_SLOWER[PY_MAX_LEVEL];
 extern player_race race_info[MAX_RACE];
 extern player_class class_info[MAX_CLASS];
 extern player_trait trait_info[MAX_TRAIT];

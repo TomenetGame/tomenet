@@ -3489,6 +3489,7 @@ struct player_type {
 
 	s32b au;			/* Current Gold */
 
+	s32b (*player_exp)[PY_MAX_LEVEL + 1];	/* Pointer to player_exp[] array in use for this char, for PLAYER_EXP_SLOWER_START/PLAYER_EXP_SLOWER_START_OPTIN */
 	s32b max_exp;			/* Max experience */
 	s32b exp;			/* Cur experience */
 	u16b exp_frac;			/* Cur exp frac (times 2^16) */
