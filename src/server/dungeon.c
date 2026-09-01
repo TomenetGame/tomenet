@@ -5308,11 +5308,27 @@ static bool process_player_end_aux(int Ind) {
 
 	/* Ents: Symbiotic mycorrhiza */
 	if (p_ptr->mycorrhiza) {
+		int minfreq;
+
 		if (p_ptr->mycorrhiza_dur) {
 			p_ptr->mycorrhiza_dur--;
 			if (!p_ptr->mycorrhiza_dur) msg_print(Ind, "\376\377GYour state of mycorrhiza has reached perfect symbiosis.");
 		}
-		if (!rand_int(3 + (p_ptr->mycorrhiza_dur + 99) / 100)) {
+
+		switch (p_ptr->mycorrhiza - 1) {
+		/* These two are in competition with CSW, buff them to trigger more frequently */
+		case SV_FOOD_CURE_BLINDNESS:
+		case SV_FOOD_CURE_CONFUSION:
+			minfreq = 2;
+			break;
+		case SV_FOOD_CURE_SERIOUS: /* Reduce this one's trigger speed somewhat, as it provides triple-status cure too. */
+			minfreq = 4;
+			break;
+		default:
+			minfreq = 3;
+		}
+
+		if (!rand_int(minfreq + (p_ptr->mycorrhiza_dur + 99) / 100)) {
 			/* Actually trigger the mushroom's effect! */
 			eat_food(Ind, p_ptr->mycorrhiza - 1, NULL, NULL);
 			//msg_format(Ind, "MYCORRHIZA: %d", 3 + (p_ptr->mycorrhiza_dur + 99) / 100); //DEBUG

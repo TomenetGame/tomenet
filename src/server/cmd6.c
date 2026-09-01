@@ -10289,6 +10289,7 @@ void do_cmd_breathe_aux(int Ind, int dir) {
 void do_set_mycorrhiza(int Ind, int item) {
 	player_type *p_ptr = Players[Ind];
 	object_type *o_ptr;
+	char o_name[ONAME_LEN];
 
 #ifndef ENABLE_MYCORRHIZA
 	msg_print(Ind, "\377yMycorrhiza is not an available gameplay function.");
@@ -10337,15 +10338,10 @@ void do_set_mycorrhiza(int Ind, int item) {
 	/* Enter mycorrhiza! */
 	p_ptr->mycorrhiza = o_ptr->sval + 1;
 	p_ptr->mycorrhiza_dur = 5000;
-	/* Hack: Positive side effect of harmful mushroom */
-	if (o_ptr->sval == SV_FOOD_PARANOIA) p_ptr->update |= PU_BONUS;
-	/* Log */
-	{
-		char o_name[ONAME_LEN];
 
-		object_desc(0, o_name, o_ptr, FALSE, 3);
-		s_printf("MYCORRHIZA: %s : %d (%s)\n", p_ptr->name, p_ptr->mycorrhiza, o_name);
-	}
+	/* Log */
+	object_desc(0, o_name, o_ptr, FALSE, 3);
+	s_printf("MYCORRHIZA: %s : %d (%s)\n", p_ptr->name, p_ptr->mycorrhiza, o_name);
 
 	/* Lose the shroom, optimize. */
 	inven_item_increase(Ind, item, -1);
@@ -10353,8 +10349,23 @@ void do_set_mycorrhiza(int Ind, int item) {
 	inven_item_optimize(Ind, item);
 
 	msg_format(Ind, "\376\377gYou plant the fungus on your bark, to enter a new mycorrhiza...");
-	if (p_ptr->mycorrhiza == SV_FOOD_SLIME_MOLD + 1)
+
+	/* Item-specific adjustments and maintenance */
+	switch (p_ptr->mycorrhiza - 1) {
+	case SV_FOOD_PARANOIA:
+		/* Hack: Positive side effect of harmful mushroom: Search frequency ('Perception') */
+		p_ptr->update |= PU_BONUS;
+		break;
+	/* These two are in competition with CSW, buff them to 'quickstart' */
+	case SV_FOOD_CURE_BLINDNESS:
+	case SV_FOOD_CURE_CONFUSION:
+		p_ptr->mycorrhiza_dur = 1500;
+		msg_print(Ind, "The mushroom seems to be especially adept.");
+		break;
+	case SV_FOOD_SLIME_MOLD:
 		msg_print(Ind, "The slime mold seems to collect moisture from the air and share it with you.");
+		break;
+	}
 
 	p_ptr->energy -= level_speed(&p_ptr->wpos);
 }
