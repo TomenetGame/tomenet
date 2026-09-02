@@ -14787,7 +14787,9 @@ static void do_cmd_options_tilesets(void) {
 		} else preview_ready = FALSE;
    #else
 		byte mode_color = TERM_WHITE;
+    #ifndef WINDOWS /* Resize interpoliation is currently not implemented for Windows */
 		byte resize_type_color = TERM_WHITE;
+    #endif
 		byte tileset_color = TERM_WHITE;
    #endif
 
