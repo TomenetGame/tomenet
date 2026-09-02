@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 27. August 2026 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 2. September 2026 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -5965,15 +5965,16 @@ Tilesets also have two designated 'mask colours':
   Before, when drawing tiles, you had to use background mask for terrain tiles
   and transparency mask for other tiles (monsters, items, ...). And for the
   other tiles to not visually blend with the terrain tile below you'd have to
-  paint the transparency mask in a way an outline is formed. In SDL3 clients you
-  use the background mask and outline mask for all tiles. When a tile is used as
-  a terrain tile, the background mask and outline mask becomes the background
-  color (currently only black) and when a tile is drawn above a terrain tile,
-  the background mask becomes fully transparent, to see the terrain tile below
-  and the outline mask becomes a semi-transparent black. This way you don't have
-  to think what mask to use depending on tile type (terrain, monsters, ...). And
-  the outline color can be used to indicate some effects in the future (eg.
-  player's outline becomes colorful when quaffing some potion).
+  paint the transparency mask in a way an outline is formed. In SDL3 clients
+  you use the background mask and outline mask for all tiles. When a tile is
+  used as a terrain tile, the background mask and outline mask becomes the
+  background color (currently only black) and when a tile is drawn above a
+  terrain tile, the background mask becomes fully transparent, to see the
+  terrain tile below and the outline mask becomes a semi-transparent black.
+  This way you don't have to think what mask to use depending on tile type
+  (terrain, monsters, ...). And the outline color can be used to indicate some
+  effects in the future (eg. player's outline becomes colorful when quaffing
+  some potion).
   You don't even have to paint the outline mask into the bitmap. There is an
   'graphicsForceOutline` setting in tomenet.cfg. When set to a non negative
   number, outline of set width will be generated automatically (0 is no
@@ -5983,7 +5984,7 @@ Tilesets also have two designated 'mask colours':
   Also you can redefine the outline mask color in .prf file too, by using the
   'm:2:<hex-color>' redefinition. If redefinition is not present, default
   outline mask color (0x1D211C) is used.
-  For backward compatibility, when there are no mask redefinitions in .prf file,
+  For backward compatibility, when there are no mask redefinitions in .prf file
   the transparency-mask (0x1D211C) is used as background mask and the original
   background mask for terrain tile (0x3E3D00) is handled as outline mask
   (outline mask for bottom tile will become the same color as background). If
@@ -28324,7 +28325,7 @@ ONLY WORKS ON STANDARD EQUIPMENT:
 
 DOESN'T WORK ON EGOS / ARTS:
 
--Don't use them on ego items or artifacts, or you will lose the scroll!
+-The scroll won't work on ego items or artifacts.
 
  Watch out: 'Indestructible' and 'Cursed' rings are ego items too, so are
  'Amulets of Telepathy' and Dragon Scale Mails 'of Defense', so you cannot
