@@ -1793,7 +1793,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 			if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yAll erroneous lines in '%s' were commented out via '#ERROR: ' prefix.", name);
 			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Commented out erroneous lines in '%s' by prefixing '#ERROR: '.\n", name));
 			rename(format("%s.tmp", buf), buf);
-		}
+		} else remove(format("%s.tmp", buf));
 	}
 
 #if 0 /* actually don't do this as it would mess up separate .prf files by putting all currently loaded stuff from any of them into this one file */
