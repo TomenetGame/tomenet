@@ -626,9 +626,10 @@ static int my_fpeekc(FILE *fff) {
  * the buffer allocated for the line. The caller is responsible for freeing
  * the allocated memory.
  * - mikaelh
+ * Returns 0 on content read, 1 on EOF, 2 on memory allocation error.
  */
 errr my_fgets2(FILE *fff, char **line, int *n, byte *fmt) {
-	int c;
+	int c, c2;
 	int done = FALSE;
 	long len = 0;
 	long alloc = 4096;
@@ -674,10 +675,7 @@ errr my_fgets2(FILE *fff, char **line, int *n, byte *fmt) {
 		}
 
 		/* Handle newline */
-		case '\n':
-		case '\r': {
-			int c2;
-
+		case '\r':
 			/* Peek at the next character to eliminate a possible \n */
 			c2 = my_fpeekc(fff);
 
@@ -687,14 +685,14 @@ errr my_fgets2(FILE *fff, char **line, int *n, byte *fmt) {
 				/* File seems to be in 'DOS format' */
 				if (c == '\r') *fmt = OS_WIN32;
 			}
-
+			// fall through
+		case '\n':
 			/* Terminate */
 			buf[len] = '\0';
 
 			/* Done */
 			done = TRUE;
 			break;
-		}
 
 		/* Handle tabs */
 		case '\t': {
@@ -1179,6 +1177,16 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 			*outdated = TRUE;
 			logprint(format("Outdated option '%s': Interpreting as 'sn_huge_bar'.\n", buf));
 			strcpy(buf + 2, "sn_huge_bar");
+		}
+		if (streq(buf + 2, "auto_insc_off")) {
+			*outdated = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'auto_inscr_off'.\n", buf));
+			strcpy(buf + 2, "auto_inscr_off");
+		}
+		if (streq(buf + 2, "stack_allow_wands")) {
+			*outdated = TRUE;
+			logprint(format("Outdated option '%s': Interpreting as 'stack_allow_devices'.\n", buf));
+			strcpy(buf + 2, "stack_allow_devices");
 		}
 
 		if (streq(buf + 2, "view_reduce_lite")) {
@@ -1695,13 +1703,13 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
  * Warn not for every bad mapping line, but once after all mapping lines were loaded: */
 #define BAD_MAPPING_BUNDLE
 errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
-	FILE *fp;
+	FILE *fp, *fperr;
 	int n, err;
 	char *buf2, *c, *c2;
 	byte fmt;
 	//bool errors = FALSE;
 	int subtileset = -1;
-	bool outdated = FALSE;
+	bool outdated = FALSE, errors = FALSE;
 
 	fp = my_fopen(buf, "r");
 	if (!fp) {
@@ -1711,6 +1719,7 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 		}
 		return(-1);
 	}
+	fperr = my_fopen(format("%s.tmp", buf), "w");
 
 	/* Recognize from filename part (basename suffix) '#...'.bmp when we're a sub-tileset file
 	   (this is somewhat better than passing a parm, because it will also catch user loading it manually).
@@ -1733,14 +1742,17 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 
 	/* Process the file */
 	while (0 == (err = my_fgets2(fp, &buf2, &n, &fmt))) {
-		/* Process the line */
-		if (process_pref_file_aux_aux(buf2, fmt, subtileset, &outdated)) {
+		/* Process the line if it's not empty */
+		if (*buf2 && process_pref_file_aux_aux(buf2, fmt, subtileset, &outdated)) {
 			/* Useful error message */
 			if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yError in '%s' parsing '%s'.", buf2, name);
 			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Error in '%s' parsing '%s'.\n", buf2, name));
 			//else if (rl_connection_state != 1 && !rl_msg_output) plog_fmt("Error in '%s' parsing '%s'.\n", buf2, name); //too annoying if prf file contains a bunch of outdated options as residue from older game versions
-			//errors = TRUE;
-		}
+			if (fperr) {
+				fprintf(fperr, "#ERROR: %s\n", buf2);
+				errors = TRUE;
+			}
+		} else if (fperr) fprintf(fperr, "%s\n", buf2);
 #ifndef BAD_MAPPING_BUNDLE /* Warn for every bad mapping-line? */
 		if (bad_solid_mapping) {
 			if (rl_connection_state == 1 || rl_msg_output) {
@@ -1775,6 +1787,14 @@ errr process_pref_file_aux(char *buf, cptr name, bool quiet) {
 
 	/* Close the file */
 	my_fclose(fp);
+	if (fperr) {
+		my_fclose(fperr);
+		if (errors) {
+			if (rl_connection_state == 1 || rl_msg_output) c_msg_format("\377yAll erroneous lines in '%s' were commented out via '#ERROR: ' prefix.", name);
+			if (strcmp(ANGBAND_SYS, "gcu")) logprint(format("Commented out erroneous lines in '%s' by prefixing '#ERROR: '.\n", name));
+			rename(format("%s.tmp", buf), buf);
+		}
+	}
 
 #if 0 /* actually don't do this as it would mess up separate .prf files by putting all currently loaded stuff from any of them into this one file */
 	/* Try to auto-fix errors simply by re-saving the file */
@@ -3141,7 +3161,7 @@ bool load_auto_inscriptions(cptr name) {
 	} else version = 5;
 
 #ifdef TEST_CLIENT
-	logprint(format("Read a v%d.%d.%d.%d.%d.%d <%s> .ins file, version %d [%d%s]: %s", vmaj, vmin, vpatch, vextra, vbranch, vbuild, vtag, version, i, compat ? "-compat":"", name));
+	logprint(format("Read a v%d.%d.%d.%d.%d.%d <%s> .ins file, version %d [%d%s]: %s\n", vmaj, vmin, vpatch, vextra, vbranch, vbuild, vtag, version, i, compat ? "-compat":"", name));
 	c_msg_format("Read a v%d.%d.%d.%d.%d.%d <%s> .ins file, version %d [%d%s]: %s", vmaj, vmin, vpatch, vextra, vbranch, vbuild, vtag, version, i, compat ? "-compat":"", name);
 #endif
 
