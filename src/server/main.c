@@ -217,17 +217,17 @@ static void get_location(void) {
 	strcpy(geoloc_city, "unknown");
 
 	s_printf("Retrieving geolocation...\n");
-	(void)system("curl --connect-timeout 3 https://mylocation.org/ 2>/dev/null > __ipgeo.tmp &");
-	sleep(2);
+	(void)system("curl --connect-timeout 3 https://api.ip2location.io/ 2>/dev/null > __ipgeo.tmp");
 	if (!file_exist("__ipgeo.tmp")) return;
 
 	fp = fopen("__ipgeo.tmp", "r");
 	if (fp) {
 		char buf[1024], *c, *c2;
-		bool gl_a = FALSE, gl_y = FALSE, gl_s = FALSE, gl_c = FALSE;
+		//bool gl_a = FALSE, gl_y = FALSE, gl_s = FALSE, gl_c = FALSE;
 
 		/* Read result and display the relevant parts */
-		while (!my_fgets(fp, buf, 1024, FALSE)) {
+		while (!feof(fp) && fgets(buf, 1024, fp)) {
+#if 0 /* info consists of multiple text lines */
 			if (gl_a) {
 				gl_a = FALSE;
 				c = strstr(buf, "<b>");
@@ -265,10 +265,48 @@ static void get_location(void) {
 			else if (strstr(buf, ">Country<")) gl_y = TRUE;
 			else if (strstr(buf, ">Region<")) gl_s = TRUE;
 			else if (strstr(buf, ">City<")) gl_c = TRUE;
+#else /* info is all in one line */
+			if ((c = strstr(buf, "country_name"))) {
+				strncpy(geoloc_country, c + 15, MAX_CHARS - 1);
+				c2 = strchr(geoloc_country, '"');
+				if (c2) *c2 = 0;
+			}
+			if ((c = strstr(buf, "region_name"))) {
+				strncpy(geoloc_state, c + 14, MAX_CHARS - 1);
+				c2 = strchr(geoloc_state, '"');
+				if (c2) *c2 = 0;
+			}
+			if ((c = strstr(buf, "city_name"))) {
+				strncpy(geoloc_city, c + 12, MAX_CHARS - 1);
+				c2 = strchr(geoloc_city, '"');
+				if (c2) *c2 = 0;
+			}
+#endif
 		}
 		fclose(fp);
 	}
 	remove("__ipgeo.tmp");
+
+#if 1
+	/* Also grab public IP if we didn't get it above */
+	s_printf("Retrieving geolocation (public IP)...\n");
+	(void)system("curl --connect-timeout 3 https://api.ipify.org?format=json 2>/dev/null > __ipgeo_ip.tmp");
+	if (!file_exist("__ipgeo_ip.tmp")) return;
+
+	fp = fopen("__ipgeo_ip.tmp", "r");
+	if (fp) {
+		char buf[256], *c, *c2;
+		while (!feof(fp) && fgets(buf, 256, fp)) {
+			if ((c = strstr(buf, ":\""))) {
+				strncpy(geoloc_extip, c + 2, MAX_CHARS - 1);
+				c2 = strchr(geoloc_extip, '"');
+				if (c2) *c2 = 0;
+			}
+		}
+		fclose(fp);
+	}
+	remove("__ipgeo_ip.tmp");
+#endif
 }
 
 /*
