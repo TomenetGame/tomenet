@@ -10298,7 +10298,7 @@ void process_player_change_wpos(int Ind) {
 		bool books = FALSE;
 		object_type *o_ptr;
 
-		for (j = 1; j < INVEN_PACK; j++) {
+		for (j = 0; j < INVEN_PACK; j++) {
 			o_ptr = &p_ptr->inventory[j];
 			if (!o_ptr->tval) break;
 
@@ -10312,9 +10312,10 @@ void process_player_change_wpos(int Ind) {
 				break;
 			}
 		}
-		if (!p_ptr->warning_powins) {
+		if (books && !p_ptr->warning_powins) {
 			msg_print(Ind, "\374\377yHINT: Press \377o{\377- to power-inscribe your custom books, eg a codex.");
-			msg_print(Ind, "\374\377y      When prompted for inscription, just enter: \377y@@@");
+			msg_print(Ind, "\374\377y      When prompted for inscription, just enter: \377o@@@");
+			msg_print(Ind, "\374\377y      This works for handbooks or tomes too. '\377o@@\377y' shows full spell names.");
 			s_printf("warning_powins: %s\n", p_ptr->name);
 			p_ptr->warning_powins = 1;
 		}
