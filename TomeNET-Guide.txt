@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 2. September 2026 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 3. September 2026 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -2160,6 +2160,12 @@ They all start with a slash '/' hence they're called slash commands:
             death, neither one of detonations, so you won't get instakilled.
             (It's easier to press '_' instead of using the /sip command.
             Also see '_' key above, for additional information.)
+
+/sinfo
+/server
+/serverinfo
+            Displays general info about the server:
+            Description, IP, location, uptime, local system time.
 
 /snbar      Cycles through available types of sanity bars to display.
             Which types are available depends on the 'Health' skill, or - only
