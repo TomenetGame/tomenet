@@ -268,7 +268,7 @@ static void get_location(void) {
 		}
 		fclose(fp);
 	}
-	//remove("__ipgeo.tmp");
+	remove("__ipgeo.tmp");
 }
 
 /*
