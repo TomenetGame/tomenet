@@ -1129,3 +1129,5 @@ int debug_drain_hp, debug_drain_mp;
 int inventory_total_max, inventory_pack_max; /* Normal inventory aka INVEN_PACK/INVEN_TOTAL plus maximum amount of items we could carry with all possible bag types */
 #endif
 bool admin_max_spawnrate = FALSE;
+
+char geoloc_extip[MAX_CHARS] = { 0 }, geoloc_country[MAX_CHARS] = { 0 }, geoloc_state[MAX_CHARS] = { 0 }, geoloc_city[MAX_CHARS] = { 0 };

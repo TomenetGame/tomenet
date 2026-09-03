@@ -3533,3 +3533,14 @@ bool highscore_file_convert(int Ind) {
 
 	return(TRUE);
 }
+
+bool file_exist(char *buf) {
+	int fd;
+
+	fd = fd_open(buf, O_RDONLY);
+	if (fd >= 0) {
+		fd_close(fd);
+		return(TRUE);
+	}
+	else return(FALSE);
+}

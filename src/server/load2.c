@@ -3695,18 +3695,6 @@ errr rd_savefile_new(int Ind) {
 	return(err);
 }
 
-/* Added this to load2.c too, for load_quests() - C. Blue */
-static bool file_exist(char *buf) {
-	int fd;
-
-	fd = fd_open(buf, O_RDONLY);
-	if (fd >= 0) {
-		fd_close(fd);
-		return(TRUE);
-	}
-	else return(FALSE);
-}
-
 /* Just discard exceeding data instead of terminating with incompatibility error?
    Currently only implemented for MAX_O_IDX. */
 #define ALLOW_EXCESS_DATA

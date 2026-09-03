@@ -1008,6 +1008,7 @@ extern bool highscore_reset(int Ind);
 extern bool highscore_remove(int Ind, int slot);
 extern bool highscore_file_convert(int Ind);
 extern void show_motd2(int from);
+extern bool file_exist(char *buf);
 
 /* generate.c */
 extern void place_up_stairs(worldpos *wpos, int y, int x);
@@ -1780,6 +1781,7 @@ extern void block_timer(void);
 extern void allow_timer(void);
 extern void setup_timer(void);
 extern void teardown_timer(void);
+extern cptr get_socket_ip(int Ind);
 
 /* spells1.c */
 extern byte spell_color(int type);
@@ -2985,3 +2987,5 @@ extern int debug_drain_hp, debug_drain_mp;
 extern int inventory_pack_max, inventory_total_max;
 #endif
 extern bool admin_max_spawnrate;
+
+extern char geoloc_extip[MAX_CHARS], geoloc_country[MAX_CHARS], geoloc_state[MAX_CHARS], geoloc_city[MAX_CHARS];

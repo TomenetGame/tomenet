@@ -1995,18 +1995,6 @@ bool save_player(int Ind) {
 	return(result);
 }
 
-
-static bool file_exist(char *buf) {
-	int fd;
-
-	fd = fd_open(buf, O_RDONLY);
-	if (fd >= 0) {
-		fd_close(fd);
-		return(TRUE);
-	}
-	else return(FALSE);
-}
-
 /* Checks saved player activity time, for automatic rollback detection and handling. - C. Blue
    For this to work, it's important that in case of rollback, the existing .activitytime files must NOT be overwritten. */
 static void verify_player_activitytime(int Ind) {

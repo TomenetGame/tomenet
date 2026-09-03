@@ -11545,9 +11545,6 @@ redo_world:
 	/*** Init the wild_info array... for more information see wilderness.c ***/
 	init_wild_info();
 
-	/* Load list of banned players */
-	load_banlist();
-
 	/* Attempt to load the server state information */
 	if (!load_server_info()) {
 		/* Oops */

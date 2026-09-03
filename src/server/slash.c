@@ -6567,6 +6567,33 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 			do_cmd_split_stack(Ind, k, amt);
 			return;
+		} else if (prefix(messagelc, "/sinfo") || prefix(messagelc, "/serverinfo") || prefix(messagelc, "/server")) {
+			u32b elapsed = (turn - session_turn) / cfg.fps;
+			int days = (int)(elapsed / 86400), hours = (int)((elapsed % 86400) / 3600), minutes = (int)((elapsed % 3600) / 60), seconds = (int)((elapsed % 60));
+
+			time_t ct = time(NULL);
+			struct tm* ctl = localtime(&ct);
+			static char day_names[7][4] = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+
+			if (*geoloc_extip) msg_format(Ind, "\377sServer '%s' (IP %s):", cfg.server_notes, geoloc_extip);
+			else msg_format(Ind, "\377sServer '%s' (IP %s):", cfg.server_notes, get_socket_ip(Ind));
+			msg_format(Ind, " \377sLocation: %s / %s / %s.", geoloc_country, geoloc_state, geoloc_city);
+#ifdef TEST_SERVER
+			msg_print(Ind, " \377sThis is a test server. Expect frequent restarts/crashes.\n");
+#endif
+#ifdef RPG_SERVER
+			msg_print(Ind, " \377sThis is an 'Ironman' server. See guide (9.6) for ruleset details.\n");
+#endif
+#ifdef ARCADE_SERVER
+			msg_print(Ind, " \377sThis is an 'Arcade' server. See guide (9.6a) for ruleset details.\n");
+#endif
+#ifdef FUN_SERVER
+			msg_print(Ind, " \377sThis is a 'Fun' server: Players may use '/wish' command freely.\n");
+#endif
+			msg_format(Ind, " \377sUptime: %d days %d hours %d minutes %d seconds", days, hours, minutes, seconds);
+			msg_format(Ind, " \377sCurrent server-side time: %04d/%02d/%02d (%s) - %02d:%02d:%02dh",
+			    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, day_names[ctl->tm_wday], ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
+			return;
 		} else if (prefix(messagelc, "/rest")) { /* Rest [for n turns] */
 			if (tk && (k <= 0 || k >= 10000)) {
 				msg_print(Ind, "\377yUsage: /rest [1..10000 turns]");

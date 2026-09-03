@@ -208,6 +208,68 @@ static void post_init_lua(void) {
 	exec_lua(0, format("server_startup_post(\"%s\", %d, %d, %d, %d, %d, %d, %d)", showtime(), h, m, s, dwd, dd, dm, dy));
 }
 
+static void get_location(void) {
+	FILE *fp;
+
+	*geoloc_extip = 0;
+	strcpy(geoloc_country, "unknown");
+	strcpy(geoloc_state, "unknown");
+	strcpy(geoloc_city, "unknown");
+
+	s_printf("Retrieving geolocation...\n");
+	(void)system("curl --connect-timeout 3 https://mylocation.org/ 2>/dev/null > __ipgeo.tmp &");
+	sleep(2);
+	if (!file_exist("__ipgeo.tmp")) return;
+
+	fp = fopen("__ipgeo.tmp", "r");
+	if (fp) {
+		char buf[1024], *c, *c2;
+		bool gl_a = FALSE, gl_y = FALSE, gl_s = FALSE, gl_c = FALSE;
+
+		/* Read result and display the relevant parts */
+		while (!my_fgets(fp, buf, 1024, FALSE)) {
+			if (gl_a) {
+				gl_a = FALSE;
+				c = strstr(buf, "<b>");
+				if (c) {
+					c2 = strchr(c + 3, '<');
+					if (c2) *c2 = 0;
+					strcpy(geoloc_extip, c + 3);
+				}
+			} else if (gl_y) {
+				gl_y = FALSE;
+				c = strstr(buf, "<td>");
+				if (c) {
+					c2 = strchr(c + 4, '<');
+					if (c2) *c2 = 0;
+					strcpy(geoloc_country, c + 4);
+				}
+			} else if (gl_s) {
+				gl_s = FALSE;
+				c = strstr(buf, "<td>");
+				if (c) {
+					c2 = strchr(c + 4, '<');
+					if (c2) *c2 = 0;
+					strcpy(geoloc_state, c + 4);
+				}
+			} else if (gl_c) {
+				gl_c = FALSE;
+				c = strstr(buf, "<td>");
+				if (c) {
+					c2 = strchr(c + 4, '<');
+					if (c2) *c2 = 0;
+					strcpy(geoloc_city, c + 4);
+				}
+			}
+			else if (strstr(buf, ">IP Address<")) gl_a = TRUE;
+			else if (strstr(buf, ">Country<")) gl_y = TRUE;
+			else if (strstr(buf, ">Region<")) gl_s = TRUE;
+			else if (strstr(buf, ">City<")) gl_c = TRUE;
+		}
+		fclose(fp);
+	}
+	//remove("__ipgeo.tmp");
+}
 
 /*
  * Some machines can actually parse command line args
@@ -444,6 +506,11 @@ int main(int argc, char *argv[]) {
 	/* All initialization done */
 	post_init_lua();
 
+	/* Load list of banned players */
+	load_banlist();
+
+	/* Determine geolocation just for /sinfo command */
+	get_location();
 
 	/* Play the game */
 	play_game(new_game, all_terrains, dry_Bree, lowdun_near_Bree, new_wilderness, new_flavours, new_houses);

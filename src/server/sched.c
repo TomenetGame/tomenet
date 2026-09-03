@@ -322,3 +322,18 @@ void sched(void) {
 		}
 	}
 }
+
+cptr get_socket_ip(int Ind) {
+	player_type *p_ptr = Players[Ind];
+	struct sockaddr_in peeraddr;
+	socklen_t peeraddrlen = sizeof(peeraddr);
+	int i;
+
+	for (i = max_fd; i >= 0; i--) {
+		if (input_handlers[i].arg == p_ptr->conn) {
+			getpeername(i, (struct sockaddr *)&peeraddr, &peeraddrlen);
+			break;
+		}
+	}
+	return(inet_ntoa(peeraddr.sin_addr));
+}
