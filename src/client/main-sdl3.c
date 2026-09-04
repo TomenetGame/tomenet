@@ -1153,6 +1153,54 @@ static void navikey_symbol(char *msg, byte msglen, bool mc, bool ms, bool ma, ui
 static void navikey_scancode(char *msg, byte msglen, bool mc, bool ms, bool ma, SDL_Scancode code) {
 	navikey_msg(msg, msglen, mc, ms, ma, true, (uint32_t)code);
 }
+
+/* Return the default character represented by a keypad key. */
+static char keypad_fallback_key(SDL_Scancode scancode) {
+	switch (scancode) {
+		case SDL_SCANCODE_KP_1: return('1');
+		case SDL_SCANCODE_KP_2: return('2');
+		case SDL_SCANCODE_KP_3: return('3');
+		case SDL_SCANCODE_KP_4: return('4');
+		case SDL_SCANCODE_KP_5: return('5');
+		case SDL_SCANCODE_KP_6: return('6');
+		case SDL_SCANCODE_KP_7: return('7');
+		case SDL_SCANCODE_KP_8: return('8');
+		case SDL_SCANCODE_KP_9: return('9');
+		case SDL_SCANCODE_KP_DIVIDE: return('/');
+		case SDL_SCANCODE_KP_MULTIPLY: return('*');
+		case SDL_SCANCODE_KP_MINUS: return('-');
+		case SDL_SCANCODE_KP_PLUS: return('+');
+		default: return(0);
+	}
+}
+
+/*
+ * Append an X11-style default action to a keypad trigger.  The delimiters
+ * make inkey() discard this action when a keypad macro matches and execute it
+ * without macro expansion when no keypad macro matches.  Thus macros on the
+ * ordinary number row remain independent from keypad movement.
+ */
+static void keypad_fallback(SDL_Scancode scancode, bool mc, bool ms, bool ma) {
+	char fallback = keypad_fallback_key(scancode);
+	bool direction = fallback >= '1' && fallback <= '9';
+
+	if (!fallback) return;
+
+	Term_keypress(28);
+	if (direction && ms && !mc && !ma) {
+		Term_keypress(ESCAPE);
+		Term_keypress(ESCAPE);
+		Term_keypress('\\');
+		Term_keypress('.');
+	} else if (direction && mc && !ms && !ma) {
+		Term_keypress(ESCAPE);
+		Term_keypress(ESCAPE);
+		Term_keypress('\\');
+		Term_keypress('+');
+	}
+	Term_keypress(fallback);
+	Term_keypress(28);
+}
 #endif
 
 static bool has_control(SDL_Keycode k) {
@@ -1270,6 +1318,7 @@ static void react_keypress(SDL_Event *event) {
 
 		navikey_symbol(msg, 128, mc, ms, ma, (uint32_t)sym);
 		for (int i = 0; msg[i]; i++) Term_keypress(msg[i]);
+		keypad_fallback(scancode, mc, ms, ma);
 #endif
 		return;
 	}
