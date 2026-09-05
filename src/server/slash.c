@@ -6451,6 +6451,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_print(Ind, NULL); //clear topline
 			if (n) C_KILL(id_list, n, int);
 			WIPE(&acc, struct account);
+
+			/* Also warn the player if some of his/her characters are about to expire maybe */
+			account_checkexpiry(NumPlayers);
+
 			return;
 		} else if (prefix(messagelc, "/ing") || prefix(messagelc, "/ingredients")) { /* toggle item-finding part of the Demolitionist perk/Apply Poison users */
 			bool pois = (p_ptr->melee_techniques & MT_POISON);
