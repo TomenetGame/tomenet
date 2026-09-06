@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 3. September 2026 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 6. September 2026 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -28842,7 +28842,7 @@ what you must actively do BEFORE turning in a deed for a reward item is:
   If you receive a weapon (and don't have Anti-magic skill) it will be a 2-h
   weapon if you are currently wielding a 2-h weapon.
   Note that you will not receive a shield if you're dual-wielding or if your
-  class is rogue.
+  class is rogue. Rogues also will never receive 1.5h- or 2h-weapons.
   Regarding weapon weight, note that a weapon reward will usually not give you
   less attacks per round than the weapon you are already wielding (if any). If
   you don't wield one, it aims for 3 attacks per round as default.

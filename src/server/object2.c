@@ -9036,7 +9036,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	int tries = 0, i = 0, j = 0;
 	char o_name[ONAME_LEN];
 	u32b f1, f2, f3, f4, f5, f6, esp, tmp;
-	bool mha, rha; /* monk heavy armor, rogue heavy armor */
+	bool mha, rha, dw; /* monk heavy armor, rogue heavy armor, dual-wielding */
 	bool go_heavy = TRUE; /* new special thingy: don't pick super light cloth armour if we're not specifically light-armour oriented */
 	bool caster = FALSE;
 	bool antimagic = (p_ptr->s_info[SKILL_ANTIMAGIC].value != 0);
@@ -9071,15 +9071,18 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 	/* fix reasonable limits */
 	if (maxweight_armor < 30) maxweight_armor = 30;
 
+	/* We're dual-wielding? */
+	if (p_ptr->inventory[INVEN_WIELD].k_idx &&
+	    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)
+		dw = TRUE;
+
 	/* analyze skills */
 	if (p_ptr->skill_points != (p_ptr->max_plv - 1) * SKILL_NB_BASE) {
 		melee_choice = reward_melee_check(p_ptr, treshold);
 		mha = (melee_choice == 5); /* monk heavy armor */
 		rha = (get_skill(p_ptr, SKILL_DODGE)); /* rogue heavy armor; pclass == rogue or get_skill(SKILL_CRITS) are implied by this one due to current tables.c. dual_wield is left out on purpose. */
 		/* analyze current setup (for reward_armor_check) */
-		if (p_ptr->inventory[INVEN_WIELD].k_idx &&
-		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)
-			rha = TRUE; /* we're dual-wielding */
+		if (dw) rha = TRUE;
 		/* make choices */
 		ranged_choice = reward_ranged_check(p_ptr, treshold);
 		armor_choice = reward_armor_check(p_ptr, mha, rha);
@@ -9139,9 +9142,7 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 			break;
 		}
 		/* analyze current setup (for reward_armor_check) */
-		if (p_ptr->inventory[INVEN_WIELD].k_idx &&
-		    p_ptr->inventory[INVEN_ARM].k_idx && p_ptr->inventory[INVEN_ARM].tval != TV_SHIELD)
-			rha = TRUE; /* we're dual-wielding */
+		if (dw) rha = TRUE;
 		/* make choices */
 		armor_choice = reward_armor_check(p_ptr, mha, rha);
 		misc_choice = randint(3);
@@ -9569,6 +9570,9 @@ void create_reward(int Ind, object_type *o_ptr, int min_lv, int max_lv, bool gre
 
 			/* Check for weight limit! */
 			if (o_ptr->weight > reward_maxweight) continue;
+
+			/* Rogues MUST NOT use 1.5h/2h weapons, or they cannot use 'Cloaking' skill! */
+			if (p_ptr->pclass == CLASS_ROGUE && (k_info[k_idx].flags4 & (TR4_MUST2H | TR4_SHOULD2H))) continue;
 
 			/* No weapon that reduces bpr compared to what weapon the person currently holds! */
 			if (weapon_bpr) {
