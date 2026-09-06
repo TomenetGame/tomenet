@@ -12669,7 +12669,7 @@ void handle_request_return_cfr(int Ind, int id, bool cfr) {
 
 #ifdef ENABLE_MERCHANT_MAIL
 	case RID_SEND_ITEM:
-		if (cfr) Send_request_cfr(Ind, RID_SEND_ITEM2, "Will you be paying the fee? Otherwise we'll charge the addressee.", 2);
+		if (cfr) Send_request_cfr(Ind, RID_SEND_ITEM2, "Will you be paying the fee? Otherwise we'll charge the addressee.", 1);
 		return;
 	case RID_SEND_GOLD:
 		if (cfr) Send_request_cfr(Ind, RID_SEND_GOLD2, "Will you be paying the fee? Otherwise we'll charge the addressee.", 1);

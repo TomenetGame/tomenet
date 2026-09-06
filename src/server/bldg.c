@@ -3316,7 +3316,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		p_ptr->mail_fee = fee;
 		p_ptr->mail_xfee = 0;
 		Send_request_cfr(Ind, bact == BACT_SEND_ITEM ? RID_SEND_ITEM : RID_SEND_ITEM_PAY,
-		    format("The fee for sending this item is %d Au, accept?", fee), 2);
+		    format("The fee for sending this item is %d Au, accept?", fee), 1);
 		break; }
 	case BACT_SEND_GOLD: {
 		int i;
@@ -3349,7 +3349,7 @@ bool bldg_process_command(int Ind, store_type *st_ptr, int action, int item, int
 		p_ptr->mail_gold = gold;
 		p_ptr->mail_fee = fee;
 		p_ptr->mail_xfee = 0;
-		Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d Au, accept?", gold, fee), 2);
+		Send_request_cfr(Ind, RID_SEND_GOLD, format("The fee for sending %d Au is %d Au, accept?", gold, fee), 1);
 		break; }
 #endif
 	case BACT_REPAIR_WEAPON:
