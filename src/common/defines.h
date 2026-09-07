@@ -53,7 +53,7 @@
 #define VERSION_MINOR_LATEST	9
 #define VERSION_PATCH_LATEST	3
 #define VERSION_EXTRA_LATEST	0
-#define VERSION_BRANCH_LATEST	2
+#define VERSION_BRANCH_LATEST	0	/* not 2 (was an SDL3 change) */
 #define VERSION_BUILD_LATEST	0
 
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
