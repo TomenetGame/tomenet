@@ -4625,13 +4625,13 @@ void save_custom_music(void) {
 	else path_build(buf2, sizeof(path), ANGBAND_DIR_XTRA_MUSIC, "TomeNET-nomusic.cfg"); //paranoia
 #endif
 	fff = my_fopen(buf, "r");
-	fff2 = my_fopen(buf2, "w");
 	if (!fff) {
 		c_msg_format("Error: Cannot read music config file '%s'.", buf);
 		jukebox_screen = FALSE;
 		topline_icky = FALSE;
 		return;
 	}
+	fff2 = my_fopen(buf2, "w");
 	if (!fff2) {
 		c_msg_format("Error: Cannot write to disabled-music config file '%s'.", buf2);
 		jukebox_screen = FALSE;
