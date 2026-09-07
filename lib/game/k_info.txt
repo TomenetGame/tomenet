@@ -1826,6 +1826,7 @@ I:70:41:0
 W:40:0:5:5000
 A:40/8
 D:Destroys a wide area and annihilates all monsters within.
+D:Beware - it will cause a powerful shockwave that hits everyone around.
 D:Does not work on vaults or around towns.
 
 
@@ -2585,6 +2586,7 @@ W:50:0:50:10000
 A:50/1:70/1
 P:0:1d2:0:0:0
 D:Destroys a wide area and annihilates all monsters within.
+D:Beware - it will cause a powerful shockwave that hits everyone around.
 D:Does not work on vaults or around towns.
 
 N:308:Starlight
