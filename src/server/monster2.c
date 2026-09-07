@@ -4135,7 +4135,10 @@ int place_monster_aux(struct worldpos *wpos, int y, int x, int r_idx, bool forbi
 
 	if (!(summon_override_checks & SO_SURFACE)) {
 		/* Do not allow breeders to spawn in the wilderness - the_sandman */
-		if ((r_ptr->flags7 & RF7_MULTIPLY) && !(wpos->wz)) return(-3);
+		if (!wpos->wz &&
+		    ((r_ptr->flags7 & RF7_MULTIPLY) ||
+		    r_idx == RI_WARRIOR_DAWN)) /* Also no dawnies */
+			return(-3);
 	}
 #ifdef BLOODLETTER_SUMMON_NERF
 	if (r_idx == RI_BLOODLETTER && !level_generation_time && summon_override_checks != SO_ALL) return(0);
