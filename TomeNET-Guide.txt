@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 6. September 2026 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 7. September 2026 - written by C. Blue (c_blue@gmx.net)   |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -18499,7 +18499,15 @@ UN_BONUS        disenchantment.
                 If unresisted, this attack will disenchant a random piece of
                 your equipment. The damage can partially be mitigated by having
                 disenchantment resistance.
-UN_POWER        magic device skill; fast-casting UN_POWER monster forms.
+UN_POWER        magic device skill mainly (5...95% for 0...50.000 skill);
+                fast-casting UN_POWER monster forms (increased minimum chance
+                to resist to 10%...50% depending on the difference between the
+                player's level * 2 vs the monster's race level (lower cap 10%,
+                upper cap 50%)).
+                So if your magic skill grants at least 50% chance to resist,
+                which happens at 25.000 skill, you will not profit any further
+                from using an RBE_UN_POWER form.
+
                 It drains charges/energy from your items:
                 "Energy drains from your pack" for magic devices or polymorph
                 rings in your inventory or "Energy drains from your equipment"
