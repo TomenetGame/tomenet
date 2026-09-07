@@ -10806,20 +10806,27 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/tpto") ||
 			/* Teleport us to a player - even if in different world sector */
 			    prefix(messagelc, "/tpat")) {
-				int p;
+				int p, dir = 0;
 				player_type *q_ptr;
 				cave_type **zcave;
 				bool is_tpto = prefix(messagelc, "/tpto");
+				char *mp = message3;
 
 				if (tk < 1) {
-					if (is_tpto) msg_print(Ind, "\377oUsage: /tpto <exact player name>");
+					if (is_tpto) msg_print(Ind, "\377oUsage: /tpto [dir]<exact player name>");
 					else msg_print(Ind, "\377oUsage: /tpat <player/account name>");
 					return;
 				}
 
-				message3[0] = toupper(message3[0]); //qol
-				if (is_tpto) p = name_lookup(Ind, message3, FALSE, TRUE, FALSE);//gotta be exact for this kind of critical command
-				else p = name_lookup_loose(Ind, message3, FALSE, TRUE, FALSE);
+				/* Optional direction specified? */
+				if (is_tpto && *mp >= '1' && *mp <= '9' && *mp != '5') {
+					dir = *mp - '0';
+					mp++;
+				}
+
+				*mp = toupper(*mp); //qol
+				if (is_tpto) p = name_lookup(Ind, mp, FALSE, TRUE, FALSE);//gotta be exact for this kind of critical command
+				else p = name_lookup_loose(Ind, mp, FALSE, TRUE, FALSE);
 				if (!p) return;
 
 				q_ptr = Players[p];
@@ -10829,17 +10836,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 
 				if (is_tpto) {
-					if (!inarea(&q_ptr->wpos, &p_ptr->wpos)) {
+					if (!inarea(&q_ptr->wpos, &p_ptr->wpos) || dir) {
 						q_ptr->recall_pos.wx = p_ptr->wpos.wx;
 						q_ptr->recall_pos.wy = p_ptr->wpos.wy;
 						q_ptr->recall_pos.wz = p_ptr->wpos.wz;
 						if (!q_ptr->recall_pos.wz) q_ptr->new_level_method = LEVEL_OUTSIDE_RAND;
 						else q_ptr->new_level_method = LEVEL_RAND;
 						recall_player(p, "\377yA magical gust of wind lifts you up and carries you away!");
+						q_ptr->admin_wiz = TRUE; //hack for placement
+						if (dir) {
+							q_ptr->recall_x = p_ptr->px + ddx[dir];
+							q_ptr->recall_y = p_ptr->py + ddy[dir];
+						}
 						process_player_change_wpos(p);
+						q_ptr->admin_wiz = FALSE; //unhack
 					}
 
-					teleport_player_to(p, p_ptr->py, p_ptr->px, TRUE);
+					if (!dir) teleport_player_to(p, p_ptr->py, p_ptr->px, TRUE);
 
 					msg_print(Ind, "Teleported that player.");
 				} else {

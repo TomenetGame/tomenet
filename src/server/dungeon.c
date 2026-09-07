@@ -10041,14 +10041,13 @@ void process_player_change_wpos(int Ind) {
 	}
 
 	if (is_admin(p_ptr) && p_ptr->recall_x != 0 && p_ptr->recall_y != 0) {
-		p_ptr->px = p_ptr->recall_x;
-		p_ptr->py = p_ptr->recall_y;
+		x = p_ptr->recall_x;
+		y = p_ptr->recall_y;
 		p_ptr->recall_x = 0;
 		p_ptr->recall_y = 0;
-	} else {
-		p_ptr->px = x;
-		p_ptr->py = y;
 	}
+	p_ptr->px = x;
+	p_ptr->py = y;
 
 	/* Update the player location */
 	zcave[y][x].m_idx = 0 - Ind;
