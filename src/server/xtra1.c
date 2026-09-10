@@ -6754,6 +6754,47 @@ void calc_boni(int Ind) {
 	if (p_ptr->resist_chaos) p_ptr->resist_conf = TRUE;
 
 
+
+	/* Nimbus - Temporary Resists/Immunities - TODO Kurzel - Show in Chh */
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE) { p_ptr->immune_fire = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_HELLFIRE) { p_ptr->immune_fire = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD) { p_ptr->immune_cold = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC) { p_ptr->immune_elec = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_ACID) { p_ptr->immune_acid = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_POIS) { p_ptr->immune_poison = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_LITE) { p_ptr->resist_lite = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_DARK) { p_ptr->resist_dark = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_INERTIA) { p_ptr->free_act = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_GRAVITY) { p_ptr->resist_sound = TRUE; p_ptr->free_act = TRUE; p_ptr->feather_fall = TRUE; p_ptr->res_tele = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_SOUND) { p_ptr->resist_sound = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_FORCE) { p_ptr->resist_sound = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_SHARDS) { p_ptr->resist_shard = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_NEXUS) { p_ptr->resist_nexus = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_NETHER) { p_ptr->resist_neth = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_CONFUSION) { p_ptr->resist_conf = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_CHAOS) { p_ptr->resist_conf = TRUE; p_ptr->resist_chaos = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_DISENCHANT) { p_ptr->resist_disen = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_WATER) { p_ptr->immune_water = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_TIME) { p_ptr->resist_time = TRUE; }
+	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_MANA) { p_ptr->resist_mana = TRUE; }
+
+	/* resistance to fire cancel sensibility to fire */
+	if (p_ptr->resist_fire || p_ptr->oppose_fire || p_ptr->immune_fire)
+		p_ptr->suscep_fire = FALSE;
+	/* resistance to cold cancel sensibility to cold */
+	if (p_ptr->resist_cold || p_ptr->oppose_cold || p_ptr->immune_cold)
+		p_ptr->suscep_cold = FALSE;
+	/* resistance to electricity cancel sensibility to fire */
+	if (p_ptr->resist_elec || p_ptr->oppose_elec || p_ptr->immune_elec)
+		p_ptr->suscep_elec = FALSE;
+	/* resistance to acid cancel sensibility to fire */
+	if (p_ptr->resist_acid || p_ptr->oppose_acid || p_ptr->immune_acid)
+		p_ptr->suscep_acid = FALSE;
+	/* resistance to light cancels sensibility to light */
+	if (p_ptr->resist_lite) p_ptr->suscep_lite = FALSE;
+
+
+
 	old_sun_burn = p_ptr->sun_burn;
 	p_ptr->sun_burn = FALSE;
 	/* On sunlit grid, as vampire, not a ghost, without protection? -> Damage from sunlight */
@@ -6932,44 +6973,6 @@ void calc_boni(int Ind) {
 	}
 	p_ptr->old_heavy_swim = p_ptr->heavy_swim;
 #endif
-
-	/* Nimbus - Temporary Resists/Immunities - TODO Kurzel - Show in Chh */
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_FIRE) { p_ptr->immune_fire = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_HELLFIRE) { p_ptr->immune_fire = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_COLD) { p_ptr->immune_cold = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_ELEC) { p_ptr->immune_elec = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_ACID) { p_ptr->immune_acid = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_POIS) { p_ptr->immune_poison = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_LITE) { p_ptr->resist_lite = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_DARK) { p_ptr->resist_dark = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_INERTIA) { p_ptr->free_act = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_GRAVITY) { p_ptr->resist_sound = TRUE; p_ptr->free_act = TRUE; p_ptr->feather_fall = TRUE; p_ptr->res_tele = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_SOUND) { p_ptr->resist_sound = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_FORCE) { p_ptr->resist_sound = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_SHARDS) { p_ptr->resist_shard = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_NEXUS) { p_ptr->resist_nexus = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_NETHER) { p_ptr->resist_neth = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_CONFUSION) { p_ptr->resist_conf = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_CHAOS) { p_ptr->resist_conf = TRUE; p_ptr->resist_chaos = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_DISENCHANT) { p_ptr->resist_disen = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_WATER) { p_ptr->immune_water = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_TIME) { p_ptr->resist_time = TRUE; }
-	if (p_ptr->nimbus && p_ptr->nimbus_t == GF_MANA) { p_ptr->resist_mana = TRUE; }
-
-	/* resistance to fire cancel sensibility to fire */
-	if (p_ptr->resist_fire || p_ptr->oppose_fire || p_ptr->immune_fire)
-		p_ptr->suscep_fire = FALSE;
-	/* resistance to cold cancel sensibility to cold */
-	if (p_ptr->resist_cold || p_ptr->oppose_cold || p_ptr->immune_cold)
-		p_ptr->suscep_cold = FALSE;
-	/* resistance to electricity cancel sensibility to fire */
-	if (p_ptr->resist_elec || p_ptr->oppose_elec || p_ptr->immune_elec)
-		p_ptr->suscep_elec = FALSE;
-	/* resistance to acid cancel sensibility to fire */
-	if (p_ptr->resist_acid || p_ptr->oppose_acid || p_ptr->immune_acid)
-		p_ptr->suscep_acid = FALSE;
-	/* resistance to light cancels sensibility to light */
-	if (p_ptr->resist_lite) p_ptr->suscep_lite = FALSE;
 
 
 
