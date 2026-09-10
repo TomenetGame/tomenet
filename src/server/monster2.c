@@ -3534,15 +3534,16 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 7\n");
 #endif
 
 	/* "unique" monsters combo check. */
-	if ((r_ptr->flags1 & RF1_UNIQUE) &&
+	if ((r_ptr->flags1 & RF1_UNIQUE) && !wpos->wz) {
+		/* Unique may not appear on the world surface? */
 #if 0
-	    !(r_info[r_idx].flags8 & RF8_WILD_TOO_MASK) && /* Redundant? If we don't have WILD_xxx flags yet are unique we shouldn't have arrived here in the first place. */
+		if (!(r_info[r_idx].flags8 & RF8_WILD_TOO_MASK) && /* Redundant? If we don't have WILD_xxx flags yet are unique we shouldn't have arrived here in the first place. */
 #else
-	    (r_info[r_idx].flags8 & RF8_DUNGEON) && /* Avoid too many "dungeon-unfindable" uniques because they are allocated somewhere in the wilderness; so only allow WILD_ONLY uniques here */
+		if ((r_info[r_idx].flags8 & RF8_DUNGEON) && /* Avoid too many "dungeon-unfindable" uniques because they are allocated somewhere in the wilderness; so only allow WILD_ONLY uniques here */
 #endif
-	    !(summon_override_checks & (SO_BOSS_MONSTERS | SO_SURFACE))) {
-		/* may not appear on the world surface */
-		if (wpos->wz == 0) return(40);
+		    !(summon_override_checks & (SO_BOSS_MONSTERS | SO_SURFACE)))
+			return(40);
+		s_printf("place_monster_one(): Unique %d ok for world surface (%d,%d).\n", r_idx, wpos->wx, wpos->wy);
 	}
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 8\n");
