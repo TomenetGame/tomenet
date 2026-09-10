@@ -290,14 +290,14 @@ D:A thin flea-ridden mutt, growling as you get close.
 N:8:Farmer Maggot
 G:h:w
 I:110:35d10:40:10:3
-$TEST_SERVER$W:1:4:730:0
-$TEST_SERVER!W:127:4:730:0
+$TEST_SERVER$W:1:1:730:0
+$TEST_SERVER!W:127:1:730:0
 E:0:1:2:2:1:2
 O:0:100:0:0
 B:MOAN:*
 F:BASEANGBAND | ALLOW_RUNNING | MORTAL | UNIQUE | CAN_SPEAK | DROP_CORPSE
 F:MALE | FORCE_MAXHP| OPEN_DOOR | BASH_DOOR | NO_CONF | NO_SLEEP | HAS_LITE
-F:NEVER_MOVE | NO_DEATH | NO_AUTORET | WILD_ONLY | WILD_TOO
+F:NEVER_MOVE | NO_DEATH | NO_TARGET | NO_AUTORET | WILD_ONLY | WILD_TOO
 D:He's lost his dogs. He's had his mushrooms stolen. He's not a happy hobbit!
 
 N:9:Blubbering idiot
