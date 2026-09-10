@@ -3628,7 +3628,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 		int mfx[4], mfy[4], mfs = 0;
 
 		/* Surface? */
-		if (wpos->wz && summon_override_checks != SO_ALL) return(56);
+		if (wpos->wz && summon_override_checks != SO_ALL) {
+			s_printf("PMO_DEBUG: Farmer Maggot failed (cannot spawn in dungeon).\n");
+			return(56);
+		}
 
 		/* Scan this area for mushroom fields */
 		//if (!istownarea(wpos, MAX_TOWNAREA)) return(57); /* Maggot would never dare to leave town and go on an adventure.. */
@@ -3640,7 +3643,10 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 			if (mfs == 4) break;
 		}
 		if (!mfs) {
-			if (summon_override_checks != SO_ALL) return(59);
+			if (summon_override_checks != SO_ALL) {
+				s_printf("PMO_DEBUG: No mushroom fields here, Farmer Maggot failed.\n");
+				return(59);
+			}
 			s_printf("PMO_DEBUG: No mushroom fields here, overridden by admin summoning.\n");
 			/* Keep our x,y values, as there are now mushroom fields to re-set them */
 		} else {
