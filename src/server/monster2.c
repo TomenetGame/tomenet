@@ -3628,7 +3628,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 		int mfx[4], mfy[4], mfs = 0;
 
 		/* Surface? */
-		if (wpos->wz) return(56);
+		if (wpos->wz && summon_override_checks != SO_ALL) return(56);
 
 		/* Scan this area for mushroom fields */
 		//if (!istownarea(wpos, MAX_TOWNAREA)) return(57); /* Maggot would never dare to leave town and go on an adventure.. */
@@ -3639,13 +3639,17 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 10\n");
 			mfs++;
 			if (mfs == 4) break;
 		}
-		if (!mfs) return(58);
-
-		/* Pick one of the fields */
-		i = rand_int(mfs);
-		x = mfx[i] - 5 + rand_int(11);
-		y = mfy[i] - 2 + rand_int(5);
-		set_in_bounds(y, x);
+		if (!mfs) {
+			if (summon_override_checks != SO_ALL) return(59);
+			s_printf("PMO_DEBUG: No mushroom fields here, overridden by admin summoning.\n");
+			/* Keep our x,y values, as there are now mushroom fields to re-set them */
+		} else {
+			/* Pick one of the fields */
+			i = rand_int(mfs);
+			x = mfx[i] - 5 + rand_int(11);
+			y = mfy[i] - 2 + rand_int(5);
+			set_in_bounds(y, x);
+		}
 		s_printf("PMO_DEBUG: Farmer Maggot prepared on (%2d,%2d) [%3d,%2d].\n", wpos->wx, wpos->wy, x, y);
 	}
 

@@ -1094,7 +1094,7 @@ bool make_attack_melee(int Ind, int m_idx) {
 					/* Colour change for ranged MOAN for Halloween event -C. Blue */
 					if (season_halloween)
 						msg_format(Ind, "\377o%^s %s", m_name, act);
-					else
+					else if (!(r_ptr->flags7 & RF7_NO_DEATH) || !rand_int(10)) /* Hack for Farmer Maggot: Don't spam moans like crazy */
 						msg_format(Ind, "%^s %s", m_name, act);
 				} else if (method == RBM_SHOW || method == RBM_WHISPER || method == RBM_INSULT)
 					msg_format(Ind, "%^s %s", m_name, act);

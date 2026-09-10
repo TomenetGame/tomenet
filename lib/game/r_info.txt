@@ -290,20 +290,14 @@ D:A thin flea-ridden mutt, growling as you get close.
 N:8:Farmer Maggot
 G:h:w
 I:110:35d10:40:10:3
-W:0:4:730:0
+$TEST_SERVER$W:1:4:730:0
+$TEST_SERVER!W:127:4:730:0
 E:0:1:2:2:1:2
 O:0:100:0:0
-# Soon MOAN will be removed again?
 B:MOAN:*
-B:MOAN:*
-F:ALLOW_RUNNING | UNIQUE | MALE | CAN_SPEAK | DROP_CORPSE | SPECIAL_GENE 
-F:FORCE_MAXHP | WILD_TOWN | WILD_ONLY | OPEN_DOOR | BASH_DOOR
-F:NO_CONF | NO_SLEEP | MORTAL | BASEANGBAND | HAS_LITE
-#Don't drop.. then no1 hunts you..
-#F:DROP_GOOD | DROP_GREAT | DROP_60 | ONLY_ITEM |
-F:ONLY_ITEM | DROP_90 | DROP_GOOD
-F:NEVER_MOVE | NO_DEATH |
-#| NEUTRAL |  --make him spawnable :)
+F:BASEANGBAND | ALLOW_RUNNING | MORTAL | UNIQUE | CAN_SPEAK | DROP_CORPSE
+F:MALE | FORCE_MAXHP| OPEN_DOOR | BASH_DOOR | NO_CONF | NO_SLEEP | HAS_LITE
+F:NEVER_MOVE | NO_DEATH | NO_AUTORET | WILD_ONLY | WILD_TOO
 D:He's lost his dogs. He's had his mushrooms stolen. He's not a happy hobbit!
 
 N:9:Blubbering idiot
