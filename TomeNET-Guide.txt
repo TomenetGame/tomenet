@@ -14319,6 +14319,17 @@ the class 'Hell Knight' which counts as demonic:
          mana point drain effect if it's head gear or gloves, otherwise a it
          will apply a hit point drain effect.
 
+Susceptibilities of the base race or lineage are kept when using mimicry:
+- Ent keeps fire susceptibility.
+- Dark-elves keep light susceptibility.
+- Vampires keep light, 'good' and 'life' susceptibility.
+- Draconians:
+  White lineage keeps fire susceptibility.
+  Red lineage keeps frost susceptibility.
+- Maiar:
+  Enlightened keeps 'evil' susceptibility.
+  Corrupted keeps 'good' susceptibility.
+
 Branded physical attacks vs monsters:
 Susceptibility of a monster will result in a doubled multiplier for
 branded attacks. Example: If the player hits a Cold Hound with a
@@ -23197,7 +23208,7 @@ Yeek:
     Pass trees.
 Ent:
     Speed malus (will be reduced), swimming, pass trees.
-    (Note that Ents KEEP racial water resistance and fire susceptibilitiy.)
+    (Note that Ents KEEP racial water resistance and fire susceptibility.)
 Draconian:
     Feather falling, levitation.
     Intrinsic breath weapon - you can only use it if you're actually in dragon
@@ -23206,6 +23217,17 @@ Draconian:
 Abilities acquired from traits (such as 'enlightened' or 'corrupted' trait for
 Maiar or draconian traits) are also considered intrinsic abilities and
 therefore polymorph-proof if they aren't on the list above.
+
+Susceptibilities of the base race or lineage are kept when using mimicry:
+- Ent keeps fire susceptibility.
+- Dark-elves keep light susceptibility.
+- Vampires keep light, 'good' and 'life' susceptibility.
+- Draconians:
+  White lineage keeps fire susceptibility.
+  Red lineage keeps frost susceptibility.
+- Maiar:
+  Enlightened keeps 'evil' susceptibility.
+  Corrupted keeps 'good' susceptibility.
 
 
 (7.7a) Polymorph rings ('Ring of Polymorphing of <form>'):
