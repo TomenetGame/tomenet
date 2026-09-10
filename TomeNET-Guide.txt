@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 7. September 2026 - written by C. Blue (c_blue@gmx.net)   |
+| Latest update: 10. September 2026 - written by C. Blue (c_blue@gmx.net)  |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1399,7 +1399,7 @@ They all start with a slash '/' hence they're called slash commands:
 /autoretr
 /arr        Sets up auto-retaliation with runecraft.
               Enter            /arr help          for this info in-game.
-              Usage:           /arr [q][t]<a-f><a-f><a-h><a-f>
+              Usage:           /arr [q][t]<a-f><a-f><a-h><a-g>
             or to disable:   /arr -
             'q': fallback to melee if you cannot cast right now.
             't': town area only? (optional).
@@ -9099,7 +9099,7 @@ Mimic powers:
     /arm help   Shows details for the /arm command.
 
 Runes:
-    /arr [Q][t]<a-f><a-f><a-h><a-f>   or   /arr -
+    /arr [Q][t]<a-f><a-f><a-h><a-g>   or   /arr -
                 Auto-retaliate with a runespell, See (0.2b) for details.
                 Optionally use 't' for 'in town areas only',
                 and/or 'Q' for 'fallback to melee if cannot cast'.
@@ -25846,10 +25846,10 @@ Runecraft macros look like this (key translation in parenthesis):
 (Note: m@12\r invokes the m-key menu command for 'Draw a rune'.)
 
 Targetted runespells use the following format:
-    \e)*tm@12\r<a-f><a-f><a-h><a-f>-  (rune, rune, mode, type, target)
+    \e)*tm@12\r<a-f><a-f><a-h><a-g>-  (rune, rune, mode, type, target)
 
 Non-targetted runespells use the format:
-    \e)m@18\r<a-f><a-f><a-h><a-f>  (rune, rune, mode, type)
+    \e)m@18\r<a-f><a-f><a-h><a-g>  (rune, rune, mode, type)
 
 Note that you must choose two runes, one mode, and one type.
 To cast a single element runespell, simply choose the same element twice.
@@ -25867,19 +25867,19 @@ This spell launches a minimized light bolt, a targetted projection
 affecting up to a single opponent, dealing light damage if it connects.
 
 A fire ball spell might look like this (runes 'a' and 'e' for 'fire'):
-    \e)*tm@12\raedd-  (light--chaos--moderate--ball)
+    \e)*tm@12\raedc-  (light--chaos--moderate--ball)
 
 Note the following macro produces an identical effect (runes 'e' and 'a'):
-    \e)*tm@12\readd-  (chaos--light--moderate--ball)
+    \e)*tm@12\readc-  (chaos--light--moderate--ball)
 
 To increase the radius of the ball, adjust the mode to something that
 sounds bigger, ie. choose a spell mode that increases radius.
 
 A maximized ball of fire:
-    \e)*tm@12\raegd-  (light--chaos--maximized--ball)
+    \e)*tm@12\raehc-  (light--chaos--maximized--ball)
 
 Or an expanded ball of fire, to produce something even larger:
-    \e)*tm@12\raeed-  (light--chaos--expanded--ball)
+    \e)*tm@12\raefc-  (light--chaos--expanded--ball)
 
 Note that failure rate may become an obstacle to advanced spells at low
 level. Low failure types, modes, and elements are recommended.
@@ -25903,7 +25903,7 @@ choices for repeat casting. Retaliation is disabled completely for spells with
 an indirect effect (nimbus and glyph). Specify both runes, then mode and type,
 or '-' to disable. Prefix 't' before a runespell to retaliate in town only.
 
-Usage:   /arr [t]<a-f><a-f><a-h><a-f> (town?, rune, rune, mode, type)
+Usage:   /arr [t]<a-f><a-f><a-h><a-g> (town?, rune, rune, mode, type)
 Example: /arr aeda          Auto-retaliate with a moderate fire bolt.
 Example: /arr taeda         Moderate fire bolt, but 'in town only'.
 Example: /arr -             Disable any auto-retaliation with runes.
