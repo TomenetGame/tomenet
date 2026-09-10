@@ -27172,7 +27172,7 @@ Blood (True Vampires)        5000      |   Cure Serious Wounds           100*
 Apple Juice                   250*     |   *Healing*                     400*
 Slime Mold Juice              400*     |   Life                         1000*
 Slowness                       50*     |   Resistance                    100*
-Sleep                         100*     |   Booze                          50*
+Sleep                         100*     |   Booze (not Ents)               50
 
 (*) Double this amount for Ents
 
@@ -27188,7 +27188,8 @@ Sleep                         100*     |   Booze                          50*
   ie to 14999. Scroll and Lembas do not work for Ents or true Vampires.
 
 - Ents gain double nourishment from fountains and potions and specifically 1500
-  if it's (fresh) water. Salt water gives no nourishment even to Ents.
+  if it's (fresh) water.
+  Salt water and Booze give no nourishment even to Ents but rather poison them.
 
 - Vampire race characters gain no nourishment from any food, potions or
   fountains except for fountains/potions of blood. Other characters gain no

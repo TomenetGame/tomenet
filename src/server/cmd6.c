@@ -790,9 +790,17 @@ bool quaff_potion(int Ind, int tval, int sval, int pval) {
 			if (!p_ptr->resist_blind)
 				if (set_blind(Ind, p_ptr->blind + rand_int(100) + 100)) ident = TRUE;
 			break;
-		case SV_POTION_CONFUSION:
-			if (!p_ptr->resist_conf)
-				if (set_confused(Ind, p_ptr->confused + rand_int(20) + 15)) ident = TRUE;
+		case SV_POTION_CONFUSION: /* This is actually "Booze" - treat it accordingly: */
+			if (p_ptr->prace == RACE_ENT) {
+				dam = damroll(2, 3);
+				msg_format(Ind, "The booze harms your metabolism for \377o%d \377wdamage!", dam);
+				take_hit(Ind, dam, "ingesting booze", 0);
+				if (!(p_ptr->resist_pois || p_ptr->oppose_pois || p_ptr->immune_poison))
+					if (set_poisoned(Ind, p_ptr->poisoned + rand_int(5) + 5, 0)) ident = TRUE;
+			} else {
+				if (!p_ptr->resist_conf)
+					if (set_confused(Ind, p_ptr->confused + rand_int(20) + 15)) ident = TRUE;
+			}
 			break;
 #if 0
 		case SV_POTION_MUTATION:
@@ -1422,11 +1430,19 @@ void do_cmd_quaff_potion(int Ind, int item) {
 		if (p_ptr->prace == RACE_VAMPIRE) {
 			if (o_ptr->sval == SV_POTION_BLOOD) set_food(Ind, o_ptr->pval + p_ptr->food);
 		} else if (p_ptr->prace == RACE_ENT) {
-			if (o_ptr->sval == SV_POTION_WATER) (void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
-			else if (o_ptr->sval != SV_POTION_BLOOD) (void)set_food(Ind, p_ptr->food + (o_ptr->pval * (o_ptr->pval > 0 ? 2 : 1))); //don't double-subtract for invulnerability potions!
+			switch (o_ptr->sval) {
+			case SV_POTION_WATER:
+				(void)set_food(Ind, p_ptr->food + WATER_ENT_FOOD);
+				break;
+			case SV_POTION_CONFUSION: //booze
+			case SV_POTION_BLOOD:
+				break;
+			default:
+				(void)set_food(Ind, p_ptr->food + (o_ptr->pval * (o_ptr->pval > 0 ? 2 : 1))); //don't double-subtract for invulnerability potions!
+			}
 		} else if (p_ptr->suscep_life) {
-			if (o_ptr->sval == SV_POTION_BLOOD) set_food(Ind, o_ptr->pval + p_ptr->food / 4);
-			(void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2) / 3);
+			if (o_ptr->sval == SV_POTION_BLOOD) set_food(Ind, o_ptr->pval / 4 + p_ptr->food);
+			else (void)set_food(Ind, p_ptr->food + (o_ptr->pval * 2) / 3);
 		} else
 			if (o_ptr->sval != SV_POTION_BLOOD) (void)set_food(Ind, p_ptr->food + o_ptr->pval);
 	}
