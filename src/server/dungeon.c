@@ -5317,10 +5317,13 @@ static bool process_player_end_aux(int Ind) {
 
 		switch (p_ptr->mycorrhiza - 1) {
 		/* These two are in competition with CSW, buff them to trigger more frequently */
+		case SV_FOOD_RESTORE_STR:
+		case SV_FOOD_RESTORE_CON:
 		case SV_FOOD_CURE_BLINDNESS:
 		case SV_FOOD_CURE_CONFUSION:
 			minfreq = 2;
 			break;
+		case SV_FOOD_RESTORING:
 		case SV_FOOD_CURE_SERIOUS: /* Reduce this one's trigger speed somewhat, as it provides triple-status cure too. */
 			minfreq = 4;
 			break;
