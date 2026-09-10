@@ -11404,23 +11404,22 @@ void dealloc_dungeon_level(struct worldpos *wpos) {
 	}
 
 	/* Delete any monsters/objects on that level */
-	/* Hack -- don't wipe wilderness monsters/objects
-	   (especially important for preserving items in town inns). */
-	if (wpos->wz
+	/* Hack -- don't wipe wilderness monsters/objects -- except for uniques in the wilderness! See further below.
+	   (especially important for preserving items in fixed towns' inns). */
+	if (wpos->wz) {
 #ifdef IRONDEEPDIVE_FIXED_TOWNS
  #ifdef IRONDEEPDIVE_STATIC_TOWNS
-	    && !is_fixed_irondeepdive_town(wpos, getlevel(wpos))
+		if (!is_fixed_irondeepdive_town(wpos, getlevel(wpos)))
  #endif
 #endif
-	     ) {
-		wipe_m_list_special(wpos);
-		wipe_o_list_special(wpos);
+		{
+			wipe_m_list_special(wpos);
+			wipe_o_list_special(wpos);
+		}
 	} else {
-#ifdef IRONDEEPDIVE_FIXED_TOWNS
- #ifdef IRONDEEPDIVE_STATIC_TOWNS
-		if (!wpos->wz)
- #endif
-#endif
+		/* Actually do wipe unique monsters in the wilderness, or they might remain too hard to find */
+		wipe_m_list_uniques(wpos);
+
 		save_guildhalls(wpos);	/* has to be done here */
 
 		/* remove 'deposited' true artefacts from wilderness */

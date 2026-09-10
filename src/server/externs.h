@@ -1197,6 +1197,7 @@ extern void delete_monster_idx(int i, bool unfound_art);
 extern void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_art);
 extern void wipe_m_list(struct worldpos *wpos);
 extern void wipe_m_list_special(struct worldpos *wpos);
+extern void wipe_m_list_uniques(struct worldpos *wpos);
 extern void wipe_m_list_admin(struct worldpos *wpos);
 extern void wipe_m_list_roaming(struct worldpos *wpos);
 extern void thin_surface_spawns(void);

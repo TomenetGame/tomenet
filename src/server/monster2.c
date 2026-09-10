@@ -505,13 +505,18 @@ void delete_monster(struct worldpos *wpos, int y, int x, bool unfound_arts) {
  * if 'purge', non-allocated wilderness monsters will be purged.
  */
 void compact_monsters(int size, bool purge) {
-	int	     i, num, cnt, Ind;
-	int	     cur_lev, cur_dis, chance;
+	int i, num, cnt, Ind;
+	int cur_lev, cur_dis, chance;
 	cave_type **zcave;
 	struct worldpos *wpos;
 	quest_info *q_ptr;
+	monster_type *m_ptr;
+	monster_race *r_ptr;
+	object_type *o_ptr;
+	player_type *p_ptr;
 
 	int this_o_idx, next_o_idx = 0;
+
 
 	/* Message (only if compacting) */
 	if (size) s_printf("Compacting monsters...\n");
@@ -526,8 +531,8 @@ void compact_monsters(int size, bool purge) {
 
 		/* Check all the monsters */
 		for (i = 1; i < m_max; i++) {
-			monster_type *m_ptr = &m_list[i];
-			monster_race *r_ptr = race_inf(m_ptr);
+			m_ptr = &m_list[i];
+			r_ptr = race_inf(m_ptr);
 
 			/* Paranoia -- skip "dead" monsters */
 			if (!m_ptr->r_idx) continue;
@@ -585,7 +590,7 @@ void compact_monsters(int size, bool purge) {
 	/* Excise dead monsters (backwards!) */
 	for (i = m_max - 1; i >= 1; i--) {
 		/* Get the i'th monster */
-		monster_type *m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
 
 		/* Skip real monsters */
 		/* real monsters in unreal location are not skipped. */
@@ -626,8 +631,6 @@ void compact_monsters(int size, bool purge) {
 			for (this_o_idx = m_list[m_max].hold_o_idx; this_o_idx; this_o_idx = next_o_idx)
 #endif
 			{
-				object_type *o_ptr;
-
 				/* Acquire object */
 				o_ptr = &o_list[this_o_idx];
 
@@ -673,16 +676,18 @@ void compact_monsters(int size, bool purge) {
 
 			/* Copy the visibility and los flags for the players */
 			for (Ind = 1; Ind <= NumPlayers; Ind++) {
-				if (Players[Ind]->conn == NOT_CONNECTED) continue;
+				p_ptr = Players[Ind];
 
-				Players[Ind]->mon_vis[i] = Players[Ind]->mon_vis[m_max];
-				Players[Ind]->mon_los[i] = Players[Ind]->mon_los[m_max];
+				if (p_ptr->conn == NOT_CONNECTED) continue;
+
+				p_ptr->mon_vis[i] = p_ptr->mon_vis[m_max];
+				p_ptr->mon_los[i] = p_ptr->mon_los[m_max];
 
 				/* Hack -- Update the target */
-				if (Players[Ind]->target_who == (int)(m_max)) Players[Ind]->target_who = i;
+				if (p_ptr->target_who == (int)(m_max)) p_ptr->target_who = i;
 
 				/* Hack -- Update the health bar */
-				if (Players[Ind]->health_who == (int)(m_max)) health_track(Ind, i);
+				if (p_ptr->health_who == (int)(m_max)) health_track(Ind, i);
 			}
 
 			/* Wipe the hole */
@@ -698,10 +703,9 @@ void compact_monsters(int size, bool purge) {
 	m_top = 0;
 
 	/* Collect "live" monsters */
-	for (i = 1; i < m_max; i++) {
+	for (i = 1; i < m_max; i++)
 		/* Collect indexes */
 		m_fast[m_top++] = i;
-	}
 }
 
 
@@ -715,10 +719,11 @@ void compact_monsters(int size, bool purge) {
  */
 void wipe_m_list(struct worldpos *wpos) {
 	int i;
+	monster_type *m_ptr;
 
 	/* Delete all the monsters */
 	for (i = m_max - 1; i >= 1; i--) {
-		monster_type *m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
 
 		if (!inarea(&m_ptr->wpos,wpos)) continue;
 
@@ -738,10 +743,11 @@ void wipe_m_list(struct worldpos *wpos) {
 /* For /geno command: Wipes all monsters except for pets, golems and questors */
 void wipe_m_list_admin(struct worldpos *wpos) {
 	int i;
+	monster_type *m_ptr;
 
 	/* Delete all the monsters */
 	for (i = m_max - 1; i >= 1; i--) {
-		monster_type *m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
 
 		if (m_ptr->pet || m_ptr->special || m_ptr->questor) continue;
 
@@ -764,13 +770,14 @@ void wipe_m_list_admin(struct worldpos *wpos) {
    Special means: Static IDDC town floor. (Could maybe be used for quests too in some way.) */
 void wipe_m_list_special(struct worldpos *wpos) {
 	int i;
+	monster_type *m_ptr;
 
 	/* main purpose: keep target dummies alive */
 	if (sustained_wpos(wpos)) return;
 
 	/* Delete all the monsters */
 	for (i = m_max - 1; i >= 1; i--) {
-		monster_type *m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
 
 		if (!inarea(&m_ptr->wpos,wpos)) continue;
 
@@ -791,16 +798,34 @@ void wipe_m_list_special(struct worldpos *wpos) {
 	/* Compact the monster list */
 	compact_monsters(0, FALSE);
 }
+void wipe_m_list_uniques(struct worldpos *wpos) {
+	int i;
+	monster_type *m_ptr;
+
+	/* Delete all the monsters */
+	for (i = m_max - 1; i >= 1; i--) {
+		m_ptr = &m_list[i];
+
+		if (!(r_info[m_ptr->r_idx].flags1 & RF1_UNIQUE)) continue;
+		if (!inarea(&m_ptr->wpos,wpos)) continue;
+
+		delete_monster_idx(i, TRUE);
+	}
+
+	/* Compact the monster list */
+	compact_monsters(0, FALSE);
+}
 /* Avoid overcrowding of towns - C. Blue */
 void thin_surface_spawns(void) {
 	int i;
 	player_type *p_ptr;
 	cave_type **zcave;
+	monster_type *m_ptr;
 
 	/* Delete all the monsters, except for dummies and santa,
 	   because those are usually in town, and this function is called periodically for towns. */
 	for (i = m_max - 1 - (turn % (cfg.fps * 600)); i >= 1; i -= cfg.fps * 600) {
-		monster_type *m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
 
 		/* Only affect surface monsters, and only 20% of them (randomly) */
 		//if ((m_ptr->wpos.wz != 0) || !magik(20)) continue; //high towns end up pretty empty, even if a player idles for hours
@@ -846,10 +871,11 @@ void thin_surface_spawns(void) {
 /* Wipe all monsters in towns. (For seasonal events: Halloween) */
 void geno_towns(void) {
 	int i;
+	monster_type *m_ptr;
 
 	/* Delete all the monsters, except for target dummies and grid-occupying dummy */
 	for (i = m_max - 1; i >= 1; i--) {
-		monster_type *m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
 
 		if (!istown(&m_ptr->wpos) || (r_info[m_ptr->r_idx].flags8 & RF8_GENO_PERSIST)) continue;
 
@@ -871,10 +897,11 @@ void geno_towns(void) {
 void wipe_m_list_roaming(struct worldpos *wpos) {
 	int i;
 	cave_type **zcave;
+	monster_type *m_ptr;
 
 	if (!(zcave = getcave(wpos))) return;
 	for (i = m_max - 1; i >= 1; i--) {
-		monster_type *m_ptr = &m_list[i];
+		m_ptr = &m_list[i];
 
 		if (!inarea(&m_ptr->wpos,wpos)) continue;
 		if (zcave[m_ptr->fy][m_ptr->fx].info & CAVE_ICKY) continue;
