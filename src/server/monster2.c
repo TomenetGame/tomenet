@@ -3536,10 +3536,11 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 7\n");
 	if ((r_ptr->flags1 & RF1_UNIQUE) && !wpos->wz) {
 		/* Unique may not appear on the world surface? */
 #if 0
-		if (!(r_info[r_idx].flags8 & RF8_WILD_TOO_MASK) && /* Redundant? If we don't have WILD_xxx flags yet are unique we shouldn't have arrived here in the first place. */
+		if ((!(r_info[r_idx].flags8 & RF8_WILD_TOO_MASK) /* Redundant? If we don't have WILD_xxx flags yet are unique we shouldn't have arrived here in the first place. */
 #else
-		if ((r_info[r_idx].flags8 & RF8_DUNGEON) && /* Avoid too many "dungeon-unfindable" uniques because they are allocated somewhere in the wilderness; so only allow WILD_ONLY uniques here */
+		if (((r_info[r_idx].flags8 & RF8_DUNGEON) /* Avoid too many "dungeon-unfindable" uniques because they are allocated somewhere in the wilderness; so only allow WILD_ONLY uniques here */
 #endif
+		    || !level_generation_time) && /* And even so, only allow spawning uniques on world surface in wilderness_gen(), not as live spawns, for now, so players cannot sit on a level forever to cause unique spawns. */
 		    !(summon_override_checks & (SO_BOSS_MONSTERS | SO_SURFACE)))
 			return(40);
 		surface_unique = TRUE;

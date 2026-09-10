@@ -4141,6 +4141,8 @@ void wilderness_gen(struct worldpos *wpos) {
 		c_ptr->info |= (CAVE_GLOW);*/
 	}
 
+	level_generation_time = TRUE;
+
 	/* Hack -- Build some wilderness (from memory) */
 	wilderness_gen_hack(wpos);
 
@@ -4247,6 +4249,8 @@ void wilderness_gen(struct worldpos *wpos) {
 
 	/* set all those flags */
 	w_ptr->flags |= WILD_F_INVADERS | WILD_F_HOME_OWNERS | WILD_F_BONES | WILD_F_FOOD | WILD_F_OBJECTS | WILD_F_CASH | WILD_F_GARDENS;
+
+	level_generation_time = FALSE;
 }
 
 
