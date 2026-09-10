@@ -983,22 +983,21 @@ static void wild_add_garden(struct worldpos *wpos, int x, int y) {
 			    o_ptr->ix >= x1 && o_ptr->ix <= x2)
 				delete_object_idx(i, TRUE, TRUE);
 		}
-
-		/* Remember/reindex mushroom fields all over the world, for Farmer Maggot! */
-		if (type == WILD_CROP_MUSHROOM) {
-			for (i = 0; i < mushroom_fields; i++) {
-				if (mushroom_field_wx[i] == wpos->wx && mushroom_field_wy[i] == wpos->wy &&
-				    mushroom_field_x[i] == (x1 + x2) / 2 && mushroom_field_y[i] == (y1 + y2) / 2)
-					break;
-			}
-			/* Not yet indexed? Add it. */
-			if (i == mushroom_fields && mushroom_fields < MAX_MUSHROOM_FIELDS) {
-				mushroom_field_wx[i] = wpos->wx;
-				mushroom_field_wy[i] = wpos->wy;
-				mushroom_field_x[i] = (x1 + x2) / 2;
-				mushroom_field_y[i] = (y1 + y2) / 2;
-				mushroom_fields++;
-			}
+	}
+	/* Remember/reindex mushroom fields all over the world, for Farmer Maggot! */
+	if (type == WILD_CROP_MUSHROOM) {
+		for (i = 0; i < mushroom_fields; i++) {
+			if (mushroom_field_wx[i] == wpos->wx && mushroom_field_wy[i] == wpos->wy &&
+			    mushroom_field_x[i] == (x1 + x2) / 2 && mushroom_field_y[i] == (y1 + y2) / 2)
+				break;
+		}
+		/* Not yet indexed? Add it. */
+		if (i == mushroom_fields && mushroom_fields < MAX_MUSHROOM_FIELDS) {
+			mushroom_field_wx[i] = wpos->wx;
+			mushroom_field_wy[i] = wpos->wy;
+			mushroom_field_x[i] = (x1 + x2) / 2;
+			mushroom_field_y[i] = (y1 + y2) / 2;
+			mushroom_fields++;
 		}
 	}
 
