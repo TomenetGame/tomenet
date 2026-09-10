@@ -3133,7 +3133,7 @@ void final_guardian_diffboost(int m_idx) {
 /* lots of hard-coded stuff in here -C. Blue */
 int place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, int randuni, bool slp, int clo, int clone_summoning) {
 	int		i, Ind, j, dlev, m_idx;
-	bool		already_on_level = FALSE;
+	bool		already_on_level = FALSE, surface_unique = FALSE;
 	cave_type	*c_ptr;
 	dun_level	*l_ptr = getfloor(wpos);
 	monster_type	*m_ptr;
@@ -3142,8 +3142,7 @@ int place_monster_one(struct worldpos *wpos, int y, int x, int r_idx, int ego, i
 	char		buf[MNAME_LEN];
 	/* for final guardians, finally! - C. Blue */
 	struct dungeon_type *d_ptr = getdungeon(wpos);
-	bool netherrealm_level = in_netherrealm(wpos);
-	bool nr_bottom;
+	bool netherrealm_level = in_netherrealm(wpos), nr_bottom;
 	cave_type **zcave;
 	dungeon_info_type *dinfo_ptr =
 #ifdef IRONDEEPDIVE_MIXED_TYPES
@@ -3543,7 +3542,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 7\n");
 #endif
 		    !(summon_override_checks & (SO_BOSS_MONSTERS | SO_SURFACE)))
 			return(40);
-		s_printf("place_monster_one(): Unique %d ok for world surface (%d,%d).\n", r_idx, wpos->wx, wpos->wy);
+		surface_unique = TRUE;
 	}
 #ifdef PMO_DEBUG
 if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 8\n");
@@ -3686,7 +3685,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	/* Mega-Hack -- catch "failure" */
 	if (!m_idx) return(49);
 
-	c_ptr->m_idx = m_idx;;
+	c_ptr->m_idx = m_idx;
+
+	if (surface_unique) s_printf("place_monster_one(): Unique %d spawned on world surface (%d,%d).\n", r_idx, wpos->wx, wpos->wy);
 
 
 	/* --- Success! --- */
