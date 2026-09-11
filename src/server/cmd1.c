@@ -2607,34 +2607,31 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 
 /* the_sandman: item lvl restrictions are disabled in rpg */
 #ifndef RPG_SERVER
-		if (o_ptr->owner && o_ptr->owner != p_ptr->id &&
-		    (o_ptr->level > p_ptr->lev || o_ptr->level == 0) &&
-		    !in_irondeepdive(&p_ptr->wpos)) {
+		/* Items owned by someone else - handle if item level either exceeds ours or is zero: */
+		if (o_ptr->owner && o_ptr->owner != p_ptr->id
+		    && (o_ptr->level > p_ptr->lev || o_ptr->level == 0)
+		    && !in_irondeepdive(&p_ptr->wpos) /* These restrictions are disabled inside the IDDC */
+		    ) {
 			if (cfg.anti_cheeze_pickup) {
 				if (o_ptr->level) {
 					msg_format(Ind, "You must be level %d or higher to pick up that item!", o_ptr->level);
 					if (!is_admin(p_ptr)) return;
-				}
- #if 1 /* doesn't matter probably? Food exchange was already done above. */
-				else {
+				} else { /* doesn't matter probably? Food exchange was already done above. */
 					msg_print(Ind, "You cannot pick up a zero-level item that doesn't belong to you.");
 					if (!is_admin(p_ptr)) return;
 				}
- #endif
+			}
 			/* new: this is to prevent newbies to pick up all nearby stuff with their
-			   level 1 char aimlessly without being able to drop it again. */
-			} else if (p_ptr->max_plv < cfg.newbies_cannot_drop) {
+			   level 1 char aimlessly without being able to drop it again despite being unable to use them. */
+			else if (o_ptr->level && p_ptr->max_plv < cfg.newbies_cannot_drop) {
 				msg_format(Ind, "You must at least be level %d to pick up items above your level.", cfg.newbies_cannot_drop);
 				if (!is_admin(p_ptr)) return;
 			}
- #if 1
 			/* this is for a similar purpose: in the inn, don't allow picking up items that we can't immediately use */
-			else if ((f_info[c_ptr->feat].flags1 & FF1_PROTECTED) && p_ptr->lev < o_ptr->level
-			    && !in_irondeepdive(&p_ptr->wpos)) {
+			else if (o_ptr->level && (f_info[c_ptr->feat].flags1 & FF1_PROTECTED)) {
 				msg_print(Ind, "Inside an inn you cannot pick up items that are higher level than you.");
 				if (!is_admin(p_ptr)) return;
 			}
- #endif
 			else if (true_artifact_p(o_ptr) && cfg.anti_arts_pickup)
 			//else if (artifact_p(o_ptr) && cfg.anti_arts_pickup)
 			{
