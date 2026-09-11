@@ -5064,10 +5064,25 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 	quest_info *q_ptr = &q_info[q_idx];
 	int i, j;
 
+	o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
+	o_ptr->note_utag = 0;
+
+	o_ptr->iron_turn = turn;
+	o_ptr->find_reward = -1 - q_idx;
+
+	/* Always *ID*ed */
+	object_known(o_ptr);
+	o_ptr->ident |= ID_MENTAL;
+
+#ifdef PRE_OWN_DROP_CHOSEN /* These items never drop to the floor, but we just use this to set their level to 0 aka soulbound */
+	o_ptr->level = 0;
+#endif
+
 	if (pInd && q_ptr->individual) { //we should never get an individual quest without a pInd here..
 		o_ptr->iron_trade = Players[pInd]->iron_trade;
-		o_ptr->iron_turn = turn;
-		o_ptr->find_reward = -q_idx;
+		object_aware(pInd, o_ptr);
+		imprint_object_fully(o_ptr, Players[pInd]);
+		if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &Players[pInd]->wpos);
 		inven_carry(pInd, o_ptr);
 		return;
 	}
@@ -5092,8 +5107,9 @@ static void quest_reward_object(int pInd, int q_idx, object_type *o_ptr) {
 
 		/* hand him out the reward too */
 		o_ptr->iron_trade = Players[i]->iron_trade;
-		o_ptr->iron_turn = turn;
-		o_ptr->find_reward = -q_idx;
+		object_aware(i, o_ptr);
+		imprint_object_fully(o_ptr, Players[pInd]);
+		//no artifact timeout determination as we cannot hand out the same trueart to multiple people^^
 		inven_carry(i, o_ptr);
 	}
 }
@@ -5331,32 +5347,13 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					o_ptr->bpval = q_rew->obpval;
 					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
 					o_ptr->note_utag = 0;
-#ifdef PRE_OWN_DROP_CHOSEN
-					o_ptr->level = 0;
-					if (pInd) {
-						imprint_object_fully(o_ptr, Players[pInd]);
-						o_ptr->find_reward = -1 - q_idx;
-						if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &wpos);
-					}
-#endif
 				} else {
 					o_ptr = &forge;
 					object_wipe(o_ptr);
 					invcopy(o_ptr, lookup_kind(q_rew->otval, q_rew->osval));
 					o_ptr->number = 1;
 					apply_magic(&wpos, o_ptr, -2, q_rew->ogood, q_rew->ogreat, q_rew->ovgreat, FALSE, resf);
-					o_ptr->note = quark_add(format("%s", q_name + q_ptr->name));
-					o_ptr->note_utag = 0;
-#ifdef PRE_OWN_DROP_CHOSEN
-					o_ptr->level = 0;
-					if (pInd) {
-						imprint_object_fully(o_ptr, Players[pInd]);
-						o_ptr->find_reward = -1 - q_idx;
-						if (true_artifact_p(o_ptr)) determine_artifact_timeout(o_ptr->name1, &wpos);
-					}
-#endif
 				}
-
 				/* hand it out */
 				quest_reward_object(pInd, q_idx, o_ptr);
 				r_obj++;
