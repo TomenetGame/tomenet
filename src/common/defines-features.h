@@ -376,6 +376,7 @@
  #define MAX_MERCHANT_MAILS 100
  /* <this> x (MAX_MERCHANT_MAILS / cfg.fps) seconds  [36 -> 1 min, ie 36*100/60] */
  #define MERCHANT_MAIL_DURATION 36
+ /* Timeout is in the same unit */
  #ifdef TEST_SERVER
   #define MERCHANT_MAIL_TIMEOUT 36
  #else

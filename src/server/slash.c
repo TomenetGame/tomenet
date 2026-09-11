@@ -15081,9 +15081,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 #ifdef ENABLE_MERCHANT_MAIL
 			else if (prefix(messagelc, "/mgmail")) { //debug merchants guild mail
-				int i;
+				int i, sec;
 				char cd, cto;
-				char o_name_short[ONAME_LEN];
+				char o_name_short[ONAME_LEN], mt_str[MAX_CHARS];
 
 				msg_print(Ind, "Currently active merchants guild mail:");
 				for (i = 0; i < MAX_MERCHANT_MAILS; i++) {
@@ -15094,8 +15094,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					cd = mail_duration[i] < 0 ? 'y' : (mail_duration[i] == 0 ? 'G' : 'w');
 					cto = mail_timeout[i] == -1 ? 'r' : (mail_timeout[i] == -2 ? 'o' : (mail_timeout[i] < -2 ? 'y' : 'w'));
 
-					if (mail_xfee[i]) msg_format(Ind, " %3d: %s->%s (%s) dur \377%c%d\377w, timeout \377%c%d\377w%s, extra fee %d:", i, mail_sender[i], mail_target[i], mail_target_acc[i], cd, mail_duration[i], cto, mail_timeout[i], mail_COD[i] ? ", COD" : "", mail_xfee[i]);
-					else msg_format(Ind, " %3d: %s->%s (%s) dur \377%c%d\377w timeout \377%c%d\377w%s:", i, mail_sender[i], mail_target[i], mail_target_acc[i], cd, mail_duration[i], cto, mail_timeout[i], mail_COD[i] ? ", COD" : "");
+					/* <Timeout x MAX_MERCHANT_MAILS / cfg.fps> seconds [36 -> 1 min, ie 36*100/60] */
+					sec = (mail_timeout[i] * MAX_MERCHANT_MAILS) / cfg.fps;
+					if (sec / (3600 * 24)) sprintf(mt_str, "%dd%dh%dm", sec / (3600 * 24), (sec % (3600 * 24)) / 3600, (sec % 3600) / 60);
+					else if (sec / 3600) sprintf(mt_str, "%dh%dm", sec / 3600, (sec % 3600) / 60);
+					else sprintf(mt_str, "%dm%ds", sec / 60, sec % 60);
+
+					if (mail_xfee[i]) msg_format(Ind, " %3d: %s->%s (%s) dur \377%c%d\377w, timeout \377%c%d (%s)\377w%s, extra fee %d:", i, mail_sender[i], mail_target[i], mail_target_acc[i], cd, mail_duration[i], cto, mail_timeout[i], mt_str, mail_COD[i] ? ", COD" : "", mail_xfee[i]);
+					else msg_format(Ind, " %3d: %s->%s (%s) dur \377%c%d\377w timeout \377%c%d (%s)\377w%s:", i, mail_sender[i], mail_target[i], mail_target_acc[i], cd, mail_duration[i], cto, mail_timeout[i], mt_str, mail_COD[i] ? ", COD" : "");
 					if (mail_forge[i].name1 == ART_RANDART) msg_format(Ind, "      \377st%d,s%d,\377URA\377s,lv%d,m%d,o%d <%s>", mail_forge[i].tval, mail_forge[i].sval, mail_forge[i].level, mail_forge[i].mode, mail_forge[i].owner, o_name_short);
 					else if (mail_forge[i].name1) msg_format(Ind, "      \377st%d,s%d,\377U%d\377s,lv%d,m%d,o%d <%s>", mail_forge[i].tval, mail_forge[i].sval, mail_forge[i].name1, mail_forge[i].level, mail_forge[i].mode, mail_forge[i].owner, o_name_short);
 					else msg_format(Ind, "      \377st%d,s%d,lv%d,m%d,o%d <%s>", mail_forge[i].tval, mail_forge[i].sval, mail_forge[i].level, mail_forge[i].mode, mail_forge[i].owner, o_name_short);
