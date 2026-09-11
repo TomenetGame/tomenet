@@ -291,6 +291,7 @@ typedef struct qi_goal {
 typedef struct qi_reward {
 	s16b otval;					/* hand over certain rewards to the player */
 	s16b osval;
+	s16b onumber;
 	s16b opval, obpval;
 	s16b oname1, oname2, oname2b;
 	bool ogood, ogreat, ovgreat;

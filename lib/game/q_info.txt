@@ -98,7 +98,7 @@ V:1.0.0
 # (optional) Z:stage:goal:changeflags (flags that get set/cleared when that goal is cleared)
 # (up to 5x) G:stage:next stage:main kill/retrieve/move goals required to complete separated by colons (optional goals are NOT allowed here) to progress to next stage
 # (optional) O:stage:get reward n (-1 to disable):main/optional goals required for reward (0 for none -> it's for free) separated by colons
-# (optional, up to 10x - rewards) R:stage:define reward tval:sval:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward 0..5:gold:exp:specialstatuseffect
+# (optional, up to 10x - rewards) R:stage:define reward tval:sval:number:pval:bpval:name1:name2:name2b:good?:great?:verygreat?:createreward 0..5:gold:exp:specialstatuseffect
 
 # New (2018): Most text lines (W:, yR:, X:, x:, Wr:) can call a lua function. It must begin with two slashes and nothing else must be in the line.
 # Parameters are possible. As usual, ':' symbols are not allowed anywhere. Lua functions cannot change any quest parameters except for flags.
@@ -190,8 +190,8 @@ O:3:0:0
 X:3:-:The shop keeper hands you a pint of fine ale!
 O:4:1:0
 X:4:-:The shop keeper hands you a ration of food!
-R:3:80:38:0:0:0:0:0:0:0:0:0:4:2:0
-R:4:80:35:0:0:0:0:0:0:0:0:0:3:1:0
+R:3:80:38:1:0:0:0:0:0:0:0:0:0:4:2:0
+R:4:80:35:1:0:0:0:0:0:0:0:0:0:3:1:0
 
 
 
@@ -209,7 +209,7 @@ W:0:1:0:-:Thanks!
 M:1:1:-1:32:32:0:0:105:40:0:-:0:0
 G:1:3:1
 X:3:-:The shop keeper hands you a pint of fine ale!
-R:3:80:38:0:0:0:0:0:0:0:0:0:1:1:0
+R:3:80:38:1:0:0:0:0:0:0:0:0:0:1:1:0
 
 
 
@@ -246,7 +246,7 @@ kV:1:1:C:-
 M:1:2:0:63:63:0:0:99:35:1:-:0:0
 G:1:3:1:2:3
 X:3:-:The Goalkeeper Bat seems very satisfied.
-R:3:80:38:0:0:0:0:0:0:0:0:0:2:2:0
+R:3:80:38:1:0:0:0:0:0:0:0:0:0:2:2:0
 
 Y:0:0:-:retrieve:-:2
 W:0:2:0:-:Dude where's muh potions.. I had two red potions I'm sure.
@@ -260,7 +260,7 @@ rV:2:1:-9999:-9999:r:-1:-1:-1:-9999:-9999:R:-1:-1:-1:
 M:2:2:0:63:63:0:0:99:35:1:-:0:0
 G:2:4:1:2
 X:4:-:The Goalkeeper Bat seems very satisfied.
-R:4:80:38:0:0:0:0:0:1:1:0:0:2:2:0
+R:4:80:38:1:0:0:0:0:0:1:1:0:0:2:2:0
 
 
 
@@ -503,12 +503,7 @@ W:0:4:0:-:You made it back. Thank you for delivering those scrolls.
 W:0:4:0:-:My colleagues sent word that the bundle reached them safely.
 W:0:4:0:-:I have more provisions than I need, so let me share some of my supplies.
 W:0:4:0:-:Take these potions and a little gold from my stores. You have earned them.
-R:4:71:34:0:0:0:0:0:0:0:0:0:0:0:0
-R:4:71:34:0:0:0:0:0:0:0:0:0:0:0:0
-R:4:71:34:0:0:0:0:0:0:0:0:0:0:0:0
-R:4:71:34:0:0:0:0:0:0:0:0:0:0:0:0
-R:4:71:34:0:0:0:0:0:0:0:0:0:0:0:0
-R:4:71:26:0:0:0:0:0:0:0:0:0:0:0:0
-R:4:71:26:0:0:0:0:0:0:0:0:0:0:0:0
-R:4:0:0:0:0:0:0:0:0:0:0:0:100:0:0
+R:4:71:34:5:0:0:0:0:0:0:0:0:0:0:0:0
+R:4:71:26:2:0:0:0:0:0:0:0:0:0:0:0:0
+R:4:0:0:0:0:0:0:0:0:0:0:0:0:100:0:0
 x:4:-:You delivered the enchantment scrolls and received the Bree guard's reward.

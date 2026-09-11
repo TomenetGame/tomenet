@@ -5269,7 +5269,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	object_type forge, *o_ptr;
 	u64b resf = RESF_NOTRUEART;
 	/* count rewards */
-	int r_obj = 0, r_gold = 0, r_exp = 0;
+	int r_obj = 0, r_obj_s = 0, r_gold = 0, r_exp = 0;
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage);
 	qi_reward *q_rew;
 	qi_questor *q_questor;
@@ -5334,7 +5334,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					o_ptr = &forge;
 					object_wipe(o_ptr);
 					invcopy(o_ptr, lookup_kind(q_rew->otval, q_rew->osval));
-					o_ptr->number = 1;
+					o_ptr->number = q_rew->onumber;
 					o_ptr->name1 = q_rew->oname1;
 					o_ptr->name2 = q_rew->oname2;
 					o_ptr->name2b = q_rew->oname2b;
@@ -5351,12 +5351,13 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 					o_ptr = &forge;
 					object_wipe(o_ptr);
 					invcopy(o_ptr, lookup_kind(q_rew->otval, q_rew->osval));
-					o_ptr->number = 1;
+					o_ptr->number = q_rew->onumber;
 					apply_magic(&wpos, o_ptr, -2, q_rew->ogood, q_rew->ogreat, q_rew->ovgreat, FALSE, resf);
 				}
 				/* hand it out */
 				quest_reward_object(pInd, q_idx, o_ptr);
-				r_obj++;
+				r_obj += q_rew->onumber;
+				r_obj_s++;
 			}
 			/* instead use create_reward() like for events? */
 			else if (q_rew->oreward) {
@@ -5369,6 +5370,7 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 				}
 				quest_reward_create(pInd, q_idx, resf);
 				r_obj++;
+				r_obj_s++;
 			}
 			/* hand out gold? */
 			if (q_rew->gold) {
@@ -5388,7 +5390,10 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 	/* give one unified message per reward type that was handed out */
 	if (pInd && q_ptr->individual) {
 		if (r_obj == 1) msg_print(pInd, "You have received an item.");
-		else if (r_obj) msg_format(pInd, "You have received %d items.", r_obj);
+		else if (r_obj) {
+			if (r_obj_s == 1) msg_format(pInd, "You have received %d items.", r_obj);
+			else msg_format(pInd, "You have received %d items in %d stacks.", r_obj, r_obj_s);
+		}
 		if (r_gold) msg_format(pInd, "You have received %d gold piece%s.", r_gold, r_gold == 1 ? "" : "s");
 		if (r_exp) msg_format(pInd, "You have received %d experience point%s.", r_exp, r_exp == 1 ? "" : "s");
 #ifdef USE_SOUND_2010
@@ -5407,7 +5412,10 @@ static void quest_goal_check_reward(int pInd, int q_idx) {
 		if (j == q_ptr->questors) continue;
 
 		if (r_obj == 1) msg_print(i, "You have received an item.");
-		else if (r_obj) msg_format(i, "You have received %d items.", r_obj);
+		else if (r_obj) {
+			if (r_obj_s == 1) msg_format(i, "You have received %d items.", r_obj);
+			else msg_format(i, "You have received %d items in %d stacks.", r_obj, r_obj_s);
+		}
 		if (r_gold) msg_format(i, "You have received %d gold piece%s.", r_gold, r_gold == 1 ? "" : "s");
 		if (r_exp) msg_format(i, "You have received %d experience point%s.", r_exp, r_exp == 1 ? "" : "s");
 

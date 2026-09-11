@@ -9225,7 +9225,7 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 		/* Process 'R', quest reward definitions */
 		if (buf[0] == 'R') {
 			int good, great, vgreat, createreward, rstatus;
-			int otval, osval, opval, obpval, oname1, oname2, oname2b;
+			int otval, osval, onumber, opval, obpval, oname1, oname2, oname2b;
 
 			/* first number is the stage */
 			s = buf + 2;
@@ -9239,14 +9239,15 @@ errr init_q_info_txt(FILE *fp, char *buf) {
 			if (!(c = strchr(s, ':'))) return(1);
 			c++;
 
-			if (14 != sscanf(c, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
-			    &otval, &osval, &opval, &obpval, &oname1, &oname2, &oname2b,
+			if (15 != sscanf(c, "%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d",
+			    &otval, &osval, &onumber, &opval, &obpval, &oname1, &oname2, &oname2b,
 			    &good, &great, &vgreat, &createreward,
 			    &q_rew->gold, &q_rew->exp, &rstatus))
 				return(1);
 
 			q_rew->otval = otval;
 			q_rew->osval = osval;
+			q_rew->onumber = onumber;
 			q_rew->opval = opval;
 			q_rew->obpval = obpval;
 			q_rew->oname1 = oname1;
