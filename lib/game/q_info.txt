@@ -492,7 +492,8 @@ x:2:-:Deliver the bundle of enchantment scrolls to the guards in the Training To
 
 # Stage 3, return to the original Bree guard for the reward.
 W:1:3:0:-:Thank you for bringing the scrolls from Bree.
-W:1:3:0:-:We have everything we need now. Please return to the Bree guard and tell him the delivery is complete.
+W:1:3:0:-:We have everything we need now. Please return to the Bree guard
+W:1:3:0:-:and tell him the delivery is complete.
 M:3:1:0:-1:-1:-1:0:0:0:0:-:0:0
 G:3:4:1
 x:3:-:Return to the Bree guard to receive your reward.
