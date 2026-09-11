@@ -1254,6 +1254,42 @@ static void calc_sanity(int Ind) {
 	}
 }
 
+int mana_heavy_armour(player_type *p_ptr) {
+	int max_wgt = 1000;
+
+	/* Determine the weight allowance */
+	//max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
+	switch (p_ptr->pclass) {
+	case CLASS_MAGE: max_wgt = 150 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_RANGER: max_wgt = 240 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+#ifdef ENABLE_CPRIEST
+	case CLASS_CPRIEST:
+#endif
+	case CLASS_PRIEST: max_wgt = 250 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+#ifdef ENABLE_DEATHKNIGHT
+	case CLASS_DEATHKNIGHT:
+#endif
+#ifdef ENABLE_HELLKNIGHT
+	case CLASS_HELLKNIGHT:
+#endif
+	case CLASS_PALADIN: max_wgt = 300 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_DRUID: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_SHAMAN: max_wgt = 170 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_ROGUE: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_RUNEMASTER: max_wgt = 230 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;/*was 270*/
+	case CLASS_MIMIC: max_wgt = 280 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_ADVENTURER: max_wgt = 210 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	//case CLASS_MINDCRAFTER: max_wgt = 230 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_MINDCRAFTER: max_wgt = 260 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
+	case CLASS_WARRIOR:
+	case CLASS_ARCHER:
+	default:
+		// go with '1000' aka w/e
+		break;
+	}
+
+	return(max_wgt);
+}
 
 /*
  * Calculate maximum mana.  You do not need to know any spells.
@@ -1519,34 +1555,7 @@ void calc_mana(int Ind) {
 	/* Weigh the armor */
 	cur_wgt = worn_armour_weight(p_ptr);
 
-	/* Determine the weight allowance */
-	//max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 250); break;
-	switch (p_ptr->pclass) {
-	case CLASS_MAGE: max_wgt = 150 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-	case CLASS_RANGER: max_wgt = 240 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-#ifdef ENABLE_CPRIEST
-	case CLASS_CPRIEST:
-#endif
-	case CLASS_PRIEST: max_wgt = 250 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-#ifdef ENABLE_DEATHKNIGHT
-	case CLASS_DEATHKNIGHT:
-#endif
-#ifdef ENABLE_HELLKNIGHT
-	case CLASS_HELLKNIGHT:
-#endif
-	case CLASS_PALADIN: max_wgt = 300 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-	case CLASS_DRUID: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-	case CLASS_SHAMAN: max_wgt = 170 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-	case CLASS_ROGUE: max_wgt = 200 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-	case CLASS_RUNEMASTER: max_wgt = 230 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;/*was 270*/
-	case CLASS_MIMIC: max_wgt = 280 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-	case CLASS_ADVENTURER: max_wgt = 210 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-//	case CLASS_MINDCRAFTER: max_wgt = 230 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-	case CLASS_MINDCRAFTER: max_wgt = 260 + get_skill_scale(p_ptr, SKILL_COMBAT, 150); break;
-	case CLASS_WARRIOR:
-	case CLASS_ARCHER:
-	default: max_wgt = 1000; break;
-	}
+	max_wgt = mana_heavy_armour(p_ptr);
 
 	/* Heavy armor penalizes mana */
 	if ((cur_wgt - max_wgt) > 0) {

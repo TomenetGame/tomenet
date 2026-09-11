@@ -2318,6 +2318,7 @@ extern void window_stuff(int Ind);
 extern void handle_stuff(int Ind);
 extern void fix_spell(int Ind, bool full);
 extern void calc_mana(int Ind);
+extern int mana_heavy_armour(player_type *p_ptr);
 
 extern void calc_hitpoints(int Ind);
 extern void calc_boni(int Ind);
