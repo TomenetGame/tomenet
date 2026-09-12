@@ -7956,6 +7956,12 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 			/* Change wpos */
 			wpcopy(wpos, &nwpos);
 
+#if 1 /* Alleviate insta-attacks on entering a new wilderness sector, similar to teleporting around in the dungeon */
+ #ifdef TELEPORT_SURPRISES
+			p_ptr->teleported = TELEPORT_SURPRISES;
+ #endif
+#endif
+
 			/* A player has left this depth */
 			new_players_on_depth(&old_wpos, -1, TRUE);
 
