@@ -6640,13 +6640,7 @@ void calc_boni(int Ind) {
 	//p_ptr->skill_tht += (p_ptr->cp_ptr->x_thb * (get_skill_scale(p_ptr, SKILL_COMBAT, 10) + get_skill_scale(p_ptr, SKILL_BOOMERANG, 35))) / 30;
 	p_ptr->skill_tht += (40 * (get_skill_scale(p_ptr, SKILL_COMBAT, 10) + get_skill_scale(p_ptr, SKILL_BOOMERANG, 35))) / 30;
 
-
-
-	/* Hack: Mycorrhiza positive side effect of harmful mushroom - Thanks, Virus. */
-	switch (p_ptr->mycorrhiza - 1) {
-	case SV_FOOD_PARANOIA: p_ptr->skill_fos += 30; break;
-	}
-	/* Just eating the shroom instead: */
+	/* Mushroom of paranoia - Thanks, Virus */
 	if (p_ptr->skill_fos_inc) p_ptr->skill_fos += 30;
 
 

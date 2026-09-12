@@ -21033,12 +21033,8 @@ create a character!):
     potions that provide nourishment. They can never be gorged though.
     Starting at level 7, Ents can enter a special symbiotic relationship with
     any fungus of their choice: Mycorrhiza. The fungus will get implanted
-    into the Ent's bark and provide periodic effects depending on its type.
-    The effect will not happen frequently at first, but more often the longer
-    the symbiosis is active (up to 5000 turns of symbiosis existance).
-    (Press 'm' to begin or end a mycorrhiza. Only one fungus can be active.
-    You can also use the '/myc' command instead. Also, the '/ex' command will
-    display a currently active symbiosis in light green colour.)
+    into the Ent's bark and provide periodic effects depending on its type,
+    getting more frequent over time.
     Ents also intrinsically resist the force of unleashed water and their bark
     skin even provides a small bonus to armour class.
     They get bonus to 'Health', a slight bonus to 'Spirit' and a large bonus on
@@ -21046,6 +21042,28 @@ create a character!):
     receive a huge penalty on 'Fire' school, a large penalty on 'Axe-mastery'
     and a penalty on 'Sword-mastery'. They cannot train 'Climbing' or any
     blood magic at all.
+
+    Mycorrhiza details:
+    -------------------
+    The effect will not happen frequently at first, but more often the longer
+    the symbiosis is active, reaching its maximum frequency after 5000 turns
+    of symbiosis existance.
+    Press 'm' to begin or end a mycorrhiza. Only one fungus can be active at
+    a time. You can also use the '/myc' command instead of 'm' menu (older
+    clients don't have the 'm' menu entry yet).
+    Also, the '/ex' command will display a currently active symbiosis in light
+    green colour, including its quality aka its duration, with 'perfect'
+    meaning 5000 turns (or longer), resulting in an average of 1 in 3 turns.
+    Some mushrooms have adjusted effects:
+    - slime mold also works and will provide nutrition to you.
+    - mushrooms of cure poison/confusion and of restore strength/constitution
+      trigger faster than other mushrooms (1 in 2 turns).
+    - mushrooms of cure serious wounds and of restoring trigger slower than
+      other mushrooms (1 in 4 turns).
+    - mushroom of cure serious wounds heals HP for 1d8 (unlike eating it,
+      which heals 6d8).
+    - mushroom of paranoia doesn't stack bad effects (fear/hallucination) far,
+      and temporarily grants increased 'perception' ability.
 
 - Draconian
     These humanoid half-breeds of dragon and man surpass common humans in all
