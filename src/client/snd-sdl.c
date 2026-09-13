@@ -4769,7 +4769,7 @@ void save_custom_music(void) {
 }
 void do_cmd_options_mus_sdl(bool reset) {
 	int i, i2, j, d, k, vertikal_offset = 5, horiz_offset = 1, list_size = 9;
-	static int y = 0, j_sel = 0; // j_sel = -1; for initially jumping to playing song, see further below
+	static int y = 0, j_sel;
 	char ch;
 	byte a, a2;
 	cptr lua_name;
@@ -4794,7 +4794,7 @@ void do_cmd_options_mus_sdl(bool reset) {
 		}
 		save_custom_music();
 
-		y = j_sel = 0;
+		y = 0;
 
 		jukebox_play_all = jukebox_play_all_done = FALSE;
 		jukebox_playing = jukebox_play_all_prev = jukebox_playing_song = jukebox_play_all_prev_song = -1;
@@ -4838,20 +4838,6 @@ void do_cmd_options_mus_sdl(bool reset) {
 	Term_clear();
 
 	topline_icky = TRUE;
-
-#if 0 /* instead of this, rather add a 'c' key that jumps to the currently playing song */
-	/* Initially jump selection cursor to song that is currently being played */
-	if (j_sel == -1) {
-		for (j = 0; j < MUSIC_MAX; j++) {
-			//if (!songs[j].config) continue;
-			/* playing atm? */
-			if (j != music_cur) continue;
-			/* match */
-			j_sel = y = j;
-			break;
-		}
-	}
-#endif
 
 	jukebox_update_songlength();
 
@@ -5030,14 +5016,21 @@ void do_cmd_options_mus_sdl(bool reset) {
 
 			/* Locate currently playing song, select it visually */
 			d = -1;
+			k = -1;
 			for (j = 0; j < MUSIC_MAX; j++) {
 				if (!songs[j].config) continue;
 				d++;
+				if (j == music_cur) k = d;
 				if (j != jukebox_playing) continue;
 				break;
 			}
-			if (j == MUSIC_MAX) d = music_cur; /* Happens if play-all just finished and we resume normal operation of the actual game song playing before */
-			if (d != -1) j_sel = y = d; //paranoia, should always be true
+			if (j == MUSIC_MAX) { /* Happens if play-all just finished and we resume normal operation of the actual game song playing before */
+				y = k;
+				j_sel = music_cur;
+			} else if (d != -1) { //paranoia, should always be true, except if music pack has no events defined at all
+				y = d;
+				j_sel = j;
+			}
 			continue;
 		}
 
@@ -5247,17 +5240,15 @@ void do_cmd_options_mus_sdl(bool reset) {
 			break;
 
 		case 'c': /* Jump to currently playing song */
-			i = 0;
+			i = -1;
 			for (j = 0; j < MUSIC_MAX; j++) {
 				/* skip songs that we don't have defined */
-				if (!songs[j].config) {
-					i++;
-					continue;
-				}
+				if (!songs[j].config) continue;
+				i++;
 				/* playing atm? */
 				if (j != music_cur) continue;
 				/* match */
-				j_sel = y = j - i;
+				y = i;
 				break;
 			}
 			break;
@@ -5276,7 +5267,9 @@ void do_cmd_options_mus_sdl(bool reset) {
 			break;
 			}
 
-		case 't': //case ' ':
+		case 't': { //case ' ':
+			bool gmc = jukebox_gamemusicchanged; //should actually be FALSE, but we save its actual value anyway here to be safe
+
 			songs[j_sel].disabled = !songs[j_sel].disabled;
 			if (songs[j_sel].disabled) {
 				if (music_cur == j_sel && Mix_PlayingMusic()) {
@@ -5304,7 +5297,11 @@ void do_cmd_options_mus_sdl(bool reset) {
 			}
 			/* actually advance down the list too */
 			y = (y + 1 + audio_music) % audio_music;
-			break;
+			/* Hack: Disabling a song would actually set 'jukebox_gamemusicchanged = TRUE',
+			   which in turn would set ch to -1, which in turn would reset 'y' to what it just was, instead of above increment,
+			   so we set jukebox_gamemusicchanged back to FALSE here: */
+			jukebox_gamemusicchanged = gmc;
+			break; }
 
 		case 'y':
 			if (!songs[j_sel].disabled) break;
@@ -5401,8 +5398,7 @@ void do_cmd_options_mus_sdl(bool reset) {
 			/* Hack: If we're already playing-all/shuffling-all, stop that and return to the current game music: */
 			if (jukebox_play_all) {
 				//jukebox_play_all_done = TRUE; //refresh the song list a last time
-				//jukebox_playing = -1;
-
+				jukebox_playing = -1;
 				jukebox_static200vol = FALSE;
 				jukebox_play_all = FALSE;
 
@@ -5419,17 +5415,15 @@ void do_cmd_options_mus_sdl(bool reset) {
 				curmus_timepos = 0; //song starts to play, at 0 seconds mark ie the beginning
 
 				/* Jump to currently playing song */
-				i = 0;
+				i = -1;
 				for (j = 0; j < MUSIC_MAX; j++) {
 					/* skip songs that we don't have defined */
-					if (!songs[j].config) {
-						i++;
-						continue;
-					}
+					if (!songs[j].config) continue;
+					i++;
 					/* playing atm? */
 					if (j != music_cur) continue;
 					/* match */
-					j_sel = y = j - i;
+					y = i;
 					break;
 				}
 
