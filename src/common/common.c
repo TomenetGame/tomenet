@@ -666,9 +666,9 @@ bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *
    at the end of our character name, assuming it is separated by at least one space;
    also for 'similar names' checks regarding choosing a character name on character creation!
    Note that this function also verifies the actual validity of the roman numbers.. :-p - C. Blue */
-char *roman_suffix(char* cname) {
+char *roman_suffix(char* cname, int *arabic_ptr) {
 	char *p, *p0;
-	int arabic = 0, rome_prev = 0;
+	int arabic = 0, rome_prev = 0, maybe_prefix_val;
 	bool maybe_prefix = FALSE;
 
 	/* Not long enough to contain roman number? */
@@ -688,8 +688,10 @@ char *roman_suffix(char* cname) {
 			if (arabic % 5 >= 3) return(NULL); //this digit may never occur more than 3 times in a row
 
 			if (maybe_prefix) arabic += rome_prev; //prefix was not a prefix but a normal digit ('I' cannot get a prefix)
-			if (arabic % 5 == 0) maybe_prefix = TRUE;
-			else {
+			if (arabic % 5 == 0) {
+				maybe_prefix = TRUE;
+				maybe_prefix_val = 1;
+			} else {
 				arabic++;
 				maybe_prefix = FALSE;
 			}
@@ -719,8 +721,10 @@ char *roman_suffix(char* cname) {
 				if (rome_prev == 1) arabic--;
 				else arabic += rome_prev;
 			}
-			if (arabic % 50 == 0) maybe_prefix = TRUE;
-			else {
+			if (arabic % 50 == 0) {
+				maybe_prefix = TRUE;
+				maybe_prefix_val = 10;
+			} else {
 				arabic += 10;
 				maybe_prefix = FALSE;
 			}
@@ -752,8 +756,10 @@ char *roman_suffix(char* cname) {
 				if (rome_prev == 10) arabic -= 10;
 				else arabic += rome_prev;
 			}
-			if (arabic % 500 == 0) maybe_prefix = TRUE;
-			else {
+			if (arabic % 500 == 0) {
+				maybe_prefix = TRUE;
+				maybe_prefix_val = 100;
+			} else {
 				arabic += 100;
 				maybe_prefix = FALSE;
 			}
@@ -798,8 +804,71 @@ char *roman_suffix(char* cname) {
 		}
 	}
 
+	/* Finish up the arabic number and return it too */
+	if (arabic_ptr) {
+		if (maybe_prefix) arabic += maybe_prefix_val;
+		*arabic_ptr = arabic;
+	}
+
 	/* Success, return starting position of the roman number */
 	return(p0);
+}
+/* Convert arabic number to roman number */
+cptr arabic2roman(int arabic) {
+	static char roman[20];
+
+	/* 'Overflow' */
+	if (arabic >= 4000) return("I");
+	if (arabic <= 0) return(""); /* In theory 'N' is zero, but we don't parse 'N' in roman_suffix() and it doesn't make sense for names anyway */
+
+	*roman = 0;
+
+	switch (arabic / 1000) {
+	case 3: strcat(roman, "MMM"); break;
+	case 2: strcat(roman, "MM"); break;
+	case 1: strcat(roman, "M"); break;
+	}
+	arabic %= 1000;
+
+	switch (arabic / 100) {
+	case 9: strcat(roman, "CM"); break;
+	case 8: strcat(roman, "DCCC"); break;
+	case 7: strcat(roman, "DCC"); break;
+	case 6: strcat(roman, "DC"); break;
+	case 5: strcat(roman, "D"); break;
+	case 4: strcat(roman, "CD"); break;
+	case 3: strcat(roman, "CCC"); break;
+	case 2: strcat(roman, "CC"); break;
+	case 1: strcat(roman, "C"); break;
+	}
+	arabic %= 100;
+
+	switch (arabic / 10) {
+	case 9: strcat(roman, "XC"); break;
+	case 8: strcat(roman, "LXXX"); break;
+	case 7: strcat(roman, "LXX"); break;
+	case 6: strcat(roman, "LX"); break;
+	case 5: strcat(roman, "L"); break;
+	case 4: strcat(roman, "XL"); break;
+	case 3: strcat(roman, "XXX"); break;
+	case 2: strcat(roman, "XX"); break;
+	case 1: strcat(roman, "X"); break;
+	}
+	arabic %= 10;
+
+	switch (arabic) {
+	case 9: strcat(roman, "IX"); break;
+	case 8: strcat(roman, "VIII"); break;
+	case 7: strcat(roman, "VII"); break;
+	case 6: strcat(roman, "VI"); break;
+	case 5: strcat(roman, "V"); break;
+	case 4: strcat(roman, "IV"); break;
+	case 3: strcat(roman, "III"); break;
+	case 2: strcat(roman, "II"); break;
+	case 1: strcat(roman, "I"); break;
+	}
+
+	return(roman);
 }
 
 /*

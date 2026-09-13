@@ -17717,6 +17717,10 @@ void c_close_game(cptr reason) {
 #endif
 	char tmp[MAX_CHARS];
 	bool c_cfg_tmp = c_cfg.topline_no_msg;
+#ifdef CHARNAME_ROMAN
+	char *ptr;
+	int arabic = -1;
+#endif
 
 	/* Let the player view the last scene */
 	c_cfg.topline_no_msg = FALSE;
@@ -17731,6 +17735,11 @@ void c_close_game(cptr reason) {
 
 	/* Remember deceased char's name if we will just recreate the same.. */
 	strcpy(prev_cname, cname);
+#ifdef CHARNAME_ROMAN
+	/* Auto-increment roman number at the end :D */
+	if ((ptr = roman_suffix(prev_cname, &arabic)))
+		strcpy(ptr, arabic2roman(arabic + 1));
+#endif
 
 #if 0
 	/* hack: hide cursor */

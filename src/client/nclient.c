@@ -3486,7 +3486,7 @@ int Receive_message(void) {
 			while (*ptr) { *ptr = tolower(*ptr); ptr++; }
 			strcpy(l_cname, cname);
 #ifdef CHARNAME_ROMAN /* Convenience feature: Ignore roman numbers at the end of our character name? (Must be separated by a space.) */
-			if ((ptr = roman_suffix(l_cname))) *(ptr - 1) = 0;
+			if ((ptr = roman_suffix(l_cname, NULL))) *(ptr - 1) = 0;
 #endif
 			ptr = l_cname;
 			while (*ptr) { *ptr = tolower(*ptr); ptr++; }

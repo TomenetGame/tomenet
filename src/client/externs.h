@@ -1139,7 +1139,8 @@ extern char *my_strstr_skipcol(const char *big, const char *little, byte strict)
 #ifdef REGEX_SEARCH
 extern bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *withinsearch, int *next_start);
 #endif
-extern char *roman_suffix(char* cname);
+extern char *roman_suffix(char* cname, int *arabic);
+extern cptr arabic2roman(int arabic);
 extern bool wearable_p(object_type *o_ptr);
 #ifdef ENABLE_SUBINVEN
 //extern int get_subinven_size(int sval);

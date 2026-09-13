@@ -3488,7 +3488,7 @@ void save_birth_file(cptr cname, bool touch) {
 	strcpy(name, cname);
 #ifdef CHARNAME_ROMAN
 	/* Ignore roman number at the end, for players who increment after each death :) */
-	if ((ptr = roman_suffix(name))) *(ptr - 1) = 0;
+	if ((ptr = roman_suffix(name, NULL))) *(ptr - 1) = 0;
 #endif
 
 	strncpy(file_name, name, 249);
@@ -3573,7 +3573,7 @@ void load_birth_file(cptr cname) {
 
 #ifdef CHARNAME_ROMAN
 	/* Ignore roman number at the end, for players who increment after each death :) */
-	if ((ptr = roman_suffix(name))) *(ptr - 1) = 0;
+	if ((ptr = roman_suffix(name, NULL))) *(ptr - 1) = 0;
 #endif
 
 	strncpy(file_name, name, 249);

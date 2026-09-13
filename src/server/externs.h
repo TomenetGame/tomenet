@@ -43,7 +43,7 @@ extern char *my_strcasestr_skipcol(const char *big, const char *little, byte str
 #ifdef REGEX_SEARCH
 extern bool my_strregexp_skipcol(char *buf2, regex_t re_src, char *searchstr_re, char *withinsearch, int *next_start);
 #endif
-extern char *roman_suffix(char* cname);
+extern char *roman_suffix(char* cname, int *arabic);
 #ifdef ENABLE_SUBINVEN
 //extern int get_subinven_size(int sval);
 #endif

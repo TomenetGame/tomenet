@@ -10823,7 +10823,7 @@ void condense_name(char *condensed, const char *name_raw) {
 	char name[NAME_LEN];
 
 	strcpy(name, name_raw);
-	if ((ptr = roman_suffix(name))) *(ptr - 1) = 0;
+	if ((ptr = roman_suffix(name, NULL))) *(ptr - 1) = 0;
 	//s_printf("condense: n='%s'", name); // debug (spammy)
 #endif
 
@@ -10881,8 +10881,8 @@ int similar_names(const char *name1_raw, const char *name2_raw) {
 
 	strcpy(name1, name1_raw);
 	strcpy(name2, name2_raw);
-	if ((ptr3 = roman_suffix(name1))) *(ptr3 - 1) = 0;
-	if ((ptr3 = roman_suffix(name2))) *(ptr3 - 1) = 0;
+	if ((ptr3 = roman_suffix(name1, NULL))) *(ptr3 - 1) = 0;
+	if ((ptr3 = roman_suffix(name2, NULL))) *(ptr3 - 1) = 0;
 	//s_printf("similar: n1='%s',n2='%s'", name1, name2); // debug (spammy)
 #endif
 
