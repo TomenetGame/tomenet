@@ -2264,6 +2264,7 @@ void carry(int Ind, int pickup, int confirm, bool pick_one) {
 #endif
 		if ((c_ptr->info2 & CAVE2_MINED) && !p_ptr->warning_tunnel_hidden) {
 			msg_print(Ind, "\374\377yHINT: Mining hidden veins yields more than the right away spottable ones!");
+			msg_print(Ind, "\374\377y      Use 'Treasure Location' magic near a vein to find hidden veins nearby!");
 			c_ptr->info2 &= ~CAVE2_MINED;
 			p_ptr->warning_tunnel_hidden = 1;
 			s_printf("warning_tunnel_hidden: %s\n", p_ptr->name);
@@ -8322,6 +8323,7 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						else
 							msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with \377oSHIFT+t\377y.");
 						msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
+						msg_print(Ind, "\374\377y      Use 'Treasure Location' magic near a vein to find hidden veins nearby!");
 						s_printf("warning_tunnel2: %s\n", p_ptr->name);
 						p_ptr->warning_tunnel2 = 1;
 					}
@@ -8409,12 +8411,13 @@ void move_player(int Ind, int dir, int do_pickup, char *consume_full_energy) {
 						msg_print(Ind, "There is a wall blocking your way.");
 						//msg_print(Ind, "There is a wall with valuable minerals blocking your way.");
 
-					if (!p_ptr->warning_tunnel2) {
+						if (!p_ptr->warning_tunnel2) {
 							if (p_ptr->rogue_like_commands)
 								msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with '\377o+\377y' key.");
 							else
 								msg_print(Ind, "\374\377yHINT: You can try to dig out treasure with \377oSHIFT+t\377y.");
 							msg_print(Ind, "\374\377y      Using a shovel or, even better, a pick increases chance of success.");
+							msg_print(Ind, "\374\377y      Use 'Treasure Location' magic near a vein to find hidden veins nearby!");
 							s_printf("warning_tunnel2: %s\n", p_ptr->name);
 							p_ptr->warning_tunnel2 = 1;
 						}
