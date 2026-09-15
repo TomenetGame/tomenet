@@ -4516,8 +4516,10 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, int m_idx, obj
 			break;
 		}
 
+#ifdef TEST_SERVER /* Limit to test server, it's too spammy */
 #if QDEBUG > 2
 	s_printf(" CHECKING k/r-GOAL IN QUEST (%s,%d) stage %d.\n", q_ptr->codename, q_idx, stage);
+#endif
 #endif
 	/* check the quest goals, whether any of them wants a target to this location */
 	for (j = 0; j < q_stage->goals; j++) {
@@ -4525,8 +4527,10 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, int m_idx, obj
 
 		/* no k/r goal? */
 		if (!q_goal->kill && !q_goal->retrieve) continue;
+#ifdef TEST_SERVER /* Limit to test server, it's too spammy */
 #if QDEBUG > 2
 		s_printf(" FOUND kr GOAL %d (k=%d,r=%d).\n", j, q_goal->kill ? TRUE : FALSE, q_goal->retrieve ? TRUE : FALSE);
+#endif
 #endif
 
 		/* location-restricted?
@@ -4551,8 +4555,10 @@ static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, int m_idx, obj
 			    distance(q_goal->target_pos_y, q_goal->target_pos_x, p_ptr->py, p_ptr->px) > q_goal->target_pos_radius)
 				continue;
 		}
+#ifdef TEST_SERVER /* Limit to test server, it's too spammy */
 #if QDEBUG > 2
 		s_printf(" PASSED/NO LOCATION CHECK.\n");
+#endif
 #endif
 
 	///TODO: implement for global quests too!
