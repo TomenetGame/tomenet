@@ -2828,8 +2828,11 @@ extern int sector000music, sector000musicalt, sector000musicalt2, sector000music
 extern u32b sector000flags1, sector000flags2;
 extern u32b ge_contender_buffer_ID[MAX_CONTENDER_BUFFERS];
 extern int ge_contender_buffer_deed[MAX_CONTENDER_BUFFERS];
+extern int ge_contender_buffer_type[MAX_CONTENDER_BUFFERS];
 extern u32b achievement_buffer_ID[MAX_ACHIEVEMENT_BUFFERS];
 extern int achievement_buffer_deed[MAX_ACHIEVEMENT_BUFFERS];
+extern int achievement_buffer_type[MAX_ACHIEVEMENT_BUFFERS];
+
 
 /* for temporary disabling all validity checks when a dungeon master/wizard summons something - C. Blue */
 extern u32b summon_override_checks;

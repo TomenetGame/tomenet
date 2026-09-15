@@ -203,6 +203,7 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 			}
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_HIGHLANDER;
+			ge_contender_buffer_type[i] = p_ptr->buffer_get[j];
 			s_printf("GE_HIGHLANDER(%d)\n", i);
 			return;
 		case GE_DUNGEON_KEEPER:
@@ -216,6 +217,7 @@ static void buffer_account_for_event_deed(player_type *p_ptr, int death_type) {
 			}
 			/* hand out the reward: */
 			ge_contender_buffer_deed[i] = SV_DEED2_DUNGEONKEEPER;
+			ge_contender_buffer_type[i] = p_ptr->buffer_get[j];
 			s_printf("GE_DUNGEON_KEEPER(%d)\n", i);
 			/* extra: if this player is the last one on the level, taunt staircases (Thanks @ The_sandman!) */
 			n = 0;
@@ -265,13 +267,16 @@ static void buffer_account_for_achievement_deed(player_type *p_ptr, int achievem
 	case ACHV_PVP_MAX:
 		s_printf("PVP_MAX(%d)\n", i);
 		achievement_buffer_deed[i] = SV_DEED_PVP_MAX;
+		achievement_buffer_type[i] = 124;
 		return;
 	case ACHV_PVP_MID:
 		achievement_buffer_deed[i] = SV_DEED_PVP_MID;
+		achievement_buffer_type[i] = 125;
 		s_printf("PVP_MID(%d)\n", i);
 		return;
 	case ACHV_PVP_MASS:
 		achievement_buffer_deed[i] = SV_DEED_PVP_MASS;
+		achievement_buffer_type[i] = 126;
 		s_printf("PVP_MASS(%d)\n", i);
 		return;
 	case ACHV_NONE:

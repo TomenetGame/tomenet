@@ -3778,6 +3778,7 @@ static int Handle_login(int ind) {
 			o_ptr->discount = 0;
 			o_ptr->level = 0;
 			o_ptr->ident |= ID_MENTAL;
+			o_ptr->find_reward = ge_contender_buffer_type[i];
 			inven_carry(NumPlayers, o_ptr);
 			s_printf("GE_CONTENDER_BUFFER(%d): '%s' got sval %d.\n", i, p_ptr->name, ge_contender_buffer_deed[i]);
 			msg_print(NumPlayers, "\377GAs a former contender in an event, you have received a deed!");
@@ -3804,6 +3805,7 @@ static int Handle_login(int ind) {
 			o_ptr->discount = 0;
 			o_ptr->level = 0;
 			o_ptr->ident |= ID_MENTAL;
+			o_ptr->find_reward = achievement_buffer_type[i];
 			inven_carry(NumPlayers, o_ptr);
 			s_printf("ACHIEVEMENT_BUFFER(%d): '%s' got sval %d.\n", i, p_ptr->name, achievement_buffer_deed[i]);
 			msg_print(NumPlayers, "\377GFor your achievements, you have received a deed!");
