@@ -3828,11 +3828,18 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 	if (not_acquired_yet) {
 		/* do we accept players by questor interaction at all? */
 		if (!q_questor->accept_interact) {
+			int passive_stage = 0;
+
+			if (p_ptr->quest_done[q_idx] && q_ptr->ending_stage &&
+			    quest_qi_stage(q_idx, q_ptr->ending_stage)->talk_lines[questor_idx])
+				passive_stage = q_ptr->ending_stage;
+
 			/* A talkable NPC that does not offer the quest may still provide
-			   passive stage-0 dialogue. End the interaction after the text so
+			   passive dialogue. Use the ending stage after quest completion,
+			   otherwise stage 0. End the interaction after the text so
 			   it cannot check goals, acquire the quest, or prompt for keywords. */
 			if (q_questor->type == QI_QUESTOR_NPC)
-				quest_dialogue(Ind, q_idx, questor_idx, FALSE, TRUE, FALSE, 0);
+				quest_dialogue(Ind, q_idx, questor_idx, FALSE, TRUE, FALSE, passive_stage);
 			return;
 		}
 		/* do we accept players to acquire this quest in the current quest stage? */
@@ -3885,7 +3892,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
    keyword input when a keyword wasn't recognized.
 
    'suppress_keywords' ends the interaction after displaying the dialogue. This
-   is used before an acquisition prompt and for passive stage-0 NPC dialogue.
+   is used before an acquisition prompt and for passive NPC dialogue.
 
    'force_prompt' is set if we're called from quest_interact(). If at least one
    valid keyword exists, this gives us a keyword-prompt even if none is obvious.
