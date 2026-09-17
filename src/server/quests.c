@@ -82,7 +82,7 @@
 
 static void quest_goal_check_reward(int pInd, int q_idx);
 static bool quest_goal_check(int pInd, int q_idx, bool interacting);
-static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire, bool force_prompt);
+static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool suppress_keywords, bool force_prompt, int stage_override);
 static void quest_imprint_tracking_information(int Ind, int py_q_idx, bool target_flagging_only);
 static void quest_check_goal_kr(int Ind, int q_idx, int py_q_idx, int m_idx, object_type *o_ptr);
 static void quest_remove_dungeons(int q_idx);
@@ -3223,7 +3223,7 @@ static byte quest_set_stage_individual(int Ind, int q_idx, int stage, bool quiet
 	if (!quiet)
 		for (k = 0; k < q_ptr->questors; k++) {
 			if (!inarea(&p_ptr->wpos, &q_ptr->questor[k].current_wpos)) continue;
-			quest_dialogue(Ind, q_idx, k, FALSE, FALSE, FALSE);
+			quest_dialogue(Ind, q_idx, k, FALSE, FALSE, FALSE, -1);
 		}
 
 	/* hand out/spawn any special quest items */
@@ -3394,7 +3394,7 @@ void quest_set_stage(int pInd, int q_idx, int stage, bool quiet, struct worldpos
 				/* play questors' stage dialogue */
 				for (k = 0; k < q_ptr->questors; k++) {
 					if (wpos == NULL || !inarea(&Players[i]->wpos, &q_ptr->questor[k].current_wpos)) continue;
-					quest_dialogue(i, q_idx, k, FALSE, FALSE, FALSE);
+					quest_dialogue(i, q_idx, k, FALSE, FALSE, FALSE, -1);
 				}
 			}
 
@@ -3585,7 +3585,7 @@ void quest_acquire_confirmed(int Ind, int q_idx, bool quiet) {
 #endif
 
 	/* re-prompt for keyword input, if any */
-	quest_dialogue(Ind, q_idx, p_ptr->interact_questor_idx, TRUE, FALSE, FALSE);
+	quest_dialogue(Ind, q_idx, p_ptr->interact_questor_idx, TRUE, FALSE, FALSE, -1);
 }
 
 /* Acquire a quest, WITHOUT CHECKING whether the quest actually allows this at this stage!
@@ -3827,7 +3827,14 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 
 	if (not_acquired_yet) {
 		/* do we accept players by questor interaction at all? */
-		if (!q_questor->accept_interact) return;
+		if (!q_questor->accept_interact) {
+			/* A talkable NPC that does not offer the quest may still provide
+			   passive stage-0 dialogue. End the interaction after the text so
+			   it cannot check goals, acquire the quest, or prompt for keywords. */
+			if (q_questor->type == QI_QUESTOR_NPC)
+				quest_dialogue(Ind, q_idx, questor_idx, FALSE, TRUE, FALSE, 0);
+			return;
+		}
 		/* do we accept players to acquire this quest in the current quest stage? */
 		if (!q_stage->accepts) return;
 
@@ -3859,7 +3866,7 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
 
 	/* questor interaction qutomatically invokes the quest dialogue, if any */
 	q_questor->talk_focus = Ind; /* only this player can actually respond with keywords -- TODO: ensure this happens for non 'individual' quests only */
-	quest_dialogue(Ind, q_idx, questor_idx, FALSE, may_acquire, TRUE);
+	quest_dialogue(Ind, q_idx, questor_idx, FALSE, may_acquire, TRUE, -1);
 
 	/* prompt him to acquire this quest if he hasn't yet */
 	if (may_acquire) {
@@ -3877,19 +3884,21 @@ void quest_interact(int Ind, int q_idx, int questor_idx, FILE *fff) {
    'repeat' will repeat requesting an input and skip the usual dialogue. Used for
    keyword input when a keyword wasn't recognized.
 
-   'interact_acquire' must be set if this dialogue spawns from someone interacting
-   initially with the questor who is eligible to acquire the quest.
-   In that case, the player won't get the enter-a-keyword-prompt. Instead, our
-   caller function quest_interact() will prompt him to acquire the quest first.
+   'suppress_keywords' ends the interaction after displaying the dialogue. This
+   is used before an acquisition prompt and for passive stage-0 NPC dialogue.
 
    'force_prompt' is set if we're called from quest_interact(). If at least one
    valid keyword exists, this gives us a keyword-prompt even if none is obvious.
    This lets players intentionally bump a questor to try hidden keywords without
-   opening an input prompt for one-way dialogue. */
-static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool interact_acquire, bool force_prompt) {
+   opening an input prompt for one-way dialogue.
+
+   'stage_override' selects a specific dialogue stage, or -1 for the player's
+   current quest stage. */
+static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, bool suppress_keywords, bool force_prompt, int stage_override) {
 	quest_info *q_ptr = &q_info[q_idx];
 	player_type *p_ptr = Players[Ind];
-	int i, k, first_keyword = -1, stage = quest_get_stage(Ind, q_idx);
+	int i, k, first_keyword = -1;
+	int stage = stage_override >= 0 ? stage_override : quest_get_stage(Ind, q_idx);
 	qi_stage *q_stage = quest_qi_stage(q_idx, stage), *q_stage_talk = q_stage;
 	bool anything, has_keyword = FALSE, obvious_keyword = FALSE, more_hack = FALSE, yn_hack = FALSE;
 	char text[MAX_CHARS * 2];
@@ -3939,7 +3948,7 @@ static void quest_dialogue(int Ind, int q_idx, int questor_idx, bool repeat, boo
 	} else force_prompt = TRUE; /* repeating what? to talk of course, what else oO -> force_prompt! */
 
 	/* No keyword-interaction possible if we haven't acquired the quest yet. */
-	if (interact_acquire) return;
+	if (suppress_keywords) return;
 
 	/* If there are any keywords in this stage, prompt the player for a reply.
 	   If the questor is focussed on one player, only he can give a reply,
@@ -4255,7 +4264,7 @@ void quest_reply(int Ind, int q_idx, char *str) {
 
 #if 1
 	/* if keyword wasn't recognised, repeat input prompt instead of just 'dropping' the convo */
-	quest_dialogue(Ind, q_idx, questor_idx, TRUE, FALSE, FALSE);
+	quest_dialogue(Ind, q_idx, questor_idx, TRUE, FALSE, FALSE, -1);
 	/* don't give 'wassup?' style msg if we just hit RETURN.. silyl */
 	if (str[0]) {
 		msg_print(Ind, "\374 ");
