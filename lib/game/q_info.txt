@@ -32,6 +32,7 @@ V:1.0.0
 # L (up to 30x, 1 per Q line - questor location):locations (SURFACE/TOWNS ONLY):terrains:towns (BASIC 5 ONLY):exact wpos wx:wy:wz:adjacent terrain extension:exact pos x:y:radius:mapfile (if not using terrain type) or '-':map offset x:y
 # Ld (up to 30x, 1 per L line):minfloorlev:maxfloorlev:list of dungeon indices eligible for spawning, separated by colons... (255 = IDDC, 0 = all 'wilderness' dungeons ie those not in d_info.txt)
 # (optional) F (up to 30x, 1 per Q line - initial behaviour):accept-on-los? (NI):accept-on-interaction?:talkable?:despawned?:invincible?:questor floor is static?:quest ends on leaving floor?(NI)
+#   A monster questor with accept-on-interaction=0 and talkable=1 passively displays its stage-0 dialogue without offering or starting the quest.
 # (optional) K (up to 30x, 1 per Q line - for killable questors):itemdroptype (0=none,1=regular,2=specific,3=both):tval:sval:pval:bpval:name1:name2:name2b:good:great:verygreat:createreward 0..5:dropgold:giveexp (-1 for normal exp)
 
 #(Parameters from here on, except for keywords/keywordreplies, are all individual per quest stage)
@@ -436,14 +437,15 @@ I:0:2:1:100:FFFFF:FFFF:1:1:1:0:0:1
 T:1:1:1:1:1:1:1:1:1:-1:-1
 
 # Questor 0, the guard who offers the quest in Bree.
-#Q:1:1:863:6:0:863:U:-1:-1:the Bree guard:1
-Q:1:1:863:0:0:863:U:-1:-1:the Bree guard:1
+#Q:1:1:863:6:0:863:U:-1:-1:Bree Guard:1
+Q:1:1:863:0:0:863:U:-1:-1:Bree Guard:1
 L:0:0:0:32:32:0:0:117:41:0:-:0:0
 F:0:1:1:0:1:0:0
 
 # Questors 1 and 2, guards on the first floor of the Training Tower.
 # This server cannot safely process S-lines, so they are spawned with the quest
-# and only provide their relevant dialogue to players who reach stage 1.
+# and remain passive: stage 0 points players back to Bree, while later stages
+# provide their delivery dialogue.
 Q:1:1:863:0:0:863:C:-1:-1:the tower guard:1
 L:4:0:0:-1:-1:-1:0:40:20:5:-:0:0
 Ld:1:1:30
@@ -462,6 +464,10 @@ W:0:0:0:-:Hail, $$T. I could use your help.
 W:0:0:0:-:Two fellow guards left Bree to inspect the Training Tower.
 W:0:0:0:-:I need someone to carry a bundle of enchantment scrolls to them.
 W:0:0:0:-:Will you [[accept]] this task and take the scrolls to my colleagues?
+W:1:0:0:-:We're just tending to our duties here. Nothing interesting to report.
+W:1:0:0:-:We're expecting a shipment from Bree, but it has yet to arrive.
+W:2:0:0:-:We're just tending to our duties here. Nothing interesting to report.
+W:2:0:0:-:We're expecting a shipment from Bree, but it has yet to arrive.
 Y:0:0:-:*accept*:-:1
 Y:0:0:-:*yes*:-:1
 Y:0:0:-:*later*:-:255
