@@ -973,6 +973,71 @@ errr show_file(int Ind, cptr name, cptr what, s32b line, int color, int divl, ch
 
 
 
+/*
+ * Extract a clean "base name" (the savefile name) from a character name.
+ * 'basename' must hold at least CNAME_LEN chars.
+ */
+static void player_basename(cptr name, char *basename) {
+	int i, k = 0;
+	char c;
+
+#ifdef MACINTOSH
+	/* Extract "useful" letters */
+	for (i = 0; name[i]; i++) {
+		c = name[i];
+
+		/* Convert "dot" to "underscore" */
+		if (c == '.') c = '_';
+
+		/* Accept all the letters */
+		basename[k++] = c;
+	}
+#else
+	/* Extract "useful" letters */
+	for (i = 0; name[i]; i++) {
+		c = name[i];
+
+		/* Accept some letters */
+		if (isalphanum(c)) basename[k++] = c;
+		/* Convert space, dot, and underscore to underscore */
+		else if (strchr(SF_BAD_CHARS, c)) basename[k++] = '_';
+	}
+#endif
+
+
+//#if defined(WINDOWS) || defined(MSDOS)
+#ifdef MSDOS
+	/* Hack -- max length */
+	if (k > 8) k = 8;
+#endif
+	/* Terminate */
+	basename[k] = '\0';
+	/* Require a "base" name */
+	if (!basename[0]) strcpy(basename, "PLAYER");
+}
+
+/*
+ * Does a savefile exist for this character name?
+ * A character that is in the player name database but has no savefile
+ * was lost: the server died after writing the database but before
+ * writing the savefile. - see Receive_login()
+ */
+bool player_savefile_exists(cptr name) {
+	char basename[CNAME_LEN], path[MAX_PATH_LENGTH];
+	FILE *fp;
+
+	if (strlen(name) >= CNAME_LEN) return(FALSE);
+	player_basename(name, basename);
+	path_build(path, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, basename);
+
+	fp = fopen(path, "rb");
+	if (fp) {
+		fclose(fp);
+		return(TRUE);
+	}
+	/* Only a missing file counts as missing; any other error (eg EMFILE) must not */
+	return(errno != ENOENT);
+}
 
 /*
  * Process the player name.
@@ -984,8 +1049,7 @@ errr show_file(int Ind, cptr name, cptr what, s32b line, int color, int divl, ch
  */
 bool process_player_name(int Ind, bool sf) {
 	player_type *p_ptr = Players[Ind];
-	int i, k = 0;
-	char c;
+	int i;
 
 	/* Cannot be too long */
 	if (strlen(p_ptr->name) >= CNAME_LEN) { /* (null terminator char at the end) */
@@ -1023,40 +1087,8 @@ bool process_player_name(int Ind, bool sf) {
 		}
 	}
 
-
-#ifdef MACINTOSH
-	/* Extract "useful" letters */
-	for (i = 0; p_ptr->name[i]; i++) {
-		c = p_ptr->name[i];
-
-		/* Convert "dot" to "underscore" */
-		if (c == '.') c = '_';
-
-		/* Accept all the letters */
-		p_ptr->basename[k++] = c;
-	}
-#else
-	/* Extract "useful" letters */
-	for (i = 0; p_ptr->name[i]; i++) {
-		c = p_ptr->name[i];
-
-		/* Accept some letters */
-		if (isalphanum(c)) p_ptr->basename[k++] = c;
-		/* Convert space, dot, and underscore to underscore */
-		else if (strchr(SF_BAD_CHARS, c)) p_ptr->basename[k++] = '_';
-	}
-#endif
-
-
-//#if defined(WINDOWS) || defined(MSDOS)
-#ifdef MSDOS
-	/* Hack -- max length */
-	if (k > 8) k = 8;
-#endif
-	/* Terminate */
-	p_ptr->basename[k] = '\0';
-	/* Require a "base" name */
-	if (!p_ptr->basename[0]) strcpy(p_ptr->basename, "PLAYER");
+	/* Extract a clean "base name" */
+	player_basename(p_ptr->name, p_ptr->basename);
 
 #ifdef SAVEFILE_MUTABLE
 	/* Accept */

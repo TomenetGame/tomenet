@@ -781,6 +781,7 @@ void Receive_login(void) {
 
 	bool allow_reordering = FALSE;
 	int offset_bak;
+	bool cname_listed = FALSE;
 
 
 	/* Check if the server wanted to destroy the connection - mikaelh */
@@ -1004,12 +1005,18 @@ void Receive_login(void) {
 		/* End of character list is designated by a 'zero' character */
 		if (!c_name[0]) break;
 
+		/* already found our character, just consume the rest of the list */
+		if (cname_listed) continue;
+
 		/* skip all characters that exceed what our client knows as max_cpa */
 		if (i == max_cpa) continue;
 
 		/* read a character name from command-line or config file,
 		   that exists, so we log in with it straight away? */
-		if (streq(cname, c_name)) return;
+		if (streq(cname, c_name)) {
+			cname_listed = TRUE;
+			continue;
+		}
 
 		/* do we possess a character of same name as our account? */
 		if (streq(c_name, nick)) found_nick = TRUE;
@@ -1041,6 +1048,10 @@ void Receive_login(void) {
 
 		i++;
 	}
+	/* Log in with it straight away - only now that the whole list has been read:
+	   returning mid-list left the rest of it in the buffer, where Net_login()
+	   then misread its first byte as the server's login status. */
+	if (cname_listed) return;
 	existing_characters = i;
 
 	create_character_ok_pvp = create_character_ok_iddc = FALSE;
