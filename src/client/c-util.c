@@ -9587,9 +9587,9 @@ Chain_Macro:
 								l = ystart + 2;
 								Term_putstr(2, l++, -1, TERM_GREEN, "Select one of the following:");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "a) fire equipped shooter at closest enemy                    \\e)*tf-");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) inscribe ammo/trap payload to auto pickup+merge+load+@m0  {-!=LM@m0\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) inscribe ammo/trap payload to auto pickup+merge+load+@m0  {&!=LM@m0\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "c) throw an item inscribed '@v1' at closest enemy            \\e)*tv1-");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "d) inscribe throwing weapon to auto pickup+equip+@v1         {-!=L@v1\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "d) inscribe throwing weapon to auto pickup+equip+@v1         {&!=L@v1\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) throw an item tagged {bad} at closest monster             \\e)*tv@{bad}\\r-");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) quick-toggle option 'easy_disarm_montraps'                :/edmt\\r");
 
@@ -9632,9 +9632,9 @@ Chain_Macro:
 									if (c_cfg.rogue_like_commands) strcpy(buf2, "\\e)*tt-");
 									else strcpy(buf2, "\\e)*tf-");
 									break;
-								case 'b': strcpy(buf2, "{-!=LM@m0\\r"); break;
+								case 'b': strcpy(buf2, "{&!=LM@m0\\r"); break;
 								case 'c': strcpy(buf2, "\\e)*tv1-"); break;
-								case 'd': strcpy(buf2, "{-!=L@v1\\r"); break;
+								case 'd': strcpy(buf2, "{&!=L@v1\\r"); break;
 								case 'e': strcpy(buf2, "\\e)*tv@{bad}\r-"); break;
 								case 'f': strcpy(buf2, ":/edmt\\r"); break;
 								}
@@ -9834,8 +9834,8 @@ Chain_Macro:
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "b) untag all your '!k'-inscribed loot again                  :/ut\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "c) redux-power-inscribe and tag all your equipment '!+'      :/etag * @@@!+\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "d) redux-power-inscribe and tag all your equipment '!*'      :/etag * @@@!*\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) add '!Uk' tag to an item of your choice                   {-\\\\!Uk\\r");
-								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) remove '!Uk' tag from an item of your choice              {-\\\\\\\\!Uk\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "e) add '!Uk' tag to an item of your choice                   {&\\\\!Uk\\r");
+								Term_putstr(2, l++, -1, TERM_L_GREEN, "f) remove '!Uk' tag from an item of your choice              {&\\\\\\\\!Uk\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "g) use '/dis' to destroy all items pseudo-ided up to 'good'  :/dis\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "h) use '/dis a' to destroy ALL uninscribed inventory items   :/dis a\\r");
 								Term_putstr(2, l++, -1, TERM_L_GREEN, "i) use '/dis fa' to destroy an item at your feet             :/dis fa\\r");
@@ -9887,8 +9887,8 @@ Chain_Macro:
 								case 'b': strcpy(buf2, ":/ut\\r"); break;
 								case 'c': strcpy(buf2, ":/etag\\s*\\s@@@!+\\r"); break;
 								case 'd': strcpy(buf2, ":/etag\\s*\\s@@@!*\\r"); break;
-								case 'e': strcpy(buf2, "{-\\\\!Uk\r"); break;
-								case 'f': strcpy(buf2, "{-\\\\\\\\!Uk\r"); break;
+								case 'e': strcpy(buf2, "{&\\\\!Uk\r"); break;
+								case 'f': strcpy(buf2, "{&\\\\\\\\!Uk\r"); break;
 								case 'g': strcpy(buf2, ":/dis\\r"); break;
 								case 'h': strcpy(buf2, ":/dis\\sa\\r"); break;
 								case 'i': strcpy(buf2, ":/dis\\sfa\\r"); break;

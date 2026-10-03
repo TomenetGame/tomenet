@@ -1082,11 +1082,13 @@ bool get_item_hook_find_obj(int *item, int mode) {
 	return(FALSE);
 }
 
-/*  Automatically lists all bags right in the beginning, instead of showing the normal inventory: Extra QoL on top of the into-bag-autoswitching?
-    If no item exists in normal inventory, switch to '!' bag list right away so we don't have to press '!'.
-    However, this implies that there are items eligible that can be in different bags. Right now there are no such items though except for the case
-    of normal 'chest' items, which are not exactly very efficient, so this code probably doesn't make too much sense/doesn't really help much. */
+/* Automatically lists all bags right in the beginning, instead of showing the normal inventory: Extra QoL on top of the into-bag-autoswitching?
+   If no item exists in normal inventory, switch to '!' bag list right away so we don't have to press '!'.
+   However, this implies that there are items eligible that can be in different bags. Right now there are no such items though except for the case
+   of normal 'chest' items, which are not exactly very efficient, so this code probably doesn't make too much sense/doesn't really help much. */
 //#define AUTO_LIST_BAGS
+/* Allow 'ESC' to cancel the prompt from within subinventory too, instead using another, new key to go back one level into normal inventory. */
+#define ITEM_PROMPT_KEY_TO_LEAVE_BAG
 bool (*get_item_extra_hook)(int *cp, int mode);
 /* (pmt = prompt, for measuring total prompt length and possibly shorten some things to find into the line) */
 bool c_get_item(int *cp, cptr pmt, u32b mode) {
@@ -1595,14 +1597,23 @@ bool c_get_item(int *cp, cptr pmt, u32b mode) {
 
 		/* Special request toggle? */
 		if (special_req) {
-			if (spammy) strcat(out_val, " - switch,");
-			else strcat(out_val, " - to switch,");
+			if (spammy) strcat(out_val, " & switch,");
+			else strcat(out_val, " & to switch,");
 		}
 		/* Re-use 'newest' item? */
 		if (newest != -1) {
 			if (spammy) strcat(out_val, " + newest,");
 			else strcat(out_val, " + for newest,");
 		}
+
+#ifdef ITEM_PROMPT_KEY_TO_LEAVE_BAG
+		/* If we're inside a subinventory, don't use ESC to go back to main inventory,
+		   but kepe using ESC to completely cancel the prompt and instead add new key '-' to go back: */
+		if (mode & EXCLUDE_SUBINVEN) {
+			if (spammy) strcat(out_val, " - inven,");
+			else strcat(out_val, " - leave bag,");
+		}
+#endif
 
 		/* Finish the prompt */
 		//if (spammy)
@@ -1700,6 +1711,18 @@ bool c_get_item(int *cp, cptr pmt, u32b mode) {
 					item = TRUE;
 					done = TRUE;
 				}
+#ifdef ITEM_PROMPT_KEY_TO_LEAVE_BAG
+				/* Hack: Abuse 'i' to distinguish between 'ESC' and 'leave bag' 'failure states' of c_get_item: */
+				if (i == -1) { /* We pressed ESC? */
+					/* Leave subinventory again and return to our main inventory */
+					using_subinven = -1;
+					using_subinven_size = -1;
+
+					command_gap = 50;
+					done = TRUE;
+					break;
+				}
+#endif
 
 				/* Leave this bag and continue looking for our original item type(s) in our normal inven/equip again?
 				   (The above c_get_item() will have NULL'ed item_tester_hook at least, so we have to restore it again.) */
@@ -1722,6 +1745,19 @@ bool c_get_item(int *cp, cptr pmt, u32b mode) {
 				break;
 			} else if (c_cfg.item_error_beep) bell();
 			else bell_silent();
+			break;
+#endif
+#ifdef ITEM_PROMPT_KEY_TO_LEAVE_BAG
+		case '-':
+			if (!(mode & EXCLUDE_SUBINVEN)) {
+				if (c_cfg.item_error_beep) bell();
+				else bell_silent();
+				break;
+			}
+			command_gap = 50;
+			done = TRUE;
+			*cp = -4; /* Hack marker to leave the bag */
+			break;
 			break;
 #endif
 		case '*':
@@ -1917,7 +1953,7 @@ bool c_get_item(int *cp, cptr pmt, u32b mode) {
 			limit = FALSE; //just for visuals: don't offer to re-enter level limit over and over since it's pointless
 			break;
 
-		case '-':
+		case '&':
 			if (!special_req) {
 				if (c_cfg.item_error_beep) bell();
 				else bell_silent();

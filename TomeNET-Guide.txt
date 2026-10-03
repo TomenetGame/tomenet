@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 10. September 2026 - written by C. Blue (c_blue@gmx.net)  |
+| Latest update: 3. October 2026 - written by C. Blue (c_blue@gmx.net)     |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -1014,6 +1014,11 @@ SPACE   Stop executing repeatable actions such as searching, tunnelling or
         see (0.4) for details on that.
 
 {       inscribe an item.
+        This command first asks for an item, then for an inscription, but it
+        allows you to press the '&' key to switch that behaviour, in which
+        case it will first prompt for an inscription and then for an item.
+        This second variant is especially useful for macros that you want to
+        apply a fixed inscription and just want to prompt you for an item.
 
         The inscription can start on backslashes '\' for special modes:
 
@@ -3309,8 +3314,8 @@ Morgy       Morgoth, Lord of Darkness. Final boss enemy in TomeNET.
 
 MP          Mana points, the amount of magical energy you have at your disposal
             to cast spells or recite prayers.
-            A class that cannot use any spells will '-' displayed instead of a
-            numerical amount.
+            A class that cannot use any spells will see '-' displayed instead
+            of a numerical amount.
             The starter MP are different for each race and class and can be
             viewed in the tables in chapters (7.4) and (7.5) respectively;
             quick-access these tables by searching the guide for chapter key
@@ -3465,8 +3470,8 @@ Specials    Items that pseudo-identify as 'special'. These are true arts or
 ST          Stamina, which you can spend to use certain special techniques that
             are usually either fighting techniques (close combat) or shooting
             techniques (ranged combat), see (7.12) for a complete list.
-            A class that cannot use any techniques will '-' displayed instead
-            of a numerical amount.
+            A class that cannot use any techniques will see '-' displayed
+            instead of a numerical amount.
             Maximum stamina is always 10, its regeneration is slow. It can be
             sped up by resting (SHIFT+R), and by having a higher Constitution
             attribute (CON) or by training the 'Health' skill.
@@ -10923,9 +10928,10 @@ bad potions you could make a macro to load a fumes trap kit with a potion
 inscribed  @m1 . Now make another macro that lets you inscribe all the bad
 potions you pick up  @m1  so you won't have to do that manually for each of
 them. That inscribing-macro could look like this:
-{-@m1\r
-where the '-' will cause the { inscribe command to prompt for inscription first
-and the item afterwards, effectively simply asking you to specify the item.
+{&@m1\r
+where the '&' between the '{' (ie the inscribe command) and the '@' will cause
+the inscribe command to prompt for inscription first and the item afterwards,
+making this macro effectively just asking you to specify an item.
 
 
 (4.7a) Trap kit load effects
