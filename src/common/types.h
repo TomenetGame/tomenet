@@ -4042,7 +4042,7 @@ struct player_type {
 	bool icky_wield;		/* Icky weapon */
 	bool awkward_wield;		/* shield and COULD_2H weapon */
 	bool easy_wield;		/* Using a 1-h weapon which is MAY2H with both hands */
-	bool heavy_tool;		/* Heavy digging tool */
+	bool heavy_tool;		/* Heavy digging tool -- in theory to do for cleanliness: heavy_tool2 for EQUIPPABLE_DIGGERS. Currently doesn't matter because only diggers can be 'heavy'. But bad. :/ */
 	bool cumber_weight;		/* Full weight. FA from MA will be lost if overloaded */
 	bool monk_heavyarmor;		/* Reduced MA power? */
 	bool awkward_shoot;		/* using ranged weapon while having a shield on the arm */
@@ -4175,9 +4175,10 @@ struct player_type {
 	s16b skill_thn;			/* Skill: To hit (normal) */
 	s16b skill_thb;			/* Skill: To hit (shooting) */
 	s16b skill_tht;			/* Skill: To hit (throwing) */
-	s16b skill_dig;			/* Skill: Digging */
+	s16b skill_dig;			/* Skill: Digging - global if not EQUIPPABLE_DIGGERS, otherwise with digging tool (tool slot) */
 #ifdef EQUIPPABLE_DIGGERS
-	s16b skill_dig2;		/* Skill: Digging, equipped digger in weapon slot */
+	s16b skill_dig2;		/* Skill: Digging, equipped digger in weapon slot, or weapon with +digging (Angrist) */
+	s16b skill_dig_any;		/* Skill: Digging - global bonus from non-wieldable/non-tool equip item */
 #endif
 
 	s16b num_blow;			/* Number of blows */

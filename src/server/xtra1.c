@@ -3512,6 +3512,7 @@ void calc_boni(int Ind) {
 	p_ptr->skill_dig = 0;
 #ifdef EQUIPPABLE_DIGGERS
 	p_ptr->skill_dig2 = 0;
+	p_ptr->skill_dig_any = 0;
 #endif
 
 	/* Special admin items */
@@ -4352,7 +4353,8 @@ void calc_boni(int Ind) {
 			if (k_ptr->flags1 & TR1_TUNNEL) {
 				csheet_boni[i-INVEN_WIELD].dig += o_ptr->bpval;
 				if (i == INVEN_TOOL) p_ptr->skill_dig += (o_ptr->bpval * 20);
-				else p_ptr->skill_dig2 += (o_ptr->bpval * 20);
+				else if (i == INVEN_WIELD || i == INVEN_ARM) p_ptr->skill_dig2 += (o_ptr->bpval * 20); /* inven-arm: angrist dagger! */
+				else p_ptr->skill_dig_any += (o_ptr->bpval * 20);
 			}
 #endif
 
@@ -4475,7 +4477,8 @@ void calc_boni(int Ind) {
 		if (f1 & TR1_TUNNEL) {
 			csheet_boni[i-INVEN_WIELD].dig += pval;
 			if (i == INVEN_TOOL) p_ptr->skill_dig += (o_ptr->pval * 20);
-			else p_ptr->skill_dig2 += (o_ptr->pval * 20);
+			else if (i == INVEN_WIELD || i == INVEN_ARM) p_ptr->skill_dig2 += (o_ptr->pval * 20); /* inven-arm: angrist dagger! */
+			else p_ptr->skill_dig_any += (o_ptr->pval * 20);
 		}
 #endif
 

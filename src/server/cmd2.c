@@ -4817,7 +4817,7 @@ void do_cmd_tunnel(int Ind, int dir, bool quiet_borer) {
 #ifndef EQUIPPABLE_DIGGERS
 	int power = p_ptr->skill_dig + (quiet_borer ? 20000 : 0);
 #else
-	int power = (p_ptr->skill_dig > p_ptr->skill_dig2 ? p_ptr->skill_dig : p_ptr->skill_dig2) + (quiet_borer ? 20000 : 0);
+	int power = (p_ptr->skill_dig > p_ptr->skill_dig2 ? p_ptr->skill_dig : p_ptr->skill_dig2) + (quiet_borer ? 20000 : 0) + p_ptr->skill_dig_any;
 	bool swapped = FALSE;
 	object_type object_storage;
 #endif
