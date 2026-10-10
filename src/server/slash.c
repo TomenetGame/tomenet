@@ -1592,10 +1592,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			for (i = INVEN_WIELD; i < INVEN_TOTAL; i++) {
 				if (!item_tester_hook_wear(Ind, i)) continue;
 
-				/* No parm given -> only use free equipment slots */
+				/* No parm given -> only use free equipment slots...<*> */
 				o_ptr = &p_ptr->inventory[i];
 				if (!tk && o_ptr->tval) {
-					/* ...but still remember if we had a 2h- or 1.5h- weapon there already, to handle dual-wielding */
+					/* <*>...but still remember if we had a 2h- or 1.5h- weapon there already, to handle dual-wielding */
 					if (i == INVEN_WIELD) {
 						if (k_info[o_ptr->k_idx].flags4 & TR4_MUST2H)
 							i++; /* Skip INVEN_ARM slot */
@@ -1625,6 +1625,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 						if (!object_known_p(Ind, o_ptr)) continue;
 						if (cursed_p(o_ptr)) continue;
+
+						/* For pure /dr w/o parms, exempt books and magic devices,
+						   as these are only wieldable quirk-wise and in most cases the player won't intend to wield these */
+						if (o_ptr->tval == TV_BOOK || is_magic_device(o_ptr->tval)) continue;
 					}
 
 					/* get target base equipment slot of the item to wield */
