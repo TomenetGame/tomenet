@@ -13744,7 +13744,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			else if (prefix(messagelc, "/terminate")) {
-				/* same as /shutdown 0, except server will return -2 instead of -1.
+				/* same as /shutdown 0, except server will return 4 instead of 3.
 				   can be used by scripts to initiate maintenance downtime etc. */
 				set_runlevel(-1);
 

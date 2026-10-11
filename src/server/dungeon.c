@@ -8649,7 +8649,7 @@ static void process_world(void) {
 		shutdown_server();
 	/* termination now */
 	} else if (cfg.runlevel == 2052) {
-		/* same as /shutdown 0, except server will return -2 instead of -1.
+		/* same as /shutdown 0, except server will return 4 instead of 3.
 		   can be used by scripts to initiate maintenance downtime etc. */
 		set_runlevel(-1);
 
