@@ -1049,7 +1049,9 @@ errr process_pref_file_aux_aux(char *buf, byte fmt, signed char subtileset, bool
 	int n1, n2;
 
 	char *zz[16], tmp[MACRO_MAXLEN];
+#ifdef USE_GRAPHICS
 	rawpict_tile *rawpict;
+#endif
 #if defined(USE_SDL3) && defined(USE_GRAPHICS)
 	uint32_t color;
 #endif
