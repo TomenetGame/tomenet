@@ -677,13 +677,13 @@
  #define GFXERR_FALLBACK
 
 #endif
-#if 1 /* actually make these constants always available for now, might need sorting out/cleaning up */
+#if 1 /* actually make these constants always available for now (or gcu client has compile errors), might need sorting out/cleaning up. */
  /* Constants for use_graphics client setting */
  #define UG_NONE	0
  #define UG_NORMAL	1
- #ifdef GRAPHICS_BG_MASK
+ //#ifdef GRAPHICS_BG_MASK
   #define UG_2MASK	2
- #endif
+ //#endif
 
  #ifdef USE_SDL3
   /* Maximum number of masks per tile and tiles per coordinate. */
