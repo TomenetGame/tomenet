@@ -6462,16 +6462,23 @@ void toggle_afk(int Ind, char *msg)
 			msg_print(Ind, "\374\377RWARNING: Going AFK in wraithform is very dangerous because wraithform impairs auto-retaliation!");
 		}
 
-		/* Since Mark's mimic died in front of Minas XBM due to this.. - C. Blue */
-		if (!istown(&p_ptr->wpos) && /* actually it's dangerous in towns too outside the inn! */
-		    !(sector000separation && in_sector000(&p_ptr->wpos)) &&
-		    !on_irondeepdive(&p_ptr->wpos) && !on_hallsofmandos(&p_ptr->wpos) &&
-		    !(l_ptr && (l_ptr->flags1 & LF1_NO_NEW_MONSTER))) {
-			p_ptr->paging = 2;
-			msg_print(Ind, "\374\377RWARNING: Going AFK in the wild is dangerous, monsters may spawn and attack you!");
-		} else if (istown(&p_ptr->wpos) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
-			p_ptr->paging = 2;
-			msg_print(Ind, "\374\377RWARNING: Going AFK outside a town's inn is dangerous, monsters may attack you!");
+		/* Since wilderness on the world surface is more lively now and can have higher level spawns, warn players - C. Blue */
+		if (!p_ptr->wpos.wz) {
+			/* outside of towns or special safe locations */
+			if (!istown(&p_ptr->wpos) &&
+			    !(sector000separation && in_sector000(&p_ptr->wpos)) &&
+			    !on_irondeepdive(&p_ptr->wpos) && !on_hallsofmandos(&p_ptr->wpos) &&
+			    !(l_ptr && (l_ptr->flags1 & LF1_NO_NEW_MONSTER))) {
+				p_ptr->paging = 2;
+				msg_print(Ind, "\374\377RWARNING: Going AFK in the wild is dangerous, monsters may spawn and attack you!");
+			}
+			/* actually it's dangerous in towns too outside the inn! */
+			else if (istown(&p_ptr->wpos) &&
+			    !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px]) &&
+			    !in_bree(&p_ptr->wpos)) { /* Pft, Bree is mostly harmless - if you die as lowestbie it's a good lesson maybe q_q */
+				p_ptr->paging = 2;
+				msg_print(Ind, "\374\377RWARNING: Going AFK outside a town's inn is dangerous, monsters may attack you!");
+			}
 		}
 	}
 
