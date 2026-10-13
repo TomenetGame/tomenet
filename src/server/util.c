@@ -6419,6 +6419,7 @@ void toggle_afk(int Ind, char *msg)
 			player_list_del(&Players[i]->afk_noticed, p_ptr->id);
 	} else {
 		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+		cave_type **zcave = getcave(&p_ptr->wpos);
 
 		/* hack: lose health tracker so we actually get to see the 'AFK'
 		   (for example we might've attacked the target dummy before). */
@@ -6462,12 +6463,15 @@ void toggle_afk(int Ind, char *msg)
 		}
 
 		/* Since Mark's mimic died in front of Minas XBM due to this.. - C. Blue */
-		if (!istown(&p_ptr->wpos) &&
+		if (!istown(&p_ptr->wpos) && /* actually it's dangerous in towns too outside the inn! */
 		    !(sector000separation && in_sector000(&p_ptr->wpos)) &&
 		    !on_irondeepdive(&p_ptr->wpos) && !on_hallsofmandos(&p_ptr->wpos) &&
 		    !(l_ptr && (l_ptr->flags1 & LF1_NO_NEW_MONSTER))) {
 			p_ptr->paging = 6;
 			msg_print(Ind, "\374\377RWARNING: Going AFK in the wild is dangerous, monsters may spawn and attack you!");
+		} else if (istown(&p_ptr->wpos) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
+			p_ptr->paging = 2;
+			msg_print(Ind, "\374\377RWARNING: Going AFK outside a town's inn is dangerous, monsters may attack you!");
 		}
 	}
 
