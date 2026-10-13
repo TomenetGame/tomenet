@@ -7511,7 +7511,7 @@
 #define FF1_SLOW_SWIMMING_1	0x04000000U
 #define FF1_SLOW_SWIMMING_2	0x08000000U
 
-#define FF1_PROTECTED		0x10000000U	/* monsters cannot teleport to nor spawn on this grid */
+#define FF1_PROTECTED		0x10000000U	/* monsters cannot teleport to nor spawn on nor cross this grid */
 #define FF1_LOS			0x20000000U	/* can shoot/cast/throw through this one, but may not be able to walk through (FEAT_DARK_PIT) */
 #define FF1_BLOCK_LOS		0x40000000U	/* can't shoot/cast/throw through this one, but may be able to walk through ('easy door') */
 #define FF1_BLOCK_CONTACT	0x80000000U	/* like BLOCK_LOS, except players can see across it even if they cant attack (nor can monsters) */
