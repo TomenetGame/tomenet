@@ -6467,7 +6467,7 @@ void toggle_afk(int Ind, char *msg)
 		    !(sector000separation && in_sector000(&p_ptr->wpos)) &&
 		    !on_irondeepdive(&p_ptr->wpos) && !on_hallsofmandos(&p_ptr->wpos) &&
 		    !(l_ptr && (l_ptr->flags1 & LF1_NO_NEW_MONSTER))) {
-			p_ptr->paging = 6;
+			p_ptr->paging = 2;
 			msg_print(Ind, "\374\377RWARNING: Going AFK in the wild is dangerous, monsters may spawn and attack you!");
 		} else if (istown(&p_ptr->wpos) && !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px])) {
 			p_ptr->paging = 2;
