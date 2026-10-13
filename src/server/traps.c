@@ -2716,7 +2716,7 @@ bool player_activate_trap_type(int Ind, s16b y, s16b x, object_type *i_ptr, int 
 				monster_level = dlev;
 				for (k = 0; k < 5 + dlev / 4; k++) {
 					if (p_ptr->wpos.wz) ident |= (alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE) > 0);
-					else wild_add_monster(&p_ptr->wpos, MAX_SIGHT + 10);
+					else wild_add_monster(&p_ptr->wpos, MAX_SIGHT + 20);
 				}
 			}
 			msg_print(Ind, "You feel uneasy.");
@@ -3401,7 +3401,7 @@ void generic_activate_trap_type(struct worldpos *wpos, s16b y, s16b x, object_ty
 				monster_level = dlev;
 				for (k = 0; k < 5 + dlev / 4; k++) {
 					if (wpos->wz) ident |= (alloc_monster(wpos, MAX_SIGHT + 5, FALSE) > 0);
-					else wild_add_monster(wpos, MAX_SIGHT + 10);
+					else wild_add_monster(wpos, MAX_SIGHT + 20);
 				}
 			}
 			break; }
