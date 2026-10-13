@@ -51,7 +51,8 @@
    with a 'T' marker which is visible only to admins.*/
 #define VERSION_MAJOR_LATEST	4
 #define VERSION_MINOR_LATEST	9
-#define VERSION_PATCH_LATEST	4
+#define VERSION_PATCH_LATEST	3
+//#define VERSION_PATCH_LATEST		4	--temporary until 4.9.4 release
 #define VERSION_EXTRA_LATEST	0
 #define VERSION_BRANCH_LATEST	0	/* not 2 (was an SDL3 change) */
 #define VERSION_BUILD_LATEST	0
@@ -59,8 +60,10 @@
 /* maximum MAJOR/MINOR/PATCH version that counts as 'outdated' (should be 0-15). */
 #define VERSION_MAJOR_OUTDATED	4
 #define VERSION_MINOR_OUTDATED	9
-#define VERSION_PATCH_OUTDATED	3
-#define VERSION_EXTRA_OUTDATED	2
+#define VERSION_PATCH_OUTDATED	2
+#define VERSION_EXTRA_OUTDATED	9
+//#define VERSION_PATCH_OUTDATED	3	--temporary until 4.9.4 release
+//#define VERSION_EXTRA_OUTDATED	2
 #define VERSION_BRANCH_OUTDATED	0
 #define VERSION_BUILD_OUTDATED	3 /* should always be 1 (or higher) to invalidate previous 'test' versions */
 
