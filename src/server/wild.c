@@ -763,12 +763,14 @@ void set_mon_num_hook_wild(struct worldpos *wpos) {
 	}
 }
 
-/* this may not be the most efficient way of doing things... */
-void wild_add_monster(struct worldpos *wpos) {
-	int monst_x, monst_y, r_idx;
-	int tries = 0;
+/* this may not be the most efficient way of doing things...
+   dis: 0 for ignore any distance-to-players-present-restrictions. */
+void wild_add_monster(struct worldpos *wpos, int dis) {
+	int monst_x, monst_y, r_idx, min_dis = 999;
+	int d, i, tries = 0;
 	cave_type **zcave;
 	dun_level *l_ptr = getfloor(wpos);
+	player_type *p_ptr;
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -780,15 +782,34 @@ void wild_add_monster(struct worldpos *wpos) {
 
 	/* find a legal, unoccupied space
 	   -- however, TODO: use creature_can_enter2() instead so monsters could also spawn on mountains if they can pass those etc! */
-	do {
+	while (tries < 50) {
+		tries++;
+
 		monst_x = rand_int(MAX_WID);
 		monst_y = rand_int(MAX_HGT);
 
-		if (cave_naked_bold(zcave, monst_y, monst_x)) break;
-		tries++;
-	} while (tries < 50);
+		if (!cave_naked_bold(zcave, monst_y, monst_x)) continue;
 
-	if (!cave_naked_bold(zcave, monst_y, monst_x)) {
+		if (!dis) break;
+
+		/* Accept far away grids */
+		for (i = 1; i <= NumPlayers; i++) {
+			p_ptr = Players[i];
+
+			/* Skip him if he's not playing */
+			if (p_ptr->conn == NOT_CONNECTED) continue;
+
+			/* Skip him if he's not on this depth */
+			if (!inarea(wpos, &p_ptr->wpos)) continue;
+
+			if ((d = distance(monst_y, monst_x, p_ptr->py, p_ptr->px)) < min_dis)
+				min_dis = d;
+		}
+
+		if (min_dis >= dis) break;
+	}
+
+	if (!cave_naked_bold(zcave, monst_y, monst_x) || tries >= 50) {
 		/* Give up */
 		return;
 	}
@@ -4152,8 +4173,8 @@ void wilderness_gen(struct worldpos *wpos) {
 		if (!(w_ptr->flags & WILD_F_INHABITED)) {
 			//wild_cull_monsters(wpos);
 			/* Add new monsters */
-			//for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
-			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos);
+			//for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos, 0);
+			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos, 0);
 			w_ptr->flags |= WILD_F_INHABITED;
 		}
 	}
@@ -4163,8 +4184,8 @@ void wilderness_gen(struct worldpos *wpos) {
 		if (!(w_ptr->flags & WILD_F_INHABITED)) {
 			//wild_cull_monsters(wpos);
 			/* Add new monsters */
-			//for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos);
-			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos);
+			//for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos, 0);
+			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos, 0);
 			w_ptr->flags |= WILD_F_INHABITED;
 		}
 	}

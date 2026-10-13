@@ -9282,7 +9282,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				monster_level = getlevel(&p_ptr->wpos);
 				msg_format(Ind, "Respawning monsters of level %d here.", monster_level);
 				if (p_ptr->wpos.wz) (void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
-				else wild_add_monster(&p_ptr->wpos);
+				else wild_add_monster(&p_ptr->wpos, MAX_SIGHT + 10);
 				return;
 			}
 			else if (prefix(messagelc, "/log_u")) {

@@ -1071,7 +1071,7 @@ extern void deltown(int Ind);
 extern int determine_wilderness_type(struct worldpos *wpos);
 extern void wilderness_gen(struct worldpos *wpos);
 extern void set_mon_num_hook_wild(struct worldpos *wpos);
-extern void wild_add_monster(struct worldpos *wpos);
+extern void wild_add_monster(struct worldpos *wpos, int dis);
 extern bool fill_house(house_type *h_ptr, int func, void *data);
 extern void wild_add_uhouse(house_type *h_ptr);
 extern void wild_add_uhouses(struct worldpos *wpos);
