@@ -6418,6 +6418,8 @@ void toggle_afk(int Ind, char *msg)
 		for (i = 1; i <= NumPlayers; i++)
 			player_list_del(&Players[i]->afk_noticed, p_ptr->id);
 	} else {
+		dun_level *l_ptr = getfloor(&p_ptr->wpos);
+
 		/* hack: lose health tracker so we actually get to see the 'AFK'
 		   (for example we might've attacked the target dummy before). */
 		health_track(Ind, 0);
@@ -6457,6 +6459,15 @@ void toggle_afk(int Ind, char *msg)
 		if (p_ptr->tim_wraith) {
 			p_ptr->paging = 6;
 			msg_print(Ind, "\374\377RWARNING: Going AFK in wraithform is very dangerous because wraithform impairs auto-retaliation!");
+		}
+
+		/* Since Mark's mimic died in front of Minas XBM due to this.. - C. Blue */
+		if (!istown(&p_ptr->wpos) &&
+		    !(sector000separation && in_sector000(&p_ptr->wpos)) &&
+		    !on_irondeepdive(&p_ptr->wpos) && !on_hallsofmandos(&p_ptr->wpos) &&
+		    !(l_ptr && (l_ptr->flags1 & LF1_NO_NEW_MONSTER))) {
+			p_ptr->paging = 6;
+			msg_print(Ind, "\374\377RWARNING: Going AFK in the wild is dangerous, monsters may spawn and attack you!");
 		}
 	}
 
