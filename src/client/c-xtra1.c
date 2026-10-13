@@ -1857,21 +1857,21 @@ void prt_lagometer(int lag) {
 	}
 #endif
 
-	if (screen_icky) Term_switch(0);
-
 	/* remember cursor position */
 	hidden = Term_locate(&x, &y);
+
+	if (screen_icky) Term_switch(0);
 
 	/* Default to "unknown" */
 	Term_putstr(COL_LAG, ROW_LAG, 12, TERM_L_DARK, "[----------]");
 	/* Dump the current "lag" (use '*' symbols) */
 	Term_putstr(COL_LAG + 1, ROW_LAG, num, attr, "++++++++++");
 
+	if (screen_icky) Term_switch(0);
+
 	/* restore cursor position */
 	Term_gotoxy(x, y);
 	if (hidden) Term->scr->cu = 1;
-
-	if (screen_icky) Term_switch(0);
 
 	Term_activate(old);
 }
@@ -1917,6 +1917,7 @@ void health_redraw(int num, byte attr) {
 
 /*
  * Choice window "shadow" of the "show_inven()" function.
+ * (This is the subterm window for inventory)
  */
 static void display_inven(void) {
 	int	i, n, z = 0;
@@ -2047,6 +2048,7 @@ static void display_inven(void) {
 #ifdef ENABLE_SUBINVEN
 /*
  * Choice window "shadow" of the "show_subinven()" function.
+ * (This is the subterm window for subinventory)
  */
 static void display_subinven(void) {
 	int n, islot;
@@ -2212,15 +2214,12 @@ static void display_subinven(void) {
 		/* Erase the line */
 		Term_erase(0, i, 255);
 	}
-
-	/* hack: hide cursor */
-	Term->scr->cx = Term->wid;
-	Term->scr->cu = 1;
 }
 #endif
 
 /*
  * Choice window "shadow" of the "show_equip()" function.
+ * (This is the subterm window for equipment)
  */
 #define EQUIP_TEXT_COLOUR TERM_WHITE
 #define EQUIP_TEXT_COLOUR2 TERM_YELLOW
@@ -2319,7 +2318,9 @@ static void display_equip(void) {
 }
 
 /* Just show the header line for show_inven(): Mainly the total weight.
-   This is used for easy redrawal within 'i' screen when using commands from within it that erase the topline. */
+ * This is used for easy redrawal within 'i' screen when using commands from within it that erase the topline.
+ * (This is for the on-main-screen temp window showing the inventory)
+ */
 void show_inven_header(void) {
 	int i, j, k, z = 0;
 	long int totalwgt = 0;
@@ -2398,10 +2399,9 @@ void show_inven_header(void) {
 	Term->scr->cu = 1;
 }
 
-/*
- * Display the inventory.
- *
+/* Display the inventory.
  * Hack -- do not display "trailing" empty slots
+ * (This is for the on-main-screen temp window showing the inventory)
  */
 void show_inven(void) {
 	int	i, j, k, l, z = 0, n;
@@ -2594,10 +2594,15 @@ void show_inven(void) {
 	/* Do not allow environmental redrawing if we're actually already inside an icky screen here.
 	   (Concerns shopping only atm I think, but checking screen_icky seems better than checking 'shopping') */
 	if (screen_icky != 1) screen_line_icky = screen_column_icky = -1;
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 }
 
 #ifdef ENABLE_SUBINVEN
 //todo: topline_icky is (wrongfully?) TRUE, so the totalwgt isn't shown!
+/* (This is for the on-main-screen temp window showing the inventory/subinventory) */
 void show_subinven(int islot) {
 	int	i, j, k, l, z = 0, n;
 	int	col, len, lim;
@@ -2781,12 +2786,17 @@ void show_subinven(int islot) {
 	/* Do not allow environmental redrawing if we're actually already inside an icky screen here.
 	   (Concerns shopping only atm I think, but checking screen_icky seems better than checking 'shopping') */
 	if (screen_icky != 1) screen_line_icky = screen_column_icky = -1;
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 }
 #endif
 
 
 /*
  * Display the equipment.
+ * (This is for the on-main-screen temp window showing the equipment)
  */
 void show_equip(void) {
 	int	i, j, k, l;
@@ -2936,6 +2946,10 @@ void show_equip(void) {
 	/* Do not allow environmental redrawing if we're actually already inside an icky screen here.
 	   (Concerns shopping only atm I think, but checking screen_icky seems better than checking 'shopping') */
 	if (screen_icky != 1) screen_line_icky = screen_column_icky = -1;
+
+	/* hack: hide cursor */
+	Term->scr->cx = Term->wid;
+	Term->scr->cu = 1;
 }
 
 
