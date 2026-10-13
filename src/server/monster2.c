@@ -3243,9 +3243,9 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG 2\n");
 		if (isdungeontown(wpos)) return(10);
 #endif
 		/* Keep Ironman Deep Dive Challenge entrance sector clean too */
-		if (wpos->wx == WPOS_IRONDEEPDIVE_X && wpos->wy == WPOS_IRONDEEPDIVE_Y && !wpos->wz) return(11);
+		if (on_irondeepdive(wpos)) return(11);
 		/* Halls of Mandos too...? It doesn't have XP entrance restrictions though. */
-		if (wpos->wx == hallsofmandos_wpos_x && wpos->wy == hallsofmandos_wpos_y && !wpos->wz) return(11);
+		if (on_hallsofmandos(wpos)) return(11);
 	}
 
 	/* Can we summon onto walls (also count mountains as walls except for climbers -
