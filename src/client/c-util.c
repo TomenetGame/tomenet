@@ -16933,7 +16933,7 @@ void do_cmd_options(void) {
 
 		Term_putstr(1, l++, -1, TERM_L_DARK, "-----------------------------------------------------------------------------");
 
-		Term_putstr(1, l++, -1, TERM_SLATE, "The following settings are mostly saved automatically on quitting via CTRL+Q:");
+		Term_putstr(1, l++, -1, TERM_SLATE, "The following settings are mostly saved automatically on quitting the game:");
 		l++;
 #ifdef USE_SOUND_2010
 		if (c_cfg.rogue_like_commands)
