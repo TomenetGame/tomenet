@@ -6464,8 +6464,10 @@ void toggle_afk(int Ind, char *msg)
 
 		/* Since wilderness on the world surface is more lively now and can have higher level spawns, warn players - C. Blue */
 		if (!p_ptr->wpos.wz) {
+			/* inside a house is fine (we even include public houses for now, which monsters could enter) */
+			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA) && (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)) ; //fine
 			/* outside of towns or special safe locations */
-			if (!istown(&p_ptr->wpos) &&
+			else if (!istown(&p_ptr->wpos) &&
 			    !(sector000separation && in_sector000(&p_ptr->wpos)) &&
 			    !on_irondeepdive(&p_ptr->wpos) && !on_hallsofmandos(&p_ptr->wpos) &&
 			    !(l_ptr && (l_ptr->flags1 & LF1_NO_NEW_MONSTER))) {
