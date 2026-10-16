@@ -14595,8 +14595,8 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 
 							//r_ptr = race_info_idx(r_idx, ego, randuni);
 							r_ptr = &r_info[m_ptr->r_idx]; //simple for now...
-							if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
-							else l_ptr->monsters_generated += 2; //MON_GEN_WILD_NOFRIENDS_INC;
+							if (r_ptr->flags1 & RF1_FRIENDS) k++;
+							else k += 2; //MON_GEN_WILD_NOFRIENDS_INC;
 						}
 					} else k++; //just iddc statistics, don't mind small erorrs due to player-golems or w/e...
 				}
