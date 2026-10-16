@@ -384,7 +384,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 	    && !m_ptr->questor && !m_ptr->special && !m_ptr->pet) { /* careful: ONLY for 'normal' monsters! */
 		/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
 		if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated--;
-		else l_ptr->monsters_generated -= 3;
+		else l_ptr->monsters_generated -= 2;
 	}
 
 	/* Hack -- count the number of "reproducers" */
@@ -4032,7 +4032,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		if (!wpos->wz) {
 			/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
 			if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
-			else l_ptr->monsters_generated += 3;
+			else l_ptr->monsters_generated += 2;
 		} else {
 			if (level_generation_time) l_ptr->monsters_generated++;
 			else l_ptr->monsters_spawned++;

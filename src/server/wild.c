@@ -778,7 +778,7 @@ int wild_add_monster(struct worldpos *wpos, int dis) {
 	if (sector000separation && in_sector000(wpos)) return(2);
 
 	/* Don't spawn too many monsters */
-	if (l_ptr && l_ptr->monsters_generated + l_ptr->monsters_spawned >= 100) return(3);
+	if (l_ptr && l_ptr->monsters_generated + l_ptr->monsters_spawned >= 70) return(3);
 
 	/* reset the monster sorting function, sets get_mon_num_hook to wild_monst_aux_<sector terrain type> at this wpos */
 	set_mon_num_hook_wild(wpos);
