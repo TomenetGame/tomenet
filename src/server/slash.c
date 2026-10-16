@@ -14612,6 +14612,54 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				msg_format(Ind, "flags2 = %u", l_ptr->flags2);
 				return;
 			}
+			else if (prefix(messagelc, "/debugsurface")) {
+				struct dun_level *l_ptr;
+				struct worldpos tpos;
+				int wx, wy;
+
+				for (wy = MAX_WILD_Y - 1; wy != -1; wy--) {
+					for (wx = 0; wx != MAX_WILD_X; wx++) {
+						tpos.wx = wx;
+						tpos.wy = wy;
+
+						if (!getcave(&tpos)) continue; //only check allocated sectors!
+
+						l_ptr = getfloor(&tpos);
+						if (!l_ptr) { /* paranoia */
+							msg_format(Ind, "PARANOIA - couldn't get floor (%2d,%2d).", wx, wy);
+							continue;
+						}
+
+						k = 0;
+						for (i = 1; i < m_max; i++) {
+							monster_type *m_ptr = &m_list[i];
+
+							if (!inarea(&m_ptr->wpos, &tpos)) continue;
+							if (!m_ptr->questor && !m_ptr->special && !m_ptr->pet) { /* careful: ONLY for 'normal' monsters! */
+								monster_race *r_ptr;
+
+								//r_ptr = race_info_idx(r_idx, ego, randuni);
+								r_ptr = &r_info[m_ptr->r_idx]; //simple for now...
+								if (r_ptr->flags1 & RF1_FRIENDS) k++;
+								else k += 2; //MON_GEN_WILD_NOFRIENDS_INC;
+							}
+						}
+
+						/* All is well? Don't report then: */
+						if (k == l_ptr->monsters_generated + l_ptr->monsters_spawned) continue;
+
+						msg_format(Ind, "(%2d,%2d) monsters = %d+%d = %d (vs %d counted)", wx, wy, l_ptr->monsters_generated, l_ptr->monsters_spawned, l_ptr->monsters_generated + l_ptr->monsters_spawned, k);
+#if 0 /* maybe better to only use /debugfloor manually */
+						if (k != l_ptr->monsters_generated + l_ptr->monsters_spawned) {
+							l_ptr->monsters_generated = k;
+							l_ptr->monsters_spawned = 0;
+							msg_print(Ind, "-> COUNT CORRECTED.");
+						}
+#endif
+					}
+				}
+				return;
+			}
 			else if (prefix(messagelc, "/reservednames")) { /* specify any parm to not stop at 1st 'nulled' name found */
 				k = 0;
 				for (i = 0; i < MAX_RESERVED_NAMES; i++) {
