@@ -4032,7 +4032,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 	/* for obtaining statistical IDDC information: */
 	if (l_ptr) {
 		 /* wilderness: we also count down monsters again on deletion, and we cannot dinstinguish at that point, so just don't make a difference to begin with */
-		if (!wpos->wz) {
+		if (!wpos->wz) { /* We assume here we never are m_ptr->questor/m_ptr->special/m_ptr->pet but just a 'normal' monster! (The other ones must not be counted!) */
 			/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
 			if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
 			else l_ptr->monsters_generated += MON_GEN_WILD_NOFRIENDS_INC;
@@ -5658,11 +5658,13 @@ void setup_monsters(struct worldpos *wpos) {
 			l_ptr = getfloor(&m_ptr->wpos);
 			/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
 			if (!m_ptr->wpos.wz) {
-				//r_ptr = race_info_idx(r_idx, ego, randuni);
-				r_ptr = &r_info[m_ptr->r_idx]; //simple for now...
-				if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
-				else l_ptr->monsters_generated += MON_GEN_WILD_NOFRIENDS_INC;
-			} else l_ptr->monsters_generated++;
+				if (!m_ptr->questor && !m_ptr->special && !m_ptr->pet) { /* careful: ONLY for 'normal' monsters! */
+					//r_ptr = race_info_idx(r_idx, ego, randuni);
+					r_ptr = &r_info[m_ptr->r_idx]; //simple for now...
+					if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
+					else l_ptr->monsters_generated += MON_GEN_WILD_NOFRIENDS_INC;
+				}
+			} else l_ptr->monsters_generated++; //just iddc statistics, don't mind small erorrs due to player-golems or w/e...
 		}
 	} else if ((zcave = getcave(wpos))) {
 		l_ptr = getfloor(wpos);
@@ -5678,11 +5680,13 @@ void setup_monsters(struct worldpos *wpos) {
 
 			/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
 			if (!wpos->wz) {
-				//r_ptr = race_info_idx(r_idx, ego, randuni);
-				r_ptr = &r_info[m_ptr->r_idx]; //simple for now...
-				if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
-				else l_ptr->monsters_generated += MON_GEN_WILD_NOFRIENDS_INC;
-			} else l_ptr->monsters_generated++;
+				if (!m_ptr->questor && !m_ptr->special && !m_ptr->pet) { /* careful: ONLY for 'normal' monsters! */
+					//r_ptr = race_info_idx(r_idx, ego, randuni);
+					r_ptr = &r_info[m_ptr->r_idx]; //simple for now...
+					if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
+					else l_ptr->monsters_generated += MON_GEN_WILD_NOFRIENDS_INC;
+				}
+			} else l_ptr->monsters_generated++; //just iddc statistics, don't mind small erorrs due to player-golems or w/e...
 		}
 	}
 }

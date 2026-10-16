@@ -14583,7 +14583,31 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					msg_print(Ind, "PARANOIA - couldn't get floor.");
 					return;
 				}
-				msg_format(Ind, "monsters = %d+%d = %d", l_ptr->monsters_generated, l_ptr->monsters_spawned, l_ptr->monsters_generated + l_ptr->monsters_spawned);
+
+				k = 0;
+				for (i = 1; i < m_max; i++) {
+					monster_type *m_ptr = &m_list[i];
+
+					if (!inarea(&m_ptr->wpos, &p_ptr->wpos)) continue;
+					if (!m_ptr->wpos.wz) {
+						if (!m_ptr->questor && !m_ptr->special && !m_ptr->pet) { /* careful: ONLY for 'normal' monsters! */
+							monster_race *r_ptr;
+
+							//r_ptr = race_info_idx(r_idx, ego, randuni);
+							r_ptr = &r_info[m_ptr->r_idx]; //simple for now...
+							if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
+							else l_ptr->monsters_generated += 2; //MON_GEN_WILD_NOFRIENDS_INC;
+						}
+					} else k++; //just iddc statistics, don't mind small erorrs due to player-golems or w/e...
+				}
+
+				msg_format(Ind, "monsters = %d+%d = %d (vs %d counted)", l_ptr->monsters_generated, l_ptr->monsters_spawned, l_ptr->monsters_generated + l_ptr->monsters_spawned, k);
+				if (k != l_ptr->monsters_generated + l_ptr->monsters_spawned) {
+					l_ptr->monsters_generated = k;
+					l_ptr->monsters_spawned = 0;
+					msg_print(Ind, "-> COUNT CORRECTED.");
+				}
+
 				msg_format(Ind, "flags1 = %u", l_ptr->flags1);
 				msg_format(Ind, "flags2 = %u", l_ptr->flags2);
 				return;
