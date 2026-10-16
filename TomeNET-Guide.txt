@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                              TomeNET Guide                               |
 +==========================================================================+-
-| Latest update: 3. October 2026 - written by C. Blue (c_blue@gmx.net)     |
+| Latest update: 16. October 2026 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -6196,7 +6196,7 @@ light weapon, for example one of these:
  -dagger or main gauche (sword class),
  -whip (blunt class),
  -cleaver (axe class) or
- -spear (polearm class).
+ -sickle (polearm class).
 (For more information about the different weapon classes see (5.1a).)
 Sometimes it is even possible to start out with 3 BpR (warriors mostly).
 
@@ -21497,7 +21497,7 @@ create a character!):
     - Daggers (Sword-mastery)
     - Whips (Blunt-mastery)
     - Cleavers (Axe-mastery)
-    - Spears (Polearm-mastery)
+    - Sickles (Polearm-mastery)
     Dual-wielding requires light armour. This should be adequate until you find
     some heavy armour in the dungeon, then you can switch back to 1-handed
     weapon with a shield (or to a 2-handed weapon if you have excessive enough
@@ -27461,9 +27461,9 @@ Beginners (level 1)
   Note that martial arts users can only use boomerangs, other ranged weapons
   will nullify their Martial Arts skills.
 + An appropriate melee weapon (except if using martial arts, eg Druids!)
-  Check out how many blows per round you get with a light dagger, whip,
-  cleaver or spear, depending on your favourite weapon class. If you get more
-  BpR than with your starter weapon, switch!
+  Check out how many blows per round you get with the lightest weapons, such as
+  a dagger, whip, cleaver or sickle, depending on your favourite weapon class.
+  If you get more BpR than with your starter weapon, switch!
   If your character has only one blow per round even with light weapons, choose
   a heavy weapon that can deal more damage in one blow. If your character is
   low on strength, pay attention that you don't buy a weapon that is too heavy
