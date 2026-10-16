@@ -5632,6 +5632,18 @@ static int Receive_login(int ind) {
 		}
 #endif
 
+		/* A character that is in the player name database but has no savefile is lost:
+		   the server died after saving the database (it does so at every login) but before
+		   the new character's first save. Answering SUCCESS would make the client skip
+		   character creation, and player_birth() would find nothing to load. Remove the
+		   stale entry and let the player create the character properly instead.
+		   (Ownership was verified by check_account() above.) */
+		if ((i = lookup_player_id(choice)) && !player_savefile_exists(choice)
+		    && GetAccount(&acc, connp->nick, NULL, FALSE, NULL, NULL) && lookup_player_account(i) == acc.id) {
+			s_printf("LOST_CHARACTER: '%s' (id %d, account %s) has no savefile - removing stale name entry.\n", choice, i, connp->nick);
+			delete_player_name(choice);
+		}
+
 		Packet_printf(&connp->c, "%c", lookup_player_id(choice) ? SUCCESS : E_NEED_INFO);
 		/* Player now initiated character creation (or picked an existing character).
 		   This also means that some /shutXXX commands might we wait for him with shutdowns from server-auto-update commands. */
