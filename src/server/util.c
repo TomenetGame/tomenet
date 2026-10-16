@@ -6465,7 +6465,13 @@ void toggle_afk(int Ind, char *msg)
 		/* Since wilderness on the world surface is more lively now and can have higher level spawns, warn players - C. Blue */
 		if (!p_ptr->wpos.wz) {
 			/* inside a house is fine (we even include public houses for now, which monsters could enter) */
-			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA) && (zcave[p_ptr->py][p_ptr->px].info & CAVE_ICKY)) ; //fine
+			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
+				if (!inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) ||
+				    inside_which_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) == -1) {
+					p_ptr->paging = 2;
+					msg_print(Ind, "\374\377RWARNING: Going AFK outside owned houses is dangerous, monsters may attack you!");
+				}
+			}
 			/* outside of towns or special safe locations */
 			else if (!istown(&p_ptr->wpos) &&
 			    !(sector000separation && in_sector000(&p_ptr->wpos)) &&
