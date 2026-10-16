@@ -2969,7 +2969,7 @@ static void process_world_player(int Ind) {
 			monster_level = getlevel(&p_ptr->wpos);
 
 			if (p_ptr->wpos.wz) (void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
-			else wild_add_monster(&p_ptr->wpos, MAX_SIGHT + 20);
+			else (void)wild_add_monster(&p_ptr->wpos, MAX_SIGHT + 20);
 		}
 	}
 
@@ -11775,7 +11775,7 @@ redo_world:
 	}
 
 	/* Finish initializing dungeon monsters */
-	setup_monsters();
+	setup_monsters(NULL);
 
 	/* Detect and fix wrong monster counts. Important to keep uniques spawnable:
 	   Their counts might have been corrupted by panic save or similar crash. */

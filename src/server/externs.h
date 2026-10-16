@@ -1071,7 +1071,7 @@ extern void deltown(int Ind);
 extern int determine_wilderness_type(struct worldpos *wpos);
 extern void wilderness_gen(struct worldpos *wpos);
 extern void set_mon_num_hook_wild(struct worldpos *wpos);
-extern void wild_add_monster(struct worldpos *wpos, int dis);
+extern int wild_add_monster(struct worldpos *wpos, int dis);
 extern bool fill_house(house_type *h_ptr, int func, void *data);
 extern void wild_add_uhouse(house_type *h_ptr);
 extern void wild_add_uhouses(struct worldpos *wpos);
@@ -1242,7 +1242,7 @@ extern int summon_specific_race_somewhere(struct worldpos *wpos, int r_idx, int 
 extern int summon_detailed_one_somewhere(struct worldpos *wpos, int r_idx, int ego, bool slp, int s_clone);
 extern bool multiply_monster(int m_idx);
 extern void update_smart_learn(int Ind, int m_idx, int what);
-extern void setup_monsters(void);
+extern void setup_monsters(struct worldpos *wpos);
 extern int race_index(char * name);
 extern int monster_gain_exp(int m_idx, u32b exp, bool silent);
 #ifdef MONSTER_INVENTORY

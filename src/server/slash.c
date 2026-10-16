@@ -9282,7 +9282,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				monster_level = getlevel(&p_ptr->wpos);
 				msg_format(Ind, "Respawning monsters of level %d here.", monster_level);
 				if (p_ptr->wpos.wz) (void)alloc_monster(&p_ptr->wpos, MAX_SIGHT + 5, FALSE);
-				else wild_add_monster(&p_ptr->wpos, MAX_SIGHT + 20);
+				else {
+					switch (wild_add_monster(&p_ptr->wpos, MAX_SIGHT + 20)) {
+					case 1: msg_print(Ind, "\377rNo zcave."); break;
+					case 2: msg_print(Ind, "\377oSector 000 may not spawn."); break;
+					case 3: msg_print(Ind, "\377yWilderness monster limit exceeded."); break;
+					case 4: msg_print(Ind, "\377yNo free random grid found."); break;
+					}
+				}
 				return;
 			}
 			else if (prefix(messagelc, "/log_u")) {
@@ -14571,15 +14578,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/debugfloor")) {
 				struct dun_level *l_ptr;
 
-				if (!p_ptr->wpos.wz) {
-					msg_print(Ind, "Must be used in dungeon/tower.");
-					return;
-				}
 				l_ptr = getfloor(&p_ptr->wpos);
 				if (!l_ptr) { /* paranoia */
 					msg_print(Ind, "PARANOIA - couldn't get floor.");
 					return;
 				}
+				msg_format(Ind, "monsters = %d+%d = %d", l_ptr->monsters_generated, l_ptr->monsters_spawned, l_ptr->monsters_generated + l_ptr->monsters_spawned);
 				msg_format(Ind, "flags1 = %u", l_ptr->flags1);
 				msg_format(Ind, "flags2 = %u", l_ptr->flags2);
 				return;

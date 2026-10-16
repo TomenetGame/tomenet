@@ -8542,7 +8542,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 		/* reattach objects and monsters */
 		setup_objects();
 		/* target dummies */
-		//setup_monsters();
+		//setup_monsters(wpos);
 		level_generation_time = FALSE;
 		p_ptr->temp_misc_1 &= ~(0x80 | 0x40);
 
@@ -8926,7 +8926,7 @@ static void cave_gen(struct worldpos *wpos, player_type *p_ptr) {
 			/* reattach objects and monsters */
 			setup_objects();
 			/* target dummies */
-			setup_monsters();
+			setup_monsters(wpos);
 		}
 #endif
 
@@ -11939,7 +11939,7 @@ void generate_cave(struct worldpos *wpos, player_type *p_ptr) {
 			/* Make a town */
 			town_gen(wpos);
 			setup_objects();
-			setup_monsters();
+			setup_monsters(wpos);
 		}
 
 		/* Build wilderness */

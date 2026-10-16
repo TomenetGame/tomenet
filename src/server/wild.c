@@ -765,17 +765,20 @@ void set_mon_num_hook_wild(struct worldpos *wpos) {
 
 /* this may not be the most efficient way of doing things...
    dis: 0 for ignore any distance-to-players-present-restrictions. */
-void wild_add_monster(struct worldpos *wpos, int dis) {
+int wild_add_monster(struct worldpos *wpos, int dis) {
 	int monst_x, monst_y, r_idx, min_dis = 999;
 	int d, i, tries = 0;
 	cave_type **zcave;
 	dun_level *l_ptr = getfloor(wpos);
 	player_type *p_ptr;
 
-	if (!(zcave = getcave(wpos))) return;
+	if (!(zcave = getcave(wpos))) return(1);
 
 	/* Don't spawn during highlander tournament or global events in general (ancient D vs lvl 10 is silyl) */
-	if (sector000separation && in_sector000(wpos)) return;
+	if (sector000separation && in_sector000(wpos)) return(2);
+
+	/* Don't spawn too many monsters */
+	if (l_ptr && l_ptr->monsters_generated + l_ptr->monsters_spawned >= 100) return(3);
 
 	/* reset the monster sorting function, sets get_mon_num_hook to wild_monst_aux_<sector terrain type> at this wpos */
 	set_mon_num_hook_wild(wpos);
@@ -811,7 +814,7 @@ void wild_add_monster(struct worldpos *wpos, int dis) {
 
 	if (!cave_naked_bold(zcave, monst_y, monst_x) || tries >= 50) {
 		/* Give up */
-		return;
+		return(4);
 	}
 
 	/* Set the second hook according to the very target feat's terrain type. */
@@ -829,6 +832,8 @@ void wild_add_monster(struct worldpos *wpos, int dis) {
 
 	/* hack -- restore the monster selection function */
 	get_mon_num_hook = dungeon_aux;
+
+	return(0); //success
 }
 
 
@@ -3841,7 +3846,7 @@ static void wilderness_gen_hack(struct worldpos *wpos) {
 	/* Hack -- reattach existing objects to the map */
 	setup_objects();
 	/* Hack -- reattach existing monsters to the map */
-	setup_monsters();
+	setup_monsters(wpos);
 }
 
 
@@ -4119,6 +4124,7 @@ void wilderness_gen(struct worldpos *wpos) {
 #endif
 	cave_type **zcave;
 	struct dungeon_type *d_ptr = NULL;
+	dun_level *l_ptr = getfloor(wpos);
 
 	if (!(zcave = getcave(wpos))) return;
 
@@ -4164,6 +4170,8 @@ void wilderness_gen(struct worldpos *wpos) {
 
 	level_generation_time = TRUE;
 
+	l_ptr->monsters_generated = l_ptr->monsters_spawned = l_ptr->monsters_killed = 0;
+
 	/* Hack -- Build some wilderness (from memory) */
 	wilderness_gen_hack(wpos);
 
@@ -4173,8 +4181,8 @@ void wilderness_gen(struct worldpos *wpos) {
 		if (!(w_ptr->flags & WILD_F_INHABITED)) {
 			//wild_cull_monsters(wpos);
 			/* Add new monsters */
-			//for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos, 0);
-			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos, 0);
+			//for (i = 0; i < w_ptr->type; i++) (void)wild_add_monster(wpos, 0);
+			for (i = 0; i < rand_int(8) + 3; i++) (void)wild_add_monster(wpos, 0);
 			w_ptr->flags |= WILD_F_INHABITED;
 		}
 	}
@@ -4184,8 +4192,8 @@ void wilderness_gen(struct worldpos *wpos) {
 		if (!(w_ptr->flags & WILD_F_INHABITED)) {
 			//wild_cull_monsters(wpos);
 			/* Add new monsters */
-			//for (i = 0; i < w_ptr->type; i++) wild_add_monster(wpos, 0);
-			for (i = 0; i < rand_int(8) + 3; i++) wild_add_monster(wpos, 0);
+			//for (i = 0; i < w_ptr->type; i++) (void)wild_add_monster(wpos, 0);
+			for (i = 0; i < rand_int(8) + 3; i++) (void)wild_add_monster(wpos, 0);
 			w_ptr->flags |= WILD_F_INHABITED;
 		}
 	}

@@ -379,6 +379,14 @@ void delete_monster_idx(int i, bool unfound_arts) {
 	if (r_ptr->cur_num != 0) /* don't overflow - mikaelh */
 		r_ptr->cur_num--;
 
+	/* For wilderness spawn sanity limits */
+	if (!wpos->wz && l_ptr
+	    && !m_ptr->questor && !m_ptr->special && !m_ptr->pet) { /* careful: ONLY for 'normal' monsters! */
+		/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
+		if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated--;
+		else l_ptr->monsters_generated -= 3;
+	}
+
 	/* Hack -- count the number of "reproducers" */
 	if (r_ptr->flags7 & RF7_MULTIPLY) num_repro--;
 
@@ -4020,8 +4028,15 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 
 	/* for obtaining statistical IDDC information: */
 	if (l_ptr) {
-		if (level_generation_time) l_ptr->monsters_generated++;
-		else l_ptr->monsters_spawned++;
+		 /* wilderness: we also count down monsters again on deletion, and we cannot dinstinguish at that point, so just don't make a difference to begin with */
+		if (!wpos->wz) {
+			/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
+			if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
+			else l_ptr->monsters_generated += 3;
+		} else {
+			if (level_generation_time) l_ptr->monsters_generated++;
+			else l_ptr->monsters_spawned++;
+		}
 	}
 
 	/* monster creation attempt passed! */
@@ -5618,18 +5633,37 @@ void update_smart_learn(int Ind, int m_idx, int what) {
 * Set the "m_idx" fields in the cave array to correspond
 * to the objects in the "m_list".
 */
-void setup_monsters(void) {
+void setup_monsters(struct worldpos *wpos) {
 	int i;
 	monster_type *r_ptr;
 	cave_type **zcave;
+	dun_level *l_ptr;
 
-	for (i = 1; i < m_max; i++) {
-		r_ptr = &m_list[i];
-		/* setup the cave m_idx if the level has been
-		 * allocated.
-		 */
-		if ((zcave = getcave(&r_ptr->wpos)))
+	if (wpos == NULL) {
+		for (i = 1; i < m_max; i++) {
+			r_ptr = &m_list[i];
+
+			/* setup the cave m_idx if the level has been allocated. */
+			if (!(zcave = getcave(&r_ptr->wpos))) continue;
+			if (zcave[r_ptr->fy][r_ptr->fx].m_idx == i) continue;
+
 			zcave[r_ptr->fy][r_ptr->fx].m_idx = i;
+			l_ptr = getfloor(&r_ptr->wpos);
+			l_ptr->monsters_generated++; //we don't know here whether that monster was actually monsters_generated or monsters_spawned, whatever.
+		}
+	} else if ((zcave = getcave(wpos))) {
+		l_ptr = getfloor(wpos);
+
+		for (i = 1; i < m_max; i++) {
+			r_ptr = &m_list[i];
+
+			/* setup the cave m_idx if the level has been allocated. */
+			if (!inarea(&r_ptr->wpos, wpos)) continue;
+			if (zcave[r_ptr->fy][r_ptr->fx].m_idx == i) continue;
+
+			zcave[r_ptr->fy][r_ptr->fx].m_idx = i;
+			l_ptr->monsters_generated++; //we don't know here whether that monster was actually monsters_generated or monsters_spawned, whatever.
+		}
 	}
 }
 
