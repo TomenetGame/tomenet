@@ -46,6 +46,9 @@
 /* No Unmaker spawns at all in Ironman Deep Dive Challenge or Halls of Mandos? */
 #define IDDC_MANDOS_NO_UNMAKERS
 
+/* Monster counting: non-FRIENDS monsters in the wilderness get bigger increment: */
+#define MON_GEN_WILD_NOFRIENDS_INC 2
+
 
 
 static cptr horror_desc[MAX_HORROR] = {
@@ -384,7 +387,7 @@ void delete_monster_idx(int i, bool unfound_arts) {
 	    && !m_ptr->questor && !m_ptr->special && !m_ptr->pet) { /* careful: ONLY for 'normal' monsters! */
 		/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
 		if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated--;
-		else l_ptr->monsters_generated -= 2;
+		else l_ptr->monsters_generated -= MON_GEN_WILD_NOFRIENDS_INC;
 	}
 
 	/* Hack -- count the number of "reproducers" */
@@ -4032,7 +4035,7 @@ if (PMO_DEBUG == r_idx) s_printf("PMO_DEBUG ok\n");
 		if (!wpos->wz) {
 			/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
 			if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
-			else l_ptr->monsters_generated += 2;
+			else l_ptr->monsters_generated += MON_GEN_WILD_NOFRIENDS_INC;
 		} else {
 			if (level_generation_time) l_ptr->monsters_generated++;
 			else l_ptr->monsters_spawned++;
@@ -5632,37 +5635,54 @@ void update_smart_learn(int Ind, int m_idx, int what) {
 /*
 * Set the "m_idx" fields in the cave array to correspond
 * to the objects in the "m_list".
+*
+* We don't know here whether that monster was actually monsters_generated or monsters_spawned, so we just increment monsters_generated.
 */
 void setup_monsters(struct worldpos *wpos) {
 	int i;
-	monster_type *r_ptr;
+	monster_type *m_ptr;
+	monster_race *r_ptr;
 	cave_type **zcave;
 	dun_level *l_ptr;
 
 	if (wpos == NULL) {
 		for (i = 1; i < m_max; i++) {
-			r_ptr = &m_list[i];
+			m_ptr = &m_list[i];
 
 			/* setup the cave m_idx if the level has been allocated. */
-			if (!(zcave = getcave(&r_ptr->wpos))) continue;
-			if (zcave[r_ptr->fy][r_ptr->fx].m_idx == i) continue;
+			if (!(zcave = getcave(&m_ptr->wpos))) continue;
+			if (zcave[m_ptr->fy][m_ptr->fx].m_idx == i) continue;
 
-			zcave[r_ptr->fy][r_ptr->fx].m_idx = i;
-			l_ptr = getfloor(&r_ptr->wpos);
-			l_ptr->monsters_generated++; //we don't know here whether that monster was actually monsters_generated or monsters_spawned, whatever.
+			zcave[m_ptr->fy][m_ptr->fx].m_idx = i;
+
+			l_ptr = getfloor(&m_ptr->wpos);
+			/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
+			if (!m_ptr->wpos.wz) {
+				//r_ptr = race_info_idx(r_idx, ego, randuni);
+				r_ptr = &r_info[m_ptr->r_idx]; //simple for now...
+				if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
+				else l_ptr->monsters_generated += MON_GEN_WILD_NOFRIENDS_INC;
+			} else l_ptr->monsters_generated++;
 		}
 	} else if ((zcave = getcave(wpos))) {
 		l_ptr = getfloor(wpos);
 
 		for (i = 1; i < m_max; i++) {
-			r_ptr = &m_list[i];
+			m_ptr = &m_list[i];
 
 			/* setup the cave m_idx if the level has been allocated. */
-			if (!inarea(&r_ptr->wpos, wpos)) continue;
-			if (zcave[r_ptr->fy][r_ptr->fx].m_idx == i) continue;
+			if (!inarea(&m_ptr->wpos, wpos)) continue;
+			if (zcave[m_ptr->fy][m_ptr->fx].m_idx == i) continue;
 
-			zcave[r_ptr->fy][r_ptr->fx].m_idx = i;
-			l_ptr->monsters_generated++; //we don't know here whether that monster was actually monsters_generated or monsters_spawned, whatever.
+			zcave[m_ptr->fy][m_ptr->fx].m_idx = i;
+
+			/* hack: in the wilderness we count FRIENDS monsters as less (or rather, non-FRIENDS as more) */
+			if (!wpos->wz) {
+				//r_ptr = race_info_idx(r_idx, ego, randuni);
+				r_ptr = &r_info[m_ptr->r_idx]; //simple for now...
+				if (r_ptr->flags1 & RF1_FRIENDS) l_ptr->monsters_generated++;
+				else l_ptr->monsters_generated += MON_GEN_WILD_NOFRIENDS_INC;
+			} else l_ptr->monsters_generated++;
 		}
 	}
 }
