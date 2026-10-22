@@ -2366,21 +2366,20 @@ static bool chown_door(int Ind, struct dna_type *dna, char *args, int x, int y) 
 			msg_print(Ind, "There is no transferrable house there.");
 			return(FALSE);
 		}
-		/* only the guild master can assign an OT_GUILD house */
-		if (!p_ptr->guild || p_ptr->id != guilds[p_ptr->guild].master) {
-			msg_print(Ind, "You must be the guild master to give house ownership to a guild.");
-			return(FALSE);
-		}
 		/* there can only be one guild hall */
 		if (guilds[p_ptr->guild].h_idx) {
 			msg_print(Ind, "The guild already has a guild hall.");
 			return(FALSE);
 		}
-
 		/* guild halls must be mang-style houses (technically too, for CAVE2_GUILD_SUS flag to work!) */
 		if ((houses[h_idx].flags & HF_TRAD)) {
 			msg_print(Ind, "\377yGuild halls must not be list-type (store-like) houses.");
 			return(FALSE);
+		}
+		/* only the guild master can assign an OT_GUILD house */
+		if (!p_ptr->guild || p_ptr->id != guilds[p_ptr->guild].master) {
+			msg_print(Ind, "You must be the guild master to give house ownership to a guild.");
+			if (!is_admin(p_ptr)) return(FALSE);
 		}
 
 		/* guild master loses one own house (side note: stays imprinted as 'creator' though), gets transferred to the guild as 'guild hall' */
