@@ -11476,7 +11476,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				for (i = 1; i < MAX_PARTIES; i++) {
 					if (!parties[i].members) continue;
-					fprintf(fp, "Party: %s, Owner: %s, Members: %d, Created: %d\n", parties[i].name, parties[i].owner, (int)parties[i].members, (int)parties[i].created);
+					fprintf(fp, "Party %d: %s, Owner: %s, Members: %d, Created: %d\n", i, parties[i].name, parties[i].owner, (int)parties[i].members, (int)parties[i].created);
 				}
 				fclose(fp);
 				msg_print(Ind, "Party data dumped to tomenet_parties.txt");
@@ -11492,7 +11492,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				}
 				for (i = 1; i < MAX_GUILDS; i++) {
 					if (!guilds[i].members) continue;
-					fprintf(fp, "Guild: %s Master: %s, Members: %d, Timeout: %d\n", guilds[i].name, lookup_player_name(guilds[i].master), (int)guilds[i].members, (int)guilds[i].timeout);
+					fprintf(fp, "Guild %d: %s Master: %s, Members: %d, Timeout: %d\n", i, guilds[i].name, lookup_player_name(guilds[i].master), (int)guilds[i].members, (int)guilds[i].timeout);
 				}
 				fclose(fp);
 				msg_print(Ind, "Guild data dumped to tomenet_guilds.txt");
