@@ -9886,7 +9886,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!d_ptr) return;
 
 				d_ptr->known = DKF_UNKNOWN;
-				msg_print(Ind, "\377rDungeon is know UNKNOWN.");
+				msg_print(Ind, "\377rDungeon is now UNKNOWN.");
 				return;
 			}
 			else if (prefix(messagelc, "/knowdun")) { /* (Just for adding IDDC on test server) */
@@ -9896,7 +9896,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				if (!d_ptr) return;
 
 				d_ptr->known = DKF_KNOWN; /* Entrance seen, base level known, depth known, boss known */
-				msg_print(Ind, "\377GDungeon is know FULLY KNOWN.");
+				msg_print(Ind, "\377GDungeon is now FULLY KNOWN.");
 				return;
 			}
 			else if (prefix(messagelc, "/forgettown")) {
@@ -9905,7 +9905,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				town[k].flags &= ~TF_KNOWN;
-				msg_format(Ind, "\377GTown '%s' is know unknown.", town_profile[town[k].type].name);
+				msg_format(Ind, "\377GTown '%s' is now unknown.", town_profile[town[k].type].name);
+				return;
+			}
+			else if (prefix(messagelc, "/knowalldun")) { /* (Just for adding IDDC on test server) */
+				int x, y;
+				struct worldpos tpos;
+				struct dungeon_type *d_ptr;
+
+				for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
+					tpos.wx = x; tpos.wy = y; tpos.wz = 0;
+					/* check tower */
+					if ((d_ptr = wild_info[y][x].tower)) d_ptr->known |= DKF_KNOWN;
+					/* check dungeon */
+					if ((d_ptr = wild_info[y][x].dungeon)) d_ptr->known |= DKF_KNOWN;
+				}
+
+				msg_print(Ind, "\377GAll dungeons are now FULLY KNOWN.");
 				return;
 			}
 			else if (prefix(messagelc, "/knowtown")) {
@@ -9914,7 +9930,12 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				town[k].flags |= TF_KNOWN;
-				msg_format(Ind, "\377GTown '%s' is know known.", town_profile[town[k].type].name);
+				msg_format(Ind, "\377GTown '%s' is now known.", town_profile[town[k].type].name);
+				return;
+			}
+			else if (prefix(messagelc, "/knowalltowns")) {
+				for (k = 0; k < numtowns; k++) town[k].flags |= TF_KNOWN;
+				msg_print(Ind, "\377GAll towns are now known.");
 				return;
 			}
 			/* Find a particular feat anywhere on the world surface */
