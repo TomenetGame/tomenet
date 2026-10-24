@@ -8257,7 +8257,10 @@ void meta_diz(object_type *o_ptr, FILE *fff) {
 		//switch(-o_ptr->find_reward) {
 	}
 
-	else if (o_ptr->find_special == 12001) {
+	else if (o_ptr->find_special == 12002) {
+		sprintf(source_acttime, "received%s", hr_time);
+		*source_from = 0;
+	} else if (o_ptr->find_special == 12001) {
 		sprintf(source_acttime, "forged%s", hr_time);
 		sprintf(source_from, "by %s", o_ptr->find_name);
 	} else if (o_ptr->find_special == 12000) {

@@ -3868,6 +3868,26 @@ static int Handle_login(int ind) {
 #endif
 	}
 
+	/* Sold something in his player store while he wasn't logged on? */
+	if (acc_get_flags(p_ptr->accountname) & ACC_COMPENSATE) {
+		acc_set_flags(p_ptr->accountname, ACC_COMPENSATE, FALSE);
+		msg_print(NumPlayers, "\374\377yYou receive a one-time compensation your account was eligible for!");
+
+		j = lookup_kind(TV_SCROLL, SV_SCROLL_ARTIFACT_CREATION);
+		invcopy(o_ptr, j);
+		o_ptr->number = 1;
+		object_aware(NumPlayers, o_ptr);
+		object_known(o_ptr);
+		o_ptr->discount = 100;
+		o_ptr->level = 0;
+		o_ptr->ident |= ID_MENTAL;
+		imprint_object(o_ptr, p_ptr);
+		o_ptr->find_special = 12002; /* for item fluff: displays 'acquired' */
+		o_ptr->note = quark_add("Administrative compensation");
+		inven_carry(NumPlayers, o_ptr);
+		s_printf("COMPENSATION: '%s' got %d,%d.\n", p_ptr->name, o_ptr->tval, o_ptr->sval);
+	}
+
 #if 1 /* hm, too much spam? - but usually you'd get this notification anyway, if logged in a bit earlier.. */
 #define GE_FINAL_ANNOUNCEMENT 300 /* keep consistent with xtra1.c */
 	for (i = 0; i < MAX_GLOBAL_EVENTS; i++)
