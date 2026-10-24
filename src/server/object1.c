@@ -1129,7 +1129,7 @@ static byte object_d_attr(int i) {
 		case TV_POTION: return(potion_col[indexx]);
 		case TV_SCROLL: return(scroll_col[indexx]);
 		case TV_AMULET: return(amulet_col[indexx]);
-		case TV_RING:   return(ring_col[indexx]);
+		case TV_RING:   return(ring_col[indexx % MAX_ROCKS]); //there exist admin-only debug-purpose rings around sval 99-
 		case TV_STAFF:  return(staff_col[indexx]);
 		case TV_WAND:   return(wand_col[indexx]);
 		case TV_ROD:    return(rod_col[indexx]);
