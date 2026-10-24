@@ -3879,7 +3879,7 @@ static int Handle_login(int ind) {
 		object_aware(NumPlayers, o_ptr);
 		object_known(o_ptr);
 		o_ptr->discount = 100;
-		o_ptr->level = 0;
+		o_ptr->level = 25;
 		o_ptr->ident |= ID_MENTAL;
 		imprint_object(o_ptr, p_ptr);
 		o_ptr->find_special = 12002; /* for item fluff: displays 'acquired' */
