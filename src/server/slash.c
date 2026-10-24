@@ -6602,7 +6602,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			msg_format(Ind, " \377sCurrent server-side time: %04d/%02d/%02d (%s) - %02d:%02d:%02dh",
 			    1900 + ctl->tm_year, ctl->tm_mon + 1, ctl->tm_mday, day_names[ctl->tm_wday], ctl->tm_hour, ctl->tm_min, ctl->tm_sec);
 			return;
-		} else if (prefix(messagelc, "/rest")) { /* Rest [for n turns] */
+		} else if (prefix(messagelc, "/rest ") || !strcmp(messagelc, "/rest")) { /* Rest [for n turns] */
 			if (tk && (k <= 0 || k >= 10000)) {
 				msg_print(Ind, "\377yUsage: /rest [1..10000 turns]");
 				return;
