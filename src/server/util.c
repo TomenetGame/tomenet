@@ -8405,9 +8405,9 @@ bool gain_au(int Ind, u32b amt, bool quiet, bool exempt) {
 /* backup all house prices and contents for all players to lib/save/estate/.
    partial: don't stop with failure if a character files can't be read. */
 #define ESTATE_BACKUP_VERSION "v10"
-bool backup_estate(bool partial) {
+bool backup_estate(bool partial, bool guild_halls_only) {
 	FILE *fp;
-	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[CNAME_LEN], c;
+	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], savefile[NAME_LEN], c;
 	cptr name;
 	int i, j, k;
 	int sy, sx, ey,ex , x, y;
@@ -8442,13 +8442,22 @@ bool backup_estate(bool partial) {
 		au = house_price_player(dna->price, 15);
 		//h_ptr->dy,dx
 
-		/* WARNING: For now unable to save guild halls */
-		if (h_ptr->dna->owner_type != OT_PLAYER) continue;
-
-		name = lookup_player_name(h_ptr->dna->owner);
-		if (!name) {
-			s_printf("  warning: house %d's owner %d doesn't have a name.\n", i, h_ptr->dna->owner);
-			continue;
+		switch (h_ptr->dna->owner_type) {
+		case OT_PLAYER:
+			if (guild_halls_only) continue;
+			name = lookup_player_name(h_ptr->dna->owner);
+			if (!name) {
+				s_printf("  warning: house %d's owner %d doesn't have a name.\n", i, h_ptr->dna->owner);
+				continue;
+			}
+			break;
+		case OT_GUILD:
+			name = guilds[h_ptr->dna->owner].name;
+			if (!name) {
+				s_printf("  warning: house %d's guild %d doesn't have a name.\n", i, h_ptr->dna->owner);
+				continue;
+			}
+			break;
 		}
 
 		/* create backup file if required, or append to it */
@@ -8462,6 +8471,7 @@ bool backup_estate(bool partial) {
 			else if (strchr(SF_BAD_CHARS, c)) savefile[k++] = '_';
 		}
 		savefile[k] = '\0';
+
 		/* build path name and try to create/append to player's backup file */
 		path_build(buf, MAX_PATH_LENGTH, buf2, savefile);
 		if ((fp = fopen(buf, "rb")) == NULL)
@@ -8478,18 +8488,10 @@ bool backup_estate(bool partial) {
 			newly_created = FALSE;
 			/* begin with a version tag */
 			fprintf(fp, "%s\n", ESTATE_BACKUP_VERSION);
-
-#if 0 /* guild info is no longer tied to map reset! */
-			/* add 2M Au if he's a guild master, since guilds will be erased if the server
-			   savefile gets deleted (which is the sole purpose of calling this function..) */
-			for (j = 1; j < MAX_GUILDS; j++)
-				if (guilds[j].master == h_ptr->dna->owner) {
-					fprintf(fp, "AU:%d\n", GUILD_PRICE);
-					s_printf("  guild master: '%s'.\n", name);
-					break;
-				}
-#endif
 		}
+
+		/* Add guild creation cost too? (Currently, guild info doesn't survive 'server' deletion, pft */
+		if (h_ptr->dna->owner_type == OT_GUILD) fprintf(fp, "AU:%d\n", GUILD_PRICE);
 
 		/* add house price to his backup file */
 		fprintf(fp, "AU:%d\n", au);
@@ -8751,7 +8753,7 @@ void relay_estate(char *buf, char *buf2, FILE *fp, FILE *fp_tmp) {
 }
 
 /* get back the backed-up real estate from files */
-void restore_estate(int Ind) {
+void restore_estate(int Ind, bool guild_halls) {
 	player_type *p_ptr = Players[Ind];
 	FILE *fp, *fp_tmp;
 	char buf[MAX_PATH_LENGTH], buf2[MAX_PATH_LENGTH], version[MAX_CHARS];
@@ -8774,14 +8776,58 @@ void restore_estate(int Ind) {
 	object_type_v2a forge_v2a, *o_ptr_v2a = &forge_v2a;
 	object_type_v2b forge_v2b, *o_ptr_v2b = &forge_v2b;
 
+	guild_type *guild;
 
-	s_printf("Restoring real estate for %s...\n", p_ptr->name);
 
-	/* create folder lib/save/estate if not existing */
-	path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+	if (guild_halls) {
+		cptr name;
+		int k, j;
+		char savefile[NAME_LEN], c;
 
-	/* build path name and try to create/append to player's backup file */
-	path_build(buf, MAX_PATH_LENGTH, buf2, p_ptr->basename);
+		if (!p_ptr->guild) {
+			msg_print(Ind, "You are not in a guild.");
+			return;
+		}
+		guild = &guilds[p_ptr->guild];
+		if (guild->master != p_ptr->id) {
+			msg_print(Ind, "You are not the guild master.");
+			return;
+		}
+		s_printf("Restoring guild real estate for %s (%d:'%s')...\n", p_ptr->name, p_ptr->guild, guild->name);
+
+		/* create folder lib/save/estate if not existing */
+		path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+
+		name = guild->name;
+		if (!name) {
+			s_printf("  warning: guild %d (master '%s') doesn't have a name.\n", p_ptr->guild, p_ptr->name);
+			return;
+		}
+
+		/* create backup file if required, or append to it */
+		/* create actual filename from character name (same as used for sf_delete or process_player_name) */
+		k = 0;
+		for (j = 0; name[j]; j++) {
+			c = name[j];
+			/* Accept some letters */
+			if (isalphanum(c)) savefile[k++] = c;
+			/* Convert space, dot, and underscore to underscore */
+			else if (strchr(SF_BAD_CHARS, c)) savefile[k++] = '_';
+		}
+		savefile[k] = '\0';
+
+		/* build path name and try to create/append to player's backup file */
+		path_build(buf, MAX_PATH_LENGTH, buf2, savefile);
+	} else {
+		s_printf("Restoring real estate for %s...\n", p_ptr->name);
+
+		/* create folder lib/save/estate if not existing */
+		path_build(buf2, MAX_PATH_LENGTH, ANGBAND_DIR_SAVE, "estate");
+
+		/* build path name and try to create/append to player's backup file */
+		path_build(buf, MAX_PATH_LENGTH, buf2, p_ptr->basename);
+	}
+
 	if ((fp = fopen(buf, "rb")) == NULL) {
 		s_printf("  error: No file '%s' exists to request from.\nfailed.\n", buf);
 		msg_print(Ind, "\377yNo goods or money stored to request.");

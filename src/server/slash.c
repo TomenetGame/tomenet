@@ -5283,10 +5283,10 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			return;
 		}
 		/* request back real estate that was previously backed up via /backup_estate */
-		else if (prefix(messagelc, "/request_estate") || prefix(messagelc, "/request")) {
+		else if (prefix(messagelc, "/request_estate") || !strcmp(messagelc, "/request")) {
 			/* Specialty: Allow a single player to restore her estate */
 			if (p_ptr->admin_parm[0] == 'E' && !p_ptr->admin_parm[1]) {
-				restore_estate(Ind);
+				restore_estate(Ind, FALSE);
 				return;
 			}
 			/* Globally allow everyone to use this command to restore their estates */
@@ -5295,7 +5295,23 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 
-			restore_estate(Ind);
+			restore_estate(Ind, FALSE);
+			return;
+		}
+		/* like /backup_estate but only request guild hall contents (OT_GUILD); player must be the guild's master */
+		else if (prefix(messagelc, "/request_guild_estate")) {
+			/* Specialty: Allow a single player to restore her estate */
+			if (p_ptr->admin_parm[0] == 'E' && !p_ptr->admin_parm[1]) {
+				restore_estate(Ind, TRUE);
+				return;
+			}
+			/* Globally allow everyone to use this command to restore their estates */
+			if (!allow_requesting_estate) {
+				msg_print(Ind, "This command is currently not available.");
+				return;
+			}
+
+			restore_estate(Ind, TRUE);
 			return;
 		}
 #ifdef ENABLE_SUBCLASS
@@ -13786,7 +13802,21 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/backup_estate")) {
 				msg_print(Ind, "Backing up all real estate...");
 				//specify any parameter for allowing partial backup
-				if (!backup_estate(tk)) {
+				if (!backup_estate(tk, FALSE)) {
+					msg_print(Ind, "...failed.");
+					return;
+				}
+				msg_print(Ind, "...done.");
+
+				/* terminate the server? */
+				if (tk && !strcmp(token[1], "term"))
+					set_runlevel(-1);
+				return;
+			}
+			else if (prefix(messagelc, "/backup_guild_estate")) { /* Like /backup_estate but only backs up guild halls ie OT_GUILD houses */
+				msg_print(Ind, "Backing up all guild-owned real estate...");
+				//specify any parameter for allowing partial backup
+				if (!backup_estate(tk, TRUE)) {
 					msg_print(Ind, "...failed.");
 					return;
 				}
@@ -15006,7 +15036,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					return;
 				}
 				i = name_lookup_loose(Ind, message3, FALSE, FALSE, FALSE);
-				if (i) restore_estate(i);
+				if (i) restore_estate(i, FALSE);
 				return;
 			}
 			else if (prefix(messagelc, "/ambient")) {
