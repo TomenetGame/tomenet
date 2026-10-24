@@ -3519,6 +3519,19 @@ bool player_birth(int Ind, int conn, connection_t *connp) {
 		return(FALSE);
 	}
 
+	/* No character was loaded, but the name is still in the player name database:
+	   the client was told this character exists, so it skipped character creation.
+	   The entry is stale - its savefile is missing, or holds a dead character whose
+	   erasure from the database was lost because the server died before its next save.
+	   Creating a character here would make a default one under a new ID, next to the
+	   stale entry of the same name. Remove the entry and let the player create anew. */
+	if ((i = lookup_player_id(name)) && lookup_player_account(i) == p_ptr->account) {
+		s_printf("LOST_CHARACTER: '%s' (id %d) did not load - removing stale name entry.\n", name, i);
+		delete_player_name(name);
+		Destroy_connection(conn, "This character was lost in a server crash. Please log in again to create it anew.");
+		return(FALSE);
+	}
+
 	p_ptr->turn = turn; /* Birth time (for info) */
 
 	/* Reprocess his name */
