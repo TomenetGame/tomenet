@@ -28,6 +28,7 @@ Contents
     (0.1)  Shutting down the server gracefully
     (0.2)  Live LUA changes
     (0.3)  More slash commands
+    (0.4)  LUA commands
 (1) Accounts
     (1.1)  The account editor 'accedit'
     (1.2)  New accounts and validation
