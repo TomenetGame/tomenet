@@ -1,7 +1,7 @@
 .==========================================================================+--.
 |                       TomeNET Administrator Guide                        |
 +==========================================================================+-
-| Latest update: 15. July 2026 - written by C. Blue (c_blue@gmx.net)       |
+| Latest update: 25. October 2026 - written by C. Blue (c_blue@gmx.net)    |
 | for TomeNET version v4.9.4 - official websites are:                      :
 | https://www.tomenet.eu/ (official main site, formerly www.tomenet.net)
 | https://muuttuja.org/tomenet/ (Mikael's TomeNET site)
@@ -46,6 +46,7 @@ Contents
     (5.1) Server compilation
     (5.1a) Server recompilation
     (5.2) accedit compilation
+(6) World reset
 
 
 
@@ -732,5 +733,90 @@ The reason we moved accedit to the save folder is that it must find the file
 Alternatively you can just sym-link the tomenet.acc file to any location
 you prefer and put accedit there accordingly, for example the root 'tomenet'
 folder.
+
+
+
+(6) World reset
+---------------
+If you want to reset the game world, that is...
+- World map layout
+- Dungeon locations
+- Houses
+- Object flavours (scroll titles, potion colours, amulet/ring stones etc)
+...you can make a backup of player characters and all items they have stored
+inside their owned houses, then reset the world, and then restore players
+and their items.
+
+Limitations currently:
+- Parties and guilds do not survive the transition and have to be recreated
+  in the new world. Guild hall items can be backed up though (see below).
+- Dungeon knowledge is lost. While dungeon knowledge can also easily be
+  restored (also see below), characters will lose their maximum depth recall
+  info and hence need to dive into dungeons again taking staircases down.
+- Characters will have wrong owned-house counts, these are easy to auto-correct
+  though (also explained further below).
+
+The procedure consists of 4 steps:
+- Initiating backups of player data and shutting down the server.
+- Deleting the 'server' savefile, usually located in tomenet/lib/save/
+- Starting 'tomenet.server' again which will auto-create a new world ie
+  a new 'server' savefile. Optionally add command-line options, refer to (3).
+- On the new server initiate backup restoration routines.
+
+
+Step 1 - Backup
+---------------
+First, make sure the folder lib/save/estate/ does not contain old files,
+as backup files of an older version and a newer version must not be mixed
+or restoration will fail.
+
+Log in as admin and issue the command "/backup_estate".
+This command creates or appends to files in lib/save/estate/ that have the
+same name as the character or guild owning the houses.
+As implied, the command APPENDS instead of overwrites, which can lead to
+a lot of trouble if you didn't intend that, so check and maybe just clear
+all contents of lib/save/estate/ first, as stated already.
+
+Also back up all account info via "/backup_acclists". This takes care of
+which accounts exist and which characters they hold.
+
+
+Step 2 - Delete the 'server' savefile
+-------------------------------------
+Navigate to tomenet's lib/save/ subfolder and just delete the file 'server'.
+Make sure the server is not currently running, it should be in shutdown state
+when you delete this file.
+
+
+Step 3 - Restart the server
+---------------------------
+
+Issue the terminal command, usually './tomenet.server', to re-run the server.
+Add command-line options as you see fit, eg './tomenet.server -a -b -l'.
+(Compare chapter (3) for command-line options.)
+
+
+Step 4 - Restore data from backup
+---------------------------------
+Log in as admin and issue the commands...
+/restore_acclists
+and optionally if you don't want everyone having to search for dungeons and
+towns again:
+/knowalltowns
+/knowalldun
+
+Now players can log in and use the "/request" command to obtain all their
+housed items, including the house purchase cost.
+Guild masters must recreate their guilds and then issue the command
+/request_guild_estate
+to get their guild hall items back.
+
+Finally, you can manually reset the old house count of characters to zero by
+issuing the command "/chouse <character name>" or automate that conveniently
+by adding the command
+lua_count_houses(num)
+in the code block of function "player_has_joined(num, id, name, timestamp)"
+in the script file lib/scpt/custom.lua.
+
 
 ===============================================================================
