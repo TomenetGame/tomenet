@@ -93,6 +93,7 @@ extern bool get_conn_state_ok(int Ind);
 extern void do_quit(int ind, bool tellclient);
 extern int check_multi_exploit(char *acc, char *nick);
 extern int max_connections;
+extern bool compensate_all_accounts(bool comp);
 
 /* randart.c */
 extern artifact_type *ego_make(object_type *o_ptr);

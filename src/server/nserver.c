@@ -673,6 +673,53 @@ bool purge_acc_file(void) {
 	return(TRUE);
 }
 
+/* Add/remove compensation flag to all accounts. */
+bool compensate_all_accounts(bool comp) {
+	FILE *fp_old, *fp;
+	struct account acc;
+	size_t retval;
+	char buf[1024], buf2[1024];
+
+	s_printf("Initiating %s of compensation to all accounts.. ", comp ? "bestowal" : "withdrawal");
+
+	path_build(buf, 1024, ANGBAND_DIR_SAVE, "tomenet.acc");
+	fp_old = fopen(buf, "rb");
+	if (!fp_old) {
+		s_printf("failed opening tomenet.acc.\n");
+		fclose(fp_old);
+		return(FALSE);
+	}
+
+	path_build(buf2, 1024, ANGBAND_DIR_SAVE, "tomenet.acc_new");
+	fp = fopen(buf2, "wb");
+	if (!fp) {
+		s_printf("failed opening tomenet.acc_new.\n");
+		fclose(fp_old);
+		return(FALSE);
+	}
+
+	while (!feof(fp_old)) {
+		retval = fread(&acc, sizeof(struct account), 1, fp_old);
+		if (retval == 0) break; /* EOF reached, nothing read into acc - mikaelh */
+
+		/* Set/unset compensation flag */
+		if (comp) acc.flags |= ACC_COMPENSATE;
+		else acc.flags &= ~ACC_COMPENSATE;
+
+		/* write it back */
+		if (fwrite(&acc, sizeof(struct account), 1, fp) < 1)
+			s_printf("failure: %s\n", feof(fp) ? "EOF" : strerror(ferror(fp)));
+	}
+	s_printf("done.\n");
+	fclose(fp);
+	fclose(fp_old);
+
+	remove(buf);
+	rename(buf2, buf);
+
+	return(TRUE);
+}
+
 /*
  * Initialize the connection structures.
  */

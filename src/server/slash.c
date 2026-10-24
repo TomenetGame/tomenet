@@ -9087,7 +9087,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				p_ptr->skill_points = 9999;
 				return;
 			}
-			else if (prefix(messagelc, "/uncurse") || prefix(messagelc, "/unc")) {
+			else if (prefix(messagelc, "/uncurse")) {
 				remove_all_curse(Ind);
 				return;
 			}
@@ -13862,6 +13862,14 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			else if (prefix(messagelc, "/restore_acclists")) {
 				restore_acclists();
 				msg_print(Ind, "Restored all account<-character relations.");
+				return;
+			}
+			else if (prefix(messagelc, "/compensateallaccounts")) {
+				compensate_all_accounts(TRUE);
+				return;
+			}
+			else if (prefix(messagelc, "/uncompensateallaccounts")) {
+				compensate_all_accounts(FALSE);
 				return;
 			}
 #ifdef CLIENT_SIDE_WEATHER
