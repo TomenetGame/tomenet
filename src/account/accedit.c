@@ -62,9 +62,9 @@ void setupscreen(void) {
 	mvprintw(0, COLS / 2 - 18, "TomeNET account editor - 2002 Evileye");
 	mvprintw(1, COLS / 2 - 16, "(Updated by Mikaelh and C. Blue)");
 	attroff(A_STANDOUT);
+	mvprintw(LINES - 5, COLS / 2 - 29, "L: List/Long f/F: Find/Next H: Change Password A: Admin M: Multi K: PvP");
+	mvprintw(LINES - 4, COLS / 2 - 29, "V+S: Validate+Score B: Ban C: Quiet I: Privilege R: Restrict O: Compensate");
 	mvprintw(LINES - 3, COLS / 2 - 29, "N: next P: previous BKSPC: 1st/end D: Delete U: Purge dupes");
-	mvprintw(LINES - 4, COLS / 2 - 29, "V+S: Validate+Score A: Admin M: Multi B: Ban C: Quiet H: PW");
-	mvprintw(LINES - 5, COLS / 2 - 29, "L: List/Long f/F: Find/Next R: Restrict I: Privilege K: PvP");
 	mainwin = newwin(LINES - 9, COLS, 3, 0);
 	listwin = newwin(LINES - 9, COLS, 3, 0);
 	refresh();
@@ -119,10 +119,11 @@ int ListAccounts(int fpos) {
 	mvwaddstr(listwin, 0, 51, "PK");
 	mvwaddstr(listwin, 0, 55, "Qui");
 	mvwaddstr(listwin, 0, 59, "Ban");
+	mvwaddstr(listwin, 0, 63, "Com");
 	//mvwprintw(mainwin, 12, 4, "Last hostname:  %-20s", c_acc.hostname);
 	//mvwprintw(mainwin, 13, 4, "Last IP addr:   %-20s", c_acc.addr);
 	//mvwprintw(mainwin, 14, 4, "Email if any:   %-55s", c_acc.email);
-	mvwaddstr(listwin, 0, 64, "Account ID");
+	mvwaddstr(listwin, 0, 68, "Account ID");
 	if (fpos > LINES - 11) {
 		ifpos = fpos - (LINES - 11);
 	}
@@ -132,7 +133,7 @@ int ListAccounts(int fpos) {
 			for (i = 0; i < (LINES - 10); i++) {
 				x = fread(&c_acc, sizeof(struct account), 1, fp);
 				if (x == 0) break;
-				mvwprintw(listwin, i + 1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c %.10d%10s", c_acc.name,
+				mvwprintw(listwin, i + 1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c% .10d%10s", c_acc.name,
 				c_acc.flags & ACC_TRIAL ? '.' : 'Y',
 				c_acc.flags & ACC_ADMIN ? 'Y' : '.',
 				c_acc.flags & ACC_NOSCORE ? '.' : 'Y',
@@ -142,6 +143,7 @@ int ListAccounts(int fpos) {
 				c_acc.flags & ACC_PVP ? 'Y' : c_acc.flags & ACC_ANOPVP ? 'K' : c_acc.flags & ACC_NOPVP ? 'n' : '.',
 				(c_acc.flags & ACC_QUIET) && (c_acc.flags & ACC_VQUIET) ? 'X' : (c_acc.flags & ACC_VQUIET ? 'V' : (c_acc.flags & ACC_QUIET ? 'y' : '.')),
 				c_acc.flags & ACC_BANNED ? 'Y' : '.',
+				c_acc.flags & ACC_COMPENSATE ? 'Y' : '.',
 				c_acc.id, c_acc.flags & ACC_DELD ? "DELETED" : "");
 			}
 			reload = 0;
@@ -152,7 +154,7 @@ int ListAccounts(int fpos) {
 			x = fread(&c_acc, sizeof(struct account), 1, fp);
 		}
 		if (redraw) {
-			mvwprintw(listwin, (fpos - ifpos) + 1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c %.10d%10s", c_acc.name,
+			mvwprintw(listwin, (fpos - ifpos) + 1, 5, "%-22s%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c%-4c% .10d%10s", c_acc.name,
 			c_acc.flags & ACC_TRIAL ? '.' : 'Y',
 			c_acc.flags & ACC_ADMIN ? 'Y' : '.',
 			c_acc.flags & ACC_NOSCORE ? '.' : 'Y',
@@ -162,6 +164,7 @@ int ListAccounts(int fpos) {
 			c_acc.flags & ACC_PVP ? 'Y' : c_acc.flags & ACC_ANOPVP ? 'K' : c_acc.flags & ACC_NOPVP ? 'n' : '.',
 			(c_acc.flags & ACC_QUIET) && (c_acc.flags & ACC_VQUIET) ? 'X' : (c_acc.flags & ACC_VQUIET ? 'V' : (c_acc.flags & ACC_QUIET ? 'y' : '.')),
 			c_acc.flags & ACC_BANNED ? 'Y' : '.',
+			c_acc.flags & ACC_COMPENSATE ? 'Y' : '.',
 			c_acc.id, c_acc.flags & ACC_DELD ? "DELETED" : "");
 			redraw = 0;
 		}
@@ -330,6 +333,7 @@ int ListAccounts(int fpos) {
 			case 'c':
 			case 'C':
 				change = 1;
+				redraw = 1;
 				if ((c_acc.flags & ACC_QUIET) && (c_acc.flags & ACC_VQUIET))
 					c_acc.flags &= ~(ACC_VQUIET | ACC_QUIET);
 				else if (c_acc.flags & ACC_VQUIET)
@@ -343,11 +347,18 @@ int ListAccounts(int fpos) {
 			case 'b':
 			case 'B':
 				change = 1;
+				redraw = 1;
 				c_acc.flags ^= ACC_BANNED;
+				break;
+			case 'O':
+				change = 1;
+				redraw = 1;
+				c_acc.flags ^= ACC_COMPENSATE;
 				break;
 			case 'k':
 			case 'K':
 				change = 1;
+				redraw = 1;
 				if (c_acc.flags & ACC_ANOPVP)
 					c_acc.flags &= ~(ACC_ANOPVP | ACC_NOPVP);
 				else if (c_acc.flags & ACC_NOPVP) {
@@ -362,6 +373,7 @@ int ListAccounts(int fpos) {
 			case 'r':
 			case 'R':
 				change = 1;
+				redraw = 1;
 				if (c_acc.flags & ACC_VRESTRICTED)
 					c_acc.flags &= ~(ACC_VRESTRICTED | ACC_RESTRICTED);
 				else if (c_acc.flags & ACC_RESTRICTED) {
@@ -373,6 +385,7 @@ int ListAccounts(int fpos) {
 			case 'i':
 			case 'I':
 				change = 1;
+				redraw = 1;
 				if (c_acc.flags & ACC_VPRIVILEGED)
 					c_acc.flags &= ~(ACC_VPRIVILEGED | ACC_PRIVILEGED);
 				else if (c_acc.flags & ACC_PRIVILEGED) {
@@ -426,6 +439,7 @@ void editor(void) {
 		mvwprintw(mainwin, 12, 4, "Last hostname:  %-20s", c_acc.hostname);
 		mvwprintw(mainwin, 13, 4, "Last IP addr:   %-20s", c_acc.addr);
 		mvwprintw(mainwin, 14, 4, "Email if any:   %-55s", c_acc.email);
+		mvwprintw(mainwin, 15, 4, "Compensation:   %s", c_acc.flags & ACC_COMPENSATE ? "Yes": "No ");
 		mvwprintw(mainwin, 3, 37, "%-7s", c_acc.flags & ACC_DELD ? "DELETED" : "");
 		wrefresh(mainwin);
 		do {
@@ -599,6 +613,10 @@ void editor(void) {
 				case 'B':
 					change = 1;
 					c_acc.flags ^= ACC_BANNED;
+					break;
+				case 'O':
+					change = 1;
+					c_acc.flags ^= ACC_COMPENSATE;
 					break;
 				case 'k':
 				case 'K':
