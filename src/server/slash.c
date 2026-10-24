@@ -13799,6 +13799,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			/* back up all house prices and items/gold inside houses for all
 			   characters to lib/save/estate/ and invoke /terminate right
 			   afterwards if the parameter "term" is given. - C. Blue */
+			// WARNING: Don't call it if it would append to an already existing estate backup file of a different ESTATE_BACKUP_VERSION!
 			else if (prefix(messagelc, "/backup_estate")) {
 				msg_print(Ind, "Backing up all real estate...");
 				//specify any parameter for allowing partial backup
@@ -13813,7 +13814,9 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 					set_runlevel(-1);
 				return;
 			}
-			else if (prefix(messagelc, "/backup_guild_estate")) { /* Like /backup_estate but only backs up guild halls ie OT_GUILD houses */
+			/* Like /backup_estate but only backs up guild halls ie OT_GUILD houses */
+			// WARNING: Don't call it if it would append to an already existing estate backup file of a different ESTATE_BACKUP_VERSION!
+			else if (prefix(messagelc, "/backup_guild_estate")) {
 				msg_print(Ind, "Backing up all guild-owned real estate...");
 				//specify any parameter for allowing partial backup
 				if (!backup_estate(tk, TRUE)) {
@@ -13828,6 +13831,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* Same as above but only for one specific house! You must be standing on the house door! */
+			// WARNING: Don't call it if it would append to an already existing estate backup file of a different ESTATE_BACKUP_VERSION!
 			else if (prefix(messagelc, "/backup_one_estate")) {
 				s32b pid;
 
@@ -13849,6 +13853,7 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 				return;
 			}
 			/* Backs up contents of all houses owned by a specific character and gives ownership to a specific character. */
+			// WARNING: Don't call it if it would append to an already existing estate backup file of a different ESTATE_BACKUP_VERSION!
 			else if (prefix(messagelc, "/backup_char_estate")) {
 				s32b hid, pid;
 				char *pid_name;
