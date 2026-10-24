@@ -9926,11 +9926,20 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			else if (prefix(messagelc, "/knowalldun")) { /* (Just for adding IDDC on test server) */
 				int x, y;
-				struct worldpos tpos;
 				struct dungeon_type *d_ptr;
+				struct worldpos tpos;
 
+				tpos.wz = 0;
 				for (x = 0; x < 64; x++) for (y = 0; y < 64; y++) {
-					tpos.wx = x; tpos.wy = y; tpos.wz = 0;
+					/* We need to allocate towns once after server resets, for their town dungeons to be actually generated! */
+					tpos.wx = x;
+					tpos.wy = y;
+					if (istown(&tpos) && !getcave(&tpos)) {
+						alloc_dungeon_level(&tpos);
+						generate_cave(&tpos, NULL);
+						dealloc_dungeon_level(&tpos);
+					}
+
 					/* check tower */
 					if ((d_ptr = wild_info[y][x].tower)) d_ptr->known |= DKF_KNOWN;
 					/* check dungeon */
