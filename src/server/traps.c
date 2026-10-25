@@ -4275,12 +4275,12 @@ void do_cmd_disarm_mon_trap_aux(int Ind, worldpos *wpos, int y, int x) {
 				/* If we could stow it, we're done with this item */
 				if (!q_ptr->number) continue;
 #endif
-				object_desc(Ind, o_name, q_ptr, TRUE, 3);
 				slot = inven_carry(Ind, q_ptr);
 				if (slot >= 0) {
 					//inven_item_describe(Ind, slot);
 					q_ptr->marked = 0;
 					q_ptr->marked2 = ITEM_REMOVAL_NORMAL;
+					object_desc(Ind, o_name, &p_ptr->inventory[slot], TRUE, 3);
 					msg_format(Ind, "You have %s (%c).", o_name, index_to_label(slot));
 				} else if (drop_near(TRUE, 0, q_ptr, -1, wpos, y, x) < 0) //paranoia
 					s_printf("Montrap disarm -> item '%s' couldn't drop.\n", o_name);
