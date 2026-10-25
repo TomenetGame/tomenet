@@ -11363,7 +11363,7 @@ void arm_charge(int Ind, int item, int dir) {
 	cave_type *c_ptr, **zcave;
 	struct c_special *cs_ptr;
 	int py = p_ptr->py, px = p_ptr->px;
-	s16b o2_idx;
+	u16b o2_idx;
 	object_type *o2_ptr;
 	worldpos *wpos = &p_ptr->wpos;
 
