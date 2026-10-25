@@ -11445,6 +11445,7 @@ void arm_charge(int Ind, int item, int dir) {
 	if (!cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP)) {
 		msg_print(Ind, "\377yYou cannot set a charge here.");
 		cs_erase(c_ptr, cs_ptr);
+		delete_object_idx(o2_idx, FALSE, FALSE);
 		return;
 	}
 
