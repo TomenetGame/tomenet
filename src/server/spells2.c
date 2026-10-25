@@ -11393,13 +11393,12 @@ void arm_charge(int Ind, int item, int dir) {
 		return;
 	}
 
-
 	/* Create a charge-item to be dropped on/into the floor */
 
 	o2_idx = o_pop();
-	if (!o2_idx) {
-		//shouldn't happen
+	if (!o2_idx) { //shouldn't happen
 		msg_print(Ind, "\377yIt's not possible to arm charges right now.");
+		cs_erase(c_ptr, cs_ptr);
 		return;
 	}
 
@@ -11439,7 +11438,11 @@ void arm_charge(int Ind, int item, int dir) {
 	/* Note: Glyph colour is taken from the charge type in k_info. */
 
 	/* Actually set the 'trap' */
-	cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP);
+	if (!cave_set_feat_live(&p_ptr->wpos, py, px, FEAT_MON_TRAP)) {
+		msg_print(Ind, "\377yYou cannot set a charge here.");
+		cs_erase(c_ptr, cs_ptr);
+		return;
+	}
 
 	/* Erase the ingredients in the pack */
 	inven_item_increase(Ind, item, -1);
