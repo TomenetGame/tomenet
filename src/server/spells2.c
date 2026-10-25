@@ -11412,6 +11412,7 @@ void arm_charge(int Ind, int item, int dir) {
 	o2_ptr = &o_list[o2_idx];
 	object_copy(o2_ptr, o_ptr);
 
+	o2_ptr->number = 1;
 	o2_ptr->embed = 1;
 	o2_ptr->iy = py;
 	o2_ptr->ix = px;
