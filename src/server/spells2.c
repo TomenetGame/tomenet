@@ -11367,9 +11367,8 @@ void arm_charge(int Ind, int item, int dir) {
 	object_type *o2_ptr;
 	worldpos *wpos = &p_ptr->wpos;
 
-	zcave = getcave(&p_ptr->wpos);
+	if (!(zcave = getcave(&p_ptr->wpos))) return; //paranoia
 	c_ptr = &zcave[py][px];
-
 
 	/* Check some conditions */
 	if (!arm_charge_conditions(Ind, o_ptr, FALSE)) return;
@@ -11382,7 +11381,12 @@ void arm_charge(int Ind, int item, int dir) {
 	p_ptr->energy -= level_speed(&p_ptr->wpos) / 2;
 	if (interfere(Ind, 50 - get_skill_scale(p_ptr, SKILL_CALMNESS, 35))) return;
 
-	if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) { // || !allow_terraforming(wpos, FEAT_NONE)) {
+	//copy-paste from do_cmd_set_trap():
+	if (!cave_clean_bold(zcave, py, px) ||
+	    (f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM) ||
+	    !cave_set_feat_live_ok(&p_ptr->wpos, py, px, FEAT_MON_TRAP) ||
+	    c_ptr->special) {
+	//if ((f_info[c_ptr->feat].flags2 & FF2_NO_TFORM) || (c_ptr->info & CAVE_NO_TFORM)) { // || !allow_terraforming(wpos, FEAT_NONE)) {
 		msg_print(Ind, "\377yYou cannot set a charge here.");
 		return;
 	}
