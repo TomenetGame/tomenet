@@ -2182,6 +2182,23 @@ static void player_setup(int Ind, bool new) {
 	/* initialise "random breath" for draconians. (0 is just unused) */
 	p_ptr->breath_element = 1;
 
+	/* For players who just logged in but aren't in town, set default town to Bree
+	   so they have a valid instant-resurrection wpos target for immediate use. */
+	if (!new && !p_ptr->town_x && !p_ptr->town_y) {
+		struct worldpos tpos;
+
+		tpos.wx = p_ptr->wpos.wx;
+		tpos.wy = p_ptr->wpos.wy;
+		tpos.wz = 0;
+		if (istown(&tpos)) {
+			p_ptr->town_x = p_ptr->wpos.wx;
+			p_ptr->town_y = p_ptr->wpos.wy;
+		} else {
+			p_ptr->town_x = cfg.town_x;
+			p_ptr->town_y = cfg.town_y;
+		}
+	}
+
 	/* Catch bad player coordinates,
 	   either corrupted ones (insane values)
 	   or invalid ones if dungeon locations were changed meanwhile - C. Blue */
@@ -2323,6 +2340,9 @@ static void player_setup(int Ind, bool new) {
  #endif
 
 			wpos->wz = 0;
+			/* Actually don't just put people in the wilderness randomly, as it might be really dangerous nowadays */
+			wpos->wx = p_ptr->town_x;
+			wpos->wy = p_ptr->town_y;
 			/* Don't always start in top left corner */
 			p_ptr->py = rand_int(MAX_WID - 4) + 2;
 			p_ptr->px = rand_int(MAX_HGT - 4) + 2;
@@ -2360,17 +2380,6 @@ static void player_setup(int Ind, bool new) {
 #endif	// 0
 		p_ptr->town_x = p_ptr->wpos.wx;
 		p_ptr->town_y = p_ptr->wpos.wy;
-	}
-	/* For players who just logged in but aren't in town, set default town to Bree
-	   so they have a valid instant-resurrection wpos target for immediate use. */
-	if (!p_ptr->town_x && !p_ptr->town_y) {
-		if (istown(&p_ptr->wpos)) {
-			p_ptr->town_x = p_ptr->wpos.wx;
-			p_ptr->town_y = p_ptr->wpos.wy;
-		} else {
-			p_ptr->town_x = cfg.town_x;
-			p_ptr->town_y = cfg.town_y;
-		}
 	}
 
 	/* Count players on this depth */
