@@ -2361,6 +2361,17 @@ static void player_setup(int Ind, bool new) {
 		p_ptr->town_x = p_ptr->wpos.wx;
 		p_ptr->town_y = p_ptr->wpos.wy;
 	}
+	/* For players who just logged in but aren't in town, set default town to Bree
+	   so they have a valid instant-resurrection wpos target for immediate use. */
+	if (!p_ptr->town_x && !p_ptr->town_y) {
+		if (istown(&p_ptr->wpos)) {
+			p_ptr->town_x = p_ptr->wpos.wx;
+			p_ptr->town_y = p_ptr->wpos.wy;
+		} else {
+			p_ptr->town_x = cfg.town_x;
+			p_ptr->town_y = cfg.town_y;
+		}
+	}
 
 	/* Count players on this depth */
 	for (i = 1; i <= NumPlayers; i++) {
