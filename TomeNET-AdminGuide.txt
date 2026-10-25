@@ -812,6 +812,11 @@ Guild masters must recreate their guilds and then issue the command
 /request_guild_estate
 to get their guild hall items back.
 
+If the /request... commands cause an error message:
+"This command is currently not available."
+you can enable it globally by setting "/ allow_requesting_estate = 1" via lua
+command or in the custom.lua script (in folder lib/scpt/).
+
 Finally, you can manually reset the old house count of characters to zero by
 issuing the command "/chouse <character name>" or automate that conveniently
 by adding the command
