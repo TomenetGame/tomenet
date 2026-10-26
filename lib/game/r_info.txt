@@ -1480,7 +1480,7 @@ F:ANIMAL | AQUATIC | WEIRD_MIND | RAND_25 | BASEANGBAND
 D:Yech! The disgusting thing only wants your blood!
 
 N:96:Barracuda
-G:~:G
+G:~:s
 I:120:6d8:20:45:20
 W:5:2:150:30
 E:0:0:0:0:1:0
@@ -9549,7 +9549,7 @@ S:BR_ACID | BR_FIRE | BR_COLD | BR_ELEC | BR_POIS
 D:A large dragon, scales shimmering many colours.
 
 N:594:Sky whale
-G:~:G
+G:~:r
 I:110:80d10:20:75:30
 W:38:6:4000:1750
 E:0:0:0:0:1:0
@@ -15734,7 +15734,7 @@ D:A leader of a clan of frog-people, he is cloaked in a cloak made of
 D:shark skin.
 
 N:889:Whale
-G:~:G
+G:~:s
 I:110:22d22:15:50:70
 W:20:4:9000:175
 E:0:0:0:0:1:0
@@ -15763,7 +15763,7 @@ D:A relative of crabs and shrimp, this is a tiny creature that inhabits sandy
 D:bottoms. It has a pair of dangerous-looking claws.
 
 N:891:Octopus
-G:~:g
+G:~:U
 I:105:60d6:60:60:60
 W:15:2:1200:60
 E:3:0:3:6:1:0
@@ -15777,7 +15777,7 @@ F:MORTAL | BASEANGBAND
 D:It doesn't move very fast, but when it does - watch out!
 
 N:892:Giant octopus
-G:~:g
+G:~:U
 I:115:100d6:10:35:5
 W:30:1:1800:180
 E:3:0:3:6:1:0
@@ -16283,7 +16283,7 @@ D:arms or legs. It has a toothed gaping maw, reminiscent of a caricature
 D:of a shark's jaws.
 
 N:925:Ixitxachitl
-G:~:s
+G:~:D
 I:110:12d8:20:30:20
 W:12:1:1600:40
 E:0:0:0:0:1:0
@@ -16295,7 +16295,7 @@ F:MORTAL | BASEANGBAND
 D:An intelligent devil ray of the depths.
 
 N:926:Ixitxachitl priest
-G:~:s
+G:~:D
 I:110:10d10:20:40:20
 W:19:1:1600:80
 E:0:0:0:0:1:0
