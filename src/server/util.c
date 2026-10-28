@@ -6464,25 +6464,26 @@ void toggle_afk(int Ind, char *msg)
 
 		/* Since wilderness on the world surface is more lively now and can have higher level spawns, warn players - C. Blue */
 		if (!p_ptr->wpos.wz) {
-			/* inside a house is fine (we even include public houses for now, which monsters could enter) */
-			if (istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
+			/* outside of town areas and special safe locations */
+			if (!istownarea(&p_ptr->wpos, MAX_TOWNAREA)) {
+				if (!(sector000separation && in_sector000(&p_ptr->wpos)) &&
+				    !on_irondeepdive(&p_ptr->wpos) && !on_hallsofmandos(&p_ptr->wpos) &&
+				    !(l_ptr && (l_ptr->flags1 & LF1_NO_NEW_MONSTER))) {
+					p_ptr->paging = 2;
+					msg_print(Ind, "\374\377RWARNING: Going AFK in the wild is dangerous, monsters may spawn and attack you!");
+				}
+			}
+			/* Housing zones: In town areas but outside of the town */
+			else if (!istown(&p_ptr->wpos)) {
+				/* inside a house is fine (we even include public houses for now, which monsters could enter) */
 				if (!inside_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) ||
 				    inside_which_house(&p_ptr->wpos, p_ptr->px, p_ptr->py) == -1) {
 					p_ptr->paging = 2;
 					msg_print(Ind, "\374\377RWARNING: Going AFK outside owned houses is dangerous, monsters may attack you!");
 				}
 			}
-			/* outside of towns or special safe locations */
-			else if (!istown(&p_ptr->wpos) &&
-			    !(sector000separation && in_sector000(&p_ptr->wpos)) &&
-			    !on_irondeepdive(&p_ptr->wpos) && !on_hallsofmandos(&p_ptr->wpos) &&
-			    !(l_ptr && (l_ptr->flags1 & LF1_NO_NEW_MONSTER))) {
-				p_ptr->paging = 2;
-				msg_print(Ind, "\374\377RWARNING: Going AFK in the wild is dangerous, monsters may spawn and attack you!");
-			}
-			/* actually it's dangerous in towns too outside the inn! */
-			else if (istown(&p_ptr->wpos) &&
-			    !inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px]) &&
+			/* In a town: Actually it's dangerous too outside the inn! - exception for Bree maybe */
+			else if (!inside_inn(p_ptr, &zcave[p_ptr->py][p_ptr->px]) &&
 			    !in_bree(&p_ptr->wpos)) { /* Pft, Bree is mostly harmless - if you die as lowestbie it's a good lesson maybe q_q */
 				p_ptr->paging = 2;
 				msg_print(Ind, "\374\377RWARNING: Going AFK outside a town's inn is dangerous, monsters may attack you!");
