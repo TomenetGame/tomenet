@@ -17,7 +17,7 @@ int Receive_quit(void);
 #ifdef SERVER_PORTALS
 int Receive_relogin(void);
 #endif
-void Receive_login(void);
+bool Receive_login(void);
 int Receive_file(void);
 int Receive_reply(int *replyto, int *result);
 int Receive_magic(void);

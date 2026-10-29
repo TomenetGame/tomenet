@@ -759,7 +759,8 @@ static bool reorder_characters(int col, int col_cmd, int chars, char names[LOTSO
 
 #define CHARSCREEN_COLOUR TERM_L_GREEN
 #define COL_CHARS 4
-void Receive_login(void) {
+/* Returns TRUE if we wanted to quit the client. */
+bool Receive_login(void) {
 	int n;
 	char ch;
 	int i = 0, max_cpa, max_cpa_plus = 0;
@@ -795,10 +796,10 @@ void Receive_login(void) {
 		else if (strstr(&rbuf.ptr[1], "nter a password") /* (Avoid upper-case issues) */
 		    || strstr(&rbuf.ptr[1], "assword length")) /* or if the password was just too short (avoid upper-case issues) */
 			rl_password = TRUE;
-		return;
+		return(FALSE);
 #endif
 		quit(&rbuf.ptr[1]);
-		return;
+		return(FALSE);
 	}
 #ifdef RETRY_LOGIN
 	/* allow quitting again (especially 'Q' in character screen ;)) */
@@ -810,7 +811,7 @@ void Receive_login(void) {
 		plog("Packet scan error when trying to read server flags.");
 #ifdef RETRY_LOGIN
 		rl_connection_destroyed = TRUE;
-		return;
+		return(FALSE);
 #endif
 		quit(NULL);
 	}
@@ -876,7 +877,7 @@ void Receive_login(void) {
 				race = dna_race;
 				class = dna_class;
 				trait = dna_trait;
-				return;
+				return(FALSE);
 			}
 		}
 	}
@@ -1009,7 +1010,7 @@ void Receive_login(void) {
 
 		/* read a character name from command-line or config file,
 		   that exists, so we log in with it straight away? */
-		if (streq(cname, c_name)) return;
+		if (streq(cname, c_name)) return(FALSE);
 
 		/* do we possess a character of same name as our account? */
 		if (streq(c_name, nick)) found_nick = TRUE;
@@ -1133,7 +1134,12 @@ void Receive_login(void) {
 	    && ((ch != 'S' && ch != 'I' && ch != 'A') || !allow_reordering)) {
 		ch = inkey();
 		//added CTRL+Q for RETRY_LOGIN, so you can quit the whole game from within in-game via simply double-tapping CTRL+Q
-		if (ch == 'Q' || ch == KTRL('Q')) quit(NULL);
+		if (ch == 'Q' || ch == KTRL('Q'))
+#ifndef RETRY_META_LOGIN
+			quit(NULL);
+#else
+			return(TRUE);
+#endif
 		/* Take a screenshot */
 		if (ch == KTRL('T')) {
 			xhtml_screenshot("screenshot????", 2);
@@ -1160,7 +1166,7 @@ void Receive_login(void) {
 		}
 		ch = 0;
 #ifdef RETRY_LOGIN
-		if (rl_connection_destroyed) return;
+		if (rl_connection_destroyed) return(FALSE);
 #endif
 		goto enter_menu;
 	}
@@ -1228,6 +1234,7 @@ void Receive_login(void) {
 	strcpy(cname, c_name);
 
 	Term_clear();
+	return(FALSE);
 }
 
 /*
@@ -1607,7 +1614,11 @@ unsigned char Net_login(void) {
 
 	Sockbuf_clear(&rbuf);
 	Sockbuf_read(&rbuf);
-	Receive_login();
+#ifndef RETRY_META_LOGIN
+	if (Receive_login()) quit(NULL);
+#else
+	if (Receive_login()) return(E_QUIT_RETRY);
+#endif
 #ifdef RETRY_LOGIN
 	/* Our connection was destroyed in Receive_login() -> something wrong with our account crecedentials? */
 	if (rl_connection_destroyed) return(E_RETRY_CONTACT);

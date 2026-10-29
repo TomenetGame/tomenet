@@ -303,6 +303,7 @@
 #ifdef CLIENT_SIDE /* RETRY_LOGIN: */
  #define E_RETRY_CONTACT	0xFF
  #define E_RETRY_LOGIN		0xFE
+ #define E_QUIT_RETRY		0xFD	/* RETRY_META_LOGIN */
 #endif
 
 

@@ -878,6 +878,9 @@
 
  /* 4.6.2: Allow to retry login, for re-entering invalid account/character names or after death. */
  #define RETRY_LOGIN
+ /* 4.9.4: If the client was called without cmd-line options so it'd go to meta server screen,
+    then on quitting the game, return to the meta screen instead of just terminating normally. */
+ #define RETRY_META_LOGIN
 
  /* Buffer guide in RAM, to reduce searching times (especially on Windows OS, not really bad on Linux) */
  #define BUFFER_GUIDE
