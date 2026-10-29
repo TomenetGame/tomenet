@@ -4369,7 +4369,7 @@ again:
 	if (status == E_QUIT_RETRY) {
 		if (argv1 == NULL) {
 			Net_cleanup();
-			if (!rl_auto_relogin) my_memfrob(pass, strlen(pass)); //need to un-frob the password as it will get refrobbed right over there again
+			my_memfrob(pass, strlen(pass)); //need to un-frob the password as it will get refrobbed right over there again
 			skip = rl_auto_relogin = FALSE;
 
 			/* reset global game states (and activate auto-relogin) */
