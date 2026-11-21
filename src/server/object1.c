@@ -1217,6 +1217,7 @@ void reset_visuals(void) {
 //void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3)
 void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u32b *f5, u32b *f6, u32b *esp) {
 	object_kind *k_ptr = &k_info[o_ptr->k_idx];
+	artifact_type *a_ptr;
 
 	/* Base object */
 	(*f1) = k_ptr->flags1;
@@ -1226,13 +1227,6 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 	(*f5) = k_ptr->flags5;
 	(*f6) = k_ptr->flags6;
 	(*esp) = k_ptr->esp;
-
-#ifdef MSTAFF_MDEV_COMBO /* mstaff base item has activation, but does not carry over to ego/art states! */
-	if (o_ptr->tval == TV_MSTAFF && (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b))
-		*f3 &= ~TR3_ACTIVATE;
-#endif
-
-	artifact_type *a_ptr;
 
 	/* Artifact */
 	if (o_ptr->name1) {
@@ -1861,6 +1855,11 @@ void object_flags(object_type *o_ptr, u32b *f1, u32b *f2, u32b *f3, u32b *f4, u3
 		(*f3) |= TR3_IGNORE_FIRE;
 		(*f5) |= TR5_IGNORE_WATER;
 	}
+
+#ifdef MSTAFF_MDEV_COMBO /* mstaff base item has activation, but does not carry over to ego/art states! */
+	if (o_ptr->tval == TV_MSTAFF && (o_ptr->name1 || o_ptr->name2 || o_ptr->name2b))
+		*f3 &= ~TR3_ACTIVATE;
+#endif
 
 	if (o_ptr->questor && o_ptr->questor_invincible) {
 		(*f3) |= TR3_IGNORE_FIRE;
