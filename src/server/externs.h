@@ -2995,3 +2995,4 @@ extern int inventory_pack_max, inventory_total_max;
 extern bool admin_max_spawnrate;
 
 extern char geoloc_extip[MAX_CHARS], geoloc_country[MAX_CHARS], geoloc_state[MAX_CHARS], geoloc_city[MAX_CHARS];
+extern int wild_placement_max_fails;

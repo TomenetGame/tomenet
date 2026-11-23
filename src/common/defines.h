@@ -731,7 +731,7 @@
 #define MAX_DEPTH_OBJ	128 /* must be <= 128 */
 #define MAX_DEPTH	255 /* should be <= 255? (Valinor at 200 is deepest level) */
 
-/* Amount of towns */
+/* Amount of towns + 1 (town 0 aka 'vanilla' doesn't exist, starts at real town 1 aka 'Bree') */
 #define TOWNS		6
 
 /* The 'generally acknowledged' max radius for a town's housing zone.

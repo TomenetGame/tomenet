@@ -56,6 +56,8 @@
 
 /* Max # of attempts to place dungeons on the world map until giving up due to probably impossible terrain situation */
 #define MAX_TRIES_DUN_PLACEMENT 500000
+/* Max # of attempts to place towns on the world map until giving up due to probably impossible terrain situation */
+#define MAX_TRIES_TOWN_PLACEMENT 1000000
 
 /* Add windows to wilderness houses ('dwellings')? */
 #define WILD_HOUSES_WINDOWS
@@ -181,8 +183,11 @@ void initwild(void) {
 	int i, j;
 
 	for (i = 0; i < MAX_WILD_X; i++)
-		for (j = 0; j < MAX_WILD_Y; j++)
+		for (j = 0; j < MAX_WILD_Y; j++) {
 			wild_info[j][i].type = WILD_UNDEFINED;
+			wild_info[j][i].town_idx = 0;
+			wild_info[j][i].radius = 0;
+		}
 }
 
 /* Initialize the wild_info coordinates and radius. Uses a recursive fill algorithm.
@@ -298,20 +303,34 @@ void wild_bulldoze(void) {
  * This should be totally rewritten for v5!		- Jir -
  */
 bool wild_spawn_towns(bool lowdun_near_Bree) {
-	int x, y, i, j, k, try = 0;
-	bool retry;
+	int x, y, i, j, k, m;
+	int tries_towns = 0, step_towns = 1000, tries_dungeons = 0, step_dungeons = 1000;
+	int town_x[TOWNS], town_y[TOWNS];
 
 	//int tries = 0;
 	worldpos wpos = {0, 0, 0};
 
 	s_printf("Placing towns...\n");
+	/* Bree is fixed (and 'vanilla' town aka index #0 is not a standard wilderness town/does not exist) */
+	town_x[1] = cfg.town_x;
+	town_y[1] = cfg.town_y;
+	s_printf("  Starter town (Bree) coordinates (cfg.town_x/y): %d,%d\n", town_x[1], town_y[1]);
 
 	/* Place towns */
 	/* Bree (1) is skipped here and instead initialized by init_wild_info(),
 	   which uses baselevel 0 instead of town_profile's baselevel 1,
 	   important for 't'ownie generation or Bree would be populated by monsters! */
 	for (i = 1 + 1; i < TOWNS; i++) {
-		retry = FALSE;
+		tries_towns++;
+		if (tries_towns == 1 || tries_towns % step_towns == 0) s_printf("  Attempt %d\n", tries_towns);
+		if (tries_towns == 10000) step_towns = 10000;
+		if (tries_towns == 100000) step_towns = 100000;
+		//if (tries_towns == 1000000) step_towns = 1000000;
+		if (tries_towns == MAX_TRIES_TOWN_PLACEMENT) {
+			s_printf("Excessive town generation failures (%d attempts):\n", MAX_TRIES_TOWN_PLACEMENT);
+			for (j = 1; j < i; j++)
+				s_printf("  (accepted town %d at (%d,%d))\n", j, town_x[j], town_y[j]);
+		}
 
 		/* avoid towns at the border of the world map (also: no housing space there!); especially 0,0 (event sector) and 63,63 (test/storage sector) */
 		y = 2 + rand_int(MAX_WILD_Y - 4);
@@ -320,23 +339,55 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 		/* check wilderness type so that Bree is in forest and
 		 * Minas Anor in mountain etc */
 		if (wild_info[y][x].type != town_profile[i].wild_req) {
+#if 1 /* debug */
+			if (tries_towns == MAX_TRIES_TOWN_PLACEMENT) {
+				s_printf("  Cause: Terrain misfit.\n");
+				s_printf("Going back to wilderness terrain rerolling first, then retrying towns.\n");
+				wild_placement_max_fails += MAX_TRIES_TOWN_PLACEMENT;
+				return(FALSE);
+			}
+#endif
 			i--;
 			continue;
 		}
 
-		/* Don't build them too near to each other */
-		for (j = 0; j < i - 1; j++) {
-			if (distance(y, x, town[j].y, town[j].x) < 8) {
-				retry = TRUE;
-				break;
+		/* Don't build them too near to each other -
+		   this is especially critical for towns of vastly differing level (eg Bree 1 vs Khazad-dum 80)
+		   as this can result in super deep wilderness levels very close to the lower level town,
+		   induced by the higher level town. */
+		for (j = 1; j < i; j++) { /* 'vanilla' town #0 is not generated (at all, or at least not as one of the standard server towns) */
+			if (town_profile[i].dun_base > town_profile[j].dun_base) {
+				k = town_profile[i].dun_base;
+				m = town_profile[j].dun_base;
+			} else {
+				k = town_profile[j].dun_base;
+				m = town_profile[i].dun_base;
 			}
+			k = 8 + (k - m) / 3; // div by 3...5
+			m = distance(y, x, town_y[j], town_x[j]);
+			if (m < k) {
+#if 1 /* debug */
+				if (tries_towns == MAX_TRIES_TOWN_PLACEMENT) {
+					s_printf("  Cause: Distance misfit.\n");
+					s_printf("Going back to wilderness terrain rerolling first, then retrying towns.\n");
+					wild_placement_max_fails += MAX_TRIES_TOWN_PLACEMENT;
+					return(FALSE);
+				}
+#endif
+				/* In this case, completely start over with first additional town (after fixed starter town 'Bree') again */
+				i = 1 + 1;
+				continue;
+			}
+			//s_printf("   accepting distance %d<%d of town %d to town %d\n", m, k, i, j);
 		}
-		if (retry) {
-			i--;
-			continue;
-		}
-		addtown(y, x, town_profile[i].dun_base, town_profile[i].flags1, i);	/* base town */
+		/* Preliminarily accepted town coordinates */
+		town_x[i] = x;
+		town_y[i] = y;
 	}
+	/* All town coordinates acceptable? Then finally do place them */
+	for (i = 1 + 1; i < TOWNS; i++)
+		addtown(town_y[i], town_x[i], town_profile[i].dun_base, town_profile[i].flags1, i);
+	s_printf("  All towns (%d) generated after %d attempts.\n", TOWNS, tries_towns);
 
 	s_printf("Placing dungeons...\n");
 
@@ -364,16 +415,20 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 		   we'll never be able to satisfy all strict dungeon dependancies,
 		   in that case try to reroll the worldmap instead.
 		   In general, around 500-5000 tries should usually be sufficient to generate everything at max strictness. */
-		if (try == MAX_TRIES_DUN_PLACEMENT) {
+		if (tries_dungeons == MAX_TRIES_DUN_PLACEMENT) {
 			s_printf("Dungeon placement still failed after %d tries,\n going back to wilderness terrain rerolling first,\n then retrying dungeons.\n", MAX_TRIES_DUN_PLACEMENT);
 			dungeon_id_max = 0; //forgot index array, reindex from 0 again
+			wild_placement_max_fails += MAX_TRIES_DUN_PLACEMENT;
 			return (FALSE);
 		}
 
 		/* Attempt to place the dungeon... */
 
-		try++;
-		s_printf("  Dungeon %d of %d, attempt %d...\n", i, max_d_idx, try);
+		tries_dungeons++;
+		if (tries_dungeons == 1 || tries_dungeons % step_dungeons == 0) s_printf("  Dungeon %d of %d, attempt %d...\n", i, max_d_idx, tries_dungeons);
+		if (tries_dungeons == 10000) step_dungeons = 10000;
+		if (tries_dungeons == 100000) step_dungeons = 100000;
+		if (tries_dungeons == 1000000) step_dungeons = 1000000;
 
 		y = rand_int(MAX_WILD_Y);
 		x = rand_int(MAX_WILD_X);
@@ -406,7 +461,7 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 
 		/* Don't build them too near to towns
 		 * (otherwise entrance can be within a house) */
-		for (j = 0; j < TOWNS; j++)
+		for (j = 1; j < TOWNS; j++)
 			if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA)
 				break;
 		if (j != TOWNS) continue;
@@ -503,13 +558,15 @@ bool wild_spawn_towns(bool lowdun_near_Bree) {
 			new_level_up_y(&wpos, y);
 		}
 #if DEBUG_LEVEL > 0
-		s_printf("Dungeon %d is generated in %s [%d,%d].\n", i, wpos_format(0, &wpos), x, y);
+		s_printf("    Dungeon %d is generated in %s [%d,%d].\n", i, wpos_format(0, &wpos), x, y);
 #endif
 
 		i++;
 	}
+	s_printf("  All dungeons (%d) generated after %d attempts.\n", max_d_idx, tries_dungeons);
 
-	s_printf("Worldmap created after %d tries.\n", try);
+	if (wild_placement_max_fails) s_printf("Worldmap created after %d+%d tries for towns and dungeons.\n", wild_placement_max_fails, tries_towns + tries_dungeons);
+	else s_printf("Worldmap created after %d tries for towns and dungeons.\n", tries_towns + tries_dungeons);
 	return(TRUE);
 }
 
@@ -4895,7 +4952,7 @@ void wild_add_new_dungeons(int Ind, bool lowdun_near_Bree) {
 
 		/* Don't build them too near to towns
 		 * (otherwise entrance can be within a house) */
-		for (j = 0; j < TOWNS; j++)
+		for (j = 1; j < TOWNS; j++) /* 'vanilla' town ie index #0 is not generated as a standard server town */
 			if (distance(y, x, town[j].y, town[j].x) <= MAX_TOWNAREA)
 				break;
 		if (j != TOWNS) continue;

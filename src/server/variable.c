@@ -1133,3 +1133,4 @@ int inventory_total_max, inventory_pack_max; /* Normal inventory aka INVEN_PACK/
 bool admin_max_spawnrate = FALSE;
 
 char geoloc_extip[MAX_CHARS] = { 0 }, geoloc_country[MAX_CHARS] = { 0 }, geoloc_state[MAX_CHARS] = { 0 }, geoloc_city[MAX_CHARS] = { 0 };
+int wild_placement_max_fails = 0;

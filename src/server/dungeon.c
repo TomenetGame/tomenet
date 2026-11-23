@@ -11518,7 +11518,6 @@ void play_game(bool new_game, bool all_terrains, bool dry_Bree, bool lowdun_near
 	int h = 0, m = 0, s = 0, dwd = 0, dd = 0, dm = 0, dy = 0;
 	time_t now;
 	struct tm *tmp;
-	//int i, n;
 
 redo_world:
 
@@ -11574,8 +11573,18 @@ redo_world:
 
 	/* Roll new town */
 	if (new_game) {
+		int i;
+
 		/* Ignore the dungeon */
 		server_dungeon = FALSE;
+
+		/* If we land here via redo_world goto: */
+		/* free old town[] and town[]->store info */
+		if (town) {
+			for (i = 0; i < numtowns; i++) dealloc_stores(i);
+			C_KILL(town, numtowns, struct town_type);
+		}
+		numtowns = 0;
 
 		/* Start in town */
 		/* dlev = 0;*/

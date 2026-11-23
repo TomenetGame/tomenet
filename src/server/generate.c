@@ -11198,7 +11198,7 @@ static void town_gen(struct worldpos *wpos) {
 	/* XXX this will be changed very soon	- Jir -
 	 * It's no good hardcoding things like this.. */
 #if 1
-	if (type > 0 && type < TOWNS) { /* the 5 fixed towns (aside from Bree, which is #0 and always at cfg.town_x/town_y aka (32,32)) */
+	if (type > 0 && type < TOWNS) { /* the 5 fixed towns (aside from Bree, which is #1 and always at cfg.town_x/town_y aka (32,32)); 'vanilla' town is index #0 */
 		/* Hack -- Use the "simple" RNG */
 		Rand_quick = TRUE;
 
@@ -11646,7 +11646,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 	dungeon_ditype[dungeon_id_max] = type;
 	/* mostly affects highlander dungeon: */
 	set_dungeon_bonus(dungeon_id_max, TRUE);
-	s_printf("adding dungeon of index %d.\n", dungeon_id_max);
+	s_printf("    adding dungeon of index %d.\n", dungeon_id_max);
 #endif
 
 	if (type) {
@@ -11720,7 +11720,7 @@ void add_dungeon(struct worldpos *wpos, int baselevel, int maxdep, u32b flags1, 
 		C_MAKE(d_ptr->level[i].uniques_killed, MAX_R_IDX, char);
 #endif
 
-	s_printf("add_dungeon completed (type %d, %s).\n", type, tower ? "tower" : "dungeon");
+	s_printf("    add_dungeon completed (type %d, %s).\n", type, tower ? "tower" : "dungeon");
 }
 
 /* Check if an existing dungeon is still large enough and has the correct parameters - does not erase dungeon knowledge (unlike deleting + re-adding would do). */
