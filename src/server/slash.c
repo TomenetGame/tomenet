@@ -9348,99 +9348,144 @@ void do_slash_cmd(int Ind, char *message, char *message_u) {
 			}
 			/* Swap two towns' positions on the world map */
 			else if (prefix(messagelc, "/swap-towns")) {
-				int a = tk, b = atoi(token[2]);
-				int x, y;
-				struct worldpos wpos1, wpos2;
+				int a = k, b, x, y;
+				struct worldpos wpos1, wpos2, tpos;
+				wilderness_type w1info, w2info, *w1_ptr, *w2_ptr;
+				u32b w1flags, w2flags;
+				dungeon_type *d_ptr;
 
 				if (tk < 2) {
 					msg_print(Ind, "Usage: /swap-towns <town1> <town2>");
-					msg_format(Ind, "Where town1 and town2 are [0...%d], 1 is Bree.", numtowns - 1);
+					msg_format(Ind, "Where town1 and town2 are [0...%d], 0 is Bree.", numtowns - 1);
 					return;
 				}
+				b = atoi(token[2]);
 				if (a < 0 || a >= numtowns || b < 0 || b >= numtowns) {
-					msg_format(Ind, "Town numbers may range from 0 to %d (1 is Bree).", numtowns - 1);
+					msg_format(Ind, "Town numbers may range from 0 to %d (0 is Bree).", numtowns - 1);
 					return;
 				}
 
+				msg_format(Ind, "Swapping towns #%d (type %d, '%s') and #%d (type %d, '%s').",
+				    a, town[a].type, town_profile[town[a].type].name, b, town[b].type, town_profile[town[b].type].name);
+
+				/* Get wpos and wilderness info */
 				wpos1.wx = town[a].x;
 				wpos1.wy = town[a].y;
 				wpos1.wz = 0;
 				wpos2.wx = town[b].x;
 				wpos2.wy = town[b].y;
 				wpos2.wz = 0;
+				w1_ptr = &wild_info[wpos1.wy][wpos1.wx];
+				w1info = *w1_ptr;
+				w2_ptr = &wild_info[wpos2.wy][wpos2.wx];
+				w2info = *w2_ptr;
 
-#if 0				/* Process draft */
+				/* Unstatice both so they get rebuilt as the newly swapped version */
+				unstatic_level(&wpos1);
+				if (getcave(&wpos1)) dealloc_dungeon_level(&wpos1);
+				unstatic_level(&wpos2);
+				if (getcave(&wpos2)) dealloc_dungeon_level(&wpos2);
 
-				/*** Init the wild_info array... for more information see wilderness.c ***/
-				init_wild_info();
+				/* Swap dungeons */
+				w1flags = w1info.flags;
+				if (w1flags & WILD_F_UP) {
+					d_ptr = w1info.tower;
 
+					/* Unstatice all dungeons/towers or monsters will be processed at illegal (non-allocated) locations -> panic save (null pointer) */
+					tpos = wpos1;
+					for (k = 0; k < d_ptr->maxdepth; k++) {
+						tpos.wz = k + 1;
+						wipe_m_list(&tpos); //Get rid of questors too! Otherwise, eg Bree 'Tower Guard' NPCs could crash the server if other town has no tower.
+						unstatic_level(&tpos);
+						if (getcave(&tpos)) dealloc_dungeon_level(&tpos);
+					}
 
-				// ... actually swap the towns
-				/* Add town process draft */
+					dungeon_x[d_ptr->id] = wpos2.wx;
+					dungeon_y[d_ptr->id] = wpos2.wy;
+				}
+				if (w1flags & WILD_F_DOWN) {
+					d_ptr = w1info.dungeon;
 
-				town[numtowns].x = x;
-				town[numtowns].y = y;
-				town[numtowns].baselevel = base;
-				town[numtowns].flags = flags;
-				//town[numtowns].num_stores = MAX_BASE_STORES;
-				town[numtowns].num_stores = max_st_idx;
-				town[numtowns].type = type;
-				wild_info[y][x].type = WILD_TOWN;
-				wild_info[y][x].town_idx = numtowns;
-				wild_info[y][x].radius = base;
-				alloc_stores(numtowns);
-				/* Initialize the stores */
-				//for (n = 0; n < MAX_BASE_STORES; n++)
-				for (n = 0; n < max_st_idx; n++) {
-					/* make shop remember the town its in - C. Blue */
-					town[numtowns].townstore[n].town = numtowns;
+					/* Unstatice all dungeons/towers or monsters will be processed at illegal (non-allocated) locations -> panic save (null pointer) */
+					tpos = wpos1;
+					for (k = 0; k < d_ptr->maxdepth; k++) {
+						tpos.wz = - (k + 1);
+						wipe_m_list(&tpos); //Get rid of questors too! Otherwise, eg Bree 'Tower Guard' NPCs could crash the server if other town has no tower.
+						unstatic_level(&tpos);
+						if (getcave(&tpos)) dealloc_dungeon_level(&tpos);
+					}
+
+					dungeon_x[d_ptr->id] = wpos2.wx;
+					dungeon_y[d_ptr->id] = wpos2.wy;
 				}
 
+				w2flags = w2info.flags;
+				if (w2flags & WILD_F_UP) {
+					d_ptr = w2info.tower;
 
-				/* Discard old dungeon index info */
-				//reindex_dungeons();
-				// ... actually swap town dungeon info
-				if (w_ptr->flags & WILD_F_UP) {
-					d_ptr = w_ptr->tower;
-					d_ptr->id = ++dungeon_id_max;
+					/* Unstatice all dungeons/towers or monsters will be processed at illegal (non-allocated) locations -> panic save (null pointer) */
+					tpos = wpos2;
+					for (k = 0; k < d_ptr->maxdepth; k++) {
+						tpos.wz = k + 1;
+						wipe_m_list(&tpos); //Get rid of questors too! Otherwise, eg Bree 'Tower Guard' NPCs could crash the server if other town has no tower.
+						unstatic_level(&tpos);
+						if (getcave(&tpos)) dealloc_dungeon_level(&tpos);
+					}
 
-					dungeon_visit_frequency[dungeon_id_max] = 0;
-					dungeon_x[dungeon_id_max] = x;
-					dungeon_y[dungeon_id_max] = y;
-					dungeon_tower[dungeon_id_max] = TRUE;
-					dungeon_ditype[dungeon_id_max] = d_ptr->type;
-
-					/* Initialize all dungeons at 'low rest bonus' */
-					set_dungeon_bonus(dungeon_id_max, TRUE);
-
-					s_printf("  indexed tower   at %d,%d: id = %d\n", x, y, dungeon_id_max);
+					dungeon_x[d_ptr->id] = wpos1.wx;
+					dungeon_y[d_ptr->id] = wpos1.wy;
 				}
-				if (w_ptr->flags & WILD_F_DOWN) {
-					d_ptr = w_ptr->dungeon;
-					d_ptr->id = ++dungeon_id_max;
+				if (w2flags & WILD_F_DOWN) {
+					d_ptr = w2info.dungeon;
 
-					dungeon_visit_frequency[dungeon_id_max] = 0;
-					dungeon_x[dungeon_id_max] = x;
-					dungeon_y[dungeon_id_max] = y;
-					dungeon_tower[dungeon_id_max] = FALSE;
-					dungeon_ditype[dungeon_id_max] = d_ptr->type;
+					/* Unstatice all dungeons/towers or monsters will be processed at illegal (non-allocated) locations -> panic save (null pointer) */
+					tpos = wpos2;
+					for (k = 0; k < d_ptr->maxdepth; k++) {
+						tpos.wz = - (k + 1);
+						wipe_m_list(&tpos); //Get rid of questors too! Otherwise, eg Bree 'Tower Guard' NPCs could crash the server if other town has no tower.
+						unstatic_level(&tpos);
+						if (getcave(&tpos)) dealloc_dungeon_level(&tpos);
+					}
 
-					/* Initialize all dungeons at 'low rest bonus' */
-					set_dungeon_bonus(dungeon_id_max, TRUE);
-
-					s_printf("  indexed dungeon at %d,%d: id = %d\n", x, y, dungeon_id_max);
+					dungeon_x[d_ptr->id] = wpos1.wx;
+					dungeon_y[d_ptr->id] = wpos1.wy;
 				}
 
- #ifdef DUNGEON_VISIT_BONUS_DEPTHRANGE
-				//for (i = 0; i < 20; i++)
-				//	depthrange_visited[i] = 0;
- #endif
+				/* Swap town positions */
+				town[a].x = wpos2.wx;
+				town[a].y = wpos2.wy;
+				town[b].x = wpos1.wx;
+				town[b].y = wpos1.wy;
 
+				/* Swap wilderness info */
+#if 0 /* Swap complete wilderness info -- no! we need to preserve some aspects such as terrain/neighbour-bled info */
+				*w1_ptr = w2info;
+				*w2_ptr = w1info;
+#else /* Swap selected wilderness aspects */
+				w1_ptr->town_idx = b;
+				w2_ptr->town_idx = a;
+				//u16b type; /* what kind of terrain we are in */
+				w1_ptr->radius = 0;
+				w2_ptr->radius = 0;
+				w1_ptr->town_lev = town[b].baselevel;
+				w2_ptr->town_lev = town[a].baselevel;
 
-				/* Initialize wilderness 'level' */
-				init_wild_info_aux(0, 0);
-
+				//Swap UP/DOWN staircase wild flags
+				w1_ptr->flags &= ~(WILD_F_UP | WILD_F_DOWN);
+				w1_ptr->flags |= (w2flags & (WILD_F_UP | WILD_F_DOWN));
+				w2_ptr->flags &= ~(WILD_F_UP | WILD_F_DOWN);
+				w2_ptr->flags |= (w1flags & (WILD_F_UP | WILD_F_DOWN));
+				w1_ptr->tower = w2info.tower;
+				w1_ptr->dungeon= w2info.dungeon;
+				w2_ptr->tower = w1info.tower;
+				w2_ptr->dungeon = w1info.dungeon;
 #endif
+
+				/* Reinitialize wilderness levels */
+				for (x = 0; x < MAX_WILD_X; x++)
+				for (y = 0; y < MAX_WILD_Y; y++)
+					wild_info[y][x].radius = 0;
+				init_wild_info_aux(0, 0);
 
 				return;
 			}
