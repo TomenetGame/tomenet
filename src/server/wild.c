@@ -213,7 +213,8 @@ void addtown(int y, int x, int base, u16b flags, int type) {
 	town[numtowns].type = type;
 	wild_info[y][x].type = WILD_TOWN;
 	wild_info[y][x].town_idx = numtowns;
-	wild_info[y][x].radius = base;
+	wild_info[y][x].radius = 0;
+	wild_info[y][x].town_lev = base;
 	alloc_stores(numtowns);
 	/* Initialize the stores */
 	//for (n = 0; n < MAX_BASE_STORES; n++)

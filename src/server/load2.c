@@ -4524,7 +4524,8 @@ void rd_towns(void) {
 		rd_u16b(&town[i].num_stores);
 		rd_u16b(&town[i].type);
 		wild_info[town[i].y][town[i].x].type = WILD_TOWN;
-		wild_info[town[i].y][town[i].x].radius = town[i].baselevel;
+		wild_info[town[i].y][town[i].x].radius = 0;
+		wild_info[town[i].y][town[i].x].town_lev = town[i].baselevel;
 		wild_info[town[i].y][town[i].x].town_idx = i;
 		alloc_stores(i);
 		for (j = 0; j < town[i].num_stores; j++)
