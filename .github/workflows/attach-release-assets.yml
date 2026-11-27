@@ -18,11 +18,11 @@ jobs:
   attach-release-assets:
     name: Attach assets to published release
     if: startsWith(github.event.release.tag_name, 'v')
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
 
     steps:
       - name: Checkout release tag
-        uses: actions/checkout@v4
+        uses: actions/checkout@v7
         with:
           # Fallback build must use exact tag content, not default branch HEAD.
           ref: ${{ github.event.release.tag_name }}
@@ -201,7 +201,7 @@ jobs:
       - name: Log in to GHCR (best effort, fallback build)
         if: steps.release_assets_state.outputs.needs_attach == 'true' && steps.find_run.outputs.found != 'true'
         continue-on-error: true
-        uses: docker/login-action@v3
+        uses: docker/login-action@v4
         with:
           registry: ghcr.io
           username: ${{ github.actor }}
